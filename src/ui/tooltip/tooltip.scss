@@ -1,0 +1,58 @@
+/* ── tooltip ── */
+
+.uxm-tooltip {
+  display: inline-block;
+  position: relative;
+
+  &__body {
+    background-color: var(--color-text);
+    border-radius: 6px;
+    color: var(--color-text-inverse);
+    font-size: 12px;
+    padding: 6px 10px;
+    white-space: nowrap;
+  }
+
+  &__arrow {
+    background-color: var(--color-text);
+    height: 10px;
+    position: absolute;
+    width: 10px;
+  }
+
+  &--top &__arrow {
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  &--bottom &__arrow {
+    left: 50%;
+    top: -5px;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  &--left &__arrow {
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  &--right &__arrow {
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+}
+
+.uxm-content-tooltip {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  max-width: 320px;
+  padding: 12px;
+
+  &--shadow {
+    box-shadow: var(--shadow-md);
+  }
+}

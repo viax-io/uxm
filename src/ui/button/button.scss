@@ -1,0 +1,139 @@
+/* ── button ── */
+
+.uxm-button-primary {
+  align-items: center;
+  background-color: var(--color-accent-bold);
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-inverse);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: var(--uxm-button-primary-gap, 8px);
+  justify-content: center;
+  padding: 10px 20px;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.uxm-button-secondary {
+  align-items: center;
+  background-color: var(--color-card);
+  border: 1.5px solid var(--color-accent-bold);
+  border-radius: 8px;
+  color: var(--color-accent-bold);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: var(--uxm-button-secondary-gap, 8px);
+  justify-content: center;
+  padding: 10px 20px;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.uxm-button-tertiary {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: var(--uxm-button-tertiary-gap, 8px);
+  justify-content: center;
+  padding: 10px 20px;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.uxm-button-ghost {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-accent-bold);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 500;
+  gap: var(--uxm-button-ghost-gap, 8px);
+  justify-content: center;
+  padding: 10px 20px;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--color-surface-alt);
+  }
+}
+
+.uxm-button-with-icon {
+  align-items: center;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 500;
+  gap: var(--uxm-button-with-icon-gap, 8px);
+  padding: 8px 12px;
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  &__icon {
+    display: inline-flex;
+  }
+}
+
+/* ButtonGroup — root is the segmented track; per-item bg/text/padding/
+   font-size live on `.uxm-button-group__item`. The inner border-right
+   shares the same `--uxm-button-group-border-color` var as the root
+   border so a single saved knob themes both. */
+
+.uxm-button-group {
+  border: 1px solid var(--uxm-button-group-border-color, var(--color-border));
+  border-radius: 8px;
+  display: inline-flex;
+  overflow: hidden;
+
+  &__item {
+    background-color: var(--uxm-button-group-inactive-bg, var(--color-card));
+    border: none;
+    border-right: 1px solid var(--uxm-button-group-border-color, var(--color-border));
+    color: var(--uxm-button-group-inactive-text, var(--color-text-muted));
+    cursor: pointer;
+    font-size: var(--uxm-button-group-font-size, 13px);
+    font-weight: 500;
+    padding: var(--uxm-button-group-padding-y, 8px) var(--uxm-button-group-padding-x, 16px);
+    transition: background-color 0.15s, color 0.15s;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &--active {
+      background-color: var(--uxm-button-group-active-bg, var(--color-accent-subtle));
+      color: var(--uxm-button-group-active-text, var(--color-accent-bold));
+      font-weight: 600;
+    }
+  }
+}

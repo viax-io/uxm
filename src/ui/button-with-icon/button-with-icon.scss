@@ -1,0 +1,25 @@
+/* ── button-with-icon ── */
+
+.uxm-button-with-icon {
+  align-items: center;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 500;
+  gap: var(--uxm-button-with-icon-gap, 8px);
+  padding: 8px 12px;
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  &__icon {
+    display: inline-flex;
+  }
+}

@@ -1,0 +1,39 @@
+/* ── inline-action ── */
+
+/* ── InlineAction ──
+   Tertiary text-with-optional-icon button for dense UI. Muted by
+   default with a hover transition to accent. Sized small (10px) by
+   default; the icon slot follows iconSize. */
+
+.uxm-inline-action {
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--uxm-inline-action-color, var(--color-text-muted));
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--uxm-inline-action-font-size, 10px);
+  font-weight: var(--uxm-inline-action-font-weight, 500);
+  gap: var(--uxm-inline-action-gap, 4px);
+  padding: 0;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--uxm-inline-action-hover-color, var(--color-accent-bold));
+  }
+
+  &__icon {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+
+    & > svg {
+      height: var(--uxm-inline-action-icon-size, 10px);
+      width: var(--uxm-inline-action-icon-size, 10px);
+    }
+  }
+
+  &__label {
+    display: inline-block;
+  }
+}

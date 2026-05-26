@@ -1,0 +1,49 @@
+/* ── thumbnail ── */
+
+/* Thumbnail — bounded image frame. Root IS the visible frame: bg / border /
+   radius / size land directly. `--uxm-thumbnail-size` drives both width and
+   height (square frame). Image fills via object-fit; placeholder centers a
+   fallback icon when no src is provided. */
+
+.uxm-thumbnail {
+  align-items: center;
+  background-color: var(--uxm-thumbnail-background-color, var(--color-card));
+  border: var(--uxm-thumbnail-border-width, 2px) solid var(--uxm-thumbnail-border-color, var(--color-border));
+  border-radius: var(--uxm-thumbnail-border-radius, 12px);
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: var(--uxm-thumbnail-size, 48px);
+  justify-content: center;
+  overflow: hidden;
+  width: var(--uxm-thumbnail-size, 48px);
+
+  /* CSS sizing wins over the SVG width/height attrs the Icon component sets,
+     so the placeholder glyph scales with the thumbnail's `--uxm-thumbnail-size`. */
+
+  &__image {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+
+  &--cover &__image {
+    object-fit: cover;
+  }
+
+  &--contain &__image {
+    object-fit: contain;
+  }
+
+  &__placeholder {
+    align-items: center;
+    color: var(--uxm-thumbnail-placeholder-color, var(--color-text-subtle));
+    display: inline-flex;
+    justify-content: center;
+
+    & > svg {
+      height: calc(var(--uxm-thumbnail-size, 48px) * 0.45);
+      width: calc(var(--uxm-thumbnail-size, 48px) * 0.45);
+    }
+  }
+}

@@ -1,0 +1,59 @@
+/* ── radio-group ── */
+
+.uxm-radio {
+  align-items: center;
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  gap: 8px;
+}
+
+/* RadioGroup — saves write to `.uxm-radio-group` (the wrapper).
+   Inner `.uxm-radio__circle` and `__dot` are descendants that read
+   the same `--uxm-radio-group-*` vars via custom-property inheritance.
+   The dot sizes itself off the circle (size / 2) so a single `size`
+   knob keeps the proportions. */
+
+.uxm-radio-group {
+  display: flex;
+  gap: var(--uxm-radio-group-gap, 16px);
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &--horizontal {
+    flex-direction: row;
+  }
+}
+
+.uxm-radio {
+  &__circle {
+    align-items: center;
+    border: 2px solid var(--uxm-radio-group-border-color, var(--color-border));
+    border-radius: 50%;
+    display: inline-flex;
+    flex-shrink: 0;
+    height: var(--uxm-radio-group-size, 20px);
+    justify-content: center;
+    transition: border-color 0.15s;
+    width: var(--uxm-radio-group-size, 20px);
+  }
+
+  &__dot {
+    background-color: var(--uxm-radio-group-active-color, var(--color-accent));
+    border-radius: 50%;
+    height: calc(var(--uxm-radio-group-size, 20px) / 2);
+    opacity: 0;
+    width: calc(var(--uxm-radio-group-size, 20px) / 2);
+  }
+
+  &__input:checked + &__circle {
+    border-color: var(--uxm-radio-group-active-color, var(--color-accent));
+  }
+
+  &__input:checked + &__circle > &__dot {
+    opacity: 1;
+  }
+}

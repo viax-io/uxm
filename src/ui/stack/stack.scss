@@ -1,0 +1,23 @@
+/* Stack — moved from monolithic styles.css */
+
+.uxm-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uxm-stack-gap, 16px);
+
+  &--start {
+    align-items: flex-start;
+  }
+
+  &--center {
+    align-items: center;
+  }
+
+  &--end {
+    align-items: flex-end;
+  }
+
+  &--stretch {
+    align-items: stretch;
+  }
+}

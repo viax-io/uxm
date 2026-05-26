@@ -1,0 +1,47 @@
+/* ── icon-button ── */
+
+/* IconButton — defaults match the `icon-button` registry: 32×32, radius 6,
+   transparent bg, text-muted icon, surface-alt hover, 0.4 disabled opacity.
+   Previously the CSS hardcoded 40×40, surface-alt bg — the editor
+   preview disagreed with production right out of the gate. */
+
+.uxm-icon-button,
+.uxm-button-icon {
+  align-items: center;
+  background-color: var(--uxm-icon-button-bg, transparent);
+  border: none;
+  border-radius: var(--uxm-icon-button-radius, 6px);
+  color: var(--uxm-icon-button-color, var(--color-text-muted));
+  cursor: pointer;
+  display: inline-flex;
+  height: var(--uxm-icon-button-size, 32px);
+  justify-content: center;
+  transition: background-color 0.15s, color 0.15s;
+  width: var(--uxm-icon-button-size, 32px);
+}
+
+.uxm-icon-button:hover,
+.uxm-button-icon:hover {
+  background-color: var(--uxm-icon-button-hover-bg, var(--color-surface-alt));
+  color: var(--uxm-icon-button-hover-color, var(--color-text));
+}
+
+.uxm-icon-button:disabled,
+.uxm-button-icon:disabled {
+  cursor: not-allowed;
+  opacity: var(--uxm-icon-button-disabled-opacity, 0.4);
+}
+
+/* Inner SVG sizing — without this, the `iconSize` and `strokeWidth`
+   registry knobs emitted to `--uxm-icon-button-icon-size` / `-stroke-width`
+   but nothing read them. Saves were no-ops outside the editor preview.
+   CSS wins over SVG width/height/stroke-width attributes, so any
+   <Icon size={N} strokeWidth={X}> inside an IconButton now inherits
+   the IconButton's saved sizing instead of its own per-call prop. */
+
+.uxm-icon-button > svg,
+.uxm-button-icon > svg {
+  height: var(--uxm-icon-button-icon-size, 16px);
+  stroke-width: var(--uxm-icon-button-stroke-width, 1.75);
+  width: var(--uxm-icon-button-icon-size, 16px);
+}

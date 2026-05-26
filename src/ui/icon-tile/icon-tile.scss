@@ -1,0 +1,13 @@
+/* ── icon-tile ── */
+
+.uxm-icon-tile {
+  align-items: center;
+  background-color: var(--uxm-icon-tile-bg, var(--color-surface-alt));
+  border-radius: var(--uxm-icon-tile-radius, 6px);
+  color: var(--uxm-icon-tile-color, var(--color-text-muted));
+  display: inline-flex;
+  flex-shrink: 0;
+  height: var(--uxm-icon-tile-size, 28px);
+  justify-content: center;
+  width: var(--uxm-icon-tile-size, 28px);
+}

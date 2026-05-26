@@ -1,0 +1,190 @@
+/* ── chip ── */
+
+.uxm-chip {
+  align-items: center;
+  background: none;
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  line-height: 1;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  user-select: none;
+  white-space: nowrap;
+
+  /* === Assist === */
+  /* === Filter — adds [aria-pressed="true"] for selected === */
+  /* === Input — typically used with onRemove (× button) === */
+  /* === Suggestion — flat / borderless by default === */
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  &__icon-left {
+    align-items: center;
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  &__label {
+    align-items: center;
+    display: inline-flex;
+  }
+
+  &__remove {
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    color: currentColor;
+    cursor: pointer;
+    display: inline-flex;
+    flex-shrink: 0;
+    height: 16px;
+    justify-content: center;
+    margin-left: 2px;
+    margin-right: -4px;
+    opacity: 0.7;
+    padding: 0;
+    width: 16px;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &:disabled &__remove,
+  &[aria-disabled="true"] &__remove {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &--assist {
+    background-color: var(--uxm-chip-assist-default-bg, var(--color-card));
+    border-color: var(--uxm-chip-assist-default-border, var(--color-border));
+    border-radius: var(--uxm-chip-assist-border-radius, 999px);
+    color: var(--uxm-chip-assist-default-text, var(--color-text));
+    font-size: var(--uxm-chip-assist-font-size, 13px);
+    font-weight: var(--uxm-chip-assist-font-weight, 500);
+    gap: var(--uxm-chip-assist-gap, 8px);
+    padding: var(--uxm-chip-assist-padding-y, 4px) var(--uxm-chip-assist-padding-x, 12px);
+  }
+
+  &--assist &__icon-left > svg {
+    height: var(--uxm-chip-assist-icon-size, 16px);
+    width: var(--uxm-chip-assist-icon-size, 16px);
+  }
+
+  &--assist {
+    &:hover:not(:disabled) {
+      background-color: var(--uxm-chip-assist-hover-bg, var(--color-surface-alt));
+      border-color: var(--uxm-chip-assist-hover-border, var(--color-border));
+      color: var(--uxm-chip-assist-hover-text, var(--color-text));
+    }
+
+    &:disabled {
+      background-color: var(--uxm-chip-assist-disabled-bg, var(--color-surface-alt));
+      border-color: var(--uxm-chip-assist-disabled-border, var(--color-border));
+      color: var(--uxm-chip-assist-disabled-text, var(--color-text-subtle));
+    }
+  }
+
+  &--filter {
+    background-color: var(--uxm-chip-filter-default-bg, var(--color-card));
+    border-color: var(--uxm-chip-filter-default-border, var(--color-border));
+    border-radius: var(--uxm-chip-filter-border-radius, 999px);
+    color: var(--uxm-chip-filter-default-text, var(--color-text));
+    font-size: var(--uxm-chip-filter-font-size, 13px);
+    font-weight: var(--uxm-chip-filter-font-weight, 500);
+    gap: var(--uxm-chip-filter-gap, 8px);
+    padding: var(--uxm-chip-filter-padding-y, 4px) var(--uxm-chip-filter-padding-x, 12px);
+  }
+
+  &--filter &__icon-left > svg {
+    height: var(--uxm-chip-filter-icon-size, 16px);
+    width: var(--uxm-chip-filter-icon-size, 16px);
+  }
+
+  &--filter {
+    &:hover:not(:disabled):not([aria-pressed="true"]) {
+      background-color: var(--uxm-chip-filter-hover-bg, var(--color-surface-alt));
+      border-color: var(--uxm-chip-filter-hover-border, var(--color-border));
+      color: var(--uxm-chip-filter-hover-text, var(--color-text));
+    }
+
+    &[aria-pressed="true"] {
+      background-color: var(--uxm-chip-filter-selected-bg, var(--color-accent-bold));
+      border-color: var(--uxm-chip-filter-selected-border, var(--color-accent-bold));
+      color: var(--uxm-chip-filter-selected-text, var(--color-text-inverse));
+    }
+
+    &:disabled {
+      background-color: var(--uxm-chip-filter-disabled-bg, var(--color-surface-alt));
+      border-color: var(--uxm-chip-filter-disabled-border, var(--color-border));
+      color: var(--uxm-chip-filter-disabled-text, var(--color-text-subtle));
+    }
+  }
+
+  &--input {
+    background-color: var(--uxm-chip-input-default-bg, var(--color-accent-subtle));
+    border-color: var(--uxm-chip-input-default-border, var(--color-accent-subtle));
+    border-radius: var(--uxm-chip-input-border-radius, 999px);
+    color: var(--uxm-chip-input-default-text, var(--color-accent-bold));
+    font-size: var(--uxm-chip-input-font-size, 13px);
+    font-weight: var(--uxm-chip-input-font-weight, 500);
+    gap: var(--uxm-chip-input-gap, 8px);
+    padding: var(--uxm-chip-input-padding-y, 4px) var(--uxm-chip-input-padding-x, 12px);
+  }
+
+  &--input &__icon-left > svg {
+    height: var(--uxm-chip-input-icon-size, 16px);
+    width: var(--uxm-chip-input-icon-size, 16px);
+  }
+
+  &--input {
+    &:hover:not(:disabled) {
+      background-color: var(--uxm-chip-input-hover-bg, var(--color-surface-alt));
+      border-color: var(--uxm-chip-input-hover-border, var(--color-border));
+      color: var(--uxm-chip-input-hover-text, var(--color-text));
+    }
+
+    &:disabled {
+      background-color: var(--uxm-chip-input-disabled-bg, var(--color-surface-alt));
+      border-color: var(--uxm-chip-input-disabled-border, var(--color-border));
+      color: var(--uxm-chip-input-disabled-text, var(--color-text-subtle));
+    }
+  }
+
+  &--suggestion {
+    background-color: var(--uxm-chip-suggestion-default-bg, var(--color-surface));
+    border-color: var(--uxm-chip-suggestion-default-border, var(--color-surface));
+    border-radius: var(--uxm-chip-suggestion-border-radius, 999px);
+    color: var(--uxm-chip-suggestion-default-text, var(--color-text-strong));
+    font-size: var(--uxm-chip-suggestion-font-size, 13px);
+    font-weight: var(--uxm-chip-suggestion-font-weight, 500);
+    gap: var(--uxm-chip-suggestion-gap, 8px);
+    padding: var(--uxm-chip-suggestion-padding-y, 4px) var(--uxm-chip-suggestion-padding-x, 12px);
+  }
+
+  &--suggestion &__icon-left > svg {
+    height: var(--uxm-chip-suggestion-icon-size, 16px);
+    width: var(--uxm-chip-suggestion-icon-size, 16px);
+  }
+
+  &--suggestion {
+    &:hover:not(:disabled) {
+      background-color: var(--uxm-chip-suggestion-hover-bg, var(--color-surface-alt));
+      border-color: var(--uxm-chip-suggestion-hover-border, var(--color-surface-alt));
+      color: var(--uxm-chip-suggestion-hover-text, var(--color-text-strong));
+    }
+
+    &:disabled {
+      background-color: var(--uxm-chip-suggestion-disabled-bg, var(--color-surface));
+      border-color: var(--uxm-chip-suggestion-disabled-border, var(--color-surface));
+      color: var(--uxm-chip-suggestion-disabled-text, var(--color-text-subtle));
+    }
+  }
+}

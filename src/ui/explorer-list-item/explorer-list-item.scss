@@ -1,0 +1,58 @@
+/* ── explorer-list-item ── */
+
+/* ── ExplorerListItem ──
+   Component-explorer / file-tree row. Active state shows a left rail
+   (an accent bar) instead of a filled tile, distinguishing it from
+   SidebarNavItem. Default colours read tokens; per-instance theming
+   reads `--uxm-explorer-list-item-*`. */
+
+.uxm-explorer-list-item {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--uxm-explorer-list-item-border-radius, 8px);
+  color: var(--uxm-explorer-list-item-inactive-color, var(--color-text-strong));
+  cursor: pointer;
+  display: flex;
+  font-size: var(--uxm-explorer-list-item-font-size, 13px);
+  font-weight: var(--uxm-explorer-list-item-font-weight, 500);
+  gap: var(--uxm-explorer-list-item-gap, 8px);
+  padding-block: var(--uxm-explorer-list-item-padding-y, 8px);
+  padding-inline: var(--uxm-explorer-list-item-padding-x, 12px);
+  text-align: left;
+  transition: background-color 0.12s, color 0.12s;
+  width: 100%;
+
+  &:hover {
+    background-color: var(--uxm-explorer-list-item-hover-bg, color-mix(in srgb, var(--color-surface) 60%, transparent));
+    color: var(--uxm-explorer-list-item-hover-color, var(--color-text));
+  }
+
+  &--active {
+    background-color: var(--uxm-explorer-list-item-active-bg, var(--color-surface));
+    box-shadow: var(--shadow-xs);
+    color: var(--uxm-explorer-list-item-active-color, var(--color-text));
+  }
+
+  &__rail {
+    background-color: var(--uxm-explorer-list-item-rail-color, var(--color-accent));
+    border-radius: var(--uxm-explorer-list-item-rail-radius, 999px);
+    flex-shrink: 0;
+    height: var(--uxm-explorer-list-item-rail-height, 16px);
+    width: var(--uxm-explorer-list-item-rail-width, 2px);
+  }
+
+  &__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__trailing {
+    color: var(--uxm-explorer-list-item-trailing-color, var(--color-text-subtle));
+    flex-shrink: 0;
+    font-size: var(--uxm-explorer-list-item-trailing-size, 10px);
+  }
+}

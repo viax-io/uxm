@@ -1,0 +1,28 @@
+/* ── form-field ── */
+
+/* FormField — label-above-input stack for editable form rows. Distinct
+   from PropertyField (which is for read-only metadata). The control slot
+   is just a wrapping div so any UXM input nests cleanly. */
+
+.uxm-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uxm-form-field-gap, 6px);
+
+  &__label {
+    color: var(--uxm-form-field-label-color, var(--color-text-muted));
+    font-size: var(--uxm-form-field-label-size, 13px);
+    font-weight: var(--uxm-form-field-label-weight, 500);
+  }
+
+  &__control {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__hint {
+    color: var(--uxm-form-field-hint-color, var(--color-text-muted));
+    font-size: var(--uxm-form-field-hint-size, 12px);
+    margin-top: var(--uxm-form-field-hint-gap, 2px);
+  }
+}

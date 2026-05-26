@@ -1,0 +1,44 @@
+/* ── section-header ── */
+
+/* ── SectionHeader ──
+   Small uppercase label for grouping fields in dense settings panels.
+   Heading inherits the title knobs; trailing slot floats right;
+   optional subtitle drops below in muted text. */
+
+.uxm-section-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uxm-section-header-gap, 2px);
+  margin-bottom: var(--uxm-section-header-margin-bottom, 12px);
+
+  &__row {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  &__title {
+    color: var(--uxm-section-header-title-color, var(--color-text-subtle));
+    font-size: var(--uxm-section-header-title-size, 11px);
+    font-weight: var(--uxm-section-header-title-weight, 600);
+    letter-spacing: 0.06em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  &__trailing {
+    align-items: center;
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  &__subtitle {
+    align-items: center;
+    color: var(--uxm-section-header-subtitle-color, var(--color-text-muted));
+    display: flex;
+    flex-wrap: wrap;
+    font-size: var(--uxm-section-header-subtitle-size, 10px);
+    gap: 6px;
+  }
+}

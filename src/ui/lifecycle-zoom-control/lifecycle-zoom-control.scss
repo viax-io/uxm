@@ -1,0 +1,54 @@
+/* ── lifecycle-zoom-control ── */
+
+.uxm-lifecycle-zoom-control {
+  align-items: center;
+  background-color: var(--uxm-lifecycle-zoom-bg, var(--color-card));
+  border: 1px solid var(--uxm-lifecycle-zoom-border-color, var(--color-border));
+  border-radius: var(--uxm-lifecycle-zoom-radius, 6px);
+  color: var(--uxm-lifecycle-zoom-color, var(--color-text));
+  display: inline-flex;
+  overflow: hidden;
+
+  &__btn {
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: var(--uxm-lifecycle-zoom-icon-color, var(--color-text-muted));
+    cursor: pointer;
+    display: inline-flex;
+    height: var(--uxm-lifecycle-zoom-button-size, 32px);
+    justify-content: center;
+    width: var(--uxm-lifecycle-zoom-button-size, 32px);
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-surface-alt);
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+  }
+
+  &__value {
+    align-items: center;
+    border-left: 1px solid var(--uxm-lifecycle-zoom-border-color, var(--color-border));
+    border-right: 1px solid var(--uxm-lifecycle-zoom-border-color, var(--color-border));
+    color: inherit;
+    display: inline-flex;
+    font-size: var(--uxm-lifecycle-zoom-font-size, 13px);
+    height: var(--uxm-lifecycle-zoom-button-size, 32px);
+    padding: 0 10px;
+  }
+
+  &__num {
+    font-weight: 500;
+    min-width: 26px;
+    text-align: center;
+  }
+
+  &__unit {
+    color: var(--color-text-muted);
+    margin-left: 2px;
+  }
+}

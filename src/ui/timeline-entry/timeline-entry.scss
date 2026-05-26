@@ -1,0 +1,85 @@
+/* ── timeline-entry ── */
+
+.uxm-timeline-entry {
+  display: flex;
+  gap: 12px;
+  padding: 8px;
+
+  &__rail {
+    flex-shrink: 0;
+    position: relative;
+    width: 12px;
+  }
+
+  &__line {
+    background-color: var(--color-border);
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+    width: 2px;
+
+    &--before {
+      height: 8px;
+      top: 0;
+    }
+
+    &--after {
+      bottom: 0;
+      top: 20px;
+    }
+  }
+
+  &__dot {
+    background-color: var(--color-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--color-card);
+    height: 12px;
+    left: 0;
+    position: absolute;
+    top: 8px;
+    width: 12px;
+  }
+
+  &--idle &__dot {
+    background-color: var(--color-text-subtle);
+  }
+
+  &__content {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    flex: 1;
+    padding: 6px 12px;
+  }
+
+  &__row {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+  }
+
+  &__title {
+    color: var(--color-text);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  &__trailing {
+    color: var(--color-text-subtle);
+    flex-shrink: 0;
+    font-size: 11px;
+    margin-left: auto;
+  }
+
+  &__meta {
+    color: var(--color-text-muted);
+    font-size: 11px;
+    margin: 2px 0 0;
+  }
+
+  &__body {
+    color: var(--color-text-muted);
+    font-size: 13px;
+    margin-top: 6px;
+  }
+}

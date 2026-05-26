@@ -1,0 +1,33 @@
+/* ── lifecycle-edge-label ── */
+
+.uxm-lifecycle-edge-label {
+  align-items: center;
+  border-radius: var(--uxm-lifecycle-edge-label-radius, 999px);
+  border-style: solid;
+  border-width: var(--uxm-lifecycle-edge-label-border-width, 1px);
+  /* Defaults mirror the `lifecycle-edge-label` registry entry. */
+  display: inline-flex;
+  font-size: var(--uxm-lifecycle-edge-label-font-size, 12px);
+  font-weight: var(--uxm-lifecycle-edge-label-font-weight, 500);
+  padding: var(--uxm-lifecycle-edge-label-padding-y, 3px)
+    var(--uxm-lifecycle-edge-label-padding-x, 12px);
+  white-space: nowrap;
+
+  &--true {
+    background-color: color-mix(in srgb, var(--color-accent-light) 40%, transparent);
+    border-color: var(--color-accent-bold);
+    color: var(--color-accent-bold);
+  }
+
+  &--false {
+    background-color: color-mix(in srgb, var(--color-highlight-warm) 35%, transparent);
+    border-color: var(--color-on-highlight-warm);
+    color: var(--color-on-highlight-warm);
+  }
+
+  &--neutral {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+    color: var(--color-text-muted);
+  }
+}

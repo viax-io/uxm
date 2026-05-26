@@ -1,0 +1,91 @@
+/* ── input-with-icon ── */
+
+/* InputWithIcon — every registry knob (bg, border, radius, paddings,
+   fontSize, color, iconColor, iconSize, iconOffset) maps to a CSS
+   variable. The left padding stays computed so the input text can't
+   overlap the leading icon: `paddingX + iconOffset + iconSize ≈ 36px`
+   default. */
+
+.uxm-input-with-icon {
+  position: relative;
+  width: 100%;
+
+  /* Suppress the browser's native search clear button (Chrome/Safari/Edge).
+     Without this, `type="search"` renders its own ✕ on the right, on top of
+     our `__clear` button — two clear buttons side by side. */
+  /* Reserve trailing space when clearable so the input text doesn't slide
+     under the clear button when there's a value. Symmetric with the leading
+     icon padding computation. */
+
+  &__icon {
+    color: var(--uxm-input-with-icon-icon-color, var(--color-text-muted));
+    display: inline-flex;
+    left: var(--uxm-input-with-icon-icon-offset, 12px);
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &__input {
+    background-color: var(--uxm-input-with-icon-bg, var(--color-surface));
+    border: 1px solid var(--uxm-input-with-icon-border-color, var(--color-border));
+    border-radius: var(--uxm-input-with-icon-radius, 8px);
+    color: var(--uxm-input-with-icon-color, var(--color-text));
+    font-size: var(--uxm-input-with-icon-font-size, 14px);
+    outline: none;
+    padding: var(--uxm-input-with-icon-padding-y, 8px)
+      var(--uxm-input-with-icon-padding-x, 12px)
+      var(--uxm-input-with-icon-padding-y, 8px)
+      calc(
+        var(--uxm-input-with-icon-icon-offset, 12px)
+        + var(--uxm-input-with-icon-icon-size, 16px)
+        + 8px
+      );
+    transition: border-color 0.15s;
+    width: 100%;
+
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+  }
+
+  &--clearable &__input {
+    padding-right: calc(
+      var(--uxm-input-with-icon-icon-offset, 12px)
+      + 18px
+      + 8px
+    );
+  }
+
+  &__clear {
+    align-items: center;
+    background-color: color-mix(in srgb, var(--color-text) 12%, transparent);
+    border: none;
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    height: 18px;
+    justify-content: center;
+    position: absolute;
+    right: var(--uxm-input-with-icon-icon-offset, 12px);
+    top: 50%;
+    transform: translateY(-50%);
+    transition: background-color 0.12s ease, color 0.12s ease;
+    width: 18px;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--color-text) 20%, transparent);
+      color: var(--color-text);
+    }
+  }
+
+  &__input {
+    &:focus {
+      border-color: var(--color-accent);
+    }
+  }
+}

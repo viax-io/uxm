@@ -1,0 +1,109 @@
+/* DateInput — moved from monolithic styles.css */
+
+.uxm-date-input {
+  position: relative;
+  width: 100%;
+
+  /* Icon is now a real <button> that toggles the calendar popover (not a
+     decorative span). Reset native button chrome down to the bare minimum so
+     the button's box is exactly the icon SVG — `top:50% + translateY(-50%)`
+     then centers it cleanly. No padding/margin tricks (those previously
+     misaligned the vertical center). Hover affordance is a subtle color shift
+     rather than a bg pill so the click feels precise. */
+  /* State coverage for date-input. Same shape as input-with-icon — :hover /
+     :focus / :disabled target the inner `__input`; the `--error` and
+     `--state-*` forced modifiers sit on the wrapper so the trailing
+     calendar icon can also re-tone in error mode. */
+
+  &__icon {
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: var(--uxm-date-input-icon-color, var(--color-text-muted));
+    cursor: pointer;
+    display: inline-flex;
+    font-family: inherit;
+    justify-content: center;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: var(--uxm-date-input-icon-offset, 12px);
+    top: 50%;
+    transform: translateY(-50%);
+    transition: color 0.12s;
+
+    &:hover {
+      color: var(--uxm-date-input-icon-hover-color, var(--color-text));
+    }
+
+    & > svg {
+      height: var(--uxm-date-input-icon-size, 16px);
+      width: var(--uxm-date-input-icon-size, 16px);
+    }
+  }
+
+  &__popover {
+    /* Calendar inside owns its own bg / border / radius / padding, so the
+       popover wrapper just needs positioning + a drop shadow. Using a filter
+       drop-shadow follows the Calendar's rounded outline cleanly. */
+    filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.18));
+    left: 0;
+    position: absolute;
+    top: calc(100% + 4px);
+    z-index: 10;
+  }
+
+  &__input {
+    background-color: var(--uxm-date-input-background-color, var(--color-card));
+    border: 1px solid var(--uxm-date-input-border-color, var(--color-border));
+    border-radius: var(--uxm-date-input-border-radius, 8px);
+    box-sizing: border-box;
+    color: var(--uxm-date-input-color, var(--color-text));
+    font-family: inherit;
+    font-size: var(--uxm-date-input-font-size, 14px);
+    outline: none;
+    padding: var(--uxm-date-input-padding-y, 10px)
+      calc(
+        var(--uxm-date-input-icon-offset, 12px)
+        + var(--uxm-date-input-icon-size, 16px)
+        + 8px
+      )
+      var(--uxm-date-input-padding-y, 10px)
+      var(--uxm-date-input-padding-x, 12px);
+    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+    width: 100%;
+  }
+
+  &--state-hover &__input,
+  &__input:hover:not(:disabled) {
+    background-color: var(--uxm-date-input-hover-bg, var(--color-card));
+    border-color: var(--uxm-date-input-hover-border, var(--color-accent));
+  }
+
+  &--state-focus &__input,
+  &__input:focus {
+    border-color: var(--uxm-date-input-focus-border, var(--color-accent));
+    outline: 2px solid var(--uxm-date-input-focus-ring, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &__input {
+    &:disabled {
+      background-color: var(--uxm-date-input-disabled-bg, var(--color-surface-alt));
+      border-color: var(--uxm-date-input-disabled-border, var(--color-border));
+      color: var(--uxm-date-input-disabled-color, var(--color-text-muted));
+      cursor: not-allowed;
+      opacity: var(--uxm-date-input-disabled-opacity, 0.6);
+    }
+  }
+
+  &--error &__input {
+    background-color: var(--uxm-date-input-error-bg, var(--color-card));
+    border-color: var(--uxm-date-input-error-border, var(--color-danger-text));
+  }
+
+  &--error &__icon {
+    color: var(--uxm-date-input-error-color, var(--color-danger-text));
+  }
+}
