@@ -42,6 +42,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "test:ci": "echo 'no tests yet' && exit 0",
+    "test:coverage": "echo 'no coverage yet' && exit 0",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
