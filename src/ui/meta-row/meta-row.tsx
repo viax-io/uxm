@@ -1,5 +1,6 @@
-import { Children, Fragment, type HTMLAttributes, type ReactNode } from "react";
-import { cn } from "@/helpers";
+import { Children, Fragment, type HTMLAttributes, type ReactNode } from 'react';
+
+import { cn } from '@/helpers';
 
 export interface MetaRowProps extends HTMLAttributes<HTMLDivElement> {
   /**
@@ -23,7 +24,7 @@ export function MetaRow({ children, className, ...rest }: MetaRowProps) {
   // returned array's type doesn't allow falsy entries.
   const items = Children.toArray(children);
   return (
-    <div {...rest} className={cn("uxm-meta-row", className)}>
+    <div {...rest} className={cn('uxm-meta-row', className)}>
       {items.map((child, i) => (
         <Fragment key={i}>
           {i > 0 && <span className="uxm-meta-row__dot" aria-hidden="true" />}

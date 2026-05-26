@@ -1,9 +1,11 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
-import { Link } from "../link";
+import { cn } from '@/helpers';
 
-export type BreadcrumbSeparator = "slash" | "chevron" | "dot" | "dash";
+import { Icon } from '../icon';
+import { Link } from '../link';
+
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export type BreadcrumbSeparator = 'slash' | 'chevron' | 'dot' | 'dash';
 
 export interface BreadcrumbCrumb {
   label: ReactNode;
@@ -19,20 +21,20 @@ export interface BreadcrumbProps extends HTMLAttributes<HTMLElement> {
   separator?: BreadcrumbSeparator;
 }
 
-const SEPARATOR_GLYPH: Record<Exclude<BreadcrumbSeparator, "chevron">, string> = {
-  slash: "/",
-  dot: "·",
-  dash: "—",
+const SEPARATOR_GLYPH: Record<Exclude<BreadcrumbSeparator, 'chevron'>, string> = {
+  slash: '/',
+  dot: '·',
+  dash: '—',
 };
 
 export function Breadcrumb({
   items,
-  separator = "chevron",
+  separator = 'chevron',
   className,
   ...rest
 }: BreadcrumbProps) {
   return (
-    <nav aria-label="Breadcrumb" className={cn("uxm-breadcrumb", className)} {...rest}>
+    <nav aria-label="Breadcrumb" className={cn('uxm-breadcrumb', className)} {...rest}>
       <ol className="uxm-breadcrumb__list">
         {items.map((item, i) => {
           const isLast = i === items.length - 1;
@@ -51,13 +53,13 @@ export function Breadcrumb({
               ) : (
                 <span
                   className="uxm-breadcrumb__current"
-                  aria-current={isLast ? "page" : undefined}
+                  aria-current={isLast ? 'page' : undefined}
                 >
                   {item.label}
                 </span>
               )}
               {showSeparator &&
-                (separator === "chevron" ? (
+                (separator === 'chevron' ? (
                   <Icon
                     glyph="chevron-right"
                     className="uxm-breadcrumb__separator uxm-breadcrumb__separator--icon"

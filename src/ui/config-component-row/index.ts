@@ -1,1 +1,1 @@
-export * from "./config-component-row";
+export * from './config-component-row';

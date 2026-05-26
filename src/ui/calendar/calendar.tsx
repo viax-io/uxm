@@ -1,19 +1,22 @@
-"use client";
+'use client';
 
-import { useCallback, useMemo, useState } from "react";
-import type { HTMLAttributes } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
-import { computeMonthGrid, type WeekStart } from "../../lib/calendar-grid";
+import { useCallback, useMemo, useState } from 'react';
+
+import { cn } from '@/helpers';
+
+import { computeMonthGrid, type WeekStart } from '../../lib/calendar-grid';
+import { Icon } from '../icon';
+
+import type { HTMLAttributes } from 'react';
 
 export interface CalendarValue {
   start: Date | null;
   end: Date | null;
 }
 
-type CalendarView = "day" | "month" | "year";
+type CalendarView = 'day' | 'month' | 'year';
 
-export interface CalendarProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface CalendarProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** Currently-displayed month. Controlled. If omitted, atom owns it (initialized to today's month). */
   month?: Date;
   /** Selection value. Controlled when passed. `{ start, end: null }` for a single date; `{ start, end }` for a range. */
@@ -51,7 +54,7 @@ function isStrictlyBetween(date: Date, start: Date | null | undefined, end: Date
 }
 
 function getWeekdayLabels(locale: string, weekStartsOn: WeekStart): string[] {
-  const fmt = new Intl.DateTimeFormat(locale, { weekday: "short" });
+  const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
   // 2024-01-07 is a known Sunday — stable anchor for the formatter.
   const anchor = new Date(2024, 0, 7);
   const labels: string[] = [];
@@ -101,7 +104,7 @@ export function Calendar({
   today,
   isDisabled,
   weekStartsOn = 0,
-  locale = "en-US",
+  locale = 'en-US',
   onChange,
   onMonthChange,
   className,
@@ -117,7 +120,7 @@ export function Calendar({
 
   // View state — pure UI state, never controlled. Day view by default. Header
   // click drills up (day → month → year). Cell click drills back down.
-  const [view, setView] = useState<CalendarView>("day");
+  const [view, setView] = useState<CalendarView>('day');
 
   // Unified selection model — atom infers single vs range from click sequence.
   const isControlled = value !== undefined;
@@ -143,10 +146,10 @@ export function Calendar({
 
   // Header label — depends on the active view.
   const titleLabel = useMemo(() => {
-    if (view === "day") {
-      return new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(currentMonth);
+    if (view === 'day') {
+      return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(currentMonth);
     }
-    if (view === "month") {
+    if (view === 'month') {
       return String(currentMonth.getFullYear());
     }
     const start = yearBlockStart(currentMonth.getFullYear());
@@ -155,7 +158,7 @@ export function Calendar({
 
   // Month-view labels — short month names from the locale formatter.
   const monthShortNames = useMemo(() => {
-    const fmt = new Intl.DateTimeFormat(locale, { month: "short" });
+    const fmt = new Intl.DateTimeFormat(locale, { month: 'short' });
     return Array.from({ length: 12 }, (_, i) => fmt.format(new Date(2024, i, 1)));
   }, [locale]);
 
@@ -174,9 +177,9 @@ export function Calendar({
       const m = currentMonth.getMonth();
       const y = currentMonth.getFullYear();
       let next: Date;
-      if (view === "day") {
+      if (view === 'day') {
         next = new Date(y, m + delta, 1);
-      } else if (view === "month") {
+      } else if (view === 'month') {
         next = new Date(y + delta, m, 1);
       } else {
         next = new Date(y + delta * YEARS_PER_BLOCK, m, 1);
@@ -188,8 +191,8 @@ export function Calendar({
 
   // Header click drills up. Year view has nowhere further to go.
   const handleTitleClick = useCallback(() => {
-    if (view === "day") setView("month");
-    else if (view === "month") setView("year");
+    if (view === 'day') setView('month');
+    else if (view === 'month') setView('year');
   }, [view]);
 
   const commit = useCallback(
@@ -229,7 +232,7 @@ export function Calendar({
   const handleMonthClick = useCallback(
     (monthIdx: number) => {
       setMonth(new Date(currentMonth.getFullYear(), monthIdx, 1));
-      setView("day");
+      setView('day');
     },
     [currentMonth, setMonth],
   );
@@ -239,7 +242,7 @@ export function Calendar({
   const handleYearClick = useCallback(
     (year: number) => {
       setMonth(new Date(year, currentMonth.getMonth(), 1));
-      setView("month");
+      setView('month');
     },
     [currentMonth, setMonth],
   );
@@ -257,7 +260,7 @@ export function Calendar({
   }, []);
 
   return (
-    <div className={cn("uxm-calendar", `uxm-calendar--view-${view}`, className)} {...rest}>
+    <div className={cn('uxm-calendar', `uxm-calendar--view-${view}`, className)} {...rest}>
       <div className="uxm-calendar__header">
         <button
           type="button"
@@ -271,8 +274,8 @@ export function Calendar({
           type="button"
           className="uxm-calendar__title"
           onClick={handleTitleClick}
-          disabled={view === "year"}
-          aria-label={view === "year" ? undefined : "Drill up"}
+          disabled={view === 'year'}
+          aria-label={view === 'year' ? undefined : 'Drill up'}
         >
           {titleLabel}
         </button>
@@ -286,7 +289,7 @@ export function Calendar({
         </button>
       </div>
 
-      {view === "day" && (
+      {view === 'day' && (
         <>
           <div className="uxm-calendar__weekdays" aria-hidden="true">
             {weekdays.map((w) => (
@@ -313,17 +316,17 @@ export function Calendar({
                   onMouseEnter={() => handleMouseEnter(date, disabled)}
                   onMouseLeave={() => handleMouseLeave(date)}
                   className={cn(
-                    "uxm-calendar__day",
-                    outside && "uxm-calendar__day--outside",
-                    isToday && "uxm-calendar__day--today",
-                    isSelected && "uxm-calendar__day--selected",
-                    isRangeStart && "uxm-calendar__day--range-start",
-                    isRangeEnd && "uxm-calendar__day--range-end",
-                    isInRange && "uxm-calendar__day--in-range",
-                    disabled && "uxm-calendar__day--disabled",
+                    'uxm-calendar__day',
+                    outside && 'uxm-calendar__day--outside',
+                    isToday && 'uxm-calendar__day--today',
+                    isSelected && 'uxm-calendar__day--selected',
+                    isRangeStart && 'uxm-calendar__day--range-start',
+                    isRangeEnd && 'uxm-calendar__day--range-end',
+                    isInRange && 'uxm-calendar__day--in-range',
+                    disabled && 'uxm-calendar__day--disabled',
                   )}
                   aria-selected={isSelected || isRangeStart || isRangeEnd || undefined}
-                  aria-current={isToday ? "date" : undefined}
+                  aria-current={isToday ? 'date' : undefined}
                 >
                   {date.getDate()}
                 </button>
@@ -333,7 +336,7 @@ export function Calendar({
         </>
       )}
 
-      {view === "month" && (
+      {view === 'month' && (
         <div className="uxm-calendar__months" role="grid">
           {monthShortNames.map((name, i) => {
             const year = currentMonth.getFullYear();
@@ -346,12 +349,12 @@ export function Calendar({
                 role="gridcell"
                 onClick={() => handleMonthClick(i)}
                 className={cn(
-                  "uxm-calendar__month",
-                  isCurrent && "uxm-calendar__month--today",
-                  isSelected && "uxm-calendar__month--selected",
+                  'uxm-calendar__month',
+                  isCurrent && 'uxm-calendar__month--today',
+                  isSelected && 'uxm-calendar__month--selected',
                 )}
                 aria-selected={isSelected || undefined}
-                aria-current={isCurrent ? "true" : undefined}
+                aria-current={isCurrent ? 'true' : undefined}
               >
                 {name}
               </button>
@@ -360,7 +363,7 @@ export function Calendar({
         </div>
       )}
 
-      {view === "year" && (
+      {view === 'year' && (
         <div className="uxm-calendar__years" role="grid">
           {Array.from({ length: YEARS_PER_BLOCK }, (_, i) => {
             const year = yearBlockStart(currentMonth.getFullYear()) + i;
@@ -373,12 +376,12 @@ export function Calendar({
                 role="gridcell"
                 onClick={() => handleYearClick(year)}
                 className={cn(
-                  "uxm-calendar__year",
-                  isCurrent && "uxm-calendar__year--today",
-                  isSelected && "uxm-calendar__year--selected",
+                  'uxm-calendar__year',
+                  isCurrent && 'uxm-calendar__year--today',
+                  isSelected && 'uxm-calendar__year--selected',
                 )}
                 aria-selected={isSelected || undefined}
-                aria-current={isCurrent ? "true" : undefined}
+                aria-current={isCurrent ? 'true' : undefined}
               >
                 {year}
               </button>

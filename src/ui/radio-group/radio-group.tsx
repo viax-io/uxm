@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import type { ChangeEvent, ReactNode } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
 
-export type RadioGroupDirection = "vertical" | "horizontal";
+import type { ChangeEvent, ReactNode } from 'react';
+
+export type RadioGroupDirection = 'vertical' | 'horizontal';
 
 export interface RadioGroupProps {
   name: string;
@@ -16,14 +17,14 @@ export interface RadioGroupProps {
 }
 
 export function RadioGroup({
-  direction = "vertical",
+  direction = 'vertical',
   className,
   children,
 }: RadioGroupProps) {
   return (
     <div
       role="radiogroup"
-      className={cn("uxm-radio-group", `uxm-radio-group--${direction}`, className)}
+      className={cn('uxm-radio-group', `uxm-radio-group--${direction}`, className)}
     >
       {children}
     </div>
@@ -52,7 +53,7 @@ export function RadioOption({
   className,
 }: RadioOptionProps) {
   return (
-    <label className={cn("uxm-radio", disabled && "uxm-radio--disabled", className)}>
+    <label className={cn('uxm-radio', disabled && 'uxm-radio--disabled', className)}>
       <input
         type="radio"
         className="uxm-radio__input"

@@ -1,1 +1,1 @@
-export * from "./input-with-icon";
+export * from './input-with-icon';

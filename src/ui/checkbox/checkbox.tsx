@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import type { ChangeEvent, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "@/ui/icon";
+import { cn } from '@/helpers';
+import { Icon } from '@/ui/icon';
+
+import type { ChangeEvent, ReactNode } from 'react';
 
 export interface CheckboxProps {
   checked?: boolean;
@@ -26,7 +27,7 @@ export function Checkbox({
   value,
 }: CheckboxProps) {
   return (
-    <label className={cn("uxm-checkbox", disabled && "uxm-checkbox--disabled", className)}>
+    <label className={cn('uxm-checkbox', disabled && 'uxm-checkbox--disabled', className)}>
       <input
         type="checkbox"
         className="uxm-checkbox__input"

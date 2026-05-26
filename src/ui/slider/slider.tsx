@@ -1,8 +1,9 @@
-import type { InputHTMLAttributes } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { InputHTMLAttributes } from 'react';
 
 export interface SliderProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "type" | "value"> {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'value'> {
   value: number;
   onChange: (value: number) => void;
   min?: number;
@@ -41,7 +42,7 @@ export function Slider({
   const progress = range > 0 ? ((value - min) / range) * 100 : 0;
   const mergedStyle = {
     ...style,
-    ["--uxm-slider-progress" as string]: `${progress}%`,
+    ['--uxm-slider-progress' as string]: `${progress}%`,
   };
 
   return (
@@ -53,7 +54,7 @@ export function Slider({
       min={min}
       max={max}
       step={step}
-      className={cn("uxm-slider", className)}
+      className={cn('uxm-slider', className)}
       style={mergedStyle}
     />
   );

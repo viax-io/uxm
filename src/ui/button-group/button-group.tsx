@@ -1,8 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import type { HTMLAttributes } from "react";
-import { cn } from "@/helpers";
+import { useState } from 'react';
+
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes } from 'react';
 
 export interface ButtonGroupOption {
   value: string;
@@ -12,7 +14,7 @@ export interface ButtonGroupOption {
   disabled?: boolean;
 }
 
-export interface ButtonGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface ButtonGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   options: ButtonGroupOption[];
   value?: string;
   defaultValue?: string;
@@ -28,7 +30,7 @@ export function ButtonGroup({
   ...rest
 }: ButtonGroupProps) {
   const isControlled = value !== undefined;
-  const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? "");
+  const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? '');
   const active = isControlled ? value : internal;
 
   const select = (next: string) => {
@@ -37,7 +39,7 @@ export function ButtonGroup({
   };
 
   return (
-    <div role="group" className={cn("uxm-button-group", className)} {...rest}>
+    <div role="group" className={cn('uxm-button-group', className)} {...rest}>
       {options.map((opt) => {
         const isActive = opt.value === active;
         return (
@@ -47,8 +49,8 @@ export function ButtonGroup({
             aria-pressed={isActive}
             disabled={opt.disabled}
             className={cn(
-              "uxm-button-group__item",
-              isActive && "uxm-button-group__item--active",
+              'uxm-button-group__item',
+              isActive && 'uxm-button-group__item--active',
             )}
             onClick={() => select(opt.value)}
           >

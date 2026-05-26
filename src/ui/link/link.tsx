@@ -1,8 +1,10 @@
-import type { AnchorHTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
+import { cn } from '@/helpers';
 
-export type LinkUnderline = "none" | "hover" | "always";
+import { Icon } from '../icon';
+
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
+
+export type LinkUnderline = 'none' | 'hover' | 'always';
 
 export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children: ReactNode;
@@ -15,7 +17,7 @@ export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 
 export function Link({
   children,
-  underline = "hover",
+  underline = 'hover',
   external = false,
   disabled = false,
   className,
@@ -24,14 +26,14 @@ export function Link({
   return (
     <a
       className={cn(
-        "uxm-link",
+        'uxm-link',
         `uxm-link--underline-${underline}`,
-        external && "uxm-link--external",
+        external && 'uxm-link--external',
         className,
       )}
-      {...(disabled ? { "aria-disabled": true as const } : {})}
+      {...(disabled ? { 'aria-disabled': true as const } : {})}
       {...rest}
-      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
       {children}
       {external && (

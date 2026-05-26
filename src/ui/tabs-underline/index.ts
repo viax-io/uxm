@@ -1,1 +1,1 @@
-export * from "./tabs-underline";
+export * from './tabs-underline';

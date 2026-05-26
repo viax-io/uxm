@@ -1,1 +1,1 @@
-export * from "./inline-action";
+export * from './inline-action';

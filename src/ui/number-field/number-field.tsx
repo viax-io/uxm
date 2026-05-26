@@ -1,6 +1,8 @@
-import type { CSSProperties } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
+import { cn } from '@/helpers';
+
+import { Icon } from '../icon';
+
+import type { CSSProperties } from 'react';
 
 export interface NumberFieldProps {
   value: number;
@@ -25,7 +27,7 @@ export interface NumberFieldProps {
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
-  "aria-label"?: string;
+  'aria-label'?: string;
 }
 
 /**
@@ -47,7 +49,7 @@ export function NumberField({
   disabled = false,
   className,
   style,
-  "aria-label": ariaLabel,
+  'aria-label': ariaLabel,
 }: NumberFieldProps) {
   const adjust = (delta: number) => {
     let next = value + delta;
@@ -58,9 +60,9 @@ export function NumberField({
 
   return (
     <div
-      className={cn("uxm-number-field", className)}
+      className={cn('uxm-number-field', className)}
       style={style}
-      {...(disabled ? { "aria-disabled": true as const } : {})}
+      {...(disabled ? { 'aria-disabled': true as const } : {})}
     >
       {withSteppers && (
         <button

@@ -1,10 +1,11 @@
+import { cn } from '@/helpers';
+
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   HTMLAttributes,
   ReactNode,
-} from "react";
-import { cn } from "@/helpers";
+} from 'react';
 
 export interface ListProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
@@ -12,7 +13,7 @@ export interface ListProps extends HTMLAttributes<HTMLDivElement> {
 
 export function List({ children, className, ...rest }: ListProps) {
   return (
-    <div className={cn("uxm-list", className)} {...rest}>
+    <div className={cn('uxm-list', className)} {...rest}>
       {children}
     </div>
   );
@@ -76,8 +77,8 @@ export function ListItem({
   ...rest
 }: ListItemProps & (AnchorRest | ButtonRest | DivRest)) {
   const classes = cn(
-    "uxm-list-item",
-    active && "uxm-list-item--active",
+    'uxm-list-item',
+    active && 'uxm-list-item--active',
     className,
   );
   const isInteractive = interactive || href !== undefined;
@@ -99,7 +100,7 @@ export function ListItem({
       <a
         href={href}
         className={classes}
-        {...(disabled ? { "aria-disabled": true as const, tabIndex: -1 } : {})}
+        {...(disabled ? { 'aria-disabled': true as const, tabIndex: -1 } : {})}
         {...(rest as AnchorRest)}
       >
         {inner}
@@ -122,7 +123,7 @@ export function ListItem({
   return (
     <div
       className={classes}
-      {...(disabled ? { "aria-disabled": true as const } : {})}
+      {...(disabled ? { 'aria-disabled': true as const } : {})}
       {...(rest as DivRest)}
     >
       {inner}

@@ -1,12 +1,13 @@
-import type { SVGAttributes } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
 
-export type LifecycleConnectorState = "idle" | "active" | "dashed";
+import type { SVGAttributes } from 'react';
+
+export type LifecycleConnectorState = 'idle' | 'active' | 'dashed';
 
 // `from` and `to` on SVG elements are string-typed SMIL animation attrs we
 // don't use. Dropping them lets us reuse the names for the actual node-anchor
 // coordinates.
-export interface LifecycleConnectorProps extends Omit<SVGAttributes<SVGGElement>, "from" | "to"> {
+export interface LifecycleConnectorProps extends Omit<SVGAttributes<SVGGElement>, 'from' | 'to'> {
   /** Source point (in the parent SVG's coordinate system). */
   from: { x: number; y: number };
   /** Destination point. The arrowhead is placed here. */
@@ -46,9 +47,9 @@ export interface LifecycleConnectorProps extends Omit<SVGAttributes<SVGGElement>
 export function LifecycleConnector({
   from,
   to,
-  state = "idle",
+  state = 'idle',
   arrowSize = 7,
-  dashPattern = "6 4",
+  dashPattern = '6 4',
   className,
   ...rest
 }: LifecycleConnectorProps) {
@@ -90,13 +91,13 @@ export function LifecycleConnector({
     `${ax},${ay}`,
     `${ax - ux * arrowSize + px * arrowSize * 0.55},${ay - uy * arrowSize + py * arrowSize * 0.55}`,
     `${ax - ux * arrowSize - px * arrowSize * 0.55},${ay - uy * arrowSize - py * arrowSize * 0.55}`,
-  ].join(" ");
+  ].join(' ');
 
   return (
     <g
       {...rest}
       className={cn(
-        "uxm-lifecycle-connector",
+        'uxm-lifecycle-connector',
         `uxm-lifecycle-connector--${state}`,
         className,
       )}
@@ -107,7 +108,7 @@ export function LifecycleConnector({
         d={pathD}
         fill="none"
         strokeLinecap="round"
-        strokeDasharray={state === "dashed" ? dashPattern : undefined}
+        strokeDasharray={state === 'dashed' ? dashPattern : undefined}
       />
       <polygon className="uxm-lifecycle-connector__arrow" points={arrow} />
     </g>

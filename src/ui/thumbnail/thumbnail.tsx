@@ -1,11 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "@/ui/icon";
+import { useState } from 'react';
 
-export type ThumbnailFit = "cover" | "contain";
+import { cn } from '@/helpers';
+import { Icon } from '@/ui/icon';
+
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export type ThumbnailFit = 'cover' | 'contain';
 
 export interface ThumbnailProps extends HTMLAttributes<HTMLDivElement> {
   src?: string;
@@ -17,7 +19,7 @@ export interface ThumbnailProps extends HTMLAttributes<HTMLDivElement> {
 export function Thumbnail({
   src,
   alt,
-  fit = "cover",
+  fit = 'cover',
   fallback,
   className,
   ...rest
@@ -27,14 +29,14 @@ export function Thumbnail({
 
   return (
     <div
-      className={cn("uxm-thumbnail", `uxm-thumbnail--${fit}`, className)}
+      className={cn('uxm-thumbnail', `uxm-thumbnail--${fit}`, className)}
       {...rest}
     >
       {showImage ? (
         <img
           className="uxm-thumbnail__image"
           src={src}
-          alt={alt ?? ""}
+          alt={alt ?? ''}
           onError={() => setErrored(true)}
         />
       ) : (

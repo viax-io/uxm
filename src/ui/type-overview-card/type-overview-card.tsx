@@ -1,7 +1,8 @@
-import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "@/ui/icon";
-import { IconTile } from "@/ui/icon-tile";
+import { cn } from '@/helpers';
+import { Icon } from '@/ui/icon';
+import { IconTile } from '@/ui/icon-tile';
+
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 
 export interface TypeOverviewCardProps extends HTMLAttributes<HTMLDivElement> {
   /** Required label, e.g. "Revenue Motions". */
@@ -24,10 +25,10 @@ export interface TypeOverviewCardProps extends HTMLAttributes<HTMLDivElement> {
 // (`--uxm-typeoverview-icon-*`) so the editor's per-instance icon knobs and
 // the `iconBg` / `iconColor` props on this component continue to work unchanged.
 const ICON_TILE_STYLE: CSSProperties = {
-  ["--uxm-icon-tile-bg" as string]: "var(--uxm-typeoverview-icon-bg, var(--color-accent-subtle))",
-  ["--uxm-icon-tile-color" as string]: "var(--uxm-typeoverview-icon-color, var(--color-accent-bold))",
-  ["--uxm-icon-tile-size" as string]: "var(--uxm-typeoverview-icon-tile-size, 32px)",
-  ["--uxm-icon-tile-radius" as string]: "var(--uxm-typeoverview-icon-tile-radius, 8px)",
+  ['--uxm-icon-tile-bg' as string]: 'var(--uxm-typeoverview-icon-bg, var(--color-accent-subtle))',
+  ['--uxm-icon-tile-color' as string]: 'var(--uxm-typeoverview-icon-color, var(--color-accent-bold))',
+  ['--uxm-icon-tile-size' as string]: 'var(--uxm-typeoverview-icon-tile-size, 32px)',
+  ['--uxm-icon-tile-radius' as string]: 'var(--uxm-typeoverview-icon-tile-radius, 8px)',
 };
 
 export function TypeOverviewCard({
@@ -44,12 +45,12 @@ export function TypeOverviewCard({
 }: TypeOverviewCardProps) {
   const cssVars: CSSProperties = {
     ...style,
-    ...(iconBg && { ["--uxm-typeoverview-icon-bg" as string]: iconBg }),
-    ...(iconColor && { ["--uxm-typeoverview-icon-color" as string]: iconColor }),
-    ...(accent && { ["--uxm-typeoverview-accent-color" as string]: accent }),
+    ...(iconBg && { ['--uxm-typeoverview-icon-bg' as string]: iconBg }),
+    ...(iconColor && { ['--uxm-typeoverview-icon-color' as string]: iconColor }),
+    ...(accent && { ['--uxm-typeoverview-accent-color' as string]: accent }),
   };
   return (
-    <div className={cn("uxm-type-overview-card", className)} style={cssVars} {...rest}>
+    <div className={cn('uxm-type-overview-card', className)} style={cssVars} {...rest}>
       <span aria-hidden="true" className="uxm-type-overview-card__accent" />
       {icon && <IconTile style={ICON_TILE_STYLE}>{icon}</IconTile>}
       <p className="uxm-type-overview-card__label">{label}</p>

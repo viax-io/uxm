@@ -1,9 +1,11 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
+import { cn } from '@/helpers';
+
+import { Icon } from '../icon';
+
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export interface ExplorerSectionProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /** Section heading text. */
   children: ReactNode;
   /** Whether the section is currently expanded — controls chevron rotation. */
@@ -44,7 +46,7 @@ export function ExplorerSection({
   indicator,
   trailing,
   className,
-  type = "button",
+  type = 'button',
   ...rest
 }: ExplorerSectionProps) {
   return (
@@ -52,8 +54,8 @@ export function ExplorerSection({
       type={type}
       aria-expanded={open}
       className={cn(
-        "uxm-explorer-section",
-        open && "uxm-explorer-section--open",
+        'uxm-explorer-section',
+        open && 'uxm-explorer-section--open',
         className,
       )}
       {...rest}

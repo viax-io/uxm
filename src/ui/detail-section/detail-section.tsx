@@ -1,8 +1,10 @@
-import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { IconTile } from "../icon-tile";
+import { cn } from '@/helpers';
 
-export interface DetailSectionProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+import { IconTile } from '../icon-tile';
+
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
+
+export interface DetailSectionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   icon?: ReactNode;
   title: ReactNode;
   subtitle?: ReactNode;
@@ -13,10 +15,10 @@ export interface DetailSectionProps extends Omit<HTMLAttributes<HTMLDivElement>,
 // `--uxm-detail-section-icon-{bg,color}` flow through the section's CSS
 // (set by editor saves or consumer inline style) into IconTile's own vars.
 const ICON_TILE_STYLE: CSSProperties = {
-  ["--uxm-icon-tile-bg" as string]: "var(--uxm-detail-section-icon-bg, var(--color-surface-alt))",
-  ["--uxm-icon-tile-color" as string]: "var(--uxm-detail-section-icon-color, var(--color-text-muted))",
-  ["--uxm-icon-tile-size" as string]: "32px",
-  ["--uxm-icon-tile-radius" as string]: "6px",
+  ['--uxm-icon-tile-bg' as string]: 'var(--uxm-detail-section-icon-bg, var(--color-surface-alt))',
+  ['--uxm-icon-tile-color' as string]: 'var(--uxm-detail-section-icon-color, var(--color-text-muted))',
+  ['--uxm-icon-tile-size' as string]: '32px',
+  ['--uxm-icon-tile-radius' as string]: '6px',
 };
 
 export function DetailSection({
@@ -28,7 +30,7 @@ export function DetailSection({
   ...rest
 }: DetailSectionProps) {
   return (
-    <section className={cn("uxm-detail-section", className)} {...rest}>
+    <section className={cn('uxm-detail-section', className)} {...rest}>
       <span className="uxm-detail-section__accent" aria-hidden="true" />
       <div className="uxm-detail-section__inner">
         <header className="uxm-detail-section__header">

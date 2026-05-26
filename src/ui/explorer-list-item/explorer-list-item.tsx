@@ -1,10 +1,11 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 // Drop the native `name` attribute (a form-control name string) — our
 // `name` prop is the row's display label (ReactNode).
 export interface ExplorerListItemProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "name"> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'name'> {
   /** Primary label text. */
   name: ReactNode;
   /** Optional trailing slot — typically a category meta or count. */
@@ -35,7 +36,7 @@ export function ExplorerListItem({
   trailing,
   active,
   className,
-  type = "button",
+  type = 'button',
   ...rest
 }: ExplorerListItemProps) {
   return (
@@ -43,8 +44,8 @@ export function ExplorerListItem({
       type={type}
       aria-pressed={active}
       className={cn(
-        "uxm-explorer-list-item",
-        active && "uxm-explorer-list-item--active",
+        'uxm-explorer-list-item',
+        active && 'uxm-explorer-list-item--active',
         className,
       )}
       {...rest}

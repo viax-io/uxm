@@ -1,5 +1,6 @@
-import type { CSSProperties } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { CSSProperties } from 'react';
 
 export interface RangeSliderProps {
   /** [start, end] — start ≤ end always (the atom clamps on drag). */
@@ -20,7 +21,7 @@ export interface RangeSliderProps {
   unit?: string;
   className?: string;
   style?: CSSProperties;
-  "aria-label"?: string;
+  'aria-label'?: string;
 }
 
 /**
@@ -55,7 +56,7 @@ export function RangeSlider({
   unit,
   className,
   style,
-  "aria-label": ariaLabel,
+  'aria-label': ariaLabel,
 }: RangeSliderProps) {
   const [start, end] = value;
   const range = max - min;
@@ -75,24 +76,24 @@ export function RangeSlider({
 
   const mergedStyle = {
     ...style,
-    ["--uxm-range-slider-start" as string]: `${startPct}%`,
-    ["--uxm-range-slider-end" as string]: `${endPct}%`,
+    ['--uxm-range-slider-start' as string]: `${startPct}%`,
+    ['--uxm-range-slider-end' as string]: `${endPct}%`,
   };
 
   const showAnyValues = showStart || showEnd || showRange;
 
   return (
-    <div className={cn("uxm-range-slider", className)} style={mergedStyle}>
+    <div className={cn('uxm-range-slider', className)} style={mergedStyle}>
       {showAnyValues && (
         <div className="uxm-range-slider__values">
           <span className="uxm-range-slider__value uxm-range-slider__value--start">
-            {showStart ? `${start}${unit ?? ""}` : ""}
+            {showStart ? `${start}${unit ?? ''}` : ''}
           </span>
           <span className="uxm-range-slider__value uxm-range-slider__value--range">
-            {showRange ? `${end - start}${unit ?? ""}` : ""}
+            {showRange ? `${end - start}${unit ?? ''}` : ''}
           </span>
           <span className="uxm-range-slider__value uxm-range-slider__value--end">
-            {showEnd ? `${end}${unit ?? ""}` : ""}
+            {showEnd ? `${end}${unit ?? ''}` : ''}
           </span>
         </div>
       )}
@@ -106,7 +107,7 @@ export function RangeSlider({
           step={step}
           disabled={disabled}
           onChange={(e) => handleStart(Number(e.target.value))}
-          aria-label={ariaLabel ? `${ariaLabel} (start)` : "Range start"}
+          aria-label={ariaLabel ? `${ariaLabel} (start)` : 'Range start'}
         />
         <input
           type="range"
@@ -117,7 +118,7 @@ export function RangeSlider({
           step={step}
           disabled={disabled}
           onChange={(e) => handleEnd(Number(e.target.value))}
-          aria-label={ariaLabel ? `${ariaLabel} (end)` : "Range end"}
+          aria-label={ariaLabel ? `${ariaLabel} (end)` : 'Range end'}
         />
       </div>
     </div>

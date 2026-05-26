@@ -1,11 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import type { HTMLAttributes } from "react";
-import { Chip } from "../chip";
-import { cn } from "@/helpers";
+import { useState } from 'react';
 
-export interface PillSelectProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+import { cn } from '@/helpers';
+
+import { Chip } from '../chip';
+
+import type { HTMLAttributes } from 'react';
+
+export interface PillSelectProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   options: string[];
   value?: string[];
   defaultValue?: string[];
@@ -33,7 +36,7 @@ export function PillSelect({
   options,
   value,
   defaultValue = [],
-  placeholder = "Add…",
+  placeholder = 'Add…',
   onChange,
   disabled = false,
   className,
@@ -59,7 +62,7 @@ export function PillSelect({
   const available = options.filter((o) => !selected.includes(o));
 
   return (
-    <div className={cn("uxm-pill-select", className)} {...rest}>
+    <div className={cn('uxm-pill-select', className)} {...rest}>
       <div
         className="uxm-pill-select__field"
         onClick={() => {
@@ -79,12 +82,12 @@ export function PillSelect({
           // any are ever added) keep ownership.
           if (e.target !== e.currentTarget) return;
           if (disabled) return;
-          if (e.key === "Enter" || e.key === " ") {
+          if (e.key === 'Enter' || e.key === ' ') {
             // preventDefault on Space stops the page from scrolling when
             // the field has keyboard focus.
             e.preventDefault();
             setOpen((v) => !v);
-          } else if (e.key === "Escape" && open) {
+          } else if (e.key === 'Escape' && open) {
             setOpen(false);
           }
         }}

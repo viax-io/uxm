@@ -1,5 +1,6 @@
-import type { HTMLAttributes, ReactNode, CSSProperties } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode, CSSProperties } from 'react';
 
 export interface ClusterProps extends HTMLAttributes<HTMLDivElement> {
   /** Gap between items. Defaults to 12px. */
@@ -9,13 +10,13 @@ export interface ClusterProps extends HTMLAttributes<HTMLDivElement> {
    * children have mixed heights (e.g., a label + a button). Defaults to
    * "center".
    */
-  align?: "start" | "center" | "end" | "baseline";
+  align?: 'start' | 'center' | 'end' | 'baseline';
   /**
    * Horizontal distribution. "start" keeps items packed left; "between"
    * pushes the first/last to the edges (toolbar pattern). Defaults to
    * "start".
    */
-  justify?: "start" | "center" | "end" | "between";
+  justify?: 'start' | 'center' | 'end' | 'between';
   /**
    * Allow items to wrap onto a second row when they don't fit. The whole
    * point of Cluster is that it's wrap-friendly, so default true; pass
@@ -33,8 +34,8 @@ export interface ClusterProps extends HTMLAttributes<HTMLDivElement> {
  */
 export function Cluster({
   gap,
-  align = "center",
-  justify = "start",
+  align = 'center',
+  justify = 'start',
   wrap = true,
   className,
   style,
@@ -42,17 +43,17 @@ export function Cluster({
 }: ClusterProps) {
   const mergedStyle: CSSProperties = {
     ...(gap !== undefined
-      ? { ["--uxm-cluster-gap" as string]: typeof gap === "number" ? `${gap}px` : gap }
+      ? { ['--uxm-cluster-gap' as string]: typeof gap === 'number' ? `${gap}px` : gap }
       : null),
     ...style,
   };
   return (
     <div
       className={cn(
-        "uxm-cluster",
+        'uxm-cluster',
         `uxm-cluster--align-${align}`,
         `uxm-cluster--justify-${justify}`,
-        wrap && "uxm-cluster--wrap",
+        wrap && 'uxm-cluster--wrap',
         className,
       )}
       style={mergedStyle}

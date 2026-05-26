@@ -1,1 +1,1 @@
-export * from "./lifecycle-zoom-control";
+export * from './lifecycle-zoom-control';

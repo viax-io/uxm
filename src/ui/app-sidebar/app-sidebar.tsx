@@ -1,9 +1,11 @@
-"use client";
+'use client';
 
-import type { ElementType, HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
-import { SidebarNavItem } from "../sidebar-nav-item";
+import { cn } from '@/helpers';
+
+import { Icon } from '../icon';
+import { SidebarNavItem } from '../sidebar-nav-item';
+
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 
 export interface AppSidebarBrand {
   /** Wide logo (shown when expanded). */
@@ -91,9 +93,9 @@ export function AppSidebar({
       )}
       <aside
         className={cn(
-          "uxm-app-sidebar",
-          collapsed && "uxm-app-sidebar--collapsed",
-          mobileOpen && "uxm-app-sidebar--mobile-open",
+          'uxm-app-sidebar',
+          collapsed && 'uxm-app-sidebar--collapsed',
+          mobileOpen && 'uxm-app-sidebar--mobile-open',
           className,
         )}
         {...rest}
@@ -108,7 +110,7 @@ export function AppSidebar({
           >
             {brand.iconUrl && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={brand.iconUrl} alt={brand.alt ?? ""} />
+              <img src={brand.iconUrl} alt={brand.alt ?? ''} />
             )}
           </button>
         ) : (
@@ -116,7 +118,7 @@ export function AppSidebar({
             <span className="uxm-app-sidebar__brand">
               {brand.logoUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={brand.logoUrl} alt={brand.alt ?? ""} />
+                <img src={brand.logoUrl} alt={brand.alt ?? ''} />
               )}
             </span>
             {onCollapseToggle && (
@@ -151,11 +153,11 @@ export function AppSidebar({
                 trailing={collapsed ? undefined : item.trailing}
                 title={collapsed ? item.label : undefined}
                 className={cn(
-                  "uxm-app-sidebar__item",
-                  collapsed && "uxm-app-sidebar__item--collapsed",
+                  'uxm-app-sidebar__item',
+                  collapsed && 'uxm-app-sidebar__item--collapsed',
                 )}
               >
-                {collapsed ? "" : item.label}
+                {collapsed ? '' : item.label}
               </SidebarNavItem>
             ))}
           </div>

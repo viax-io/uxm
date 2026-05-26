@@ -1,5 +1,6 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export interface InlineActionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Optional leading icon — typically a small SVG (12px-ish). */
@@ -23,13 +24,13 @@ export function InlineAction({
   icon,
   children,
   className,
-  type = "button",
+  type = 'button',
   ...rest
 }: InlineActionProps) {
   return (
     <button
       type={type}
-      className={cn("uxm-inline-action", className)}
+      className={cn('uxm-inline-action', className)}
       {...rest}
     >
       {icon && (

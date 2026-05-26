@@ -1,8 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+
+import { cn } from '@/helpers';
+
+import { Icon } from '../icon';
 
 export interface SearchDropdownOption {
   value: string;
@@ -25,7 +27,7 @@ export interface SearchDropdownProps {
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
-  "aria-label"?: string;
+  'aria-label'?: string;
 }
 
 /**
@@ -46,15 +48,15 @@ export function SearchDropdown({
   value,
   onChange,
   options,
-  placeholder = "Select…",
-  searchPlaceholder = "Search…",
+  placeholder = 'Select…',
+  searchPlaceholder = 'Search…',
   disabled = false,
   className,
   style,
-  "aria-label": ariaLabel,
+  'aria-label': ariaLabel,
 }: SearchDropdownProps) {
   const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [highlight, setHighlight] = useState(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -73,7 +75,7 @@ export function SearchDropdown({
   // match consistently.
   useEffect(() => {
     if (!open) return;
-    setSearch("");
+    setSearch('');
     setHighlight(0);
     setTimeout(() => searchRef.current?.focus(), 0);
     function onClick(e: MouseEvent) {
@@ -81,8 +83,8 @@ export function SearchDropdown({
       if (triggerRef.current?.contains(t) || popoverRef.current?.contains(t)) return;
       setOpen(false);
     }
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
   }, [open]);
 
   // Keep highlight in range when the filtered list changes (e.g. after
@@ -98,17 +100,17 @@ export function SearchDropdown({
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "ArrowDown") {
+    if (e.key === 'ArrowDown') {
       e.preventDefault();
       setHighlight((i) => Math.min(filtered.length - 1, i + 1));
-    } else if (e.key === "ArrowUp") {
+    } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setHighlight((i) => Math.max(0, i - 1));
-    } else if (e.key === "Enter") {
+    } else if (e.key === 'Enter') {
       e.preventDefault();
       const opt = filtered[highlight];
       if (opt) select(opt.value);
-    } else if (e.key === "Escape") {
+    } else if (e.key === 'Escape') {
       e.preventDefault();
       setOpen(false);
       triggerRef.current?.focus();
@@ -116,7 +118,7 @@ export function SearchDropdown({
   };
 
   return (
-    <div className={cn("uxm-search-dropdown", className)} style={style}>
+    <div className={cn('uxm-search-dropdown', className)} style={style}>
       <button
         ref={triggerRef}
         type="button"
@@ -126,9 +128,9 @@ export function SearchDropdown({
         disabled={disabled}
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "uxm-search-dropdown__trigger",
-          open && "uxm-search-dropdown__trigger--open",
-          !selected && "uxm-search-dropdown__trigger--empty",
+          'uxm-search-dropdown__trigger',
+          open && 'uxm-search-dropdown__trigger--open',
+          !selected && 'uxm-search-dropdown__trigger--empty',
         )}
       >
         <span className="uxm-search-dropdown__trigger-label">
@@ -138,7 +140,7 @@ export function SearchDropdown({
           glyph="chevron-down"
           size={14}
           className="uxm-search-dropdown__trigger-chevron"
-          style={{ transform: open ? "rotate(180deg)" : "none" }}
+          style={{ transform: open ? 'rotate(180deg)' : 'none' }}
         />
       </button>
       {open && (
@@ -177,9 +179,9 @@ export function SearchDropdown({
                     onMouseDown={(e) => { e.preventDefault(); select(opt.value); }}
                     onMouseEnter={() => setHighlight(i)}
                     className={cn(
-                      "uxm-search-dropdown__option",
-                      active && "uxm-search-dropdown__option--active",
-                      highlighted && "uxm-search-dropdown__option--highlighted",
+                      'uxm-search-dropdown__option',
+                      active && 'uxm-search-dropdown__option--active',
+                      highlighted && 'uxm-search-dropdown__option--highlighted',
                     )}
                   >
                     {opt.icon && (

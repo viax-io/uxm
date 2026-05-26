@@ -1,5 +1,6 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
   /** The field label (e.g. "Name", "Time zone"). */
@@ -29,7 +30,7 @@ export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
  */
 export function FormField({ label, hint, children, className, ...rest }: FormFieldProps) {
   return (
-    <div className={cn("uxm-form-field", className)} {...rest}>
+    <div className={cn('uxm-form-field', className)} {...rest}>
       <span className="uxm-form-field__label">{label}</span>
       <div className="uxm-form-field__control">{children}</div>
       {hint && <span className="uxm-form-field__hint">{hint}</span>}

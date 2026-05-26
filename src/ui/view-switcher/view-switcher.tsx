@@ -1,8 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
+import { useState } from 'react';
+
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface ViewSwitcherOption {
   value: string;
@@ -13,7 +15,7 @@ export interface ViewSwitcherOption {
   disabled?: boolean;
 }
 
-export interface ViewSwitcherProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface ViewSwitcherProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   options: ViewSwitcherOption[];
   value?: string;
   defaultValue?: string;
@@ -29,7 +31,7 @@ export function ViewSwitcher({
   ...rest
 }: ViewSwitcherProps) {
   const isControlled = value !== undefined;
-  const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? "");
+  const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? '');
   const active = isControlled ? value : internal;
 
   const select = (next: string) => {
@@ -38,7 +40,7 @@ export function ViewSwitcher({
   };
 
   return (
-    <div role="group" className={cn("uxm-view-switcher", className)} {...rest}>
+    <div role="group" className={cn('uxm-view-switcher', className)} {...rest}>
       {options.map((opt) => {
         const isActive = opt.value === active;
         return (
@@ -49,8 +51,8 @@ export function ViewSwitcher({
             aria-label={opt.label}
             disabled={opt.disabled}
             className={cn(
-              "uxm-view-switcher__button",
-              isActive && "uxm-view-switcher__button--active",
+              'uxm-view-switcher__button',
+              isActive && 'uxm-view-switcher__button--active',
             )}
             onClick={() => select(opt.value)}
           >

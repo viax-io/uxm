@@ -1,1 +1,1 @@
-export * from "./pill-select";
+export * from './pill-select';

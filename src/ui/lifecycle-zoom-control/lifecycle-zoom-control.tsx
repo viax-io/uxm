@@ -1,6 +1,7 @@
-import type { HTMLAttributes } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "@/ui/icon";
+import { cn } from '@/helpers';
+import { Icon } from '@/ui/icon';
+
+import type { HTMLAttributes } from 'react';
 
 export interface LifecycleZoomControlProps extends HTMLAttributes<HTMLDivElement> {
   /** Current zoom percentage shown between the +/− buttons. */
@@ -25,11 +26,11 @@ export function LifecycleZoomControl({
   style,
   ...rest
 }: LifecycleZoomControlProps) {
-  const sizeStyle = buttonSize ? { ["--uxm-lifecycle-zoom-button-size" as string]: `${buttonSize}px` } : undefined;
+  const sizeStyle = buttonSize ? { ['--uxm-lifecycle-zoom-button-size' as string]: `${buttonSize}px` } : undefined;
   return (
     <div
       {...rest}
-      className={cn("uxm-lifecycle-zoom-control", className)}
+      className={cn('uxm-lifecycle-zoom-control', className)}
       style={{ ...sizeStyle, ...style }}
     >
       <button

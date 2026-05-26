@@ -1,5 +1,6 @@
-import type { HTMLAttributes, ReactNode, CSSProperties } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode, CSSProperties } from 'react';
 
 export interface ResponsiveGridProps extends HTMLAttributes<HTMLDivElement> {
   /**
@@ -32,13 +33,13 @@ export function ResponsiveGrid({
   ...rest
 }: ResponsiveGridProps) {
   const mergedStyle: CSSProperties = {
-    ...(min !== undefined ? { ["--uxm-responsive-grid-min" as string]: min } : null),
+    ...(min !== undefined ? { ['--uxm-responsive-grid-min' as string]: min } : null),
     ...(gap !== undefined
-      ? { ["--uxm-responsive-grid-gap" as string]: typeof gap === "number" ? `${gap}px` : gap }
+      ? { ['--uxm-responsive-grid-gap' as string]: typeof gap === 'number' ? `${gap}px` : gap }
       : null),
     ...style,
   };
   return (
-    <div className={cn("uxm-responsive-grid", className)} style={mergedStyle} {...rest} />
+    <div className={cn('uxm-responsive-grid', className)} style={mergedStyle} {...rest} />
   );
 }

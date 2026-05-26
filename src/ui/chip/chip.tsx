@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import type { CSSProperties, MouseEvent, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "@/ui/icon";
+import { cn } from '@/helpers';
+import { Icon } from '@/ui/icon';
 
-export type ChipMode = "assist" | "filter" | "input" | "suggestion";
+import type { CSSProperties, MouseEvent, ReactNode } from 'react';
+
+export type ChipMode = 'assist' | 'filter' | 'input' | 'suggestion';
 
 export interface ChipProps {
   children: ReactNode;
@@ -27,13 +28,13 @@ export interface ChipProps {
    * on `.uxm-chip` (which would otherwise win the cascade).
    */
   style?: CSSProperties;
-  "aria-label"?: string;
+  'aria-label'?: string;
 }
 
 function inferMode(props: ChipProps): ChipMode {
   if (props.mode) return props.mode;
-  if (props.onRemove) return "input";
-  return "assist";
+  if (props.onRemove) return 'input';
+  return 'assist';
 }
 
 /**
@@ -61,7 +62,7 @@ export function Chip(props: ChipProps) {
     onRemove,
     className,
     style,
-    "aria-label": ariaLabel,
+    'aria-label': ariaLabel,
   } = props;
   const mode = inferMode(props);
 
@@ -90,8 +91,8 @@ export function Chip(props: ChipProps) {
     </>
   );
 
-  const classes = cn("uxm-chip", `uxm-chip--${mode}`, className);
-  const isInteractive = Boolean(onClick) || mode === "filter";
+  const classes = cn('uxm-chip', `uxm-chip--${mode}`, className);
+  const isInteractive = Boolean(onClick) || mode === 'filter';
 
   if (isInteractive) {
     return (
@@ -100,7 +101,7 @@ export function Chip(props: ChipProps) {
         className={classes}
         style={style}
         disabled={disabled}
-        aria-pressed={mode === "filter" ? selected : undefined}
+        aria-pressed={mode === 'filter' ? selected : undefined}
         aria-label={ariaLabel}
         onClick={onClick}
       >

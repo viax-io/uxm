@@ -1,11 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import type { HTMLAttributes } from "react";
-import { cn } from "@/helpers";
+import { useEffect, useMemo, useState } from 'react';
 
-export type LoaderVariant = "spinner" | "dots" | "bar";
-export type LoaderLayout = "stacked" | "inline";
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes } from 'react';
+
+export type LoaderVariant = 'spinner' | 'dots' | 'bar';
+export type LoaderLayout = 'stacked' | 'inline';
 
 export interface LoaderProps extends HTMLAttributes<HTMLDivElement> {
   variant?: LoaderVariant;
@@ -17,15 +19,15 @@ export interface LoaderProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function Loader({
-  variant = "spinner",
-  layout = "stacked",
-  message = "",
+  variant = 'spinner',
+  layout = 'stacked',
+  message = '',
   messageInterval = 1500,
   className,
   ...rest
 }: LoaderProps) {
   const messages = useMemo(
-    () => message.split("|").map((s) => s.trim()).filter(Boolean),
+    () => message.split('|').map((s) => s.trim()).filter(Boolean),
     [message],
   );
   const [idx, setIdx] = useState(0);
@@ -36,22 +38,22 @@ export function Loader({
     return () => clearInterval(id);
   }, [messages, messageInterval]);
 
-  const currentMessage = messages.length === 0 ? "" : messages[idx % messages.length];
+  const currentMessage = messages.length === 0 ? '' : messages[idx % messages.length];
 
   return (
-    <div className={cn("uxm-loader", `uxm-loader--${layout}`, className)} {...rest}>
-      {variant === "spinner" && (
-        <div className="uxm-loader__spinner" role="status" aria-label={currentMessage || "Loading"} />
+    <div className={cn('uxm-loader', `uxm-loader--${layout}`, className)} {...rest}>
+      {variant === 'spinner' && (
+        <div className="uxm-loader__spinner" role="status" aria-label={currentMessage || 'Loading'} />
       )}
-      {variant === "dots" && (
-        <div className="uxm-loader__dots" role="status" aria-label={currentMessage || "Loading"}>
+      {variant === 'dots' && (
+        <div className="uxm-loader__dots" role="status" aria-label={currentMessage || 'Loading'}>
           <span />
           <span />
           <span />
         </div>
       )}
-      {variant === "bar" && (
-        <div className="uxm-loader__bar" role="status" aria-label={currentMessage || "Loading"}>
+      {variant === 'bar' && (
+        <div className="uxm-loader__bar" role="status" aria-label={currentMessage || 'Loading'}>
           <span />
         </div>
       )}

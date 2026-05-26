@@ -1,11 +1,13 @@
-"use client";
+'use client';
 
-import { useState, type ButtonHTMLAttributes, type ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
+import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
+
+import { cn } from '@/helpers';
+
+import { Icon } from '../icon';
 
 export interface DisclosureProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> {
   icon?: ReactNode;
   label: ReactNode;
   open?: boolean;
@@ -31,7 +33,7 @@ export function Disclosure({
   defaultOpen = false,
   onOpenChange,
   className,
-  type = "button",
+  type = 'button',
   onClick,
   ...rest
 }: DisclosureProps) {
@@ -42,7 +44,7 @@ export function Disclosure({
   return (
     <button
       type={type}
-      className={cn("uxm-disclosure", open && "uxm-disclosure--open", className)}
+      className={cn('uxm-disclosure', open && 'uxm-disclosure--open', className)}
       aria-expanded={open}
       onClick={(e) => {
         const next = !open;

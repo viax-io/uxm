@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "@/ui/icon";
+import { cn } from '@/helpers';
+import { Icon } from '@/ui/icon';
+
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface AppTopBarProps extends HTMLAttributes<HTMLElement> {
   /** Search input (use TextInput / InputWithIcon). */
@@ -21,7 +22,7 @@ export function AppTopBar({
   ...rest
 }: AppTopBarProps) {
   return (
-    <header className={cn("uxm-app-top-bar", className)} {...rest}>
+    <header className={cn('uxm-app-top-bar', className)} {...rest}>
       <div className="uxm-app-top-bar__left">
         {onMobileMenuClick && (
           <button

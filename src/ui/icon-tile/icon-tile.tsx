@@ -1,5 +1,6 @@
-import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 
 export interface IconTileProps extends HTMLAttributes<HTMLSpanElement> {
   /** The icon to render — typically `<Icon glyph="..." size={14} />`. */
@@ -34,13 +35,13 @@ export function IconTile({
   // Project the per-instance overrides into CSS custom properties the
   // class rule reads. Default tokens live in `.uxm-icon-tile` in styles.css.
   const cssVars: CSSProperties = {
-    "--uxm-icon-tile-size": `${size}px`,
-    ...(iconBg ? { "--uxm-icon-tile-bg": iconBg } : {}),
-    ...(iconColor ? { "--uxm-icon-tile-color": iconColor } : {}),
+    '--uxm-icon-tile-size': `${size}px`,
+    ...(iconBg ? { '--uxm-icon-tile-bg': iconBg } : {}),
+    ...(iconColor ? { '--uxm-icon-tile-color': iconColor } : {}),
     ...style,
   } as CSSProperties;
   return (
-    <span {...rest} className={cn("uxm-icon-tile", className)} style={cssVars}>
+    <span {...rest} className={cn('uxm-icon-tile', className)} style={cssVars}>
       {children}
     </span>
   );

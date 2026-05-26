@@ -1,5 +1,6 @@
-import type { HTMLAttributes } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes } from 'react';
 
 export interface LifecycleMinimapNode {
   /** Position in 0–1 space (relative to the minimap frame). */
@@ -56,7 +57,7 @@ export function LifecycleMinimap({
   return (
     <div
       {...rest}
-      className={cn("uxm-lifecycle-minimap", className)}
+      className={cn('uxm-lifecycle-minimap', className)}
       style={{ width, height, ...style }}
     >
       <svg width={width} height={height} className="uxm-lifecycle-minimap__svg">

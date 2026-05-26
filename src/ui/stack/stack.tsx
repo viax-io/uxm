@@ -1,5 +1,6 @@
-import type { HTMLAttributes, ReactNode, CSSProperties } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode, CSSProperties } from 'react';
 
 export interface StackProps extends HTMLAttributes<HTMLDivElement> {
   /** Gap between stacked items. Defaults to 16px. */
@@ -8,7 +9,7 @@ export interface StackProps extends HTMLAttributes<HTMLDivElement> {
    * Cross-axis alignment of items (left/right/center within the stack's
    * width). Defaults to "stretch" so children naturally span the container.
    */
-  align?: "start" | "center" | "end" | "stretch";
+  align?: 'start' | 'center' | 'end' | 'stretch';
   children?: ReactNode;
 }
 
@@ -22,20 +23,20 @@ export interface StackProps extends HTMLAttributes<HTMLDivElement> {
  */
 export function Stack({
   gap,
-  align = "stretch",
+  align = 'stretch',
   className,
   style,
   ...rest
 }: StackProps) {
   const mergedStyle: CSSProperties = {
     ...(gap !== undefined
-      ? { ["--uxm-stack-gap" as string]: typeof gap === "number" ? `${gap}px` : gap }
+      ? { ['--uxm-stack-gap' as string]: typeof gap === 'number' ? `${gap}px` : gap }
       : null),
     ...style,
   };
   return (
     <div
-      className={cn("uxm-stack", `uxm-stack--${align}`, className)}
+      className={cn('uxm-stack', `uxm-stack--${align}`, className)}
       style={mergedStyle}
       {...rest}
     />

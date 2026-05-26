@@ -1,9 +1,10 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
 
-export type TimelineDotState = "active" | "idle";
+import type { HTMLAttributes, ReactNode } from 'react';
 
-export interface TimelineEntryProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+export type TimelineDotState = 'active' | 'idle';
+
+export interface TimelineEntryProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   title: ReactNode;
   meta?: ReactNode;
   trailing?: ReactNode;
@@ -19,7 +20,7 @@ export function TimelineEntry({
   title,
   meta,
   trailing,
-  state = "active",
+  state = 'active',
   lineBefore = true,
   lineAfter = true,
   children,
@@ -28,7 +29,7 @@ export function TimelineEntry({
 }: TimelineEntryProps) {
   return (
     <div
-      className={cn("uxm-timeline-entry", `uxm-timeline-entry--${state}`, className)}
+      className={cn('uxm-timeline-entry', `uxm-timeline-entry--${state}`, className)}
       {...rest}
     >
       <div className="uxm-timeline-entry__rail" aria-hidden="true">

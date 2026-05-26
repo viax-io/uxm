@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   useCallback,
@@ -6,12 +6,14 @@ import {
   useState,
   type HTMLAttributes,
   type ReactNode,
-} from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
-import { IconButton } from "../icon-button";
+} from 'react';
 
-export interface SideFlexpaneProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+import { cn } from '@/helpers';
+
+import { Icon } from '../icon';
+import { IconButton } from '../icon-button';
+
+export interface SideFlexpaneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   eyebrow?: ReactNode;
   title: ReactNode;
   onClose?: () => void;
@@ -78,16 +80,16 @@ export function SideFlexpane({
 
       const onMouseUp = () => {
         dragging.current = false;
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
-        document.body.style.cursor = "";
-        document.body.style.userSelect = "";
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
       };
 
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
-      document.body.style.cursor = "col-resize";
-      document.body.style.userSelect = "none";
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
     },
     [width, minWidth, maxWidth, _defaultWidth],
   );
@@ -95,7 +97,7 @@ export function SideFlexpane({
   return (
     <aside
       ref={paneRef}
-      className={cn("uxm-side-flexpane", className)}
+      className={cn('uxm-side-flexpane', className)}
       // Consumer-provided `style` wins over the resize-driven width — that
       // matches existing usage (user-panel / create-panel pass borderRadius
       // and height overrides) and gives consumers a way to lock width if

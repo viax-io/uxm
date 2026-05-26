@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import type { CSSProperties, ReactNode } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
 
-export type TagType = "accent" | "success" | "warning" | "danger" | "info" | "neutral";
-export type TagSize = "small" | "medium";
+import type { CSSProperties, ReactNode } from 'react';
+
+export type TagType = 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+export type TagSize = 'small' | 'medium';
 
 export interface TagProps {
   children: ReactNode;
@@ -33,9 +34,9 @@ export interface TagProps {
  * Styled via `.uxm-tag` + `.uxm-tag--{type}` + `.uxm-tag--{size}` CSS
  * reading `--uxm-tag-*` custom properties.
  */
-export function Tag({ children, type = "neutral", size = "medium", iconLeft, className, style }: TagProps) {
+export function Tag({ children, type = 'neutral', size = 'medium', iconLeft, className, style }: TagProps) {
   return (
-    <span className={cn("uxm-tag", `uxm-tag--${type}`, `uxm-tag--${size}`, className)} style={style}>
+    <span className={cn('uxm-tag', `uxm-tag--${type}`, `uxm-tag--${size}`, className)} style={style}>
       {iconLeft && (
         <span className="uxm-tag__icon-left" aria-hidden="true">
           {iconLeft}

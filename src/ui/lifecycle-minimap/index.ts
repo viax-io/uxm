@@ -1,1 +1,1 @@
-export * from "./lifecycle-minimap";
+export * from './lifecycle-minimap';

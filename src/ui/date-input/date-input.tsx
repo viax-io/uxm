@@ -1,18 +1,21 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { ChangeEvent, InputHTMLAttributes } from "react";
-import { cn } from "@/helpers";
-import { Icon } from "../icon";
-import { Calendar, type CalendarValue } from "../calendar";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-export type DateInputFormat = "mdy" | "dmy" | "ymd";
-export type DateInputMode = "single" | "range";
+import { cn } from '@/helpers';
 
-const RANGE_SEPARATOR = " – ";
+import { Calendar, type CalendarValue } from '../calendar';
+import { Icon } from '../icon';
+
+import type { ChangeEvent, InputHTMLAttributes } from 'react';
+
+export type DateInputFormat = 'mdy' | 'dmy' | 'ymd';
+export type DateInputMode = 'single' | 'range';
+
+const RANGE_SEPARATOR = ' – ';
 
 export interface DateInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "defaultValue" | "type" | "style"> {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'defaultValue' | 'type' | 'style'> {
   /** Format mask. Drives placeholder, the digit-segment layout, and Calendar ↔ input parsing. */
   format?: DateInputFormat;
   /**
@@ -42,17 +45,17 @@ export interface DateInputProps
 }
 
 const FORMAT_SPEC: Record<DateInputFormat, { segments: number[]; sep: string; placeholder: string }> = {
-  mdy: { segments: [2, 2, 4], sep: "/", placeholder: "MM/DD/YYYY" },
-  dmy: { segments: [2, 2, 4], sep: "/", placeholder: "DD/MM/YYYY" },
-  ymd: { segments: [4, 2, 2], sep: "-", placeholder: "YYYY-MM-DD" },
+  mdy: { segments: [2, 2, 4], sep: '/', placeholder: 'MM/DD/YYYY' },
+  dmy: { segments: [2, 2, 4], sep: '/', placeholder: 'DD/MM/YYYY' },
+  ymd: { segments: [4, 2, 2], sep: '-', placeholder: 'YYYY-MM-DD' },
 };
 
 /** Auto-format raw input per the chosen format. Strips non-digits, caps at the format's total digit count, inserts separators. */
 function maskDate(raw: string, format: DateInputFormat): string {
   const spec = FORMAT_SPEC[format];
   const maxDigits = spec.segments.reduce((sum, n) => sum + n, 0);
-  const digits = raw.replace(/\D/g, "").slice(0, maxDigits);
-  let out = "";
+  const digits = raw.replace(/\D/g, '').slice(0, maxDigits);
+  let out = '';
   let consumed = 0;
   for (let i = 0; i < spec.segments.length; i++) {
     const segDigits = digits.slice(consumed, consumed + spec.segments[i]);
@@ -71,14 +74,14 @@ function maskDate(raw: string, format: DateInputFormat): string {
  * — JS Date will silently roll over, which is a benign mismatch.
  */
 function parseDate(formatted: string, format: DateInputFormat): Date | null {
-  const digits = formatted.replace(/\D/g, "");
+  const digits = formatted.replace(/\D/g, '');
   if (digits.length !== 8) return null;
   let y: number, m: number, d: number;
-  if (format === "ymd") {
+  if (format === 'ymd') {
     y = Number(digits.slice(0, 4));
     m = Number(digits.slice(4, 6));
     d = Number(digits.slice(6, 8));
-  } else if (format === "mdy") {
+  } else if (format === 'mdy') {
     m = Number(digits.slice(0, 2));
     d = Number(digits.slice(2, 4));
     y = Number(digits.slice(4, 8));
@@ -93,19 +96,19 @@ function parseDate(formatted: string, format: DateInputFormat): Date | null {
 
 /** Format a Date back into the chosen mask. Inverse of `parseDate`. */
 function formatDate(date: Date, format: DateInputFormat): string {
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  const y = String(date.getFullYear()).padStart(4, "0");
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  const y = String(date.getFullYear()).padStart(4, '0');
   switch (format) {
-    case "mdy": return `${m}/${d}/${y}`;
-    case "dmy": return `${d}/${m}/${y}`;
-    case "ymd": return `${y}-${m}-${d}`;
+    case 'mdy': return `${m}/${d}/${y}`;
+    case 'dmy': return `${d}/${m}/${y}`;
+    case 'ymd': return `${y}-${m}-${d}`;
   }
 }
 
 /** Range-aware value formatter: `"<start>"` or `"<start> – <end>"`. */
 function formatRangeValue(value: CalendarValue, format: DateInputFormat): string {
-  if (!value.start) return "";
+  if (!value.start) return '';
   const startStr = formatDate(value.start, format);
   if (!value.end) return startStr;
   return `${startStr}${RANGE_SEPARATOR}${formatDate(value.end, format)}`;
@@ -123,12 +126,12 @@ function parseRangeValue(formatted: string, format: DateInputFormat): CalendarVa
 /** Build a placeholder that doubles up the mask for range mode. */
 function placeholderFor(format: DateInputFormat, mode: DateInputMode): string {
   const single = FORMAT_SPEC[format].placeholder;
-  return mode === "range" ? `${single}${RANGE_SEPARATOR}${single}` : single;
+  return mode === 'range' ? `${single}${RANGE_SEPARATOR}${single}` : single;
 }
 
 export function DateInput({
-  format = "mdy",
-  mode = "single",
+  format = 'mdy',
+  mode = 'single',
   className,
   placeholder,
   value,
@@ -141,7 +144,7 @@ export function DateInput({
   // Initial state — same masker for single, plain string for range (typing
   // disabled in range mode so no need to mask).
   const [internal, setInternal] = useState<string>(() =>
-    mode === "single" ? maskDate(defaultValue ?? "", format) : defaultValue ?? "",
+    mode === 'single' ? maskDate(defaultValue ?? '', format) : defaultValue ?? '',
   );
   const isControlled = value !== undefined;
   const current = isControlled ? value : internal;
@@ -165,7 +168,7 @@ export function DateInput({
       isFirstModeEffect.current = false;
       return;
     }
-    setInternal("");
+    setInternal('');
     setIsOpen(false);
   }, [mode]);
 
@@ -179,20 +182,20 @@ export function DateInput({
       }
     };
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
+      if (e.key === 'Escape') setIsOpen(false);
     };
-    document.addEventListener("mousedown", handleClick);
-    document.addEventListener("keydown", handleKey);
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
     return () => {
-      document.removeEventListener("mousedown", handleClick);
-      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
     };
   }, [isOpen]);
 
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       // Range mode is read-only; this guard prevents any sneaky programmatic edits.
-      if (mode === "range") return;
+      if (mode === 'range') return;
       const formatted = maskDate(e.target.value, format);
       if (!isControlled) setInternal(formatted);
       onChange?.(formatted);
@@ -203,7 +206,7 @@ export function DateInput({
   const handleCalendarChange = useCallback(
     (calValue: CalendarValue) => {
       if (!calValue.start) return;
-      if (mode === "range") {
+      if (mode === 'range') {
         // Calendar fires after every click: end=null after first, end set after second.
         // Update the input either way (so the user sees the in-flight start) but only
         // close when the range is fully committed.
@@ -229,17 +232,17 @@ export function DateInput({
   // the next click would be treated as the second click of a range — exactly
   // the bug where switching back to single still drew range styling.
   const calendarValue: CalendarValue = (() => {
-    if (mode === "range") return parseRangeValue(current ?? "", format);
-    const date = parseDate(current ?? "", format);
+    if (mode === 'range') return parseRangeValue(current ?? '', format);
+    const date = parseDate(current ?? '', format);
     return { start: date, end: date };
   })();
 
   return (
-    <div className={cn("uxm-date-input", className)} ref={containerRef} style={style}>
+    <div className={cn('uxm-date-input', className)} ref={containerRef} style={style}>
       <input
         type="text"
         inputMode="numeric"
-        readOnly={mode === "range"}
+        readOnly={mode === 'range'}
         className="uxm-date-input__input"
         placeholder={placeholder ?? placeholderFor(format, mode)}
         value={current}

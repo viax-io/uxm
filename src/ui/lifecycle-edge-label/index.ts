@@ -1,1 +1,1 @@
-export * from "./lifecycle-edge-label";
+export * from './lifecycle-edge-label';

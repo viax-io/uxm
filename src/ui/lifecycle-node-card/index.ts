@@ -1,1 +1,1 @@
-export * from "./lifecycle-node-card";
+export * from './lifecycle-node-card';

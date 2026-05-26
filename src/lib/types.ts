@@ -1,4 +1,4 @@
-export type Category = "App" | "Buttons" | "Inputs" | "Display" | "Feedback" | "Forms" | "Composite" | "Diagram" | "Icons";
+export type Category = 'App' | 'Buttons' | 'Inputs' | 'Display' | 'Feedback' | 'Forms' | 'Composite' | 'Diagram' | 'Icons';
 
 export interface BrandTokens {
   light?: Record<string, string>;
@@ -16,7 +16,7 @@ export interface BrandConfig {
   tokens?: BrandTokens;
 }
 
-export type EditorControlType = "color" | "number" | "select" | "toggle" | "slider" | "text";
+export type EditorControlType = 'color' | 'number' | 'select' | 'toggle' | 'slider' | 'text';
 
 export interface StyleProperty {
   key: string;

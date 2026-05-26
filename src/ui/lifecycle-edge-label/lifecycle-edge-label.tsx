@@ -1,7 +1,8 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/helpers";
+import { cn } from '@/helpers';
 
-export type LifecycleEdgeLabelVariant = "true" | "false" | "neutral";
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export type LifecycleEdgeLabelVariant = 'true' | 'false' | 'neutral';
 
 export interface LifecycleEdgeLabelProps extends HTMLAttributes<HTMLSpanElement> {
   /** Color variant — `true` (green) / `false` (warm) / `neutral` (border-only). */
@@ -19,7 +20,7 @@ export interface LifecycleEdgeLabelProps extends HTMLAttributes<HTMLSpanElement>
  * absolutely-positioned div pinned to the edge midpoint).
  */
 export function LifecycleEdgeLabel({
-  variant = "neutral",
+  variant = 'neutral',
   className,
   children,
   ...rest
@@ -28,7 +29,7 @@ export function LifecycleEdgeLabel({
     <span
       {...rest}
       className={cn(
-        "uxm-lifecycle-edge-label",
+        'uxm-lifecycle-edge-label',
         `uxm-lifecycle-edge-label--${variant}`,
         className,
       )}
