@@ -1,0 +1,10 @@
+variables:
+  CONFIG_BRANCH: &ref master
+
+include:
+  - project: 'infra/helm'
+    ref: *ref
+    file: '/ci/pipelines/common.yml'
+  - project: 'infra/helm'
+    ref: *ref
+    file: '/ci/pipelines/mfa.yml'

@@ -1,0 +1,22 @@
+/* ── meta-row ── */
+
+.uxm-meta-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uxm-meta-row-gap, 12px);
+  font-size: var(--uxm-meta-row-font-size, 12px);
+  color: var(--uxm-meta-row-color, var(--color-text-muted));
+}
+
+.uxm-meta-row__item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.uxm-meta-row__dot {
+  display: inline-block;
+  width: var(--uxm-meta-row-dot-size, 4px);
+  height: var(--uxm-meta-row-dot-size, 4px);
+  border-radius: 999px;
+  background-color: var(--uxm-meta-row-dot-color, color-mix(in srgb, var(--color-text) 20%, transparent));
+}

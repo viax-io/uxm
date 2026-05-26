@@ -1,0 +1,14 @@
+/* ── inline-filter ── */
+
+.uxm-inline-filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.uxm-inline-filter__search { flex: 0 1 220px; }
+
+.uxm-inline-filter__filters { flex: 1; }
+
+.uxm-inline-filter__trailing { margin-left: auto; }

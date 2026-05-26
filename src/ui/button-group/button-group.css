@@ -1,0 +1,33 @@
+/* ── button-group ── */
+
+/* ButtonGroup — root is the segmented track; per-item bg/text/padding/
+   font-size live on `.uxm-button-group__item`. The inner border-right
+   shares the same `--uxm-button-group-border-color` var as the root
+   border so a single saved knob themes both. */
+
+.uxm-button-group {
+  display: inline-flex;
+  border: 1px solid var(--uxm-button-group-border-color, var(--color-border));
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.uxm-button-group__item {
+  background-color: var(--uxm-button-group-inactive-bg, var(--color-card));
+  color: var(--uxm-button-group-inactive-text, var(--color-text-muted));
+  padding: var(--uxm-button-group-padding-y, 8px) var(--uxm-button-group-padding-x, 16px);
+  font-size: var(--uxm-button-group-font-size, 13px);
+  font-weight: 500;
+  border: none;
+  border-right: 1px solid var(--uxm-button-group-border-color, var(--color-border));
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.uxm-button-group__item:last-child { border-right: none; }
+
+.uxm-button-group__item--active {
+  background-color: var(--uxm-button-group-active-bg, var(--color-accent-subtle));
+  color: var(--uxm-button-group-active-text, var(--color-accent-bold));
+  font-weight: 600;
+}

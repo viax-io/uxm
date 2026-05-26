@@ -1,0 +1,157 @@
+/* ── search-dropdown ── */
+
+/* ── SearchDropdown ──
+   Combobox: trigger button + popover with search input + filtered list.
+   Use for long option lists (icon glyphs, country codes, etc.); native
+   <Select> covers short ones. The popover is absolutely positioned
+   relative to the wrapper, so the parent should be `position:
+   relative` when it isn't already. */
+
+.uxm-search-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.uxm-search-dropdown__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--uxm-search-dropdown-trigger-bg, var(--color-card));
+  border: 1px solid var(--uxm-search-dropdown-trigger-border, var(--color-border));
+  border-radius: var(--uxm-search-dropdown-trigger-radius, 6px);
+  padding: var(--uxm-search-dropdown-trigger-padding-y, 6px) var(--uxm-search-dropdown-trigger-padding-x, 10px);
+  font-size: var(--uxm-search-dropdown-trigger-font-size, 12px);
+  color: var(--color-text);
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+
+.uxm-search-dropdown__trigger:focus-visible,
+.uxm-search-dropdown__trigger--open {
+  border-color: var(--uxm-search-dropdown-trigger-focus-border, var(--color-accent));
+}
+
+.uxm-search-dropdown__trigger--empty {
+  color: var(--color-text-muted);
+}
+
+.uxm-search-dropdown__trigger-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uxm-search-dropdown__trigger-chevron {
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: var(--color-text-muted);
+  transition: transform 0.15s;
+}
+
+/* Popover floats below the trigger. `z-index: 20` clears typical sticky
+   panel headers; bump per-instance via `style` if needed. */
+
+.uxm-search-dropdown__popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  max-height: var(--uxm-search-dropdown-popover-max-height, 280px);
+  overflow: hidden;
+  background-color: var(--uxm-search-dropdown-popover-bg, var(--color-card));
+  border: 1px solid var(--uxm-search-dropdown-popover-border, var(--color-border));
+  border-radius: var(--uxm-search-dropdown-popover-radius, 8px);
+  box-shadow: var(--uxm-search-dropdown-popover-shadow, 0 6px 20px rgba(0, 0, 0, 0.10));
+}
+
+.uxm-search-dropdown__search {
+  position: relative;
+  padding: 8px;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.uxm-search-dropdown__search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-text-subtle);
+}
+
+.uxm-search-dropdown__search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-size: var(--uxm-search-dropdown-search-font-size, 12px);
+  color: var(--color-text);
+  padding: 4px 8px 4px 28px;
+  box-sizing: border-box;
+}
+
+.uxm-search-dropdown__list {
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.uxm-search-dropdown__empty {
+  padding: 12px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.uxm-search-dropdown__option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  padding: var(--uxm-search-dropdown-option-padding-y, 6px) var(--uxm-search-dropdown-option-padding-x, 10px);
+  font-size: var(--uxm-search-dropdown-option-font-size, 13px);
+  color: var(--color-text);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--uxm-search-dropdown-option-radius, 4px);
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.uxm-search-dropdown__option--highlighted {
+  background-color: var(--uxm-search-dropdown-option-hover-bg, var(--color-surface-alt));
+}
+
+.uxm-search-dropdown__option--active {
+  background-color: var(--uxm-search-dropdown-option-active-bg, var(--color-accent-subtle));
+  color: var(--uxm-search-dropdown-option-active-color, var(--color-accent-bold));
+  font-weight: 600;
+}
+
+.uxm-search-dropdown__option-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.uxm-search-dropdown__option-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uxm-search-dropdown__option-meta {
+  flex-shrink: 0;
+  font-size: var(--uxm-search-dropdown-option-meta-size, 10px);
+  color: var(--color-text-subtle);
+}

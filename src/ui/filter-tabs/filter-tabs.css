@@ -1,0 +1,34 @@
+/* ── filter-tabs ── */
+
+/* Filter Tabs (label-only segmented filter) */
+
+.uxm-filter-tabs {
+  display: inline-flex;
+  background-color: var(--uxm-filter-tabs-track-bg, var(--color-surface));
+  border: 1px solid var(--uxm-filter-tabs-track-border, var(--color-border));
+  border-radius: var(--uxm-filter-tabs-track-radius, 8px);
+  padding: var(--uxm-filter-tabs-track-padding, 2px);
+  gap: var(--uxm-filter-tabs-gap, 0px);
+}
+
+.uxm-filter-tabs__tab {
+  background-color: transparent;
+  color: var(--uxm-filter-tabs-inactive-text, var(--color-text-muted));
+  border: none;
+  border-radius: var(--uxm-filter-tabs-tab-radius, 6px);
+  padding: var(--uxm-filter-tabs-padding-y, 6px) var(--uxm-filter-tabs-padding-x, 12px);
+  font-size: var(--uxm-filter-tabs-font-size, 12px);
+  font-weight: var(--uxm-filter-tabs-font-weight, 500);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uxm-filter-tabs__tab--active {
+  background-color: var(--uxm-filter-tabs-active-bg, var(--color-card));
+  color: var(--uxm-filter-tabs-active-text, var(--color-text));
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
+}

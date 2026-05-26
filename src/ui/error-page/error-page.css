@@ -1,0 +1,55 @@
+/* ── error-page ── */
+
+.uxm-error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px;
+  gap: 8px;
+}
+
+.uxm-error-page__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background-color: var(--color-accent-subtle);
+  color: var(--color-accent-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.uxm-error-page__code {
+  font-size: 88px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-text-subtle);
+  margin: 0;
+}
+
+.uxm-error-page__title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 16px 0 0;
+}
+
+.uxm-error-page__message {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  max-width: 28rem;
+  line-height: 1.5;
+  margin: 8px 0 0;
+}
+
+.uxm-error-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+}

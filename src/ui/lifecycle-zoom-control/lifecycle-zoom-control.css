@@ -1,0 +1,54 @@
+/* ── lifecycle-zoom-control ── */
+
+.uxm-lifecycle-zoom-control {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--uxm-lifecycle-zoom-bg, var(--color-card));
+  border: 1px solid var(--uxm-lifecycle-zoom-border-color, var(--color-border));
+  border-radius: var(--uxm-lifecycle-zoom-radius, 6px);
+  overflow: hidden;
+  color: var(--uxm-lifecycle-zoom-color, var(--color-text));
+}
+
+.uxm-lifecycle-zoom-control__btn {
+  width: var(--uxm-lifecycle-zoom-button-size, 32px);
+  height: var(--uxm-lifecycle-zoom-button-size, 32px);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--uxm-lifecycle-zoom-icon-color, var(--color-text-muted));
+}
+
+.uxm-lifecycle-zoom-control__btn:hover:not(:disabled) {
+  background-color: var(--color-surface-alt);
+}
+
+.uxm-lifecycle-zoom-control__btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.uxm-lifecycle-zoom-control__value {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  height: var(--uxm-lifecycle-zoom-button-size, 32px);
+  border-left: 1px solid var(--uxm-lifecycle-zoom-border-color, var(--color-border));
+  border-right: 1px solid var(--uxm-lifecycle-zoom-border-color, var(--color-border));
+  font-size: var(--uxm-lifecycle-zoom-font-size, 13px);
+  color: inherit;
+}
+
+.uxm-lifecycle-zoom-control__num {
+  font-weight: 500;
+  min-width: 26px;
+  text-align: center;
+}
+
+.uxm-lifecycle-zoom-control__unit {
+  color: var(--color-text-muted);
+  margin-left: 2px;
+}

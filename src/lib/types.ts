@@ -1,0 +1,61 @@
+export type Category = "App" | "Buttons" | "Inputs" | "Display" | "Feedback" | "Forms" | "Composite" | "Diagram" | "Icons";
+
+export interface BrandTokens {
+  light?: Record<string, string>;
+  dark?: Record<string, string>;
+}
+
+export interface BrandConfig {
+  logoUrl?: string;
+  iconUrl?: string;
+  faviconUrl?: string;
+  logoUrlDark?: string;
+  iconUrlDark?: string;
+  faviconUrlDark?: string;
+  fontFamily?: string;
+  tokens?: BrandTokens;
+}
+
+export type EditorControlType = "color" | "number" | "select" | "toggle" | "slider" | "text";
+
+export interface StyleProperty {
+  key: string;
+  label: string;
+  control: EditorControlType;
+  defaultValue: string | number | boolean;
+  options?: string[];
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: string;
+  showWhen?: Record<string, string>;
+  section?: string;
+}
+
+export interface LayoutVariant {
+  key: string;
+  label: string;
+  options: Array<{
+    value: string;
+    label: string;
+    showWhen?: Record<string, string>;
+  }>;
+  defaultValue: string;
+}
+
+export interface ComponentDef {
+  id: string;
+  name: string;
+  category: Category;
+  description: string;
+  styleProperties: StyleProperty[];
+  layoutVariants: LayoutVariant[];
+  canvasBackground?: boolean;
+}
+
+export type StyleOverrides = Record<string, string | number | boolean>;
+
+export interface PreviewProps {
+  styles: Record<string, string | number | boolean>;
+  variants: Record<string, string>;
+}

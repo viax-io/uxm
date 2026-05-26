@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.idea/
+.vscode/
+coverage/
+.npmrc
+
+# work with claude agents
+.claude/
+.mcp.json
+/todo

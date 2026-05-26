@@ -1,0 +1,8 @@
+/* ── lifecycle-node-card ── */
+
+.uxm-lifecycle-node-card--state {
+  --kind-icon-bg: color-mix(in srgb, var(--color-accent-bold) 18%, transparent);
+  --kind-icon-color: var(--color-accent-bold);
+  --kind-badge-bg: color-mix(in srgb, var(--color-accent-bold) 12%, transparent);
+  --kind-badge-color: var(--color-accent-bold);
+}

@@ -1,0 +1,48 @@
+import type { HTMLAttributes, ReactNode } from "react";
+import { cn } from "./cn";
+import { Icon } from "./icon";
+
+export type StatCardTrend = "up" | "down" | "neutral";
+
+export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
+  label: ReactNode;
+  value: ReactNode;
+  trend?: ReactNode;
+  trendDirection?: StatCardTrend;
+}
+
+export function StatCard({
+  label,
+  value,
+  trend,
+  trendDirection = "neutral",
+  className,
+  ...rest
+}: StatCardProps) {
+  return (
+    <div className={cn("uxm-stat-card", className)} {...rest}>
+      <p className="uxm-stat-card__label">{label}</p>
+      <div className="uxm-stat-card__row">
+        <span className="uxm-stat-card__value">{value}</span>
+        {trend && (
+          <span
+            className={cn(
+              "uxm-stat-card__trend",
+              `uxm-stat-card__trend--${trendDirection}`,
+            )}
+          >
+            {trendDirection !== "neutral" && (
+              <Icon
+                glyph="arrow-up"
+                size={12}
+                strokeWidth={2.5}
+                style={{ transform: trendDirection === "down" ? "rotate(180deg)" : undefined }}
+              />
+            )}
+            {trend}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}

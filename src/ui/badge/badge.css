@@ -1,0 +1,111 @@
+/* ── badge ── */
+
+/* Badge — notification indicator. Two modes (dot, count) × six tones.
+   - Count mode: root IS the pill — bg + text + padding + radius land on it.
+   - Dot mode: root is a flex row (dot + optional label). The visible circle
+     is the `__dot` inner span; tone bg paints it (not the root). When children
+     are provided, `__label` renders alongside and reads its own typography vars.
+   Per-tone bg/text and per-mode dimension knobs route through `--uxm-badge-*`
+   custom properties via the save-route fallback path; no PER_COMPONENT_MAPPING
+   entry needed. countFontWeight is non-REAL by design (avoids the save route
+   emitting bare `font-weight` on the root — that would leak into the label too). */
+
+.uxm-badge {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Count mode — root is the pill */
+
+.uxm-badge--count {
+  justify-content: center;
+  white-space: nowrap;
+  min-width: var(--uxm-badge-count-min-width, 18px);
+  height: var(--uxm-badge-count-min-width, 18px);
+  padding-inline: var(--uxm-badge-count-padding-x, 6px);
+  padding-block: var(--uxm-badge-count-padding-y, 1px);
+  font-size: var(--uxm-badge-count-font-size, 11px);
+  font-weight: var(--uxm-badge-count-font-weight, 600);
+  border-radius: var(--uxm-badge-count-border-radius, 999px);
+  box-sizing: border-box;
+}
+
+/* Dot mode — root is a layout row; dot circle is `__dot`, label is `__label` */
+
+.uxm-badge--dot {
+  gap: var(--uxm-badge-label-gap, 8px);
+}
+
+.uxm-badge__dot {
+  width: var(--uxm-badge-dot-size, 8px);
+  height: var(--uxm-badge-dot-size, 8px);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.uxm-badge__label {
+  font-size: var(--uxm-badge-label-font-size, 13px);
+  font-weight: var(--uxm-badge-label-font-weight, 500);
+  color: var(--uxm-badge-label-color, var(--color-text));
+}
+
+/* Type colors — count uses Tag's tonal palette (soft `${type}-bg` paired
+   with bold `${type}-text`) so adjacent Badges and Tags read as the same
+   status family. Dot mode reads a separate `--dot-color` per type that
+   defaults to the solid hue (`${type}-text`) for a punchier indicator. */
+
+.uxm-badge--count.uxm-badge--accent {
+  background-color: var(--uxm-badge-accent-bg, var(--color-accent-subtle));
+  color: var(--uxm-badge-accent-text, var(--color-accent-bold));
+}
+
+.uxm-badge--dot.uxm-badge--accent .uxm-badge__dot {
+  background-color: var(--uxm-badge-accent-dot-color, var(--color-accent-bold));
+}
+
+.uxm-badge--count.uxm-badge--success {
+  background-color: var(--uxm-badge-success-bg, var(--color-success-bg));
+  color: var(--uxm-badge-success-text, var(--color-success-text));
+}
+
+.uxm-badge--dot.uxm-badge--success .uxm-badge__dot {
+  background-color: var(--uxm-badge-success-dot-color, var(--color-success-text));
+}
+
+.uxm-badge--count.uxm-badge--warning {
+  background-color: var(--uxm-badge-warning-bg, var(--color-warning-bg));
+  color: var(--uxm-badge-warning-text, var(--color-warning-text));
+}
+
+.uxm-badge--dot.uxm-badge--warning .uxm-badge__dot {
+  background-color: var(--uxm-badge-warning-dot-color, var(--color-warning-text));
+}
+
+.uxm-badge--count.uxm-badge--danger {
+  background-color: var(--uxm-badge-danger-bg, var(--color-danger-bg));
+  color: var(--uxm-badge-danger-text, var(--color-danger-text));
+}
+
+.uxm-badge--dot.uxm-badge--danger .uxm-badge__dot {
+  background-color: var(--uxm-badge-danger-dot-color, var(--color-danger-text));
+}
+
+.uxm-badge--count.uxm-badge--info {
+  background-color: var(--uxm-badge-info-bg, var(--color-info-bg));
+  color: var(--uxm-badge-info-text, var(--color-info-text));
+}
+
+.uxm-badge--dot.uxm-badge--info .uxm-badge__dot {
+  background-color: var(--uxm-badge-info-dot-color, var(--color-info-text));
+}
+
+.uxm-badge--count.uxm-badge--neutral {
+  background-color: var(--uxm-badge-neutral-bg, var(--color-surface-alt));
+  color: var(--uxm-badge-neutral-text, var(--color-text-strong));
+}
+
+.uxm-badge--dot.uxm-badge--neutral .uxm-badge__dot {
+  background-color: var(--uxm-badge-neutral-dot-color, var(--color-text-muted));
+}

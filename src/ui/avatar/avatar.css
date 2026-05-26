@@ -1,0 +1,31 @@
+/* ── avatar ── */
+
+.uxm-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-highlight-cool);
+  color: var(--color-text);
+  /* `size` knob is non-REAL, so saves emit `--uxm-avatar-size: Xpx` (not bare
+     width/height). CSS reads the var on both dimensions so saved values
+     reach production consumers. Live preview's inline `width`/`height`
+     still wins via specificity. */
+  width: var(--uxm-avatar-size, 40px);
+  height: var(--uxm-avatar-size, 40px);
+  border-radius: 99px;
+  border: 0 solid var(--color-border);
+  font-size: 16px;
+  font-weight: 600;
+  user-select: none;
+  box-sizing: border-box;
+  /* Image mode fills the frame; overflow hides anything past the radius. */
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.uxm-avatar__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

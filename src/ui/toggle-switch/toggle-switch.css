@@ -1,0 +1,46 @@
+/* ── toggle-switch ── */
+
+.uxm-toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+/* ToggleSwitch — registry knobs: trackColorOn / Off, thumbColor, width,
+   height. Thumb sizing derives from height (height − 4px inset) and the
+   "on" thumb position derives from width minus thumb-size minus 2px,
+   so the math survives any width/height change. Was previously hardcoded
+   `left: calc(100% - 22px)` which broke on width changes. */
+
+.uxm-toggle-switch__track {
+  position: relative;
+  width: var(--uxm-toggle-switch-width, 44px);
+  height: var(--uxm-toggle-switch-height, 24px);
+  flex-shrink: 0;
+  border-radius: 99px;
+  background-color: var(--uxm-toggle-switch-track-off, var(--color-border));
+  transition: background-color 0.2s;
+}
+
+.uxm-toggle-switch__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(var(--uxm-toggle-switch-height, 24px) - 4px);
+  height: calc(var(--uxm-toggle-switch-height, 24px) - 4px);
+  border-radius: 50%;
+  background-color: var(--uxm-toggle-switch-thumb, var(--color-card));
+  box-shadow: var(--shadow-sm);
+  transition: left 0.2s;
+}
+
+.uxm-toggle-switch__input:checked + .uxm-toggle-switch__track {
+  background-color: var(--uxm-toggle-switch-track-on, var(--color-accent));
+}
+
+.uxm-toggle-switch__input:checked + .uxm-toggle-switch__track > .uxm-toggle-switch__thumb {
+  left: calc(var(--uxm-toggle-switch-width, 44px) - var(--uxm-toggle-switch-height, 24px) + 2px);
+}
