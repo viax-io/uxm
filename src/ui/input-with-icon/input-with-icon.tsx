@@ -1,6 +1,7 @@
-import type { InputHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from '@/helpers';
+import { Icon } from '@/ui/icon';
+
+import type { InputHTMLAttributes, ReactNode } from 'react';
 
 export interface InputWithIconProps extends InputHTMLAttributes<HTMLInputElement> {
   /** Leading icon (SVG or Icon component). */
@@ -23,21 +24,21 @@ export interface InputWithIconProps extends InputHTMLAttributes<HTMLInputElement
 export function InputWithIcon({
   icon,
   className,
-  type = "text",
+  type = 'text',
   clearable,
   onClear,
   value,
   ...rest
 }: InputWithIconProps) {
-  const isClearable = clearable ?? type === "search";
-  const hasValue = typeof value === "string" && value.length > 0;
-  const showClear = isClearable && hasValue && typeof onClear === "function";
+  const isClearable = clearable ?? type === 'search';
+  const hasValue = typeof value === 'string' && value.length > 0;
+  const showClear = isClearable && hasValue && typeof onClear === 'function';
 
   return (
     <div
       className={cn(
-        "uxm-input-with-icon",
-        isClearable && "uxm-input-with-icon--clearable",
+        'uxm-input-with-icon',
+        isClearable && 'uxm-input-with-icon--clearable',
         className,
       )}
     >

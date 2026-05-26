@@ -1,7 +1,8 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
 
-export interface ErrorPageProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export interface ErrorPageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Big numeric/textual code rendered above the title (e.g. "404"). */
   code?: ReactNode;
   /** Optional icon rendered in a tile above the code. */
@@ -27,7 +28,7 @@ export function ErrorPage({
   ...rest
 }: ErrorPageProps) {
   return (
-    <div className={cn("uxm-error-page", className)} {...rest}>
+    <div className={cn('uxm-error-page', className)} {...rest}>
       {icon && (
         <div className="uxm-error-page__icon" aria-hidden="true">
           {icon}

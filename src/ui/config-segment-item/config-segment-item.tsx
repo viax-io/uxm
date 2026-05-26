@@ -1,12 +1,13 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
+
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 // `name` here is the visible segment label (ReactNode). The native HTML
 // `name` attribute on <button> is a form-control name — not what we want
 // surfaced. Strip it from the props surface; consumers don't put buttons in
 // forms here.
 export interface ConfigSegmentItemProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "name"> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'name'> {
   /** Segment name (primary text). */
   name: ReactNode;
   /**
@@ -30,7 +31,7 @@ export function ConfigSegmentItem({
   meta,
   active,
   className,
-  type = "button",
+  type = 'button',
   ...rest
 }: ConfigSegmentItemProps) {
   return (
@@ -38,8 +39,8 @@ export function ConfigSegmentItem({
       type={type}
       aria-pressed={active}
       className={cn(
-        "uxm-config-segment-item",
-        active && "uxm-config-segment-item--active",
+        'uxm-config-segment-item',
+        active && 'uxm-config-segment-item--active',
         className,
       )}
       {...rest}

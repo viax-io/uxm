@@ -1,16 +1,21 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { useState } from 'react';
+
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface TabsOption {
   value: string;
   label: ReactNode;
   icon?: ReactNode;
+  /** Disabled tabs are inert and paint the disabled styling (opacity +
+   *  disabled text color). Selecting one is a no-op. */
+  disabled?: boolean;
 }
 
-export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   options: TabsOption[];
   value?: string;
   defaultValue?: string;
@@ -26,7 +31,7 @@ export function Tabs({
   ...rest
 }: TabsProps) {
   const isControlled = value !== undefined;
-  const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? "");
+  const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? '');
   const active = isControlled ? value : internal;
 
   const select = (next: string) => {
@@ -35,7 +40,7 @@ export function Tabs({
   };
 
   return (
-    <div role="tablist" className={cn("uxm-tabs", className)} {...rest}>
+    <div role="tablist" className={cn('uxm-tabs', className)} {...rest}>
       {options.map((opt) => {
         const isActive = opt.value === active;
         return (
@@ -44,7 +49,8 @@ export function Tabs({
             type="button"
             role="tab"
             aria-selected={isActive}
-            className={cn("uxm-tabs__tab", isActive && "uxm-tabs__tab--active")}
+            disabled={opt.disabled}
+            className={cn('uxm-tabs__tab', isActive && 'uxm-tabs__tab--active')}
             onClick={() => select(opt.value)}
           >
             {opt.icon && <span className="uxm-tabs__icon">{opt.icon}</span>}

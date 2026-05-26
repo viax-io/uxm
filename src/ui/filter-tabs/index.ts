@@ -1,1 +1,1 @@
-export * from "./filter-tabs";
+export * from './filter-tabs';

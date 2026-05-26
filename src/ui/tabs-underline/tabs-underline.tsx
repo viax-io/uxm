@@ -1,16 +1,21 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { useState } from 'react';
+
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface TabsUnderlineOption {
   value: string;
   label: ReactNode;
   icon?: ReactNode;
+  /** Disabled tabs are inert and paint the disabled styling (opacity +
+   *  disabled text color). Selecting one is a no-op. */
+  disabled?: boolean;
 }
 
-export interface TabsUnderlineProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface TabsUnderlineProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   options: TabsUnderlineOption[];
   value?: string;
   defaultValue?: string;
@@ -26,7 +31,7 @@ export function TabsUnderline({
   ...rest
 }: TabsUnderlineProps) {
   const isControlled = value !== undefined;
-  const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? "");
+  const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? '');
   const active = isControlled ? value : internal;
 
   const select = (next: string) => {
@@ -35,7 +40,7 @@ export function TabsUnderline({
   };
 
   return (
-    <div role="tablist" className={cn("uxm-tabs-underline", className)} {...rest}>
+    <div role="tablist" className={cn('uxm-tabs-underline', className)} {...rest}>
       {options.map((opt) => {
         const isActive = opt.value === active;
         return (
@@ -44,9 +49,10 @@ export function TabsUnderline({
             type="button"
             role="tab"
             aria-selected={isActive}
+            disabled={opt.disabled}
             className={cn(
-              "uxm-tabs-underline__tab",
-              isActive && "uxm-tabs-underline__tab--active",
+              'uxm-tabs-underline__tab',
+              isActive && 'uxm-tabs-underline__tab--active',
             )}
             onClick={() => select(opt.value)}
           >

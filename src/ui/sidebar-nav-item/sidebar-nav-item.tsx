@@ -1,10 +1,14 @@
-import type { AnchorHTMLAttributes, CSSProperties, ElementType, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
+
+import type { AnchorHTMLAttributes, CSSProperties, ElementType, ReactNode } from 'react';
 
 export interface SidebarNavItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
-  /** Icon node — typically <Icon glyph="..." /> from @viax/uxm/ui. */
+  /** Icon node — typically <Icon glyph="..." /> from @modo/uxm/ui. */
   icon?: ReactNode;
   active?: boolean;
+  /** Disabled items render `aria-disabled` so the CSS disabled rule
+   *  paints and `pointer-events: none` blocks interaction. */
+  disabled?: boolean;
   /** Override the icon-tile background color for this item (e.g. model-type accent). */
   iconBg?: string;
   /** Override the icon (foreground) color for this item. */
@@ -29,9 +33,10 @@ export interface SidebarNavItemProps extends AnchorHTMLAttributes<HTMLAnchorElem
 }
 
 export function SidebarNavItem({
-  as: Component = "a",
+  as: Component = 'a',
   icon,
   active,
+  disabled = false,
   iconBg,
   iconColor,
   trailing,
@@ -44,8 +49,9 @@ export function SidebarNavItem({
     : undefined;
   return (
     <Component
-      aria-current={active ? "page" : undefined}
-      className={cn("uxm-sidebar-nav-item", active && "uxm-sidebar-nav-item--active", className)}
+      aria-current={active ? 'page' : undefined}
+      {...(disabled ? { 'aria-disabled': true as const, tabIndex: -1 } : {})}
+      className={cn('uxm-sidebar-nav-item', active && 'uxm-sidebar-nav-item--active', className)}
       {...rest}
     >
       {icon && (

@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface InlineFilterProps extends HTMLAttributes<HTMLDivElement> {
   search?: ReactNode;
@@ -17,7 +18,7 @@ export function InlineFilter({
   ...rest
 }: InlineFilterProps) {
   return (
-    <div className={cn("uxm-inline-filter", className)} {...rest}>
+    <div className={cn('uxm-inline-filter', className)} {...rest}>
       {search && <div className="uxm-inline-filter__search">{search}</div>}
       {filters && <div className="uxm-inline-filter__filters">{filters}</div>}
       {trailing && <div className="uxm-inline-filter__trailing">{trailing}</div>}

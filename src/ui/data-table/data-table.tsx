@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
 
-export type DataTableDensity = "compact" | "default" | "relaxed";
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export type DataTableDensity = 'compact' | 'default' | 'relaxed';
 
 export interface DataTableColumn<T> {
   key: string;
   header: ReactNode;
   /** Optional cell renderer; defaults to `row[key]`. */
   render?: (row: T) => ReactNode;
-  align?: "left" | "right" | "center";
+  align?: 'left' | 'right' | 'center';
 }
 
-export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
+export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   columns: DataTableColumn<T>[];
   rows: T[];
   density?: DataTableDensity;
@@ -24,7 +25,7 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
 export function DataTable<T>({
   columns,
   rows,
-  density = "default",
+  density = 'default',
   rowKey,
   onRowClick,
   className,
@@ -32,7 +33,7 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   return (
     <div
-      className={cn("uxm-data-table", `uxm-data-table--${density}`, className)}
+      className={cn('uxm-data-table', `uxm-data-table--${density}`, className)}
       {...rest}
     >
       <table className="uxm-data-table__table">
@@ -41,7 +42,7 @@ export function DataTable<T>({
             {columns.map((c) => (
               <th
                 key={c.key}
-                className={cn("uxm-data-table__th", c.align && `uxm-data-table__th--${c.align}`)}
+                className={cn('uxm-data-table__th', c.align && `uxm-data-table__th--${c.align}`)}
               >
                 {c.header}
               </th>
@@ -53,15 +54,15 @@ export function DataTable<T>({
             <tr
               key={rowKey(row)}
               className={cn(
-                "uxm-data-table__row",
-                onRowClick && "uxm-data-table__row--interactive",
+                'uxm-data-table__row',
+                onRowClick && 'uxm-data-table__row--interactive',
               )}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
             >
               {columns.map((c) => (
                 <td
                   key={c.key}
-                  className={cn("uxm-data-table__td", c.align && `uxm-data-table__td--${c.align}`)}
+                  className={cn('uxm-data-table__td', c.align && `uxm-data-table__td--${c.align}`)}
                 >
                   {c.render ? c.render(row) : (row as Record<string, ReactNode>)[c.key]}
                 </td>

@@ -1,0 +1,37 @@
+/* ButtonIcon — moved from monolithic styles.css */
+
+.uxm-button-icon {
+  width: var(--uxm-button-icon-size, 40px);
+  height: var(--uxm-button-icon-size, 40px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: var(--uxm-button-icon-background-color, var(--color-surface-alt));
+  color: var(--uxm-button-icon-color, var(--color-text));
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, opacity 0.15s;
+}
+.uxm-button-icon > svg {
+  width: var(--uxm-button-icon-icon-size, 18px);
+  height: var(--uxm-button-icon-icon-size, 18px);
+}
+.uxm-button-icon:hover:not(:disabled) {
+  background-color: var(--uxm-button-icon-hover-background-color, var(--color-accent-subtle));
+  color: var(--uxm-button-icon-hover-color, var(--color-text));
+}
+.uxm-button-icon:active:not(:disabled) {
+  background-color: var(--uxm-button-icon-active-background-color, var(--color-accent-bold));
+  color: var(--uxm-button-icon-active-color, var(--color-text-inverse));
+}
+.uxm-button-icon:focus-visible {
+  outline: 2px solid var(--uxm-button-icon-focus-ring-color, var(--color-accent));
+  outline-offset: 2px;
+  color: var(--uxm-button-icon-focus-color, var(--color-text));
+}
+.uxm-button-icon:disabled {
+  opacity: var(--uxm-button-icon-disabled-opacity, 0.4);
+  color: var(--uxm-button-icon-disabled-color, var(--color-text-muted));
+  cursor: not-allowed;
+}

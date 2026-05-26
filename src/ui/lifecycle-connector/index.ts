@@ -1,1 +1,1 @@
-export * from "./lifecycle-connector";
+export * from './lifecycle-connector';

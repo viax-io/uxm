@@ -1,7 +1,8 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
 
-export type PageShellVariant = "standard" | "canvas";
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export type PageShellVariant = 'standard' | 'canvas';
 
 export interface PageShellProps extends HTMLAttributes<HTMLDivElement> {
   /**
@@ -23,7 +24,7 @@ export interface PageShellProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function PageShell({
-  variant = "standard",
+  variant = 'standard',
   sidebar,
   topBar,
   children,
@@ -31,7 +32,7 @@ export function PageShell({
   ...rest
 }: PageShellProps) {
   return (
-    <div className={cn("uxm-page-shell", `uxm-page-shell--${variant}`, className)} {...rest}>
+    <div className={cn('uxm-page-shell', `uxm-page-shell--${variant}`, className)} {...rest}>
       {sidebar && <div className="uxm-page-shell__sidebar">{sidebar}</div>}
       <div className="uxm-page-shell__body">
         {topBar && <div className="uxm-page-shell__top-bar">{topBar}</div>}

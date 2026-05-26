@@ -1,6 +1,7 @@
-import type { AnchorHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from '@/helpers';
+import { Icon } from '@/ui/icon';
+
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
 
 export interface BackLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children: ReactNode;
@@ -8,7 +9,7 @@ export interface BackLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 
 export function BackLink({ children, className, ...rest }: BackLinkProps) {
   return (
-    <a className={cn("uxm-back-link", className)} {...rest}>
+    <a className={cn('uxm-back-link', className)} {...rest}>
       <Icon
         glyph="arrow-left"
         size={14}

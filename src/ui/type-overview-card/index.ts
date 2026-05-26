@@ -1,1 +1,1 @@
-export * from "./type-overview-card";
+export * from './type-overview-card';

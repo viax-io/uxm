@@ -4,7 +4,7 @@ export function resolveCssColor(value: string, scope?: Element | null): string {
   const trimmed = value.trim();
   const varMatch = trimmed.match(/^var\((--[\w-]+)(?:\s*,\s*([^)]+))?\)$/);
   if (varMatch) {
-    const source = scope ?? (typeof document !== "undefined" ? document.documentElement : null);
+    const source = scope ?? (typeof document !== 'undefined' ? document.documentElement : null);
     if (source) {
       const resolved = getComputedStyle(source).getPropertyValue(varMatch[1]).trim();
       if (resolved) return resolveCssColor(resolved, scope);
@@ -21,7 +21,7 @@ export function parseColor(value: string, scope?: Element | null): RGB | null {
   if (hex) {
     const h = hex[1];
     const expand = h.length === 3 || h.length === 4
-      ? h.split("").map((c) => c + c).join("")
+      ? h.split('').map((c) => c + c).join('')
       : h;
     return {
       r: parseInt(expand.slice(0, 2), 16),
@@ -35,7 +35,7 @@ export function parseColor(value: string, scope?: Element | null): RGB | null {
     const parts = rgb[1].split(/[\s,/]+/).filter(Boolean).slice(0, 3);
     if (parts.length === 3) {
       const [r, g, b] = parts.map((p) => {
-        const n = p.endsWith("%") ? (parseFloat(p) * 255) / 100 : parseFloat(p);
+        const n = p.endsWith('%') ? (parseFloat(p) * 255) / 100 : parseFloat(p);
         return Math.round(n);
       });
       return { r, g, b };
@@ -61,17 +61,17 @@ export function contrastRatio(fg: RGB, bg: RGB): number {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-export type WcagLevel = "AAA" | "AA" | "AA-large" | "fail";
+export type WcagLevel = 'AAA' | 'AA' | 'AA-large' | 'fail';
 
 export function wcagLevel(ratio: number): WcagLevel {
-  if (ratio >= 7) return "AAA";
-  if (ratio >= 4.5) return "AA";
-  if (ratio >= 3) return "AA-large";
-  return "fail";
+  if (ratio >= 7) return 'AAA';
+  if (ratio >= 4.5) return 'AA';
+  if (ratio >= 3) return 'AA-large';
+  return 'fail';
 }
 
 export function rgbToHex({ r, g, b }: RGB): string {
-  const c = (n: number) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, "0");
+  const c = (n: number) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0');
   return `#${c(r)}${c(g)}${c(b)}`;
 }
 

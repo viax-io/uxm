@@ -1,5 +1,6 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface SectionHeaderProps extends HTMLAttributes<HTMLDivElement> {
   /** Heading text — rendered uppercase by default. */
@@ -35,7 +36,7 @@ export function SectionHeader({
   ...rest
 }: SectionHeaderProps) {
   return (
-    <div className={cn("uxm-section-header", className)} {...rest}>
+    <div className={cn('uxm-section-header', className)} {...rest}>
       <div className="uxm-section-header__row">
         <h4 className="uxm-section-header__title">{children}</h4>
         {trailing && (

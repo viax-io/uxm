@@ -1,0 +1,64 @@
+/* ── sidebar-nav-item ── */
+
+.uxm-sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--color-text-strong);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.uxm-sidebar-nav-item:hover {
+  background-color: color-mix(in srgb, var(--color-surface) 60%, transparent);
+  color: var(--color-text);
+}
+
+.uxm-sidebar-nav-item--active {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.uxm-sidebar-nav-item__icon {
+  width: var(--uxm-snavitem-icon-tile-size, 24px);
+  height: var(--uxm-snavitem-icon-tile-size, 24px);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: var(--uxm-snavitem-icon-tile-radius, 6px);
+  background-color: var(--uxm-snavitem-icon-bg, color-mix(in srgb, var(--color-text) 6%, transparent));
+  color: var(--uxm-snavitem-icon-color, var(--color-text));
+}
+
+.uxm-sidebar-nav-item__icon > svg {
+  width: var(--uxm-snavitem-icon-size, 14px);
+  height: var(--uxm-snavitem-icon-size, 14px);
+}
+
+.uxm-sidebar-nav-item__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uxm-sidebar-nav-item__trailing {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.uxm-sidebar-nav-item:hover .uxm-sidebar-nav-item__trailing,
+.uxm-sidebar-nav-item:focus-within .uxm-sidebar-nav-item__trailing {
+  opacity: 1;
+}

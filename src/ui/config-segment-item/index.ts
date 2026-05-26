@@ -1,1 +1,1 @@
-export * from "./config-segment-item";
+export * from './config-segment-item';

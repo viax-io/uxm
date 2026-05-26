@@ -1,17 +1,23 @@
-"use client";
+'use client';
 
-import { useState, type ButtonHTMLAttributes, type ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
+
+import { cn } from '@/helpers';
+
+import { Icon } from '../icon';
 
 export interface DisclosureProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onChange" | "value"> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> {
   icon?: ReactNode;
   label: ReactNode;
-  value?: ReactNode;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Disabled disclosures render `disabled` natively on the button —
+   *  CSS `:disabled` paints the dimmed treatment and clicks are
+   *  blocked. `aria-disabled` selector also matches for symmetry with
+   *  the rest of the family. */
+  disabled?: boolean;
 }
 
 /**
@@ -23,12 +29,11 @@ export interface DisclosureProps
 export function Disclosure({
   icon,
   label,
-  value,
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
   className,
-  type = "button",
+  type = 'button',
   onClick,
   ...rest
 }: DisclosureProps) {
@@ -39,7 +44,7 @@ export function Disclosure({
   return (
     <button
       type={type}
-      className={cn("uxm-disclosure", open && "uxm-disclosure--open", className)}
+      className={cn('uxm-disclosure', open && 'uxm-disclosure--open', className)}
       aria-expanded={open}
       onClick={(e) => {
         const next = !open;
@@ -52,9 +57,6 @@ export function Disclosure({
       {icon && <span className="uxm-disclosure__icon">{icon}</span>}
       <span className="uxm-disclosure__content">
         <span className="uxm-disclosure__label">{label}</span>
-        {value !== undefined && value !== null && (
-          <span className="uxm-disclosure__value">{value}</span>
-        )}
       </span>
       <Icon
         glyph="chevron-right"

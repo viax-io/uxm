@@ -1,5 +1,6 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
+
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export interface ButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Leading icon (SVG element or Icon component). */
@@ -11,11 +12,11 @@ export function ButtonWithIcon({
   icon,
   children,
   className,
-  type = "button",
+  type = 'button',
   ...rest
 }: ButtonWithIconProps) {
   return (
-    <button type={type} className={cn("uxm-button-with-icon", className)} {...rest}>
+    <button type={type} className={cn('uxm-button-with-icon', className)} {...rest}>
       <span className="uxm-button-with-icon__icon">{icon}</span>
       <span className="uxm-button-with-icon__label">{children}</span>
     </button>

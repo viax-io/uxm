@@ -1,1 +1,1 @@
-export * from "./side-flexpane";
+export * from './side-flexpane';

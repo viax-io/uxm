@@ -1,25 +1,26 @@
-import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
-import { IconTile } from "./icon-tile";
+import { cn } from '@/helpers';
+import { Icon } from '@/ui/icon';
+import { IconTile } from '@/ui/icon-tile';
+
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 
 // The kind modifier classes (`.uxm-lifecycle-node-card--state` etc.) set
 // `--kind-icon-bg` and `--kind-icon-color` on the card. Those bridge to
 // IconTile's own `--uxm-icon-tile-{bg,color}` so the kind-aware coloring
 // continues to drive the icon tile after composition.
 const ICON_TILE_STYLE: CSSProperties = {
-  ["--uxm-icon-tile-bg" as string]: "var(--kind-icon-bg)",
-  ["--uxm-icon-tile-color" as string]: "var(--kind-icon-color)",
-  ["--uxm-icon-tile-size" as string]: "var(--uxm-lifecycle-node-card-icon-size, 32px)",
-  ["--uxm-icon-tile-radius" as string]: "6px",
+  ['--uxm-icon-tile-bg' as string]: 'var(--kind-icon-bg)',
+  ['--uxm-icon-tile-color' as string]: 'var(--kind-icon-color)',
+  ['--uxm-icon-tile-size' as string]: 'var(--uxm-lifecycle-node-card-icon-size, 32px)',
+  ['--uxm-icon-tile-radius' as string]: '6px',
 };
 
-export type LifecycleNodeKind = "state" | "condition" | "task";
+export type LifecycleNodeKind = 'state' | 'condition' | 'task';
 
 // Drop the native HTML `title` attribute (a string, used for tooltips) — our
 // `title` prop is the primary content (ReactNode). Tooltips can still be set
 // via `aria-label` if needed.
-export interface LifecycleNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+export interface LifecycleNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** What kind of step this node represents — drives the icon, label, and accent color. */
   kind: LifecycleNodeKind;
   /** Primary text — typically the node name (e.g. "In Cart", "Validate Price"). */
@@ -37,18 +38,18 @@ export interface LifecycleNodeCardProps extends Omit<HTMLAttributes<HTMLDivEleme
 }
 
 const KIND_LABEL: Record<LifecycleNodeKind, string> = {
-  state: "State",
-  condition: "Condition",
-  task: "Task",
+  state: 'State',
+  condition: 'Condition',
+  task: 'Task',
 };
 
 // Map each node kind to its glyph in the Icon registry. Centralised so
 // other lifecycle components (the add-step-modal, edge-insert-menu)
 // share the exact same kind→glyph contract.
 const KIND_GLYPH: Record<LifecycleNodeKind, string> = {
-  state: "check-circle",
-  condition: "question-mark-circle",
-  task: "cog-6-tooth",
+  state: 'check-circle',
+  condition: 'question-mark-circle',
+  task: 'cog-6-tooth',
 };
 
 function NodeIcon({ kind }: { kind: LifecycleNodeKind }) {
@@ -80,9 +81,9 @@ export function LifecycleNodeCard({
     <div
       {...rest}
       className={cn(
-        "uxm-lifecycle-node-card",
+        'uxm-lifecycle-node-card',
         `uxm-lifecycle-node-card--${kind}`,
-        active && "uxm-lifecycle-node-card--active",
+        active && 'uxm-lifecycle-node-card--active',
         className,
       )}
       style={containerStyle}

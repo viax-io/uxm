@@ -6,7 +6,7 @@
  * subpath entries (`@viax/uxm/ui`, `@viax/uxm/tokens`) remain available for
  * tree-shaking-friendly, granular consumption.
  */
-export * from "./ui";
-export * from "./tokens";
+export * from './ui';
+export * from './tokens';
 // WCAG/contrast helpers — useful for tooling that needs to audit token pairs.
-export * from "./lib/contrast";
+export * from './lib/contrast';

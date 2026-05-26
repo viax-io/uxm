@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import type { ChangeEvent, CSSProperties, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
+
+import type { ChangeEvent, CSSProperties, ReactNode } from 'react';
 
 export interface ToggleSwitchProps {
   checked?: boolean;
@@ -27,7 +28,7 @@ export function ToggleSwitch({
 }: ToggleSwitchProps) {
   return (
     <label
-      className={cn("uxm-toggle-switch", disabled && "uxm-toggle-switch--disabled", className)}
+      className={cn('uxm-toggle-switch', disabled && 'uxm-toggle-switch--disabled', className)}
       style={style}
     >
       <input

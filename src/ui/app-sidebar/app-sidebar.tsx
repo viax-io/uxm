@@ -1,9 +1,11 @@
-"use client";
+'use client';
 
-import type { ElementType, HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
-import { SidebarNavItem } from "./sidebar-nav-item";
+import { cn } from '@/helpers';
+
+import { Icon } from '../icon';
+import { SidebarNavItem } from '../sidebar-nav-item';
+
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 
 export interface AppSidebarBrand {
   /** Wide logo (shown when expanded). */
@@ -52,6 +54,14 @@ export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
    * framework-neutral. The consumer plugs in the routing primitive.
    */
   linkAs?: ElementType;
+  /**
+   * Whether the mobile drawer is open. Only meaningful below the 768px
+   * breakpoint — at desktop widths the sidebar is always in-flow and this
+   * flag is ignored. Defaults to false.
+   */
+  mobileOpen?: boolean;
+  /** Called when the user dismisses the mobile drawer (backdrop click). */
+  onMobileClose?: () => void;
 }
 
 export function AppSidebar({
@@ -61,18 +71,35 @@ export function AppSidebar({
   onCollapseToggle,
   footer,
   linkAs,
+  mobileOpen = false,
+  onMobileClose,
   className,
   ...rest
 }: AppSidebarProps) {
   return (
-    <aside
-      className={cn(
-        "uxm-app-sidebar",
-        collapsed && "uxm-app-sidebar--collapsed",
-        className,
+    <>
+      {/* Mobile-only backdrop: rendered as a sibling so the consumer's
+          page-shell slot still receives exactly one element (the aside)
+          via fragment fall-through. Both elements are `position: fixed`,
+          so they don't disrupt the consumer's flex layout. CSS hides
+          both `--mobile-*` chrome at min-width: 768px. */}
+      {mobileOpen && (
+        <button
+          type="button"
+          className="uxm-app-sidebar__mobile-backdrop"
+          aria-label="Close navigation"
+          onClick={onMobileClose}
+        />
       )}
-      {...rest}
-    >
+      <aside
+        className={cn(
+          'uxm-app-sidebar',
+          collapsed && 'uxm-app-sidebar--collapsed',
+          mobileOpen && 'uxm-app-sidebar--mobile-open',
+          className,
+        )}
+        {...rest}
+      >
       <div className="uxm-app-sidebar__header">
         {collapsed ? (
           <button
@@ -83,7 +110,7 @@ export function AppSidebar({
           >
             {brand.iconUrl && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={brand.iconUrl} alt={brand.alt ?? ""} />
+              <img src={brand.iconUrl} alt={brand.alt ?? ''} />
             )}
           </button>
         ) : (
@@ -91,7 +118,7 @@ export function AppSidebar({
             <span className="uxm-app-sidebar__brand">
               {brand.logoUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={brand.logoUrl} alt={brand.alt ?? ""} />
+                <img src={brand.logoUrl} alt={brand.alt ?? ''} />
               )}
             </span>
             {onCollapseToggle && (
@@ -126,11 +153,11 @@ export function AppSidebar({
                 trailing={collapsed ? undefined : item.trailing}
                 title={collapsed ? item.label : undefined}
                 className={cn(
-                  "uxm-app-sidebar__item",
-                  collapsed && "uxm-app-sidebar__item--collapsed",
+                  'uxm-app-sidebar__item',
+                  collapsed && 'uxm-app-sidebar__item--collapsed',
                 )}
               >
-                {collapsed ? "" : item.label}
+                {collapsed ? '' : item.label}
               </SidebarNavItem>
             ))}
           </div>
@@ -141,5 +168,6 @@ export function AppSidebar({
         <div className="uxm-app-sidebar__footer">{footer}</div>
       )}
     </aside>
+    </>
   );
 }

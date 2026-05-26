@@ -1,1 +1,1 @@
-export * from "./meta-row";
+export * from './meta-row';

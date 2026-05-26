@@ -1,5 +1,6 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
+
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface PropertyFieldProps extends HTMLAttributes<HTMLDivElement> {
   label: ReactNode;
@@ -8,7 +9,7 @@ export interface PropertyFieldProps extends HTMLAttributes<HTMLDivElement> {
 
 export function PropertyField({ label, children, className, ...rest }: PropertyFieldProps) {
   return (
-    <div className={cn("uxm-property-field", className)} {...rest}>
+    <div className={cn('uxm-property-field', className)} {...rest}>
       <span className="uxm-property-field__label">{label}</span>
       <span className="uxm-property-field__value">{children}</span>
     </div>
@@ -21,7 +22,7 @@ export interface PropertyGridProps extends HTMLAttributes<HTMLDivElement> {
 
 export function PropertyGrid({ children, className, ...rest }: PropertyGridProps) {
   return (
-    <div className={cn("uxm-property-grid", className)} {...rest}>
+    <div className={cn('uxm-property-grid', className)} {...rest}>
       {children}
     </div>
   );

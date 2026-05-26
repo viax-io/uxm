@@ -1,10 +1,12 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from '@/helpers';
 
-export type AlertVariant = "success" | "info" | "warning" | "error";
+import { Icon } from '../icon';
 
-export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export type AlertVariant = 'success' | 'info' | 'warning' | 'error';
+
+export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   variant?: AlertVariant;
   title?: ReactNode;
   icon?: ReactNode;
@@ -14,14 +16,14 @@ export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"
 // Map each alert variant to its glyph in the Icon registry. Callers that
 // want a custom icon can still pass `icon={...}` to override.
 const VARIANT_GLYPH: Record<AlertVariant, string> = {
-  success: "check-circle",
-  info: "info",
-  warning: "exclamation-triangle",
-  error: "exclamation-circle",
+  success: 'check-circle',
+  info: 'info',
+  warning: 'exclamation-triangle',
+  error: 'exclamation-circle',
 };
 
 export function Alert({
-  variant = "info",
+  variant = 'info',
   title,
   icon,
   children,
@@ -29,7 +31,7 @@ export function Alert({
   ...rest
 }: AlertProps) {
   return (
-    <div role="alert" className={cn("uxm-alert", `uxm-alert--${variant}`, className)} {...rest}>
+    <div role="alert" className={cn('uxm-alert', `uxm-alert--${variant}`, className)} {...rest}>
       <span className="uxm-alert__icon" aria-hidden="true">
         {icon ?? <Icon glyph={VARIANT_GLYPH[variant]} size={20} strokeWidth={1.5} />}
       </span>

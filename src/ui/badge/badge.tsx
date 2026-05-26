@@ -1,8 +1,9 @@
-import type { HTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
 
-export type BadgeMode = "dot" | "count";
-export type BadgeType = "accent" | "success" | "warning" | "danger" | "info" | "neutral";
+import type { HTMLAttributes } from 'react';
+
+export type BadgeMode = 'dot' | 'count';
+export type BadgeType = 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   mode?: BadgeMode;
@@ -12,17 +13,17 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 export function Badge({
-  mode = "count",
-  type = "danger",
+  mode = 'count',
+  type = 'danger',
   count,
   max = 99,
   className,
   children,
   ...rest
 }: BadgeProps) {
-  const isDot = mode === "dot";
+  const isDot = mode === 'dot';
   const rootClass = cn(
-    "uxm-badge",
+    'uxm-badge',
     `uxm-badge--${mode}`,
     `uxm-badge--${type}`,
     className,
@@ -32,7 +33,7 @@ export function Badge({
     return (
       <span
         className={rootClass}
-        role={children ? undefined : "status"}
+        role={children ? undefined : 'status'}
         {...rest}
       >
         <span className="uxm-badge__dot" aria-hidden={children ? true : undefined} />
@@ -45,7 +46,7 @@ export function Badge({
 
   const display =
     children !== undefined ? children
-    : typeof count === "number" ? (count > max ? `${max}+` : String(count))
+    : typeof count === 'number' ? (count > max ? `${max}+` : String(count))
     : null;
 
   return (

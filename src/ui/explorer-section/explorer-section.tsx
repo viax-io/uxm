@@ -1,9 +1,11 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from '@/helpers';
+
+import { Icon } from '../icon';
+
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export interface ExplorerSectionProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /** Section heading text. */
   children: ReactNode;
   /** Whether the section is currently expanded — controls chevron rotation. */
@@ -18,6 +20,9 @@ export interface ExplorerSectionProps
    * right-aligned with muted styling.
    */
   trailing?: ReactNode;
+  /** Disabled sections render `disabled` natively on the button — CSS
+   *  `:disabled` paints the dimmed treatment and clicks are blocked. */
+  disabled?: boolean;
 }
 
 /**
@@ -41,7 +46,7 @@ export function ExplorerSection({
   indicator,
   trailing,
   className,
-  type = "button",
+  type = 'button',
   ...rest
 }: ExplorerSectionProps) {
   return (
@@ -49,8 +54,8 @@ export function ExplorerSection({
       type={type}
       aria-expanded={open}
       className={cn(
-        "uxm-explorer-section",
-        open && "uxm-explorer-section--open",
+        'uxm-explorer-section',
+        open && 'uxm-explorer-section--open',
         className,
       )}
       {...rest}

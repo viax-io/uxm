@@ -1,7 +1,8 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
 
-export type TooltipPlacement = "top" | "bottom" | "left" | "right";
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
 export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
   placement?: TooltipPlacement;
@@ -10,7 +11,7 @@ export interface TooltipProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function Tooltip({
-  placement = "top",
+  placement = 'top',
   showArrow = true,
   children,
   className,
@@ -19,7 +20,7 @@ export function Tooltip({
   return (
     <div
       role="tooltip"
-      className={cn("uxm-tooltip", `uxm-tooltip--${placement}`, className)}
+      className={cn('uxm-tooltip', `uxm-tooltip--${placement}`, className)}
       {...rest}
     >
       <span className="uxm-tooltip__body">{children}</span>
@@ -37,7 +38,7 @@ export function ContentTooltip({ shadow, children, className, ...rest }: Content
   return (
     <div
       role="tooltip"
-      className={cn("uxm-content-tooltip", shadow && "uxm-content-tooltip--shadow", className)}
+      className={cn('uxm-content-tooltip', shadow && 'uxm-content-tooltip--shadow', className)}
       {...rest}
     >
       {children}

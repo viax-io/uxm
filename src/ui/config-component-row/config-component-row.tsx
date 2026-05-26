@@ -1,13 +1,14 @@
-import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
-import { cn } from "./cn";
-import { IconTile } from "./icon-tile";
+import { cn } from '@/helpers';
+import { IconTile } from '@/ui/icon-tile';
+
+import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from 'react';
 
 // ConfigComponentRow's icon registry knobs (`iconTileSize` / `iconTileRadius`)
 // project onto IconTile's own CSS-variable surface. No bg/color knobs in
 // the registry, so default IconTile colors apply (surface-alt + text-muted).
 const ICON_TILE_STYLE: CSSProperties = {
-  ["--uxm-icon-tile-size" as string]: "var(--uxm-config-component-row-icon-tile-size, 28px)",
-  ["--uxm-icon-tile-radius" as string]: "var(--uxm-config-component-row-icon-tile-radius, 6px)",
+  ['--uxm-icon-tile-size' as string]: 'var(--uxm-config-component-row-icon-tile-size, 28px)',
+  ['--uxm-icon-tile-radius' as string]: 'var(--uxm-config-component-row-icon-tile-radius, 6px)',
 };
 
 // Drop two native button attributes from the props surface:
@@ -17,7 +18,7 @@ const ICON_TILE_STYLE: CSSProperties = {
 //   - `name`: HTML form-control name; consumers mean the field's display
 //     name (ReactNode) when they say "name".
 export interface ConfigComponentRowProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type" | "name"> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'name'> {
   /** Icon shown in the leading tile — typically <Icon glyph="..." />. */
   icon?: ReactNode;
   /** Component display name (primary text). */
@@ -59,8 +60,8 @@ export function ConfigComponentRow({
       type="button"
       aria-pressed={active}
       className={cn(
-        "uxm-config-component-row",
-        active && "uxm-config-component-row--active",
+        'uxm-config-component-row',
+        active && 'uxm-config-component-row--active',
         className,
       )}
       {...rest}

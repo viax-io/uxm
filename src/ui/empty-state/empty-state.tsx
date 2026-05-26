@@ -1,7 +1,8 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from '@/helpers';
 
-export interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   icon?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
@@ -17,7 +18,7 @@ export function EmptyState({
   ...rest
 }: EmptyStateProps) {
   return (
-    <div className={cn("uxm-empty-state", className)} {...rest}>
+    <div className={cn('uxm-empty-state', className)} {...rest}>
       {icon && <div className="uxm-empty-state__icon">{icon}</div>}
       <div className="uxm-empty-state__title">{title}</div>
       {description && <div className="uxm-empty-state__description">{description}</div>}
