@@ -1,0 +1,73 @@
+/* ── type-overview-card ── */
+
+/* TypeOverviewCard — registry knobs (bg, border, radius, padding,
+   accent*, icon*, label*, value*) all wired via `--uxm-typeoverview-*`
+   variables. The icon-side variables existed already; bg/border/radius/
+   padding and label/value text styling were the missing surface. */
+
+.uxm-type-overview-card {
+  background-color: var(--uxm-typeoverview-bg, var(--color-card));
+  border: 1px solid var(--uxm-typeoverview-border-color, var(--color-border));
+  border-radius: var(--uxm-typeoverview-radius, 4px);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  padding: var(--uxm-typeoverview-padding, 20px);
+  position: relative;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  /* Icon tile is now <IconTile>; TypeOverviewCard's `--uxm-typeoverview-icon-*`
+     bridge to IconTile's own CSS-variable surface in the .tsx. */
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
+    box-shadow: var(--shadow-xs);
+  }
+
+  &__accent {
+    background-color: var(--uxm-typeoverview-accent-color, var(--color-accent));
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transition: width 0.15s ease;
+    width: var(--uxm-typeoverview-accent-width, 4px);
+  }
+
+  &:hover &__accent {
+    width: calc(var(--uxm-typeoverview-accent-width, 4px) + 2px);
+  }
+
+  &__label {
+    color: var(--uxm-typeoverview-label-color, var(--color-text-strong));
+    font-size: var(--uxm-typeoverview-label-size, 14px);
+    font-weight: 500;
+    margin: 0;
+  }
+
+  &__value {
+    color: var(--uxm-typeoverview-value-color, var(--color-text));
+    font-size: var(--uxm-typeoverview-value-size, 30px);
+    font-weight: 600;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  &__trailing {
+    align-items: center;
+    color: var(--color-accent-bold);
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 500;
+    gap: 4px;
+    margin-top: auto;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  &:hover &__trailing {
+    opacity: 1;
+  }
+}

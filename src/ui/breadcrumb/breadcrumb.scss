@@ -1,0 +1,57 @@
+/* ── breadcrumb ── */
+
+/* Breadcrumb — composes Link for clickable crumbs. Uses descendant
+   selectors (.uxm-breadcrumb .uxm-link) so breadcrumb-scope styling wins
+   over Link's own saved global overrides on the `.uxm-link` single-class
+   selector. Breadcrumb is sovereign in its own scope for color, hover,
+   and font-size; anything Breadcrumb doesn't override (font-weight,
+   underline offset/thickness) inherits from Link naturally. */
+
+.uxm-breadcrumb {
+  font-size: var(--uxm-breadcrumb-font-size, 13px);
+
+  & .uxm-link {
+    color: var(--uxm-breadcrumb-link-color, var(--color-text-muted));
+    font-size: var(--uxm-breadcrumb-font-size, 13px);
+    font-weight: var(--uxm-breadcrumb-link-weight, 500);
+    text-decoration-thickness: var(--uxm-breadcrumb-underline-thickness, 1px);
+    text-underline-offset: var(--uxm-breadcrumb-underline-offset, 3px);
+  }
+
+  & .uxm-link:hover {
+    color: var(--uxm-breadcrumb-link-hover-color, var(--color-text));
+  }
+
+  &__list {
+    align-items: center;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--uxm-breadcrumb-gap, 6px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    align-items: center;
+    display: inline-flex;
+    gap: var(--uxm-breadcrumb-gap, 6px);
+  }
+
+  &__current {
+    color: var(--uxm-breadcrumb-current-color, var(--color-text));
+    font-weight: var(--uxm-breadcrumb-current-weight, 600);
+  }
+
+  &__separator {
+    color: var(--uxm-breadcrumb-separator-color, var(--color-text-subtle));
+    flex-shrink: 0;
+    font-size: var(--uxm-breadcrumb-separator-size, 13px);
+    line-height: 1;
+
+    &--icon {
+      height: var(--uxm-breadcrumb-separator-size, 13px);
+      width: var(--uxm-breadcrumb-separator-size, 13px);
+    }
+  }
+}

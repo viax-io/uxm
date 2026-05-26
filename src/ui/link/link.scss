@@ -1,0 +1,43 @@
+/* ── link ── */
+
+/* Link — generic inline text anchor with underline + external variants */
+
+.uxm-link {
+  align-items: baseline;
+  color: var(--uxm-link-color, var(--color-accent));
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--uxm-link-font-size, 14px);
+  font-weight: var(--uxm-link-font-weight, 500);
+  gap: var(--uxm-link-external-icon-gap, 4px);
+  text-decoration-color: currentColor;
+  text-decoration-thickness: var(--uxm-link-underline-thickness, 1px);
+  text-underline-offset: var(--uxm-link-underline-offset, 3px);
+  transition: color 0.15s;
+
+  &--underline-none {
+    text-decoration-line: none;
+  }
+
+  &--underline-hover {
+    text-decoration-line: none;
+
+    &:hover {
+      text-decoration-line: underline;
+    }
+  }
+
+  &--underline-always {
+    text-decoration-line: underline;
+  }
+
+  &:hover {
+    color: var(--uxm-link-hover-color, var(--color-accent-bold));
+  }
+
+  &__external-icon {
+    flex-shrink: 0;
+    height: var(--uxm-link-external-icon-size, 12px);
+    width: var(--uxm-link-external-icon-size, 12px);
+  }
+}

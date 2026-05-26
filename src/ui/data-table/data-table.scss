@@ -1,0 +1,84 @@
+/* ── data-table ── */
+
+/* DataTable — root holds the rounded border container; row/cell visuals
+   live on inner __head, __row, __th, __td elements. All inner elements
+   read `--uxm-data-table-*` vars so saves of headerBg / headerText /
+   rowBg / rowHoverBg / borderColor / fontSize / cellPaddingX/Y reach
+   them. The `--compact` / `--relaxed` density modifier rules below
+   intentionally override cell padding directly. */
+
+.uxm-data-table {
+  border: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+  border-radius: 8px;
+  overflow: hidden;
+
+  &__table {
+    border-collapse: collapse;
+    font-size: var(--uxm-data-table-font-size, 13px);
+    width: 100%;
+  }
+
+  &__head {
+    & tr {
+      background-color: var(--uxm-data-table-header-bg, var(--color-surface-alt));
+    }
+  }
+
+  &__th {
+    border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+    color: var(--uxm-data-table-header-text, var(--color-text-muted));
+    font-size: 12px;
+    font-weight: 600;
+    padding: var(--uxm-data-table-cell-padding-y, 10px) var(--uxm-data-table-cell-padding-x, 12px);
+    text-align: left;
+
+    &--right {
+      text-align: right;
+    }
+
+    &--center {
+      text-align: center;
+    }
+  }
+
+  &__row {
+    background-color: var(--uxm-data-table-row-bg, var(--color-card));
+    transition: background-color 0.1s;
+
+    &--interactive {
+      cursor: pointer;
+    }
+
+    &:hover {
+      background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
+    }
+  }
+
+  &__td {
+    border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+    color: var(--color-text);
+    padding: var(--uxm-data-table-cell-padding-y, 12px) var(--uxm-data-table-cell-padding-x, 12px);
+
+    &--right {
+      text-align: right;
+    }
+
+    &--center {
+      text-align: center;
+    }
+  }
+
+  &__row:last-child &__td {
+    border-bottom: none;
+  }
+
+  &--compact &__th,
+  &--compact &__td {
+    padding: 6px 12px;
+  }
+
+  &--relaxed &__th,
+  &--relaxed &__td {
+    padding: 16px 12px;
+  }
+}

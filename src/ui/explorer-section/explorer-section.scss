@@ -1,0 +1,67 @@
+/* ── explorer-section ── */
+
+/* ── ExplorerSection ──
+   Disclosure header for grouping rows in a navigation list. Chevron
+   rotates with `--open`; indicator slot is for category color dots
+   etc. Hover bg matches the row hover so the section header feels
+   continuous with the list. */
+
+.uxm-explorer-section {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--uxm-explorer-section-border-radius, 6px);
+  color: var(--uxm-explorer-section-color, var(--color-text-muted));
+  cursor: pointer;
+  display: flex;
+  gap: var(--uxm-explorer-section-gap, 8px);
+  padding-block: var(--uxm-explorer-section-padding-y, 4px);
+  padding-inline: var(--uxm-explorer-section-padding-x, 8px);
+  text-align: left;
+  transition: background-color 0.12s, color 0.12s;
+  width: 100%;
+
+  &:hover {
+    background-color: var(--uxm-explorer-section-hover-bg, color-mix(in srgb, var(--color-surface) 40%, transparent));
+    color: var(--uxm-explorer-section-hover-color, var(--color-text-strong));
+  }
+
+  &__chevron {
+    color: var(--uxm-explorer-section-chevron-color, var(--color-text-muted));
+    flex-shrink: 0;
+    height: var(--uxm-explorer-section-chevron-size, 12px);
+    transform: rotate(-90deg);
+    transition: transform 0.15s ease;
+    width: var(--uxm-explorer-section-chevron-size, 12px);
+  }
+
+  &--open &__chevron {
+    transform: rotate(0deg);
+  }
+
+  &__indicator {
+    align-items: center;
+    display: inline-flex;
+    flex-shrink: 0;
+    justify-content: center;
+  }
+
+  &__label {
+    flex: 1;
+    font-size: var(--uxm-explorer-section-font-size, 11px);
+    font-weight: var(--uxm-explorer-section-font-weight, 600);
+    letter-spacing: 0.06em;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  &__trailing {
+    color: var(--uxm-explorer-section-trailing-color, var(--color-text-subtle));
+    flex-shrink: 0;
+    font-size: var(--uxm-explorer-section-trailing-size, 10px);
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -1,0 +1,65 @@
+/* ── app-top-bar ── */
+
+/* AppTopBar — root flex container holds height/padding-x/gap directly
+   (REAL_CSS_PROPS land cleanly). Inner __search reads its max-width var
+   so the search-area width knob is editable; border-bottom uses the
+   same `--uxm-app-top-bar-border-color` as borderColor saves so a
+   single knob themes the bottom rule. */
+
+.uxm-app-top-bar {
+  align-items: center;
+  background-color: color-mix(in srgb, var(--color-surface-alt) 50%, transparent);
+  border-bottom: 1px solid var(--uxm-app-top-bar-border-color, var(--color-border));
+  display: flex;
+  gap: 12px;
+  height: 64px;
+  justify-content: space-between;
+  padding: 0 16px;
+
+  &__left {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__search {
+    max-width: var(--uxm-app-top-bar-search-max-width, 320px);
+    width: 100%;
+  }
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+  }
+
+  &__menu {
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--color-text-strong);
+    cursor: pointer;
+    display: inline-flex;
+    height: 36px;
+    justify-content: center;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    width: 36px;
+
+    &:hover {
+      background-color: var(--color-surface);
+      color: var(--color-text);
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .uxm-app-top-bar {
+    &__menu {
+      display: none;
+    }
+  }
+}

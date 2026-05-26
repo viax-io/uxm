@@ -1,0 +1,54 @@
+/* ── pill-select ── */
+
+.uxm-pill-select {
+  position: relative;
+  width: 100%;
+
+  &__field {
+    align-items: center;
+    background-color: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--uxm-pill-select-radius, 8px);
+    cursor: text;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--uxm-pill-select-chip-gap, 6px);
+    min-height: 42px;
+    padding: 8px 10px;
+  }
+
+  &__placeholder {
+    color: var(--color-text-muted);
+    font-size: 13px;
+  }
+
+  &__menu {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    padding: 4px;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    z-index: 10;
+  }
+
+  &__option {
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 8px 10px;
+    text-align: left;
+
+    &:hover {
+      background-color: var(--color-surface-alt);
+    }
+  }
+}

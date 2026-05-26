@@ -1,0 +1,40 @@
+/* ── property-field ── */
+
+/* PropertyGrid — auto-fill grid wrapper. Owns row/column gap only;
+   the field-shape knobs (label/value colour and size) live on the
+   PropertyField atom's own registry namespace. Reads `--uxm-property-
+   grid-*` vars (saves under the `property-grid` registry id), so
+   editing the grid's spacing in the editor doesn't bleed into a
+   PropertyField's internal label-value gap. */
+
+.uxm-property-grid {
+  column-gap: var(--uxm-property-grid-column-gap, 32px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  row-gap: var(--uxm-property-grid-row-gap, 16px);
+}
+
+/* PropertyField — single label + value pair. Reads its own
+   `--uxm-property-field-*` namespace (saves under `property-field`).
+   The gap here is the spacing between the field's own label and
+   value, not between adjacent fields in a grid. */
+
+.uxm-property-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uxm-property-field-gap, 4px);
+
+  &__label {
+    color: var(--uxm-property-field-label-color, var(--color-text-muted));
+    font-size: var(--uxm-property-field-label-size, 11px);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  &__value {
+    color: var(--uxm-property-field-value-color, var(--color-text));
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: var(--uxm-property-field-value-size, 14px);
+  }
+}

@@ -1,0 +1,117 @@
+/* ── range-slider ── */
+
+/* ── RangeSlider ──
+   Dual-thumb range. Two `<input type="range">` are absolutely positioned
+   on top of a shared gradient track — the inputs themselves are
+   transparent and pointer-events:none, so only their thumb pseudo-
+   elements are interactive. The wrapper's gradient paints the filled
+   portion BETWEEN the two thumb positions (start → end → 100%). Shares
+   the Slider atom's theming vars (`--uxm-slider-*`) so a single set of
+   editor knobs themes both modes; adds `--uxm-range-slider-start` /
+   `-end` for the gradient stops the atom computes inline. */
+
+.uxm-range-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  width: 100%;
+
+  /* Hide the default track on each input — the wrapper paints the
+     real one. Without this the two inputs render their own grey tracks
+     on top of the gradient. */
+
+  &__values {
+    align-items: baseline;
+    color: var(--uxm-slider-value-color, var(--color-text-muted));
+    display: flex;
+    font-size: var(--uxm-slider-value-size, 11px);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__value {
+    flex: 1;
+    min-width: 0;
+
+    &--start {
+      text-align: left;
+    }
+
+    &--range {
+      text-align: center;
+    }
+
+    &--end {
+      text-align: right;
+    }
+  }
+
+  &__track {
+    background: linear-gradient(
+      to right,
+      var(--uxm-slider-track-color, var(--color-border)) 0%,
+      var(--uxm-slider-track-color, var(--color-border)) var(--uxm-range-slider-start, 0%),
+      var(--uxm-slider-accent-color, var(--color-accent)) var(--uxm-range-slider-start, 0%),
+      var(--uxm-slider-accent-color, var(--color-accent)) var(--uxm-range-slider-end, 100%),
+      var(--uxm-slider-track-color, var(--color-border)) var(--uxm-range-slider-end, 100%),
+      var(--uxm-slider-track-color, var(--color-border)) 100%
+    );
+    border-radius: var(--uxm-slider-track-radius, 999px);
+    height: var(--uxm-slider-track-height, 6px);
+    position: relative;
+  }
+
+  &__input {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    height: 100%;
+    inset: 0;
+    margin: 0;
+    /* `pointer-events: none` on the input keeps the entire input area
+       non-interactive; the thumbs override below to opt back in. Without
+       this, the second-rendered input would block clicks on the first
+       thumb because they're stacked. */
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+
+    &:focus {
+      outline: none;
+    }
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      background-color: var(--uxm-slider-thumb-color, var(--color-accent));
+      border: none;
+      border-radius: 50%;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      height: var(--uxm-slider-thumb-size, 14px);
+      pointer-events: auto;
+      width: var(--uxm-slider-thumb-size, 14px);
+    }
+
+    &::-moz-range-thumb {
+      background-color: var(--uxm-slider-thumb-color, var(--color-accent));
+      border: none;
+      border-radius: 50%;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      height: var(--uxm-slider-thumb-size, 14px);
+      pointer-events: auto;
+      width: var(--uxm-slider-thumb-size, 14px);
+    }
+
+    &::-webkit-slider-runnable-track {
+      background: transparent;
+      border: none;
+    }
+
+    &::-moz-range-track {
+      background: transparent;
+      border: none;
+    }
+  }
+}

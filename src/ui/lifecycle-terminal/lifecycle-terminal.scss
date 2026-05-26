@@ -1,0 +1,15 @@
+/* ── lifecycle-terminal ── */
+
+.uxm-lifecycle-terminal {
+  align-items: center;
+  background-color: var(--uxm-lifecycle-terminal-bg, #FFFFFF);
+  border: 1px solid var(--uxm-lifecycle-terminal-border-color, var(--color-border));
+  border-radius: var(--uxm-lifecycle-terminal-radius, 4px);
+  color: var(--uxm-lifecycle-terminal-color, var(--color-text-muted));
+  display: inline-flex;
+  font-size: var(--uxm-lifecycle-terminal-font-size, 13px);
+  font-weight: var(--uxm-lifecycle-terminal-font-weight, 500);
+  height: var(--uxm-lifecycle-terminal-height, 32px);
+  justify-content: center;
+  width: var(--uxm-lifecycle-terminal-width, 60px);
+}

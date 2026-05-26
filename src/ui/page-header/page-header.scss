@@ -1,0 +1,42 @@
+/* ── page-header ── */
+
+/* PageHeader — defaults match the `page-header` registry entry. Each
+   knob (titleColor, titleSize, metaColor, metaSize, iconBg, iconColor,
+   iconSize, gap, paddingX, paddingY) maps to a CSS custom property the
+   class rule reads; consumers re-theme through the same surface the
+   editor knobs write to. */
+
+.uxm-page-header {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--uxm-page-header-gap, 16px);
+  padding: var(--uxm-page-header-padding-y, 0px)
+    var(--uxm-page-header-padding-x, 0px);
+
+  /* Icon tile is now <IconTile>; PageHeader's `--uxm-page-header-icon-{bg,color,size}`
+     are bridged to IconTile's own CSS-variable surface in the .tsx. */
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    color: var(--uxm-page-header-title-color, var(--color-text));
+    font-size: var(--uxm-page-header-title-size, 22px);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__meta {
+    color: var(--uxm-page-header-meta-color, var(--color-text-muted));
+    font-size: var(--uxm-page-header-meta-size, 13px);
+    margin: 2px 0 0;
+  }
+
+  &__actions {
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 8px;
+  }
+}

@@ -1,0 +1,87 @@
+/* ── lifecycle-node-card ── */
+
+.uxm-lifecycle-node-card {
+  align-items: center;
+  background-color: var(--uxm-lifecycle-node-card-bg, var(--color-card));
+  border: 1px solid var(--uxm-lifecycle-node-card-border-color, var(--color-border));
+  border-radius: var(--uxm-lifecycle-node-card-radius, 6px);
+  display: inline-flex;
+  gap: 12px;
+  padding: var(--uxm-lifecycle-node-card-padding-y, 12px)
+    var(--uxm-lifecycle-node-card-padding-x, 16px);
+  text-align: left;
+  width: var(--uxm-lifecycle-node-card-width, 280px);
+  /* Each kind sets its own --kind-* tokens, consumed by the icon tile +
+     badge below. Keeps the structural rule reusable across kinds. */
+
+  /* Icon tile is now <IconTile>; the kind modifier classes set
+     `--kind-icon-bg` / `--kind-icon-color` on the card, which bridge to
+     IconTile's own CSS-variable surface in the .tsx. */
+
+  &--state {
+    --kind-badge-bg: color-mix(in srgb, var(--color-accent-bold) 12%, transparent);
+    --kind-badge-color: var(--color-accent-bold);
+    --kind-icon-bg: color-mix(in srgb, var(--color-accent-bold) 18%, transparent);
+    --kind-icon-color: var(--color-accent-bold);
+  }
+
+  &--condition {
+    --kind-badge-bg: color-mix(in srgb, var(--color-highlight-warm) 25%, transparent);
+    --kind-badge-color: var(--color-on-highlight-warm);
+    --kind-icon-bg: color-mix(in srgb, var(--color-highlight-warm) 35%, transparent);
+    --kind-icon-color: var(--color-on-highlight-warm);
+  }
+
+  &--task {
+    --kind-badge-bg: color-mix(in srgb, var(--color-highlight-cool) 25%, transparent);
+    --kind-badge-color: var(--color-on-highlight-cool);
+    --kind-icon-bg: color-mix(in srgb, var(--color-highlight-cool) 35%, transparent);
+    --kind-icon-color: var(--color-on-highlight-cool);
+  }
+
+  &--active {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__kind {
+    color: var(--color-text-muted);
+    font-size: var(--uxm-lifecycle-node-card-kind-size, 11px);
+    font-weight: 500;
+    /* No text-transform / letter-spacing — registry doesn't expose those, so
+       adding them here would override the editor's font-style intent. */
+    margin: 0;
+  }
+
+  &__title {
+    color: var(--color-text);
+    font-size: var(--uxm-lifecycle-node-card-title-size, 14px);
+    font-weight: 600;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__badge {
+    align-items: center;
+    background-color: var(--kind-badge-bg);
+    border-radius: 999px;
+    color: var(--kind-badge-color);
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 500;
+    justify-content: center;
+    max-width: 140px;
+    overflow: hidden;
+    padding: 2px 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

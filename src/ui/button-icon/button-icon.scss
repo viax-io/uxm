@@ -1,0 +1,42 @@
+/* ButtonIcon — moved from monolithic styles.css */
+
+.uxm-button-icon {
+  align-items: center;
+  background-color: var(--uxm-button-icon-background-color, var(--color-surface-alt));
+  border: none;
+  border-radius: 8px;
+  color: var(--uxm-button-icon-color, var(--color-text));
+  cursor: pointer;
+  display: inline-flex;
+  height: var(--uxm-button-icon-size, 40px);
+  justify-content: center;
+  transition: background-color 0.15s, color 0.15s, opacity 0.15s;
+  width: var(--uxm-button-icon-size, 40px);
+
+  & > svg {
+    height: var(--uxm-button-icon-icon-size, 18px);
+    width: var(--uxm-button-icon-icon-size, 18px);
+  }
+
+  &:hover:not(:disabled) {
+    background-color: var(--uxm-button-icon-hover-background-color, var(--color-accent-subtle));
+    color: var(--uxm-button-icon-hover-color, var(--color-text));
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--uxm-button-icon-active-background-color, var(--color-accent-bold));
+    color: var(--uxm-button-icon-active-color, var(--color-text-inverse));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-button-icon-focus-color, var(--color-text));
+    outline: 2px solid var(--uxm-button-icon-focus-ring-color, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    color: var(--uxm-button-icon-disabled-color, var(--color-text-muted));
+    cursor: not-allowed;
+    opacity: var(--uxm-button-icon-disabled-opacity, 0.4);
+  }
+}

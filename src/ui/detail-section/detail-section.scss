@@ -1,0 +1,62 @@
+/* ── detail-section ── */
+
+/* DetailSection — defaults match the `detail-section` registry entry.
+   `padding` controls the inner box (rail width is added on the left so
+   accent toggles don't reflow content). Note: registry default radius
+   is 4 (was hardcoded 8 — drift). */
+
+.uxm-detail-section {
+  background-color: var(--uxm-detail-section-bg, var(--color-card));
+  border: 1px solid var(--uxm-detail-section-border-color, var(--color-border));
+  border-radius: var(--uxm-detail-section-radius, 4px);
+  overflow: hidden;
+  position: relative;
+
+  /* Icon tile is now <IconTile>; DetailSection's `--uxm-detail-section-icon-{bg,color}`
+     bridge to IconTile's own CSS-variable surface in the .tsx. */
+
+  &__accent {
+    background-color: var(--uxm-detail-section-accent-color, var(--color-accent));
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: var(--uxm-detail-section-accent-width, 3px);
+  }
+
+  &__inner {
+    padding: var(--uxm-detail-section-padding, 20px);
+    /* Reserve space for the rail on the left so the accent doesn't overlap content. */
+    padding-left: calc(var(--uxm-detail-section-padding, 20px) + var(--uxm-detail-section-accent-width, 3px) + 4px);
+  }
+
+  &__header {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+  }
+
+  &__heading {
+    min-width: 0;
+  }
+
+  &__title {
+    color: var(--color-text);
+    font-size: var(--uxm-detail-section-title-size, 15px);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__subtitle {
+    color: var(--uxm-detail-section-subtitle-color, var(--color-text-muted));
+    font-size: 12px;
+    margin: 2px 0 0;
+  }
+
+  &__body {
+    color: var(--color-text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+}

@@ -1,0 +1,58 @@
+/* ── disclosure ── */
+
+/* Disclosure — header-only collapsible row. Renders as a single button
+   (icon + label + right chevron). The chevron rotates 90° when open.
+   No body slot — body composition is the consumer's job (render content
+   beneath the Disclosure conditionally on `open`). Use in side panels
+   where a row reveals more detail when expanded. */
+
+.uxm-disclosure {
+  align-items: center;
+  background-color: var(--uxm-disclosure-background-color, transparent);
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  gap: var(--uxm-disclosure-gap, 12px);
+  padding-block: var(--uxm-disclosure-padding-y, 12px);
+  padding-inline: var(--uxm-disclosure-padding-x, 16px);
+  text-align: left;
+  width: 100%;
+
+  &__icon {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  &__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__label {
+    color: var(--uxm-disclosure-color, var(--color-text));
+    font-size: var(--uxm-disclosure-font-size, 14px);
+    font-weight: 500;
+  }
+
+  &__value {
+    color: var(--uxm-disclosure-value-color, var(--color-text-muted));
+    font-size: var(--uxm-disclosure-value-size, 12px);
+  }
+
+  &__chevron {
+    color: var(--uxm-disclosure-chevron-color, var(--color-text-muted));
+    flex-shrink: 0;
+    height: var(--uxm-disclosure-chevron-size, 16px);
+    transition: transform 150ms ease;
+    width: var(--uxm-disclosure-chevron-size, 16px);
+  }
+
+  &--open &__chevron {
+    transform: rotate(90deg);
+  }
+}

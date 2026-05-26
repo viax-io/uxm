@@ -1,0 +1,10 @@
+/* ResponsiveGrid — moved from monolithic styles.css */
+
+.uxm-responsive-grid {
+  display: grid;
+  gap: var(--uxm-responsive-grid-gap, 16px);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--uxm-responsive-grid-min, 200px), 1fr)
+  );
+}

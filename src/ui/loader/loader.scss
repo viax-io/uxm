@@ -1,0 +1,141 @@
+/* ── loader ── */
+
+@keyframes uxm-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes uxm-loader-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.5);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes uxm-loader-bar {
+  0% {
+    transform: translateX(-60%);
+  }
+
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+@keyframes uxm-loader-msg {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  12% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* Loader — three variants share a single root. Saves on `.uxm-loader`
+   set `--uxm-loader-*` vars that cascade into __spinner / __dots / __bar
+   children. The dots and bar derive their dot/bar diameter from `size`
+   (size / ratio) so a single Size knob keeps proportions. Note: animation
+   durations (`speed`, `messageInterval`) aren't wired — the save layer's
+   formatValue currently emits unitless numbers as `Xpx`, which is wrong
+   for animation timing. Tracked as a separate formatValue concern. */
+
+.uxm-loader {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--uxm-loader-gap, 12px);
+  justify-content: center;
+  padding: 12px;
+
+  &--stacked {
+    flex-direction: column;
+  }
+
+  &--inline {
+    flex-direction: row;
+  }
+
+  &__spinner {
+    animation: uxm-loader-spin 800ms linear infinite;
+    border: 3px solid var(--uxm-loader-track-color, color-mix(in srgb, var(--color-accent-bold) 18%, transparent));
+    border-radius: 50%;
+    border-top-color: var(--uxm-loader-color, var(--color-accent-bold));
+    height: var(--uxm-loader-size, 24px);
+    width: var(--uxm-loader-size, 24px);
+  }
+
+  &__dots {
+    display: inline-flex;
+    gap: 6px;
+
+    & > span {
+      animation: uxm-loader-dot 1280ms ease-in-out infinite both;
+      background-color: var(--uxm-loader-color, var(--color-accent-bold));
+      border-radius: 50%;
+      display: inline-block;
+      height: calc(var(--uxm-loader-size, 24px) / 3);
+      width: calc(var(--uxm-loader-size, 24px) / 3);
+    }
+
+    & > span:nth-child(2) {
+      animation-delay: 130ms;
+    }
+
+    & > span:nth-child(3) {
+      animation-delay: 260ms;
+    }
+  }
+
+  &__bar {
+    background-color: var(--uxm-loader-track-color, color-mix(in srgb, var(--color-accent-bold) 18%, transparent));
+    border-radius: 999px;
+    height: 6px;
+    overflow: hidden;
+    position: relative;
+    width: var(--uxm-loader-bar-width, 200px);
+
+    & > span {
+      animation: uxm-loader-bar 1600ms cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
+      background-color: var(--uxm-loader-color, var(--color-accent-bold));
+      border-radius: 999px;
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 40%;
+    }
+  }
+
+  &__message {
+    color: var(--uxm-loader-message-color, var(--color-text-muted));
+    display: inline-block;
+    font-size: var(--uxm-loader-message-size, 13px);
+    font-weight: 500;
+    min-height: 1.2em;
+  }
+
+  &__message-fade {
+    animation: uxm-loader-msg 1500ms ease-in-out;
+    display: inline-block;
+  }
+}

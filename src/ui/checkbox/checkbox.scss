@@ -1,0 +1,64 @@
+/* ── checkbox ── */
+
+/* Checkbox / Radio / ToggleSwitch share a label-row layout but each
+   owns its own gap var so editor saves on one don't bleed into others.
+   The checked-state styles read `--uxm-{id}-check-color` (checkbox)
+   and `--uxm-radio-group-active-color` (radio) so saves propagate
+   from the editor's knobs into the inner __box / __circle / __dot. */
+
+.uxm-checkbox {
+  align-items: center;
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  gap: var(--uxm-checkbox-gap, 10px);
+}
+
+.uxm-checkbox--disabled,
+.uxm-toggle-switch--disabled,
+.uxm-radio--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.uxm-checkbox__input,
+.uxm-toggle-switch__input,
+.uxm-radio__input {
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 1px;
+}
+
+.uxm-checkbox {
+  &__box {
+    align-items: center;
+    background-color: transparent;
+    border: 1.5px solid var(--uxm-checkbox-border-color, var(--color-border));
+    border-radius: var(--uxm-checkbox-border-radius, 4px);
+    display: inline-flex;
+    flex-shrink: 0;
+    height: var(--uxm-checkbox-size, 20px);
+    justify-content: center;
+    transition: all 0.15s;
+    width: var(--uxm-checkbox-size, 20px);
+
+    & > svg {
+      color: var(--color-text-inverse);
+      height: 70%;
+      opacity: 0;
+      width: 70%;
+    }
+  }
+
+  &__input:checked + &__box {
+    background-color: var(--uxm-checkbox-check-color, var(--color-accent));
+    border-color: var(--uxm-checkbox-check-color, var(--color-accent));
+  }
+
+  &__input:checked + &__box > svg {
+    opacity: 1;
+  }
+}

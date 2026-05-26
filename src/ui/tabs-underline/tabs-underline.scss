@@ -1,0 +1,59 @@
+/* ── tabs-underline ── */
+
+/* Tabs Underline (page-nav style — text labels with an animated bar under the active tab) */
+
+.uxm-tabs-underline {
+  border-bottom: 1px solid
+    var(--uxm-tabs-underline-track-border-color, var(--color-border));
+  display: inline-flex;
+  gap: var(--uxm-tabs-underline-gap, 4px);
+  position: relative;
+
+  &__tab {
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    color: var(--uxm-tabs-underline-inactive-text, var(--color-text-muted));
+    cursor: pointer;
+    display: inline-flex;
+    font-size: var(--uxm-tabs-underline-font-size, 13px);
+    font-weight: var(--uxm-tabs-underline-font-weight, 500);
+    gap: var(--uxm-tabs-underline-icon-gap, 6px);
+    justify-content: center;
+    padding: var(--uxm-tabs-underline-padding-y, 8px)
+      var(--uxm-tabs-underline-padding-x, 12px);
+    position: relative;
+    transition: color 0.15s;
+
+    &:hover {
+      color: var(--uxm-tabs-underline-hover-text, var(--color-text));
+    }
+
+    &--active {
+      color: var(--uxm-tabs-underline-active-text, var(--color-text));
+      font-weight: 600;
+
+      &::after {
+        background-color: var(--uxm-tabs-underline-bar-color, var(--color-accent-bold));
+        border-radius: var(--uxm-tabs-underline-bar-radius, 2px);
+        bottom: -1px;
+        content: "";
+        height: var(--uxm-tabs-underline-bar-height, 2px);
+        left: 0;
+        position: absolute;
+        right: 0;
+      }
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    height: var(--uxm-tabs-underline-icon-size, 14px);
+    width: var(--uxm-tabs-underline-icon-size, 14px);
+
+    & > svg {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}

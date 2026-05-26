@@ -1,0 +1,46 @@
+/* ── input ── */
+
+.uxm-input-text,
+.uxm-textarea,
+.uxm-select-dropdown {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  padding: 10px 12px;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+
+.uxm-input-text::placeholder,
+.uxm-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.uxm-input-text:focus,
+.uxm-textarea:focus,
+.uxm-select-dropdown:focus {
+  border-color: var(--color-accent);
+}
+
+.uxm-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.uxm-select-dropdown {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF' stroke-width='2'><path stroke-linecap='round' stroke-linejoin='round' d='m6 9 6 6 6-6'/></svg>");
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+.uxm-input-text--error,
+.uxm-input-error {
+  border-color: var(--color-danger-text) !important;
+}

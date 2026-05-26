@@ -1,0 +1,47 @@
+/* ── tabs ── */
+
+/* Tabs (label + optional icon, splits the width between tabs) */
+
+.uxm-tabs {
+  background-color: var(--uxm-tabs-track-bg, var(--color-surface));
+  border: 1px solid var(--uxm-tabs-track-border, var(--color-border));
+  border-radius: var(--uxm-tabs-track-radius, 8px);
+  display: inline-flex;
+  gap: var(--uxm-tabs-gap, 0px);
+  padding: var(--uxm-tabs-track-padding, 2px);
+
+  &__tab {
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    border-radius: var(--uxm-tabs-tab-radius, 6px);
+    color: var(--uxm-tabs-inactive-text, var(--color-text-muted));
+    cursor: pointer;
+    display: inline-flex;
+    flex: 1;
+    font-size: var(--uxm-tabs-font-size, 12px);
+    font-weight: var(--uxm-tabs-font-weight, 500);
+    gap: var(--uxm-tabs-icon-gap, 6px);
+    justify-content: center;
+    padding: var(--uxm-tabs-padding-y, 6px) var(--uxm-tabs-padding-x, 12px);
+    transition: background-color 0.15s, color 0.15s;
+
+    &--active {
+      background-color: var(--uxm-tabs-active-bg, var(--color-card));
+      box-shadow: var(--shadow-xs);
+      color: var(--uxm-tabs-active-text, var(--color-text));
+      font-weight: 600;
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    height: var(--uxm-tabs-icon-size, 12px);
+    width: var(--uxm-tabs-icon-size, 12px);
+
+    & > svg {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}

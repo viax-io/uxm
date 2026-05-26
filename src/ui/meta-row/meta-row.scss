@@ -1,0 +1,22 @@
+/* ── meta-row ── */
+
+.uxm-meta-row {
+  align-items: center;
+  color: var(--uxm-meta-row-color, var(--color-text-muted));
+  display: inline-flex;
+  font-size: var(--uxm-meta-row-font-size, 12px);
+  gap: var(--uxm-meta-row-gap, 12px);
+
+  &__item {
+    align-items: center;
+    display: inline-flex;
+  }
+
+  &__dot {
+    background-color: var(--uxm-meta-row-dot-color, color-mix(in srgb, var(--color-text) 20%, transparent));
+    border-radius: 999px;
+    display: inline-block;
+    height: var(--uxm-meta-row-dot-size, 4px);
+    width: var(--uxm-meta-row-dot-size, 4px);
+  }
+}

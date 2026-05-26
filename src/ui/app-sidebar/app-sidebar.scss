@@ -1,0 +1,130 @@
+/* ── app-sidebar ── */
+
+/* AppSidebar — chrome shell. Root holds the visible width/bg/border-right;
+   inner __heading and __footer read their own colour vars so the editor
+   can theme section labels and the footer caption independently. The
+   `--collapsed` modifier reads `--uxm-app-sidebar-collapsed-width` so
+   collapse-state width is editable too. */
+
+.uxm-app-sidebar {
+  background-color: var(--color-surface-alt);
+  border-right: 1px solid var(--uxm-app-sidebar-border-color, var(--color-border));
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: width 0.2s ease;
+  width: var(--uxm-app-sidebar-expanded-width, 256px);
+
+  &--collapsed {
+    width: var(--uxm-app-sidebar-collapsed-width, 64px);
+  }
+
+  &__header {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    height: 64px;
+    justify-content: space-between;
+    padding: 0 16px;
+  }
+
+  &__brand {
+    align-items: center;
+    display: inline-flex;
+
+    & img {
+      display: block;
+      max-height: 28px;
+      max-width: 130px;
+    }
+
+    &--icon {
+      align-items: center;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      height: 32px;
+      justify-content: center;
+      margin: 0 auto;
+      transition: background-color 0.15s ease;
+      width: 32px;
+
+      &:hover {
+        background-color: color-mix(in srgb, var(--color-text) 6%, transparent);
+      }
+
+      & img {
+        max-height: 24px;
+        max-width: 20px;
+      }
+    }
+  }
+
+  &__toggle {
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    height: 32px;
+    justify-content: center;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    width: 32px;
+
+    &:hover {
+      background-color: var(--color-surface);
+      color: var(--color-text);
+    }
+  }
+
+  &__nav {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    padding: 8px;
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__heading {
+    color: var(--uxm-app-sidebar-heading-color, var(--color-text-muted));
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin: 0;
+    padding: 8px 12px 2px;
+    text-transform: uppercase;
+  }
+
+  &__item {
+    padding: 10px 12px;
+
+    &--collapsed {
+      height: 32px;
+      justify-content: center;
+      margin: 0 auto;
+      padding: 0;
+      /* Match the brand button's 32x32 footprint at the top of the
+         collapsed sidebar so the chrome reads as a single column of tiles. */
+      width: 32px;
+    }
+  }
+
+  &__footer {
+    border-top: 1px solid var(--uxm-app-sidebar-border-color, var(--color-border));
+    color: var(--uxm-app-sidebar-footer-color, var(--color-text-muted));
+    flex-shrink: 0;
+    font-size: 11px;
+    padding: 12px 24px;
+  }
+}
