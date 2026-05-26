@@ -1,7 +1,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
-import { IconTile } from "./icon-tile";
+import { cn } from "@/helpers";
+import { Icon } from "@/ui/icon";
+import { IconTile } from "@/ui/icon-tile";
 
 // The kind modifier classes (`.uxm-lifecycle-node-card--state` etc.) set
 // `--kind-icon-bg` and `--kind-icon-color` on the card. Those bridge to

@@ -1,6 +1,6 @@
 import type { SVGAttributes } from "react";
-import { getIcon } from "../lib/icons";
-import { cn } from "./cn";
+import { getIcon } from "@/lib/icons";
+import { cn } from "@/helpers";
 
 export interface IconProps extends Omit<SVGAttributes<SVGSVGElement>, "children"> {
   glyph: string;

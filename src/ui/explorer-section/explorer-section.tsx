@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from "@/helpers";
+import { Icon } from "../icon";
 
 export interface ExplorerSectionProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
@@ -18,6 +18,9 @@ export interface ExplorerSectionProps
    * right-aligned with muted styling.
    */
   trailing?: ReactNode;
+  /** Disabled sections render `disabled` natively on the button — CSS
+   *  `:disabled` paints the dimmed treatment and clicks are blocked. */
+  disabled?: boolean;
 }
 
 /**

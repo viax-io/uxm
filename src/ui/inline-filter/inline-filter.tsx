@@ -1,7 +1,7 @@
 "use client";
 
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface InlineFilterProps extends HTMLAttributes<HTMLDivElement> {
   search?: ReactNode;

@@ -3,7 +3,7 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export type TextInputProps = InputHTMLAttributes<HTMLInputElement>;
 

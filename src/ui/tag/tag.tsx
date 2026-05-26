@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export type TagType = "accent" | "success" | "warning" | "danger" | "info" | "neutral";
 export type TagSize = "small" | "medium";

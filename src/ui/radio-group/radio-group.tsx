@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChangeEvent, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export type RadioGroupDirection = "vertical" | "horizontal";
 

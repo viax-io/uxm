@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface TabsOption {
   value: string;
   label: ReactNode;
   icon?: ReactNode;
+  /** Disabled tabs are inert and paint the disabled styling (opacity +
+   *  disabled text color). Selecting one is a no-op. */
+  disabled?: boolean;
 }
 
 export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
@@ -44,6 +47,7 @@ export function Tabs({
             type="button"
             role="tab"
             aria-selected={isActive}
+            disabled={opt.disabled}
             className={cn("uxm-tabs__tab", isActive && "uxm-tabs__tab--active")}
             onClick={() => select(opt.value)}
           >

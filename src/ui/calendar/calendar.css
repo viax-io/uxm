@@ -1,0 +1,176 @@
+/* Calendar — moved from monolithic styles.css */
+
+.uxm-calendar {
+  display: inline-flex;
+  flex-direction: column;
+  background-color: var(--uxm-calendar-background-color, var(--color-surface));
+  border: 1px solid var(--uxm-calendar-border-color, var(--color-border));
+  border-radius: var(--uxm-calendar-border-radius, 12px);
+  padding: var(--uxm-calendar-padding, 16px);
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.uxm-calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+.uxm-calendar__title {
+  color: var(--uxm-calendar-title-color, var(--color-text));
+  font-size: var(--uxm-calendar-title-size, 14px);
+  font-weight: 600;
+  /* Title is a real <button> so it can drill up (day → month → year). Reset
+     button chrome; add hover affordance only when the title is interactive. */
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.12s;
+}
+.uxm-calendar__title:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--color-text) 8%, transparent);
+}
+.uxm-calendar__title:disabled {
+  cursor: default;
+}
+.uxm-calendar__nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--uxm-calendar-nav-color, var(--color-text-muted));
+  cursor: pointer;
+  transition: background-color 0.12s, color 0.12s;
+}
+.uxm-calendar__nav:hover {
+  background-color: color-mix(in srgb, var(--color-text) 8%, transparent);
+  color: var(--color-text);
+}
+.uxm-calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding-bottom: 6px;
+}
+.uxm-calendar__weekday {
+  text-align: center;
+  color: var(--uxm-calendar-weekday-color, var(--color-text-muted));
+  font-size: var(--uxm-calendar-weekday-size, 11px);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.uxm-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.uxm-calendar__day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--uxm-calendar-cell-size, 36px);
+  height: var(--uxm-calendar-cell-size, 36px);
+  font-size: var(--uxm-calendar-cell-font-size, 13px);
+  font-weight: 500;
+  border-radius: var(--uxm-calendar-cell-radius, 8px);
+  /* 1px transparent reserved so `today`'s outline doesn't shift layout. */
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--uxm-calendar-default-color, var(--color-text));
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.12s, color 0.12s, border-color 0.12s;
+  box-sizing: border-box;
+}
+.uxm-calendar__day:hover:not(.uxm-calendar__day--disabled):not(.uxm-calendar__day--selected),
+.uxm-calendar__day--hover {
+  background-color: var(--uxm-calendar-hover-bg, color-mix(in srgb, var(--color-text) 6%, transparent));
+}
+.uxm-calendar__day--outside {
+  color: var(--uxm-calendar-outside-color, var(--color-text-subtle));
+}
+.uxm-calendar__day--in-range {
+  background-color: var(--uxm-calendar-in-range-bg, var(--color-accent-subtle));
+  color: var(--uxm-calendar-in-range-color, var(--color-accent-bold));
+}
+.uxm-calendar__day--range-start {
+  background-color: var(--uxm-calendar-range-start-bg, var(--color-accent-bold));
+  color: var(--uxm-calendar-range-start-color, var(--color-text-inverse));
+}
+.uxm-calendar__day--range-end {
+  background-color: var(--uxm-calendar-range-end-bg, var(--color-accent-bold));
+  color: var(--uxm-calendar-range-end-color, var(--color-text-inverse));
+}
+.uxm-calendar__day--today {
+  border-color: var(--uxm-calendar-today-border-color, var(--color-accent-bold));
+  color: var(--uxm-calendar-today-color, var(--color-accent-bold));
+  font-weight: 600;
+}
+.uxm-calendar__day--selected {
+  background-color: var(--uxm-calendar-selected-bg, var(--color-accent-bold));
+  color: var(--uxm-calendar-selected-color, var(--color-text-inverse));
+}
+.uxm-calendar__day--disabled {
+  color: var(--uxm-calendar-disabled-color, var(--color-text-subtle));
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Month and Year views — drill-up navigation surfaces. Share the same state
+   color vars as day cells so designers tune once (today, selected, hover all
+   re-use day-cell color knobs). Dimensions are their own knobs because these
+   cells live in a 4-col grid and are typically wider/taller than day cells. */
+/* Month and Year cells share a single Cell Size knob — square cells in a
+   4-col grid, same visual role across both views. Explicit width on the grid
+   template means the calendar root widens naturally in month/year view;
+   otherwise cells would share the day-view width (252px / 4 ≈ 60px each
+   minus gaps) and look squeezed. */
+.uxm-calendar__months,
+.uxm-calendar__years {
+  display: grid;
+  grid-template-columns: repeat(4, var(--uxm-calendar-month-cell-size, 64px));
+  gap: 4px;
+}
+.uxm-calendar__month,
+.uxm-calendar__year {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--uxm-calendar-month-cell-size, 64px);
+  height: var(--uxm-calendar-month-cell-size, 64px);
+  font-size: var(--uxm-calendar-month-cell-font-size, 13px);
+  font-weight: 500;
+  border-radius: var(--uxm-calendar-cell-radius, 8px);
+  /* Reserved 1px transparent border keeps the today-outline state non-shifting. */
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--uxm-calendar-default-color, var(--color-text));
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.12s, color 0.12s, border-color 0.12s;
+  box-sizing: border-box;
+}
+.uxm-calendar__month:hover:not(:disabled),
+.uxm-calendar__year:hover:not(:disabled),
+.uxm-calendar__month--hover,
+.uxm-calendar__year--hover {
+  background-color: var(--uxm-calendar-hover-bg, color-mix(in srgb, var(--color-text) 6%, transparent));
+}
+.uxm-calendar__month--today,
+.uxm-calendar__year--today {
+  border-color: var(--uxm-calendar-today-border-color, var(--color-accent-bold));
+  color: var(--uxm-calendar-today-color, var(--color-accent-bold));
+  font-weight: 600;
+}
+.uxm-calendar__month--selected,
+.uxm-calendar__year--selected {
+  background-color: var(--uxm-calendar-selected-bg, var(--color-accent-bold));
+  color: var(--uxm-calendar-selected-color, var(--color-text-inverse));
+}

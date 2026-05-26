@@ -1,8 +1,8 @@
 "use client";
 
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from "@/helpers";
+import { Icon } from "@/ui/icon";
 
 export interface AppTopBarProps extends HTMLAttributes<HTMLElement> {
   /** Search input (use TextInput / InputWithIcon). */

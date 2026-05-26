@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from "@/helpers";
+import { Icon } from "../icon";
 
 export interface SearchDropdownOption {
   value: string;
@@ -21,6 +21,8 @@ export interface SearchDropdownProps {
   placeholder?: string;
   /** Search input placeholder inside the popover. */
   searchPlaceholder?: string;
+  /** Disabled state — trigger can't open and renders as inert. */
+  disabled?: boolean;
   className?: string;
   style?: CSSProperties;
   "aria-label"?: string;
@@ -46,6 +48,7 @@ export function SearchDropdown({
   options,
   placeholder = "Select…",
   searchPlaceholder = "Search…",
+  disabled = false,
   className,
   style,
   "aria-label": ariaLabel,
@@ -120,6 +123,7 @@ export function SearchDropdown({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={ariaLabel}
+        disabled={disabled}
         onClick={() => setOpen((v) => !v)}
         className={cn(
           "uxm-search-dropdown__trigger",

@@ -20,10 +20,14 @@ apps/modo/                       # the product (Vite + React SPA, future state)
     lib/                         # app-specific hooks, utils
 packages/uxm/                    # shared UI library
   src/
-    ui/                          # primitive components (button.tsx, checkbox.tsx, …)
-      index.ts                   # named exports + type exports
-      cn.ts                      # className concatenator
-      styles.css                 # all UI lib styles
+    ui/                          # primitive components — one folder per component
+      <name>/                    # e.g. button/, alert/, disclosure/
+        <name>.tsx               # component implementation
+        <name>.css               # component-scoped styles (BEM, .uxm-<name>*)
+        index.ts                 # barrel — `export * from "./<name>";`
+      index.ts                   # named exports + type exports for whole UI lib
+      styles.css                 # aggregator — only `@import "./<name>/<name>.css"`
+    helpers/                     # cn, etc. (imported as `@/helpers`)
     lib/                         # shared hooks, context, types
 packages/tokens/                 # design tokens
   index.ts                       # TypeScript ThemeToken[] array
@@ -39,10 +43,15 @@ packages/tokens/                 # design tokens
 ### A1. One component per file, kebab-case filename, PascalCase export
 
 ```
-packages/uxm/src/ui/disclosure.tsx   → export function Disclosure(...) {}
-packages/uxm/src/ui/button.tsx       → export function ButtonPrimary(...) {}, ButtonGhost(...), …
-packages/uxm/src/ui/list.tsx         → export function List(...), ListItem(...)  // compound
+packages/uxm/src/ui/disclosure/disclosure.tsx   → export function Disclosure(...) {}
+packages/uxm/src/ui/button/button.tsx           → export function ButtonPrimary(...) {}, ButtonGhost(...), …
+packages/uxm/src/ui/list/list.tsx               → export function List(...), ListItem(...)  // compound
 ```
+
+Each component lives in its own folder. The folder also holds the component's
+scoped `.css` file and an `index.ts` barrel (`export * from "./<name>";`) so
+consumers can import either `@modo/uxm/ui` (the package barrel) or
+`@modo/uxm/ui/<name>` (single component).
 
 ### A2. No `"use client"` directives
 
@@ -154,7 +163,8 @@ export function Card({ className, children, ...rest }: CardProps) {
 }
 ```
 
-The `cn()` helper lives at `packages/uxm/src/ui/cn.ts` and filters falsy values:
+The `cn()` helper lives at `packages/uxm/src/helpers/cn.ts` (imported via
+`@/helpers`) and filters falsy values:
 
 ```ts
 export function cn(...parts: Array<string | false | null | undefined>): string {
@@ -327,15 +337,22 @@ uxm-block__element--modifier
 
 | Prefix | Where |
 |---|---|
-| `uxm-` | Shared UI library (`packages/uxm/src/ui/*.tsx`) |
+| `uxm-` | Shared UI library (`packages/uxm/src/ui/<name>/<name>.tsx`) |
 | `modo-` | App-specific components (`apps/modo/src/components/*.tsx`) |
 
 ### E3. Where styles live
 
-- `packages/uxm/src/ui/styles.css` — all UI library styles, one consolidated file
+- `packages/uxm/src/ui/<name>/<name>.css` — **component-scoped** CSS for each UI primitive
+- `packages/uxm/src/ui/styles.css` — aggregator only; pure `@import` list of every component CSS in cascade order
 - `apps/modo/src/index.css` (or equivalent root stylesheet) — app-level styles, resets, global utilities
 - `packages/tokens/index.css` — CSS variable definitions (light + dark themes)
 - `packages/tokens/components.css` — generated component-level token overrides
+
+Consumers pull the full UI library CSS via `import "@modo/uxm/ui/styles.css"`
+or cherry-pick a single component via `import "@modo/uxm/ui/<name>/<name>.css"`.
+Any rule that touches `.uxm-<block>*` MUST live in `<block>/<block>.css`. Rules
+that visually span two components (e.g. `.uxm-breadcrumb .uxm-link`) live with
+the **context** component (here: breadcrumb).
 
 ### E4. Always use design tokens — never hardcoded CSS values
 
@@ -591,7 +608,7 @@ package name directly.
 
 Before opening a PR with a new component, verify:
 
-- [ ] File is kebab-case `.tsx` in `packages/uxm/src/ui/` or `apps/modo/src/components/`
+- [ ] Component folder is kebab-case under `packages/uxm/src/ui/<name>/` containing `<name>.tsx`, `<name>.css`, and `index.ts` barrel (or `apps/modo/src/components/<name>.tsx` for app components)
 - [ ] PascalCase named export — no default export
 - [ ] `XxxProps` interface declared and exported alongside the component
 - [ ] Extends native HTML attribute interface where applicable (`ButtonHTMLAttributes`, etc.)
@@ -604,5 +621,6 @@ Before opening a PR with a new component, verify:
 - [ ] Semantic HTML root (`<button>`, `<input>`, `<a>`, …)
 - [ ] ARIA attributes where semantics aren't enough; icons marked `aria-hidden` or `role="img"+aria-label`
 - [ ] Keyboard operable (Tab + Enter/Space/Escape/Arrows as appropriate)
-- [ ] Re-exported from `packages/uxm/src/ui/index.ts` (named + `export type`)
+- [ ] Re-exported from `packages/uxm/src/ui/index.ts` (named + `export type`) AND from the folder barrel `packages/uxm/src/ui/<name>/index.ts`
+- [ ] `<name>.css` only contains `.uxm-<name>*` rules; imported by `packages/uxm/src/ui/styles.css` via `@import "./<name>/<name>.css"`
 - [ ] `npm run lint --workspace=@modo/app` passes

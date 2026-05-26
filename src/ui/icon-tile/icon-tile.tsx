@@ -1,5 +1,5 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface IconTileProps extends HTMLAttributes<HTMLSpanElement> {
   /** The icon to render — typically `<Icon glyph="..." size={14} />`. */

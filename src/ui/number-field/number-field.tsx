@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from "@/helpers";
+import { Icon } from "../icon";
 
 export interface NumberFieldProps {
   value: number;
@@ -17,6 +17,12 @@ export interface NumberFieldProps {
    * with keyboard-arrow editing only.
    */
   withSteppers?: boolean;
+  /**
+   * Disables the input and both steppers. `aria-disabled` on the
+   * wrapper drives the dimmed treatment across the whole field
+   * (CSS reads the `disabled-*` vars + applies the disabled-opacity).
+   */
+  disabled?: boolean;
   className?: string;
   style?: CSSProperties;
   "aria-label"?: string;
@@ -38,6 +44,7 @@ export function NumberField({
   step = 1,
   unit,
   withSteppers = true,
+  disabled = false,
   className,
   style,
   "aria-label": ariaLabel,
@@ -50,11 +57,16 @@ export function NumberField({
   };
 
   return (
-    <div className={cn("uxm-number-field", className)} style={style}>
+    <div
+      className={cn("uxm-number-field", className)}
+      style={style}
+      {...(disabled ? { "aria-disabled": true as const } : {})}
+    >
       {withSteppers && (
         <button
           type="button"
           onClick={() => adjust(-step)}
+          disabled={disabled}
           className="uxm-number-field__stepper"
           aria-label="Decrement"
         >
@@ -68,6 +80,7 @@ export function NumberField({
         min={min}
         max={max}
         step={step}
+        disabled={disabled}
         aria-label={ariaLabel}
         className="uxm-number-field__input"
       />
@@ -75,6 +88,7 @@ export function NumberField({
         <button
           type="button"
           onClick={() => adjust(step)}
+          disabled={disabled}
           className="uxm-number-field__stepper"
           aria-label="Increment"
         >

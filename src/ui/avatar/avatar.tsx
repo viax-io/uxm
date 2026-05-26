@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { HTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export type AvatarType = "text" | "image";
 

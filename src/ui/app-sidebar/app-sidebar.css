@@ -1,0 +1,130 @@
+/* ── app-sidebar ── */
+
+/* AppSidebar — chrome shell. Root holds the visible width/bg/border-right;
+   inner __heading and __footer read their own colour vars so the editor
+   can theme section labels and the footer caption independently. The
+   `--collapsed` modifier reads `--uxm-app-sidebar-collapsed-width` so
+   collapse-state width is editable too. */
+
+.uxm-app-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: var(--uxm-app-sidebar-expanded-width, 256px);
+  height: 100%;
+  border-right: 1px solid var(--uxm-app-sidebar-border-color, var(--color-border));
+  background-color: var(--color-surface-alt);
+  transition: width 0.2s ease;
+}
+
+.uxm-app-sidebar--collapsed {
+  width: var(--uxm-app-sidebar-collapsed-width, 64px);
+}
+
+.uxm-app-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.uxm-app-sidebar__brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.uxm-app-sidebar__brand img {
+  max-width: 130px;
+  max-height: 28px;
+  display: block;
+}
+
+.uxm-app-sidebar__brand--icon {
+  margin: 0 auto;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.uxm-app-sidebar__brand--icon:hover {
+  background-color: color-mix(in srgb, var(--color-text) 6%, transparent);
+}
+
+.uxm-app-sidebar__brand--icon img {
+  max-width: 20px;
+  max-height: 24px;
+}
+
+.uxm-app-sidebar__toggle {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.uxm-app-sidebar__toggle:hover {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.uxm-app-sidebar__nav {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.uxm-app-sidebar__section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.uxm-app-sidebar__heading {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--uxm-app-sidebar-heading-color, var(--color-text-muted));
+  padding: 8px 12px 2px;
+  margin: 0;
+}
+
+.uxm-app-sidebar__item {
+  padding: 10px 12px;
+}
+
+.uxm-app-sidebar__item--collapsed {
+  /* Match the brand button's 32x32 footprint at the top of the
+     collapsed sidebar so the chrome reads as a single column of tiles. */
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  padding: 0;
+  justify-content: center;
+}
+
+.uxm-app-sidebar__footer {
+  border-top: 1px solid var(--uxm-app-sidebar-border-color, var(--color-border));
+  padding: 12px 24px;
+  font-size: 11px;
+  color: var(--uxm-app-sidebar-footer-color, var(--color-text-muted));
+  flex-shrink: 0;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChangeEvent, CSSProperties, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface ToggleSwitchProps {
   checked?: boolean;

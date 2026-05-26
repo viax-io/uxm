@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export type BadgeMode = "dot" | "count";
 export type BadgeType = "accent" | "success" | "warning" | "danger" | "info" | "neutral";

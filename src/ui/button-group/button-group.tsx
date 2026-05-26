@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import type { HTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface ButtonGroupOption {
   value: string;
   label: string;
+  /** Disabled items are inert and paint the disabled styling (opacity +
+   *  disabled bg/text). Selecting one is a no-op. */
+  disabled?: boolean;
 }
 
 export interface ButtonGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
@@ -42,6 +45,7 @@ export function ButtonGroup({
             key={opt.value}
             type="button"
             aria-pressed={isActive}
+            disabled={opt.disabled}
             className={cn(
               "uxm-button-group__item",
               isActive && "uxm-button-group__item--active",

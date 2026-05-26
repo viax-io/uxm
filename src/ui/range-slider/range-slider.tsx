@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface RangeSliderProps {
   /** [start, end] — start ≤ end always (the atom clamps on drag). */
@@ -8,6 +8,8 @@ export interface RangeSliderProps {
   min?: number;
   max?: number;
   step?: number;
+  /** Disable both thumbs and dim the wrapper via the shared --uxm-slider-disabled-opacity var. */
+  disabled?: boolean;
   /** Show the start thumb's value above the slider (left-aligned). */
   showStart?: boolean;
   /** Show the end thumb's value above the slider (right-aligned). */
@@ -46,6 +48,7 @@ export function RangeSlider({
   min = 0,
   max = 100,
   step = 1,
+  disabled = false,
   showStart = false,
   showEnd = false,
   showRange = false,
@@ -101,6 +104,7 @@ export function RangeSlider({
           min={min}
           max={max}
           step={step}
+          disabled={disabled}
           onChange={(e) => handleStart(Number(e.target.value))}
           aria-label={ariaLabel ? `${ariaLabel} (start)` : "Range start"}
         />
@@ -111,6 +115,7 @@ export function RangeSlider({
           min={min}
           max={max}
           step={step}
+          disabled={disabled}
           onChange={(e) => handleEnd(Number(e.target.value))}
           aria-label={ariaLabel ? `${ariaLabel} (end)` : "Range end"}
         />

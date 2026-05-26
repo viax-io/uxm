@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import type { HTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface FilterTabsOption {
   value: string;
   label: string;
+  /** Disabled tabs are inert and paint the disabled styling (opacity +
+   *  disabled text color). Selecting one is a no-op. */
+  disabled?: boolean;
 }
 
 export interface FilterTabsProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
@@ -43,6 +46,7 @@ export function FilterTabs({
             type="button"
             role="tab"
             aria-selected={isActive}
+            disabled={opt.disabled}
             className={cn(
               "uxm-filter-tabs__tab",
               isActive && "uxm-filter-tabs__tab--active",

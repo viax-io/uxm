@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** SVG content (use the Icon component or a raw <svg>). */

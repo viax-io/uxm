@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface LifecycleTerminalProps extends HTMLAttributes<HTMLDivElement> {
   /** Label shown inside — typically "Start" or "End". */

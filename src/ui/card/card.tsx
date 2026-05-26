@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   shadow?: boolean;

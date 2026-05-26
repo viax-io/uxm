@@ -28,7 +28,13 @@ export default tseslint.config(
       globals: { ...globals.browser, ...globals.node },
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
-    settings: { react: { version: "19.0" } },
+    settings: {
+      react: { version: "19.0" },
+      "import/resolver": {
+        typescript: { project: "./tsconfig.json" },
+        node: true,
+      },
+    },
     plugins: {
       react,
       "react-hooks": reactHooks,
@@ -56,6 +62,8 @@ export default tseslint.config(
         "warn",
         {
           groups: ["builtin", "external", "internal", "parent", "sibling", "index", "type"],
+          pathGroups: [{ pattern: "@/**", group: "internal", position: "before" }],
+          pathGroupsExcludedImportTypes: ["builtin"],
           "newlines-between": "always",
           alphabetize: { order: "asc", caseInsensitive: true },
         },

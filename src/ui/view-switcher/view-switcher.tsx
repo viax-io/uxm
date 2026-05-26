@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface ViewSwitcherOption {
   value: string;
   icon: ReactNode;
   label: string;
+  /** Disabled buttons are inert and paint the disabled styling (opacity +
+   *  disabled icon color). Selecting one is a no-op. */
+  disabled?: boolean;
 }
 
 export interface ViewSwitcherProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
@@ -44,6 +47,7 @@ export function ViewSwitcher({
             type="button"
             aria-pressed={isActive}
             aria-label={opt.label}
+            disabled={opt.disabled}
             className={cn(
               "uxm-view-switcher__button",
               isActive && "uxm-view-switcher__button--active",

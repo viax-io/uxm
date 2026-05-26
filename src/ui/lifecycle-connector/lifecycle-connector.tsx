@@ -1,5 +1,5 @@
 import type { SVGAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export type LifecycleConnectorState = "idle" | "active" | "dashed";
 

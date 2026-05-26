@@ -7,9 +7,9 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
-import { IconButton } from "./icon-button";
+import { cn } from "@/helpers";
+import { Icon } from "../icon";
+import { IconButton } from "../icon-button";
 
 export interface SideFlexpaneProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   eyebrow?: ReactNode;

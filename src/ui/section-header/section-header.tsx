@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface SectionHeaderProps extends HTMLAttributes<HTMLDivElement> {
   /** Heading text — rendered uppercase by default. */

@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 // `name` here is the visible segment label (ReactNode). The native HTML
 // `name` attribute on <button> is a form-control name — not what we want

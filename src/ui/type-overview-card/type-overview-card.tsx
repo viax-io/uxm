@@ -1,7 +1,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
-import { IconTile } from "./icon-tile";
+import { cn } from "@/helpers";
+import { Icon } from "@/ui/icon";
+import { IconTile } from "@/ui/icon-tile";
 
 export interface TypeOverviewCardProps extends HTMLAttributes<HTMLDivElement> {
   /** Required label, e.g. "Revenue Motions". */

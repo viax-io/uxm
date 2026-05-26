@@ -1,5 +1,5 @@
 import { Children, Fragment, type HTMLAttributes, type ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface MetaRowProps extends HTMLAttributes<HTMLDivElement> {
   /**

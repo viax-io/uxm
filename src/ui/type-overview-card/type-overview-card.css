@@ -1,0 +1,73 @@
+/* ── type-overview-card ── */
+
+/* TypeOverviewCard — registry knobs (bg, border, radius, padding,
+   accent*, icon*, label*, value*) all wired via `--uxm-typeoverview-*`
+   variables. The icon-side variables existed already; bg/border/radius/
+   padding and label/value text styling were the missing surface. */
+
+.uxm-type-overview-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--uxm-typeoverview-bg, var(--color-card));
+  border: 1px solid var(--uxm-typeoverview-border-color, var(--color-border));
+  border-radius: var(--uxm-typeoverview-radius, 4px);
+  padding: var(--uxm-typeoverview-padding, 20px);
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.uxm-type-overview-card:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
+  box-shadow: var(--shadow-xs);
+}
+
+.uxm-type-overview-card__accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--uxm-typeoverview-accent-width, 4px);
+  background-color: var(--uxm-typeoverview-accent-color, var(--color-accent));
+  transition: width 0.15s ease;
+}
+
+.uxm-type-overview-card:hover .uxm-type-overview-card__accent {
+  width: calc(var(--uxm-typeoverview-accent-width, 4px) + 2px);
+}
+
+/* Icon tile is now <IconTile>; TypeOverviewCard's `--uxm-typeoverview-icon-*`
+   bridge to IconTile's own CSS-variable surface in the .tsx. */
+
+.uxm-type-overview-card__label {
+  font-size: var(--uxm-typeoverview-label-size, 14px);
+  font-weight: 500;
+  color: var(--uxm-typeoverview-label-color, var(--color-text-strong));
+  margin: 0;
+}
+
+.uxm-type-overview-card__value {
+  font-size: var(--uxm-typeoverview-value-size, 30px);
+  font-weight: 600;
+  color: var(--uxm-typeoverview-value-color, var(--color-text));
+  margin: 0;
+  line-height: 1.1;
+}
+
+.uxm-type-overview-card__trailing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-accent-bold);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  margin-top: auto;
+}
+
+.uxm-type-overview-card:hover .uxm-type-overview-card__trailing {
+  opacity: 1;
+}

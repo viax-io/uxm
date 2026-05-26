@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
-import { cn } from "./cn";
-import { IconTile } from "./icon-tile";
+import { cn } from "@/helpers";
+import { IconTile } from "@/ui/icon-tile";
 
 // ConfigComponentRow's icon registry knobs (`iconTileSize` / `iconTileRadius`)
 // project onto IconTile's own CSS-variable surface. No bg/color knobs in

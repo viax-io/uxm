@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface ErrorPageProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   /** Big numeric/textual code rendered above the title (e.g. "404"). */

@@ -1,13 +1,17 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
-import { Link } from "./link";
+import { cn } from "@/helpers";
+import { Icon } from "../icon";
+import { Link } from "../link";
 
 export type BreadcrumbSeparator = "slash" | "chevron" | "dot" | "dash";
 
 export interface BreadcrumbCrumb {
   label: ReactNode;
   href?: string;
+  /** Disabled crumbs render as a Link with `aria-disabled` so the CSS
+   *  disabled rule paints. The crumb stays clickable in the DOM tree but
+   *  `pointer-events: none` blocks interaction. */
+  disabled?: boolean;
 }
 
 export interface BreadcrumbProps extends HTMLAttributes<HTMLElement> {
@@ -39,6 +43,7 @@ export function Breadcrumb({
                 <Link
                   href={item.href}
                   underline="hover"
+                  disabled={item.disabled}
                   className="uxm-breadcrumb__link"
                 >
                   {item.label}

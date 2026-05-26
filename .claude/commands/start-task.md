@@ -26,7 +26,7 @@ This command implements a mandatory 14-step workflow:
 1. **THINK**: Analyze the task description — what is being built/fixed, which
    package is affected (`@modo/uxm`, `@modo/app`, `@modo/tokens`), and what
    Constitution principles apply
-2. **READ DOCS**: Read `.specify/memory/constitution.md` (if present) and the
+2. **READ DOCS**: Read `.claude/memory/constitution.md` (if present) and the
    relevant handbooks:
    - `.claude/handbooks/react-style-guide.md` — primary source of truth
    - `.claude/handbooks/design-tokens.md` — token reference
@@ -50,7 +50,7 @@ This command implements a mandatory 14-step workflow:
    - Barrel re-export in `packages/uxm/src/ui/index.ts` (value + type)
    - CSS additions to `packages/uxm/src/ui/styles.css` (BEM + design tokens)
    - Accessibility considerations (semantic HTML, ARIA, keyboard)
-   - Constitution Check (gates from `.specify/memory/constitution.md` if it exists)
+   - Constitution Check (gates from `.claude/memory/constitution.md` if it exists)
 7. **SAVE**: Save the plan to `./todo/DD-MM-YYYY-HH-MM-[name].md` (Ukrainian
    timezone, UTC+2 / UTC+3). Update this file if the plan changes during execution
 8. **VERIFY**: BLOCK for user approval — cannot proceed without explicit confirmation

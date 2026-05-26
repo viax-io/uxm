@@ -1,5 +1,24 @@
 /* ── loader ── */
 
+@keyframes uxm-loader-spin { to { transform: rotate(360deg); } }
+
+@keyframes uxm-loader-dot {
+  0%, 80%, 100% { transform: scale(0.5); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes uxm-loader-bar {
+  0%   { transform: translateX(-60%); }
+  100% { transform: translateX(220%); }
+}
+
+@keyframes uxm-loader-msg {
+  0%   { opacity: 0; transform: translateY(4px); }
+  12%  { opacity: 1; transform: translateY(0); }
+  88%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
 /* Loader — three variants share a single root. Saves on `.uxm-loader`
    set `--uxm-loader-*` vars that cascade into __spinner / __dots / __bar
    children. The dots and bar derive their dot/bar diameter from `size`

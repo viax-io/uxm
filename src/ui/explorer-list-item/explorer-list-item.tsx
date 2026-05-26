@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 // Drop the native `name` attribute (a form-control name string) — our
 // `name` prop is the row's display label (ReactNode).
@@ -12,6 +12,10 @@ export interface ExplorerListItemProps
   /** Render the active (selected) state — adds a left rail indicator. */
   active?: boolean;
 }
+
+// `disabled` is already inherited from ButtonHTMLAttributes — forwarded
+// to the native `<button disabled>` so the CSS `:disabled` rule paints
+// and pointer-events are blocked. No additional prop needed.
 
 /**
  * Component-explorer style list row — label-first, with a left rail

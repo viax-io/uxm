@@ -1,6 +1,6 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from "@/helpers";
+import { Icon } from "@/ui/icon";
 
 export interface InputWithIconProps extends InputHTMLAttributes<HTMLInputElement> {
   /** Leading icon (SVG or Icon component). */

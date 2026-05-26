@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface LifecycleMinimapNode {
   /** Position in 0–1 space (relative to the minimap frame). */

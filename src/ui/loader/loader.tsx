@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { HTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export type LoaderVariant = "spinner" | "dots" | "bar";
 export type LoaderLayout = "stacked" | "inline";

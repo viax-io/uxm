@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface PropertyFieldProps extends HTMLAttributes<HTMLDivElement> {
   label: ReactNode;

@@ -1,6 +1,6 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
-import { IconTile } from "./icon-tile";
+import { cn } from "@/helpers";
+import { IconTile } from "../icon-tile";
 
 export interface PageHeaderProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   icon?: ReactNode;

@@ -31,7 +31,7 @@ npm test            # all Jest tests must pass, including jest-axe assertions
 
 ### 3. Verify Constitution Compliance
 
-Check each changed component against the Constitution (`.specify/memory/constitution.md`):
+Check each changed component against the Constitution (`.claude/memory/constitution.md`):
 
 | Gate | Check |
 |------|-------|

@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
   /** The field label (e.g. "Name", "Time zone"). */

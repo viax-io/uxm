@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface SliderProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "type" | "value"> {

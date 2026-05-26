@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface InlineActionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Optional leading icon — typically a small SVG (12px-ish). */

@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "./cn";
+import { cn } from "@/helpers";
 
 export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
   label?: ReactNode;

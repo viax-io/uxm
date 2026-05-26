@@ -1,8 +1,8 @@
 "use client";
 
 import type { ChangeEvent, ReactNode } from "react";
-import { cn } from "./cn";
-import { Icon } from "./icon";
+import { cn } from "@/helpers";
+import { Icon } from "@/ui/icon";
 
 export interface CheckboxProps {
   checked?: boolean;
