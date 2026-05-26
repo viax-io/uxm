@@ -44,16 +44,38 @@
     "lint:fix": "eslint . --fix",
     "test:ci": "echo 'no tests yet' && exit 0",
     "test:coverage": "echo 'no coverage yet' && exit 0",
+    "commit": "cz",
+    "prepare": "husky",
     "prepublishOnly": "npm run build"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs}": [
+      "eslint --fix"
+    ]
   },
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1",
     "@eslint/js": "^9.39.4",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/gitlab": "^13.3.2",
+    "@semantic-release/npm": "^13.1.5",
+    "@semantic-release/release-notes-generator": "^14.1.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.39.4",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
@@ -61,6 +83,9 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "semantic-release": "^25.0.3",
     "tsc-alias": "^1.8.17",
     "tsup": "^8.3.5",
     "typescript": "^5.6.0",
@@ -72,7 +97,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@ssh.gitlab.viax.tech:2222/services-viax/uxm.git"
+    "url": "https://gitlab.viax.tech/services-viax/uxm.git"
   },
   "engines": {
     "node": ">=20"
