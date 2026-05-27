@@ -93,8 +93,7 @@
     "typescript-eslint": "^8.59.4"
   },
   "publishConfig": {
-    "registry": "https://gitlab.viax.tech/api/v4/projects/services-viax%2Fuxm/packages/npm/",
-    "access": "restricted"
+    "registry": "https://nexus.viax.tech/repository/npm-private/"
   },
   "repository": {
     "type": "git",
