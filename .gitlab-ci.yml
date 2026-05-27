@@ -33,6 +33,17 @@ test:
 
 publish:
   image: "registry.gitlab.viax.tech/docker/nodejs:24.16"
+  variables:
+    # semantic-release/npm checks NPM_TOKEN in verifyConditions and uses it
+    # to authenticate against the registry declared in
+    # package.json#publishConfig.registry — currently Nexus
+    # (nexus.viax.tech/repository/npm-private/) — so the npm token is
+    # NEXUS_NPM_TOKEN. GITLAB_TOKEN is independent of the publish target:
+    # @semantic-release/gitlab uses it for release notes, and
+    # @semantic-release/git for pushing CHANGELOG + tag back to master.
+    # CI_JOB_TOKEN covers that within the project's own GitLab.
+    NPM_TOKEN: $NEXUS_NPM_TOKEN
+    GITLAB_TOKEN: $CI_JOB_TOKEN
   script:
     - "NODE_VERSION=$(node -v) echo \"Node version: $NODE_VERSION\""
     - "NPM_VERSION=$(npm -v) && echo \"NPM version: $NPM_VERSION\""
