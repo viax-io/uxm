@@ -1,3 +1,10 @@
+## [1.0.2](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.1...v1.0.2) (2026-05-27)
+
+
+### Bug Fixes
+
+* **fix npm registry:** fix npm registry ([27c5743](https://gitlab.viax.tech/services-viax/uxm/commit/27c57431a8a96590c7f2129b3b3bf001cad6e199))
+
 ## [1.0.1](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.0...v1.0.1) (2026-05-27)
 
 
