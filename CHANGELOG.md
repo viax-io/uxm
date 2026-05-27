@@ -1,3 +1,15 @@
+# 1.0.0 (2026-05-27)
+
+
+### Bug Fixes
+
+* **fix builder and add scss:** fix builder and add scss ([8269d92](https://gitlab.viax.tech/services-viax/uxm/commit/8269d9210962dd164aea6558a63965e1abc877d3))
+
+
+### Features
+
+* per-component folder refactor + sync 6 new + 24 updated atoms from upstream ([50f689d](https://gitlab.viax.tech/services-viax/uxm/commit/50f689da272b53e7d7806612a7243bc5b547dfc2))
+
 # Changelog
 
 All notable changes to `@viax/uxm` will be documented in this file. The format
