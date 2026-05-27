@@ -5,7 +5,6 @@ dist/
 .idea/
 .vscode/
 coverage/
-.npmrc
 
 # work with claude agents
 .claude/

@@ -1,5 +1,0 @@
-# Copy to .npmrc (project-local) or merge into ~/.npmrc.
-# Replace <PERSONAL_ACCESS_TOKEN> with a GitLab personal access token that has
-# at minimum `read_api` (and `write_api` if you intend to publish).
-@viax:registry=https://gitlab.viax.tech/api/v4/projects/services-viax%2Fuxm/packages/npm/
-//gitlab.viax.tech/api/v4/projects/services-viax%2Fuxm/packages/npm/:_authToken=<PERSONAL_ACCESS_TOKEN>
