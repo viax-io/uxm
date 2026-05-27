@@ -33,6 +33,15 @@ test:
 
 publish:
   image: "registry.gitlab.viax.tech/docker/nodejs:24.16"
+  variables:
+    # semantic-release needs NPM_TOKEN to authenticate against the GitLab
+    # Package Registry declared in package.json#publishConfig.registry, and
+    # GITLAB_TOKEN for @semantic-release/gitlab (release notes) plus
+    # @semantic-release/git (push CHANGELOG + tag back). CI_JOB_TOKEN is
+    # injected by GitLab for the job's lifetime and has scope for the
+    # project's own package registry + repository writes.
+    NPM_TOKEN: $CI_JOB_TOKEN
+    GITLAB_TOKEN: $CI_JOB_TOKEN
   script:
     - "NODE_VERSION=$(node -v) echo \"Node version: $NODE_VERSION\""
     - "NPM_VERSION=$(npm -v) && echo \"NPM version: $NPM_VERSION\""
