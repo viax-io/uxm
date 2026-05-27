@@ -1,5 +1,5 @@
 variables:
-  CONFIG_BRANCH: &ref
+  CONFIG_BRANCH: &ref master
   NPM_TOKEN: $NEXUS_NPM_TOKEN
 
 include:
