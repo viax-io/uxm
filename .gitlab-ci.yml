@@ -1,5 +1,6 @@
 variables:
-  CONFIG_BRANCH: &ref master
+  CONFIG_BRANCH: &ref
+  NPM_TOKEN: $NEXUS_NPM_TOKEN
 
 include:
   - project: "infra/helm"
