@@ -1,3 +1,10 @@
+## [1.0.4](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.3...v1.0.4) (2026-05-27)
+
+
+### Bug Fixes
+
+* **registry:** publish @viax/uxm to nexus npm-private ([0029f41](https://gitlab.viax.tech/services-viax/uxm/commit/0029f417598f7b2482fa380de7beea0a59c1a60b))
+
 ## [1.0.3](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.2...v1.0.3) (2026-05-27)
 
 
