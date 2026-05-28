@@ -1,3 +1,10 @@
+## [1.0.7](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.6...v1.0.7) (2026-05-28)
+
+
+### Bug Fixes
+
+* **fix yml:** fix yml ([7a743bd](https://gitlab.viax.tech/services-viax/uxm/commit/7a743bddaaeba1dadd42a1cefd4ff391eaaf1fbf))
+
 ## [1.0.6](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.5...v1.0.6) (2026-05-28)
 
 
