@@ -1,3 +1,10 @@
+## [1.0.6](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.5...v1.0.6) (2026-05-28)
+
+
+### Bug Fixes
+
+* **fix package:** fix package ([dc8994b](https://gitlab.viax.tech/services-viax/uxm/commit/dc8994b49aa64370111c0e496ff7423424689434))
+
 ## [1.0.5](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.4...v1.0.5) (2026-05-28)
 
 
