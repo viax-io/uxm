@@ -1,3 +1,14 @@
+## [1.0.5](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.4...v1.0.5) (2026-05-28)
+
+
+### Bug Fixes
+
+* **fix email:** fix email ([fb6ba83](https://gitlab.viax.tech/services-viax/uxm/commit/fb6ba83a1ad0c888b9e73176c9ca2eebe8490e78))
+* **fix yml:** fix yml ([78d089b](https://gitlab.viax.tech/services-viax/uxm/commit/78d089b2648f25fe2a912258b7dbae9220c3fe35))
+* **fix yml:** fix yml ([79f661a](https://gitlab.viax.tech/services-viax/uxm/commit/79f661aa1778b34d54894af46e1a950e2dc8ed67))
+* **fix yml:** fix yml ([34120b1](https://gitlab.viax.tech/services-viax/uxm/commit/34120b1a5df823b9b1ac95a914396b928f3db8ce))
+* **fix yml:** fix yml ([921575b](https://gitlab.viax.tech/services-viax/uxm/commit/921575bee41ab1ff9fe66e0178d5390528d5f34c))
+
 ## [1.0.4](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.3...v1.0.4) (2026-05-27)
 
 
