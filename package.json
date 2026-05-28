@@ -93,7 +93,7 @@
     "typescript-eslint": "^8.59.4"
   },
   "publishConfig": {
-    "registry": "https://nexus.viax.tech/repository/viax-npm/"
+    "registry": "https://nexus.viax.tech/repository/npm-private/"
   },
   "repository": {
     "type": "git",
