@@ -38,6 +38,7 @@ publish:
     - "NODE_VERSION=$(node -v) echo \"Node version: $NODE_VERSION\""
     - "NPM_VERSION=$(npm -v) && echo \"NPM version: $NPM_VERSION\""
     - npm config set //nexus.viax.tech/repository/viax-npm/:_auth $NEXUS_NPM_TOKEN
+    - npm config set //nexus.viax.tech/repository/npm-private/:_auth $NEXUS_NPM_TOKEN
     - npm config set registry https://nexus.viax.tech/repository/viax-npm/
     - npm install
     - npm run build
