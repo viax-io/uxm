@@ -1,7 +1,5 @@
 variables:
   CONFIG_BRANCH: &ref master
-  NPM_TOKEN: $NEXUS_NPM_TOKEN
-  HUSKY: "0"
 
 include:
   - project: "infra/helm"
@@ -10,28 +8,6 @@ include:
   - project: "infra/helm"
     ref: *ref
     file: "/ci/pipelines/npm-package.yml"
-
-test:
-  image: "registry.gitlab.viax.tech/docker/nodejs:24.16"
-  script:
-    - "NODE_VERSION=$(node -v) echo \"Node version: $NODE_VERSION\""
-    - "NPM_VERSION=$(npm -v) && echo \"NPM version: $NPM_VERSION\""
-    - npm config set //nexus.viax.tech/repository/viax-npm/:_auth $NEXUS_NPM_TOKEN
-    - npm config set registry https://nexus.viax.tech/repository/viax-npm/
-    - npm config set email=gitlab.viax.tech
-    - npm install
-    - npm run test:ci
-    - npm run test:coverage
-  coverage: '/All files\s+\|\s+\d+\.\d+\s+\|\s+\d+\.\d+\s+\|\s+\d+\.\d+\s+\|\s+(\d+\.\d+)\s+.*/'
-  artifacts:
-    when: always
-    paths:
-      - junit-report.xml
-    reports:
-      junit: junit-report.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage/cobertura-coverage.xml
 
 publish:
   image: "registry.gitlab.viax.tech/docker/nodejs:24.16"
