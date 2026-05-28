@@ -16,7 +16,6 @@ test:
     - "NPM_VERSION=$(npm -v) && echo \"NPM version: $NPM_VERSION\""
     - npm config set //nexus.viax.tech/repository/viax-npm/:_auth $NEXUS_NPM_TOKEN
     - npm config set registry https://nexus.viax.tech/repository/viax-npm/
-    - npm config set email=gitlab.viax.tech
     - npm install
     - npm run test:ci
     - npm run test:coverage
