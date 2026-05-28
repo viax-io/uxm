@@ -1,7 +1,5 @@
 variables:
   CONFIG_BRANCH: &ref master
-  NPM_TOKEN: $NEXUS_NPM_TOKEN
-  HUSKY: "0"
 
 include:
   - project: "infra/helm"
@@ -31,6 +29,7 @@ test:
       coverage_report:
         coverage_format: cobertura
         path: coverage/cobertura-coverage.xml
+
 
 publish:
   image: "registry.gitlab.viax.tech/docker/nodejs:24.16"
