@@ -1,0 +1,263 @@
+/* ── File Upload ──
+   File-upload atom with two interaction modes (click anywhere on the label
+   opens the picker; drop fires onFiles). State is driven by a
+   `[data-state="…"]` attribute the component writes onto the root — the
+   workbench forces a value via the `state` prop, while production usage
+   lets the component flip itself to `drag-over` during drag.
+
+   Why data-state instead of `--state-X` modifier classes (input-text style):
+   seven states + the inner-styled file-row family read cleaner as attribute
+   selectors. CSS specificity stays predictable because every state rule
+   uses a single attribute selector, so source order resolves layering
+   (default < hover < drag-over/uploading/error < disabled).
+
+   Focus indication is wired via `:focus-within` on the label — the hidden
+   `<input type="file">` owns keyboard focus (it's visually-hidden but
+   focusable), and the visible label paints the focus ring on its behalf.
+   That's what lets Enter / Space activate the picker natively, no custom
+   key handler needed. */
+
+.uxm-file-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uxm-file-upload-wrapper-gap, 10px);
+  width: 100%;
+}
+
+.uxm-file-upload {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--uxm-file-upload-gap, 8px);
+  background-color: var(--uxm-file-upload-bg, var(--color-card));
+  color: var(--uxm-file-upload-color, var(--color-text));
+  border: var(--uxm-file-upload-border-width, 1.5px) var(--uxm-file-upload-border-style, dashed) var(--uxm-file-upload-border-color, var(--color-border));
+  border-radius: var(--uxm-file-upload-border-radius, 12px);
+  padding: var(--uxm-file-upload-padding-y, 24px) var(--uxm-file-upload-padding-x, 24px);
+  min-height: var(--uxm-file-upload-min-height, 160px);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Visually-hidden but focusable file input.
+   Clip-path (not display:none) keeps Tab focus working — pressing
+   Enter/Space then dispatches a click to the surrounding <label>,
+   which opens the file picker natively. */
+.uxm-file-upload__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.uxm-file-upload__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--uxm-file-upload-icon-color, var(--color-accent));
+}
+.uxm-file-upload__icon > svg {
+  width: var(--uxm-file-upload-icon-size, 40px);
+  height: var(--uxm-file-upload-icon-size, 40px);
+}
+
+.uxm-file-upload__title {
+  font-size: var(--uxm-file-upload-title-size, 15px);
+  font-weight: 600;
+  color: var(--uxm-file-upload-color, var(--color-text-strong));
+}
+
+.uxm-file-upload__help {
+  font-size: var(--uxm-file-upload-help-size, 13px);
+  color: var(--uxm-file-upload-help-color, var(--color-text-muted));
+}
+
+/* Allowed-types line — caller-controlled constraint copy (e.g. "PDF,
+   DOCX · up to 10 MB"). Renders only when the caller passes a value;
+   visually subordinate to help text (smaller, muted). */
+.uxm-file-upload__allowed-types {
+  font-size: var(--uxm-file-upload-allowed-types-size, 11px);
+  color: var(--uxm-file-upload-allowed-types-color, var(--color-text-subtle, var(--color-text-muted)));
+  letter-spacing: 0.01em;
+}
+
+/* Hover — paints only when not forced into a different state. The
+   `:not([data-state])` guard isn't strictly needed since forced-state
+   selectors have equal specificity and follow this rule in source
+   order, but the explicit data-state="hover" rule below covers the
+   forced case identically. */
+.uxm-file-upload:hover,
+.uxm-file-upload[data-state="hover"] {
+  background-color: var(--uxm-file-upload-hover-bg, var(--color-card));
+  border-color: var(--uxm-file-upload-hover-border, var(--color-accent));
+}
+
+/* Drag-over — overlay-style override: only the surface colors change, so
+   geometry / paddings / typography don't shift when files are dragged in. */
+.uxm-file-upload[data-state="drag-over"] {
+  background-color: var(--uxm-file-upload-drag-bg, color-mix(in srgb, var(--color-accent) 8%, var(--color-card)));
+  border-color: var(--uxm-file-upload-drag-border, var(--color-accent));
+  border-style: var(--uxm-file-upload-drag-border-style, solid);
+}
+.uxm-file-upload[data-state="drag-over"] .uxm-file-upload__icon {
+  color: var(--uxm-file-upload-drag-accent, var(--color-accent));
+}
+
+/* Focus — :focus-within paints the visible label when the (hidden) input
+   takes keyboard focus. data-state="focus" mirrors it for the forced case. */
+.uxm-file-upload:focus-within,
+.uxm-file-upload[data-state="focus"] {
+  border-color: var(--uxm-file-upload-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-file-upload-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+
+/* Uploading — explicit caller-driven drop-area state (NOT auto-derived
+   from per-file `status`). Used for page-level signals: batch lockouts,
+   pre-file validation, indeterminate chunked uploads. The cursor change
+   is the only visual difference beyond the help-text swap done in JSX. */
+.uxm-file-upload[data-state="uploading"] {
+  cursor: progress;
+}
+
+/* Error — surface tone + standalone message slot below the drop area. */
+.uxm-file-upload[data-state="error"] {
+  background-color: var(--uxm-file-upload-error-bg, var(--color-card));
+  border-color: var(--uxm-file-upload-error-border, var(--color-danger-text));
+}
+.uxm-file-upload__error {
+  font-size: var(--uxm-file-upload-error-message-size, 12px);
+  color: var(--uxm-file-upload-error-color, var(--color-danger-text));
+}
+
+/* Disabled — `data-disabled` attribute on the label, since the label
+   itself can't carry `:disabled` (that's an input pseudo). */
+.uxm-file-upload[data-disabled="true"] {
+  opacity: var(--uxm-file-upload-disabled-opacity, 0.6);
+  cursor: not-allowed;
+  background-color: var(--uxm-file-upload-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-file-upload-disabled-border, var(--color-border));
+  color: var(--uxm-file-upload-disabled-color, var(--color-text-muted));
+}
+.uxm-file-upload[data-disabled="true"] .uxm-file-upload__icon {
+  color: var(--uxm-file-upload-disabled-color, var(--color-text-muted));
+}
+
+/* Inline file list — rendered automatically whenever `files.length > 0`.
+   Each row paints from its own `[data-status]` attribute (queued /
+   uploading / done / error), independently of the other rows. The
+   trash button is always enabled (during uploading, the caller can treat
+   the click as a cancel signal). */
+.uxm-file-upload__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uxm-file-upload-row-gap, 6px);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.uxm-file-upload__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--uxm-file-upload-row-bg, var(--color-surface));
+  border: 1px solid var(--uxm-file-upload-row-border, var(--color-border));
+  border-radius: var(--uxm-file-upload-row-radius, 8px);
+  padding: var(--uxm-file-upload-row-padding-y, 8px) var(--uxm-file-upload-row-padding-x, 12px);
+  overflow: hidden;
+}
+.uxm-file-upload__row-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--uxm-file-upload-row-icon-color, var(--color-accent));
+}
+.uxm-file-upload__row-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.uxm-file-upload__row-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--uxm-file-upload-row-name-color, var(--color-text-strong));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.uxm-file-upload__row-meta {
+  font-size: 11px;
+  color: var(--uxm-file-upload-row-meta-color, var(--color-text-muted));
+}
+.uxm-file-upload__row-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--uxm-file-upload-remove-icon-color, var(--color-text-muted));
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.uxm-file-upload__row-remove:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--color-text) 8%, transparent);
+  color: var(--uxm-file-upload-remove-icon-hover-color, var(--color-danger-text));
+}
+.uxm-file-upload__row-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.uxm-file-upload__row-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: var(--uxm-file-upload-progress-height, 2px);
+  width: var(--uxm-file-upload-row-progress, 0%);
+  background-color: var(--uxm-file-upload-progress-fill, var(--color-accent));
+  transition: width 0.2s ease;
+}
+
+/* Per-row status overrides — applied via the `[data-status]` attribute the
+   atom writes onto each <li>. Queued is the default and needs no override.
+   Done swaps the icon color to a success tint. Error flips the row's
+   border + icon + meta to danger styling. The base row geometry (radius,
+   padding, gap, name color) stays identical across statuses so the rows
+   align visually. */
+
+/* Done — full state-card treatment: success bg tint + success border.
+   Symmetric with error so the two "decided" statuses (done / error) get
+   the same kind of signal, just with opposite-color semantics. */
+.uxm-file-upload__row[data-status="done"] {
+  background-color: var(--uxm-file-upload-row-done-bg, var(--color-success-bg));
+  border-color: var(--uxm-file-upload-row-done-border-color, var(--color-success-border));
+}
+.uxm-file-upload__row[data-status="done"] .uxm-file-upload__row-icon {
+  color: var(--uxm-file-upload-row-done-icon-color, var(--color-success-text, var(--color-accent)));
+}
+
+/* Error — full state-card treatment: danger bg tint + danger border. */
+.uxm-file-upload__row[data-status="error"] {
+  background-color: var(--uxm-file-upload-row-error-bg, var(--color-danger-bg));
+  border-color: var(--uxm-file-upload-row-error-border-color, var(--color-danger-border, var(--color-danger-text)));
+}
+.uxm-file-upload__row[data-status="error"] .uxm-file-upload__row-icon {
+  color: var(--uxm-file-upload-row-error-icon-color, var(--color-danger-text));
+}
+.uxm-file-upload__row[data-status="error"] .uxm-file-upload__row-meta {
+  color: var(--uxm-file-upload-row-error-meta-color, var(--color-danger-text));
+}

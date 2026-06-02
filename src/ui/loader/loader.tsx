@@ -31,8 +31,17 @@ export function Loader({
     [message],
   );
   const [idx, setIdx] = useState(0);
-  useEffect(() => {
+  // Restart the cycle from the first message whenever the `message` prop
+  // changes — otherwise a swap mid-rotation would show some interior
+  // message first. Render-phase reset (React's "storing information from
+  // previous renders" pattern) instead of an effect so there's no extra
+  // render after the swap.
+  const [prevMessage, setPrevMessage] = useState(message);
+  if (prevMessage !== message) {
+    setPrevMessage(message);
     setIdx(0);
+  }
+  useEffect(() => {
     if (messages.length < 2) return;
     const id = setInterval(() => setIdx((i) => (i + 1) % messages.length), messageInterval);
     return () => clearInterval(id);

@@ -3,52 +3,101 @@
 .uxm-pill-select {
   position: relative;
   width: 100%;
+}
 
-  &__field {
-    align-items: center;
-    background-color: var(--color-card);
-    border: 1.5px solid var(--color-border);
-    border-radius: var(--uxm-pill-select-radius, 8px);
-    cursor: text;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--uxm-pill-select-chip-gap, 6px);
-    min-height: 42px;
-    padding: 8px 10px;
-  }
+.uxm-pill-select__field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--uxm-pill-select-chip-gap, 6px);
+  align-items: center;
+  background-color: var(--uxm-pill-select-bg, var(--color-card));
+  border: 1.5px solid var(--uxm-pill-select-border-color, var(--color-border));
+  border-radius: var(--uxm-pill-select-radius, 8px);
+  padding: var(--uxm-pill-select-padding-y, 8px) var(--uxm-pill-select-padding-x, 10px);
+  min-height: 42px;
+  cursor: text;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    opacity 120ms ease;
+}
 
-  &__placeholder {
-    color: var(--color-text-muted);
-    font-size: 13px;
-  }
+/* Field interaction states — mirror the input-text / input-with-icon
+   family so the workbench's field-shaped inputs feel cohesive. Each rule
+   pairs the production pseudo-class with a `--state-*` modifier class
+   the editor preview applies to force-render the state on canvas without
+   real interaction. Hover and focus are guarded against the disabled
+   case so a disabled field doesn't paint hover on pointer-over. The
+   field is keyboard-focusable via `tabIndex={0}` + `role="combobox"` on
+   the React side; the visual ring here matches the rest of the family. */
+.uxm-pill-select--state-hover .uxm-pill-select__field,
+.uxm-pill-select__field:hover:not([aria-disabled='true']) {
+  background-color: var(--uxm-pill-select-hover-bg, var(--color-card));
+  border-color: var(--uxm-pill-select-hover-border, var(--color-accent));
+}
 
-  &__menu {
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    box-shadow: var(--shadow-lg);
-    display: flex;
-    flex-direction: column;
-    left: 0;
-    padding: 4px;
-    position: absolute;
-    right: 0;
-    top: calc(100% + 4px);
-    z-index: 10;
-  }
+.uxm-pill-select--state-focus .uxm-pill-select__field,
+.uxm-pill-select__field:focus-visible {
+  border-color: var(--uxm-pill-select-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-pill-select-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
 
-  &__option {
-    background: transparent;
-    border: none;
-    border-radius: 4px;
-    color: var(--color-text);
-    cursor: pointer;
-    font-size: 13px;
-    padding: 8px 10px;
-    text-align: left;
+/* Disabled — defaults mirror the default state's colors; the chips
+   inside carry the disabled signal via the Chip atom's own muted
+   palette (forwarded `disabled` prop), and `not-allowed` + tab-order
+   removal handle the behavioral cues. Opacity is exposed as a knob
+   but defaults to 1 so the field stays readable. */
+.uxm-pill-select--state-disabled .uxm-pill-select__field,
+.uxm-pill-select__field[aria-disabled='true'] {
+  background-color: var(--uxm-pill-select-disabled-bg, var(--color-card));
+  border-color: var(--uxm-pill-select-disabled-border, var(--color-border));
+  opacity: var(--uxm-pill-select-disabled-opacity, 1);
+  cursor: not-allowed;
+}
 
-    &:hover {
-      background-color: var(--color-surface-alt);
-    }
-  }
+.uxm-pill-select__placeholder {
+  color: var(--uxm-pill-select-placeholder-color, var(--color-text-muted));
+  font-size: 13px;
+}
+
+/* Chevron — visual affordance that the field opens a dropdown. Inline
+   flex item; `margin-left: auto` pushes it to the right edge regardless
+   of how many chips precede it. Rotation comes from inline `transform`
+   in the atom (open → 180°); transition lives here. */
+.uxm-pill-select__chevron {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--color-text-muted);
+  transition: transform 150ms ease;
+}
+
+.uxm-pill-select__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+.uxm-pill-select__option {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--color-text);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.uxm-pill-select__option:hover {
+  background-color: var(--color-surface-alt);
 }

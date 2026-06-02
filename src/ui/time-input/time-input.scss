@@ -1,0 +1,208 @@
+/* Time Input — same inner-styled-atom shape as DateInput. Root
+   `.uxm-time-input` is a positioning wrapper; the visible field is
+   `.uxm-time-input__input`. In `data-format="12h"` mode an AM/PM <select>
+   pins to the right of the field, and the clock icon shifts left to make
+   room. The `__input` right-padding math accounts for whichever trailing
+   elements are rendered. No popover — typing is the only entry path. */
+.uxm-time-input {
+  position: relative;
+  width: 100%;
+}
+.uxm-time-input__icon {
+  /* Clock icon always hugs the far right — it's the popover trigger, the
+     natural "open the picker" affordance lives at the end of the field.
+     AM/PM (when shown) sits inboard of the icon as a quiet value suffix,
+     not a competing control. */
+  position: absolute;
+  right: var(--uxm-time-input-icon-offset, 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--uxm-time-input-icon-color, var(--color-text-muted));
+  line-height: 1;
+  font-family: inherit;
+  transition: color 0.12s;
+}
+/* When rendered as a real <button> (picker enabled), pointer events are
+   live so the click can toggle the popover. The decorative <span> path
+   keeps pointer-events:none so clicks fall through to the input. */
+button.uxm-time-input__icon {
+  cursor: pointer;
+}
+button.uxm-time-input__icon:hover:not(:disabled) {
+  color: var(--uxm-time-input-icon-hover-color, var(--color-text));
+}
+button.uxm-time-input__icon:disabled {
+  cursor: not-allowed;
+}
+span.uxm-time-input__icon {
+  pointer-events: none;
+}
+.uxm-time-input__icon > svg {
+  width: var(--uxm-time-input-icon-size, 16px);
+  height: var(--uxm-time-input-icon-size, 16px);
+}
+.uxm-time-input__input {
+  width: 100%;
+  background-color: var(--uxm-time-input-background-color, var(--color-card));
+  color: var(--uxm-time-input-color, var(--color-text));
+  border: 1px solid var(--uxm-time-input-border-color, var(--color-border));
+  border-radius: var(--uxm-time-input-border-radius, 8px);
+  /* Reserve right padding for the trailing affordances. In 24h mode that's
+     just the clock icon; in 12h mode it's icon + meridiem selector width. */
+  padding: var(--uxm-time-input-padding-y, 10px)
+    calc(
+      var(--uxm-time-input-icon-offset, 12px)
+      + var(--uxm-time-input-icon-size, 16px)
+      + 8px
+    )
+    var(--uxm-time-input-padding-y, 10px)
+    var(--uxm-time-input-padding-x, 12px);
+  font-size: var(--uxm-time-input-font-size, 14px);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+  box-sizing: border-box;
+}
+.uxm-time-input[data-format="12h"] .uxm-time-input__input {
+  /* 12h: reserve right padding for the clock icon + AM/PM suffix + gaps. */
+  padding-right: calc(
+    var(--uxm-time-input-icon-offset, 12px)
+    + var(--uxm-time-input-icon-size, 16px)
+    + var(--uxm-time-input-meridiem-width, 24px)
+    + 16px
+  );
+}
+.uxm-time-input__meridiem {
+  /* Read-only AM/PM suffix. Visually a quiet label that reads as part of
+     the value, not a separate control. Sits inboard of the clock icon —
+     positioned at `icon_offset + icon_size + gap` from the right edge so
+     it clears the icon. No chip background; small caps + muted color let
+     it recede into the field surface. The popover is the only way to
+     change it (avoids duplicating an interactive affordance). */
+  position: absolute;
+  right: calc(
+    var(--uxm-time-input-icon-offset, 12px)
+    + var(--uxm-time-input-icon-size, 16px)
+    + 8px
+  );
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--uxm-time-input-meridiem-color, var(--color-text-muted));
+  font-family: inherit;
+  font-size: calc(var(--uxm-time-input-font-size, 14px) - 2px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+  user-select: none;
+}
+/* State coverage — `:hover` / `:focus` / `:disabled` target the inner
+   `__input`; `--error` and `--state-*` forced modifiers sit on the wrapper
+   so both the clock icon and the meridiem selector can re-tone in error
+   mode (matching DateInput's wrapper-scoped error treatment). */
+.uxm-time-input--state-hover .uxm-time-input__input,
+.uxm-time-input__input:hover:not(:disabled) {
+  background-color: var(--uxm-time-input-hover-bg, var(--color-card));
+  border-color: var(--uxm-time-input-hover-border, var(--color-accent));
+}
+.uxm-time-input--state-focus .uxm-time-input__input,
+.uxm-time-input__input:focus {
+  border-color: var(--uxm-time-input-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-time-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-time-input__input:disabled {
+  background-color: var(--uxm-time-input-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-time-input-disabled-border, var(--color-border));
+  color: var(--uxm-time-input-disabled-color, var(--color-text-muted));
+  opacity: var(--uxm-time-input-disabled-opacity, 0.6);
+  cursor: not-allowed;
+}
+.uxm-time-input--error .uxm-time-input__input {
+  background-color: var(--uxm-time-input-error-bg, var(--color-card));
+  border-color: var(--uxm-time-input-error-border, var(--color-danger-text));
+}
+.uxm-time-input--error .uxm-time-input__icon,
+.uxm-time-input--error .uxm-time-input__meridiem {
+  color: var(--uxm-time-input-error-color, var(--color-danger-text));
+  border-color: var(--uxm-time-input-error-border, var(--color-danger-text));
+}
+
+/* TimeInput popover — three click-list columns (hour / minute / AM-PM).
+   Anchored to the wrapper's bottom-left so it lines up with the field
+   width. Filter drop-shadow gives the rounded corners a soft surround
+   without rectangular bleed. Mirrors DateInput's popover positioning so
+   the two atoms float at the same offset. */
+.uxm-time-input__popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  background-color: var(--uxm-time-input-popover-bg, var(--color-card));
+  border: 1px solid var(--uxm-time-input-popover-border, var(--color-border));
+  border-radius: var(--uxm-time-input-popover-radius, 8px);
+  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.18));
+  overflow: hidden;
+}
+.uxm-time-input__column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--uxm-time-input-popover-border, var(--color-border));
+}
+.uxm-time-input__column:last-child {
+  border-right: none;
+}
+.uxm-time-input__column-head {
+  padding: 6px 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--uxm-time-input-color, var(--color-text));
+  background-color: var(--uxm-time-input-popover-head-bg, var(--color-surface-alt));
+  border-bottom: 1px solid var(--uxm-time-input-popover-border, var(--color-border));
+}
+.uxm-time-input__column-body {
+  /* Scrollable column. Height tuned so ~7 rows are visible at default font
+     — enough context above and below the selected row that the centered
+     scroll behaviour reads as "your value is here" rather than "this list
+     is short." */
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.uxm-time-input__row {
+  /* Reset button chrome so the rows read as plain list items. */
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--uxm-time-input-color, var(--color-text));
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.1s, color 0.1s;
+}
+.uxm-time-input__row:hover {
+  background-color: var(--uxm-time-input-popover-row-hover-bg, var(--color-surface-alt));
+}
+.uxm-time-input__row--selected {
+  background-color: var(--uxm-time-input-popover-row-selected-bg, var(--color-accent));
+  color: var(--uxm-time-input-popover-row-selected-color, var(--color-text-inverse));
+  font-weight: 600;
+}
+.uxm-time-input__row--selected:hover {
+  background-color: var(--uxm-time-input-popover-row-selected-bg, var(--color-accent));
+}

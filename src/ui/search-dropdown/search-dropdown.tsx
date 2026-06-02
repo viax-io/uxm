@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 
 import { cn } from '@/helpers';
 
@@ -70,13 +70,21 @@ export function SearchDropdown({
     return options.filter((o) => o.label.toLowerCase().includes(q));
   }, [options, search]);
 
-  // Reset search on open + auto-focus the search input. Click-outside
-  // closes the popover. Highlight resets to 0 so Enter picks the top
-  // match consistently.
-  useEffect(() => {
-    if (!open) return;
+  // Clamp the highlight against the current filtered list so a stale
+  // index from a longer list doesn't point past the end after the user
+  // types and the list shrinks. Derived rather than tracked in state so
+  // we never have a "stale highlight" intermediate render.
+  const safeHighlight = filtered.length === 0 ? 0 : Math.min(highlight, filtered.length - 1);
+
+  const openPopover = useCallback(() => {
     setSearch('');
     setHighlight(0);
+    setOpen(true);
+  }, []);
+
+  // Click-outside closes the popover. Auto-focus the search input on open.
+  useEffect(() => {
+    if (!open) return;
     setTimeout(() => searchRef.current?.focus(), 0);
     function onClick(e: MouseEvent) {
       const t = e.target as Node;
@@ -87,13 +95,6 @@ export function SearchDropdown({
     return () => document.removeEventListener('mousedown', onClick);
   }, [open]);
 
-  // Keep highlight in range when the filtered list changes (e.g. after
-  // typing). Without this, ArrowDown past a now-shorter list would
-  // wrap unexpectedly.
-  useEffect(() => {
-    if (highlight >= filtered.length) setHighlight(Math.max(0, filtered.length - 1));
-  }, [filtered, highlight]);
-
   const select = (v: string) => {
     onChange(v);
     setOpen(false);
@@ -102,13 +103,13 @@ export function SearchDropdown({
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setHighlight((i) => Math.min(filtered.length - 1, i + 1));
+      setHighlight(Math.min(filtered.length - 1, safeHighlight + 1));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setHighlight((i) => Math.max(0, i - 1));
+      setHighlight(Math.max(0, safeHighlight - 1));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      const opt = filtered[highlight];
+      const opt = filtered[safeHighlight];
       if (opt) select(opt.value);
     } else if (e.key === 'Escape') {
       e.preventDefault();
@@ -126,7 +127,7 @@ export function SearchDropdown({
         aria-expanded={open}
         aria-label={ariaLabel}
         disabled={disabled}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => (open ? setOpen(false) : openPopover())}
         className={cn(
           'uxm-search-dropdown__trigger',
           open && 'uxm-search-dropdown__trigger--open',
@@ -167,7 +168,7 @@ export function SearchDropdown({
             ) : (
               filtered.map((opt, i) => {
                 const active = opt.value === value;
-                const highlighted = i === highlight;
+                const highlighted = i === safeHighlight;
                 return (
                   <button
                     key={opt.value}

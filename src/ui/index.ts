@@ -113,8 +113,25 @@ export { PageHeader } from './page-header';
 export type { PageHeaderProps } from './page-header';
 export { PageShell } from './page-shell';
 export type { PageShellProps, PageShellVariant } from './page-shell';
+export { CurrencyInput } from './currency-input';
+export type { CurrencyInputProps, CurrencyValue } from './currency-input';
+export { FileUpload } from './file-upload';
+export type {
+  FileStatus,
+  FileUploadFileMeta,
+  FileUploadProps,
+  FileUploadState,
+} from './file-upload';
 export { FormField } from './form-field';
-export type { FormFieldProps } from './form-field';
+export type { FormFieldLabelPosition, FormFieldProps } from './form-field';
+export { NumberInput } from './number-input';
+export type { NumberInputProps } from './number-input';
+export { PasswordInput } from './password-input';
+export type { PasswordInputProps } from './password-input';
+export { PhoneInput } from './phone-input';
+export type { PhoneInputProps, PhoneValue } from './phone-input';
+export { TimeInput } from './time-input';
+export type { TimeInputFormat, TimeInputProps } from './time-input';
 export { PillSelect } from './pill-select';
 export type { PillSelectProps } from './pill-select';
 export { PropertyField, PropertyGrid } from './property-field';
