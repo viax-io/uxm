@@ -1,3 +1,10 @@
+## [1.0.8](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.7...v1.0.8) (2026-06-02)
+
+
+### Bug Fixes
+
+* **sync changes from modo:** sync changes from modo ([d9f0f41](https://gitlab.viax.tech/services-viax/uxm/commit/d9f0f414818daf51c0b202c326c02f973ec5e7a1))
+
 ## [1.0.7](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.6...v1.0.7) (2026-05-28)
 
 
