@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 import { cn } from '@/helpers';
 
 import { Chip } from '../chip';
+import { Icon } from '../icon';
 
 import type { HTMLAttributes } from 'react';
 
@@ -46,6 +47,7 @@ export function PillSelect({
   const [internal, setInternal] = useState<string[]>(defaultValue);
   const selected = isControlled ? value : internal;
   const [open, setOpen] = useState(false);
+  const menuId = useId();
 
   const setSelected = (next: string[]) => {
     if (!isControlled) setInternal(next);
@@ -97,6 +99,7 @@ export function PillSelect({
         role="combobox"
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-controls={menuId}
         aria-disabled={disabled || undefined}
       >
         {selected.map((tag) => (
@@ -110,13 +113,27 @@ export function PillSelect({
         {selected.length === 0 && (
           <span className="uxm-pill-select__placeholder">{placeholder}</span>
         )}
+        {/* Chevron — visual affordance that this is a dropdown trigger.
+            Inline as the last flex item in the field (margin-left: auto
+            in CSS pushes it to the right edge regardless of how many
+            chips fill the row). Rotates 180° when the menu is open,
+            mirroring search-dropdown's pattern. */}
+        <Icon
+          glyph="chevron-down"
+          size={14}
+          className="uxm-pill-select__chevron"
+          style={{ transform: open ? 'rotate(180deg)' : 'none' }}
+          aria-hidden
+        />
       </div>
       {!disabled && open && available.length > 0 && (
-        <div className="uxm-pill-select__menu">
+        <div id={menuId} className="uxm-pill-select__menu" role="listbox">
           {available.map((opt) => (
             <button
               key={opt}
               type="button"
+              role="option"
+              aria-selected={false}
               className="uxm-pill-select__option"
               onClick={() => add(opt)}
             >

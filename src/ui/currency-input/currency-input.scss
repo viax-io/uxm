@@ -1,0 +1,243 @@
+/* Currency Input — monetary field with a leading interactive currency
+   picker. Architecturally mirrors PhoneInput: the wrapper IS the
+   visible surface, the leading slot is a `<button>` that opens a
+   searchable popover, and the inner field handles the amount.
+   `:focus-within` lights up the wrapper when either the amount input
+   or the popover search has focus. */
+.uxm-currency-input {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  background-color: var(--uxm-currency-input-background-color, var(--color-card));
+  border: 1px solid var(--uxm-currency-input-border-color, var(--color-border));
+  border-radius: var(--uxm-currency-input-border-radius, 8px);
+  color: var(--uxm-currency-input-color, var(--color-text));
+  transition: border-color 0.15s, background-color 0.15s;
+  box-sizing: border-box;
+}
+.uxm-currency-input--state-hover,
+.uxm-currency-input:hover:not(.uxm-currency-input--disabled):not(.uxm-currency-input--error) {
+  background-color: var(--uxm-currency-input-hover-bg, var(--color-card));
+  border-color: var(--uxm-currency-input-hover-border, var(--color-accent));
+}
+.uxm-currency-input--state-focus,
+.uxm-currency-input:focus-within {
+  border-color: var(--uxm-currency-input-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-currency-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-currency-input--disabled {
+  background-color: var(--uxm-currency-input-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-currency-input-disabled-border, var(--color-border));
+  opacity: var(--uxm-currency-input-disabled-opacity, 0.6);
+}
+.uxm-currency-input--disabled .uxm-currency-input__input,
+.uxm-currency-input--disabled .uxm-currency-input__picker {
+  cursor: not-allowed;
+  color: var(--uxm-currency-input-disabled-color, var(--color-text-muted));
+}
+.uxm-currency-input--error {
+  background-color: var(--uxm-currency-input-error-bg, var(--color-card));
+  border-color: var(--uxm-currency-input-error-border, var(--color-danger-text));
+}
+/* `errorColor` tones the trailing caret in error mode — a subtle
+   indicator paired with the error border. Same pattern as phone-input.
+   The amount text stays in the normal color so the typed value
+   remains readable; only the caret recedes into the error palette. */
+.uxm-currency-input--error .uxm-currency-input__caret {
+  color: var(--uxm-currency-input-error-color, var(--color-danger-text));
+}
+
+/* Currency picker button — sits on one side of the field (left by
+   default, right for European-suffix layouts). The order / border /
+   radius rules below adjust per `--picker-left` vs `--picker-right`
+   modifier so the picker always reads as a peer of the field, with
+   the dividing border between picker and input and rounded corners
+   matching the wrapper's outline. */
+.uxm-currency-input__picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--uxm-currency-input-padding-y, 10px) var(--uxm-currency-input-padding-x, 12px);
+  background: transparent;
+  border: none;
+  color: var(--uxm-currency-input-color, var(--color-text));
+  font-family: inherit;
+  font-size: var(--uxm-currency-input-font-size, 14px);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background-color 0.12s;
+}
+.uxm-currency-input--picker-left .uxm-currency-input__picker {
+  /* Picker on the left: divider on its right edge, left corners
+     match the wrapper's rounding so hover bg follows the outline. */
+  border-right: 1px solid var(--uxm-currency-input-divider-color, var(--color-border));
+  border-top-left-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
+  border-bottom-left-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
+}
+.uxm-currency-input--picker-right .uxm-currency-input__picker {
+  /* Picker on the right: mirror the left case. JSX order stays
+     stable; flex `order` puts the picker visually last so screen
+     readers still read in the source order (amount → picker), which
+     matches the conventional EU receipt read of "amount, currency". */
+  order: 2;
+  border-left: 1px solid var(--uxm-currency-input-divider-color, var(--color-border));
+  border-top-right-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
+  border-bottom-right-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
+}
+.uxm-currency-input__picker:hover:not(:disabled) {
+  background-color: var(--uxm-currency-input-picker-hover-bg, var(--color-surface-alt));
+}
+.uxm-currency-input__picker:disabled {
+  cursor: not-allowed;
+}
+.uxm-currency-input__symbol {
+  font-weight: 600;
+  color: var(--uxm-currency-input-symbol-color, var(--color-text));
+  font-variant-numeric: tabular-nums;
+}
+.uxm-currency-input__code {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--uxm-currency-input-color, var(--color-text));
+}
+.uxm-currency-input__caret {
+  display: inline-flex;
+  color: var(--uxm-currency-input-caret-color, var(--color-text-muted));
+}
+
+/* Amount input — fills the remaining width, no border (the wrapper
+   provides it). Right-aligned digits with tabular-nums so monetary
+   values line up across stacked fields (invoice rows, totals, etc.).
+   When the picker is on the right (EU-style), the amount is the
+   leftmost element so we left-align the digits to flow naturally
+   toward the suffix picker — matches the `1.234,56 €` read. */
+.uxm-currency-input__input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: var(--uxm-currency-input-padding-y, 10px) var(--uxm-currency-input-padding-x, 12px);
+  color: var(--uxm-currency-input-color, var(--color-text));
+  font-family: inherit;
+  font-size: var(--uxm-currency-input-font-size, 14px);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.uxm-currency-input--picker-right .uxm-currency-input__input {
+  order: 1;
+  text-align: left;
+}
+.uxm-currency-input__input::placeholder {
+  color: var(--color-text-muted);
+}
+.uxm-currency-input__input:disabled {
+  cursor: not-allowed;
+}
+
+/* Currency popover — searchable scrollable list, full-width below the
+   field. Same architecture as PhoneInput's country popover. */
+.uxm-currency-input__popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: var(--uxm-currency-input-popover-bg, var(--color-card));
+  border: 1px solid var(--uxm-currency-input-popover-border, var(--color-border));
+  border-radius: var(--uxm-currency-input-popover-radius, 8px);
+  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.18));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+}
+.uxm-currency-input__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--uxm-currency-input-popover-border, var(--color-border));
+  color: var(--color-text-muted);
+}
+.uxm-currency-input__search-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--uxm-currency-input-color, var(--color-text));
+  font-family: inherit;
+  font-size: 13px;
+}
+.uxm-currency-input__search-input::placeholder {
+  color: var(--color-text-muted);
+}
+.uxm-currency-input__list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  overflow-y: auto;
+  flex: 1;
+}
+.uxm-currency-input__empty {
+  padding: 12px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.uxm-currency-input__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--uxm-currency-input-color, var(--color-text));
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.1s, color 0.1s;
+}
+.uxm-currency-input__row:hover {
+  background-color: var(--uxm-currency-input-popover-row-hover-bg, var(--color-surface-alt));
+}
+.uxm-currency-input__row--selected {
+  background-color: var(--uxm-currency-input-popover-row-selected-bg, var(--color-accent));
+  color: var(--uxm-currency-input-popover-row-selected-color, var(--color-text-inverse));
+  font-weight: 600;
+}
+.uxm-currency-input__row--selected:hover {
+  background-color: var(--uxm-currency-input-popover-row-selected-bg, var(--color-accent));
+}
+.uxm-currency-input__row-symbol {
+  /* Fixed-width column so symbols of different widths (¥, د.إ, S$)
+     keep the name column aligned vertically. */
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.uxm-currency-input__row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uxm-currency-input__row-code {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+.uxm-currency-input__row--selected .uxm-currency-input__row-code {
+  color: inherit;
+  opacity: 0.85;
+}

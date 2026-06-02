@@ -1,0 +1,224 @@
+/* Phone Input — leading country picker + national number text input.
+   Layout: flag/dial-code button on the LEFT (the country is read first,
+   left-to-right with the phone number that follows). Popover below opens
+   on country-button click; selecting a country closes it. The root is
+   layout-only (positioning wrapper + flex), all visible styling lives on
+   the inner `__input`, `__country` button, and popover. */
+.uxm-phone-input {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  background-color: var(--uxm-phone-input-background-color, var(--color-card));
+  border: 1px solid var(--uxm-phone-input-border-color, var(--color-border));
+  border-radius: var(--uxm-phone-input-border-radius, 8px);
+  transition: border-color 0.15s, background-color 0.15s;
+  box-sizing: border-box;
+}
+/* Hover / focus / disabled / error states apply to the WRAPPER (it's
+   the visible surface here, unlike date/time/password which put the
+   border on the inner input). This is the cleanest fit for a two-input
+   composite — one outline around the whole field, with the inner
+   separator being the divider between country and national number. */
+.uxm-phone-input--state-hover,
+.uxm-phone-input:hover:not(.uxm-phone-input--disabled):not(.uxm-phone-input--error) {
+  background-color: var(--uxm-phone-input-hover-bg, var(--color-card));
+  border-color: var(--uxm-phone-input-hover-border, var(--color-accent));
+}
+.uxm-phone-input--state-focus,
+.uxm-phone-input:focus-within {
+  border-color: var(--uxm-phone-input-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-phone-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-phone-input--disabled {
+  background-color: var(--uxm-phone-input-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-phone-input-disabled-border, var(--color-border));
+  opacity: var(--uxm-phone-input-disabled-opacity, 0.6);
+}
+.uxm-phone-input--disabled .uxm-phone-input__input,
+.uxm-phone-input--disabled .uxm-phone-input__country {
+  cursor: not-allowed;
+  color: var(--uxm-phone-input-disabled-color, var(--color-text-muted));
+}
+.uxm-phone-input--error {
+  background-color: var(--uxm-phone-input-error-bg, var(--color-card));
+  border-color: var(--uxm-phone-input-error-border, var(--color-danger-text));
+}
+/* `errorColor` tones the trailing caret in error mode — a subtle
+   indicator paired with the error border. Same pattern as time-input's
+   icon re-tone in error state. (The dial code stays in the normal text
+   color so the country read remains scannable; only the caret recedes
+   into the error palette.) */
+.uxm-phone-input--error .uxm-phone-input__caret {
+  color: var(--uxm-phone-input-error-color, var(--color-danger-text));
+}
+
+/* Country picker button — the leading affordance. Compact: flag + dial
+   code + caret. The dividing right border separates it from the national
+   number input, giving the composite a clear "two segments, one field"
+   read. */
+.uxm-phone-input__country {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--uxm-phone-input-padding-y, 10px) var(--uxm-phone-input-padding-x, 12px);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--uxm-phone-input-divider-color, var(--color-border));
+  /* Match the wrapper's left corners so the hover background follows the
+     rounded outline instead of painting square against it. `-1px` accounts
+     for the wrapper's 1px border — the inner radius is one pixel tighter.
+     `overflow:hidden` on the wrapper would do this for free but would
+     also clip the popover (positioned below the field), so per-corner
+     radii is the right tool here. */
+  border-top-left-radius: calc(var(--uxm-phone-input-border-radius, 8px) - 1px);
+  border-bottom-left-radius: calc(var(--uxm-phone-input-border-radius, 8px) - 1px);
+  color: var(--uxm-phone-input-color, var(--color-text));
+  font-family: inherit;
+  font-size: var(--uxm-phone-input-font-size, 14px);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  /* Subtle hover on the country button itself — picker affordance reads
+     as "interactive" without changing the wrapper's border state. */
+  transition: background-color 0.12s;
+}
+.uxm-phone-input__country:hover:not(:disabled) {
+  background-color: var(--uxm-phone-input-country-hover-bg, var(--color-surface-alt));
+}
+.uxm-phone-input__country:disabled {
+  cursor: not-allowed;
+}
+.uxm-phone-input__flag {
+  font-size: 1.1em;
+  line-height: 1;
+}
+.uxm-phone-input__dial {
+  font-weight: 500;
+}
+.uxm-phone-input__caret {
+  display: inline-flex;
+  color: var(--uxm-phone-input-caret-color, var(--color-text-muted));
+}
+
+/* National number input — fills the remaining width, no border (the
+   wrapper provides it). Display value is the masked string from
+   `maskNumber()`, so what the user sees matches the country's grouping. */
+.uxm-phone-input__input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: var(--uxm-phone-input-padding-y, 10px) var(--uxm-phone-input-padding-x, 12px);
+  color: var(--uxm-phone-input-color, var(--color-text));
+  font-family: inherit;
+  font-size: var(--uxm-phone-input-font-size, 14px);
+}
+.uxm-phone-input__input::placeholder {
+  color: var(--color-text-muted);
+}
+.uxm-phone-input__input:disabled {
+  cursor: not-allowed;
+}
+
+/* Country popover — searchable scrollable list. Anchored to the bottom
+   of the wrapper, full-width by default so long country names don't
+   truncate. Drop-shadow follows the rounded outline. */
+.uxm-phone-input__popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: var(--uxm-phone-input-popover-bg, var(--color-card));
+  border: 1px solid var(--uxm-phone-input-popover-border, var(--color-border));
+  border-radius: var(--uxm-phone-input-popover-radius, 8px);
+  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.18));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+}
+.uxm-phone-input__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--uxm-phone-input-popover-border, var(--color-border));
+  color: var(--color-text-muted);
+}
+.uxm-phone-input__search-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--uxm-phone-input-color, var(--color-text));
+  font-family: inherit;
+  font-size: 13px;
+}
+.uxm-phone-input__search-input::placeholder {
+  color: var(--color-text-muted);
+}
+.uxm-phone-input__list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  overflow-y: auto;
+  flex: 1;
+}
+.uxm-phone-input__empty {
+  padding: 12px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.uxm-phone-input__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--uxm-phone-input-color, var(--color-text));
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.1s, color 0.1s;
+}
+.uxm-phone-input__row:hover {
+  background-color: var(--uxm-phone-input-popover-row-hover-bg, var(--color-surface-alt));
+}
+.uxm-phone-input__row--selected {
+  background-color: var(--uxm-phone-input-popover-row-selected-bg, var(--color-accent));
+  color: var(--uxm-phone-input-popover-row-selected-color, var(--color-text-inverse));
+  font-weight: 600;
+}
+.uxm-phone-input__row--selected:hover {
+  background-color: var(--uxm-phone-input-popover-row-selected-bg, var(--color-accent));
+}
+.uxm-phone-input__row-flag {
+  font-size: 1.1em;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.uxm-phone-input__row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uxm-phone-input__row-dial {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.uxm-phone-input__row--selected .uxm-phone-input__row-dial {
+  color: inherit;
+  opacity: 0.85;
+}

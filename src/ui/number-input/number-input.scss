@@ -1,0 +1,47 @@
+/* Number Input — typing-only numeric field. Same architectural shape
+   as Text Input: the root `<input class="uxm-number-input">` IS the
+   visible surface (no positioning wrapper), so the `--state-*` forced
+   modifiers and `:hover` / `:focus` / `:disabled` pseudos all target
+   the same element. Sister atom to Number Field (which has explicit
+   ± buttons, soon to be renamed Stepper); reach for Number Input when
+   the buttons would be noise (large unbounded values, IDs, raw
+   digits). For monetary values use Currency Input. */
+.uxm-number-input {
+  width: 100%;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  background-color: var(--uxm-number-input-bg, var(--color-card));
+  color: var(--uxm-number-input-color, var(--color-text));
+  border: 1px solid var(--uxm-number-input-border-color, var(--color-border));
+  border-radius: var(--uxm-number-input-border-radius, 8px);
+  padding: var(--uxm-number-input-padding-y, 10px) var(--uxm-number-input-padding-x, 12px);
+  font-size: var(--uxm-number-input-font-size, 14px);
+  text-align: var(--uxm-number-input-text-align, left);
+  box-sizing: border-box;
+}
+.uxm-number-input::placeholder {
+  color: var(--color-text-muted);
+}
+.uxm-number-input--state-hover,
+.uxm-number-input:hover:not(:disabled):not(.uxm-number-input--error) {
+  background-color: var(--uxm-number-input-hover-bg, var(--color-card));
+  border-color: var(--uxm-number-input-hover-border, var(--color-accent));
+}
+.uxm-number-input--state-focus,
+.uxm-number-input:focus {
+  border-color: var(--uxm-number-input-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-number-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-number-input:disabled {
+  background-color: var(--uxm-number-input-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-number-input-disabled-border, var(--color-border));
+  color: var(--uxm-number-input-disabled-color, var(--color-text-muted));
+  opacity: var(--uxm-number-input-disabled-opacity, 0.6);
+  cursor: not-allowed;
+}
+.uxm-number-input.uxm-number-input--error {
+  background-color: var(--uxm-number-input-error-bg, var(--color-card));
+  border-color: var(--uxm-number-input-error-border, var(--color-danger-text));
+}

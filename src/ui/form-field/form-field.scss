@@ -1,28 +1,67 @@
 /* ── form-field ── */
 
-/* FormField — label-above-input stack for editable form rows. Distinct
-   from PropertyField (which is for read-only metadata). The control slot
-   is just a wrapping div so any UXM input nests cleanly. */
+/* FormField — pairs a label with any UXM input. Sole owner of label
+   theming across the form family. Top layout uses margin-bottom on the
+   label (not container `gap`) so the label↔control distance is owned by
+   exactly one knob. Side layout switches to a grid where label and input
+   sit in two columns; the hint is explicitly placed in the input column
+   on row 2 so it aligns under the input rather than under the label. */
 
 .uxm-form-field {
   display: flex;
   flex-direction: column;
-  gap: var(--uxm-form-field-gap, 6px);
+}
 
-  &__label {
-    color: var(--uxm-form-field-label-color, var(--color-text-muted));
-    font-size: var(--uxm-form-field-label-size, 13px);
-    font-weight: var(--uxm-form-field-label-weight, 500);
-  }
+/* Side layout — two columns (label | input), hint in the input column
+   on row 2 so it aligns under the input. `align-items: center` only
+   affects row 1 (label + input); hint's vertical spacing is owned by
+   its own `margin-top` (`hintGap`). The label uses `column-gap` for
+   label↔control spacing here, so it does NOT carry the `margin-bottom`
+   it has in top layout — reset to 0 in the side rule below. */
+.uxm-form-field--side {
+  display: grid;
+  grid-template-columns: var(--uxm-form-field-side-label-width, 120px) 1fr;
+  /* Horizontal gap between label column and input column. Separate
+     from the top-layout `--uxm-form-field-gap` (which controls the
+     label↔input vertical distance via margin-bottom). */
+  column-gap: var(--uxm-form-field-side-gap, 16px);
+  align-items: center;
+}
 
-  &__control {
-    display: flex;
-    flex-direction: column;
-  }
+.uxm-form-field--side .uxm-form-field__label {
+  margin-bottom: 0;
+  /* Label alignment within the side column. Direction-aware via
+     start/end. Default "start" (left in LTR) reads naturally; switch
+     to "end" via the registry knob if you want labels flush against
+     the input column edge. */
+  text-align: var(--uxm-form-field-side-label-align, start);
+}
 
-  &__hint {
-    color: var(--uxm-form-field-hint-color, var(--color-text-muted));
-    font-size: var(--uxm-form-field-hint-size, 12px);
-    margin-top: var(--uxm-form-field-hint-gap, 2px);
-  }
+.uxm-form-field--side .uxm-form-field__hint {
+  grid-column: 2;
+}
+
+.uxm-form-field__label {
+  font-size: var(--uxm-form-field-label-size, 13px);
+  font-weight: var(--uxm-form-field-label-weight, 500);
+  color: var(--uxm-form-field-label-color, var(--color-text-strong));
+  /* Owns label ↔ control distance in top layout. Side layout overrides
+     to 0 above. Fallback (8px) must match the registry default so that
+     consumers who never explicitly save a `gap` value still get the
+     same spacing FormField's own editor previews. Side gap is a
+     separate knob (see `--uxm-form-field-side-gap`) with its own
+     default since horizontal label-input distance has different visual
+     needs from vertical. */
+  margin-bottom: var(--uxm-form-field-gap, 8px);
+}
+
+.uxm-form-field__control {
+  display: flex;
+  flex-direction: column;
+}
+
+.uxm-form-field__hint {
+  font-size: var(--uxm-form-field-hint-size, 12px);
+  color: var(--uxm-form-field-hint-color, var(--color-text-muted));
+  margin-top: var(--uxm-form-field-hint-gap, 2px);
 }

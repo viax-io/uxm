@@ -109,7 +109,6 @@ export function AppSidebar({
             aria-label="Expand sidebar"
           >
             {brand.iconUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
               <img src={brand.iconUrl} alt={brand.alt ?? ''} />
             )}
           </button>
@@ -117,7 +116,6 @@ export function AppSidebar({
           <>
             <span className="uxm-app-sidebar__brand">
               {brand.logoUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={brand.logoUrl} alt={brand.alt ?? ''} />
               )}
             </span>

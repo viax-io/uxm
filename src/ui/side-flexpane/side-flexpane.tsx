@@ -94,6 +94,24 @@ export function SideFlexpane({
     [width, minWidth, maxWidth, _defaultWidth],
   );
 
+  // Keyboard resize so the handle is operable without a mouse — Arrow
+  // keys step the width, Shift accelerates. This both honours the
+  // WAI-ARIA `separator` pattern (a resize separator must be focusable
+  // and respond to arrows) and satisfies eslint-plugin-jsx-a11y's
+  // `no-noninteractive-element-interactions` rule.
+  const onHandleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      const step = e.shiftKey ? 50 : 10;
+      const base = paneRef.current?.offsetWidth ?? width ?? _defaultWidth;
+      // Pane docks to the right: ArrowLeft grows, ArrowRight shrinks.
+      const next = e.key === 'ArrowLeft' ? base + step : base - step;
+      setWidth(Math.min(maxWidth, Math.max(minWidth, next)));
+    },
+    [width, minWidth, maxWidth, _defaultWidth],
+  );
+
   return (
     <aside
       ref={paneRef}
@@ -116,8 +134,17 @@ export function SideFlexpane({
         // keeps `overflow: hidden` so it can't extend past the rounded
         // corner anyway. 6px (`w-1.5`) is the same grab target as
         // PropertiesPanel's resizer.
+        // WAI-ARIA windowsplitter pattern: `separator` IS interactive when
+        // it acts as a resize handle, with arrow-key support and a tab
+        // stop. eslint-plugin-jsx-a11y still treats `separator` as
+        // non-interactive across the board, so disable the two rules
+        // that fire on this otherwise-correct shape.
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
         <div
           onMouseDown={onResizeStart}
+          onKeyDown={onHandleKeyDown}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          tabIndex={0}
           aria-label="Resize panel"
           role="separator"
           aria-orientation="vertical"
