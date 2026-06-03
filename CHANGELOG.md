@@ -1,3 +1,10 @@
+## [1.0.9](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.8...v1.0.9) (2026-06-03)
+
+
+### Bug Fixes
+
+* **migrate previews into @viax/uxm with lint-clean baseline:** migrate previews into @viax/uxm ([18a06b0](https://gitlab.viax.tech/services-viax/uxm/commit/18a06b0b55e7272f28c659f5cdc456c6e81613ff))
+
 ## [1.0.8](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.7...v1.0.8) (2026-06-02)
 
 
