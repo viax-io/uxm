@@ -30,7 +30,12 @@
       "import": "./dist/tokens/index.js",
       "require": "./dist/tokens/index.cjs"
     },
-    "./tokens.css": "./dist/tokens/index.css"
+    "./tokens.css": "./dist/tokens/index.css",
+    "./previews": {
+      "types": "./dist/previews/index.d.ts",
+      "import": "./dist/previews/index.js",
+      "require": "./dist/previews/index.cjs"
+    }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
