@@ -1,3 +1,10 @@
+# [1.3.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.2.0...v1.3.0) (2026-06-10)
+
+
+### Features
+
+* **popover,listbox:** add Popover shell + Listbox/MultiListbox dropdowns ([5e211f2](https://gitlab.viax.tech/services-viax/uxm/commit/5e211f24ce6d326db0a76a958632bbf6b216a3f7))
+
 # [1.2.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.1.0...v1.2.0) (2026-06-10)
 
 
