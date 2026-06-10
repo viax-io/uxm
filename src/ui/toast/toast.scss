@@ -1,0 +1,178 @@
+/* ── toast ──────────────────────────────────────────────────────────────────
+   Toaster mounts a positioned container that holds the toast stack.
+   Position presets are layout-only; visual styling (background, border,
+   colors, accent icon) flows through the Toast atom's registry.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.uxm-toast-container {
+  position: fixed;
+  z-index: var(--z-toast, 80);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* Don't intercept clicks that fall in the padding between toasts —
+     each `.uxm-toast` re-enables pointer events for its own surface. */
+  pointer-events: none;
+  /* Sensible default width that doesn't choke on a long Alert title. */
+  width: 380px;
+  max-width: calc(100vw - 32px);
+
+  &--top-right    { top: 24px;    right: 24px; }
+  &--top-left     { top: 24px;    left: 24px; }
+  &--bottom-right { bottom: 24px; right: 24px; }
+  &--bottom-left  { bottom: 24px; left: 24px; }
+  &--top-center {
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  &--bottom-center {
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Bottom positions reverse the slide direction so the toast appears
+     to come UP from the screen edge it docks against. */
+  &--bottom-right .uxm-toast,
+  &--bottom-left .uxm-toast,
+  &--bottom-center .uxm-toast {
+    animation: uxm-toast-in-up 0.25s ease-out;
+  }
+}
+
+/* Each toast — compact single-row card with strong elevation. NEUTRAL
+   surface (no variant tinting); variant is communicated by a colored
+   left-edge accent strip + colored icon. Distinct visual pattern from
+   Banner (which uses full variant-tinted backgrounds) — same DS family,
+   different prominence levels.
+
+   Light theme: white card + dark text + colored accent.
+   Dark theme: elevated dark card + light text + colored accent.
+   Both adapt automatically via theme-aware tokens.
+
+   Enter animation: fade + slide from the screen edge the container
+   docks against. */
+.uxm-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding-inline: var(--uxm-toast-padding-x, 16px);
+  padding-block: var(--uxm-toast-padding-y, 12px);
+  border-radius: var(--uxm-toast-border-radius, 10px);
+  font-size: var(--uxm-toast-font-size, 14px);
+  font-weight: 500;
+  background-color: var(--uxm-toast-background-color, var(--color-card));
+  color: var(--uxm-toast-color, var(--color-text));
+  /* Outer border off by default — shadow handles lift in both themes.
+     Opt-in via `borderColor` registry knob. */
+  border: 1px solid transparent;
+  border-color: var(--uxm-toast-border-color, transparent);
+  box-shadow: var(--shadow-xl);
+  animation: uxm-toast-in 0.25s ease-out;
+
+  /* Variant is communicated by the icon color alone — no separate stripe
+     or pill marker. The colored icon + neutral surface is enough signal,
+     and avoids the redundant "two green elements both saying success"
+     problem. Each variant sets a single `--accent` consumed by the icon
+     below. */
+  &--success {
+    --accent: var(--uxm-toast-success-accent, var(--color-success-text));
+  }
+  &--info {
+    --accent: var(--uxm-toast-info-accent, var(--color-info-text));
+  }
+  &--warning {
+    --accent: var(--uxm-toast-warning-accent, var(--color-warning-text));
+  }
+  &--error {
+    --accent: var(--uxm-toast-error-accent, var(--color-danger-text));
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    color: var(--accent);
+
+    /* CSS sizing wins over the Icon component's inline `width` / `height`
+       HTML attributes — lets the iconSize knob drive the rendered glyph
+       without making the atom plumb the value through React props. */
+    svg {
+      width: var(--uxm-toast-icon-size, 16px);
+      height: var(--uxm-toast-icon-size, 16px);
+    }
+  }
+
+  /* Inline action — styled as a colored link in the variant accent.
+     Underlined to read as interactive without competing visually with
+     the dismiss X. */
+  &__action {
+    flex-shrink: 0;
+    padding: 0 4px;
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration-thickness: 2px;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+
+  &__message {
+    flex: 1;
+    min-width: 0;
+    /* Single-line by default; long messages truncate with ellipsis. If a
+       caller needs multi-line, they can wrap their content manually. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__close {
+    flex-shrink: 0;
+    padding: 2px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    opacity: 0.6;
+    transition: opacity 0.15s, background-color 0.15s;
+
+    &:hover {
+      opacity: 1;
+      background-color: rgb(0 0 0 / 0.06);
+    }
+    &:focus-visible {
+      opacity: 1;
+      outline: 2px solid currentColor;
+      outline-offset: 1px;
+    }
+  }
+}
+
+@keyframes uxm-toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes uxm-toast-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

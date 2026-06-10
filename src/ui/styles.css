@@ -74,6 +74,7 @@
 @import "./thumbnail/thumbnail.css";
 @import "./time-input/time-input.css";
 @import "./timeline-entry/timeline-entry.css";
+@import "./toast/toast.css";
 @import "./toggle-switch/toggle-switch.css";
 @import "./tooltip/tooltip.css";
 @import "./type-overview-card/type-overview-card.css";
