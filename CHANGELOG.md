@@ -1,3 +1,10 @@
+# [1.1.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.9...v1.1.0) (2026-06-10)
+
+
+### Features
+
+* **toast:** add Toast atom + Toaster + imperative toast.* API ([0d97b55](https://gitlab.viax.tech/services-viax/uxm/commit/0d97b555700d2d45079d03f5c1149b74d0ec2b79))
+
 ## [1.0.9](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.8...v1.0.9) (2026-06-03)
 
 
