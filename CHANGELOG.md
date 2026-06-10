@@ -1,3 +1,10 @@
+# [1.2.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.1.0...v1.2.0) (2026-06-10)
+
+
+### Features
+
+* **dialog,modal:** add Dialog shell + Modal surface atom ([69fb4c5](https://gitlab.viax.tech/services-viax/uxm/commit/69fb4c5509af9dadc5858b252cf8819e64d2c2f5))
+
 # [1.1.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.0.9...v1.1.0) (2026-06-10)
 
 
