@@ -1,0 +1,38 @@
+/* ── dialog ─────────────────────────────────────────────────────────────────
+   Dialog (shell — provides mechanics, no visible chrome of its own)
+
+   The shell contributes positioning + backdrop + z-index only. The panel
+   itself has no chrome — the consumer renders a `<Modal>` (or bespoke
+   surface) inside it. Mirrors the `.uxm-popover` precedent: shells
+   contribute positioning + z-index only.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.uxm-dialog-root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-dialog, 60);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Allow tall panels to scroll inside the viewport without the page
+     behind scrolling (body scroll is locked by useScrollLock). */
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.uxm-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--backdrop-color, rgba(0, 0, 0, 0.50));
+  backdrop-filter: blur(var(--backdrop-blur, 4px));
+  -webkit-backdrop-filter: blur(var(--backdrop-blur, 4px));
+}
+
+.uxm-dialog-panel {
+  position: relative;
+  /* The panel itself owns no chrome — consumer (Modal) provides it. */
+  outline: none;
+  /* Maximum reasonable width even at fullscreen; consumer can override. */
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
+}
