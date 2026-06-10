@@ -24,6 +24,7 @@
 @import "./data-table/data-table.css";
 @import "./date-input/date-input.css";
 @import "./detail-section/detail-section.css";
+@import "./dialog/dialog.css";
 @import "./disclosure/disclosure.css";
 @import "./divider/divider.css";
 @import "./empty-state/empty-state.css";
@@ -50,6 +51,7 @@
 @import "./list/list.css";
 @import "./loader/loader.css";
 @import "./meta-row/meta-row.css";
+@import "./modal/modal.css";
 @import "./number-field/number-field.css";
 @import "./number-input/number-input.css";
 @import "./page-header/page-header.css";
