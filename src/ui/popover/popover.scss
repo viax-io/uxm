@@ -1,0 +1,11 @@
+/* ── popover ────────────────────────────────────────────────────────────────
+   Bare positioned panel — no chrome of its own. Consumers (Listbox,
+   PhoneInput country picker, future menus) layer their visual treatment
+   on top. Mirrors the Dialog precedent: shell contributes positioning +
+   z-index only.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.uxm-popover {
+  z-index: var(--uxm-popover-z-index, 50);
+  outline: none;
+}

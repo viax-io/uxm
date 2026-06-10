@@ -109,6 +109,14 @@ export { Link } from './link';
 export type { LinkProps, LinkUnderline } from './link';
 export { List, ListItem } from './list';
 export type { ListItemProps, ListProps } from './list';
+export { Listbox, MultiListbox } from './listbox';
+export type {
+  ListboxProps,
+  ListboxRenderItemState,
+  ListboxRenderTriggerState,
+  ListboxTriggerProps,
+  MultiListboxProps,
+} from './listbox';
 export { Loader } from './loader';
 export type { LoaderLayout, LoaderProps, LoaderVariant } from './loader';
 export { NumberField } from './number-field';
@@ -138,6 +146,8 @@ export { TimeInput } from './time-input';
 export type { TimeInputFormat, TimeInputProps } from './time-input';
 export { PillSelect } from './pill-select';
 export type { PillSelectProps } from './pill-select';
+export { Popover } from './popover';
+export type { PopoverPlacement, PopoverProps } from './popover';
 export { PropertyField, PropertyGrid } from './property-field';
 export type { PropertyFieldProps, PropertyGridProps } from './property-field';
 export { RadioGroup, RadioOption } from './radio-group';
