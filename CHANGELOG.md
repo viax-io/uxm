@@ -1,3 +1,10 @@
+## [1.3.1](https://gitlab.viax.tech/services-viax/uxm/compare/v1.3.0...v1.3.1) (2026-06-10)
+
+
+### Bug Fixes
+
+* **previews:** export Toast/Modal/Listbox previews from the previews barrel ([2ea360b](https://gitlab.viax.tech/services-viax/uxm/commit/2ea360b72a9ecd8509bc07e3304054cd27fc4a6d))
+
 # [1.3.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.2.0...v1.3.0) (2026-06-10)
 
 
