@@ -31,6 +31,9 @@ function buildVars(styles: Styles): CSSProperties {
       styles.disabledOpacity != null ? String(styles.disabledOpacity) : undefined,
     '--uxm-textarea-error-bg': styles.errorBg as string,
     '--uxm-textarea-error-border': styles.errorBorder as string,
+    '--uxm-textarea-error-color': styles.errorColor as string,
+    '--uxm-textarea-error-message-size':
+      styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
   } as CSSProperties;
 }
 
@@ -53,29 +56,21 @@ function TextareaDemo({ state, styles }: { state: string; styles: Styles }) {
   const forcedClass = cn(
     state === 'hover' && 'uxm-textarea--state-hover',
     state === 'focus' && 'uxm-textarea--state-focus',
-    state === 'error' && 'uxm-textarea--error',
   );
 
   return (
     <div style={{ width: 320, ...cssVars } as CSSProperties}>
+      {/* `--error` is driven by the real `error` prop (not a forced-state
+          class), so the atom renders its production error message — icon
+          + text via the shared FieldError — instead of a preview-only mock. */}
       <Textarea
         value={value}
         onChange={(e) => setValue(e.target.value)}
         disabled={state === 'disabled'}
         className={forcedClass || undefined}
         placeholder="Write your message..."
+        error={isError ? 'Message contradicts itself — please clarify.' : undefined}
       />
-      {isError && (
-        <p
-          style={{
-            fontSize: (styles.errorMessageSize as number) ?? 12,
-            color: styles.errorColor as string,
-            marginTop: 4,
-          }}
-        >
-          Message contradicts itself — please clarify.
-        </p>
-      )}
     </div>
   );
 }

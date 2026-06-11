@@ -1,18 +1,21 @@
-/* ── input ── */
+/* ── Inputs ──
+   Each atom in the family — input-text, textarea, select-dropdown — gets
+   its own per-state rule set so saved theming on one doesn't bleed into
+   the others. Every state (default / :hover / :focus / :disabled /
+   .--error) reads its own `--uxm-{id}-{state}-*` var, falling back to a
+   sensible token. The order matters: default rule first, then state
+   pseudos (highest specificity wins for hover/focus), then disabled
+   (which uses `:disabled` so it beats hover/focus when both apply), then
+   the `--error` modifier class (which beats default but composes with
+   :focus / :hover via the var read in each state rule). */
 
 .uxm-input-text,
 .uxm-textarea,
 .uxm-select-dropdown {
-  background-color: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  color: var(--color-text);
-  font-family: inherit;
-  font-size: 14px;
-  outline: none;
-  padding: 10px 12px;
-  transition: border-color 0.15s ease;
   width: 100%;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
 .uxm-input-text::placeholder,
@@ -20,27 +23,173 @@
   color: var(--color-text-muted);
 }
 
-.uxm-input-text:focus,
-.uxm-textarea:focus,
-.uxm-select-dropdown:focus {
-  border-color: var(--color-accent);
+/* Text Input
+   The `--state-*` modifier classes mirror the `:hover` / `:focus` pseudo
+   rules by sharing their selector group. The UXM preview applies one of
+   these classes to force the visual without requiring real pointer /
+   keyboard interaction, while still leaving the input fully interactive
+   (you can hover and click it, and the real pseudo rules layer on top
+   via source order — focus > hover). Disabled state engages the real
+   `disabled` attribute (since `:disabled` correctly blocks input). */
+.uxm-input-text {
+  background-color: var(--uxm-input-text-bg, var(--color-card));
+  color: var(--uxm-input-text-color, var(--color-text));
+  border: 1px solid var(--uxm-input-text-border-color, var(--color-border));
+  border-radius: var(--uxm-input-text-border-radius, 8px);
+  padding: var(--uxm-input-text-padding-y, 10px) var(--uxm-input-text-padding-x, 12px);
+  font-size: var(--uxm-input-text-font-size, 14px);
+}
+.uxm-input-text--state-hover,
+.uxm-input-text:hover:not(:disabled):not(.uxm-input-text--error) {
+  background-color: var(--uxm-input-text-hover-bg, var(--color-card));
+  border-color: var(--uxm-input-text-hover-border, var(--color-accent));
+}
+.uxm-input-text--state-focus,
+.uxm-input-text:focus {
+  border-color: var(--uxm-input-text-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-input-text-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-input-text:disabled {
+  background-color: var(--uxm-input-text-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-input-text-disabled-border, var(--color-border));
+  color: var(--uxm-input-text-disabled-color, var(--color-text-muted));
+  opacity: var(--uxm-input-text-disabled-opacity, 0.6);
+  cursor: not-allowed;
+}
+.uxm-input-text.uxm-input-text--error {
+  background-color: var(--uxm-input-text-error-bg, var(--color-card));
+  border-color: var(--uxm-input-text-error-border, var(--color-danger-text));
+}
+/* Per-atom error message — sits below the field. Reads the same
+   `errorColor` / `errorMessageSize` knobs the registry already exposes
+   (kebab → `--uxm-input-text-error-color` / `-error-message-size`), so
+   the editor's "Match in N other Inputs" sync keeps every atom's message
+   styling in lockstep with one click while still allowing per-atom
+   divergence. Same pattern repeats verbatim for each input atom below. */
+.uxm-input-text__error-message {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--uxm-input-text-error-message-size, 12px);
+  color: var(--uxm-input-text-error-color, var(--color-danger-text));
 }
 
+/* Textarea — same forced-state modifier pattern as input-text. */
 .uxm-textarea {
-  min-height: 100px;
+  background-color: var(--uxm-textarea-bg, var(--color-card));
+  color: var(--uxm-textarea-color, var(--color-text));
+  border: 1px solid var(--uxm-textarea-border-color, var(--color-border));
+  border-radius: var(--uxm-textarea-border-radius, 8px);
+  padding: var(--uxm-textarea-padding-y, 10px) var(--uxm-textarea-padding-x, 12px);
+  font-size: var(--uxm-textarea-font-size, 14px);
+  min-height: var(--uxm-textarea-min-height, 100px);
   resize: vertical;
 }
-
-.uxm-select-dropdown {
-  appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF' stroke-width='2'><path stroke-linecap='round' stroke-linejoin='round' d='m6 9 6 6 6-6'/></svg>");
-  background-position: right 10px center;
-  background-repeat: no-repeat;
-  background-size: 16px;
-  padding-right: 32px;
+.uxm-textarea--state-hover,
+.uxm-textarea:hover:not(:disabled):not(.uxm-textarea--error) {
+  background-color: var(--uxm-textarea-hover-bg, var(--color-card));
+  border-color: var(--uxm-textarea-hover-border, var(--color-accent));
+}
+.uxm-textarea--state-focus,
+.uxm-textarea:focus {
+  border-color: var(--uxm-textarea-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-textarea-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-textarea:disabled {
+  background-color: var(--uxm-textarea-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-textarea-disabled-border, var(--color-border));
+  color: var(--uxm-textarea-disabled-color, var(--color-text-muted));
+  opacity: var(--uxm-textarea-disabled-opacity, 0.6);
+  cursor: not-allowed;
+  resize: none;
+}
+.uxm-textarea.uxm-textarea--error {
+  background-color: var(--uxm-textarea-error-bg, var(--color-card));
+  border-color: var(--uxm-textarea-error-border, var(--color-danger-text));
+}
+.uxm-textarea__error-message {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--uxm-textarea-error-message-size, 12px);
+  color: var(--uxm-textarea-error-color, var(--color-danger-text));
 }
 
-.uxm-input-text--error,
-.uxm-input-error {
-  border-color: var(--color-danger-text) !important;
+/* Select / Dropdown — `<div role="combobox">` trigger backed by a
+   Listbox panel. The chrome rules below match what the native
+   `<select>` carried before the migration. Disabled state runs
+   through `aria-disabled` (CSS targets the attribute since `<div>`
+   doesn't support `:disabled`). The native browser chevron + the
+   `appearance: none` + bg-image SVG hack are gone — the trigger
+   renders a real `<Icon>` chevron via its own JSX. */
+.uxm-select-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--uxm-select-dropdown-bg, var(--color-card));
+  color: var(--uxm-select-dropdown-color, var(--color-text));
+  border: 1px solid var(--uxm-select-dropdown-border-color, var(--color-border));
+  border-radius: var(--uxm-select-dropdown-border-radius, 8px);
+  padding: var(--uxm-select-dropdown-padding-y, 10px) var(--uxm-select-dropdown-padding-x, 12px);
+  font-size: var(--uxm-select-dropdown-font-size, 14px);
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+.uxm-select-dropdown__trigger-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uxm-select-dropdown__trigger-label--empty {
+  color: var(--color-text-muted);
+}
+.uxm-select-dropdown__trigger-chevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform 0.15s;
+}
+/* Clear ✕ inside the trigger — rendered only when `clearable={true}`
+   and a value is selected. Off by default to match native <select>
+   semantics; opt in for filter selects / optional fields / "reset"
+   patterns. Same trim treatment as SearchDropdown: IconButton sized
+   down (22×22 with a 12px icon) to fit inline between label and
+   chevron. Click handlers in JSX stopPropagation so clearing doesn't
+   ALSO toggle the popover. */
+.uxm-select-dropdown__trigger-clear {
+  --uxm-icon-button-size: 22px;
+  --uxm-icon-button-icon-size: 12px;
+  flex-shrink: 0;
+}
+.uxm-select-dropdown--state-hover,
+.uxm-select-dropdown:hover:not([aria-disabled="true"]):not(.uxm-select-dropdown--error) {
+  background-color: var(--uxm-select-dropdown-hover-bg, var(--color-card));
+  border-color: var(--uxm-select-dropdown-hover-border, var(--color-accent));
+}
+.uxm-select-dropdown--state-focus,
+.uxm-select-dropdown:focus-visible,
+.uxm-select-dropdown--open {
+  border-color: var(--uxm-select-dropdown-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-select-dropdown-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-select-dropdown[aria-disabled="true"] {
+  background-color: var(--uxm-select-dropdown-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-select-dropdown-disabled-border, var(--color-border));
+  color: var(--uxm-select-dropdown-disabled-color, var(--color-text-muted));
+  opacity: var(--uxm-select-dropdown-disabled-opacity, 0.6);
+  cursor: not-allowed;
+}
+.uxm-select-dropdown.uxm-select-dropdown--error {
+  background-color: var(--uxm-select-dropdown-error-bg, var(--color-card));
+  border-color: var(--uxm-select-dropdown-error-border, var(--color-danger-text));
+}
+.uxm-select-dropdown__error-message {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--uxm-select-dropdown-error-message-size, 12px);
+  color: var(--uxm-select-dropdown-error-color, var(--color-danger-text));
 }
