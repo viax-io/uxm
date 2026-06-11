@@ -1,3 +1,10 @@
+# [1.6.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.5.1...v1.6.0) (2026-06-11)
+
+
+### Features
+
+* **search-dropdown,pill-select,time-input:** finish the Listbox/Popover wave ([7c716c3](https://gitlab.viax.tech/services-viax/uxm/commit/7c716c38295441696bd3782bb7bf7fdb7c70745d))
+
 ## [1.5.1](https://gitlab.viax.tech/services-viax/uxm/compare/v1.5.0...v1.5.1) (2026-06-11)
 
 
