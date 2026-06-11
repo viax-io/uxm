@@ -4,7 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
+import { FieldError } from '../field-error';
 import { Icon } from '../icon';
+import { Popover } from '../popover';
 
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 
@@ -52,6 +54,14 @@ export interface TimeInputProps
    * reach all parts.
    */
   style?: React.CSSProperties;
+  /**
+   * When set to a non-empty string, the field renders in its error state:
+   * the `--error` modifier sits on the wrapper (so the inner input, clock
+   * icon, and meridiem badge re-tone), `aria-invalid` lands on the inner
+   * `<input>`, and the message renders below. Omit (or pass an empty
+   * string) for the normal state.
+   */
+  error?: string;
 }
 
 const TIME_PLACEHOLDER = 'HH:MM';
@@ -148,6 +158,7 @@ export function TimeInput({
   minuteStep = 1,
   style,
   disabled,
+  error,
   ...rest
 }: TimeInputProps) {
   const [internal, setInternal] = useState<string>(() => {
@@ -168,35 +179,22 @@ export function TimeInput({
   // Format switch clears uncontrolled state — a stored "13:00" makes no
   // sense if the user just flipped to 12h, and a "09:30 AM" string would
   // dangle stale meridiem under 24h. Mirrors DateInput's mode-flip reset.
-  // Done as a render-phase reset (React's "storing information from
-  // previous renders" pattern) rather than an effect so there's no extra
-  // render after the flip.
-  const [prevFormat, setPrevFormat] = useState(format);
-  if (prevFormat !== format) {
-    setPrevFormat(format);
+  // The ref guard skips the FIRST run so the `useState` initializer
+  // (which preserves `defaultValue`) doesn't get clobbered on mount.
+  const isFirstFormatEffect = useRef(true);
+  useEffect(() => {
+    if (isFirstFormatEffect.current) {
+      isFirstFormatEffect.current = false;
+      return;
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional format-switch reset of the uncontrolled value + popover, ref-guarded to skip mount
     if (!isControlled) setInternal('');
     setIsOpen(false);
-  }
+  }, [format, isControlled]);
 
-  // Close on outside click or Escape. Mounting only when `isOpen` is true
-  // keeps the global listeners off when the popover is closed.
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
-    };
-    document.addEventListener('mousedown', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [isOpen]);
+  // Click-outside + Escape dismissal: handled by Popover. The anchor is
+  // the OUTER wrapper (`containerRef`) so clicks on the input field
+  // don't close the picker.
 
   // When the popover opens, scroll each column so the current selection is
   // visible without manual scrolling. Runs after paint so offsetTop is real.
@@ -256,11 +254,11 @@ export function TimeInput({
   // and `picker` are on. When picker is off (or clock is off), the icon
   // — if rendered — stays a decorative <span>.
   const triggerEnabled = clock && picker && !disabled;
-  const showPopover = triggerEnabled && isOpen;
 
   return (
+    <>
     <div
-      className={cn('uxm-time-input', className)}
+      className={cn('uxm-time-input', error && 'uxm-time-input--error', className)}
       style={style}
       data-format={format}
       ref={containerRef}
@@ -273,6 +271,7 @@ export function TimeInput({
         value={time}
         onChange={handleInputChange}
         disabled={disabled}
+        aria-invalid={error ? true : undefined}
         {...rest}
       />
       {clock && (triggerEnabled ? (
@@ -300,8 +299,16 @@ export function TimeInput({
           {meridiem}
         </span>
       )}
-      {showPopover && (
-        <div className="uxm-time-input__popover" role="dialog" aria-label="Pick a time">
+      {triggerEnabled && (
+        <Popover
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          anchor={containerRef}
+          placement="bottom-start"
+          matchAnchorWidth
+          className="uxm-time-input__popover"
+          aria-label="Pick a time"
+        >
           <div className="uxm-time-input__column" role="listbox" aria-label="Hour">
             <div className="uxm-time-input__column-head">{hh || hours[0]}</div>
             <div className="uxm-time-input__column-body" ref={hourBodyRef}>
@@ -364,8 +371,11 @@ export function TimeInput({
               </div>
             </div>
           )}
-        </div>
+        </Popover>
       )}
     </div>
+    {error && <FieldError className="uxm-time-input__error-message">{error}</FieldError>}
+    </>
   );
 }
+TimeInput.hasError = true;

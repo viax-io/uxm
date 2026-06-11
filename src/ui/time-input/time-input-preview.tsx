@@ -39,6 +39,8 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-time-input-error-bg': styles.errorBg as string,
     '--uxm-time-input-error-border': styles.errorBorder as string,
     '--uxm-time-input-error-color': styles.errorColor as string,
+    '--uxm-time-input-error-message-size':
+      styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
     '--uxm-time-input-meridiem-color': styles.meridiemColor as string,
     '--uxm-time-input-popover-bg': styles.popoverBg as string,
     '--uxm-time-input-popover-border': styles.popoverBorder as string,
@@ -89,29 +91,21 @@ function TimeInputDemo({
   const forcedClass = cn(
     state === 'hover' && 'uxm-time-input--state-hover',
     state === 'focus' && 'uxm-time-input--state-focus',
-    state === 'error' && 'uxm-time-input--error',
   );
 
   return (
     <div style={{ width, ...cssVars } as CSSProperties}>
+      {/* `--error` is driven by the real `error` prop (not a forced-state
+          class), so the atom renders its production error message — icon
+          + text via the shared FieldError — instead of a preview-only mock. */}
       <TimeInput
         format={format}
         value={value}
         onChange={setValue}
         disabled={state === 'disabled'}
         className={forcedClass || undefined}
+        error={isError ? 'Pick a time between 09:00 and 17:00.' : undefined}
       />
-      {isError && (
-        <p
-          style={{
-            fontSize: (styles.errorMessageSize as number) ?? 12,
-            color: styles.errorColor as string,
-            marginTop: 4,
-          }}
-        >
-          Pick a time between 09:00 and 17:00.
-        </p>
-      )}
     </div>
   );
 }
