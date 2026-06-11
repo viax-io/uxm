@@ -1,3 +1,10 @@
+# [1.5.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.4.0...v1.5.0) (2026-06-11)
+
+
+### Features
+
+* **select,input,field-error:** migrate Select to Listbox; add input error states ([d6bce2f](https://gitlab.viax.tech/services-viax/uxm/commit/d6bce2f500a2284268bd7a14411dcde9b2544110))
+
 # [1.4.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.3.1...v1.4.0) (2026-06-11)
 
 
