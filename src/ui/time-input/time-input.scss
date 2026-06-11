@@ -195,14 +195,19 @@ span.uxm-time-input__icon {
   cursor: pointer;
   transition: background-color 0.1s, color 0.1s;
 }
+/* Row hover + selected defaults mirror the Listbox option tokens
+   (`--color-surface-alt` / `--color-accent-subtle` / `--color-accent-bold`)
+   so a selected time visually matches a selected listbox option out of
+   the box. TimeInput keeps its own theming surface — designers can tune
+   these independently if they want a distinct time-picker palette. */
 .uxm-time-input__row:hover {
   background-color: var(--uxm-time-input-popover-row-hover-bg, var(--color-surface-alt));
 }
 .uxm-time-input__row--selected {
-  background-color: var(--uxm-time-input-popover-row-selected-bg, var(--color-accent));
-  color: var(--uxm-time-input-popover-row-selected-color, var(--color-text-inverse));
+  background-color: var(--uxm-time-input-popover-row-selected-bg, var(--color-accent-subtle));
+  color: var(--uxm-time-input-popover-row-selected-color, var(--color-accent-bold));
   font-weight: 600;
 }
 .uxm-time-input__row--selected:hover {
-  background-color: var(--uxm-time-input-popover-row-selected-bg, var(--color-accent));
+  background-color: var(--uxm-time-input-popover-row-selected-bg, var(--color-accent-subtle));
 }
