@@ -1,5 +1,3 @@
-export { Alert } from './alert';
-export type { AlertProps, AlertVariant } from './alert';
 export { AppSidebar } from './app-sidebar';
 export type {
   AppSidebarBrand,
@@ -125,8 +123,8 @@ export type {
 } from './listbox';
 export { Loader } from './loader';
 export type { LoaderLayout, LoaderProps, LoaderVariant } from './loader';
-export { NumberField } from './number-field';
-export type { NumberFieldProps } from './number-field';
+export { NumberStepper } from './number-stepper';
+export type { NumberStepperProps } from './number-stepper';
 export { PageHeader } from './page-header';
 export type { PageHeaderProps } from './page-header';
 export { PageShell } from './page-shell';

@@ -91,7 +91,7 @@ function clampNumeric(value: string, min?: number, max?: number): string {
 
 /**
  * A themable typing-only numeric input. No `−` / `+` buttons (use
- * `Stepper` / the existing `NumberField` atom for that), no currency
+ * the `NumberStepper` atom for that), no currency
  * formatting (use `CurrencyInput`). Mask strips non-digits in real
  * time; `min`/`max` clamping fires on blur so typing isn't yanked
  * mid-character.

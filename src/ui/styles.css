@@ -2,7 +2,6 @@
    Each @import below pulls a single component's CSS from its folder.
    Cascade order matches the original monolithic styles.css. */
 
-@import "./alert/alert.css";
 @import "./app-sidebar/app-sidebar.css";
 @import "./app-top-bar/app-top-bar.css";
 @import "./avatar/avatar.css";
@@ -55,7 +54,7 @@
 @import "./loader/loader.css";
 @import "./meta-row/meta-row.css";
 @import "./modal/modal.css";
-@import "./number-field/number-field.css";
+@import "./number-stepper/number-stepper.css";
 @import "./number-input/number-input.css";
 @import "./page-header/page-header.css";
 @import "./page-shell/page-shell.css";
