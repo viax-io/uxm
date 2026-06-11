@@ -64,6 +64,8 @@ export { ExplorerListItem } from './explorer-list-item';
 export type { ExplorerListItemProps } from './explorer-list-item';
 export { ExplorerSection } from './explorer-section';
 export type { ExplorerSectionProps } from './explorer-section';
+export { FieldError } from './field-error';
+export type { FieldErrorProps } from './field-error';
 export { FilterTabs } from './filter-tabs';
 export type { FilterTabsOption, FilterTabsProps } from './filter-tabs';
 export { Icon } from './icon';

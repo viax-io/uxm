@@ -38,6 +38,9 @@ function buildVars(styles: Styles): CSSProperties {
       styles.disabledOpacity != null ? String(styles.disabledOpacity) : undefined,
     '--uxm-input-text-error-bg': styles.errorBg as string,
     '--uxm-input-text-error-border': styles.errorBorder as string,
+    '--uxm-input-text-error-color': styles.errorColor as string,
+    '--uxm-input-text-error-message-size':
+      styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
   } as CSSProperties;
 }
 
@@ -61,16 +64,17 @@ function InputDemo({ state, styles }: { state: string; styles: Styles }) {
   // Forced-state modifier class. `--state-hover` and `--state-focus`
   // mirror the `:hover` / `:focus` pseudo styles via shared CSS selectors,
   // so the visual fires without needing real interaction. Disabled
-  // engages via the HTML `disabled` attribute; error uses the existing
-  // `--error` modifier.
+  // engages via the HTML `disabled` attribute.
   const forcedClass = cn(
     state === 'hover' && 'uxm-input-text--state-hover',
     state === 'focus' && 'uxm-input-text--state-focus',
-    state === 'error' && 'uxm-input-text--error',
   );
 
   return (
     <div style={{ width: 300, ...cssVars } as CSSProperties}>
+      {/* `--error` is driven by the real `error` prop (not a forced-state
+          class), so the atom renders its production error message — icon
+          + text via the shared FieldError — instead of a preview-only mock. */}
       <TextInput
         type="email"
         value={value}
@@ -78,18 +82,8 @@ function InputDemo({ state, styles }: { state: string; styles: Styles }) {
         disabled={state === 'disabled'}
         className={forcedClass || undefined}
         placeholder="you@example.com"
+        error={isError ? 'Please enter a valid email address.' : undefined}
       />
-      {isError && (
-        <p
-          style={{
-            fontSize: (styles.errorMessageSize as number) ?? 12,
-            color: styles.errorColor as string,
-            marginTop: 4,
-          }}
-        >
-          Please enter a valid email address.
-        </p>
-      )}
     </div>
   );
 }
