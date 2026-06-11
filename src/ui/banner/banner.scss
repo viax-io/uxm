@@ -1,0 +1,77 @@
+/* ── banner ── */
+
+.uxm-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid;
+  border-radius: 8px;
+  font-size: 14px;
+}
+/* Each variant reads its own `--uxm-banner-{variant}-*` vars so UXM saves
+   target just that variant — editing the Info colors no longer cascades
+   to Warning / Error. Fallbacks reference the semantic token family so
+   the default look matches what the brand tokens produce. */
+.uxm-banner--info {
+  background-color: var(--uxm-banner-info-bg, var(--color-info-bg));
+  color:            var(--uxm-banner-info-text, var(--color-info-text));
+  border-color:     var(--uxm-banner-info-border, var(--color-info-border));
+}
+.uxm-banner--success {
+  background-color: var(--uxm-banner-success-bg, var(--color-success-bg));
+  color:            var(--uxm-banner-success-text, var(--color-success-text));
+  border-color:     var(--uxm-banner-success-border, var(--color-success-border));
+}
+.uxm-banner--warning {
+  background-color: var(--uxm-banner-warning-bg, var(--color-warning-bg));
+  color:            var(--uxm-banner-warning-text, var(--color-warning-text));
+  border-color:     var(--uxm-banner-warning-border, var(--color-warning-border));
+}
+/* The `error` variant key maps to the `--color-danger-*` token family
+   (existing brand-token naming). Saves emit `--uxm-banner-error-*`. */
+.uxm-banner--error {
+  background-color: var(--uxm-banner-error-bg, var(--color-danger-bg));
+  color:            var(--uxm-banner-error-text, var(--color-danger-text));
+  border-color:     var(--uxm-banner-error-border, var(--color-danger-border));
+}
+.uxm-banner__icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.uxm-banner__title {
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+.uxm-banner__content {
+  opacity: 0.9;
+  line-height: 1.5;
+}
+/* Close affordance — rendered only when `onDismiss` is passed.
+   `margin-left: auto` parks it at the right edge regardless of body
+   length; `color: inherit` makes the X pick up the variant's text
+   color so it tints with the alert. */
+.uxm-banner__close {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 4px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  opacity: 0.6;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+.uxm-banner__close:hover {
+  opacity: 1;
+  background-color: rgb(0 0 0 / 0.06);
+}
+.uxm-banner__close:focus-visible {
+  opacity: 1;
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}

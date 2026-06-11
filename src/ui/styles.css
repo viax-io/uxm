@@ -8,6 +8,7 @@
 @import "./avatar/avatar.css";
 @import "./back-link/back-link.css";
 @import "./badge/badge.css";
+@import "./banner/banner.css";
 @import "./breadcrumb/breadcrumb.css";
 @import "./button-group/button-group.css";
 @import "./button-icon/button-icon.css";
@@ -27,6 +28,7 @@
 @import "./dialog/dialog.css";
 @import "./disclosure/disclosure.css";
 @import "./divider/divider.css";
+@import "./editable-cell/editable-cell.css";
 @import "./empty-state/empty-state.css";
 @import "./error-page/error-page.css";
 @import "./explorer-list-item/explorer-list-item.css";

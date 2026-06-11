@@ -2,16 +2,47 @@
 
 import { cn } from '@/helpers';
 
-import type { HTMLAttributes, ReactNode } from 'react';
+import { EditableCell, type EditableCellType } from '../editable-cell';
+
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 
 export type DataTableDensity = 'compact' | 'default' | 'relaxed';
 
 export interface DataTableColumn<T> {
   key: string;
   header: ReactNode;
-  /** Optional cell renderer; defaults to `row[key]`. */
+  /** Optional cell renderer; defaults to `row[key]`. Ignored when the cell is editable (EditableCell handles display via `formatValue` below). */
   render?: (row: T) => ReactNode;
   align?: 'left' | 'right' | 'center';
+  /**
+   * When true, every row's cell in this column renders an EditableCell —
+   * click to enter edit mode, Enter commits, Esc cancels, blur commits.
+   * The underlying primitive comes from `row[key]` (string or number);
+   * use the sibling `formatValue` for display formatting (e.g. "$0.00").
+   */
+  editable?: boolean;
+  /** Editor type when editable. Defaults to "text". */
+  editor?: EditableCellType;
+  /** Display formatter for the editable cell's read-only state. */
+  formatValue?: (value: string | number) => ReactNode;
+  /** Synchronous per-cell validation. Returning a string blocks commit. */
+  validate?: (value: string | number, row: T) => string | null | undefined;
+  /**
+   * Per-row override for editability (e.g. some rows are read-only). When
+   * omitted, every cell in an editable column is editable.
+   */
+  isEditable?: (row: T) => boolean;
+  /** Commit handler. Async — atom shows a submitting state, rejects surface inline. */
+  onCommit?: (row: T, value: string | number) => void | Promise<void>;
+  /**
+   * Cap the column's content width, in px. One policy for both cell kinds:
+   * editable cells receive it as their max-width (display values truncate
+   * with an ellipsis, the editing input scrolls internally instead of
+   * widening the column); plain cells truncate with an ellipsis. Without
+   * it, editable cells fall back to the atom's themable Max Width and
+   * plain cells are uncapped.
+   */
+  maxWidth?: number;
 }
 
 export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -59,14 +90,80 @@ export function DataTable<T>({
               )}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
             >
-              {columns.map((c) => (
-                <td
-                  key={c.key}
-                  className={cn('uxm-data-table__td', c.align && `uxm-data-table__td--${c.align}`)}
-                >
-                  {c.render ? c.render(row) : (row as Record<string, ReactNode>)[c.key]}
-                </td>
-              ))}
+              {columns.map((c) => {
+                // Cells fall into three rendering paths:
+                //   1. Editable + this row is editable → EditableCell
+                //      with click-to-edit and async commit
+                //   2. Column has a custom `render` → use that (read-only)
+                //   3. Default → stringify `row[key]`
+                //
+                // (1) reads its primitive from `row[key]` (typed) and
+                // ignores `render`, since the editor needs to round-trip
+                // string/number values. Custom display formatting goes
+                // through `formatValue`.
+                const rowEditable =
+                  c.editable && (c.isEditable ? c.isEditable(row) : true);
+                const staticContent = c.render
+                  ? c.render(row)
+                  : (row as Record<string, ReactNode>)[c.key];
+                const cellContent = rowEditable ? (
+                  <EditableCell
+                    value={(row as Record<string, string | number>)[c.key]}
+                    onCommit={(next) => c.onCommit?.(row, next) ?? undefined}
+                    type={c.editor ?? 'text'}
+                    align={c.align}
+                    format={c.formatValue}
+                    validate={
+                      c.validate
+                        ? (next) => c.validate?.(next, row) ?? null
+                        : undefined
+                    }
+                    // Column-level cap routes through the atom's own
+                    // max-width var so display truncation, editing ghosts,
+                    // and the input all honor the same limit.
+                    style={
+                      c.maxWidth != null
+                        ? ({ '--uxm-editable-cell-max-width': `${c.maxWidth}px` } as CSSProperties)
+                        : undefined
+                    }
+                  />
+                ) : c.maxWidth != null ? (
+                  <span
+                    className="uxm-data-table__clamp"
+                    style={{ maxWidth: c.maxWidth }}
+                  >
+                    {staticContent}
+                  </span>
+                ) : (
+                  staticContent
+                );
+                return (
+                  <td
+                    key={c.key}
+                    // `data-label` carries the column header text down to the
+                    // cell so the card-list mode at narrow container widths
+                    // (see `.uxm-data-table` container query in
+                    // data-table.scss) can surface it via a CSS
+                    // pseudo-element. Only stringifiable headers participate
+                    // — a ReactNode header (icon, JSX) can't reach a
+                    // pseudo-element via `attr()`, so those cells fall back
+                    // to value-only rendering, which is the existing
+                    // behaviour at normal widths.
+                    data-label={typeof c.header === 'string' ? c.header : undefined}
+                    className={cn(
+                      'uxm-data-table__td',
+                      c.align && `uxm-data-table__td--${c.align}`,
+                      rowEditable && 'uxm-data-table__td--editable',
+                    )}
+                    // Stop the row click from firing when the user clicks an
+                    // editable cell — otherwise both onRowClick and the
+                    // EditableCell's enter-edit handler race.
+                    onClick={rowEditable ? (e) => e.stopPropagation() : undefined}
+                  >
+                    {cellContent}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

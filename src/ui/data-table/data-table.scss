@@ -1,4 +1,4 @@
-/* ── data-table ── */
+/* ── Data table ── */
 
 /* DataTable — root holds the rounded border container; row/cell visuals
    live on inner __head, __row, __th, __td elements. All inner elements
@@ -6,79 +6,117 @@
    rowBg / rowHoverBg / borderColor / fontSize / cellPaddingX/Y reach
    them. The `--compact` / `--relaxed` density modifier rules below
    intentionally override cell padding directly. */
-
 .uxm-data-table {
+  container-type: inline-size;
   border: 1px solid var(--uxm-data-table-border-color, var(--color-border));
   border-radius: 8px;
   overflow: hidden;
+}
+/* Card-list mode for narrow containers — a real HTML table starts to
+   horizontal-scroll under ~480px, especially with multi-column data.
+   At that width we reflow rows into stacked label/value pairs,
+   surfacing the column header via `data-label` (set in data-table.tsx)
+   through `attr()` on a `::before` pseudo. Each row becomes a small
+   self-contained card; the header is hidden. A column with a
+   non-string header (icon-only, JSX) renders value-only — the
+   pseudo-element has nothing to surface.
 
-  &__table {
-    border-collapse: collapse;
-    font-size: var(--uxm-data-table-font-size, 13px);
+   This is a container query (not a media query) so the same table
+   behaves correctly whether it's full-bleed in a 1440px page or
+   stuffed into a 320px side-panel — its own width drives the layout. */
+@container (max-width: 480px) {
+  .uxm-data-table__head {
+    /* The header row carries no information once each cell labels itself
+       — hide it rather than reflow it as another card. */
+    display: none;
+  }
+  .uxm-data-table__table,
+  .uxm-data-table__row,
+  .uxm-data-table__td {
+    display: block;
     width: 100%;
   }
-
-  &__head {
-    & tr {
-      background-color: var(--uxm-data-table-header-bg, var(--color-surface-alt));
-    }
-  }
-
-  &__th {
+  .uxm-data-table__row {
     border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
-    color: var(--uxm-data-table-header-text, var(--color-text-muted));
-    font-size: 12px;
-    font-weight: 600;
-    padding: var(--uxm-data-table-cell-padding-y, 10px) var(--uxm-data-table-cell-padding-x, 12px);
-    text-align: left;
-
-    &--right {
-      text-align: right;
-    }
-
-    &--center {
-      text-align: center;
-    }
+    padding: 8px var(--uxm-data-table-cell-padding-x, 12px);
   }
-
-  &__row {
-    background-color: var(--uxm-data-table-row-bg, var(--color-card));
-    transition: background-color 0.1s;
-
-    &--interactive {
-      cursor: pointer;
-    }
-
-    &:hover {
-      background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
-    }
-  }
-
-  &__td {
-    border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
-    color: var(--color-text);
-    padding: var(--uxm-data-table-cell-padding-y, 12px) var(--uxm-data-table-cell-padding-x, 12px);
-
-    &--right {
-      text-align: right;
-    }
-
-    &--center {
-      text-align: center;
-    }
-  }
-
-  &__row:last-child &__td {
+  .uxm-data-table__row:last-child {
     border-bottom: none;
   }
-
-  &--compact &__th,
-  &--compact &__td {
-    padding: 6px 12px;
+  .uxm-data-table__td {
+    /* Reset table-cell defaults that don't apply once we're block. */
+    padding: 4px 0;
+    border-bottom: none;
+    text-align: left;
   }
-
-  &--relaxed &__th,
-  &--relaxed &__td {
-    padding: 16px 12px;
+  .uxm-data-table__td::before {
+    /* The column header, surfaced from `data-label`. Cells whose header
+       wasn't a string don't get a label — `attr()` falls through to an
+       empty string and the pseudo-element collapses. */
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--uxm-data-table-header-text, var(--color-text-muted));
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+  /* Right/center alignment loses meaning in single-column card-list mode. */
+  .uxm-data-table__td--right,
+  .uxm-data-table__td--center {
+    text-align: left;
   }
 }
+.uxm-data-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--uxm-data-table-font-size, 13px);
+}
+.uxm-data-table__head tr {
+  background-color: var(--uxm-data-table-header-bg, var(--color-surface-alt));
+}
+.uxm-data-table__th {
+  text-align: left;
+  padding: var(--uxm-data-table-cell-padding-y, 10px) var(--uxm-data-table-cell-padding-x, 12px);
+  font-weight: 600;
+  color: var(--uxm-data-table-header-text, var(--color-text-muted));
+  border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+  font-size: 12px;
+}
+.uxm-data-table__th--right { text-align: right; }
+.uxm-data-table__th--center { text-align: center; }
+.uxm-data-table__row {
+  background-color: var(--uxm-data-table-row-bg, var(--color-card));
+  transition: background-color 0.1s;
+}
+.uxm-data-table__row--interactive { cursor: pointer; }
+.uxm-data-table__row:hover {
+  background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
+}
+.uxm-data-table__td {
+  padding: var(--uxm-data-table-cell-padding-y, 12px) var(--uxm-data-table-cell-padding-x, 12px);
+  color: var(--color-text);
+  border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+}
+.uxm-data-table__td--right { text-align: right; }
+.uxm-data-table__td--center { text-align: center; }
+/* Per-column content clamp — a column's `maxWidth` truncates plain (non-
+   editable) cell content with an ellipsis. Editable cells route the same
+   cap through the EditableCell's own max-width var instead, so both cell
+   kinds share one column-width policy. */
+.uxm-data-table__clamp {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+.uxm-data-table__row:last-child .uxm-data-table__td {
+  border-bottom: none;
+}
+.uxm-data-table--compact .uxm-data-table__th,
+.uxm-data-table--compact .uxm-data-table__td { padding: 6px 12px; }
+.uxm-data-table--relaxed .uxm-data-table__th,
+.uxm-data-table--relaxed .uxm-data-table__td { padding: 16px 12px; }

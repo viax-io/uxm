@@ -1,0 +1,230 @@
+/* ── EditableCell ──
+   Inline-editable text/number cell. Display mode is a button styled as
+   text — hover surfaces a subtle background tint as the affordance, so
+   users know it's interactive without needing a pencil icon in every
+   cell. Edit mode swaps in an input that fills the cell; commit cues
+   (Enter / blur) are baked into the atom, no per-consumer wiring.
+
+   Every dimension and color is themable via `--uxm-editable-cell-*`
+   tokens so a designer can:
+     - bump the click-target size (padding) for touch
+     - shift the hover affordance from background tint to underline
+     - swap the focus ring color for a non-accent theme
+     - re-tint the inline error pill */
+.uxm-editable-cell {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  /* Cap how wide a cell can push its column — values past the cap truncate
+     (display) or scroll inside the input (editing) instead of growing the
+     table unboundedly. Themable via the Max Width knob. */
+  max-width: var(--uxm-editable-cell-max-width, 320px);
+  min-height: var(--uxm-editable-cell-min-height, 24px);
+  padding: var(--uxm-editable-cell-padding-y, 2px) var(--uxm-editable-cell-padding-x, 6px);
+  margin: 0;
+  /* Read inheritance: cells should pick up the surrounding font, size,
+     and color so they read identically to a static text cell when not
+     hovered. */
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--uxm-editable-cell-radius, 4px);
+  cursor: text;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+  /* Position to anchor the inline error overlay. */
+  position: relative;
+}
+.uxm-editable-cell:hover:not(:disabled) {
+  background-color: var(--uxm-editable-cell-hover-bg, var(--color-surface-alt));
+}
+/* Keyboard focus on the display cell matches the family's focus language —
+   accent border + 2px offset ring (same halo as TextInput and this atom's
+   own editing input), so tabbing across a table reads unmistakably. The
+   forced `--state-focus` variant lets the UXM canvas render it without
+   real keyboard interaction. */
+.uxm-editable-cell:focus-visible,
+.uxm-editable-cell--state-focus {
+  border-color: var(--uxm-editable-cell-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-editable-cell-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+/* Forced hover — mirrors `:hover` above for the canvas. Editor preview only. */
+.uxm-editable-cell--state-hover:not(:disabled) {
+  background-color: var(--uxm-editable-cell-hover-bg, var(--color-surface-alt));
+}
+/* Pencil affordance — appears on hover / keyboard focus. The hover tint
+   alone can't signal editability inside a DataTable (the row's own hover
+   tint coincides with it), so the glyph is the unambiguous cue. Absolute
+   overlay: it never reflows the value. */
+.uxm-editable-cell__pencil {
+  position: absolute;
+  top: 50%;
+  right: var(--uxm-editable-cell-padding-x, 6px);
+  transform: translateY(-50%);
+  display: inline-flex;
+  pointer-events: none;
+  color: var(--uxm-editable-cell-pencil-color, var(--color-text-muted));
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+.uxm-editable-cell:hover:not(:disabled) .uxm-editable-cell__pencil,
+.uxm-editable-cell:focus-visible .uxm-editable-cell__pencil,
+.uxm-editable-cell--state-hover:not(:disabled) .uxm-editable-cell__pencil,
+.uxm-editable-cell--state-focus .uxm-editable-cell__pencil {
+  opacity: 1;
+}
+/* Right-aligned cells anchor the glyph on the leading (left) edge so it
+   never collides with the value sitting against the right edge. */
+.uxm-editable-cell--align-right .uxm-editable-cell__pencil {
+  right: auto;
+  left: var(--uxm-editable-cell-padding-x, 6px);
+}
+/* Reserve a gutter on the pencil's side so the glyph never overlaps the
+   value in narrow table cells. The value's anchored edge (left for left /
+   center align, right for right align) is unchanged — only the empty
+   opposite side gains room — so display→edit causes no text shift. The
+   editing branch is excluded; the input fills the cell with its own
+   padding. */
+.uxm-editable-cell:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--align-right) {
+  /* 20px = the fixed 16px pencil glyph + 4px breathing room. */
+  padding-inline-end: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
+}
+.uxm-editable-cell--align-right:not(.uxm-editable-cell--editing) {
+  padding-inline-start: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
+}
+.uxm-editable-cell--disabled,
+.uxm-editable-cell:disabled {
+  cursor: default;
+  opacity: var(--uxm-editable-cell-disabled-opacity, 0.55);
+}
+.uxm-editable-cell--empty {
+  color: var(--uxm-editable-cell-placeholder-color, var(--color-text-subtle));
+  font-style: italic;
+}
+/* Value container — truncates with an ellipsis once the cell hits its
+   max-width instead of growing the column. Needs to be an element of its
+   own: text-overflow can't ellipsize a flex container's anonymous text. */
+.uxm-editable-cell__value {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uxm-editable-cell--align-left { justify-content: flex-start; text-align: left; }
+.uxm-editable-cell--align-right { justify-content: flex-end; text-align: right; }
+.uxm-editable-cell--align-center { justify-content: center; text-align: center; }
+
+.uxm-editable-cell--editing {
+  /* inline-grid stacks the invisible width-keeper ghosts and the input in
+     one grid cell: the track (and thus the cell's min-content contribution
+     to auto table-column sizing) is sized by the ghosts, while the input —
+     which contributes zero width of its own — stretches to the track. */
+  display: inline-grid;
+  /* minmax(max-content, 1fr): the track is at least the ghosts' width (the
+     cell's stable min-content contribution) and absorbs all free space up
+     to the wrapper's 100%. An auto track would NOT stretch here — the
+     align modifiers set justify-content on this same element, which
+     disables auto-track stretching. */
+  grid-template-columns: minmax(max-content, 1fr);
+  padding: 0;
+  border: none;
+}
+/* Width-keeper ghosts — mirror the display button's text-affecting box
+   (font, paddings incl. the pencil gutter, border) so the editing cell
+   contributes exactly the same min-content width the display cell did. */
+.uxm-editable-cell__ghost {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  white-space: pre;
+  /* Same cap as the display cell: a long value / draft must not expand the
+     column past max-width while editing — the input scrolls internally
+     instead. A fixed-px max (the var resolves to px) also caps the ghost's
+     intrinsic contribution to auto table-column sizing. */
+  max-width: var(--uxm-editable-cell-max-width, 320px);
+  overflow: hidden;
+  min-height: var(--uxm-editable-cell-min-height, 24px);
+  padding: var(--uxm-editable-cell-padding-y, 2px)
+    calc(var(--uxm-editable-cell-padding-x, 6px) + 20px)
+    var(--uxm-editable-cell-padding-y, 2px)
+    var(--uxm-editable-cell-padding-x, 6px);
+  border: 1px solid transparent;
+  font: inherit;
+}
+.uxm-editable-cell__input {
+  grid-area: 1 / 1;
+  /* `width: 0; min-width: 100%` — the input contributes ZERO intrinsic
+     (min-content) width to sizing (its default ~20ch would widen an auto
+     table column on entering edit mode — the display→edit "jump"; `size`
+     is even ignored for type=number), then stretches to the grid track in
+     layout via the percentage min-width. The track itself is sized by the
+     width-keeper ghosts above. */
+  width: 0;
+  min-width: 100%;
+  min-height: var(--uxm-editable-cell-min-height, 24px);
+  padding: var(--uxm-editable-cell-padding-y, 2px) var(--uxm-editable-cell-padding-x, 6px);
+  margin: 0;
+  font: inherit;
+  color: var(--uxm-editable-cell-input-color, var(--color-text));
+  background-color: var(--uxm-editable-cell-input-bg, var(--color-card));
+  /* Border defaults match TextInput: idle = `--color-border`, focused =
+     `--color-accent`. The earlier "start at accent → focus to accent-bold"
+     pattern read as a different family of input than the rest of the
+     library, which broke the design-system promise that a focused input
+     looks the same wherever it appears. */
+  border: 1px solid var(--uxm-editable-cell-input-border, var(--color-border));
+  border-radius: var(--uxm-editable-cell-radius, 4px);
+  outline: none;
+  transition: border-color 0.15s ease;
+  text-align: inherit;
+  /* Inherit alignment from the parent's --align modifier via flex/text
+     alignment on the wrapper. */
+}
+.uxm-editable-cell--align-left .uxm-editable-cell__input { text-align: left; }
+.uxm-editable-cell--align-right .uxm-editable-cell__input { text-align: right; }
+.uxm-editable-cell--align-center .uxm-editable-cell__input { text-align: center; }
+.uxm-editable-cell__input:focus,
+/* Forced variant — the editing-state preview mirrors the focus halo via
+   this class because in real use the editing input is ALWAYS focused
+   (enter-edit auto-focuses + selects-all). The canvas must not steal real
+   focus, so it forces the visuals instead. Editor preview only. */
+.uxm-editable-cell--force-input-focus .uxm-editable-cell__input {
+  /* Match TextInput's focus halo exactly — same 2px outline + 2px offset
+     accent ring on top of the accent border. Designers and end users see
+     identical visual language for "input has focus" everywhere in the
+     library. */
+  border-color: var(--uxm-editable-cell-input-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-editable-cell-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+/* Severity tints the input border; the message itself rides in a popover
+   Banner (warning = recoverable input problem, error = failed save). No
+   halo ring while a problem shows — the banner already carries the signal,
+   and a second ring reads as noise. `outline: none` is explicit so the
+   accent :focus halo (declared above) can't bleed through and clash with
+   the severity border while the user corrects in place. */
+.uxm-editable-cell--error .uxm-editable-cell__input {
+  border-color: var(--uxm-editable-cell-error-border, var(--color-danger-text));
+  outline: none;
+}
+.uxm-editable-cell--warning .uxm-editable-cell__input {
+  border-color: var(--uxm-editable-cell-warning-border, var(--color-warning-text));
+  outline: none;
+}
+/* Compact Banner for the cell's error popover — the stock Banner is a
+   page-level strip (12/16px padding, 14px font); inside a table-cell
+   popover it shrinks to caption scale. Colors stay the Banner's own
+   variant tokens so warning / error read identically everywhere. */
+.uxm-editable-cell__error-banner {
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  max-width: 320px;
+}
+.uxm-editable-cell__error-banner .uxm-banner__icon svg {
+  width: 16px;
+  height: 16px;
+}
