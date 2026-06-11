@@ -143,7 +143,7 @@ function clampNumeric(value: string, min?: number, max?: number): string {
  * Pass a single-entry `currencies` array to effectively lock the
  * currency at design time (the picker still renders but only offers
  * one option). For non-monetary numeric input use `NumberInput`; for
- * integer values with step buttons use `NumberField` (soon: `Stepper`).
+ * integer values with step buttons use `NumberStepper`.
  */
 export function CurrencyInput({
   value,

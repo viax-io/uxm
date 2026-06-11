@@ -1,0 +1,85 @@
+/* ── NumberStepper ──
+   Numeric input + explicit ± step buttons + optional unit suffix. The
+   browser's native spinner is unconditionally suppressed so the
+   explicit buttons own that affordance.
+
+   State rules target the `__input` sub-element with paired `--state-*`
+   modifier classes on the wrapper alongside the real `:hover` /
+   `:focus-visible` / `:disabled` pseudos. `[aria-disabled]` on the
+   wrapper applies the disabled-opacity to the whole field (the input
+   element's native `disabled` blocks interaction). */
+.uxm-number-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uxm-number-stepper-gap, 4px);
+  transition: opacity 0.15s;
+}
+.uxm-number-stepper[aria-disabled="true"] {
+  opacity: var(--uxm-number-stepper-disabled-opacity, 0.6);
+  cursor: not-allowed;
+}
+.uxm-number-stepper__input {
+  width: var(--uxm-number-stepper-input-width, 64px);
+  border-radius: var(--uxm-number-stepper-input-radius, 6px);
+  border: 1px solid var(--uxm-number-stepper-input-border, var(--color-border));
+  background-color: var(--uxm-number-stepper-input-bg, var(--color-surface));
+  color: var(--uxm-number-stepper-input-color, var(--color-text-strong));
+  padding: var(--uxm-number-stepper-input-padding-y, 4px) var(--uxm-number-stepper-input-padding-x, 8px);
+  font-size: var(--uxm-number-stepper-font-size, 12px);
+  text-align: center;
+  outline: none;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.uxm-number-stepper__input::-webkit-inner-spin-button,
+.uxm-number-stepper__input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+.uxm-number-stepper--state-hover .uxm-number-stepper__input,
+.uxm-number-stepper:not([aria-disabled="true"]) .uxm-number-stepper__input:hover {
+  background-color: var(--uxm-number-stepper-hover-bg, var(--color-surface));
+  border-color: var(--uxm-number-stepper-hover-border, var(--color-accent));
+}
+.uxm-number-stepper--state-focus .uxm-number-stepper__input,
+.uxm-number-stepper__input:focus-visible {
+  border-color: var(--uxm-number-stepper-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-number-stepper-focus-ring, var(--color-accent));
+  outline-offset: 1px;
+}
+.uxm-number-stepper__input:disabled {
+  background-color: var(--uxm-number-stepper-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-number-stepper-disabled-border, var(--color-border));
+  color: var(--uxm-number-stepper-disabled-color, var(--color-text-muted));
+  cursor: not-allowed;
+}
+/* Error — `--error` modifier on the wrapper paints the field's
+   border + bg with the error palette. Step buttons stay unchanged
+   (error is the field's concern, not the affordance's — matches
+   how input-with-icon keeps its icon untouched in error mode). */
+.uxm-number-stepper--error .uxm-number-stepper__input {
+  background-color: var(--uxm-number-stepper-error-bg, var(--color-card));
+  border-color: var(--uxm-number-stepper-error-border, var(--color-danger-text));
+}
+.uxm-number-stepper__error-message {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--uxm-number-stepper-error-message-size, 12px);
+  color: var(--uxm-number-stepper-error-color, var(--color-danger-text));
+}
+/* ± step buttons compose `IconButton` — their size, radius, bg, hover
+   and focus treatment all flow from `.uxm-icon-button`'s own rules.
+   No `.uxm-number-stepper__button` ruleset here on purpose: tuning a
+   button-specific knob would silently diverge from IconButton's look
+   elsewhere in the app, which defeats the composition. */
+.uxm-number-stepper__unit {
+  font-size: var(--uxm-number-stepper-unit-size, 11px);
+  color: var(--uxm-number-stepper-unit-color, var(--color-text-subtle));
+  /* Fixed reserved width so the input doesn't shift when the unit
+     text changes ("px" vs "rem" etc.). Layout primitive, not a knob. */
+  width: 20px;
+  text-align: left;
+  flex-shrink: 0;
+}

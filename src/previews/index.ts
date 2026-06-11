@@ -8,7 +8,6 @@
  */
 
 // ── Atom + sub-component previews (live next to their component) ──
-export { AlertPreview } from '@/ui/alert/alert-preview';
 export { AppSidebarPreview } from '@/ui/app-sidebar/app-sidebar-preview';
 export { AppTopBarPreview } from '@/ui/app-top-bar/app-top-bar-preview';
 export { AvatarPreview } from '@/ui/avatar/avatar-preview';
@@ -60,7 +59,7 @@ export { ListboxPreview } from '@/ui/listbox/listbox-preview';
 export { LoaderPreview } from '@/ui/loader/loader-preview';
 export { MetaRowPreview } from '@/ui/meta-row/meta-row-preview';
 export { ModalPreview } from '@/ui/modal/modal-preview';
-export { NumberFieldPreview } from '@/ui/number-field/number-field-preview';
+export { NumberStepperPreview } from '@/ui/number-stepper/number-stepper-preview';
 export { NumberInputPreview } from '@/ui/number-input/number-input-preview';
 export { PageHeaderPreview } from '@/ui/page-header/page-header-preview';
 export { PageShellPreview } from '@/ui/page-shell/page-shell-preview';
