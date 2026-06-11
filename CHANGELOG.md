@@ -1,3 +1,10 @@
+## [1.5.1](https://gitlab.viax.tech/services-viax/uxm/compare/v1.5.0...v1.5.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* **time-input:** align popover-row selected defaults with Listbox option tokens ([8426ece](https://gitlab.viax.tech/services-viax/uxm/commit/8426ece884ded7f4f4f4d6e66cc60003264fc994))
+
 # [1.5.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.4.0...v1.5.0) (2026-06-11)
 
 
