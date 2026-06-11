@@ -1,3 +1,26 @@
+# [2.0.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.6.0...v2.0.0) (2026-06-11)
+
+
+* feat(banner,number-stepper)!: remove Alert; rename NumberField to NumberStepper ([df1b019](https://gitlab.viax.tech/services-viax/uxm/commit/df1b0194cfd10677ee3134edc6de9791ccb70f61))
+
+
+### BREAKING CHANGES
+
+* Alert and NumberField are removed from @viax/uxm/ui.
+
+Migration:
+- <Alert ...> → <Banner ...> (drop-in: same variant/title/icon/children;
+  optionally adopt onDismiss). CSS vars --uxm-alert-* →
+  --uxm-banner-{variant}-{bg|text|border} (per-variant tokens).
+  Class names .uxm-alert* → .uxm-banner*.
+- <NumberField ...> → <NumberStepper ...> (same props; new optional
+  error). CSS vars --uxm-number-field-* → --uxm-number-stepper-*.
+  Class names .uxm-number-field* → .uxm-number-stepper*.
+- Previews: AlertPreview removed (use BannerPreview);
+  NumberFieldPreview → NumberStepperPreview.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+
 # [1.6.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.5.1...v1.6.0) (2026-06-11)
 
 
