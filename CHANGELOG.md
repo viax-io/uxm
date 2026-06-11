@@ -1,3 +1,10 @@
+# [1.4.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.3.1...v1.4.0) (2026-06-11)
+
+
+### Features
+
+* **banner,editable-cell,data-table:** port Banner, EditableCell, DataTable editing ([ade1b1e](https://gitlab.viax.tech/services-viax/uxm/commit/ade1b1e6d86281581d31721279893c6d589b507d))
+
 ## [1.3.1](https://gitlab.viax.tech/services-viax/uxm/compare/v1.3.0...v1.3.1) (2026-06-10)
 
 
