@@ -1,10 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useMemo, type CSSProperties, type ReactNode } from 'react';
 
 import { cn } from '@/helpers';
 
+import { FieldError } from '../field-error';
 import { Icon } from '../icon';
+import { IconButton } from '../icon-button';
+import { Listbox } from '../listbox';
 
 export interface SearchDropdownOption {
   value: string;
@@ -25,6 +28,13 @@ export interface SearchDropdownProps {
   searchPlaceholder?: string;
   /** Disabled state — trigger can't open and renders as inert. */
   disabled?: boolean;
+  /**
+   * When set to a non-empty string, the trigger renders in its error
+   * state: red border (`.uxm-search-dropdown--error .uxm-search-dropdown__trigger`),
+   * `aria-invalid` on the combobox trigger, and the message below it.
+   * Omit (or pass an empty string) for the normal state.
+   */
+  error?: string;
   className?: string;
   style?: CSSProperties;
   'aria-label'?: string;
@@ -37,12 +47,20 @@ export interface SearchDropdownProps {
  * country codes, large enums). For ≤12 options, prefer the native
  * `<Select>` atom.
  *
- * Keyboard: ArrowUp/Down move highlight, Enter selects, Escape closes.
- * Click-outside closes. Focus moves to the search input on open.
+ * Internally a thin wrapper over the shared `<Listbox>` atom:
+ *   - Listbox owns the popover (positioning + portal + flip-on-overflow),
+ *     click-outside, Escape, keyboard nav (Arrow/Home/End/Enter),
+ *     ARIA listbox/option roles, focus management, the right-edge ✓
+ *     on the selected row.
+ *   - SearchDropdown layers its own trigger chrome on top
+ *     (`.uxm-search-dropdown__trigger` with `--uxm-search-dropdown-trigger-*`
+ *     theming) and renders the icon + label + meta inside each row via
+ *     `renderItem`.
  *
- * Themable through `--uxm-search-dropdown-*` custom properties: trigger
- * bg/border/radius/padding/font, popover bg/border/radius/shadow, item
- * hover/active bg + colour, and the search input chrome.
+ * Panel theming (bg, border, radius, shadow, option states, group
+ * headers) flows from the shared `listbox` registry entry — tune it
+ * once and every dropdown in the app reflects the change. SearchDropdown's
+ * own registry entry only themes the TRIGGER.
  */
 export function SearchDropdown({
   value,
@@ -51,156 +69,111 @@ export function SearchDropdown({
   placeholder = 'Select…',
   searchPlaceholder = 'Search…',
   disabled = false,
+  error,
   className,
   style,
   'aria-label': ariaLabel,
 }: SearchDropdownProps) {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const [highlight, setHighlight] = useState(0);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const popoverRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
-
-  const selected = useMemo(() => options.find((o) => o.value === value), [options, value]);
-
-  const filtered = useMemo(() => {
-    if (!search) return options;
-    const q = search.toLowerCase();
-    return options.filter((o) => o.label.toLowerCase().includes(q));
-  }, [options, search]);
-
-  // Clamp the highlight against the current filtered list so a stale
-  // index from a longer list doesn't point past the end after the user
-  // types and the list shrinks. Derived rather than tracked in state so
-  // we never have a "stale highlight" intermediate render.
-  const safeHighlight = filtered.length === 0 ? 0 : Math.min(highlight, filtered.length - 1);
-
-  const openPopover = useCallback(() => {
-    setSearch('');
-    setHighlight(0);
-    setOpen(true);
-  }, []);
-
-  // Click-outside closes the popover. Auto-focus the search input on open.
-  useEffect(() => {
-    if (!open) return;
-    setTimeout(() => searchRef.current?.focus(), 0);
-    function onClick(e: MouseEvent) {
-      const t = e.target as Node;
-      if (triggerRef.current?.contains(t) || popoverRef.current?.contains(t)) return;
-      setOpen(false);
-    }
-    document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
-  }, [open]);
-
-  const select = (v: string) => {
-    onChange(v);
-    setOpen(false);
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setHighlight(Math.min(filtered.length - 1, safeHighlight + 1));
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setHighlight(Math.max(0, safeHighlight - 1));
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      const opt = filtered[safeHighlight];
-      if (opt) select(opt.value);
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      setOpen(false);
-      triggerRef.current?.focus();
-    }
-  };
+  const selected = useMemo(
+    () => options.find((o) => o.value === value) ?? null,
+    [options, value],
+  );
 
   return (
-    <div className={cn('uxm-search-dropdown', className)} style={style}>
-      <button
-        ref={triggerRef}
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-label={ariaLabel}
-        disabled={disabled}
-        onClick={() => (open ? setOpen(false) : openPopover())}
-        className={cn(
-          'uxm-search-dropdown__trigger',
-          open && 'uxm-search-dropdown__trigger--open',
-          !selected && 'uxm-search-dropdown__trigger--empty',
-        )}
-      >
-        <span className="uxm-search-dropdown__trigger-label">
-          {selected ? selected.label : placeholder}
-        </span>
-        <Icon
-          glyph="chevron-down"
-          size={14}
-          className="uxm-search-dropdown__trigger-chevron"
-          style={{ transform: open ? 'rotate(180deg)' : 'none' }}
-        />
-      </button>
-      {open && (
-        <div ref={popoverRef} className="uxm-search-dropdown__popover" role="listbox">
-          <div className="uxm-search-dropdown__search">
-            <Icon
-              glyph="search"
-              size={14}
-              className="uxm-search-dropdown__search-icon"
-            />
-            <input
-              ref={searchRef}
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={onKeyDown}
-              placeholder={searchPlaceholder}
-              className="uxm-search-dropdown__search-input"
-            />
-          </div>
-          <div className="uxm-search-dropdown__list">
-            {filtered.length === 0 ? (
-              <div className="uxm-search-dropdown__empty">No matches</div>
-            ) : (
-              filtered.map((opt, i) => {
-                const active = opt.value === value;
-                const highlighted = i === safeHighlight;
-                return (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    role="option"
-                    aria-selected={active}
-                    // mouseDown vs click prevents the trigger button from
-                    // re-stealing focus + closing before the click fires.
-                    onMouseDown={(e) => { e.preventDefault(); select(opt.value); }}
-                    onMouseEnter={() => setHighlight(i)}
-                    className={cn(
-                      'uxm-search-dropdown__option',
-                      active && 'uxm-search-dropdown__option--active',
-                      highlighted && 'uxm-search-dropdown__option--highlighted',
-                    )}
-                  >
-                    {opt.icon && (
-                      <span className="uxm-search-dropdown__option-icon" aria-hidden="true">
-                        {opt.icon}
-                      </span>
-                    )}
-                    <span className="uxm-search-dropdown__option-label">{opt.label}</span>
-                    {opt.meta && (
-                      <span className="uxm-search-dropdown__option-meta">{opt.meta}</span>
-                    )}
-                  </button>
-                );
-              })
-            )}
-          </div>
+    <>
+    <Listbox<SearchDropdownOption>
+      items={options}
+      getKey={(o) => o.value}
+      getLabel={(o) => o.label}
+      value={selected}
+      // The old SearchDropdown's `onChange(value: string)` signature stays
+      // — coerce null (Listbox supports clear via the widened signature)
+      // to empty string for backward compatibility with existing callers.
+      // Consumers wanting actual null/clear semantics should migrate to
+      // Listbox directly.
+      onChange={(next) => onChange(next?.value ?? '')}
+      searchPlaceholder={searchPlaceholder}
+      disabled={disabled}
+      className={cn('uxm-search-dropdown', error && 'uxm-search-dropdown--error', className)}
+      style={style}
+      aria-label={ariaLabel}
+      renderTrigger={({ open, triggerProps }) => (
+        // Trigger uses `<div role="combobox">` (not `<button>`) so the
+        // clear ✕ — a real `<button>` — can sit inside without invalid
+        // HTML nesting. tabIndex enables keyboard focus; the spread
+        // `triggerProps` brings the open/close wiring + ARIA state.
+        // Disabled state runs through `aria-disabled` (CSS targets the
+        // attribute since `<div>` doesn't support `:disabled`).
+        // eslint-disable-next-line jsx-a11y/role-has-required-aria-props -- aria-expanded (always) and aria-controls (while open) arrive via the triggerProps spread; the rule can't see through it
+        <div role="combobox"
+          {...triggerProps}
+          tabIndex={disabled ? -1 : 0}
+          aria-disabled={disabled || undefined}
+          aria-invalid={error ? true : undefined}
+          className={cn(
+            'uxm-search-dropdown__trigger',
+            open && 'uxm-search-dropdown__trigger--open',
+            !selected && 'uxm-search-dropdown__trigger--empty',
+            // Activates the trigger's `:hover:not(--error)` guard so the
+            // error border persists on hover. The border itself is painted
+            // by `.uxm-search-dropdown--error .uxm-search-dropdown__trigger`
+            // (wrapper class above).
+            error && 'uxm-search-dropdown__trigger--error',
+          )}
+        >
+          <span className="uxm-search-dropdown__trigger-label">
+            {selected ? selected.label : placeholder}
+          </span>
+          {selected && !disabled && (
+            <IconButton
+              aria-label="Clear selection"
+              onClick={(e) => {
+                // Stop the click from bubbling to the trigger div
+                // (which would toggle the popover back open).
+                e.stopPropagation();
+                onChange('');
+              }}
+              onMouseDown={(e) => {
+                // Stop mousedown — the atom's Popover wires its
+                // click-outside detection to mousedown.
+                e.stopPropagation();
+              }}
+              onKeyDown={(e) => {
+                // Don't let Enter/Space bubble into the trigger's
+                // own keydown handler (which toggles the popover).
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.stopPropagation();
+                }
+              }}
+              className="uxm-search-dropdown__trigger-clear"
+            >
+              <Icon glyph="close" />
+            </IconButton>
+          )}
+          <Icon
+            glyph="chevron-down"
+            size={14}
+            className="uxm-search-dropdown__trigger-chevron"
+            style={{ transform: open ? 'rotate(180deg)' : 'none' }}
+          />
         </div>
       )}
-    </div>
+      renderItem={(opt) => (
+        <>
+          {opt.icon && (
+            <span className="uxm-search-dropdown__option-icon" aria-hidden="true">
+              {opt.icon}
+            </span>
+          )}
+          <span className="uxm-search-dropdown__option-label">{opt.label}</span>
+          {opt.meta && (
+            <span className="uxm-search-dropdown__option-meta">{opt.meta}</span>
+          )}
+        </>
+      )}
+    />
+    {error && <FieldError className="uxm-search-dropdown__error-message">{error}</FieldError>}
+    </>
   );
 }
+SearchDropdown.hasError = true;

@@ -34,17 +34,12 @@ function buildVars(styles: Styles): CSSProperties {
       styles.triggerDisabledOpacity != null ? String(styles.triggerDisabledOpacity) : undefined,
     '--uxm-search-dropdown-trigger-error-bg': styles.triggerErrorBg as string,
     '--uxm-search-dropdown-trigger-error-border': styles.triggerErrorBorder as string,
-    '--uxm-search-dropdown-popover-bg': styles.popoverBg as string,
-    '--uxm-search-dropdown-popover-border': styles.popoverBorder as string,
-    '--uxm-search-dropdown-popover-radius': `${styles.popoverRadius}px`,
-    '--uxm-search-dropdown-popover-max-height': `${styles.popoverMaxHeight}px`,
-    '--uxm-search-dropdown-option-padding-x': `${styles.optionPaddingX}px`,
-    '--uxm-search-dropdown-option-padding-y': `${styles.optionPaddingY}px`,
-    '--uxm-search-dropdown-option-font-size': `${styles.optionFontSize}px`,
-    '--uxm-search-dropdown-option-radius': `${styles.optionRadius}px`,
-    '--uxm-search-dropdown-option-hover-bg': styles.optionHoverBg as string,
-    '--uxm-search-dropdown-option-active-bg': styles.optionActiveBg as string,
-    '--uxm-search-dropdown-option-active-color': styles.optionActiveColor as string,
+    '--uxm-search-dropdown-trigger-error-color': styles.triggerErrorColor as string,
+    '--uxm-search-dropdown-trigger-error-message-size':
+      styles.triggerErrorMessageSize != null ? `${styles.triggerErrorMessageSize}px` : undefined,
+    // Popover + option-row vars live on the Listbox atom now —
+    // SearchDropdown is a thin wrapper that consumes them. Tune via
+    // the `listbox` registry entry.
     width: 280,
   } as CSSProperties;
 }
@@ -72,11 +67,13 @@ function SearchDropdownDemo({ state, styles }: { state: string; styles: Styles }
   const forcedClass = cn(
     state === 'hover' && 'uxm-search-dropdown--state-hover',
     state === 'focus' && 'uxm-search-dropdown--state-focus',
-    state === 'error' && 'uxm-search-dropdown--error',
   );
 
   return (
     <div style={cssVars}>
+      {/* `--error` is driven by the real `error` prop (not a forced-state
+          class), so the atom renders its production error message — icon
+          + text via the shared FieldError — instead of a preview-only mock. */}
       <SearchDropdown
         value={value}
         onChange={setValue}
@@ -85,18 +82,8 @@ function SearchDropdownDemo({ state, styles }: { state: string; styles: Styles }
         searchPlaceholder="Search icons…"
         disabled={state === 'disabled'}
         className={forcedClass || undefined}
+        error={isError ? "That icon isn't available in this context." : undefined}
       />
-      {isError && (
-        <p
-          style={{
-            fontSize: (styles.triggerErrorMessageSize as number) ?? 12,
-            color: styles.triggerErrorColor as string,
-            marginTop: 4,
-          }}
-        >
-          That icon isn&apos;t available in this context.
-        </p>
-      )}
     </div>
   );
 }

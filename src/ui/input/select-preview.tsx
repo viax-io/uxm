@@ -113,7 +113,7 @@ function SelectDemo({
           disabled={state === 'disabled'}
         />
       ) : searchable ? (
-        <SearchableSelect styles={styles} />
+        <SearchableSelect styles={styles} error={isError ? SELECT_ERROR : undefined} />
       ) : (
         <Select
           value={value}
@@ -138,10 +138,8 @@ function SelectDemo({
 // SearchDropdown variant: its trigger chrome lives in the SearchDropdown
 // atom (which has its own state coverage), so we don't force state visuals
 // here — just project the shared shape knobs onto the trigger and let
-// SearchDropdown's own CSS handle interaction. (Error state lands with
-// SearchDropdown's own Listbox migration — its current uxm implementation
-// has no `error` prop yet.)
-function SearchableSelect({ styles }: { styles: Styles }) {
+// SearchDropdown's own CSS handle interaction.
+function SearchableSelect({ styles, error }: { styles: Styles; error?: string }) {
   const [value, setValue] = useState('');
   const triggerVars = {
     '--uxm-search-dropdown-trigger-bg': styles.backgroundColor as string,
@@ -160,6 +158,7 @@ function SearchableSelect({ styles }: { styles: Styles }) {
       placeholder="Select a country"
       searchPlaceholder={styles.searchPlaceholder as string}
       style={triggerVars}
+      error={error}
     />
   );
 }

@@ -30,12 +30,16 @@ const DEFAULT_SELECTED = ['React', 'TypeScript', 'Tailwind'];
  * owned entirely by `<FormField>`; wrap with FormField when you want
  * one.
  */
-export function PillSelectPreview({ styles, variants }: PreviewProps) {
+export function PillSelectPreview({ styles, variants }: PreviewProps & { componentId: string }) {
   const state = ((variants.state as string) ?? 'default') as
     | 'default'
     | 'hover'
     | 'focus'
-    | 'disabled';
+    | 'disabled'
+    | 'error';
+  const chipsPosition = ((variants.chipsPosition as string) ?? 'below') as
+    | 'inside'
+    | 'below';
 
   // Map every registry knob to its `--uxm-pill-select-{kebab}` CSS var.
   // Numbers get a `px` suffix except `disabledOpacity` which is a unitless
@@ -61,6 +65,11 @@ export function PillSelectPreview({ styles, variants }: PreviewProps) {
         defaultValue={DEFAULT_SELECTED}
         placeholder="Select tags…"
         disabled={state === 'disabled'}
+        chipsPosition={chipsPosition}
+        // Error is a real prop (not a CSS pseudo), so the preview drives
+        // the actual atom path: `error` adds `__field--error` + renders the
+        // message. The error vars projected via `cssVars` above theme both.
+        error={state === 'error' ? 'Select at least one tag.' : undefined}
       />
     </div>
   );
