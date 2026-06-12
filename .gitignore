@@ -6,7 +6,11 @@ dist/
 .vscode/
 coverage/
 
-# work with claude agents
-.claude/
+# work with claude agents — local tooling stays untracked, but team-shared
+# commands are explicitly whitelisted below
+.claude/*
+!.claude/commands
+.claude/commands/*
+!.claude/commands/update-ai-skill.md
 .mcp.json
 /todo
