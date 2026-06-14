@@ -1,3 +1,11 @@
+# [2.1.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.0.0...v2.1.0) (2026-06-14)
+
+
+### Features
+
+* **studio:** add @viax/uxm/studio workbench + build:modo/dev:modo portal ([64328a2](https://gitlab.viax.tech/services-viax/uxm/commit/64328a226cc4d531670c88112ba725d4db2645bf))
+* **studio:** compile portal from src for live HMR in dev:modo ([c7cd62f](https://gitlab.viax.tech/services-viax/uxm/commit/c7cd62fc98cf1ff19084a1affd3a88bcd09d8582))
+
 # [2.0.0](https://gitlab.viax.tech/services-viax/uxm/compare/v1.6.0...v2.0.0) (2026-06-11)
 
 
