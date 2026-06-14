@@ -41,6 +41,11 @@
       "import": "./dist/studio/index.js",
       "require": "./dist/studio/index.cjs"
     },
+    "./studio/generate-css": {
+      "types": "./dist/studio/persistence/generate-css.d.ts",
+      "import": "./dist/studio/persistence/generate-css.js",
+      "require": "./dist/studio/persistence/generate-css.cjs"
+    },
     "./studio.css": "./dist/studio/studio.css"
   },
   "main": "./dist/index.cjs",
