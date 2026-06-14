@@ -27,8 +27,14 @@ export function UxmApp({ embed = false, persistence }: UxmAppProps) {
   return (
     <UxmProvider persistence={persistence}>
       <BrandTokenStyles />
-      <DemoNotice />
-      <UxmAppShell embed={embed} />
+      {/* Flex column so the read-only DemoNotice banner takes its own height and
+          the h-full shell fills the rest instead of overflowing the viewport. */}
+      <div className="flex flex-col h-full">
+        <DemoNotice />
+        <div className="flex-1 min-h-0">
+          <UxmAppShell embed={embed} />
+        </div>
+      </div>
     </UxmProvider>
   );
 }

@@ -63,6 +63,10 @@ const UxmContext = createContext<UxmContextValue | null>(null);
 
 const THEME_STORAGE_KEY = 'uxm:theme';
 
+// Stable default so consumers that omit `persistence` reuse one instance instead
+// of getting a fresh object every render (which would re-run the load effect).
+const defaultPersistence = createReadOnlyPersistence();
+
 /**
  * Strip layoutVariant keys from a loaded overrides bag. Legacy saves
  * (from before variants were ephemeral) wrote variant values into the
@@ -93,7 +97,7 @@ function stripVariantKeysFromOverrides(
 
 export function UxmProvider({
   children,
-  persistence = createReadOnlyPersistence(),
+  persistence = defaultPersistence,
 }: {
   children: ReactNode;
   persistence?: StudioPersistence;
