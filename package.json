@@ -35,14 +35,23 @@
       "types": "./dist/previews/index.d.ts",
       "import": "./dist/previews/index.js",
       "require": "./dist/previews/index.cjs"
-    }
+    },
+    "./studio": {
+      "types": "./dist/studio/index.d.ts",
+      "import": "./dist/studio/index.js",
+      "require": "./dist/studio/index.cjs"
+    },
+    "./studio.css": "./dist/studio/studio.css"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.json --outDir dist --resolve-full-paths",
+    "build": "tsup && npm run build:studio-css && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.json --outDir dist --resolve-full-paths",
+    "build:studio-css": "tailwindcss -i ./src/studio/studio.css -o ./dist/studio/studio.css --minify",
+    "build:modo": "vite build -c portal/vite.config.ts",
     "dev": "tsup --watch",
+    "dev:modo": "vite -c portal/vite.config.ts",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -77,8 +86,11 @@
     "@semantic-release/gitlab": "^13.3.2",
     "@semantic-release/npm": "^13.1.5",
     "@semantic-release/release-notes-generator": "^14.1.1",
+    "@tailwindcss/cli": "^4.0.0",
+    "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.39.4",
@@ -92,10 +104,12 @@
     "lint-staged": "^16.4.0",
     "sass": "^1.100.0",
     "semantic-release": "^25.0.3",
+    "tailwindcss": "^4.0.0",
     "tsc-alias": "^1.8.17",
     "tsup": "^8.3.5",
     "typescript": "^5.6.0",
-    "typescript-eslint": "8.60.0"
+    "typescript-eslint": "8.60.0",
+    "vite": "^5.4.0"
   },
   "publishConfig": {
     "registry": "https://nexus.viax.tech/repository/npm-private/"
