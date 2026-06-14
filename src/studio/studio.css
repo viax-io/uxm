@@ -1,0 +1,14 @@
+/*
+ * Build input for @viax/uxm/studio.css — compiled to dist/studio/studio.css by
+ * the `build:studio-css` step (Tailwind v4 CLI), which runs after `tsup`.
+ *
+ * Emits Tailwind base + the utility classes the Studio shell actually uses
+ * (scanned from the .tsx via @source) plus the design tokens (raw :root vars +
+ * the @theme inline mapping that backs `bg-card`, `text-text`, …). UI-atom CSS
+ * is intentionally NOT bundled here — hosts import `@viax/uxm/ui.css` for that,
+ * so the atoms aren't duplicated. Net: a host needs no Tailwind config of its
+ * own — just `@viax/uxm/tokens.css` + `@viax/uxm/ui.css` + this file.
+ */
+@import 'tailwindcss';
+@import '../tokens/index.css';
+@source './**/*.{ts,tsx}';

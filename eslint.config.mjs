@@ -11,7 +11,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   // 1. Global ignores.
-  { ignores: ['dist/**', 'node_modules/**', 'coverage/**', '.idea/**'] },
+  { ignores: ['dist/**', 'dist-portal/**', 'node_modules/**', 'coverage/**', '.idea/**'] },
 
   // 2. JS recommended.
   js.configs.recommended,
