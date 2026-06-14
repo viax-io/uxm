@@ -1,3 +1,10 @@
+# [2.2.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.1.0...v2.2.0) (2026-06-14)
+
+
+### Features
+
+* **studio:** expose generateOverridesCss via ./studio/generate-css subpath ([1ec0884](https://gitlab.viax.tech/services-viax/uxm/commit/1ec088472a09c40abb7c0620c412a6a4738f6de9))
+
 # [2.1.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.0.0...v2.1.0) (2026-06-14)
 
 
