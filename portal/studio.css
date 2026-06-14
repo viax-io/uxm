@@ -1,0 +1,9 @@
+/*
+ * Portal stylesheet — compiled live by @tailwindcss/vite (HMR from src).
+ * Emits Tailwind base + the utilities the Studio shell uses (scanned from the
+ * .tsx via @source) plus the design tokens (raw :root vars + @theme inline).
+ * UI-atom CSS is loaded separately via the .scss glob in main.tsx.
+ */
+@import 'tailwindcss';
+@import '../src/tokens/index.css';
+@source '../src/studio/**/*.{ts,tsx}';
