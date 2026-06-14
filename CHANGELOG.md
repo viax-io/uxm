@@ -1,3 +1,10 @@
+## [2.2.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.2.0...v2.2.1) (2026-06-14)
+
+
+### Bug Fixes
+
+* **studio:** stable read-only persistence default + flex layout for demo banner ([21d95e5](https://gitlab.viax.tech/services-viax/uxm/commit/21d95e5a26b1d946f94899ac3addd02365858f77))
+
 # [2.2.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.1.0...v2.2.0) (2026-06-14)
 
 
