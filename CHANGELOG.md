@@ -1,3 +1,10 @@
+## [2.3.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.0...v2.3.1) (2026-06-16)
+
+
+### Bug Fixes
+
+* **portal:** default VIAX brand assets + working asset substitution ([322791a](https://gitlab.viax.tech/services-viax/uxm/commit/322791a9adf946a03ac8f14c87cd8b9e66ddd7d4))
+
 # [2.3.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.2.1...v2.3.0) (2026-06-16)
 
 
