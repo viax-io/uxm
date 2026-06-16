@@ -159,6 +159,7 @@ export function TimeInput({
   style,
   disabled,
   error,
+  onFocus,
   ...rest
 }: TimeInputProps) {
   const [internal, setInternal] = useState<string>(() => {
@@ -272,6 +273,10 @@ export function TimeInput({
         onChange={handleInputChange}
         disabled={disabled}
         aria-invalid={error ? true : undefined}
+        onFocus={(e) => {
+          if (triggerEnabled) setIsOpen(true);
+          onFocus?.(e);
+        }}
         {...rest}
       />
       {clock && (triggerEnabled ? (

@@ -44,14 +44,14 @@ export interface DateInputProps
   style?: React.CSSProperties;
 }
 
-const FORMAT_SPEC: Record<DateInputFormat, { segments: number[]; sep: string; placeholder: string }> = {
+export const FORMAT_SPEC: Record<DateInputFormat, { segments: number[]; sep: string; placeholder: string }> = {
   mdy: { segments: [2, 2, 4], sep: '/', placeholder: 'MM/DD/YYYY' },
   dmy: { segments: [2, 2, 4], sep: '/', placeholder: 'DD/MM/YYYY' },
   ymd: { segments: [4, 2, 2], sep: '-', placeholder: 'YYYY-MM-DD' },
 };
 
 /** Auto-format raw input per the chosen format. Strips non-digits, caps at the format's total digit count, inserts separators. */
-function maskDate(raw: string, format: DateInputFormat): string {
+export function maskDate(raw: string, format: DateInputFormat): string {
   const spec = FORMAT_SPEC[format];
   const maxDigits = spec.segments.reduce((sum, n) => sum + n, 0);
   const digits = raw.replace(/\D/g, '').slice(0, maxDigits);
@@ -73,7 +73,7 @@ function maskDate(raw: string, format: DateInputFormat): string {
  * date is valid (month 1–12, day 1–31). Doesn't catch deeper invalidity (Feb 30)
  * — JS Date will silently roll over, which is a benign mismatch.
  */
-function parseDate(formatted: string, format: DateInputFormat): Date | null {
+export function parseDate(formatted: string, format: DateInputFormat): Date | null {
   const digits = formatted.replace(/\D/g, '');
   if (digits.length !== 8) return null;
   let y: number, m: number, d: number;
@@ -95,7 +95,7 @@ function parseDate(formatted: string, format: DateInputFormat): Date | null {
 }
 
 /** Format a Date back into the chosen mask. Inverse of `parseDate`. */
-function formatDate(date: Date, format: DateInputFormat): string {
+export function formatDate(date: Date, format: DateInputFormat): string {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   const y = String(date.getFullYear()).padStart(4, '0');
@@ -139,6 +139,7 @@ export function DateInput({
   onChange,
   calendar = true,
   style,
+  onFocus,
   ...rest
 }: DateInputProps) {
   // Initial state — same masker for single, plain string for range (typing
@@ -247,6 +248,10 @@ export function DateInput({
         placeholder={placeholder ?? placeholderFor(format, mode)}
         value={current}
         onChange={handleInputChange}
+        onFocus={(e) => {
+          if (calendar) setIsOpen(true);
+          onFocus?.(e);
+        }}
         {...rest}
       />
       {calendar && (
