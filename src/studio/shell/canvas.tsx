@@ -94,7 +94,7 @@ import {
   TypeOverviewCardPreview,
   ViewSwitcherPreview,
 } from '@/previews';
-import { ButtonGhost, ButtonPrimary } from '@/ui';
+import { ButtonGhost, ButtonPrimary, IconButton } from '@/ui';
 import { Icon } from '@/ui';
 
 import { useUxm } from '../lib/context';
@@ -239,11 +239,11 @@ export const previewMap: Record<string, PreviewComponent> = {
   cluster: ClusterPreview,
 };
 
-export function Canvas() {
+export function Canvas({ embed = false }: { embed?: boolean }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const { selectedId, getOverrides, getAllOverrides, resetOverrides, brand, getCurrentVariants, pushEvent, persistence, capabilities } = useUxm();
+  const { selectedId, getOverrides, getAllOverrides, resetOverrides, brand, getCurrentVariants, pushEvent, persistence, capabilities, theme, setTheme } = useUxm();
   const shell = usePreviewShell();
   const def = getComponentDef(selectedId);
   const overrides = getOverrides(selectedId);
@@ -337,6 +337,18 @@ export function Canvas() {
                 </>
               )}
             </ButtonGhost>
+          )}
+          {/* Light/dark toggle — only in the standalone portal (the studio
+              owns the theme here; ThemeSync mirrors it onto data-theme). An
+              embedded host renders its own theme control. */}
+          {!embed && (
+            <IconButton
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+            >
+              <Icon glyph={theme === 'dark' ? 'sun' : 'moon'} size={16} />
+            </IconButton>
           )}
           <ButtonPrimary onClick={() => setPreviewOpen(true)}>
             <Icon glyph="eye" size={14} />

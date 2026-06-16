@@ -8,6 +8,7 @@ import { MobileGallery } from './mobile-gallery';
 import { Canvas } from './shell/canvas';
 import { PropertiesPanel } from './shell/properties-panel';
 import { Sidebar } from './shell/sidebar';
+import { ThemeSync } from './theme-sync';
 
 import type { StudioPersistence } from './persistence/types';
 
@@ -35,6 +36,7 @@ export function UxmApp({ embed = false, persistence, syncFavicon = false }: UxmA
     <UxmProvider persistence={persistence}>
       <BrandTokenStyles />
       {syncFavicon && <FaviconSync />}
+      {!embed && <ThemeSync />}
       {/* Flex column so the read-only DemoNotice banner takes its own height and
           the h-full shell fills the rest instead of overflowing the viewport. */}
       <div className="flex flex-col h-full">
@@ -146,7 +148,7 @@ function DesktopShell({ embed }: { embed: boolean }) {
         }`}
       >
         <div className="flex-1 min-w-0 min-h-0">
-          <Canvas />
+          <Canvas embed={embed} />
         </div>
         {showPropertiesPanel && (
           <div
