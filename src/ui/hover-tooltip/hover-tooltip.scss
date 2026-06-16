@@ -1,0 +1,11 @@
+// HoverTooltip is a behavior layer — no visual chrome of its own.
+// The Tooltip inside it carries all the visual. We only need to
+// reset the Popover panel's default padding / background so the Tooltip
+// renders flush without a double-border.
+.uxm-hover-tooltip {
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
