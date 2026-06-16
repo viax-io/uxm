@@ -93,6 +93,112 @@
 .uxm-editable-cell--align-right:not(.uxm-editable-cell--editing) {
   padding-inline-start: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
 }
+/* Date cells reserve the ISO editing width up front. */
+.uxm-editable-cell--type-date:not(.uxm-editable-cell--editing) {
+  min-width: calc(10ch + (2 * var(--uxm-editable-cell-padding-x, 6px)) + 20px);
+}
+/* Picker cells are pick-only */
+.uxm-editable-cell--type-select,
+.uxm-editable-cell--type-multiselect {
+  cursor: pointer;
+}
+/* Chevron affordance for select */
+.uxm-editable-cell__chevron {
+  position: absolute;
+  top: 50%;
+  right: var(--uxm-editable-cell-padding-x, 6px);
+  transform: translateY(-50%);
+  display: inline-flex;
+  pointer-events: none;
+  color: var(--uxm-editable-cell-chevron-color, var(--color-text-muted));
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+.uxm-editable-cell:hover:not(:disabled) .uxm-editable-cell__chevron,
+.uxm-editable-cell:focus-visible .uxm-editable-cell__chevron,
+.uxm-editable-cell--state-hover:not(:disabled) .uxm-editable-cell__chevron,
+.uxm-editable-cell--state-focus .uxm-editable-cell__chevron,
+.uxm-editable-cell--open .uxm-editable-cell__chevron {
+  opacity: 1;
+}
+.uxm-editable-cell__chevron svg {
+  transition: transform 0.12s ease;
+}
+/* Right-aligned select cells anchor the chevron on the leading edge */
+.uxm-editable-cell--align-right .uxm-editable-cell__chevron {
+  right: auto;
+  left: var(--uxm-editable-cell-padding-x, 6px);
+}
+/* Select option labels truncate with an ellipsis */
+.uxm-editable-cell__option-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* "Clear" action in the select dropdown's footer */
+.uxm-editable-cell__clear-option {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+/* One-click clear (×) inside every editing cell */
+.uxm-editable-cell--editing .uxm-editable-cell__input {
+  padding-inline-end: calc(var(--uxm-editable-cell-padding-x, 6px) + 18px);
+}
+.uxm-editable-cell--align-right.uxm-editable-cell--editing .uxm-editable-cell__input {
+  padding-inline-end: var(--uxm-editable-cell-padding-x, 6px);
+  padding-inline-start: calc(var(--uxm-editable-cell-padding-x, 6px) + 18px);
+}
+.uxm-editable-cell--align-right .uxm-editable-cell__clear {
+  right: auto;
+  left: var(--uxm-editable-cell-padding-x, 6px);
+}
+.uxm-editable-cell__clear {
+  position: absolute;
+  top: 50%;
+  right: var(--uxm-editable-cell-padding-x, 6px);
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  margin: 0;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.uxm-editable-cell__clear:hover {
+  color: var(--color-text);
+  background-color: var(--color-surface-alt);
+}
+/* Select trigger — reset to match the editable cell's display surface */
+.uxm-editable-cell__select-trigger,
+.uxm-editable-cell__date-trigger {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--uxm-editable-cell-min-height, 24px);
+  padding: var(--uxm-editable-cell-padding-y, 2px) var(--uxm-editable-cell-padding-x, 6px);
+  padding-inline-end: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--uxm-editable-cell-radius, 4px);
+  cursor: pointer;
+  text-align: inherit;
+}
+.uxm-editable-cell--disabled .uxm-listbox {
+  pointer-events: none;
+}
 .uxm-editable-cell--disabled,
 .uxm-editable-cell:disabled {
   cursor: default;

@@ -33,6 +33,8 @@ export interface CalendarProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
   onChange?: (value: CalendarValue) => void;
   /** Month navigation callback (prev/next buttons, outside-month-cell click, or drilling via month/year views). */
   onMonthChange?: (next: Date) => void;
+  /** Drop a soft elevation shadow (the floating-surface look). Default true — pass `false` for a flat, inline / embedded calendar. */
+  shadow?: boolean;
 }
 
 const MS_PER_DAY = 86_400_000;
@@ -107,6 +109,7 @@ export function Calendar({
   locale = 'en-US',
   onChange,
   onMonthChange,
+  shadow = true,
   className,
   ...rest
 }: CalendarProps) {
@@ -260,7 +263,7 @@ export function Calendar({
   }, []);
 
   return (
-    <div className={cn('uxm-calendar', `uxm-calendar--view-${view}`, className)} {...rest}>
+    <div className={cn('uxm-calendar', `uxm-calendar--view-${view}`, shadow && 'uxm-calendar--shadow', className)} {...rest}>
       <div className="uxm-calendar__header">
         <button
           type="button"
@@ -389,6 +392,24 @@ export function Calendar({
           })}
         </div>
       )}
+
+      {/* "Today" — jumps the view back to the current month in day view so
+          the user can find today after navigating away. Deliberately does
+          NOT select today (returning to a date ≠ committing it); the day
+          cell is one click away. */}
+      <div className="uxm-calendar__footer">
+        <button
+          type="button"
+          className="uxm-calendar__today-button"
+          disabled={isDisabled?.(realToday)}
+          onClick={() => {
+            setView('day');
+            setMonth(new Date(realToday.getFullYear(), realToday.getMonth(), 1));
+          }}
+        >
+          Today
+        </button>
+      </div>
     </div>
   );
 }

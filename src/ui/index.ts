@@ -53,7 +53,7 @@ export type { DisclosureProps } from './disclosure';
 export { Divider } from './divider';
 export type { DividerProps } from './divider';
 export { EditableCell } from './editable-cell';
-export type { EditableCellAlign, EditableCellProps, EditableCellType } from './editable-cell';
+export type { EditableCellAlign, EditableCellOption, EditableCellProps, EditableCellType, EditableCellValue } from './editable-cell';
 export { EmptyState } from './empty-state';
 export type { EmptyStateProps } from './empty-state';
 export { ErrorPage } from './error-page';
@@ -113,7 +113,7 @@ export { Link } from './link';
 export type { LinkProps, LinkUnderline } from './link';
 export { List, ListItem } from './list';
 export type { ListItemProps, ListProps } from './list';
-export { Listbox, MultiListbox } from './listbox';
+export { SEARCHABLE_AUTO_THRESHOLD, Listbox, MultiListbox } from './listbox';
 export type {
   ListboxProps,
   ListboxRenderItemState,
@@ -140,6 +140,8 @@ export type {
 } from './file-upload';
 export { FormField } from './form-field';
 export type { FormFieldLabelPosition, FormFieldProps } from './form-field';
+export { HoverTooltip } from './hover-tooltip';
+export type { HoverTooltipProps } from './hover-tooltip';
 export { NumberInput } from './number-input';
 export type { NumberInputProps } from './number-input';
 export { PasswordInput } from './password-input';

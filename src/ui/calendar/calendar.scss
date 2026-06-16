@@ -1,5 +1,13 @@
 /* Calendar — moved from monolithic styles.css */
 
+/* Soft elevation so the calendar reads as a floating surface in its popover
+   usages (DateInput / TimeInput / EditableCell date). On by default via the
+   `shadow` prop; the shadow itself is tunable through the
+   `--uxm-calendar-shadow-*` vars. */
+.uxm-calendar--shadow {
+  box-shadow: 0 var(--uxm-calendar-shadow-offset-y, 6px) var(--uxm-calendar-shadow-blur, 20px) var(--uxm-calendar-shadow-color, rgba(0, 0, 0, 0.12));
+}
+
 .uxm-calendar {
   background-color: var(--uxm-calendar-background-color, var(--color-surface));
   border: 1px solid var(--uxm-calendar-border-color, var(--color-border));
@@ -195,5 +203,36 @@
   &__year--selected {
     background-color: var(--uxm-calendar-selected-bg, var(--color-accent-bold));
     color: var(--uxm-calendar-selected-color, var(--color-text-inverse));
+  }
+
+  /* "Today" footer — the button jumps the view back to the current month. */
+  &__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--uxm-calendar-border-color, var(--color-border));
+  }
+
+  &__today-button {
+    padding: 4px 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--uxm-calendar-today-button-color, var(--color-accent));
+    font: inherit;
+    font-size: var(--uxm-calendar-today-button-size, 13px);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.12s, color 0.12s;
+
+    &:hover:not(:disabled) {
+      background-color: var(--uxm-calendar-today-button-hover-bg, color-mix(in srgb, var(--color-accent) 12%, transparent));
+    }
+
+    &:disabled {
+      color: var(--color-text-subtle);
+      cursor: default;
+    }
   }
 }

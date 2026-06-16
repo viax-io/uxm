@@ -43,10 +43,12 @@ export interface PopoverProps {
   offset?: number;
   /** Render into a portal at `document.body`. Default true — escapes overflow / transform parents. */
   portal?: boolean;
-  /** Force the panel width to match the anchor width. Default false. */
-  matchAnchorWidth?: boolean;
+  /** Force the panel width to match the anchor width. `true` sets width, `"min"` sets minWidth. Default false. */
+  matchAnchorWidth?: boolean | 'min';
   /** Minimum panel width in px. Useful when `matchAnchorWidth` is false but you want a sensible floor. */
   minWidth?: number;
+  /** Maximum panel width in px. */
+  maxWidth?: number;
   /** Close on Escape keydown anywhere. Default true. */
   closeOnEscape?: boolean;
   /** Close on mousedown outside the anchor + panel. Default true. */
@@ -91,6 +93,7 @@ export function Popover({
   portal = true,
   matchAnchorWidth = false,
   minWidth,
+  maxWidth,
   closeOnEscape = true,
   closeOnOutsideClick = true,
   initialFocus,
@@ -107,6 +110,7 @@ export function Popover({
     top: number;
     left: number;
     width: number | undefined;
+    anchorWidth: number;
     placement: PopoverPlacement;
   } | null>(null);
 
@@ -159,7 +163,8 @@ export function Popover({
     setPosition({
       top,
       left,
-      width: matchAnchorWidth ? triggerRect.width : undefined,
+      width: matchAnchorWidth === true ? triggerRect.width : undefined,
+      anchorWidth: triggerRect.width,
       placement: resolvedPlacement,
     });
   }, [anchor, offset, placement, matchAnchorWidth]);
@@ -168,7 +173,7 @@ export function Popover({
   // `useLayoutEffect` so the panel's first paint includes the correct
   // coords (otherwise it flashes at 0,0).
   useLayoutEffect(() => {
-    if (!open) {
+    if (!open || !mounted) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- clear cached position on close so reopen recomputes
       setPosition(null);
       return;
@@ -178,7 +183,7 @@ export function Popover({
     // the panel's intrinsic size depends on async content (e.g. fonts).
     const r = requestAnimationFrame(updatePosition);
     return () => cancelAnimationFrame(r);
-  }, [open, updatePosition]);
+  }, [open, updatePosition, mounted]);
 
   useEffect(() => {
     if (!open) return;
@@ -237,7 +242,8 @@ export function Popover({
     top: position?.top ?? 0,
     left: position?.left ?? 0,
     width: position?.width,
-    minWidth: minWidth,
+    minWidth: matchAnchorWidth === 'min' ? position?.anchorWidth : minWidth,
+    maxWidth: maxWidth,
     // Pre-paint: invisible until the first position measurement lands so
     // we never flash at 0,0. After that, full opacity. Pointer-events
     // also gated so a not-yet-positioned panel can't eat clicks.

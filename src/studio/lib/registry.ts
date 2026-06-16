@@ -484,7 +484,7 @@ export const registry: ComponentDef[] = [
     id: 'editable-cell',
     name: 'Editable Cell',
     category: 'Inputs',
-    description: 'Inline-editable text or number cell. Click (or Enter/Space) to enter edit mode; Enter or blur commits, Esc cancels. Problems surface in a popover Banner under the cell — warning (yellow) for sync validate failures, error (red) for a rejected async `onCommit` — so the table row never changes height. Designed for DataTable cells but works anywhere an inline-edit pattern fits (PageHeader rename, StatCard label, etc.).',
+    description: 'Inline-editable cell. Text / number swap the display for an input (Enter or blur commits, Esc cancels); date pairs the input with a Calendar popover — type a date or pick a day, either commits an ISO date string; select is pick-only — clicking opens a Listbox dropdown and picking an option commits its value immediately (display can still be a custom Tag/Badge via `format`); multiselect is select\'s array sibling — a MultiListbox toggles options with the panel open, the value is a string[] of picked option values shown as joined labels. Problems surface in a popover Banner under the cell — warning (yellow) for sync validate failures, error (red) for a rejected async `onCommit` — so the table row never changes height. Designed for DataTable cells but works anywhere an inline-edit pattern fits (PageHeader rename, StatCard label, etc.).',
     styleProperties: [
       // Layout — shared across all states (no showWhen).
       { key: 'minHeight', label: 'Min Height', control: 'number', defaultValue: 24, min: 18, max: 48, step: 2, unit: 'px' },
@@ -497,7 +497,11 @@ export const registry: ComponentDef[] = [
       // gated to its own state so the panel shows only what's relevant.
       { key: 'placeholderColor', label: 'Placeholder Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'cellColors', showWhen: { state: 'default' } },
       { key: 'hoverBg', label: 'Hover Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'cellColors', showWhen: { state: 'hover' } },
-      { key: 'pencilColor', label: 'Pencil Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover' } },
+      // The hover affordance differs by type: text / number / date reveal a pencil,
+      // the pickers (select / multiselect) reveal a chevron. Gate each so only the
+      // relevant one shows under Hover.
+      { key: 'pencilColor', label: 'Pencil Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover', type: '!select|multiselect' } },
+      { key: 'chevronColor', label: 'Chevron Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover', type: 'select|multiselect' } },
       { key: 'focusBorder', label: 'Focus Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'cellColors', showWhen: { state: 'focus' } },
       { key: 'focusRing', label: 'Focus Ring', control: 'color', defaultValue: 'var(--color-accent)', section: 'cellColors', showWhen: { state: 'focus' } },
       { key: 'disabledOpacity', label: 'Disabled Opacity', control: 'slider', defaultValue: 0.55, min: 0.2, max: 1, step: 0.05, section: 'disabledState', showWhen: { state: 'disabled' } },
@@ -543,8 +547,25 @@ export const registry: ComponentDef[] = [
         options: [
           { value: 'text', label: 'Text' },
           { value: 'number', label: 'Number' },
+          { value: 'date', label: 'Date' },
+          { value: 'select', label: 'Select' },
+          { value: 'multiselect', label: 'Multi-select' },
         ],
         defaultValue: 'text',
+      },
+      {
+        // One format drives everything the user sees on a date cell —
+        // the rendered value, the empty-cell hint, the input mask, and
+        // parsing. Committed values stay ISO regardless.
+        key: 'dateFormat',
+        label: 'Date Format',
+        options: [
+          { value: 'ymd', label: 'YYYY-MM-DD' },
+          { value: 'dmy', label: 'DD/MM/YYYY' },
+          { value: 'mdy', label: 'MM/DD/YYYY' },
+        ],
+        defaultValue: 'ymd',
+        showWhen: { type: 'date' },
       },
       {
         key: 'align',
@@ -558,18 +579,22 @@ export const registry: ComponentDef[] = [
       },
     ],
     events: [
-      { name: 'onCommit', description: 'Fires when the user confirms a change (Enter, or blur with no validation error). Async — the atom shows a submitting state until the returned promise settles.', payload: '(next: string | number) => void | Promise<void>' },
+      { name: 'onCommit', description: 'Fires when the user confirms a change (Enter, or blur with no validation error; for multiselect, each toggle). Async — the atom shows a submitting state until the returned promise settles.', payload: '(next: string | number | string[]) => void | Promise<void>' },
     ],
     api: {
       importPath: '@viax/uxm/ui',
       importNames: 'EditableCell',
       props: [
-        { name: 'value', type: 'string | number', required: true, description: 'Current committed value. The atom keeps a draft internally during edit.' },
-        { name: 'onCommit', type: '(next: string | number) => void | Promise<void>', required: true, description: "Called when the user commits a change. Async — reject the promise to surface a red error Banner in the cell's popover and keep the cell in edit mode for retry." },
-        { name: 'type', type: '"text" | "number"', defaultValue: '"text"', description: 'Editor type. Number coerces to Number on commit.' },
+        { name: 'value', type: 'string | number | string[]', required: true, description: 'Current committed value (a string[] of picked option values for multiselect). The atom keeps a draft internally during edit.' },
+        { name: 'onCommit', type: '(next: string | number | string[]) => void | Promise<void>', required: true, description: "Called when the user commits a change. Async — reject the promise to surface a red error Banner in the cell's popover and keep the cell in edit mode for retry (multiselect reverts its optimistic toggle)." },
+        { name: 'type', type: '"text" | "number" | "date" | "select" | "multiselect"', defaultValue: '"text"', description: 'Editor type. Number coerces to Number on commit; date pairs a masked input with a Calendar popover — typing and picking both commit a normalized ISO date string; select is pick-only — a Listbox dropdown whose chosen option\'s value commits immediately; multiselect toggles options in a MultiListbox and commits a string[].' },
+        { name: 'dateFormat', type: '"mdy" | "dmy" | "ymd"', defaultValue: '"ymd"', description: 'Display / typing format for date cells (same options as DateInput): one format drives the rendered value, the empty-cell hint, the input mask, and parsing. Committed values stay ISO regardless — presentation, not storage.' },
+        { name: 'options', type: '{ value: string; label: string }[]', description: 'Options for `type="select"` / `"multiselect"`. Picking one commits its `value` (or toggles it into the array); display shows the `label`(s) unless `format` overrides it.' },
+        { name: 'searchable', type: 'boolean', description: 'Show a search box in the dropdown. Defaults to auto — shown only when there are more than 6 options.' },
+        { name: 'clearable', type: 'boolean', description: 'For select / multiselect: show a "Clear" action in the dropdown footer that commits an empty value ("" / [], the cell then shows its placeholder). Use for optional pickers.' },
         { name: 'align', type: '"left" | "right" | "center"', defaultValue: '"left"', description: "Text alignment for both display and edit modes — pass through from a DataTable column's `align`." },
-        { name: 'format', type: '(value: string | number) => ReactNode', description: 'Display-mode formatter. The raw value is still what gets edited.' },
-        { name: 'validate', type: '(next: string | number) => string | null | undefined', description: "Synchronous validation. Return a message to block commit — it surfaces as a yellow warning Banner in the cell's popover (recoverable input problem, vs the red error Banner for a failed save)." },
+        { name: 'format', type: '(value: string | number | string[]) => ReactNode', description: 'Display-mode formatter (receives a string[] for multiselect — e.g. render chips). The raw value is still what gets edited.' },
+        { name: 'validate', type: '(next: string | number | string[]) => string | null | undefined', description: "Synchronous validation. Return a message to block commit — it surfaces as a yellow warning Banner in the cell's popover (recoverable input problem, vs the red error Banner for a failed save)." },
         { name: 'disabled', type: 'boolean', description: 'Read-only — clicking does nothing, no edit affordance.' },
         { name: 'placeholder', type: 'string', description: 'Shown when value is empty / blank.' },
       ],
@@ -1475,7 +1500,7 @@ export const registry: ComponentDef[] = [
     id: 'select-dropdown',
     name: 'Select / Dropdown',
     category: 'Inputs',
-    description: 'Dropdown selection field. Toggle Searchable when the option list is long enough to benefit from a search input above the items. State knobs cover default / hover / focus / disabled / error; only the native (non-searchable) trigger exercises state CSS — the searchable variant inherits its trigger chrome from the SearchDropdown atom.',
+    description: 'Dropdown selection field — internally a Listbox-backed picker. This entry themes the trigger (default / hover / focus / disabled / error); the trigger is identical whether or not the panel searches, so searchability isn\'t a knob here — it\'s the `searchable` prop (default auto: the panel grows a search box once the option list is long enough), and the search box itself is previewed + themed in the Listbox entry. For a search-first combobox with its own trigger chrome (icon glyphs, dial codes), use the SearchDropdown atom instead.',
     styleProperties: [
       // Default
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'fieldColors', showWhen: { state: 'default' } },
@@ -1504,14 +1529,13 @@ export const registry: ComponentDef[] = [
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 20, step: 1, unit: 'px' },
       // Label theming + position live on FormField. See input-text for
       // the same consolidation rationale.
-      // `searchPlaceholder` is a text config, not a behavior switch.
-      // Lives in its own `search` section (not STYLE) so its
-      // `showWhen: { searchable: "on" }` scope doesn't leak onto the
-      // unscoped sizing knobs (Border Radius, Padding, Font Size).
-      // Without this split, the workbench labels the entire STYLE
-      // section "Per Searchable" — misleading, since those knobs apply
-      // regardless of searchable state.
-      { key: 'searchPlaceholder', label: 'Placeholder', control: 'text', defaultValue: 'Search…', section: 'search', showWhen: { searchable: 'on' } },
+      // The search input's placeholder is NOT a workbench knob: its TEXT
+      // is per-instance content the consumer passes at the call site (the
+      // searchable Select renders the shared Listbox panel), and its only
+      // themeable aspect — the placeholder COLOR — lives once on the
+      // `listbox` entry (`searchPlaceholderColor`). A text knob here would
+      // also serialize to a dead `--uxm-…-search-placeholder` CSS var that
+      // paints nothing.
     ],
     layoutVariants: [
       {
@@ -1526,18 +1550,11 @@ export const registry: ComponentDef[] = [
         ],
         defaultValue: 'default',
       },
-      // Behavioral variants — they change WHICH atom renders / WHAT
-      // gets shown, not how it looks. Style knobs (colors, padding,
-      // font) apply across all of these.
-      {
-        key: 'searchable',
-        label: 'Searchable',
-        options: [
-          { value: 'off', label: 'Off' },
-          { value: 'on', label: 'On' },
-        ],
-        defaultValue: 'off',
-      },
+      // Behavioral variants — they change WHAT gets shown, not how the
+      // trigger looks. Style knobs (colors, padding, font) apply across
+      // all of these. (Searchability is deliberately NOT here: the trigger
+      // is identical with/without search, and the search box is previewed
+      // in the Listbox entry — see this component's description.)
       {
         key: 'multiSelect',
         label: 'Mode',
@@ -1788,7 +1805,7 @@ export const registry: ComponentDef[] = [
         { name: 'onChange', type: '(item: T | null) => void  // Listbox — null when consumer clears\n(items: T[]) => void        // MultiListbox — empty array when cleared', required: true, description: 'Selection callback. Listbox passes null when the consumer wires up a clear affordance (e.g. ✕ in their renderTrigger). MultiListbox passes an empty array when all selections are cleared.' },
         { name: 'renderTrigger', type: '(state: { open, selected, triggerProps }) => ReactNode', required: true, description: "Render the consumer's trigger. Spread `triggerProps` on a button — that wires ref + click + ARIA in one go." },
         { name: 'renderItem', type: '(item: T, state: { active, selected }) => ReactNode', required: true, description: 'Render each row body — the atom owns layout + states; consumer owns visuals (icon, flag, swatch, etc.).' },
-        { name: 'searchable', type: 'boolean', defaultValue: 'true', description: 'Show a search input above the list.' },
+        { name: 'searchable', type: 'boolean | "auto"', defaultValue: 'true', description: 'Show a search input above the list. `"auto"` reveals it only once the option count exceeds the shared threshold (6) — the one place that rule lives, so every Listbox-backed picker shares it.' },
         { name: 'filterItems', type: '(items: T[], query: string) => T[]', description: 'Override the default case-insensitive substring filter on `getLabel`.' },
         { name: 'groupBy', type: '(item: T) => string', description: 'Group items under section headers in declared order.' },
         { name: 'footer', type: 'ReactNode', description: "Slot below the list (e.g. ColorPicker's custom hex panel)." },
@@ -3749,6 +3766,12 @@ export const registry: ComponentDef[] = [
       { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'frame' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 12, min: 0, max: 24, step: 1, unit: 'px', section: 'frame' },
       { key: 'padding', label: 'Padding', control: 'number', defaultValue: 16, min: 4, max: 32, step: 2, unit: 'px', section: 'frame' },
+      // Elevation — on by default (the floating-surface look), tunable rather
+      // than a bare on/off: the box-shadow is built from these three vars.
+      // (Code can still drop it entirely with the `shadow={false}` prop.)
+      { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'rgba(0, 0, 0, 0.12)', section: 'shadow' },
+      { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 20, min: 0, max: 48, step: 1, unit: 'px', section: 'shadow' },
+      { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 6, min: 0, max: 24, step: 1, unit: 'px', section: 'shadow' },
 
       // ── Header: month / year label + prev/next nav buttons.
       { key: 'titleColor', label: 'Title Color', control: 'color', defaultValue: 'var(--color-text)', section: 'header' },
@@ -3796,6 +3819,12 @@ export const registry: ComponentDef[] = [
       // and `.uxm-calendar__year` reads it.
       { key: 'monthCellSize', label: 'Cell Size', control: 'number', defaultValue: 64, min: 40, max: 120, step: 4, unit: 'px', section: 'month-year-cells' },
       { key: 'monthCellFontSize', label: 'Cell Font Size', control: 'number', defaultValue: 13, min: 11, max: 18, step: 1, unit: 'px', section: 'month-year-cells' },
+
+      // ── Today button: the footer action that jumps the view back to the
+      // current month. Its own knobs (not the today-CELL ones above).
+      { key: 'todayButtonColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'todayButton' },
+      { key: 'todayButtonHoverBg', label: 'Hover Background', control: 'color', defaultValue: 'color-mix(in srgb, var(--color-accent) 12%, transparent)', section: 'todayButton' },
+      { key: 'todayButtonSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 11, max: 18, step: 1, unit: 'px', section: 'todayButton' },
     ],
     layoutVariants: [
       {
