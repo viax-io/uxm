@@ -29,6 +29,7 @@ export type {
 // Persistence contract + adapters + the single CSS generator (R5/R7).
 export {
   createReadOnlyPersistence,
+  createClientPersistence,
   createHttpPersistence,
   generateOverridesCss,
 } from './persistence';
