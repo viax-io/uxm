@@ -1,3 +1,10 @@
+## [2.3.2](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.1...v2.3.2) (2026-06-16)
+
+
+### Bug Fixes
+
+* **portal:** add light/dark theme toggle + keep brand assets visible ([5e816e9](https://gitlab.viax.tech/services-viax/uxm/commit/5e816e9a86e799e213572e32036ca90300f26d72))
+
 ## [2.3.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.0...v2.3.1) (2026-06-16)
 
 
