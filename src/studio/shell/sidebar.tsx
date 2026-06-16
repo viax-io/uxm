@@ -17,7 +17,12 @@ import type { Category } from '../lib/types';
 const COLLAPSED_STORAGE_KEY = 'uxm:collapsed-categories';
 
 export function Sidebar({ embed = false }: { embed?: boolean }) {
-  const { selectedId, selectComponent } = useUxm();
+  const { selectedId, selectComponent, brand, theme } = useUxm();
+  // Brand mark shown left of the title — same asset as the Sidebar Icon
+  // brand control, defaulting to the viax mark. Theme-aware to match the
+  // rest of the brand surface.
+  const brandIcon =
+    (theme === 'dark' ? brand.iconUrlDark || brand.iconUrl : brand.iconUrl) || '/viax-icon.svg';
   const grouped = getComponentsByCategory();
   const [query, setQuery] = useState('');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
@@ -88,9 +93,18 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
       <div className={`sticky top-0 z-10 ${embed ? 'bg-card pt-3' : 'bg-surface-alt'}`}>
         {/* Header — hidden in embed mode */}
         {!embed && (
-          <div className="px-5 pt-5 pb-3">
-            <h1 className="text-[38px] tracking-[-0.06em] text-text leading-none" style={{ fontFamily: 'var(--font-logo)' }}>uxm</h1>
-            <p className="text-xs text-text-muted mt-1">Component Explorer</p>
+          <div className="px-5 pt-5 pb-3 flex items-start gap-3">
+            <img
+              src={brandIcon}
+              alt=""
+              aria-hidden
+              className="w-auto object-contain shrink-0"
+              style={{ height: 40, marginTop: 12 }}
+            />
+            <div className="flex flex-col justify-center">
+              <h1 className="text-[38px] tracking-[-0.06em] text-text leading-none" style={{ fontFamily: 'var(--font-logo)' }}>uxm</h1>
+              <p className="text-xs text-text-muted mt-1">Component Explorer</p>
+            </div>
           </div>
         )}
 
