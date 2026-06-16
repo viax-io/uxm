@@ -123,11 +123,11 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
           hint={inheritsHint('logo', logoUrl, 'Shown in the expanded sidebar. Upload a file or paste a URL.')}
           previewBox={
             <Preview box={{ width: 110, height: 32 }} dim={identityTab === 'dark'}>
-              <img
+              <PreviewImg
+                key={logoUrl || logoFallback}
                 src={logoUrl || logoFallback}
                 alt="Logo preview"
                 style={{ maxWidth: '90%', maxHeight: '70%' }}
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
               />
             </Preview>
           }
@@ -161,11 +161,11 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
           hint={inheritsHint('icon', iconUrl, 'Shown in the collapsed sidebar.')}
           previewBox={
             <Preview box={{ width: 32, height: 32 }} dim={identityTab === 'dark'}>
-              <img
+              <PreviewImg
+                key={iconUrl || iconFallback}
                 src={iconUrl || iconFallback}
                 alt="Icon preview"
                 style={{ maxWidth: '70%', maxHeight: '70%' }}
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
               />
             </Preview>
           }
@@ -201,11 +201,11 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
             <Preview box={{ width: 32, height: 32 }} dim={identityTab === 'dark'}>
               {(logoUrl || faviconFallback) && null}
               {(faviconUrl || faviconFallback) && (
-                <img
+                <PreviewImg
+                  key={faviconUrl || faviconFallback!}
                   src={faviconUrl || faviconFallback!}
                   alt="Favicon preview"
                   style={{ maxWidth: '80%', maxHeight: '80%' }}
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                 />
               )}
             </Preview>
@@ -565,6 +565,19 @@ function Preview({ box, children, dim }: { box: { width: number; height: number 
       {children}
     </div>
   );
+}
+
+/**
+ * Image that hides itself when its source fails to load — but tracks the
+ * failure in React state rather than imperatively setting `display:none`
+ * (which never resets, so a transiently-404ing src stayed hidden forever even
+ * after a valid one arrived). Callers pass `key={src}` so a new source
+ * remounts it clean, letting a valid URL recover after a bad one.
+ */
+function PreviewImg({ src, alt, style }: { src: string; alt: string; style?: React.CSSProperties }) {
+  const [errored, setErrored] = useState(false);
+  if (errored) return null;
+  return <img src={src} alt={alt} style={style} onError={() => setErrored(true)} />;
 }
 
 function LightDarkTabs({ value, onChange }: { value: 'light' | 'dark'; onChange: (v: 'light' | 'dark') => void }) {
