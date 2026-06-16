@@ -1,3 +1,10 @@
+## [2.3.3](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.2...v2.3.3) (2026-06-16)
+
+
+### Bug Fixes
+
+* **studio:** recover brand preview images on error; add brand mark to sidebar header ([e7caeb8](https://gitlab.viax.tech/services-viax/uxm/commit/e7caeb8f934ba0714991139bbbc59282d10fdf66))
+
 ## [2.3.2](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.1...v2.3.2) (2026-06-16)
 
 
