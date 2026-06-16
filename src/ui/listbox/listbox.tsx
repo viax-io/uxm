@@ -16,6 +16,13 @@ import { Icon } from '../icon';
 import { Popover, type PopoverPlacement } from '../popover';
 
 // ─────────────────────────────────────────────────────────────────────────────
+//  Public constants
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Item count above which `searchable="auto"` enables the search box. */
+export const SEARCHABLE_AUTO_THRESHOLD = 6;
+
+// ─────────────────────────────────────────────────────────────────────────────
 //  Public types
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -62,8 +69,8 @@ interface ListboxCommonProps<T> {
   /** Render each item's row body. Active / selected come from internal state. */
   renderItem: (item: T, state: ListboxRenderItemState) => ReactNode;
 
-  /** Render a search input above the list. Default true. */
-  searchable?: boolean;
+  /** Render a search input above the list. `true`/`false` force it; `"auto"` shows it only when the item count exceeds `SEARCHABLE_AUTO_THRESHOLD`. Default true. */
+  searchable?: boolean | 'auto';
   searchPlaceholder?: string;
   /** Override default case-insensitive substring filter on `getLabel`. */
   filterItems?: (items: T[], query: string) => T[];
@@ -76,8 +83,8 @@ interface ListboxCommonProps<T> {
   /** Shown in place of the list when the filter returns nothing. */
   emptyState?: ReactNode;
 
-  /** Optional footer slot below the list (e.g. ColorPicker's "Custom hex" panel). */
-  footer?: ReactNode;
+  /** Optional footer slot below the list (e.g. ColorPicker's "Custom hex" panel). Pass a function to receive `{ close }`. */
+  footer?: ReactNode | ((api: { close: () => void }) => ReactNode);
 
   /** Disable an individual item — it won't be selectable or arrow-navigable. */
   isItemDisabled?: (item: T) => boolean;
@@ -91,6 +98,8 @@ interface ListboxCommonProps<T> {
   matchAnchorWidth?: boolean;
   /** Min panel width when not matching anchor. */
   minPanelWidth?: number;
+  /** Maximum panel width in px. */
+  maxPanelWidth?: number;
   /** Render panel into a portal. Default true. */
   portal?: boolean;
   /**
@@ -210,6 +219,7 @@ function ListboxCore<T>({
   placement = 'bottom-start',
   matchAnchorWidth = true,
   minPanelWidth,
+  maxPanelWidth,
   portal = true,
   anchorRef,
   showCheckmark = true,
@@ -229,6 +239,8 @@ function ListboxCore<T>({
   const [open, setOpenState] = useState(false);
   const [search, setSearch] = useState('');
   const [active, setActive] = useState(0);
+
+  const showSearch = searchable === 'auto' ? items.length > SEARCHABLE_AUTO_THRESHOLD : searchable;
 
   const triggerRef = useRef<HTMLElement | null>(null);
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -432,15 +444,16 @@ function ListboxCore<T>({
         placement={placement}
         matchAnchorWidth={matchAnchorWidth}
         minWidth={minPanelWidth}
+        maxWidth={maxPanelWidth}
         portal={portal}
-        initialFocus={searchable ? (searchRef as React.RefObject<HTMLElement | null>) : (listRef as React.RefObject<HTMLElement | null>)}
+        initialFocus={showSearch ? (searchRef as React.RefObject<HTMLElement | null>) : (listRef as React.RefObject<HTMLElement | null>)}
         role="listbox"
         aria-label={ariaLabel}
         id={panelId}
         className={cn('uxm-listbox__panel', panelClassName)}
         style={panelStyle}
       >
-        {searchable && (
+        {showSearch && (
           <div className="uxm-listbox__search">
             <Icon
               glyph="search"
@@ -467,8 +480,8 @@ function ListboxCore<T>({
           className="uxm-listbox__list"
           // When not searchable, the panel itself is focusable so keyboard
           // nav works without a search input.
-          tabIndex={searchable ? undefined : -1}
-          onKeyDown={searchable ? undefined : onPanelKeyDown}
+          tabIndex={showSearch ? undefined : -1}
+          onKeyDown={showSearch ? undefined : onPanelKeyDown}
         >
           {selectableIndices.length === 0 ? (
             <div className="uxm-listbox__empty">
@@ -562,7 +575,7 @@ function ListboxCore<T>({
             })
           )}
         </div>
-        {footer && <div className="uxm-listbox__footer">{footer}</div>}
+        {footer && <div className="uxm-listbox__footer">{typeof footer === 'function' ? footer({ close: () => setOpen(false) }) : footer}</div>}
       </Popover>
     </div>
   );

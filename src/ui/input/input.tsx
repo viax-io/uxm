@@ -84,6 +84,15 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
    * empty string) for the normal state.
    */
   error?: string;
+  /**
+   * Whether the dropdown panel includes a search box. Forwarded to the
+   * internal Listbox: `true`/`false` force it, `"auto"` (the default)
+   * shows it only once the option count crosses the shared threshold —
+   * short lists stay a plain picker, long ones become filterable, with no
+   * change to the trigger. (For a search-first combobox with its own
+   * trigger chrome — icon glyphs, dial codes — use SearchDropdown.)
+   */
+  searchable?: boolean | 'auto';
 }
 
 interface SelectItem {
@@ -165,6 +174,7 @@ export function Select({
   id,
   clearable = false,
   error,
+  searchable = 'auto',
   'aria-label': ariaLabel,
 }: SelectProps) {
   // Uncontrolled state — only used when `value` is not provided. Matches
@@ -222,7 +232,7 @@ export function Select({
       }}
       isItemDisabled={(o) => o.disabled}
       disabled={disabled}
-      searchable={false}
+      searchable={searchable}
       aria-label={ariaLabel}
       renderTrigger={({ open, triggerProps }) => (
         // Trigger uses `<div role="combobox">` — gives us a focusable

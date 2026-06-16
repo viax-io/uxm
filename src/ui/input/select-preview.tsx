@@ -2,7 +2,7 @@ import { useState, type CSSProperties } from 'react';
 
 import { cn } from '@/helpers';
 import type { PreviewProps } from '@/previews/types';
-import { Icon, IconButton, MultiListbox, SearchDropdown, Select } from '@/ui';
+import { Icon, IconButton, MultiListbox, Select } from '@/ui';
 
 type Styles = PreviewProps['styles'];
 
@@ -57,7 +57,11 @@ export function SelectPreview({ styles, variants }: PreviewProps & { componentId
   const state = (variants.state as string) ?? 'default';
   // Behavioral variants — read from `variants`, not `styles`. They're
   // discrete options (on/off, single/multi), not tuneable values.
-  const searchable = (variants.searchable as string) === 'on';
+  // Searchability is NOT a Select variant: the trigger (all this entry
+  // themes) looks identical with or without search, and the search box
+  // itself is previewed + themed in the `listbox` entry. So there's
+  // nothing Select-specific to toggle here — `searchable` stays a runtime
+  // prop (default "auto").
   const clearable = (variants.clearable as string) === 'on';
   const multiSelect = (variants.multiSelect as string) === 'multi';
   return (
@@ -65,7 +69,6 @@ export function SelectPreview({ styles, variants }: PreviewProps & { componentId
       key={state}
       state={state}
       styles={styles}
-      searchable={searchable}
       clearable={clearable}
       multiSelect={multiSelect}
     />
@@ -77,13 +80,11 @@ export function SelectPreview({ styles, variants }: PreviewProps & { componentId
 function SelectDemo({
   state,
   styles,
-  searchable,
   clearable,
   multiSelect,
 }: {
   state: string;
   styles: Styles;
-  searchable: boolean;
   clearable: boolean;
   multiSelect: boolean;
 }) {
@@ -107,14 +108,14 @@ function SelectDemo({
     <div style={{ width: 280, ...cssVars } as CSSProperties}>
       {multiSelect ? (
         <MultiSelectPreviewInstance
-          styles={styles}
-          searchable={searchable}
           clearable={clearable}
           disabled={state === 'disabled'}
         />
-      ) : searchable ? (
-        <SearchableSelect styles={styles} error={isError ? SELECT_ERROR : undefined} />
       ) : (
+        // The Select trigger is what this entry themes. `searchable` defaults
+        // to "auto"; the full country list is past the threshold, so opening
+        // the panel shows the search box — the searchable Select in action
+        // (the search box's own theming lives in the `listbox` entry).
         <Select
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -126,40 +127,12 @@ function SelectDemo({
           <option value="" disabled>
             Select a country
           </option>
-          {SAMPLE.slice(0, 4).map((c) => (
+          {SAMPLE.map((c) => (
             <option key={c}>{c}</option>
           ))}
         </Select>
       )}
     </div>
-  );
-}
-
-// SearchDropdown variant: its trigger chrome lives in the SearchDropdown
-// atom (which has its own state coverage), so we don't force state visuals
-// here — just project the shared shape knobs onto the trigger and let
-// SearchDropdown's own CSS handle interaction.
-function SearchableSelect({ styles, error }: { styles: Styles; error?: string }) {
-  const [value, setValue] = useState('');
-  const triggerVars = {
-    '--uxm-search-dropdown-trigger-bg': styles.backgroundColor as string,
-    '--uxm-search-dropdown-trigger-border': styles.borderColor as string,
-    '--uxm-search-dropdown-trigger-radius': `${styles.borderRadius}px`,
-    '--uxm-search-dropdown-trigger-padding-x': `${styles.paddingX}px`,
-    '--uxm-search-dropdown-trigger-padding-y': `${styles.paddingY}px`,
-    '--uxm-search-dropdown-trigger-font-size': `${styles.fontSize}px`,
-  } as CSSProperties;
-
-  return (
-    <SearchDropdown
-      value={value}
-      onChange={setValue}
-      options={SAMPLE.map((s) => ({ value: s, label: s }))}
-      placeholder="Select a country"
-      searchPlaceholder={styles.searchPlaceholder as string}
-      style={triggerVars}
-      error={error}
-    />
   );
 }
 
@@ -173,13 +146,9 @@ type MultiItem = { value: string; label: string };
 const MULTI_ITEMS: MultiItem[] = SAMPLE.map((s) => ({ value: s, label: s }));
 
 function MultiSelectPreviewInstance({
-  styles,
-  searchable,
   clearable,
   disabled,
 }: {
-  styles: Styles;
-  searchable: boolean;
   clearable: boolean;
   disabled: boolean;
 }) {
@@ -213,8 +182,7 @@ function MultiSelectPreviewInstance({
       getLabel={(o) => o.label}
       value={value}
       onChange={setValue}
-      searchable={searchable}
-      searchPlaceholder={styles.searchPlaceholder as string}
+      searchable="auto"
       disabled={disabled}
       renderTrigger={({ open, triggerProps }) => (
         // eslint-disable-next-line jsx-a11y/role-has-required-aria-props -- aria-expanded (always) and aria-controls (while open) arrive via the triggerProps spread; the rule can't see through it
