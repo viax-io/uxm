@@ -93,7 +93,7 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
       <div className={`sticky top-0 z-10 ${embed ? 'bg-card pt-3' : 'bg-surface-alt'}`}>
         {/* Header — hidden in embed mode */}
         {!embed && (
-          <div className="px-5 pt-5 pb-3 flex items-start gap-3">
+          <div className="px-5 pt-2 pb-6 flex items-start gap-3">
             <img
               src={brandIcon}
               alt=""
