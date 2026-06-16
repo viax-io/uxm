@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 import { BrandTokenStyles } from './brand-token-styles';
+import { FaviconSync } from './favicon-sync';
 import { UxmProvider, useUxm } from './lib/context';
 import { getComponentDef } from './lib/registry';
 import { MobileGallery } from './mobile-gallery';
@@ -21,12 +22,19 @@ export interface UxmAppProps {
    * enable Save/Upload against a backend.
    */
   persistence?: StudioPersistence;
+  /**
+   * Sync the document `<link rel="icon">` to the brand favicon. Off by
+   * default so a host that owns its own favicon (e.g. a Next app) isn't
+   * double-driven; the static portal opts in.
+   */
+  syncFavicon?: boolean;
 }
 
-export function UxmApp({ embed = false, persistence }: UxmAppProps) {
+export function UxmApp({ embed = false, persistence, syncFavicon = false }: UxmAppProps) {
   return (
     <UxmProvider persistence={persistence}>
       <BrandTokenStyles />
+      {syncFavicon && <FaviconSync />}
       {/* Flex column so the read-only DemoNotice banner takes its own height and
           the h-full shell fills the rest instead of overflowing the viewport. */}
       <div className="flex flex-col h-full">
