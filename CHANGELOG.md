@@ -1,3 +1,15 @@
+# [2.3.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.2.1...v2.3.0) (2026-06-16)
+
+
+### Features
+
+* **calendar:** add today button + configurable soft shadow ([f0593a8](https://gitlab.viax.tech/services-viax/uxm/commit/f0593a8e2f605afb6a5a425822ad14f16ce619f6))
+* **date-input,time-input:** open picker on focus (type-or-pick) ([f958fd5](https://gitlab.viax.tech/services-viax/uxm/commit/f958fd542585af073535b880954a2ec9e1bf35b3))
+* **editable-cell,data-table:** add date/select/multiselect editors + hover-tooltip wiring ([d37cfd7](https://gitlab.viax.tech/services-viax/uxm/commit/d37cfd77019f8e9f2a443cbe61023ac391e67ea6))
+* **hover-tooltip:** add primitive that reveals truncated values on hover ([310fcdb](https://gitlab.viax.tech/services-viax/uxm/commit/310fcdb9a42113dfb469a252a64b86107b400976))
+* **listbox,select:** cap dropdown panel width, auto-search threshold, truncate long labels ([6aef6ff](https://gitlab.viax.tech/services-viax/uxm/commit/6aef6ff7e72d3e9fda5354a3267fdc16ed287430))
+* **popover:** fix first-open positioning + cap width (maxWidth, matchAnchorWidth "min") ([8d9cc0e](https://gitlab.viax.tech/services-viax/uxm/commit/8d9cc0e0866422a52bad9b1ff9aa2af6c87f1efd))
+
 ## [2.2.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.2.0...v2.2.1) (2026-06-14)
 
 
