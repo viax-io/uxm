@@ -2,7 +2,7 @@ import { useState, type CSSProperties } from 'react';
 
 import { cn } from '@/helpers';
 import type { PreviewProps } from '@/previews/types';
-import { EditableCell, type EditableCellAlign, type EditableCellType } from '@/ui';
+import { EditableCell, type EditableCellAlign, type EditableCellType, type EditableCellValue } from '@/ui';
 
 type Styles = PreviewProps['styles'];
 
@@ -70,11 +70,11 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
   // the showcase row to demonstrate the inline-error path. The
   // Interactive row commits cleanly so designers can exercise the
   // happy path.
-  const handleTextCommit = async (next: string | number) => {
+  const handleTextCommit = async (next: EditableCellValue) => {
     await new Promise((r) => setTimeout(r, 400));
-    setTextValue(String(next));
+    setTextValue(String(Array.isArray(next) ? next.join(', ') : next));
   };
-  const handleNumberCommit = async (next: string | number) => {
+  const handleNumberCommit = async (next: EditableCellValue) => {
     await new Promise((r) => setTimeout(r, 400));
     setNumberValue(Number(next));
   };

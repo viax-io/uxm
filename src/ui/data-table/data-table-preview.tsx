@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import type { PreviewProps } from '@/previews/types';
-import { EditableCell, Tag, type TagType } from '@/ui';
+import { EditableCell, Tag, type EditableCellValue, type TagType } from '@/ui';
 
 interface Row {
   name: string;
@@ -21,7 +21,7 @@ const initialData: Row[] = [
   { name: 'Marketplace Listing', status: 'Archived', owner: 'Priya Sharma', amount: 67800, date: 'Feb 15' },
 ];
 
-const formatAmount = (n: string | number) => `$${Number(n).toLocaleString()}`;
+const formatAmount = (n: EditableCellValue) => `$${Number(Array.isArray(n) ? n[0] : n).toLocaleString()}`;
 
 const STATUS_TO_TAG_TYPE: Record<string, TagType> = {
   Active: 'accent',
@@ -39,13 +39,13 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
   const densityMultiplier = density === 'compact' ? 0.65 : density === 'relaxed' ? 1.4 : 1;
   const cellPy = Math.round((styles.cellPaddingY as number) * densityMultiplier);
 
-  const commitAmount = (index: number) => async (next: string | number) => {
+  const commitAmount = (index: number) => async (next: EditableCellValue) => {
     // Simulated async commit so designers can see the submitting state.
     await new Promise((r) => setTimeout(r, 300));
     setRows((prev) => prev.map((r, i) => (i === index ? { ...r, amount: Number(next) } : r)));
   };
 
-  const commitName = (index: number) => async (next: string | number) => {
+  const commitName = (index: number) => async (next: EditableCellValue) => {
     await new Promise((r) => setTimeout(r, 300));
     setRows((prev) => prev.map((r, i) => (i === index ? { ...r, name: String(next) } : r)));
   };

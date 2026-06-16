@@ -2,7 +2,8 @@
 
 import { cn } from '@/helpers';
 
-import { EditableCell, type EditableCellType } from '../editable-cell';
+import { EditableCell, type EditableCellOption, type EditableCellType, type EditableCellValue } from '../editable-cell';
+import { HoverTooltip } from '../hover-tooltip';
 
 import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 
@@ -23,17 +24,25 @@ export interface DataTableColumn<T> {
   editable?: boolean;
   /** Editor type when editable. Defaults to "text". */
   editor?: EditableCellType;
+  /** Date format — only used when `editor="date"`. */
+  dateFormat?: 'mdy' | 'dmy' | 'ymd';
+  /** Options for `editor="select"` or `editor="multiselect"`. */
+  editorOptions?: EditableCellOption[];
+  /** Whether the select panel includes a search box. */
+  editorSearchable?: boolean | 'auto';
+  /** Whether the select panel allows clearing the selection. */
+  editorClearable?: boolean;
   /** Display formatter for the editable cell's read-only state. */
-  formatValue?: (value: string | number) => ReactNode;
+  formatValue?: (value: EditableCellValue) => ReactNode;
   /** Synchronous per-cell validation. Returning a string blocks commit. */
-  validate?: (value: string | number, row: T) => string | null | undefined;
+  validate?: (value: EditableCellValue, row: T) => string | null | undefined;
   /**
    * Per-row override for editability (e.g. some rows are read-only). When
    * omitted, every cell in an editable column is editable.
    */
   isEditable?: (row: T) => boolean;
   /** Commit handler. Async — atom shows a submitting state, rejects surface inline. */
-  onCommit?: (row: T, value: string | number) => void | Promise<void>;
+  onCommit?: (row: T, value: EditableCellValue) => void | Promise<void>;
   /**
    * Cap the column's content width, in px. One policy for both cell kinds:
    * editable cells receive it as their max-width (display values truncate
@@ -108,9 +117,13 @@ export function DataTable<T>({
                   : (row as Record<string, ReactNode>)[c.key];
                 const cellContent = rowEditable ? (
                   <EditableCell
-                    value={(row as Record<string, string | number>)[c.key]}
+                    value={(row as Record<string, EditableCellValue>)[c.key]}
                     onCommit={(next) => c.onCommit?.(row, next) ?? undefined}
                     type={c.editor ?? 'text'}
+                    dateFormat={c.dateFormat}
+                    options={c.editorOptions}
+                    searchable={c.editorSearchable}
+                    clearable={c.editorClearable}
                     align={c.align}
                     format={c.formatValue}
                     validate={
@@ -128,12 +141,14 @@ export function DataTable<T>({
                     }
                   />
                 ) : c.maxWidth != null ? (
-                  <span
-                    className="uxm-data-table__clamp"
-                    style={{ maxWidth: c.maxWidth }}
-                  >
-                    {staticContent}
-                  </span>
+                  <HoverTooltip content={staticContent}>
+                    <span
+                      className="uxm-data-table__clamp"
+                      style={{ maxWidth: c.maxWidth }}
+                    >
+                      {staticContent}
+                    </span>
+                  </HoverTooltip>
                 ) : (
                   staticContent
                 );
