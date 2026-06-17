@@ -1,3 +1,10 @@
+# [2.4.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.4...v2.4.0) (2026-06-17)
+
+
+### Features
+
+* **ui:** read per-component and per-state CSS vars across atoms for portal studio theming ([8c78e84](https://gitlab.viax.tech/services-viax/uxm/commit/8c78e8455db7ee54cd62af62ea7dd21042341d1c))
+
 ## [2.3.4](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.3...v2.3.4) (2026-06-17)
 
 
