@@ -12,7 +12,9 @@
      height. Thumb sizing derives from height (height − 4px inset) and the
      "on" thumb position derives from width minus thumb-size minus 2px,
      so the math survives any width/height change. Was previously hardcoded
-     `left: calc(100% - 22px)` which broke on width changes. */
+     `left: calc(100% - 22px)` which broke on width changes.
+     Per-state hover/focus read `--uxm-toggle-switch-{state}-*` vars with the
+     resting value as fallback (default look unchanged). */
 
   &__track {
     background-color: var(--uxm-toggle-switch-track-off, var(--color-border));
@@ -34,6 +36,27 @@
     top: 2px;
     transition: left 0.2s;
     width: calc(var(--uxm-toggle-switch-height, 24px) - 4px);
+  }
+
+  &:hover &__input:not(:checked) + &__track {
+    background-color: var(--uxm-toggle-switch-hover-off-track, var(--color-border));
+  }
+
+  &:hover &__input:not(:checked) + &__track > &__thumb {
+    background-color: var(--uxm-toggle-switch-hover-off-thumb, var(--color-card));
+  }
+
+  &:hover &__input:checked + &__track {
+    background-color: var(--uxm-toggle-switch-hover-on-track, var(--color-accent));
+  }
+
+  &:hover &__input:checked + &__track > &__thumb {
+    background-color: var(--uxm-toggle-switch-hover-on-thumb, var(--color-card));
+  }
+
+  &__input:focus-visible + &__track {
+    outline: 2px solid var(--uxm-toggle-switch-focus-ring, var(--color-accent));
+    outline-offset: 2px;
   }
 
   &__input:checked + &__track {

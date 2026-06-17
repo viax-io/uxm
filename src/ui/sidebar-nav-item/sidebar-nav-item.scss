@@ -2,8 +2,9 @@
 
 .uxm-sidebar-nav-item {
   align-items: center;
+  background-color: var(--uxm-sidebar-nav-item-inactive-bg, transparent);
   border-radius: 8px;
-  color: var(--color-text-strong);
+  color: var(--uxm-sidebar-nav-item-inactive-text, var(--color-text-strong));
   cursor: pointer;
   display: flex;
   font-size: 13px;
@@ -14,13 +15,26 @@
   transition: background-color 0.15s, color 0.15s;
 
   &:hover {
-    background-color: color-mix(in srgb, var(--color-surface) 60%, transparent);
-    color: var(--color-text);
+    background-color: var(--uxm-sidebar-nav-item-hover-bg, color-mix(in srgb, var(--color-surface) 60%, transparent));
+    color: var(--uxm-sidebar-nav-item-hover-text, var(--color-text));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-sidebar-nav-item-focus-text, var(--color-text));
+    outline: 2px solid var(--uxm-sidebar-nav-item-focus-ring, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    background-color: var(--uxm-sidebar-nav-item-disabled-bg, transparent);
+    color: var(--uxm-sidebar-nav-item-disabled-text, var(--color-text-strong));
+    opacity: var(--uxm-sidebar-nav-item-disabled-opacity, 1);
   }
 
   &--active {
-    background-color: var(--color-surface);
-    color: var(--color-text);
+    background-color: var(--uxm-sidebar-nav-item-active-bg, var(--color-surface));
+    color: var(--uxm-sidebar-nav-item-active-text, var(--color-text));
   }
 
   &__icon {

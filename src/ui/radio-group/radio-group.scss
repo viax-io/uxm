@@ -13,7 +13,8 @@
    Inner `.uxm-radio__circle` and `__dot` are descendants that read
    the same `--uxm-radio-group-*` vars via custom-property inheritance.
    The dot sizes itself off the circle (size / 2) so a single `size`
-   knob keeps the proportions. */
+   knob keeps the proportions. Per-state hover/focus read
+   `--uxm-radio-group-{state}-*` vars with the resting value as fallback. */
 
 .uxm-radio-group {
   display: flex;
@@ -31,13 +32,14 @@
 .uxm-radio {
   &__circle {
     align-items: center;
+    background-color: transparent;
     border: 2px solid var(--uxm-radio-group-border-color, var(--color-border));
     border-radius: 50%;
     display: inline-flex;
     flex-shrink: 0;
     height: var(--uxm-radio-group-size, 20px);
     justify-content: center;
-    transition: border-color 0.15s;
+    transition: background-color 0.15s, border-color 0.15s;
     width: var(--uxm-radio-group-size, 20px);
   }
 
@@ -47,6 +49,24 @@
     height: calc(var(--uxm-radio-group-size, 20px) / 2);
     opacity: 0;
     width: calc(var(--uxm-radio-group-size, 20px) / 2);
+  }
+
+  &:hover &__input:not(:checked) + &__circle {
+    background-color: var(--uxm-radio-group-hover-unselected-bg, transparent);
+    border-color: var(--uxm-radio-group-hover-unselected-border, var(--color-border));
+  }
+
+  &:hover &__input:checked + &__circle {
+    border-color: var(--uxm-radio-group-hover-selected-border, var(--color-accent));
+  }
+
+  &:hover &__input:checked + &__circle > &__dot {
+    background-color: var(--uxm-radio-group-hover-dot-color, var(--color-accent));
+  }
+
+  &__input:focus-visible + &__circle {
+    outline: 2px solid var(--uxm-radio-group-focus-ring, var(--color-accent));
+    outline-offset: 2px;
   }
 
   &__input:checked + &__circle {

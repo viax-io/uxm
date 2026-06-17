@@ -11,6 +11,22 @@
   text-decoration: none;
 
   &:hover {
-    color: var(--color-text);
+    color: var(--uxm-back-link-hover-color, var(--color-text));
+  }
+
+  &:active {
+    color: var(--uxm-back-link-active-color, var(--color-text));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-back-link-focus-color, var(--color-text));
+    outline: 2px solid var(--uxm-back-link-focus-ring-color, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &[aria-disabled="true"],
+  &:disabled {
+    color: var(--uxm-back-link-disabled-color, var(--color-text-muted));
+    opacity: var(--uxm-back-link-disabled-opacity, 1);
   }
 }

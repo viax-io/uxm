@@ -5,13 +5,17 @@
    over Link's own saved global overrides on the `.uxm-link` single-class
    selector. Breadcrumb is sovereign in its own scope for color, hover,
    and font-size; anything Breadcrumb doesn't override (font-weight,
-   underline offset/thickness) inherits from Link naturally. */
+   underline offset/thickness) inherits from Link naturally.
+
+   State colours read the studio `--uxm-breadcrumb-{state}-text` vars
+   (generate-css names), falling back to the legacy `-link-*` vars, then
+   the resting token — so saved overrides apply and the look is unchanged. */
 
 .uxm-breadcrumb {
   font-size: var(--uxm-breadcrumb-font-size, 13px);
 
   & .uxm-link {
-    color: var(--uxm-breadcrumb-link-color, var(--color-text-muted));
+    color: var(--uxm-breadcrumb-inactive-text, var(--uxm-breadcrumb-link-color, var(--color-text-muted)));
     font-size: var(--uxm-breadcrumb-font-size, 13px);
     font-weight: var(--uxm-breadcrumb-link-weight, 500);
     text-decoration-thickness: var(--uxm-breadcrumb-underline-thickness, 1px);
@@ -19,7 +23,18 @@
   }
 
   & .uxm-link:hover {
-    color: var(--uxm-breadcrumb-link-hover-color, var(--color-text));
+    color: var(--uxm-breadcrumb-hover-text, var(--uxm-breadcrumb-link-hover-color, var(--color-text)));
+  }
+
+  & .uxm-link:focus-visible {
+    color: var(--uxm-breadcrumb-focus-text, var(--color-text));
+    outline: 2px solid var(--uxm-breadcrumb-focus-ring, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  & .uxm-link[aria-disabled="true"] {
+    color: var(--uxm-breadcrumb-disabled-text, var(--color-text-subtle));
+    opacity: var(--uxm-breadcrumb-disabled-opacity, 1);
   }
 
   &__list {
@@ -39,7 +54,7 @@
   }
 
   &__current {
-    color: var(--uxm-breadcrumb-current-color, var(--color-text));
+    color: var(--uxm-breadcrumb-active-text, var(--uxm-breadcrumb-current-color, var(--color-text)));
     font-weight: var(--uxm-breadcrumb-current-weight, 600);
   }
 

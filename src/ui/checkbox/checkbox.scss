@@ -4,7 +4,9 @@
    owns its own gap var so editor saves on one don't bleed into others.
    The checked-state styles read `--uxm-{id}-check-color` (checkbox)
    and `--uxm-radio-group-active-color` (radio) so saves propagate
-   from the editor's knobs into the inner __box / __circle / __dot. */
+   from the editor's knobs into the inner __box / __circle / __dot.
+   Per-state hover/focus/disabled read `--uxm-checkbox-{state}-*` vars
+   with the resting value as fallback (default look unchanged). */
 
 .uxm-checkbox {
   align-items: center;
@@ -19,7 +21,15 @@
 .uxm-toggle-switch--disabled,
 .uxm-radio--disabled {
   cursor: not-allowed;
-  opacity: 0.6;
+}
+.uxm-checkbox--disabled {
+  opacity: var(--uxm-checkbox-disabled-opacity, 0.6);
+}
+.uxm-toggle-switch--disabled {
+  opacity: var(--uxm-toggle-switch-disabled-opacity, 0.6);
+}
+.uxm-radio--disabled {
+  opacity: var(--uxm-radio-group-disabled-opacity, 0.6);
 }
 
 .uxm-checkbox__input,
@@ -51,6 +61,25 @@
       opacity: 0;
       width: 70%;
     }
+  }
+
+  &:hover &__input:not(:checked) + &__box {
+    background-color: var(--uxm-checkbox-hover-unchecked-bg, transparent);
+    border-color: var(--uxm-checkbox-hover-unchecked-border, var(--color-border));
+  }
+
+  &:hover &__input:checked + &__box {
+    background-color: var(--uxm-checkbox-hover-checked-bg, var(--color-accent));
+    border-color: var(--uxm-checkbox-hover-checked-border, var(--color-accent));
+  }
+
+  &:hover &__input:checked + &__box > svg {
+    color: var(--uxm-checkbox-hover-check-glyph-color, var(--color-text-inverse));
+  }
+
+  &__input:focus-visible + &__box {
+    outline: 2px solid var(--uxm-checkbox-focus-ring, var(--color-accent));
+    outline-offset: 2px;
   }
 
   &__input:checked + &__box {

@@ -3,15 +3,21 @@
 /* IconButton — defaults match the `icon-button` registry: 32×32, radius 6,
    transparent bg, text-muted icon, surface-alt hover, 0.4 disabled opacity.
    Previously the CSS hardcoded 40×40, surface-alt bg — the editor
-   preview disagreed with production right out of the gate. */
+   preview disagreed with production right out of the gate.
+
+   Two registry components share this CSS: `icon-button` (`.uxm-icon-button`,
+   `--uxm-icon-button-*` vars) and `button-icon` (`.uxm-button-icon`,
+   `--uxm-button-icon-*` vars). Each declaration reads its `button-icon` var
+   first, then the `icon-button` var, then the current value — so a saved
+   override from either editor paints, and the default look is unchanged. */
 
 .uxm-icon-button,
 .uxm-button-icon {
   align-items: center;
-  background-color: var(--uxm-icon-button-bg, transparent);
+  background-color: var(--uxm-button-icon-background-color, var(--uxm-icon-button-bg, transparent));
   border: none;
   border-radius: var(--uxm-icon-button-radius, 6px);
-  color: var(--uxm-icon-button-color, var(--color-text-muted));
+  color: var(--uxm-button-icon-color, var(--uxm-icon-button-color, var(--color-text-muted)));
   cursor: pointer;
   display: inline-flex;
   height: var(--uxm-icon-button-size, 32px);
@@ -22,14 +28,28 @@
 
 .uxm-icon-button:hover,
 .uxm-button-icon:hover {
-  background-color: var(--uxm-icon-button-hover-bg, var(--color-surface-alt));
-  color: var(--uxm-icon-button-hover-color, var(--color-text));
+  background-color: var(--uxm-button-icon-hover-background-color, var(--uxm-icon-button-hover-bg, var(--color-surface-alt)));
+  color: var(--uxm-button-icon-hover-color, var(--uxm-icon-button-hover-color, var(--color-text)));
+}
+
+.uxm-icon-button:active,
+.uxm-button-icon:active {
+  background-color: var(--uxm-button-icon-active-background-color, var(--uxm-icon-button-active-bg, var(--color-surface-alt)));
+  color: var(--uxm-button-icon-active-color, var(--uxm-icon-button-active-color, var(--color-text)));
+}
+
+.uxm-icon-button:focus-visible,
+.uxm-button-icon:focus-visible {
+  color: var(--uxm-button-icon-focus-color, var(--uxm-icon-button-focus-color, var(--color-text)));
+  outline: 2px solid var(--uxm-button-icon-focus-ring-color, var(--uxm-icon-button-focus-ring-color, var(--color-accent)));
+  outline-offset: 2px;
 }
 
 .uxm-icon-button:disabled,
 .uxm-button-icon:disabled {
+  color: var(--uxm-button-icon-disabled-color, var(--uxm-icon-button-disabled-color, var(--color-text-muted)));
   cursor: not-allowed;
-  opacity: var(--uxm-icon-button-disabled-opacity, 0.4);
+  opacity: var(--uxm-button-icon-disabled-opacity, var(--uxm-icon-button-disabled-opacity, 0.4));
 }
 
 /* Inner SVG sizing — without this, the `iconSize` and `strokeWidth`

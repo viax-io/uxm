@@ -24,6 +24,22 @@
     padding: var(--uxm-filter-tabs-padding-y, 6px) var(--uxm-filter-tabs-padding-x, 12px);
     transition: background-color 0.15s, color 0.15s;
 
+    &:hover:not(.uxm-filter-tabs__tab--active):not(:disabled) {
+      background-color: var(--uxm-filter-tabs-hover-bg, transparent);
+      color: var(--uxm-filter-tabs-hover-text, var(--color-text-muted));
+    }
+
+    &:focus-visible {
+      color: var(--uxm-filter-tabs-focus-text, var(--color-text));
+      outline: 2px solid var(--uxm-filter-tabs-focus-ring, var(--color-accent));
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      color: var(--uxm-filter-tabs-disabled-text, var(--color-text-muted));
+      opacity: var(--uxm-filter-tabs-disabled-opacity, 1);
+    }
+
     &--active {
       background-color: var(--uxm-filter-tabs-active-bg, var(--color-card));
       box-shadow: var(--shadow-xs);
