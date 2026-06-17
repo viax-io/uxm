@@ -1,6 +1,6 @@
 {
   "name": "@viax/uxm",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "Viax UXM — React 19 UI primitives and design tokens.",
   "license": "UNLICENSED",
   "private": false,

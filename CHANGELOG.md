@@ -1,3 +1,10 @@
+## [2.3.4](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.3...v2.3.4) (2026-06-17)
+
+
+### Bug Fixes
+
+* **studio:** tune portal sidebar header padding ([6c44378](https://gitlab.viax.tech/services-viax/uxm/commit/6c443788f98b633d621965f9dd72a7dae074ab6a))
+
 ## [2.3.3](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.2...v2.3.3) (2026-06-16)
 
 
