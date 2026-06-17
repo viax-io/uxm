@@ -8,7 +8,8 @@
    cross-browser "value-so-far" tint — Webkit doesn't render a native
    filled portion, and `accent-color` only handles it in Firefox.
    Both -webkit- and -moz- thumb pseudo-elements are needed because
-   each engine renders the thumb in its own shadow tree. */
+   each engine renders the thumb in its own shadow tree.
+   Per-state hover/focus/disabled read `--uxm-slider-{state}-*` vars. */
 
 .uxm-slider {
   -webkit-appearance: none;
@@ -33,6 +34,16 @@
     outline: none;
   }
 
+  &:focus-visible {
+    outline: 2px solid var(--uxm-slider-focus-ring, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: var(--uxm-slider-disabled-opacity, 1);
+  }
+
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -45,6 +56,10 @@
     width: var(--uxm-slider-thumb-size, 14px);
   }
 
+  &:hover::-webkit-slider-thumb {
+    background-color: var(--uxm-slider-hover-thumb-color, var(--uxm-slider-thumb-color, var(--color-accent)));
+  }
+
   &::-moz-range-thumb {
     background-color: var(--uxm-slider-thumb-color, var(--color-accent));
     border: none;
@@ -53,5 +68,9 @@
     cursor: pointer;
     height: var(--uxm-slider-thumb-size, 14px);
     width: var(--uxm-slider-thumb-size, 14px);
+  }
+
+  &:hover::-moz-range-thumb {
+    background-color: var(--uxm-slider-hover-thumb-color, var(--uxm-slider-thumb-color, var(--color-accent)));
   }
 }

@@ -9,8 +9,9 @@
 
 .uxm-list-item {
   align-items: center;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text);
+  background-color: var(--uxm-list-item-inactive-bg, transparent);
+  border-bottom: 1px solid var(--uxm-list-item-border-color, var(--color-border));
+  color: var(--uxm-list-item-inactive-text, var(--color-text));
   display: flex;
   font-size: 14px;
   gap: 12px;
@@ -18,6 +19,31 @@
 
   &:last-child {
     border-bottom: none;
+  }
+
+  /* Interactive list items (rendered as <button>/<a>) read their state vars;
+     fallbacks equal the resting look, so a static row is visually unchanged. */
+  &:hover {
+    background-color: var(--uxm-list-item-hover-bg, transparent);
+    color: var(--uxm-list-item-hover-text, var(--color-text));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-list-item-focus-text, var(--color-text));
+    outline: 2px solid var(--uxm-list-item-focus-ring, var(--color-accent));
+    outline-offset: -2px;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    background-color: var(--uxm-list-item-disabled-bg, transparent);
+    color: var(--uxm-list-item-disabled-text, var(--color-text));
+    opacity: var(--uxm-list-item-disabled-opacity, 1);
+  }
+
+  &--active {
+    background-color: var(--uxm-list-item-active-bg, transparent);
+    color: var(--uxm-list-item-active-text, var(--color-text));
   }
 
   &__icon {

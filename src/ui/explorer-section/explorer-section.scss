@@ -8,10 +8,10 @@
 
 .uxm-explorer-section {
   align-items: center;
-  background: transparent;
+  background-color: var(--uxm-explorer-section-inactive-bg, transparent);
   border: none;
   border-radius: var(--uxm-explorer-section-border-radius, 6px);
-  color: var(--uxm-explorer-section-color, var(--color-text-muted));
+  color: var(--uxm-explorer-section-inactive-text, var(--uxm-explorer-section-color, var(--color-text-muted)));
   cursor: pointer;
   display: flex;
   gap: var(--uxm-explorer-section-gap, 8px);
@@ -23,7 +23,20 @@
 
   &:hover {
     background-color: var(--uxm-explorer-section-hover-bg, color-mix(in srgb, var(--color-surface) 40%, transparent));
-    color: var(--uxm-explorer-section-hover-color, var(--color-text-strong));
+    color: var(--uxm-explorer-section-hover-text, var(--uxm-explorer-section-hover-color, var(--color-text-strong)));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-explorer-section-focus-text, var(--color-text-strong));
+    outline: 2px solid var(--uxm-explorer-section-focus-ring, var(--color-accent));
+    outline-offset: -2px;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    background-color: var(--uxm-explorer-section-disabled-bg, transparent);
+    color: var(--uxm-explorer-section-disabled-text, var(--color-text-muted));
+    opacity: var(--uxm-explorer-section-disabled-opacity, 1);
   }
 
   &__chevron {

@@ -24,6 +24,22 @@
     transition: background-color 0.15s, color 0.15s;
     width: var(--uxm-view-switcher-button-size, 28px);
 
+    &:hover:not(.uxm-view-switcher__button--active):not(:disabled) {
+      background-color: var(--uxm-view-switcher-hover-bg, transparent);
+      color: var(--uxm-view-switcher-hover-icon, var(--color-text-muted));
+    }
+
+    &:focus-visible {
+      color: var(--uxm-view-switcher-focus-icon, var(--color-text));
+      outline: 2px solid var(--uxm-view-switcher-focus-ring, var(--color-accent));
+      outline-offset: -2px;
+    }
+
+    &:disabled {
+      color: var(--uxm-view-switcher-disabled-icon, var(--color-text-muted));
+      opacity: var(--uxm-view-switcher-disabled-opacity, 1);
+    }
+
     &--active {
       background-color: var(--uxm-view-switcher-active-bg, var(--color-card));
       box-shadow: var(--shadow-xs);

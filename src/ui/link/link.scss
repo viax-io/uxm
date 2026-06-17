@@ -1,10 +1,13 @@
 /* ── link ── */
 
-/* Link — generic inline text anchor with underline + external variants */
+/* Link — generic inline text anchor with underline + external variants.
+   State colours read the studio `--uxm-link-{state}-text` vars (generate-css
+   names), falling back to the legacy `-color`/`-hover-color` vars, then the
+   resting token — so saved overrides apply and the default look is unchanged. */
 
 .uxm-link {
   align-items: baseline;
-  color: var(--uxm-link-color, var(--color-accent));
+  color: var(--uxm-link-inactive-text, var(--uxm-link-color, var(--color-accent)));
   cursor: pointer;
   display: inline-flex;
   font-size: var(--uxm-link-font-size, 14px);
@@ -32,7 +35,19 @@
   }
 
   &:hover {
-    color: var(--uxm-link-hover-color, var(--color-accent-bold));
+    color: var(--uxm-link-hover-text, var(--uxm-link-hover-color, var(--color-accent-bold)));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-link-focus-text, var(--color-accent-bold));
+    outline: 2px solid var(--uxm-link-focus-ring, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &[aria-disabled="true"],
+  &:disabled {
+    color: var(--uxm-link-disabled-text, var(--color-text-muted));
+    opacity: var(--uxm-link-disabled-opacity, 1);
   }
 
   &__external-icon {

@@ -1,11 +1,17 @@
 /* ── button ── */
 
+/* Per-component theming contract: every colour/border the UXM studio exposes
+   (default + hover/active/focus/disabled) is read from a `--uxm-button-{variant}-*`
+   custom property with the current value as fallback — so the default look is
+   unchanged, and a saved studio override paints the real button. Focus rings
+   resolve to the accent colour when unset (kept visible for accessibility). */
+
 .uxm-button-primary {
   align-items: center;
-  background-color: var(--color-accent-bold);
+  background-color: var(--uxm-button-primary-background-color, var(--color-accent-bold));
   border: none;
   border-radius: 8px;
-  color: var(--color-text-inverse);
+  color: var(--uxm-button-primary-color, var(--color-text-inverse));
   cursor: pointer;
   display: inline-flex;
   font-size: 14px;
@@ -13,19 +19,37 @@
   gap: var(--uxm-button-primary-gap, 8px);
   justify-content: center;
   padding: 10px 20px;
-  transition: opacity 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
+    background-color: var(--uxm-button-primary-hover-background-color, var(--color-accent-bold));
+    color: var(--uxm-button-primary-hover-color, var(--color-text-inverse));
     opacity: 0.9;
+  }
+
+  &:active {
+    background-color: var(--uxm-button-primary-active-background-color, var(--color-accent-bold));
+    color: var(--uxm-button-primary-active-color, var(--color-text-inverse));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-button-primary-focus-color, var(--color-text-inverse));
+    outline: 2px solid var(--uxm-button-primary-focus-ring-color, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    color: var(--uxm-button-primary-disabled-color, var(--color-text-inverse));
+    opacity: var(--uxm-button-primary-disabled-opacity, 1);
   }
 }
 
 .uxm-button-secondary {
   align-items: center;
-  background-color: var(--color-card);
-  border: 1.5px solid var(--color-accent-bold);
+  background-color: var(--uxm-button-secondary-background-color, var(--color-card));
+  border: 1.5px solid var(--uxm-button-secondary-border-color, var(--color-accent-bold));
   border-radius: 8px;
-  color: var(--color-accent-bold);
+  color: var(--uxm-button-secondary-color, var(--color-accent-bold));
   cursor: pointer;
   display: inline-flex;
   font-size: 14px;
@@ -33,19 +57,39 @@
   gap: var(--uxm-button-secondary-gap, 8px);
   justify-content: center;
   padding: 10px 20px;
-  transition: opacity 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
+    background-color: var(--uxm-button-secondary-hover-background-color, var(--color-card));
+    border-color: var(--uxm-button-secondary-hover-border-color, var(--color-accent-bold));
+    color: var(--uxm-button-secondary-hover-color, var(--color-accent-bold));
     opacity: 0.9;
+  }
+
+  &:active {
+    background-color: var(--uxm-button-secondary-active-background-color, var(--color-card));
+    border-color: var(--uxm-button-secondary-active-border-color, var(--color-accent-bold));
+    color: var(--uxm-button-secondary-active-color, var(--color-accent-bold));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-button-secondary-focus-color, var(--color-accent-bold));
+    outline: 2px solid var(--uxm-button-secondary-focus-ring-color, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    color: var(--uxm-button-secondary-disabled-color, var(--color-accent-bold));
+    opacity: var(--uxm-button-secondary-disabled-opacity, 1);
   }
 }
 
 .uxm-button-tertiary {
   align-items: center;
-  background-color: transparent;
-  border: 1px solid var(--color-border);
+  background-color: var(--uxm-button-tertiary-background-color, transparent);
+  border: 1px solid var(--uxm-button-tertiary-border-color, var(--color-border));
   border-radius: 8px;
-  color: var(--color-text);
+  color: var(--uxm-button-tertiary-color, var(--color-text));
   cursor: pointer;
   display: inline-flex;
   font-size: 14px;
@@ -53,19 +97,39 @@
   gap: var(--uxm-button-tertiary-gap, 8px);
   justify-content: center;
   padding: 10px 20px;
-  transition: opacity 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
+    background-color: var(--uxm-button-tertiary-hover-background-color, transparent);
+    border-color: var(--uxm-button-tertiary-hover-border-color, var(--color-border));
+    color: var(--uxm-button-tertiary-hover-color, var(--color-text));
     opacity: 0.8;
+  }
+
+  &:active {
+    background-color: var(--uxm-button-tertiary-active-background-color, transparent);
+    border-color: var(--uxm-button-tertiary-active-border-color, var(--color-border));
+    color: var(--uxm-button-tertiary-active-color, var(--color-text));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-button-tertiary-focus-color, var(--color-text));
+    outline: 2px solid var(--uxm-button-tertiary-focus-ring-color, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    color: var(--uxm-button-tertiary-disabled-color, var(--color-text));
+    opacity: var(--uxm-button-tertiary-disabled-opacity, 1);
   }
 }
 
 .uxm-button-ghost {
   align-items: center;
-  background: transparent;
+  background: var(--uxm-button-ghost-background-color, transparent);
   border: none;
   border-radius: 8px;
-  color: var(--color-accent-bold);
+  color: var(--uxm-button-ghost-color, var(--color-accent-bold));
   cursor: pointer;
   display: inline-flex;
   font-size: 14px;
@@ -73,30 +137,65 @@
   gap: var(--uxm-button-ghost-gap, 8px);
   justify-content: center;
   padding: 10px 20px;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
-    background: var(--color-surface-alt);
+    background: var(--uxm-button-ghost-hover-background-color, var(--color-surface-alt));
+    color: var(--uxm-button-ghost-hover-color, var(--color-accent-bold));
+  }
+
+  &:active {
+    background: var(--uxm-button-ghost-active-background-color, var(--color-surface-alt));
+    color: var(--uxm-button-ghost-active-color, var(--color-accent-bold));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-button-ghost-focus-color, var(--color-accent-bold));
+    outline: 2px solid var(--uxm-button-ghost-focus-ring-color, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    color: var(--uxm-button-ghost-disabled-color, var(--color-accent-bold));
+    opacity: var(--uxm-button-ghost-disabled-opacity, 1);
   }
 }
 
 .uxm-button-with-icon {
   align-items: center;
-  background-color: var(--color-card);
-  border: 1px solid var(--color-border);
+  background-color: var(--uxm-button-with-icon-background-color, var(--color-card));
+  border: 1px solid var(--uxm-button-with-icon-border-color, var(--color-border));
   border-radius: 4px;
-  color: var(--color-text-muted);
+  color: var(--uxm-button-with-icon-color, var(--color-text-muted));
   cursor: pointer;
   display: inline-flex;
   font-size: 13px;
   font-weight: 500;
   gap: var(--uxm-button-with-icon-gap, 8px);
   padding: 8px 12px;
-  transition: border-color 0.15s, color 0.15s;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
 
   &:hover {
-    border-color: var(--color-accent);
-    color: var(--color-text);
+    background-color: var(--uxm-button-with-icon-hover-background-color, var(--color-card));
+    border-color: var(--uxm-button-with-icon-hover-border-color, var(--color-accent));
+    color: var(--uxm-button-with-icon-hover-color, var(--color-text));
+  }
+
+  &:active {
+    background-color: var(--uxm-button-with-icon-active-background-color, var(--color-card));
+    border-color: var(--uxm-button-with-icon-active-border-color, var(--color-accent));
+    color: var(--uxm-button-with-icon-active-color, var(--color-text));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-button-with-icon-focus-color, var(--color-text));
+    outline: 2px solid var(--uxm-button-with-icon-focus-ring-color, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    color: var(--uxm-button-with-icon-disabled-color, var(--color-text-muted));
+    opacity: var(--uxm-button-with-icon-disabled-opacity, 1);
   }
 
   &__icon {

@@ -4,11 +4,15 @@
    (icon + label + right chevron). The chevron rotates 90° when open.
    No body slot — body composition is the consumer's job (render content
    beneath the Disclosure conditionally on `open`). Use in side panels
-   where a row reveals more detail when expanded. */
+   where a row reveals more detail when expanded.
+
+   Background states live on the root; text states on `&__label`. Each reads
+   the studio `--uxm-disclosure-{state}-bg/-text` var, falling back to the
+   legacy name then the resting value — default look unchanged. */
 
 .uxm-disclosure {
   align-items: center;
-  background-color: var(--uxm-disclosure-background-color, transparent);
+  background-color: var(--uxm-disclosure-inactive-bg, var(--uxm-disclosure-background-color, transparent));
   border: 0;
   color: inherit;
   cursor: pointer;
@@ -18,7 +22,23 @@
   padding-block: var(--uxm-disclosure-padding-y, 12px);
   padding-inline: var(--uxm-disclosure-padding-x, 16px);
   text-align: left;
+  transition: background-color 0.15s, color 0.15s;
   width: 100%;
+
+  &:hover {
+    background-color: var(--uxm-disclosure-hover-bg, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--uxm-disclosure-focus-ring, var(--color-accent));
+    outline-offset: -2px;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    background-color: var(--uxm-disclosure-disabled-bg, transparent);
+    opacity: var(--uxm-disclosure-disabled-opacity, 1);
+  }
 
   &__icon {
     display: inline-flex;
@@ -34,9 +54,22 @@
   }
 
   &__label {
-    color: var(--uxm-disclosure-color, var(--color-text));
+    color: var(--uxm-disclosure-inactive-text, var(--uxm-disclosure-color, var(--color-text)));
     font-size: var(--uxm-disclosure-font-size, 14px);
     font-weight: 500;
+  }
+
+  &:hover &__label {
+    color: var(--uxm-disclosure-hover-text, var(--color-text));
+  }
+
+  &:focus-visible &__label {
+    color: var(--uxm-disclosure-focus-text, var(--color-text));
+  }
+
+  &:disabled &__label,
+  &[aria-disabled="true"] &__label {
+    color: var(--uxm-disclosure-disabled-text, var(--color-text));
   }
 
   &__value {

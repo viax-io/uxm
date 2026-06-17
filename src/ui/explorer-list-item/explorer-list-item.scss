@@ -3,15 +3,16 @@
 /* ── ExplorerListItem ──
    Component-explorer / file-tree row. Active state shows a left rail
    (an accent bar) instead of a filled tile, distinguishing it from
-   SidebarNavItem. Default colours read tokens; per-instance theming
-   reads `--uxm-explorer-list-item-*`. */
+   SidebarNavItem. Colours read the studio `--uxm-explorer-list-item-*`
+   state vars (generate-css names: inactive/hover/active/focus/disabled
+   -text + -bg), with the resting value as fallback. */
 
 .uxm-explorer-list-item {
   align-items: center;
-  background: transparent;
+  background-color: var(--uxm-explorer-list-item-inactive-bg, transparent);
   border: none;
   border-radius: var(--uxm-explorer-list-item-border-radius, 8px);
-  color: var(--uxm-explorer-list-item-inactive-color, var(--color-text-strong));
+  color: var(--uxm-explorer-list-item-inactive-text, var(--uxm-explorer-list-item-inactive-color, var(--color-text-strong)));
   cursor: pointer;
   display: flex;
   font-size: var(--uxm-explorer-list-item-font-size, 13px);
@@ -25,13 +26,26 @@
 
   &:hover {
     background-color: var(--uxm-explorer-list-item-hover-bg, color-mix(in srgb, var(--color-surface) 60%, transparent));
-    color: var(--uxm-explorer-list-item-hover-color, var(--color-text));
+    color: var(--uxm-explorer-list-item-hover-text, var(--uxm-explorer-list-item-hover-color, var(--color-text)));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-explorer-list-item-focus-text, var(--color-text));
+    outline: 2px solid var(--uxm-explorer-list-item-focus-ring, var(--color-accent));
+    outline-offset: -2px;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    background-color: var(--uxm-explorer-list-item-disabled-bg, transparent);
+    color: var(--uxm-explorer-list-item-disabled-text, var(--color-text-strong));
+    opacity: var(--uxm-explorer-list-item-disabled-opacity, 1);
   }
 
   &--active {
     background-color: var(--uxm-explorer-list-item-active-bg, var(--color-surface));
     box-shadow: var(--shadow-xs);
-    color: var(--uxm-explorer-list-item-active-color, var(--color-text));
+    color: var(--uxm-explorer-list-item-active-text, var(--uxm-explorer-list-item-active-color, var(--color-text)));
   }
 
   &__rail {

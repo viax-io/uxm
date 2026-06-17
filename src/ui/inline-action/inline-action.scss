@@ -22,6 +22,22 @@
     color: var(--uxm-inline-action-hover-color, var(--color-accent-bold));
   }
 
+  &:active {
+    color: var(--uxm-inline-action-active-color, var(--color-accent));
+  }
+
+  &:focus-visible {
+    color: var(--uxm-inline-action-focus-color, var(--color-accent-bold));
+    outline: 2px solid var(--uxm-inline-action-focus-ring-color, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    color: var(--uxm-inline-action-disabled-color, var(--color-text-muted));
+    opacity: var(--uxm-inline-action-disabled-opacity, 1);
+  }
+
   &__icon {
     align-items: center;
     display: inline-flex;

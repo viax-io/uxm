@@ -29,6 +29,17 @@
       color: var(--uxm-tabs-underline-hover-text, var(--color-text));
     }
 
+    &:focus-visible {
+      color: var(--uxm-tabs-underline-focus-text, var(--color-text));
+      outline: 2px solid var(--uxm-tabs-underline-focus-ring, var(--color-accent));
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      color: var(--uxm-tabs-underline-disabled-text, var(--color-text-muted));
+      opacity: var(--uxm-tabs-underline-disabled-opacity, 1);
+    }
+
     &--active {
       color: var(--uxm-tabs-underline-active-text, var(--color-text));
       font-weight: 600;

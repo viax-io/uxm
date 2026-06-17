@@ -4,7 +4,8 @@
    fontSize, color, iconColor, iconSize, iconOffset) maps to a CSS
    variable. The left padding stays computed so the input text can't
    overlap the leading icon: `paddingX + iconOffset + iconSize ≈ 36px`
-   default. */
+   default. State colours (hover/focus/disabled) mirror the input-text
+   sibling so the input family themes uniformly. */
 
 .uxm-input-with-icon {
   position: relative;
@@ -42,13 +43,32 @@
         + var(--uxm-input-with-icon-icon-size, 16px)
         + 8px
       );
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
     width: 100%;
 
     &::-webkit-search-cancel-button,
     &::-webkit-search-decoration {
       -webkit-appearance: none;
       appearance: none;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: var(--uxm-input-with-icon-hover-bg, var(--color-surface));
+      border-color: var(--uxm-input-with-icon-hover-border, var(--color-accent));
+    }
+
+    &:focus {
+      border-color: var(--uxm-input-with-icon-focus-border, var(--color-accent));
+      outline: 2px solid var(--uxm-input-with-icon-focus-ring, var(--color-accent));
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      background-color: var(--uxm-input-with-icon-disabled-bg, var(--color-surface-alt));
+      border-color: var(--uxm-input-with-icon-disabled-border, var(--color-border));
+      color: var(--uxm-input-with-icon-disabled-color, var(--color-text-muted));
+      cursor: not-allowed;
+      opacity: var(--uxm-input-with-icon-disabled-opacity, 0.6);
     }
   }
 
@@ -80,12 +100,6 @@
     &:hover {
       background-color: color-mix(in srgb, var(--color-text) 20%, transparent);
       color: var(--color-text);
-    }
-  }
-
-  &__input {
-    &:focus {
-      border-color: var(--color-accent);
     }
   }
 }
