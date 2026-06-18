@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
@@ -415,6 +416,145 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
   );
 }
 
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+const isHex6 = (v: string) => /^#[0-9A-Fa-f]{6}$/.test(v.trim());
+
+/**
+ * HEX-only colour picker for a token swatch. Clicking the swatch opens a small
+ * popover with a focused HEX field (no OS RGB picker — we work in HEX): Enter
+ * applies the value (flows into the row's numeric field), Esc closes without
+ * changes, and an outside click applies the current valid value.
+ */
+function HexSwatchPicker({
+  value,
+  label,
+  onCommit,
+}: {
+  value: string;
+  label: string;
+  onCommit: (hex: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState(value);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const popRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const preview = isHex6(draft) ? draft.trim() : value;
+
+  const openPicker = () => {
+    setDraft(value);
+    const r = btnRef.current?.getBoundingClientRect();
+    if (r) setPos({ top: r.bottom + 6, left: r.left });
+    setOpen(true);
+  };
+
+  const apply = (raw: string) => {
+    const v = raw.trim().toUpperCase();
+    if (isHex6(v)) onCommit(v);
+    setOpen(false);
+  };
+
+  // Focus the HEX field on open; an outside click applies the current value.
+  useEffect(() => {
+    if (!open) return;
+    inputRef.current?.focus();
+    inputRef.current?.select();
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (btnRef.current?.contains(t) || popRef.current?.contains(t)) return;
+      apply(inputRef.current?.value ?? '');
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- apply reads the live input value; only re-bind on open/close
+  }, [open]);
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={() => (open ? setOpen(false) : openPicker())}
+        aria-label={`Pick colour for ${label}`}
+        title="Pick a colour"
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: 4,
+          border: '1px solid var(--color-border)',
+          backgroundColor: value,
+          cursor: 'pointer',
+          padding: 0,
+        }}
+      />
+      {open &&
+        createPortal(
+          <div
+            ref={popRef}
+            style={{
+              position: 'fixed',
+              top: pos.top,
+              left: pos.left,
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: 8,
+              backgroundColor: 'var(--color-card)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 8,
+              boxShadow: 'var(--shadow-lg)',
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                width: 22,
+                height: 22,
+                flexShrink: 0,
+                borderRadius: 4,
+                border: '1px solid var(--color-border)',
+                backgroundColor: preview,
+              }}
+            />
+            <input
+              ref={inputRef}
+              type="text"
+              value={draft}
+              spellCheck={false}
+              placeholder="#RRGGBB"
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  apply(draft);
+                } else if (e.key === 'Escape') {
+                  e.preventDefault();
+                  setOpen(false);
+                }
+              }}
+              style={{
+                width: 92,
+                fontFamily: MONO,
+                fontSize: 12,
+                padding: '4px 6px',
+                border: `1px solid ${isHex6(draft) ? 'var(--color-border)' : 'var(--color-danger-text)'}`,
+                borderRadius: 4,
+                backgroundColor: 'var(--color-surface)',
+                color: 'var(--color-text)',
+                outline: 'none',
+                textTransform: 'uppercase',
+              }}
+            />
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+}
+
 function TokenRow({
   token, theme, override, onChange,
 }: {
@@ -449,26 +589,7 @@ function TokenRow({
         fontSize: 12,
       }}
     >
-      <label
-        aria-label={`Pick colour for ${token.name}`}
-        style={{
-          position: 'relative',
-          width: 20, height: 20,
-          borderRadius: 4,
-          border: '1px solid var(--color-border)',
-          backgroundColor: effective,
-          cursor: 'pointer',
-          overflow: 'hidden',
-        }}
-        title="Pick a color"
-      >
-        <input
-          type="color"
-          value={effective}
-          onChange={(e) => onChange(e.target.value.toUpperCase())}
-          style={{ position: 'absolute', inset: 0, opacity: 0, width: '100%', height: '100%', cursor: 'pointer', border: 'none' }}
-        />
-      </label>
+      <HexSwatchPicker value={effective} label={token.name} onCommit={(hex) => onChange(hex)} />
       <span style={{ color: 'var(--color-text)', fontWeight: isOverridden ? 600 : 400, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {token.name}
         <span style={{ marginLeft: 6, color: 'var(--color-text-muted)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 11 }}>
