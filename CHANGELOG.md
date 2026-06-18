@@ -1,3 +1,10 @@
+## [2.4.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.4.0...v2.4.1) (2026-06-18)
+
+
+### Bug Fixes
+
+* **studio:** paint colour-picker swatches from live token vars, not static defaults ([253b649](https://gitlab.viax.tech/services-viax/uxm/commit/253b649799f8827aa210f15e673fc7e8c2dca2dc))
+
 # [2.4.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.3.4...v2.4.0) (2026-06-17)
 
 
