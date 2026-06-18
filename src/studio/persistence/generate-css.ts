@@ -71,6 +71,15 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     fontSize: '--uxm-currency-input-font-size',
     color: '--uxm-currency-input-color',
   },
+  'color-picker': {
+    backgroundColor: '--uxm-color-picker-bg',
+    borderColor: '--uxm-color-picker-border-color',
+    color: '--uxm-color-picker-color',
+    borderRadius: '--uxm-color-picker-radius',
+    paddingX: '--uxm-color-picker-padding-x',
+    paddingY: '--uxm-color-picker-padding-y',
+    fontSize: '--uxm-color-picker-font-size',
+  },
   textarea: {
     backgroundColor: '--uxm-textarea-bg',
     borderColor: '--uxm-textarea-border-color',
