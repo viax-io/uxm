@@ -38,6 +38,26 @@ function groupTokens(tokens: ThemeToken[]) {
   return groupOrder.filter((g) => groups[g]).map((g) => ({ key: g, label: groupLabels[g], tokens: groups[g] }));
 }
 
+/**
+ * Resolve a token reference to its CURRENT computed hex — brand- and
+ * theme-aware — so the custom picker / native input start from the applied
+ * value, not the library's static default. Falls back to the static token hex,
+ * then the raw value (SSR / unresolved). Swatch markers paint the `var(...)`
+ * directly so CSS resolves them live; this is only for the hex-typed surfaces.
+ */
+function liveHex(value: string): string {
+  if (typeof document !== 'undefined') {
+    const token = findToken(value);
+    if (token) {
+      const computed = getComputedStyle(document.documentElement)
+        .getPropertyValue(token.cssVar)
+        .trim();
+      if (/^#[0-9A-Fa-f]{6}$/.test(computed)) return computed;
+    }
+  }
+  return resolveHex(value);
+}
+
 export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   const [open, setOpen] = useState(false);
   const [customMode, setCustomMode] = useState(false);
@@ -49,7 +69,13 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
 
   const isNone = value === 'none';
   const token = !isNone && isTokenValue(value) ? findToken(value) : undefined;
-  const displayHex = isNone ? 'transparent' : resolveHex(value);
+  // Hex for the custom picker / native input (must be a literal hex), resolved
+  // live so it reflects the applied brand.
+  const displayHex = isNone ? 'transparent' : liveHex(value);
+  // Colour for the visible swatch marker: paint the token's `var(...)` directly
+  // so CSS resolves the applied brand value (and current theme); a raw hex
+  // value passes through unchanged.
+  const swatchColor = isNone ? 'transparent' : value;
   const displayLabel = isNone ? 'None' : token ? token.name : value;
 
   // Sync custom hex field when value changes externally
@@ -167,7 +193,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
                       >
                         <span
                           className="h-4 w-4 flex-shrink-0 rounded border border-border/60"
-                          style={{ backgroundColor: t.hex }}
+                          style={{ backgroundColor: t.variable }}
                         />
                         <span className="flex-1 truncate">{t.name}</span>
                         {isActive && (
@@ -255,7 +281,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
       >
         <span
           className="h-4 w-4 flex-shrink-0 rounded border border-border/60 relative overflow-hidden"
-          style={{ backgroundColor: displayHex }}
+          style={{ backgroundColor: swatchColor }}
         >
           {isNone && (
             <span
