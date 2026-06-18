@@ -1,3 +1,10 @@
+## [2.5.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.0...v2.5.1) (2026-06-18)
+
+
+### Bug Fixes
+
+* **studio:** replace the unsuccessful hex-text picker with a real ColorPicker ([bc6cdee](https://gitlab.viax.tech/services-viax/uxm/commit/bc6cdee00b1869372ead5a459798eb47d8754628))
+
 # [2.5.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.4.1...v2.5.0) (2026-06-18)
 
 
