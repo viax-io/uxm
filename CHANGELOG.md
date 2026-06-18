@@ -1,3 +1,10 @@
+## [2.5.2](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.1...v2.5.2) (2026-06-18)
+
+
+### Bug Fixes
+
+* **studio:** revert the Brand Settings colour picker to the native input ([e59d13d](https://gitlab.viax.tech/services-viax/uxm/commit/e59d13d04e36e6c319cf9148a93a7efbab534026))
+
 ## [2.5.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.0...v2.5.1) (2026-06-18)
 
 
