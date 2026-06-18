@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
-import { ColorPicker, Tabs } from '@/ui';
+import { Tabs } from '@/ui';
 
 export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
   { label: 'Inter (default)', value: 'Inter', stack: "'Inter', var(--font-inter), system-ui, sans-serif" },
@@ -441,7 +441,7 @@ function TokenRow({
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'auto 1fr auto auto 18px',
+        gridTemplateColumns: '20px 1fr auto auto 18px',
         alignItems: 'center',
         gap: 8,
         padding: '4px 6px',
@@ -449,12 +449,26 @@ function TokenRow({
         fontSize: 12,
       }}
     >
-      <ColorPicker
-        value={effective}
-        hideValue
-        aria-label={`Colour for ${token.name}`}
-        onChange={(hex) => onChange(hex)}
-      />
+      <label
+        aria-label={`Pick colour for ${token.name}`}
+        style={{
+          position: 'relative',
+          width: 20, height: 20,
+          borderRadius: 4,
+          border: '1px solid var(--color-border)',
+          backgroundColor: effective,
+          cursor: 'pointer',
+          overflow: 'hidden',
+        }}
+        title="Pick a color"
+      >
+        <input
+          type="color"
+          value={effective}
+          onChange={(e) => onChange(e.target.value.toUpperCase())}
+          style={{ position: 'absolute', inset: 0, opacity: 0, width: '100%', height: '100%', cursor: 'pointer', border: 'none' }}
+        />
+      </label>
       <span style={{ color: 'var(--color-text)', fontWeight: isOverridden ? 600 : 400, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {token.name}
         <span style={{ marginLeft: 6, color: 'var(--color-text-muted)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 11 }}>
