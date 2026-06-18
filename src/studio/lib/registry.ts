@@ -1139,58 +1139,6 @@ export const registry: ComponentDef[] = [
     ],
   },
   {
-    id: 'color-picker',
-    name: 'Color Picker',
-    category: 'Inputs',
-    description: 'HEX colour input: a swatch + value trigger that opens a popover with a saturation/brightness area, a hue slider, and a HEX field. Controlled/uncontrolled; onChange fires live while dragging. Used by Brand Settings → Colors.',
-    styleProperties: [
-      // Default
-      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'triggerColors', showWhen: { state: 'default' } },
-      { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'triggerColors', showWhen: { state: 'default' } },
-      { key: 'color', label: 'Value Text', control: 'color', defaultValue: 'var(--color-text)', section: 'triggerColors', showWhen: { state: 'default' } },
-      // Hover
-      { key: 'hoverBorderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'triggerColors', showWhen: { state: 'hover' } },
-      // Focus
-      { key: 'focusRing', label: 'Ring', control: 'color', defaultValue: 'var(--color-accent)', section: 'focusState', showWhen: { state: 'focus' } },
-      // Disabled
-      { key: 'disabledOpacity', label: 'Opacity', control: 'slider', defaultValue: 0.6, min: 0.1, max: 1, step: 0.05, section: 'disabledState', showWhen: { state: 'disabled' } },
-      // Shared
-      { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },
-      { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 10, min: 2, max: 20, step: 1, unit: 'px' },
-      { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 6, min: 2, max: 16, step: 1, unit: 'px' },
-      { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 10, max: 18, step: 1, unit: 'px' },
-      { key: 'swatchSize', label: 'Swatch Size', control: 'number', defaultValue: 18, min: 10, max: 28, step: 1, unit: 'px' },
-    ],
-    layoutVariants: [
-      {
-        key: 'state',
-        label: 'State',
-        options: [
-          { value: 'default', label: 'Default' },
-          { value: 'hover', label: 'Hover' },
-          { value: 'focus', label: 'Focus' },
-          { value: 'disabled', label: 'Disabled' },
-        ],
-        defaultValue: 'default',
-      },
-    ],
-    events: [
-      { name: 'onChange', description: 'Fires with the new #RRGGBB on every change, including live while dragging the area/hue.', payload: '{ value: string }' },
-    ],
-    api: {
-      importPath: '@viax/uxm/ui',
-      importNames: 'ColorPicker',
-      props: [
-        { name: 'value', type: 'string', description: 'Current colour as #RRGGBB (controlled).' },
-        { name: 'defaultValue', type: 'string', description: 'Initial colour (uncontrolled).' },
-        { name: 'onChange', type: '(hex: string) => void', description: 'Fires with the new #RRGGBB on every change.' },
-        { name: 'hideValue', type: 'boolean', defaultValue: 'false', description: 'Hide the hex text in the trigger (swatch only).' },
-        { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Disables the picker.' },
-        { name: '...rest', type: 'ButtonHTMLAttributes<HTMLButtonElement>', description: 'Native attributes pass through to the trigger button.' },
-      ],
-    },
-  },
-  {
     id: 'number-input',
     name: 'Number Input',
     category: 'Inputs',

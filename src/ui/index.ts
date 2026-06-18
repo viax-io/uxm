@@ -32,8 +32,6 @@ export { Checkbox } from './checkbox';
 export type { CheckboxProps } from './checkbox';
 export { Chip } from './chip';
 export type { ChipMode, ChipProps } from './chip';
-export { ColorPicker } from './color-picker';
-export type { ColorPickerProps } from './color-picker';
 export { Cluster } from './cluster';
 export type { ClusterProps } from './cluster';
 export { ConfigComponentRow } from './config-component-row';

@@ -22,7 +22,6 @@ export { CalendarPreview } from '@/ui/calendar/calendar-preview';
 export { CardPreview } from '@/ui/card/card-preview';
 export { CheckboxPreview } from '@/ui/checkbox/checkbox-preview';
 export { ChipPreview } from '@/ui/chip/chip-preview';
-export { ColorPickerPreview } from '@/ui/color-picker/color-picker-preview';
 export { ClusterPreview } from '@/ui/cluster/cluster-preview';
 export { ConfigComponentRowPreview } from '@/ui/config-component-row/config-component-row-preview';
 export { ConfigSegmentItemPreview } from '@/ui/config-segment-item/config-segment-item-preview';
