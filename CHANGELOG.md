@@ -1,3 +1,10 @@
+# [2.5.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.4.1...v2.5.0) (2026-06-18)
+
+
+### Features
+
+* **studio:** hex-only colour popover for brand token rows ([f298a4a](https://gitlab.viax.tech/services-viax/uxm/commit/f298a4acf8ce1da5a87db9f938135e1ac8a4f8bf))
+
 ## [2.4.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.4.0...v2.4.1) (2026-06-18)
 
 
