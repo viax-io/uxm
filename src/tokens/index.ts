@@ -23,10 +23,10 @@ export const themeTokens: ThemeToken[] = [
   // ── Borders ──
   { name: 'Border', variable: 'var(--color-border)', cssVar: '--color-border', hex: '#EBEBEA', darkHex: '#2A2A2A', group: 'borders' },
 
-  // ── Accent ──
+  // ── Accent ── (brand colour first; the others derive from its hue)
+  { name: 'Accent', variable: 'var(--color-accent)', cssVar: '--color-accent', hex: '#3ECC87', darkHex: '#4FD99A', group: 'accent' },
   { name: 'Accent Subtle', variable: 'var(--color-accent-subtle)', cssVar: '--color-accent-subtle', hex: '#E6FFD1', darkHex: '#0F3A1F', group: 'accent' },
   { name: 'Accent Light', variable: 'var(--color-accent-light)', cssVar: '--color-accent-light', hex: '#90E9B8', darkHex: '#2E8B57', group: 'accent' },
-  { name: 'Accent', variable: 'var(--color-accent)', cssVar: '--color-accent', hex: '#3ECC87', darkHex: '#4FD99A', group: 'accent' },
   { name: 'Accent Bold', variable: 'var(--color-accent-bold)', cssVar: '--color-accent-bold', hex: '#1E7150', darkHex: '#8AE6B4', group: 'accent' },
 
   // ── Highlights ──
