@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 
+import { hexToHsl, retintHue } from '@/lib/contrast';
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
-import { Tabs } from '@/ui';
+import { ButtonPrimary, ButtonTertiary, Dialog, Modal, Tabs } from '@/ui';
 
 export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
   { label: 'Inter (default)', value: 'Inter', stack: "'Inter', var(--font-inter), system-ui, sans-serif" },
@@ -340,6 +341,9 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
   const { theme, setTheme, brand, setBrand } = shell;
   const grouped = groupTokens();
   const overrides = brand.tokens?.[theme] ?? {};
+  // When non-null, the recalc modal is open; holds the just-changed accent token
+  // (its cssVar + new hex) to use as the base for re-tinting the rest of the group.
+  const [pendingAccent, setPendingAccent] = useState<{ cssVar: string; hex: string } | null>(null);
 
   const setOverride = (cssVar: string, hex: string | undefined) => {
     const next = { ...(brand.tokens?.[theme] ?? {}) };
@@ -351,6 +355,40 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
         [theme]: Object.keys(next).length ? next : undefined,
       },
     });
+  };
+
+  // Called when any token in the Accent group changes: stash the changed token
+  // and ask (via modal) whether to re-tint the rest of the group to its hue. The
+  // changed token becomes the base, so editing any shade can drive the others.
+  const onAccentTokenChange = (cssVar: string, hex: string | undefined) => {
+    setOverride(cssVar, hex);
+    setPendingAccent(hex ? { cssVar, hex } : null);
+  };
+
+  // Re-tint the accent ramp to the base's hue across BOTH themes, so the brand
+  // hue stays consistent in light and dark. Each derived shade is rebuilt from
+  // its DEFAULT colour (its designed saturation + lightness step) re-tinted to
+  // the base hue — NOT from its current value. This keeps the result a clean
+  // light→dark ramp every time, regardless of any prior overrides, so changing
+  // one accent always recomputes the others into a proper palette. The shade the
+  // user just edited (in the active theme) is left untouched; everything else in
+  // the group, in both themes, is recomputed in one batched update.
+  const recalcAccents = (baseVar: string, baseHex: string) => {
+    const hsl = hexToHsl(baseHex);
+    setPendingAccent(null);
+    if (!hsl) return;
+    const nextTokens = { ...brand.tokens };
+    for (const t of ['light', 'dark'] as const) {
+      const map = { ...(brand.tokens?.[t] ?? {}) };
+      for (const tk of themeTokens) {
+        if (tk.group !== 'accent') continue;
+        if (t === theme && tk.cssVar === baseVar) continue; // keep the edit the user just made
+        const base = t === 'dark' ? tk.darkHex : tk.hex; // re-tint from the designed default ramp
+        map[tk.cssVar] = retintHue(base, hsl.h).toUpperCase();
+      }
+      nextTokens[t] = Object.keys(map).length ? map : undefined;
+    }
+    setBrand({ tokens: nextTokens });
   };
 
   const resetAll = () => {
@@ -404,13 +442,41 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
                   token={t}
                   theme={theme}
                   override={overrides[t.cssVar]}
-                  onChange={(hex) => setOverride(t.cssVar, hex)}
+                  onChange={(hex) =>
+                    t.group === 'accent' ? onAccentTokenChange(t.cssVar, hex) : setOverride(t.cssVar, hex)
+                  }
                 />
               ))}
             </div>
           </div>
         ))}
       </div>
+
+      <Dialog
+        open={pendingAccent !== null}
+        onOpenChange={(open) => { if (!open) setPendingAccent(null); }}
+      >
+        <Modal size="sm" onClose={() => setPendingAccent(null)}>
+          <Modal.Header>Recalculate accent palette?</Modal.Header>
+          <Modal.Body>
+            <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text)', lineHeight: 1.5 }}>
+              You changed{' '}
+              <strong>
+                {themeTokens.find((t) => t.cssVar === pendingAccent?.cssVar)?.name ?? 'an accent color'}
+              </strong>
+. Re-tint the rest of the accent ramp — in both light and dark — to its hue?
+              Each shade keeps its own lightness and saturation; only the hue follows
+              the color you just set.
+            </p>
+          </Modal.Body>
+          <Modal.Footer>
+            <ButtonTertiary onClick={() => setPendingAccent(null)}>Keep as is</ButtonTertiary>
+            <ButtonPrimary onClick={() => { if (pendingAccent) recalcAccents(pendingAccent.cssVar, pendingAccent.hex); }}>
+              Recalculate
+            </ButtonPrimary>
+          </Modal.Footer>
+        </Modal>
+      </Dialog>
     </section>
   );
 }
