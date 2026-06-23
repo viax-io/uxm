@@ -1,3 +1,10 @@
+## [2.5.3](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.2...v2.5.3) (2026-06-23)
+
+
+### Bug Fixes
+
+* **studio:** recompute the accent ramp from any edited accent colour ([3713d01](https://gitlab.viax.tech/services-viax/uxm/commit/3713d01cfebc83b170218e63df77f7e56dbc9038))
+
 ## [2.5.2](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.1...v2.5.2) (2026-06-18)
 
 
