@@ -11,6 +11,7 @@ import { Sidebar } from './shell/sidebar';
 import { ThemeSync } from './theme-sync';
 
 import type { StudioPersistence } from './persistence/types';
+import type { ReactNode } from 'react';
 
 const DESKTOP_QUERY = '(min-width: 1024px)';
 
@@ -29,9 +30,15 @@ export interface UxmAppProps {
    * double-driven; the static portal opts in.
    */
   syncFavicon?: boolean;
+  /**
+   * Optional host-provided actions rendered in the canvas top bar, right after
+   * the Preview & Publish button (e.g. a user avatar / account menu). Desktop
+   * chrome only — the mobile gallery does not render it.
+   */
+  headerActions?: ReactNode;
 }
 
-export function UxmApp({ embed = false, persistence, syncFavicon = false }: UxmAppProps) {
+export function UxmApp({ embed = false, persistence, syncFavicon = false, headerActions }: UxmAppProps) {
   return (
     <UxmProvider persistence={persistence}>
       <BrandTokenStyles />
@@ -42,7 +49,7 @@ export function UxmApp({ embed = false, persistence, syncFavicon = false }: UxmA
       <div className="flex flex-col h-full">
         <DemoNotice />
         <div className="flex-1 min-h-0">
-          <UxmAppShell embed={embed} />
+          <UxmAppShell embed={embed} headerActions={headerActions} />
         </div>
       </div>
     </UxmProvider>
@@ -66,7 +73,7 @@ function DemoNotice() {
   );
 }
 
-function UxmAppShell({ embed }: { embed: boolean }) {
+function UxmAppShell({ embed, headerActions }: { embed: boolean; headerActions?: ReactNode }) {
   const [isDesktop, setIsDesktop] = useState(true);
 
   useEffect(() => {
@@ -83,12 +90,12 @@ function UxmAppShell({ embed }: { embed: boolean }) {
     return <MobileGallery />;
   }
 
-  return <DesktopShell embed={embed} />;
+  return <DesktopShell embed={embed} headerActions={headerActions} />;
 }
 
 type Orientation = 'horizontal' | 'vertical';
 
-function DesktopShell({ embed }: { embed: boolean }) {
+function DesktopShell({ embed, headerActions }: { embed: boolean; headerActions?: ReactNode }) {
   const { selectedId } = useUxm();
   const [orientation, setOrientation] = useState<Orientation>('horizontal');
   const [panelWidth, setPanelWidth] = useState(320);
@@ -148,7 +155,7 @@ function DesktopShell({ embed }: { embed: boolean }) {
         }`}
       >
         <div className="flex-1 min-w-0 min-h-0">
-          <Canvas embed={embed} />
+          <Canvas embed={embed} headerActions={headerActions} />
         </div>
         {showPropertiesPanel && (
           <div
