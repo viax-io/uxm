@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 
+
 import {
   BannerPreview,
   AppSidebarPreview,
@@ -104,6 +105,7 @@ import { getComponentDef } from '../lib/registry';
 import { PreviewModal } from './preview-modal';
 
 import type { PreviewProps } from '../lib/types';
+import type { ReactNode } from 'react';
 
 
 type PreviewComponent = React.ComponentType<PreviewProps>;
@@ -239,7 +241,15 @@ export const previewMap: Record<string, PreviewComponent> = {
   cluster: ClusterPreview,
 };
 
-export function Canvas({ embed = false }: { embed?: boolean }) {
+export function Canvas({
+  embed = false,
+  headerActions,
+}: {
+  embed?: boolean;
+  /** Optional host-provided actions rendered at the end of the top-bar
+      cluster, right after the Preview & Publish button (e.g. a user avatar). */
+  headerActions?: ReactNode;
+}) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -354,6 +364,7 @@ export function Canvas({ embed = false }: { embed?: boolean }) {
             <Icon glyph="eye" size={14} />
             {capabilities.persist ? 'Preview & Publish' : 'Preview'}
           </ButtonPrimary>
+          {headerActions}
         </div>
       </div>
 
