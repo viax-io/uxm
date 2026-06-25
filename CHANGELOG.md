@@ -1,3 +1,10 @@
+## [2.5.4](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.3...v2.5.4) (2026-06-25)
+
+
+### Bug Fixes
+
+* **studio:** render optional headerActions slot in the canvas top bar ([65edf0b](https://gitlab.viax.tech/services-viax/uxm/commit/65edf0bda7b31c879d95dcec0e801ac7ed245e75))
+
 ## [2.5.3](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.2...v2.5.3) (2026-06-23)
 
 
