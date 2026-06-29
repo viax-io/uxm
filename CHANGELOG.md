@@ -1,3 +1,10 @@
+# [2.6.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.4...v2.6.0) (2026-06-29)
+
+
+### Features
+
+* **ui:** port Menu, BulkActionBar, ButtonDanger, DataTable rowActions, Listbox shadow ([2ca363e](https://gitlab.viax.tech/services-viax/uxm/commit/2ca363ef55ec8afd5d2c58c88faa50b36e9f76e6))
+
 ## [2.5.4](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.3...v2.5.4) (2026-06-25)
 
 
