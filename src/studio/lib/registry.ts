@@ -294,6 +294,70 @@ export const registry: ComponentDef[] = [
     ],
   },
   {
+    id: 'button-danger',
+    name: 'Button — Destructive',
+    category: 'Buttons',
+    description: 'Destructive (danger) action button for irreversible operations — Delete, Remove, Discard. Outlined/subtle by default (danger-tinted surface + danger text + danger border); pressing deepens to a solid danger fill so the commit-to-destroy moment reads clearly. Reuses the semantic danger token trio — no new palette tokens. Reserve for genuinely destructive actions; everything else uses the primary/secondary/tertiary family.',
+    styleProperties: [
+      // Default — danger-tinted surface, danger text + border.
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-danger-bg)', section: 'states', showWhen: { state: 'default' } },
+      { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'states', showWhen: { state: 'default' } },
+      { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-danger-border)', section: 'states', showWhen: { state: 'default' } },
+      // Hover — deepen the tint toward the danger text colour.
+      { key: 'hoverBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-danger-border)', section: 'states', showWhen: { state: 'hover' } },
+      { key: 'hoverColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'states', showWhen: { state: 'hover' } },
+      { key: 'hoverBorderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'states', showWhen: { state: 'hover' } },
+      // Pressed — solid danger fill, inverse text.
+      { key: 'activeBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'states', showWhen: { state: 'active' } },
+      { key: 'activeColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'active' } },
+      { key: 'activeBorderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'states', showWhen: { state: 'active' } },
+      // Focus
+      { key: 'focusRingColor', label: 'Ring Color', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'states', showWhen: { state: 'focus' } },
+      { key: 'focusColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'states', showWhen: { state: 'focus' } },
+      // Disabled
+      { key: 'disabledOpacity', label: 'Opacity', control: 'slider', defaultValue: 0.4, min: 0.1, max: 1, step: 0.05, section: 'states', showWhen: { state: 'disabled' } },
+      { key: 'disabledColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'states', showWhen: { state: 'disabled' } },
+      // Shared style
+      { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 24, step: 1, unit: 'px' },
+      { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 20, min: 4, max: 48, step: 2, unit: 'px' },
+      { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 2, max: 24, step: 2, unit: 'px' },
+      { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px' },
+      { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '600', options: ['400', '500', '600', '700'] },
+      { key: 'gap', label: 'Icon Gap', control: 'number', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },
+    ],
+    layoutVariants: [
+      {
+        key: 'state',
+        label: 'State',
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'hover', label: 'Hover' },
+          { value: 'active', label: 'Pressed' },
+          { value: 'focus', label: 'Focus' },
+          { value: 'disabled', label: 'Disabled' },
+        ],
+        defaultValue: 'default',
+      },
+    ],
+    events: [
+      { name: 'onClick', description: 'Fires on mouse click or Enter/Space activation while focused.', payload: 'MouseEvent<HTMLButtonElement>' },
+      { name: 'onFocus', description: 'Fires when the button receives keyboard focus.', payload: 'FocusEvent' },
+      { name: 'onBlur', description: 'Fires when the button loses keyboard focus.', payload: 'FocusEvent' },
+    ],
+    api: {
+      importPath: '@viax/uxm/ui',
+      importNames: 'ButtonDanger',
+      props: [
+        { name: 'children', type: 'ReactNode', description: 'Button label — text, icon, or both. Prefer an explicit verb ("Delete", "Remove").' },
+        { name: 'onClick', type: '(e: MouseEvent<HTMLButtonElement>) => void', description: 'Click handler. For irreversible actions, confirm before committing.' },
+        { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Disables the button and prevents interaction.' },
+        { name: 'type', type: '"button" | "submit" | "reset"', defaultValue: '"button"', description: "Native button type. Defaults to 'button' to avoid accidental form submits." },
+        { name: 'className', type: 'string', description: "Extra classes appended after the atom's own `uxm-button-danger`." },
+        { name: '...rest', type: 'ButtonHTMLAttributes<HTMLButtonElement>', description: 'All other native button attributes (aria-label, tabIndex, etc.) pass through to the underlying <button>.' },
+      ],
+    },
+  },
+  {
     id: 'button-with-icon',
     name: 'Button — With Icon',
     category: 'Buttons',
@@ -1648,7 +1712,13 @@ export const registry: ComponentDef[] = [
       { key: 'panelBg', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'panel' },
       { key: 'panelBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'panel' },
       { key: 'panelRadius', label: 'Radius', control: 'slider', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px', section: 'panel' },
-      { key: 'panelShadow', label: 'Shadow', control: 'text', defaultValue: '0 6px 20px rgba(0, 0, 0, 0.10)', section: 'panel' },
+      // Drop shadow — decomposed into Color / Blur / Offset Y (colour picker
+      // + sliders) instead of a raw box-shadow text field. Same pattern as
+      // the Calendar / Menu atoms; the box-shadow is composed from these
+      // three vars in listbox.scss.
+      { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'rgba(0, 0, 0, 0.10)', section: 'shadow' },
+      { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 20, min: 0, max: 48, step: 1, unit: 'px', section: 'shadow' },
+      { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 6, min: 0, max: 24, step: 1, unit: 'px', section: 'shadow' },
       { key: 'panelMaxHeight', label: 'Max Height', control: 'number', defaultValue: 320, min: 120, max: 600, step: 20, unit: 'px', section: 'panel' },
 
       // Search input — only meaningful when the consumer enables search.
@@ -1816,6 +1886,113 @@ export const registry: ComponentDef[] = [
         { name: 'showCheckmark', type: 'boolean', defaultValue: 'true', description: 'Listbox only — show the right-edge ✓ on the selected row. Set to `false` when row content already has trailing meta (dial codes, currency codes) that would compete for the right edge.' },
         { name: 'portal', type: 'boolean', defaultValue: 'true', description: 'Mount the panel into document.body — escapes clipping parents.' },
         { name: 'excludeSelected', type: 'boolean', defaultValue: 'true', description: 'MultiListbox only — hide items already in `value` from the panel.' },
+      ],
+    },
+  },
+  {
+    id: 'menu',
+    name: 'Menu (Action Menu)',
+    category: 'Inputs',
+    description:
+      "Action / dropdown menu — a list of commands invoked from a consumer-owned trigger (a ⋮ IconButton, a Button, anything). Built on the same headless Popover as Listbox (positioning, portal, outside-click, Escape) but with menu semantics (role=menu / menuitem / separator) and NO selected-value state: pick a row → run its action → dismiss. Reach for Listbox/Select when you need to HOLD a chosen value; reach for Menu for row ⋮ actions, overflow menus, and command lists. Supports leading icons, trailing hints (e.g. shortcuts), separators, disabled rows, and destructive (danger) items. This entry themes the PANEL + rows; the trigger is owned entirely by the consumer's renderTrigger.",
+    styleProperties: [
+      // Panel chrome — the floating card.
+      { key: 'panelBg', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'panel' },
+      { key: 'panelBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'panel' },
+      { key: 'panelRadius', label: 'Radius', control: 'slider', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px', section: 'panel' },
+      { key: 'panelMaxHeight', label: 'Max Height', control: 'number', defaultValue: 360, min: 120, max: 600, step: 20, unit: 'px', section: 'panel' },
+
+      // Drop shadow — decomposed into Color / Blur / Offset Y instead of a
+      // raw `box-shadow` text field, so designers tune it with a colour
+      // picker + sliders. Same pattern as the Calendar atom; the box-shadow
+      // is composed from these three vars in styles.css. Defaults match the
+      // floating-panel elevation (0 6px 20px rgba(0,0,0,0.10)).
+      { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'rgba(0, 0, 0, 0.10)', section: 'shadow' },
+      { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 20, min: 0, max: 48, step: 1, unit: 'px', section: 'shadow' },
+      { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 6, min: 0, max: 24, step: 1, unit: 'px', section: 'shadow' },
+
+      // Item row — sizing knobs apply across all states.
+      { key: 'itemPaddingX', label: 'Padding X', control: 'number', defaultValue: 10, min: 4, max: 20, step: 1, unit: 'px', section: 'item' },
+      { key: 'itemPaddingY', label: 'Padding Y', control: 'number', defaultValue: 7, min: 2, max: 14, step: 1, unit: 'px', section: 'item' },
+      { key: 'itemFontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 10, max: 18, step: 1, unit: 'px', section: 'item' },
+      { key: 'itemRadius', label: 'Radius', control: 'slider', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px', section: 'item' },
+
+      // Per-state colours — scoped by the `state` showcase variant so only
+      // the knobs relevant to the displayed row state are visible. Mirrors
+      // the listbox / select-dropdown convention. "Hover" covers both
+      // mouse hover and keyboard arrow-key highlight (same `--active`
+      // class). Default row has no surface of its own (panel bg shows
+      // through), so only text colour is exposed there.
+      { key: 'itemColor', label: 'Text', control: 'color', defaultValue: 'var(--color-text)', section: 'itemState', showWhen: { state: 'default' } },
+
+      { key: 'itemActiveBg', label: 'Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'itemState', showWhen: { state: 'hover' } },
+      { key: 'itemActiveColor', label: 'Text', control: 'color', defaultValue: 'var(--color-text)', section: 'itemState', showWhen: { state: 'hover' } },
+
+      { key: 'itemDisabledOpacity', label: 'Opacity', control: 'slider', defaultValue: 0.4, min: 0.1, max: 1, step: 0.05, section: 'itemState', showWhen: { state: 'disabled' } },
+
+      // Destructive rows (Delete etc.) — danger text at rest, danger-tinted
+      // surface when highlighted.
+      { key: 'itemDangerColor', label: 'Text', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'itemState', showWhen: { state: 'danger' } },
+      { key: 'itemDangerActiveBg', label: 'Hover Background', control: 'color', defaultValue: 'var(--color-danger-bg)', section: 'itemState', showWhen: { state: 'danger' } },
+
+      // Leading icon colour at rest (tracks the row text colour when
+      // active / danger — no separate knobs for those states).
+      { key: 'itemIconColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'icon', showWhen: { withIcons: 'yes' } },
+
+      // Separator divider colour.
+      { key: 'separatorColor', label: 'Color', control: 'color', defaultValue: 'var(--color-border)', section: 'separator', showWhen: { withSeparator: 'yes' } },
+    ],
+    layoutVariants: [
+      {
+        // Which state the static showcase rows paint. The interactive
+        // instance (a real ⋮ trigger) below is always live — hover /
+        // keyboard exercise the real CSS independently. This picker is
+        // purely to VISUALLY confirm each per-state knob without having
+        // to hover the live menu.
+        key: 'state',
+        label: 'Row State',
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'hover', label: 'Hover' },
+          { value: 'disabled', label: 'Disabled' },
+          { value: 'danger', label: 'Danger' },
+        ],
+        defaultValue: 'default',
+      },
+      {
+        key: 'withIcons',
+        label: 'Leading Icons',
+        options: [
+          { value: 'yes', label: 'On' },
+          { value: 'no', label: 'Off' },
+        ],
+        defaultValue: 'yes',
+      },
+      {
+        key: 'withSeparator',
+        label: 'Separator',
+        options: [
+          { value: 'yes', label: 'On' },
+          { value: 'no', label: 'Off' },
+        ],
+        defaultValue: 'yes',
+      },
+    ],
+    events: [
+      { name: 'onSelect', description: "Fires when an item is invoked (click / Enter / Space). The menu closes afterward. Per-item — wired via each item's `onSelect`.", payload: 'void' },
+      { name: 'onOpenChange', description: 'Fires when the menu opens or closes.', payload: 'boolean' },
+    ],
+    api: {
+      importPath: '@viax/uxm/ui',
+      importNames: 'Menu',
+      props: [
+        { name: 'items', type: 'MenuEntry[]', required: true, description: 'Menu entries — actionable items ({ key, label, icon?, hint?, onSelect?, disabled?, danger? }) and separators ({ separator: true }), in display order.' },
+        { name: 'renderTrigger', type: '(api: { open, triggerProps }) => ReactNode', required: true, description: 'Render the trigger. Spread `triggerProps` on your interactive element (an IconButton ⋮, a Button) — wires ref + click + ARIA in one go.' },
+        { name: 'placement', type: '"bottom-start" | "bottom-end" | "top-start" | "top-end"', defaultValue: '"bottom-end"', description: 'Preferred placement; flips on overflow. Defaults to bottom-end since menus usually align to a trailing ⋮.' },
+        { name: 'open', type: 'boolean', description: 'Controlled open state. Pair with onOpenChange. Omit for uncontrolled.' },
+        { name: 'onOpenChange', type: '(open: boolean) => void', description: 'Called whenever the menu wants to open/close.' },
+        { name: 'minWidth', type: 'number', defaultValue: '160', description: 'Minimum panel width in px.' },
+        { name: 'maxWidth', type: 'number', defaultValue: '280', description: 'Maximum panel width in px — long labels truncate beyond it.' },
       ],
     },
   },
@@ -2498,6 +2675,64 @@ export const registry: ComponentDef[] = [
     events: [
       { name: 'onDismiss', description: 'Fires when the user clicks the close affordance — only present if the Banner was rendered with one.', payload: 'void' },
     ],
+  },
+  {
+    id: 'bulk-action-bar',
+    name: 'Bulk Action Bar',
+    category: 'Feedback',
+    description: "Floating toolbar that surfaces once rows are selected: \"{N} selected · actions · × clear\". Purely presentational — the consumer wires it to its own `selectedKeys` state and positions it (typically fixed/sticky near the bottom of a table view). Pairs with the DataTable's row selection. The `.uxm-bulk-action-bar` root IS the styled card surface (background / border / decomposed shadow); the per-part colours (action / danger / divider / clear ×) theme the inner buttons. Destructive actions get the danger treatment via `danger: true`.",
+    styleProperties: [
+      // ── Bar surface (the floating card) ──
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'bar' },
+      { key: 'color', label: 'Count Text', control: 'color', defaultValue: 'var(--color-text)', section: 'bar' },
+      { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'bar' },
+      { key: 'borderRadius', label: 'Radius', control: 'slider', defaultValue: 12, min: 0, max: 24, step: 1, unit: 'px', section: 'bar' },
+      { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 28, step: 2, unit: 'px', section: 'bar' },
+      { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 8, min: 2, max: 20, step: 1, unit: 'px', section: 'bar' },
+      { key: 'gap', label: 'Gap', control: 'number', defaultValue: 8, min: 0, max: 20, step: 1, unit: 'px', section: 'bar' },
+      { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 18, step: 1, unit: 'px', section: 'bar' },
+
+      // ── Drop shadow — decomposed into Color / Blur / Offset Y (same
+      //    pattern as the Menu / Calendar floating panels). Composed into
+      //    a single box-shadow in styles.css. Default lifts the bar off
+      //    the page (0 10px 28px rgba(0,0,0,0.16)). ──
+      { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'rgba(0, 0, 0, 0.16)', section: 'shadow' },
+      { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 28, min: 0, max: 60, step: 1, unit: 'px', section: 'shadow' },
+      { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 10, min: 0, max: 32, step: 1, unit: 'px', section: 'shadow' },
+
+      // ── Action buttons (the plain commands) ──
+      { key: 'actionColor', label: 'Text', control: 'color', defaultValue: 'var(--color-text)', section: 'actions' },
+      { key: 'actionHoverBg', label: 'Hover Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'actions' },
+      { key: 'actionRadius', label: 'Radius', control: 'slider', defaultValue: 6, min: 0, max: 12, step: 1, unit: 'px', section: 'actions' },
+
+      // ── Destructive action (Delete etc.) — danger text at rest, a
+      //    danger-tinted surface on hover. Reuses the danger token trio. ──
+      { key: 'dangerColor', label: 'Text', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'danger' },
+      { key: 'dangerHoverBg', label: 'Hover Background', control: 'color', defaultValue: 'var(--color-danger-bg)', section: 'danger' },
+
+      // ── Divider ── (the clear × is the IconButton atom, themed there)
+      { key: 'dividerColor', label: 'Divider', control: 'color', defaultValue: 'var(--color-border)', section: 'divider' },
+    ],
+    // No layout variants — the selection count is runtime data, not a
+    // design knob, and the × clear is a behavioral prop (`onClear`), so the
+    // preview just renders a representative count.
+    layoutVariants: [],
+    events: [
+      { name: 'onClear', description: 'Fires when the user clicks the trailing × to clear the selection. Omit `onClear` to hide the ×.', payload: 'void' },
+      { name: 'action.onClick', description: "Per-action handler — fires when an action button is clicked. Wired via each entry's `onClick`.", payload: 'void' },
+    ],
+    api: {
+      importPath: '@viax/uxm/ui',
+      importNames: 'BulkActionBar',
+      props: [
+        { name: 'count', type: 'number', required: true, description: 'Number of selected items. Drives the default "{n} selected" label.' },
+        { name: 'actions', type: 'BulkAction[]', description: 'Action buttons in display order. Each: { key, label, icon?, danger?, disabled?, onClick? }. Set `danger: true` for destructive actions (Delete/Remove).' },
+        { name: 'onClear', type: '() => void', description: 'When provided, renders a trailing × that clears the selection.' },
+        { name: 'countLabel', type: '(count: number) => ReactNode', description: 'Override the count label — e.g. for pluralisation or a different noun ("3 rows").' },
+        { name: 'className', type: 'string', description: "Extra classes appended after the atom's own `uxm-bulk-action-bar`." },
+        { name: 'style', type: 'CSSProperties', description: 'Inline style — use for fixed/sticky positioning in the consuming layout.' },
+      ],
+    },
   },
   {
     id: 'toast',

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import type { PreviewProps } from '@/previews/types';
-import { EditableCell, Tag, type EditableCellValue, type TagType } from '@/ui';
+import { EditableCell, Icon, IconButton, Menu, Tag, type EditableCellValue, type MenuEntry, type TagType } from '@/ui';
 
 interface Row {
   name: string;
@@ -50,6 +50,41 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
     setRows((prev) => prev.map((r, i) => (i === index ? { ...r, name: String(next) } : r)));
   };
 
+  // Per-row action menu — the trailing ⋮ column. Demonstrates the real
+  // Menu atom in a table: leading icons, a disabled item (Archive, when
+  // already archived), a separator, and a destructive Delete. Actions
+  // mutate the table's row state so the effect is visible live.
+  const rowActions = (index: number): MenuEntry[] => [
+    { key: 'edit', label: 'Edit', icon: 'pencil', onSelect: () => {} },
+    {
+      key: 'duplicate',
+      label: 'Duplicate',
+      icon: 'copy',
+      onSelect: () =>
+        setRows((prev) => {
+          const next = [...prev];
+          next.splice(index + 1, 0, { ...prev[index], name: `${prev[index].name} (copy)` });
+          return next;
+        }),
+    },
+    {
+      key: 'archive',
+      label: 'Archive',
+      icon: 'archive-x',
+      disabled: rows[index]?.status === 'Archived',
+      onSelect: () =>
+        setRows((prev) => prev.map((r, i) => (i === index ? { ...r, status: 'Archived' } : r))),
+    },
+    { separator: true, key: 'sep' },
+    {
+      key: 'delete',
+      label: 'Delete',
+      icon: 'trash',
+      danger: true,
+      onSelect: () => setRows((prev) => prev.filter((_, i) => i !== index)),
+    },
+  ];
+
   return (
     <div style={{
       // max-content with a floor: the table grows for wide data (a long
@@ -77,6 +112,14 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
                 fontSize: (styles.fontSize as number) - 1,
               }}>{h}</th>
             ))}
+            {/* Trailing actions column header — empty, narrow (1% + nowrap
+                shrinks it to the ⋮ trigger). */}
+            <th aria-label="Actions" style={{
+              width: '1%',
+              whiteSpace: 'nowrap',
+              padding: `${cellPy}px ${styles.cellPaddingX}px`,
+              borderBottom: `1px solid ${styles.borderColor}`,
+            }} />
           </tr>
         </thead>
         <tbody>
@@ -119,6 +162,29 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
                 />
               </td>
               <td style={{ padding: `${cellPy}px ${styles.cellPaddingX}px`, color: 'var(--color-text-muted)', borderBottom: `1px solid ${styles.borderColor}` }}>{row.date}</td>
+              {/* Actions column — a ⋮ IconButton that opens the Menu atom
+                  with row-bound actions. Right-aligned, hugs the trigger. */}
+              <td style={{
+                width: '1%',
+                whiteSpace: 'nowrap',
+                textAlign: 'right',
+                padding: `0 ${styles.cellPaddingX}px`,
+                borderBottom: `1px solid ${styles.borderColor}`,
+              }}>
+                <Menu
+                  items={rowActions(i)}
+                  aria-label="Row actions"
+                  renderTrigger={({ open, triggerProps }) => (
+                    <IconButton
+                      {...triggerProps}
+                      aria-label="Row actions"
+                      className={open ? 'uxm-icon-button--active' : undefined}
+                    >
+                      <Icon glyph="kebab" size={18} />
+                    </IconButton>
+                  )}
+                />
+              </td>
             </tr>
           ))}
         </tbody>

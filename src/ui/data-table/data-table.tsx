@@ -4,6 +4,9 @@ import { cn } from '@/helpers';
 
 import { EditableCell, type EditableCellOption, type EditableCellType, type EditableCellValue } from '../editable-cell';
 import { HoverTooltip } from '../hover-tooltip';
+import { Icon } from '../icon';
+import { IconButton } from '../icon-button';
+import { Menu, type MenuEntry } from '../menu';
 
 import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 
@@ -60,6 +63,15 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   density?: DataTableDensity;
   rowKey: (row: T) => string;
   onRowClick?: (row: T) => void;
+  /**
+   * Per-row action menu. When provided, a trailing column is appended
+   * whose cell is a ⋮ `IconButton` that opens a `Menu` of these entries
+   * (actions + separators) on click. The callback receives the row, so
+   * each action's `onSelect` closes over its row. Return an empty array
+   * to leave a row without a trigger (the column stays for alignment).
+   * Clicks inside the actions cell don't bubble to `onRowClick`.
+   */
+  rowActions?: (row: T) => MenuEntry[];
 }
 
 export function DataTable<T>({
@@ -68,6 +80,7 @@ export function DataTable<T>({
   density = 'default',
   rowKey,
   onRowClick,
+  rowActions,
   className,
   ...rest
 }: DataTableProps<T>) {
@@ -87,6 +100,15 @@ export function DataTable<T>({
                 {c.header}
               </th>
             ))}
+            {rowActions && (
+              // Trailing actions column — header is visually empty (the ⋮
+              // affordance speaks for itself) but carries an accessible
+              // name. `--actions` shrinks the column to the trigger width.
+              <th
+                className="uxm-data-table__th uxm-data-table__th--actions"
+                aria-label="Actions"
+              />
+            )}
           </tr>
         </thead>
         <tbody>
@@ -179,6 +201,37 @@ export function DataTable<T>({
                   </td>
                 );
               })}
+              {rowActions && (() => {
+                const actions = rowActions(row);
+                return (
+                  <td
+                    className="uxm-data-table__td uxm-data-table__actions"
+                    data-label="Actions"
+                    // Opening the menu must not also fire the row click —
+                    // same guard the editable cells use.
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {actions.length > 0 && (
+                      <Menu
+                        items={actions}
+                        aria-label="Row actions"
+                        renderTrigger={({ open, triggerProps }) => (
+                          <IconButton
+                            {...triggerProps}
+                            aria-label="Row actions"
+                            className={cn(
+                              'uxm-data-table__actions-trigger',
+                              open && 'uxm-icon-button--active',
+                            )}
+                          >
+                            <Icon glyph="kebab" size={18} />
+                          </IconButton>
+                        )}
+                      />
+                    )}
+                  </td>
+                );
+              })()}
             </tr>
           ))}
         </tbody>

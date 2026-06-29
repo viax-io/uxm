@@ -120,3 +120,20 @@
 .uxm-data-table--compact .uxm-data-table__td { padding: 6px 12px; }
 .uxm-data-table--relaxed .uxm-data-table__th,
 .uxm-data-table--relaxed .uxm-data-table__td { padding: 16px 12px; }
+
+/* Trailing row-action column — `width: 1%` + `nowrap` is the table idiom
+   for "shrink to content", so the column hugs the ⋮ trigger and the data
+   columns keep the remaining width. Right-aligned so the affordance sits
+   at the row's trailing edge. */
+.uxm-data-table__th--actions,
+.uxm-data-table__actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+/* Trim vertical padding so the IconButton (not the cell box) drives row
+   height, keeping action rows the same height as data rows. */
+.uxm-data-table__actions {
+  padding-top: 0;
+  padding-bottom: 0;
+}

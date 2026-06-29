@@ -1,12 +1,12 @@
 import { useState, type CSSProperties } from 'react';
 
 import type { PreviewProps } from '@/previews/types';
-import { ButtonGhost, ButtonPrimary, ButtonSecondary, ButtonTertiary } from '@/ui';
+import { ButtonDanger, ButtonGhost, ButtonPrimary, ButtonSecondary, ButtonTertiary } from '@/ui';
 import { ButtonIcon } from '@/ui';
 import { Icon } from '@/ui';
 import { getIcon } from '@/ui';
 
-type PlainButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost';
+type PlainButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger';
 
 /**
  * State-aware style for plain buttons that adopt the per-state knob pattern.
@@ -148,6 +148,18 @@ export function ButtonPreview(props: PreviewProps) {
       <ButtonGhost style={style} disabled={disabled}>
         Ghost Button
       </ButtonGhost>
+    );
+  }
+
+  if (componentId === 'button-danger') {
+    const { style, disabled } = plainButtonStateStyle(props, 'danger');
+    return (
+      <ButtonDanger
+        style={{ ...style, borderStyle: 'solid', borderWidth: 1 }}
+        disabled={disabled}
+      >
+        Delete
+      </ButtonDanger>
     );
   }
 

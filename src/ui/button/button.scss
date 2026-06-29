@@ -161,6 +161,50 @@
   }
 }
 
+/* ── button — destructive (outlined danger) ──
+   Danger-tinted surface + danger text/border at rest; pressing deepens to a
+   solid danger fill (the commit-to-destroy moment). Reuses the semantic
+   danger token trio. Every state reads its own `--uxm-button-danger-*` var. */
+.uxm-button-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--uxm-button-danger-gap, 8px);
+  background-color: var(--uxm-button-danger-background-color, var(--color-danger-bg));
+  color: var(--uxm-button-danger-color, var(--color-danger-text));
+  border: 1px solid var(--uxm-button-danger-border-color, var(--color-danger-border));
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--uxm-button-danger-hover-background-color, var(--color-danger-border));
+    color: var(--uxm-button-danger-hover-color, var(--color-danger-text));
+    border-color: var(--uxm-button-danger-hover-border-color, var(--color-danger-text));
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--uxm-button-danger-active-background-color, var(--color-danger-text));
+    color: var(--uxm-button-danger-active-color, var(--color-text-inverse));
+    border-color: var(--uxm-button-danger-active-border-color, var(--color-danger-text));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--uxm-button-danger-focus-ring-color, var(--color-danger-text));
+    outline-offset: 2px;
+    color: var(--uxm-button-danger-focus-color, var(--color-danger-text));
+  }
+
+  &:disabled {
+    opacity: var(--uxm-button-danger-disabled-opacity, 0.4);
+    color: var(--uxm-button-danger-disabled-color, var(--color-danger-text));
+    cursor: not-allowed;
+  }
+}
+
 .uxm-button-with-icon {
   align-items: center;
   background-color: var(--uxm-button-with-icon-background-color, var(--color-card));

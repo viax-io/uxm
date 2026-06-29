@@ -15,9 +15,11 @@ export { Badge } from './badge';
 export type { BadgeMode, BadgeProps, BadgeType } from './badge';
 export { Banner } from './banner';
 export type { BannerProps, BannerVariant } from './banner';
+export { BulkActionBar } from './bulk-action-bar';
+export type { BulkAction, BulkActionBarProps } from './bulk-action-bar';
 export { Breadcrumb } from './breadcrumb';
 export type { BreadcrumbCrumb, BreadcrumbProps, BreadcrumbSeparator } from './breadcrumb';
-export { ButtonGhost, ButtonPrimary, ButtonSecondary, ButtonTertiary } from './button';
+export { ButtonDanger, ButtonGhost, ButtonPrimary, ButtonSecondary, ButtonTertiary } from './button';
 export { ButtonGroup } from './button-group';
 export type { ButtonGroupOption, ButtonGroupProps } from './button-group';
 export { ButtonIcon } from './button-icon';
@@ -123,6 +125,14 @@ export type {
 } from './listbox';
 export { Loader } from './loader';
 export type { LoaderLayout, LoaderProps, LoaderVariant } from './loader';
+export { Menu } from './menu';
+export type {
+  MenuProps,
+  MenuItem,
+  MenuSeparator,
+  MenuEntry,
+  MenuTriggerProps,
+} from './menu';
 export { NumberStepper } from './number-stepper';
 export type { NumberStepperProps } from './number-stepper';
 export { PageHeader } from './page-header';
