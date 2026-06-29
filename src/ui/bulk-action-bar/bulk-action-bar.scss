@@ -1,0 +1,77 @@
+/* ── Bulk Action Bar ──
+   Floating toolbar shown once rows are selected: "{N} selected · actions ·
+   × clear". The `.uxm-bulk-action-bar` root IS the styled element (card
+   surface + border + decomposed shadow), so the real-CSS knobs
+   (background/color/border/radius/padding/gap/font) land on it directly,
+   while the per-part colours (action / danger / divider / clear) read
+   `--uxm-bulk-action-bar-*` custom properties on the inner elements. */
+.uxm-bulk-action-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uxm-bulk-action-bar-gap, 8px);
+  background-color: var(--uxm-bulk-action-bar-background-color, var(--color-card));
+  color: var(--uxm-bulk-action-bar-color, var(--color-text));
+  border: 1px solid var(--uxm-bulk-action-bar-border-color, var(--color-border));
+  border-radius: var(--uxm-bulk-action-bar-border-radius, 12px);
+  padding: var(--uxm-bulk-action-bar-padding-y, 8px) var(--uxm-bulk-action-bar-padding-x, 12px);
+  font-size: var(--uxm-bulk-action-bar-font-size, 14px);
+  box-shadow: 0 var(--uxm-bulk-action-bar-shadow-offset-y, 10px)
+    var(--uxm-bulk-action-bar-shadow-blur, 28px)
+    var(--uxm-bulk-action-bar-shadow-color, rgba(0, 0, 0, 0.16));
+}
+.uxm-bulk-action-bar__count {
+  font-weight: 600;
+  white-space: nowrap;
+  padding-inline: 4px;
+}
+.uxm-bulk-action-bar__divider {
+  width: 1px;
+  align-self: stretch;
+  min-height: 20px;
+  background-color: var(--uxm-bulk-action-bar-divider-color, var(--color-border));
+}
+.uxm-bulk-action-bar__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.uxm-bulk-action-bar__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: transparent;
+  color: var(--uxm-bulk-action-bar-action-color, var(--color-text));
+  border: none;
+  border-radius: var(--uxm-bulk-action-bar-action-radius, 6px);
+  padding: 6px 10px;
+  font-size: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+.uxm-bulk-action-bar__action:hover:not(:disabled) {
+  background-color: var(--uxm-bulk-action-bar-action-hover-bg, var(--color-surface-alt));
+}
+.uxm-bulk-action-bar__action:focus-visible {
+  outline: 2px solid var(--uxm-bulk-action-bar-action-color, var(--color-text));
+  outline-offset: 1px;
+}
+.uxm-bulk-action-bar__action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.uxm-bulk-action-bar__action--danger {
+  color: var(--uxm-bulk-action-bar-danger-color, var(--color-danger-text));
+}
+.uxm-bulk-action-bar__action--danger:hover:not(:disabled) {
+  background-color: var(--uxm-bulk-action-bar-danger-hover-bg, var(--color-danger-bg));
+}
+.uxm-bulk-action-bar__action--danger:focus-visible {
+  outline-color: var(--uxm-bulk-action-bar-danger-color, var(--color-danger-text));
+}
+.uxm-bulk-action-bar__action-icon {
+  flex: none;
+}
+/* The trailing clear (×) is the canonical IconButton atom — its chrome
+   (size / muted colour / surface-alt hover / focus ring) comes from
+   `.uxm-icon-button`, themed by the IconButton component's own knobs. */

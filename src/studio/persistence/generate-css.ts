@@ -40,6 +40,10 @@ const REAL_CSS_PROPS = new Set([
 // never reach a portaled descendant. Emit on BOTH wrapper and panel selector.
 const PER_COMPONENT_SELECTOR: Record<string, string> = {
   listbox: '.uxm-listbox, .uxm-listbox__panel',
+  // Menu mirrors Listbox: the `.uxm-menu` wrapper lives in-page around the
+  // trigger, but the `.uxm-menu__panel` portals to document.body, so vars on
+  // the wrapper never reach it. Emit on both so the panel carries them.
+  menu: '.uxm-menu, .uxm-menu__panel',
 };
 
 const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
@@ -248,6 +252,11 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     backgroundColor: '--uxm-button-ghost-background-color',
     color: '--uxm-button-ghost-color',
   },
+  'button-danger': {
+    backgroundColor: '--uxm-button-danger-background-color',
+    color: '--uxm-button-danger-color',
+    borderColor: '--uxm-button-danger-border-color',
+  },
   'button-with-icon': {
     backgroundColor: '--uxm-button-with-icon-background-color',
     color: '--uxm-button-with-icon-color',
@@ -331,7 +340,10 @@ function formatValue(value: string | number | boolean, key: string): string {
   if (typeof value === 'boolean') return value ? '1' : '0';
   if (typeof value === 'number') {
     const unitless = ['fontWeight', 'shadow', 'disabledOpacity'];
-    if (unitless.includes(key)) return String(value);
+    // `opacity` is always unitless — match every *Opacity knob (e.g. the
+    // per-element `itemDisabledOpacity` / `optionDisabledOpacity` variants)
+    // so a saved value never gets a spurious `px` suffix.
+    if (unitless.includes(key) || key.endsWith('Opacity')) return String(value);
     return `${value}px`;
   }
   return String(value);

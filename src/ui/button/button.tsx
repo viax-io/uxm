@@ -19,3 +19,7 @@ export function ButtonTertiary({ className, type = 'button', ...rest }: ButtonPr
 export function ButtonGhost({ className, type = 'button', ...rest }: ButtonProps) {
   return <button type={type} className={cn('uxm-button-ghost', className)} {...rest} />;
 }
+
+export function ButtonDanger({ className, type = 'button', ...rest }: ButtonProps) {
+  return <button type={type} className={cn('uxm-button-danger', className)} {...rest} />;
+}

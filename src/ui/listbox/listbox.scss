@@ -15,7 +15,9 @@
     background-color: var(--uxm-listbox-panel-bg, var(--color-card));
     border: 1px solid var(--uxm-listbox-panel-border, var(--color-border));
     border-radius: var(--uxm-listbox-panel-radius, 8px);
-    box-shadow: var(--uxm-listbox-panel-shadow, 0 6px 20px rgba(0, 0, 0, 0.10));
+    /* Composed from the Color / Blur / Offset Y knobs (same pattern as the
+       Calendar / Menu atoms) rather than a single box-shadow string. */
+    box-shadow: 0 var(--uxm-listbox-shadow-offset-y, 6px) var(--uxm-listbox-shadow-blur, 20px) var(--uxm-listbox-shadow-color, rgba(0, 0, 0, 0.10));
   }
 
   &__search {

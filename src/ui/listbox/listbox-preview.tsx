@@ -22,7 +22,9 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-listbox-panel-bg': styles.panelBg as string,
     '--uxm-listbox-panel-border': styles.panelBorder as string,
     '--uxm-listbox-panel-radius': `${styles.panelRadius}px`,
-    '--uxm-listbox-panel-shadow': styles.panelShadow as string,
+    '--uxm-listbox-shadow-color': styles.shadowColor as string,
+    '--uxm-listbox-shadow-blur': `${styles.shadowBlur}px`,
+    '--uxm-listbox-shadow-offset-y': `${styles.shadowOffsetY}px`,
     '--uxm-listbox-panel-max-height': `${styles.panelMaxHeight}px`,
 
     '--uxm-listbox-search-border': styles.searchBorder as string,

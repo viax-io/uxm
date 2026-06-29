@@ -1,0 +1,102 @@
+/* ── menu ─────────────────────────────────────────────────────────────────────
+   Action / dropdown menu — a list of commands invoked from a consumer-owned
+   trigger. The `.uxm-menu` wrapper lives in-page around the trigger; the
+   `.uxm-menu__panel` portals to document.body (positioned by Popover), so the
+   studio emits saved vars on BOTH selectors (PER_COMPONENT_SELECTOR) and the
+   panel carries them no matter where it mounts. Picking a row runs its action
+   and dismisses — no selected-value state (that's Listbox).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.uxm-menu {
+  display: inline-flex;
+}
+.uxm-menu__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: var(--uxm-menu-panel-max-height, 360px);
+  overflow: hidden;
+  background-color: var(--uxm-menu-panel-bg, var(--color-card));
+  border: 1px solid var(--uxm-menu-panel-border, var(--color-border));
+  border-radius: var(--uxm-menu-panel-radius, 8px);
+  /* Composed from the Color / Blur / Offset Y knobs (same pattern as the
+     Calendar atom) rather than a single box-shadow string. */
+  box-shadow: 0 var(--uxm-menu-shadow-offset-y, 6px) var(--uxm-menu-shadow-blur, 20px) var(--uxm-menu-shadow-color, rgba(0, 0, 0, 0.10));
+}
+.uxm-menu__list {
+  overflow-y: auto;
+  padding: var(--uxm-menu-list-padding, 4px);
+  outline: none;
+}
+
+.uxm-menu__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--uxm-menu-item-gap, 10px);
+  text-align: left;
+  padding: var(--uxm-menu-item-padding-y, 7px) var(--uxm-menu-item-padding-x, 10px);
+  font-size: var(--uxm-menu-item-font-size, 13px);
+  color: var(--uxm-menu-item-color, var(--color-text));
+  background-color: transparent;
+  border: none;
+  border-radius: var(--uxm-menu-item-radius, 4px);
+  cursor: pointer;
+  transition: background-color 0.1s, color 0.1s;
+}
+/* Active = keyboard-highlighted via arrow nav OR pointer hover. The
+   atom's onMouseEnter applies `--active` so keyboard + pointer paint the
+   same modifier class; the `:hover` selector is a defensive fallback. */
+.uxm-menu__item--active,
+.uxm-menu__item:hover:not(:disabled) {
+  background-color: var(--uxm-menu-item-active-bg, var(--color-surface-alt));
+  color: var(--uxm-menu-item-active-color, var(--color-text));
+}
+.uxm-menu__item--disabled {
+  opacity: var(--uxm-menu-item-disabled-opacity, 0.4);
+  cursor: not-allowed;
+}
+/* Destructive items — e.g. Delete. Danger text at rest; danger-tinted
+   surface + colour when highlighted. The `--danger.--active` rule comes
+   AFTER the shared `--active` rule so it wins by source order. */
+.uxm-menu__item--danger {
+  color: var(--uxm-menu-item-danger-color, var(--color-danger-text));
+}
+.uxm-menu__item--danger.uxm-menu__item--active,
+.uxm-menu__item--danger:hover:not(:disabled) {
+  background-color: var(--uxm-menu-item-danger-active-bg, var(--color-danger-bg));
+  color: var(--uxm-menu-item-danger-color, var(--color-danger-text));
+}
+
+.uxm-menu__item-icon {
+  flex-shrink: 0;
+  color: var(--uxm-menu-item-icon-color, var(--color-text-subtle));
+}
+/* Icon tracks the row's text colour while active / danger so it never
+   reads as a separate accent against the highlighted row. */
+.uxm-menu__item--active .uxm-menu__item-icon,
+.uxm-menu__item--danger .uxm-menu__item-icon {
+  color: inherit;
+}
+.uxm-menu__item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uxm-menu__item-hint {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 12px;
+  font-size: var(--uxm-menu-item-hint-font-size, 12px);
+  color: var(--uxm-menu-item-hint-color, var(--color-text-subtle));
+}
+.uxm-menu__item--active .uxm-menu__item-hint {
+  color: inherit;
+}
+
+.uxm-menu__separator {
+  height: 1px;
+  margin: var(--uxm-menu-separator-margin, 4px) 0;
+  background-color: var(--uxm-menu-separator-color, var(--color-border));
+}
