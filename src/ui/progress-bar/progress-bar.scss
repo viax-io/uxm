@@ -1,0 +1,83 @@
+/* ── Progress Bar ──
+   Determinate progress (linear track+fill or circular ring). The root is
+   layout-only; every themeable property reads a `--uxm-progress-bar-*` custom
+   property on an inner element, so editor saves route via the kebab-fallback
+   path (no PER_COMPONENT_MAPPING needed). The single `--uxm-progress-bar-value`
+   var drives both the linear fill width and the ring's conic sweep; it's set
+   inline from the `value` prop, so the runtime value always wins — any saved
+   `--uxm-progress-bar-value` (px-suffixed) is inert. */
+.uxm-progress-bar {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--uxm-progress-bar-stack-gap, 8px);
+  width: 100%;
+  align-items: stretch;
+}
+.uxm-progress-bar--ring {
+  width: auto;
+  align-items: center;
+}
+.uxm-progress-bar__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.uxm-progress-bar__label {
+  /* Pushes the value to the right edge; when absent the value stays
+     right-aligned on its own. */
+  margin-right: auto;
+  font-size: var(--uxm-progress-bar-label-size, 13px);
+  color: var(--uxm-progress-bar-label-color, var(--color-text-muted));
+  font-weight: 500;
+}
+.uxm-progress-bar__value {
+  font-size: var(--uxm-progress-bar-value-size, 13px);
+  color: var(--uxm-progress-bar-value-color, var(--color-text));
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.uxm-progress-bar__track {
+  position: relative;
+  width: 100%;
+  height: var(--uxm-progress-bar-bar-height, 8px);
+  border-radius: var(--uxm-progress-bar-bar-radius, 999px);
+  background-color: var(--uxm-progress-bar-track-color, color-mix(in srgb, var(--color-accent-bold) 16%, transparent));
+  overflow: hidden;
+}
+.uxm-progress-bar__fill {
+  /* Absolutely positioned so the percentage width resolves against the
+     positioned track's USED width — robust in any layout. (An in-flow
+     `width:%` fill silently collapses to 0 inside a `flex:1` row item,
+     where the item's width is definite for layout but indefinite for
+     percentage descendants. Absolute-positioning sidesteps that rule.)
+     The track's overflow:hidden + radius own the rounded end caps. */
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: calc(var(--uxm-progress-bar-value, 0) * 1%);
+  background-color: var(--uxm-progress-bar-fill-color, var(--color-accent-bold));
+  transition: width 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.uxm-progress-bar__ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--uxm-progress-bar-ring-size, 72px);
+  height: var(--uxm-progress-bar-ring-size, 72px);
+}
+.uxm-progress-bar__ring-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--uxm-progress-bar-fill-color, var(--color-accent-bold)) calc(var(--uxm-progress-bar-value, 0) * 1%),
+    var(--uxm-progress-bar-track-color, color-mix(in srgb, var(--color-accent-bold) 16%, transparent)) 0
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--uxm-progress-bar-ring-thickness, 8px)), #000 calc(100% - var(--uxm-progress-bar-ring-thickness, 8px)));
+  mask: radial-gradient(farthest-side, transparent calc(100% - var(--uxm-progress-bar-ring-thickness, 8px)), #000 calc(100% - var(--uxm-progress-bar-ring-thickness, 8px)));
+}
+.uxm-progress-bar--ring .uxm-progress-bar__value {
+  position: relative;
+}

@@ -193,3 +193,54 @@
   font-size: var(--uxm-select-dropdown-error-message-size, 12px);
   color: var(--uxm-select-dropdown-error-color, var(--color-danger-text));
 }
+
+/* ── Clearable (✕) — Text Input + Textarea ──
+   `.uxm-field-clear` shrinks the shared IconButton to a 22×22 affordance
+   (12px glyph); per-atom classes add POSITIONING only. Both fields reserve
+   trailing room so the value never slides under the ✕. The visible field
+   chrome stays on `.uxm-input-text` / `.uxm-textarea` (the input element), so
+   the wrapper is layout-only and save-emitted `--uxm-{id}-*` vars still land.
+   (Input with Icon keeps its own `&__clear` chrome — this pair uses the
+   IconButton-backed clear introduced with `clearFieldValue`.) */
+.uxm-field-clear {
+  --uxm-icon-button-size: 22px;
+  --uxm-icon-button-icon-size: 12px;
+  --uxm-icon-button-stroke-width: 2;
+  flex-shrink: 0;
+}
+
+.uxm-input-text-wrap {
+  position: relative;
+  display: block;
+}
+.uxm-input-text-wrap .uxm-input-text {
+  width: 100%;
+}
+.uxm-input-text--clearable {
+  padding-right: calc(var(--uxm-input-text-padding-x, 12px) + 22px + 8px);
+}
+.uxm-input-text__clear {
+  position: absolute;
+  right: var(--uxm-input-text-padding-x, 12px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Clearable textarea — the ✕ pins to the top-right corner, away from the
+   bottom-right resize handle. */
+.uxm-textarea-wrap {
+  position: relative;
+  display: block;
+}
+.uxm-textarea-wrap .uxm-textarea {
+  width: 100%;
+  display: block;
+}
+.uxm-textarea--clearable {
+  padding-right: calc(var(--uxm-textarea-padding-x, 12px) + 22px + 8px);
+}
+.uxm-textarea__clear {
+  position: absolute;
+  right: var(--uxm-textarea-padding-x, 12px);
+  top: var(--uxm-textarea-padding-y, 10px);
+}

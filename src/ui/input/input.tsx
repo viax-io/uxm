@@ -5,6 +5,7 @@ import {
   isValidElement,
   useCallback,
   useMemo,
+  useRef,
   useState,
   type ChangeEvent,
   type InputHTMLAttributes,
@@ -20,6 +21,8 @@ import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
 import { Listbox } from '../listbox';
 
+import { clearFieldValue } from './clear-field-value';
+
 export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   /**
    * When set to a non-empty string, the field renders in its error state:
@@ -29,17 +32,103 @@ export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
    * inline edits, custom layouts — without requiring a `FormField` wrapper.
    */
   error?: string;
+  /**
+   * Show a clear (✕) button at the trailing edge when the input has content.
+   * **Defaults to `true`** — a free-text field is always safe to clear (you
+   * can type/delete anyway), so the affordance is on by default; pass
+   * `clearable={false}` to opt out. The ✕ self-clears (resets the field and
+   * fires `onChange` with ""), so no `onClear` is needed — any controlled
+   * `value` + `onChange` usage gets it for free.
+   */
+  clearable?: boolean;
+  /**
+   * Optional override for the clear action. By default the field clears
+   * itself (and notifies via `onChange`); pass `onClear` only when you need
+   * custom reset logic beyond emptying the value.
+   */
+  onClear?: () => void;
 }
 
-export function TextInput({ className, type = 'text', error, ...rest }: TextInputProps) {
+export function TextInput({
+  className,
+  type = 'text',
+  error,
+  clearable = true,
+  onClear,
+  value,
+  defaultValue,
+  onChange,
+  disabled,
+  ...rest
+}: TextInputProps) {
+  const innerRef = useRef<HTMLInputElement>(null);
+  const isControlled = value !== undefined;
+  const [hasTextUncontrolled, setHasTextUncontrolled] = useState(
+    () => typeof defaultValue === 'string' && defaultValue.length > 0,
+  );
+  const hasValue = isControlled ? String(value).length > 0 : hasTextUncontrolled;
+  const showClear = !!clearable && hasValue && !disabled;
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!isControlled) setHasTextUncontrolled(e.target.value.length > 0);
+    onChange?.(e);
+  };
+  const handleClear = () => {
+    // Self-clear path (clearFieldValue) already refocuses the field; only the
+    // onClear-override path needs an explicit focus. Avoids a double focus().
+    if (onClear) {
+      onClear();
+      innerRef.current?.focus();
+    } else {
+      clearFieldValue(innerRef.current);
+    }
+    if (!isControlled) setHasTextUncontrolled(false);
+  };
+
+  const input = (
+    // `{...rest}` is spread FIRST so the managed props below always win — in
+    // particular a consumer-passed `ref` can't clobber `innerRef` (which the
+    // self-clear relies on). `defaultValue` is only forwarded when
+    // uncontrolled, so value+defaultValue are never both set.
+    <input
+      {...rest}
+      ref={innerRef}
+      type={type}
+      value={value}
+      defaultValue={isControlled ? undefined : defaultValue}
+      onChange={handleChange}
+      disabled={disabled}
+      className={cn(
+        'uxm-input-text',
+        error && 'uxm-input-text--error',
+        clearable && 'uxm-input-text--clearable',
+        className,
+      )}
+      aria-invalid={error ? true : undefined}
+    />
+  );
+
   return (
     <>
-      <input
-        type={type}
-        className={cn('uxm-input-text', error && 'uxm-input-text--error', className)}
-        aria-invalid={error ? true : undefined}
-        {...rest}
-      />
+      {clearable ? (
+        // Layout-only wrapper so the clear button can sit absolutely at the
+        // trailing edge. The visible chrome stays on `.uxm-input-text` (the
+        // input itself), so save-emitted `--uxm-input-text-*` vars still land.
+        <div className="uxm-input-text-wrap">
+          {input}
+          {showClear && (
+            <IconButton
+              onClick={handleClear}
+              className="uxm-field-clear uxm-input-text__clear"
+              aria-label="Clear"
+            >
+              <Icon glyph="close" />
+            </IconButton>
+          )}
+        </div>
+      ) : (
+        input
+      )}
       {error && <FieldError className="uxm-input-text__error-message">{error}</FieldError>}
     </>
   );
@@ -51,16 +140,84 @@ TextInput.hasError = true;
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   /** See `TextInputProps.error`. */
   error?: string;
+  /** See `TextInputProps.clearable`. Defaults to `true`; ✕ sits at the top-right corner. */
+  clearable?: boolean;
+  /** See `TextInputProps.onClear` — optional override; the field self-clears otherwise. */
+  onClear?: () => void;
 }
 
-export function Textarea({ className, error, ...rest }: TextareaProps) {
+export function Textarea({
+  className,
+  error,
+  clearable = true,
+  onClear,
+  value,
+  defaultValue,
+  onChange,
+  disabled,
+  ...rest
+}: TextareaProps) {
+  const innerRef = useRef<HTMLTextAreaElement>(null);
+  const isControlled = value !== undefined;
+  const [hasTextUncontrolled, setHasTextUncontrolled] = useState(
+    () => typeof defaultValue === 'string' && defaultValue.length > 0,
+  );
+  const hasValue = isControlled ? String(value).length > 0 : hasTextUncontrolled;
+  const showClear = !!clearable && hasValue && !disabled;
+
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    if (!isControlled) setHasTextUncontrolled(e.target.value.length > 0);
+    onChange?.(e);
+  };
+  const handleClear = () => {
+    // See TextInput: clearFieldValue refocuses; only onClear needs explicit focus.
+    if (onClear) {
+      onClear();
+      innerRef.current?.focus();
+    } else {
+      clearFieldValue(innerRef.current);
+    }
+    if (!isControlled) setHasTextUncontrolled(false);
+  };
+
+  const textarea = (
+    // `{...rest}` first so managed props (esp. `ref`) win; `defaultValue` only
+    // when uncontrolled — never both value+defaultValue.
+    <textarea
+      {...rest}
+      ref={innerRef}
+      value={value}
+      defaultValue={isControlled ? undefined : defaultValue}
+      onChange={handleChange}
+      disabled={disabled}
+      className={cn(
+        'uxm-textarea',
+        error && 'uxm-textarea--error',
+        clearable && 'uxm-textarea--clearable',
+        className,
+      )}
+      aria-invalid={error ? true : undefined}
+    />
+  );
+
   return (
     <>
-      <textarea
-        className={cn('uxm-textarea', error && 'uxm-textarea--error', className)}
-        aria-invalid={error ? true : undefined}
-        {...rest}
-      />
+      {clearable ? (
+        <div className="uxm-textarea-wrap">
+          {textarea}
+          {showClear && (
+            <IconButton
+              onClick={handleClear}
+              className="uxm-field-clear uxm-textarea__clear"
+              aria-label="Clear"
+            >
+              <Icon glyph="close" />
+            </IconButton>
+          )}
+        </div>
+      ) : (
+        textarea
+      )}
       {error && <FieldError className="uxm-textarea__error-message">{error}</FieldError>}
     </>
   );

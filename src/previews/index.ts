@@ -68,6 +68,7 @@ export { PageShellPreview } from '@/ui/page-shell/page-shell-preview';
 export { PasswordInputPreview } from '@/ui/password-input/password-input-preview';
 export { PhoneInputPreview } from '@/ui/phone-input/phone-input-preview';
 export { PillSelectPreview } from '@/ui/pill-select/pill-select-preview';
+export { ProgressBarPreview } from '@/ui/progress-bar/progress-bar-preview';
 export { PropertyFieldPreview } from '@/ui/property-field/property-field-preview';
 export { PropertyGridPreview } from '@/ui/property-field/property-grid-preview';
 export { RadioGroupPreview } from '@/ui/radio-group/radio-group-preview';

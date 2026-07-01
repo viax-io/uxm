@@ -2,7 +2,13 @@ import { useState, type CSSProperties } from 'react';
 
 import { cn } from '@/helpers';
 import type { PreviewProps } from '@/previews/types';
-import { EditableCell, type EditableCellAlign, type EditableCellType, type EditableCellValue } from '@/ui';
+import {
+  EditableCell,
+  type EditableCellAlign,
+  type EditableCellOption,
+  type EditableCellType,
+  type EditableCellValue,
+} from '@/ui';
 
 type Styles = PreviewProps['styles'];
 
@@ -37,9 +43,21 @@ function buildVars(styles: Styles): CSSProperties {
   } as CSSProperties;
 }
 
+// Sample options for the select / multiselect showcase branches. Kept small
+// so the dropdown renders without a search box by default (auto threshold).
+const SAMPLE_OPTIONS: EditableCellOption[] = [
+  { value: 'growth', label: 'Growth' },
+  { value: 'retention', label: 'Retention' },
+  { value: 'expansion', label: 'Expansion' },
+  { value: 'winback', label: 'Win-back' },
+];
+
+const commitDelay = () => new Promise((r) => setTimeout(r, 400));
+
 export function EditableCellPreview({ styles, variants }: PreviewProps & { componentId: string }) {
   const type = (variants.type as EditableCellType) ?? 'text';
   const align = (variants.align as EditableCellAlign) ?? 'left';
+  const dateFormat = (variants.dateFormat as 'ymd' | 'dmy' | 'mdy') ?? 'ymd';
   // `state` forces the showcase cell into each peer state so only the
   // matching knobs are shown and they paint without interaction. hover /
   // focus ride on forced modifier classes, disabled on the `disabled` prop,
@@ -63,51 +81,114 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
   // doesn't throw away the user's current value.
   const [textValue, setTextValue] = useState('Revenue Motion');
   const [numberValue, setNumberValue] = useState(42);
+  const [dateValue, setDateValue] = useState('2026-03-14');
+  const [selectValue, setSelectValue] = useState('growth');
+  const [multiValue, setMultiValue] = useState<string[]>(['growth', 'expansion']);
 
   const vars = buildVars(styles);
 
-  // Async commit simulator — half-second delay, occasional reject for
-  // the showcase row to demonstrate the inline-error path. The
-  // Interactive row commits cleanly so designers can exercise the
-  // happy path.
+  // Async commit simulators — half-second delay to exercise the submitting
+  // state, then coerce the committed value into the type's shape. The showcase
+  // cell (below) and the Interactive row both commit cleanly so designers can
+  // eyeball the happy path per type.
   const handleTextCommit = async (next: EditableCellValue) => {
-    await new Promise((r) => setTimeout(r, 400));
+    await commitDelay();
     setTextValue(String(Array.isArray(next) ? next.join(', ') : next));
   };
   const handleNumberCommit = async (next: EditableCellValue) => {
-    await new Promise((r) => setTimeout(r, 400));
+    await commitDelay();
     setNumberValue(Number(next));
   };
+  const handleDateCommit = async (next: EditableCellValue) => {
+    await commitDelay();
+    setDateValue(String(next));
+  };
+  const handleSelectCommit = async (next: EditableCellValue) => {
+    await commitDelay();
+    setSelectValue(String(next));
+  };
+  const handleMultiCommit = async (next: EditableCellValue) => {
+    await commitDelay();
+    // multiselect commits a string[]; clearable commits [] (empty).
+    setMultiValue(Array.isArray(next) ? next : next === '' ? [] : [String(next)]);
+  };
+
+  // Chrome shared by every showcase branch so switching Type in the editor
+  // re-renders the matching editor while keeping the forced state / align.
+  const showcaseChrome = {
+    align,
+    forceMode,
+    disabled: state === 'disabled',
+    className: forcedClass || undefined,
+  };
+
+  // Render the showcase cell for the type currently picked in the editor — the
+  // whole point of this preview: changing Type must swap the rendered editor,
+  // not fall back to a text input.
+  const showcaseCell = (() => {
+    switch (type) {
+      case 'number':
+        return (
+          <EditableCell
+            {...showcaseChrome}
+            type="number"
+            value={numberValue}
+            onCommit={handleNumberCommit}
+            validate={(v) => (typeof v === 'number' && v < 0 ? 'Must be ≥ 0' : null)}
+          />
+        );
+      case 'date':
+        return (
+          <EditableCell
+            {...showcaseChrome}
+            type="date"
+            value={dateValue}
+            dateFormat={dateFormat}
+            onCommit={handleDateCommit}
+          />
+        );
+      case 'select':
+        return (
+          <EditableCell
+            {...showcaseChrome}
+            type="select"
+            value={selectValue}
+            options={SAMPLE_OPTIONS}
+            clearable
+            onCommit={handleSelectCommit}
+            placeholder="Pick a motion…"
+          />
+        );
+      case 'multiselect':
+        return (
+          <EditableCell
+            {...showcaseChrome}
+            type="multiselect"
+            value={multiValue}
+            options={SAMPLE_OPTIONS}
+            clearable
+            onCommit={handleMultiCommit}
+            placeholder="Pick motions…"
+          />
+        );
+      default:
+        return (
+          <EditableCell
+            {...showcaseChrome}
+            type="text"
+            value={textValue}
+            onCommit={handleTextCommit}
+            placeholder="Enter a name…"
+          />
+        );
+    }
+  })();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       <div>
         <div style={sectionLabel}>{type} cell ({align}) — {state}</div>
-        <div style={vars}>
-          {type === 'number' ? (
-            <EditableCell
-              value={numberValue}
-              onCommit={handleNumberCommit}
-              type="number"
-              align={align}
-              forceMode={forceMode}
-              disabled={state === 'disabled'}
-              className={forcedClass || undefined}
-              validate={(v) => (typeof v === 'number' && v < 0 ? 'Must be ≥ 0' : null)}
-            />
-          ) : (
-            <EditableCell
-              value={textValue}
-              onCommit={handleTextCommit}
-              type="text"
-              align={align}
-              forceMode={forceMode}
-              disabled={state === 'disabled'}
-              className={forcedClass || undefined}
-              placeholder="Enter a name…"
-            />
-          )}
-        </div>
+        <div style={vars}>{showcaseCell}</div>
       </div>
 
       <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
