@@ -26,10 +26,15 @@ import type { ComponentDef, PreviewProps, StyleOverrides } from '../lib/types';
 type Tab = 'visual' | 'dev' | 'code';
 
 export function PropertiesPanel({
-  embed = false,
   orientation = 'horizontal',
   onToggleOrientation,
 }: {
+  /**
+   * Accepted for API compatibility with host portals that mount the panel
+   * embedded. No longer switches the surface color — the properties panel
+   * is always white (`bg-card`) so its text keeps full contrast in both the
+   * standalone studio and an embedded portal.
+   */
   embed?: boolean;
   orientation?: 'horizontal' | 'vertical';
   onToggleOrientation?: () => void;
@@ -248,9 +253,9 @@ export function PropertiesPanel({
   return (
     <aside className={`flex flex-col overflow-hidden w-full h-full ${
       orientation === 'horizontal' ? 'border-l' : 'border-t'
-    } border-border ${embed ? 'bg-card' : 'bg-surface-alt'}`}>
+    } border-border bg-card`}>
       {/* Header with tabs */}
-      <div className={`sticky top-0 z-10 border-b border-border px-5 py-3 ${embed ? 'bg-card' : 'bg-surface-alt'}`}>
+      <div className="sticky top-0 z-10 border-b border-border px-5 py-3 bg-card">
         {/* Panel-level header — uses the same SectionHeader atom as the
             VARIANT / COLORS / STYLE per-section headers below, so the
             entire panel's section-title chrome flows through one
