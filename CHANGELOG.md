@@ -1,3 +1,11 @@
+# [2.8.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.7.0...v2.8.0) (2026-07-01)
+
+
+### Features
+
+* **ui:** add error state to Checkbox, RadioGroup and ToggleSwitch ([c14f3c9](https://gitlab.viax.tech/services-viax/uxm/commit/c14f3c9dda429a381b94cc308e9c00798d0677ea))
+* **ui:** align file-upload page-error prop with the input family ([885fa34](https://gitlab.viax.tech/services-viax/uxm/commit/885fa3478a04b8bf9b2ec6b35606c30b6e1ff53e))
+
 # [2.7.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.6.0...v2.7.0) (2026-07-01)
 
 
