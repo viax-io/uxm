@@ -1,3 +1,17 @@
+# [2.7.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.6.0...v2.7.0) (2026-07-01)
+
+
+### Bug Fixes
+
+* **studio:** keep the properties panel white for text contrast ([1ace2b8](https://gitlab.viax.tech/services-viax/uxm/commit/1ace2b8cf8df83bcf9985118574e2b32dc34f6fd)), closes [#F2F1F0](https://gitlab.viax.tech/services-viax/uxm/issues/F2F1F0)
+* **studio:** render all five Editable Cell types in the preview ([76ab019](https://gitlab.viax.tech/services-viax/uxm/commit/76ab01918723c61e67c362d3e8c1e1ba4f8e234f))
+
+
+### Features
+
+* **ui:** add Clearable (✕) to TextInput and Textarea ([6798a74](https://gitlab.viax.tech/services-viax/uxm/commit/6798a74f07ba639aee641e10fcbe315973c5f466))
+* **ui:** add Progress Bar — determinate Feedback atom (linear + ring) ([72f033f](https://gitlab.viax.tech/services-viax/uxm/commit/72f033f144ef0341adaec5c55fd90ba138446c2a))
+
 # [2.6.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.4...v2.6.0) (2026-06-29)
 
 
