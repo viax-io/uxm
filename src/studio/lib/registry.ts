@@ -540,6 +540,8 @@ export const registry: ComponentDef[] = [
         { name: 'placeholder', type: 'string', description: 'Placeholder shown when empty.' },
         { name: 'type', type: '"text" | "email" | "tel" | "url" | "password" | "search"', defaultValue: '"text"', description: 'Native input type — affects keyboard and validation hints on mobile.' },
         { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Disables the input.' },
+        { name: 'clearable', type: 'boolean', defaultValue: 'true', description: 'Show a clear (✕) button at the trailing edge when the field has content. On by default; the ✕ self-clears and fires `onChange` with "", so no wiring is needed for controlled fields. Pass `false` to opt out.' },
+        { name: 'onClear', type: '() => void', description: 'Optional override for the clear action. By default the field clears itself (and notifies via `onChange`); pass `onClear` only for custom reset logic beyond emptying the value.' },
         { name: '...rest', type: 'InputHTMLAttributes<HTMLInputElement>', description: 'All other native input attributes (aria-label, name, autoComplete, etc.) pass through.' },
       ],
     },
