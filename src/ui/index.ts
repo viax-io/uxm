@@ -164,6 +164,8 @@ export { PillSelect } from './pill-select';
 export type { PillSelectProps } from './pill-select';
 export { Popover } from './popover';
 export type { PopoverPlacement, PopoverProps } from './popover';
+export { ProgressBar } from './progress-bar';
+export type { ProgressBarProps, ProgressBarVariant } from './progress-bar';
 export { PropertyField, PropertyGrid } from './property-field';
 export type { PropertyFieldProps, PropertyGridProps } from './property-field';
 export { RadioGroup, RadioOption } from './radio-group';

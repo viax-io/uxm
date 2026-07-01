@@ -2630,6 +2630,59 @@ export const registry: ComponentDef[] = [
     ],
   },
   {
+    id: 'progress-bar',
+    name: 'Progress Bar',
+    category: 'Feedback',
+    description:
+      'Determinate progress (0–100%) — the companion to Loader\'s indeterminate spinner/dots/bar. Use for uploads, batch operations, and stepped flows where the share of work done is known; for "something is happening, no ETA" use Loader instead. Two variants share one Value knob: a linear track+fill and a circular ring (CSS conic-gradient, no SVG). Root is layout-only — all theming routes through `--uxm-progress-bar-*` vars on inner elements, so saves need no PER_COMPONENT_MAPPING entry. The value drives the linear fill width and the ring sweep via the same var.',
+    styleProperties: [
+      // `value` is a preview proxy for what will be runtime/dynamic data — the
+      // editor slider lets designers eyeball fill levels, but in production the
+      // consumer drives it via the `value` prop (the saved
+      // `--uxm-progress-bar-value` is always overridden inline). The numeric
+      // percentage label is always shown (determinate by nature).
+      { key: 'value', label: 'Value (%)', control: 'slider', defaultValue: 60, min: 0, max: 100, step: 1 },
+      { key: 'fillColor', label: 'Fill Color', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
+      { key: 'trackColor', label: 'Track Color', control: 'color', defaultValue: 'color-mix(in srgb, var(--color-accent-bold) 16%, transparent)', section: 'colors' },
+      // ── Linear shape (showWhen variant=linear) ──
+      { key: 'barHeight', label: 'Bar Height', control: 'number', defaultValue: 8, min: 2, max: 24, step: 1, unit: 'px', showWhen: { variant: 'linear' } },
+      { key: 'barRadius', label: 'Bar Radius', control: 'slider', defaultValue: 999, min: 0, max: 999, step: 1, unit: 'px', showWhen: { variant: 'linear' } },
+      // ── Ring shape (showWhen variant=ring) ──
+      { key: 'ringSize', label: 'Ring Size', control: 'number', defaultValue: 72, min: 40, max: 160, step: 2, unit: 'px', showWhen: { variant: 'ring' } },
+      { key: 'ringThickness', label: 'Ring Thickness', control: 'number', defaultValue: 8, min: 2, max: 28, step: 1, unit: 'px', showWhen: { variant: 'ring' } },
+      // ── Value label — always rendered; its own section ──
+      { key: 'valueColor', label: 'Value Color', control: 'color', defaultValue: 'var(--color-text)', section: 'value' },
+      { key: 'valueSize', label: 'Value Size', control: 'number', defaultValue: 13, min: 10, max: 28, step: 1, unit: 'px', section: 'value' },
+      // ── Caption + layout ──
+      { key: 'label', label: 'Caption', control: 'text', defaultValue: 'Uploading…' },
+      { key: 'labelColor', label: 'Caption Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
+      { key: 'labelSize', label: 'Caption Size', control: 'number', defaultValue: 13, min: 10, max: 18, step: 1, unit: 'px' },
+      { key: 'stackGap', label: 'Gap', control: 'number', defaultValue: 8, min: 0, max: 24, step: 2, unit: 'px' },
+    ],
+    layoutVariants: [
+      {
+        key: 'variant',
+        label: 'Variant',
+        options: [
+          { value: 'linear', label: 'Linear' },
+          { value: 'ring', label: 'Ring' },
+        ],
+        defaultValue: 'linear',
+      },
+    ],
+    api: {
+      importPath: '@viax/uxm/ui',
+      importNames: 'ProgressBar',
+      props: [
+        { name: 'value', type: 'number', required: true, description: 'Completion 0–100. Clamped into range. In production the consumer drives this from real progress data.' },
+        { name: 'variant', type: '"linear" | "ring"', defaultValue: '"linear"', description: 'Linear track+fill or circular ring (CSS conic-gradient, no SVG). Both are determinate.' },
+        { name: 'label', type: 'string', description: 'Optional caption — above the bar (linear) / below the ring (ring). Also becomes the accessible name.' },
+        { name: 'valueText', type: 'string', description: 'Override the percentage text (defaults to `${Math.round(value)}%`).' },
+        { name: '...rest', type: 'HTMLAttributes<HTMLDivElement>', description: 'Native attributes pass through to the root.' },
+      ],
+    },
+  },
+  {
     id: 'banner',
     name: 'Banner',
     category: 'Feedback',
