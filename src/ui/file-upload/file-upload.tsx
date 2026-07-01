@@ -112,12 +112,18 @@ export interface FileUploadProps {
   allowedTypesText?: string;
   /**
    * Page-level error message to render below the drop area (e.g. "Connection
-   * lost", "Server rejected the batch"). When set, the atom paints the
-   * drop area in the `error` state automatically.
+   * lost", "Server rejected the batch"). When set, the atom paints the drop
+   * area in the `error` state automatically. Named `error` to match the rest
+   * of the input family's `error?: string`.
    *
    * Distinct from per-file errors — set `status: "error"` + `errorMessage`
    * on a `FileUploadFileMeta` to surface a single-file failure inline on
    * its row instead.
+   */
+  error?: string;
+  /**
+   * @deprecated Renamed to `error` (input-family convention). Still accepted
+   * as an alias for back-compat; `error` wins when both are set.
    */
   errorMessage?: string;
   /**
@@ -160,6 +166,7 @@ export function FileUpload({
   titleText,
   helpText,
   allowedTypesText,
+  error,
   errorMessage,
   files = [],
   onFiles,
@@ -187,9 +194,11 @@ export function FileUpload({
   // chunked uploads without per-file callbacks. Caller drives it.
   const isUploading = forcedState === 'uploading';
 
-  // Atom-level error: caller set errorMessage OR forced state to "error".
-  // Per-file errors are NOT reflected here — they're each row's concern.
-  const isPageError = forcedState === 'error' || (!forcedState && !!errorMessage);
+  // Atom-level error: caller set `error` (or the deprecated `errorMessage`
+  // alias) OR forced state to "error". Per-file errors are NOT reflected here —
+  // they're each row's concern.
+  const pageError = error ?? errorMessage;
+  const isPageError = forcedState === 'error' || (!forcedState && !!pageError);
 
   const dataState: FileUploadState = forcedState
     ? forcedState
@@ -297,7 +306,7 @@ export function FileUpload({
           <span className="uxm-file-upload__allowed-types">{allowedTypesText}</span>
         )}
       </label>
-      {errorMessage && <span className="uxm-file-upload__error">{errorMessage}</span>}
+      {pageError && <span className="uxm-file-upload__error">{pageError}</span>}
       {children}
       {files.length > 0 && (
         <ul className="uxm-file-upload__list">
