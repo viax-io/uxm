@@ -91,3 +91,16 @@
     opacity: 1;
   }
 }
+
+/* Small-control error message — the control + label stay neutral (too small to
+   read as an error; a red label would compete). The message below is the sole
+   signal, reading the errorColor / errorMessageSize knobs the registry exposes
+   (kebab → `--uxm-checkbox-error-color` / `-error-message-size`). The
+   `.uxm-checkbox--error` class rides the root as a state hook + aria-invalid
+   companion, even though it paints nothing itself. */
+.uxm--message {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--uxm-checkbox-error-message-size, 12px);
+  color: var(--uxm-checkbox-error-color, var(--color-danger-text));
+}

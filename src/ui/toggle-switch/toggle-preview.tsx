@@ -107,6 +107,9 @@ export function TogglePreview({ styles, variants }: PreviewProps) {
     '--uxm-toggle-switch-focus-ring': styles.focusRing as string | undefined,
     '--uxm-toggle-switch-disabled-opacity':
       styles.disabledOpacity != null ? String(styles.disabledOpacity) : undefined,
+    '--uxm-toggle-switch-error-color': styles.errorColor as string | undefined,
+    '--uxm-toggle-switch-error-message-size':
+      styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
   };
 
   const sectionLabel = {
@@ -136,7 +139,11 @@ export function TogglePreview({ styles, variants }: PreviewProps) {
           so the visual matches the freshly-disabled UX. */}
       <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
         <div style={sectionLabel}>Interactive</div>
-        <ToggleSwitch key={state} disabled={state === 'disabled'}>
+        <ToggleSwitch
+          key={state}
+          disabled={state === 'disabled'}
+          error={state === 'error' ? 'Enable notifications to continue' : undefined}
+        >
           Click, hover, or Tab-focus this toggle
         </ToggleSwitch>
       </div>

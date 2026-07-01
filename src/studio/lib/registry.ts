@@ -1555,7 +1555,8 @@ export const registry: ComponentDef[] = [
         { name: 'titleText', type: 'string', defaultValue: '"Upload a file"', description: 'Heading inside the drop area.' },
         { name: 'helpText', type: 'string', description: 'Hint line under the title. Defaults to a `multiple`-aware string if omitted.' },
         { name: 'allowedTypesText', type: 'string', description: 'Optional constraint line below the help text — e.g. "PDF, DOCX · up to 10 MB". Caller-controlled copy: the atom never invents it and never enforces it. Keep it in sync with the `accept` filter and your `onFiles` validation. If omitted, no slot renders.' },
-        { name: 'errorMessage', type: 'string', description: 'Page-level error message (e.g. "Connection lost"). Paints the drop area in the `error` state and renders the message below it. Distinct from per-file errors — set `status: "error"` + `errorMessage` on a `FileUploadFileMeta` for single-file failures.' },
+        { name: 'error', type: 'string', description: 'Page-level error message (e.g. "Connection lost"). Paints the drop area in the `error` state and renders the message below it. Named `error` to match the rest of the input family. Distinct from per-file errors — set `status: "error"` + `errorMessage` on a `FileUploadFileMeta` for single-file failures.' },
+        { name: 'errorMessage', type: 'string', description: 'Deprecated alias for `error` (back-compat); `error` wins when both are set.' },
         { name: 'files', type: 'FileUploadFileMeta[]', description: "Files to display in the inline list under the drop area. Each row: `{ id, name, size, status?, progress?, errorMessage? }`. `status` is `queued | uploading | done | error` and drives row rendering independently. List is always rendered when `files.length > 0` — to keep the list elsewhere on the page, just don't pass `files` to the atom." },
         { name: 'state', type: '"default" | "drag-over" | "uploading" | "error"', description: 'Drop-area visual state. Caller-controlled — the atom never auto-derives this from per-file statuses. Set `"uploading"` for batch lockouts / pre-file validation / indeterminate uploads; the help text swaps to "Uploading…" and `aria-busy` is applied. Per-file states (queued/uploading/done/error) live on each `FileUploadFileMeta.status` and are orthogonal to this.' },
         { name: 'iconGlyph', type: 'string', defaultValue: '"cloud-arrow-up"', description: 'Override the drop-area icon glyph.' },
@@ -2027,6 +2028,11 @@ export const registry: ComponentDef[] = [
       { key: 'size', label: 'Size', control: 'number', defaultValue: 20, min: 14, max: 32, step: 2, unit: 'px' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px' },
       { key: 'gap', label: 'Label Gap', control: 'number', defaultValue: 10, min: 4, max: 20, step: 2, unit: 'px' },
+      // Error — the box + label stay neutral; the message below is the sole
+      // signal (errorColor colors it, errorMessageSize sizes it). Shared keys
+      // with the input family so the editor's "Match in N" sync applies.
+      { key: 'errorColor', label: 'Message', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'errorState', showWhen: { state: 'error' } },
+      { key: 'errorMessageSize', label: 'Message Size', control: 'number', defaultValue: 12, min: 10, max: 16, step: 1, unit: 'px', section: 'errorState', showWhen: { state: 'error' } },
     ],
     layoutVariants: [
       {
@@ -2037,6 +2043,7 @@ export const registry: ComponentDef[] = [
           { value: 'hover', label: 'Hover' },
           { value: 'focus', label: 'Focus' },
           { value: 'disabled', label: 'Disabled' },
+          { value: 'error', label: 'Error' },
         ],
         defaultValue: 'default',
       },
@@ -2073,6 +2080,10 @@ export const registry: ComponentDef[] = [
       // Shared — always visible
       { key: 'width', label: 'Width', control: 'number', defaultValue: 44, min: 32, max: 64, step: 4, unit: 'px' },
       { key: 'height', label: 'Height', control: 'number', defaultValue: 24, min: 18, max: 36, step: 2, unit: 'px' },
+      // Error — the track + label stay neutral; the message below is the sole
+      // signal (errorColor colors it, errorMessageSize sizes it).
+      { key: 'errorColor', label: 'Message', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'errorState', showWhen: { state: 'error' } },
+      { key: 'errorMessageSize', label: 'Message Size', control: 'number', defaultValue: 12, min: 10, max: 16, step: 1, unit: 'px', section: 'errorState', showWhen: { state: 'error' } },
     ],
     layoutVariants: [
       {
@@ -2083,6 +2094,7 @@ export const registry: ComponentDef[] = [
           { value: 'hover', label: 'Hover' },
           { value: 'focus', label: 'Focus' },
           { value: 'disabled', label: 'Disabled' },
+          { value: 'error', label: 'Error' },
         ],
         defaultValue: 'default',
       },
@@ -2118,6 +2130,10 @@ export const registry: ComponentDef[] = [
       // Shared — always visible
       { key: 'size', label: 'Size', control: 'number', defaultValue: 20, min: 14, max: 32, step: 2, unit: 'px' },
       { key: 'gap', label: 'Item Gap', control: 'number', defaultValue: 16, min: 4, max: 32, step: 4, unit: 'px' },
+      // Error — the circles + option labels stay neutral; the group message
+      // below is the sole signal (errorColor colors it, errorMessageSize sizes it).
+      { key: 'errorColor', label: 'Message', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'errorState', showWhen: { state: 'error' } },
+      { key: 'errorMessageSize', label: 'Message Size', control: 'number', defaultValue: 12, min: 10, max: 16, step: 1, unit: 'px', section: 'errorState', showWhen: { state: 'error' } },
     ],
     layoutVariants: [
       {
@@ -2128,6 +2144,7 @@ export const registry: ComponentDef[] = [
           { value: 'hover', label: 'Hover' },
           { value: 'focus', label: 'Focus' },
           { value: 'disabled', label: 'Disabled' },
+          { value: 'error', label: 'Error' },
         ],
         defaultValue: 'default',
       },

@@ -105,6 +105,9 @@ export function RadioGroupPreview({ styles, variants }: PreviewProps) {
     '--uxm-radio-group-focus-ring': styles.focusRing as string | undefined,
     '--uxm-radio-group-disabled-opacity':
       styles.disabledOpacity != null ? String(styles.disabledOpacity) : undefined,
+    '--uxm-radio-group-error-color': styles.errorColor as string | undefined,
+    '--uxm-radio-group-error-message-size':
+      styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
   };
 
   const sectionLabel = {
@@ -143,6 +146,7 @@ export function RadioGroupPreview({ styles, variants }: PreviewProps) {
           key={interactiveKey}
           name={`uxm-radio-preview-${interactiveKey}`}
           direction={direction}
+          error={state === 'error' ? 'Pick an option to continue' : undefined}
         >
           {INTERACTIVE_OPTIONS.map((opt) => (
             <RadioOption

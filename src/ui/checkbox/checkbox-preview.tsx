@@ -106,6 +106,9 @@ export function CheckboxPreview({ styles, variants }: PreviewProps) {
     '--uxm-checkbox-focus-ring': styles.focusRing as string | undefined,
     '--uxm-checkbox-disabled-opacity':
       styles.disabledOpacity != null ? String(styles.disabledOpacity) : undefined,
+    '--uxm-checkbox-error-color': styles.errorColor as string | undefined,
+    '--uxm-checkbox-error-message-size':
+      styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
   };
 
   const sectionLabel = {
@@ -135,7 +138,11 @@ export function CheckboxPreview({ styles, variants }: PreviewProps) {
           designers flip into and out of disabled. */}
       <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
         <div style={sectionLabel}>Interactive</div>
-        <Checkbox key={state} disabled={state === 'disabled'}>
+        <Checkbox
+          key={state}
+          disabled={state === 'disabled'}
+          error={state === 'error' ? 'Please accept the terms to continue' : undefined}
+        >
           Click, hover, or Tab-focus this checkbox
         </Checkbox>
       </div>
