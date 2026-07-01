@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/helpers';
+import { FieldError } from '@/ui/field-error';
 
 import type { ChangeEvent, ReactNode } from 'react';
 
@@ -14,22 +15,44 @@ export interface RadioGroupProps {
   direction?: RadioGroupDirection;
   className?: string;
   children: ReactNode;
+  /**
+   * When set to a non-empty string, marks the group invalid: `aria-invalid`
+   * lands on the group and the message renders below in the error color. Per
+   * the input family's small-control convention the circles AND the option
+   * labels all stay neutral — the message is the sole signal. The
+   * `.uxm-radio-group--error` class still rides on the root as a state hook.
+   * Omit (or pass an empty string) for normal.
+   */
+  error?: string;
 }
 
 export function RadioGroup({
   direction = 'vertical',
   className,
   children,
+  error,
 }: RadioGroupProps) {
   return (
-    <div
-      role="radiogroup"
-      className={cn('uxm-radio-group', `uxm-radio-group--${direction}`, className)}
-    >
-      {children}
-    </div>
+    <>
+      <div
+        role="radiogroup"
+        className={cn(
+          'uxm-radio-group',
+          `uxm-radio-group--${direction}`,
+          error && 'uxm-radio-group--error',
+          className,
+        )}
+        aria-invalid={error ? true : undefined}
+      >
+        {children}
+      </div>
+      {error && <FieldError className="uxm-radio-group__error-message">{error}</FieldError>}
+    </>
   );
 }
+// Static marker so FormField only forwards its `error` prop into children that
+// accept one (avoids React unknown-prop warnings on non-input children).
+RadioGroup.hasError = true;
 
 export interface RadioOptionProps {
   name: string;

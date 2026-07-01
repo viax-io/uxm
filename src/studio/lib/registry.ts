@@ -2027,6 +2027,11 @@ export const registry: ComponentDef[] = [
       { key: 'size', label: 'Size', control: 'number', defaultValue: 20, min: 14, max: 32, step: 2, unit: 'px' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px' },
       { key: 'gap', label: 'Label Gap', control: 'number', defaultValue: 10, min: 4, max: 20, step: 2, unit: 'px' },
+      // Error — the box + label stay neutral; the message below is the sole
+      // signal (errorColor colors it, errorMessageSize sizes it). Shared keys
+      // with the input family so the editor's "Match in N" sync applies.
+      { key: 'errorColor', label: 'Message', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'errorState', showWhen: { state: 'error' } },
+      { key: 'errorMessageSize', label: 'Message Size', control: 'number', defaultValue: 12, min: 10, max: 16, step: 1, unit: 'px', section: 'errorState', showWhen: { state: 'error' } },
     ],
     layoutVariants: [
       {
@@ -2037,6 +2042,7 @@ export const registry: ComponentDef[] = [
           { value: 'hover', label: 'Hover' },
           { value: 'focus', label: 'Focus' },
           { value: 'disabled', label: 'Disabled' },
+          { value: 'error', label: 'Error' },
         ],
         defaultValue: 'default',
       },
@@ -2073,6 +2079,10 @@ export const registry: ComponentDef[] = [
       // Shared — always visible
       { key: 'width', label: 'Width', control: 'number', defaultValue: 44, min: 32, max: 64, step: 4, unit: 'px' },
       { key: 'height', label: 'Height', control: 'number', defaultValue: 24, min: 18, max: 36, step: 2, unit: 'px' },
+      // Error — the track + label stay neutral; the message below is the sole
+      // signal (errorColor colors it, errorMessageSize sizes it).
+      { key: 'errorColor', label: 'Message', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'errorState', showWhen: { state: 'error' } },
+      { key: 'errorMessageSize', label: 'Message Size', control: 'number', defaultValue: 12, min: 10, max: 16, step: 1, unit: 'px', section: 'errorState', showWhen: { state: 'error' } },
     ],
     layoutVariants: [
       {
@@ -2083,6 +2093,7 @@ export const registry: ComponentDef[] = [
           { value: 'hover', label: 'Hover' },
           { value: 'focus', label: 'Focus' },
           { value: 'disabled', label: 'Disabled' },
+          { value: 'error', label: 'Error' },
         ],
         defaultValue: 'default',
       },
@@ -2118,6 +2129,10 @@ export const registry: ComponentDef[] = [
       // Shared — always visible
       { key: 'size', label: 'Size', control: 'number', defaultValue: 20, min: 14, max: 32, step: 2, unit: 'px' },
       { key: 'gap', label: 'Item Gap', control: 'number', defaultValue: 16, min: 4, max: 32, step: 4, unit: 'px' },
+      // Error — the circles + option labels stay neutral; the group message
+      // below is the sole signal (errorColor colors it, errorMessageSize sizes it).
+      { key: 'errorColor', label: 'Message', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'errorState', showWhen: { state: 'error' } },
+      { key: 'errorMessageSize', label: 'Message Size', control: 'number', defaultValue: 12, min: 10, max: 16, step: 1, unit: 'px', section: 'errorState', showWhen: { state: 'error' } },
     ],
     layoutVariants: [
       {
@@ -2128,6 +2143,7 @@ export const registry: ComponentDef[] = [
           { value: 'hover', label: 'Hover' },
           { value: 'focus', label: 'Focus' },
           { value: 'disabled', label: 'Disabled' },
+          { value: 'error', label: 'Error' },
         ],
         defaultValue: 'default',
       },
