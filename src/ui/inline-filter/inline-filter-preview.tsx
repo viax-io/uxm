@@ -6,6 +6,8 @@ import { Icon } from '@/ui';
 import { InlineFilter } from '@/ui';
 import { InputWithIcon } from '@/ui';
 
+import type { CSSProperties } from 'react';
+
 const FILTERS = ['All', 'Active', 'Draft', 'Archived'];
 
 /**
@@ -28,7 +30,7 @@ export function InlineFilterPreview({ styles }: PreviewProps) {
   return (
     <div style={{ width: 500 }}>
       <InlineFilter
-        style={{ gap: `${styles.gap}px` }}
+        style={{ '--uxm-inline-filter-gap': `${styles.gap}px` } as CSSProperties}
         search={
           <InputWithIcon
             placeholder="Search..."

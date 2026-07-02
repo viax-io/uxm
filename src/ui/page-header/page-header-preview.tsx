@@ -10,15 +10,17 @@ export function PageHeaderPreview({ styles }: PreviewProps) {
       style={{
         width: 520,
         display: 'flex', alignItems: 'flex-start',
-        gap: styles.gap as number,
-        padding: `${styles.paddingY}px ${styles.paddingX}px`,
+        gap: `var(--uxm-page-header-gap, ${styles.gap}px)`,
+        padding: `var(--uxm-page-header-padding-y, ${styles.paddingY}px) var(--uxm-page-header-padding-x, ${styles.paddingX}px)`,
       }}
     >
       <span style={{
-        width: iconSize, height: iconSize, flexShrink: 0,
+        width: `var(--uxm-page-header-icon-size, ${iconSize}px)`,
+        height: `var(--uxm-page-header-icon-size, ${iconSize}px)`,
+        flexShrink: 0,
         borderRadius: 8,
-        backgroundColor: styles.iconBg as string,
-        color: styles.iconColor as string,
+        backgroundColor: `var(--uxm-page-header-icon-bg, ${styles.iconBg as string})`,
+        color: `var(--uxm-page-header-icon-color, ${styles.iconColor as string})`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         <Icon glyph="chat-bubble" size={iconSize * 0.55} strokeWidth={1.5} />

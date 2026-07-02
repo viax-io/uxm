@@ -81,7 +81,7 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
       : brand.iconUrl || '/viax-icon.svg';
 
   const cssVars: CSSProperties = {
-    backgroundColor: styles.backgroundColor as string,
+    ['--uxm-app-sidebar-background-color' as string]: styles.backgroundColor as string,
     borderColor: styles.borderColor as string,
     width: collapsed ? (styles.collapsedWidth as number) : (styles.expandedWidth as number),
     height: 480,

@@ -11,3 +11,8 @@
   justify-content: center;
   width: var(--uxm-icon-tile-size, 28px);
 }
+
+.uxm-icon-tile > .uxm-icon {
+  height: var(--uxm-icon-tile-icon-size, 14px);
+  width: var(--uxm-icon-tile-icon-size, 14px);
+}

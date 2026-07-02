@@ -3,7 +3,7 @@
 /* Tabs Underline (page-nav style — text labels with an animated bar under the active tab) */
 
 .uxm-tabs-underline {
-  border-bottom: 1px solid
+  border-bottom: var(--uxm-tabs-underline-track-border-width, 1px) solid
     var(--uxm-tabs-underline-track-border-color, var(--color-border));
   display: inline-flex;
   gap: var(--uxm-tabs-underline-gap, 4px);

@@ -3,7 +3,7 @@
 .uxm-inline-filter {
   align-items: center;
   display: flex;
-  gap: 12px;
+  gap: var(--uxm-inline-filter-gap, 12px);
   width: 100%;
 
   &__search {

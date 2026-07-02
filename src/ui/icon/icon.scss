@@ -2,4 +2,7 @@
 
 .uxm-icon {
   display: inline-block;
+  // Glyph tint. The SVG paints with `currentColor`, so with no override the
+  // icon keeps inheriting its parent's color (byte-identical to before).
+  color: var(--uxm-icon-color, inherit);
 }

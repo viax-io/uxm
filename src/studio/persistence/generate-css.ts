@@ -60,11 +60,19 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     backgroundColor: '--uxm-input-text-bg',
     borderColor: '--uxm-input-text-border-color',
     color: '--uxm-input-text-color',
+    borderRadius: '--uxm-input-text-border-radius',
+    paddingX: '--uxm-input-text-padding-x',
+    paddingY: '--uxm-input-text-padding-y',
+    fontSize: '--uxm-input-text-font-size',
   },
   'number-input': {
     backgroundColor: '--uxm-number-input-bg',
     borderColor: '--uxm-number-input-border-color',
     color: '--uxm-number-input-color',
+    borderRadius: '--uxm-number-input-border-radius',
+    paddingX: '--uxm-number-input-padding-x',
+    paddingY: '--uxm-number-input-padding-y',
+    fontSize: '--uxm-number-input-font-size',
   },
   'currency-input': {
     backgroundColor: '--uxm-currency-input-background-color',
@@ -80,6 +88,10 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     borderColor: '--uxm-textarea-border-color',
     color: '--uxm-textarea-color',
     minHeight: '--uxm-textarea-min-height',
+    borderRadius: '--uxm-textarea-border-radius',
+    paddingX: '--uxm-textarea-padding-x',
+    paddingY: '--uxm-textarea-padding-y',
+    fontSize: '--uxm-textarea-font-size',
   },
   'file-upload': {
     backgroundColor: '--uxm-file-upload-bg',
@@ -92,11 +104,16 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     paddingY: '--uxm-file-upload-padding-y',
     minHeight: '--uxm-file-upload-min-height',
     gap: '--uxm-file-upload-gap',
+    rowGap: '--uxm-file-upload-row-gap',
   },
   'select-dropdown': {
     backgroundColor: '--uxm-select-dropdown-bg',
     borderColor: '--uxm-select-dropdown-border-color',
     color: '--uxm-select-dropdown-color',
+    borderRadius: '--uxm-select-dropdown-border-radius',
+    paddingX: '--uxm-select-dropdown-padding-x',
+    paddingY: '--uxm-select-dropdown-padding-y',
+    fontSize: '--uxm-select-dropdown-font-size',
   },
   'date-input': {
     backgroundColor: '--uxm-date-input-background-color',
@@ -173,6 +190,7 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   checkbox: {
     borderRadius: '--uxm-checkbox-border-radius',
+    gap: '--uxm-checkbox-gap',
   },
   card: {
     backgroundColor: '--uxm-card-bg',
@@ -189,6 +207,7 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   loader: {
     color: '--uxm-loader-color',
+    gap: '--uxm-loader-gap',
   },
   'data-table': {
     borderColor: '--uxm-data-table-border-color',
@@ -197,6 +216,7 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   'app-sidebar': {
     borderColor: '--uxm-app-sidebar-border-color',
+    backgroundColor: '--uxm-app-sidebar-background-color',
   },
   'sidebar-nav-item': {
     paddingX: '--uxm-sidebar-nav-item-padding-x',
@@ -216,6 +236,10 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   'app-top-bar': {
     borderColor: '--uxm-app-top-bar-border-color',
+    backgroundColor: '--uxm-app-top-bar-background-color',
+    height: '--uxm-app-top-bar-height',
+    paddingX: '--uxm-app-top-bar-padding-x',
+    gap: '--uxm-app-top-bar-gap',
   },
   'explorer-section': {
     paddingX: '--uxm-explorer-section-padding-x',
@@ -240,6 +264,7 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     backgroundColor: '--uxm-icon-button-bg',
     hoverBackgroundColor: '--uxm-icon-button-hover-bg',
     activeBackgroundColor: '--uxm-icon-button-active-bg',
+    borderRadius: '--uxm-icon-button-radius',
   },
   'button-primary': {
     backgroundColor: '--uxm-button-primary-background-color',
@@ -302,9 +327,13 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   'button-icon': {
     backgroundColor: '--uxm-button-icon-background-color',
     color: '--uxm-button-icon-color',
+    borderRadius: '--uxm-button-icon-border-radius',
   },
   'back-link': {
     color: '--uxm-back-link-color',
+    fontSize: '--uxm-back-link-font-size',
+    fontWeight: '--uxm-back-link-font-weight',
+    gap: '--uxm-back-link-gap',
   },
   breadcrumb: {
     fontSize: '--uxm-breadcrumb-font-size',
@@ -320,6 +349,10 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   'side-flexpane': {
     paddingX: '--uxm-side-flexpane-padding-x',
     paddingY: '--uxm-side-flexpane-padding-y',
+    backgroundColor: '--uxm-side-flexpane-background-color',
+    borderColor: '--uxm-side-flexpane-border-color',
+    borderRadius: '--uxm-side-flexpane-border-radius',
+    width: '--uxm-side-flexpane-width',
   },
   'list-item': {
     paddingX: '--uxm-list-item-padding-x',
@@ -350,6 +383,217 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     paddingX: '--uxm-toast-padding-x',
     paddingY: '--uxm-toast-padding-y',
     fontSize: '--uxm-toast-font-size',
+  },
+  avatar: {
+    backgroundColor: '--uxm-avatar-background-color',
+    borderColor: '--uxm-avatar-border-color',
+    borderRadius: '--uxm-avatar-border-radius',
+    borderWidth: '--uxm-avatar-border-width',
+    color: '--uxm-avatar-color',
+    fontSize: '--uxm-avatar-font-size',
+    fontWeight: '--uxm-avatar-font-weight',
+  },
+  banner: {
+    borderRadius: '--uxm-banner-border-radius',
+    paddingX: '--uxm-banner-padding-x',
+    paddingY: '--uxm-banner-padding-y',
+    fontSize: '--uxm-banner-font-size',
+  },
+  'bulk-action-bar': {
+    backgroundColor: '--uxm-bulk-action-bar-background-color',
+    color: '--uxm-bulk-action-bar-color',
+    borderColor: '--uxm-bulk-action-bar-border-color',
+    borderRadius: '--uxm-bulk-action-bar-border-radius',
+    paddingX: '--uxm-bulk-action-bar-padding-x',
+    paddingY: '--uxm-bulk-action-bar-padding-y',
+    gap: '--uxm-bulk-action-bar-gap',
+    fontSize: '--uxm-bulk-action-bar-font-size',
+  },
+  cluster: {
+    gap: '--uxm-cluster-gap',
+  },
+  'config-component-row': {
+    padding: '--uxm-config-component-row-padding',
+    borderRadius: '--uxm-config-component-row-radius',
+  },
+  'config-segment-item': {
+    paddingX: '--uxm-config-segment-item-padding-x',
+    paddingY: '--uxm-config-segment-item-padding-y',
+    borderRadius: '--uxm-config-segment-item-radius',
+  },
+  'detail-section': {
+    backgroundColor: '--uxm-detail-section-bg',
+    borderColor: '--uxm-detail-section-border-color',
+    borderRadius: '--uxm-detail-section-radius',
+    padding: '--uxm-detail-section-padding',
+  },
+  divider: {
+    color: '--uxm-divider-color',
+    gap: '--uxm-divider-gap',
+  },
+  'editable-cell': {
+    minHeight: '--uxm-editable-cell-min-height',
+    maxWidth: '--uxm-editable-cell-max-width',
+    paddingX: '--uxm-editable-cell-padding-x',
+    paddingY: '--uxm-editable-cell-padding-y',
+  },
+  'empty-state': {
+    padding: '--uxm-empty-state-padding',
+  },
+  'form-field': {
+    gap: '--uxm-form-field-gap',
+  },
+  'icon-tile': {
+    borderRadius: '--uxm-icon-tile-radius',
+    iconBg: '--uxm-icon-tile-bg',
+    iconColor: '--uxm-icon-tile-color',
+  },
+  icon: {
+    color: '--uxm-icon-color',
+  },
+  'inline-action': {
+    color: '--uxm-inline-action-color',
+    fontSize: '--uxm-inline-action-font-size',
+    fontWeight: '--uxm-inline-action-font-weight',
+    gap: '--uxm-inline-action-gap',
+  },
+  'inline-filter': {
+    gap: '--uxm-inline-filter-gap',
+  },
+  'lifecycle-edge-label': {
+    paddingX: '--uxm-lifecycle-edge-label-padding-x',
+    paddingY: '--uxm-lifecycle-edge-label-padding-y',
+    borderRadius: '--uxm-lifecycle-edge-label-radius',
+    borderWidth: '--uxm-lifecycle-edge-label-border-width',
+    fontSize: '--uxm-lifecycle-edge-label-font-size',
+    fontWeight: '--uxm-lifecycle-edge-label-font-weight',
+  },
+  'lifecycle-minimap': {
+    backgroundColor: '--uxm-lifecycle-minimap-bg',
+    borderColor: '--uxm-lifecycle-minimap-border-color',
+    borderRadius: '--uxm-lifecycle-minimap-radius',
+    width: '--uxm-lifecycle-minimap-width',
+    height: '--uxm-lifecycle-minimap-height',
+  },
+  'lifecycle-node-card': {
+    backgroundColor: '--uxm-lifecycle-node-card-bg',
+    borderColor: '--uxm-lifecycle-node-card-border-color',
+    borderRadius: '--uxm-lifecycle-node-card-radius',
+    paddingX: '--uxm-lifecycle-node-card-padding-x',
+    paddingY: '--uxm-lifecycle-node-card-padding-y',
+    width: '--uxm-lifecycle-node-card-width',
+  },
+  'lifecycle-terminal': {
+    backgroundColor: '--uxm-lifecycle-terminal-bg',
+    borderColor: '--uxm-lifecycle-terminal-border-color',
+    color: '--uxm-lifecycle-terminal-color',
+    borderRadius: '--uxm-lifecycle-terminal-radius',
+    width: '--uxm-lifecycle-terminal-width',
+    height: '--uxm-lifecycle-terminal-height',
+    fontSize: '--uxm-lifecycle-terminal-font-size',
+    fontWeight: '--uxm-lifecycle-terminal-font-weight',
+  },
+  'lifecycle-zoom-control': {
+    backgroundColor: '--uxm-lifecycle-zoom-bg',
+    borderColor: '--uxm-lifecycle-zoom-border-color',
+    borderRadius: '--uxm-lifecycle-zoom-radius',
+    fontSize: '--uxm-lifecycle-zoom-font-size',
+    color: '--uxm-lifecycle-zoom-color',
+    buttonSize: '--uxm-lifecycle-zoom-button-size',
+    iconColor: '--uxm-lifecycle-zoom-icon-color',
+  },
+  link: {
+    fontSize: '--uxm-link-font-size',
+    fontWeight: '--uxm-link-font-weight',
+  },
+  'meta-row': {
+    fontSize: '--uxm-meta-row-font-size',
+    color: '--uxm-meta-row-color',
+    gap: '--uxm-meta-row-gap',
+  },
+  'number-stepper': {
+    backgroundColor: '--uxm-number-stepper-input-bg',
+    borderColor: '--uxm-number-stepper-input-border',
+    color: '--uxm-number-stepper-input-color',
+    borderRadius: '--uxm-number-stepper-input-radius',
+    paddingX: '--uxm-number-stepper-input-padding-x',
+    paddingY: '--uxm-number-stepper-input-padding-y',
+    fontSize: '--uxm-number-stepper-font-size',
+    gap: '--uxm-number-stepper-gap',
+  },
+  'page-header': {
+    gap: '--uxm-page-header-gap',
+    paddingX: '--uxm-page-header-padding-x',
+    paddingY: '--uxm-page-header-padding-y',
+  },
+  'page-shell': {
+    backgroundColor: '--uxm-page-shell-bg',
+  },
+  'property-field': {
+    gap: '--uxm-property-field-gap',
+  },
+  'property-grid': {
+    rowGap: '--uxm-property-grid-row-gap',
+    columnGap: '--uxm-property-grid-column-gap',
+  },
+  'responsive-grid': {
+    gap: '--uxm-responsive-grid-gap',
+  },
+  'section-header': {
+    gap: '--uxm-section-header-gap',
+  },
+  stack: {
+    gap: '--uxm-stack-gap',
+  },
+  'stat-card': {
+    backgroundColor: '--uxm-stat-card-background-color',
+    borderColor: '--uxm-stat-card-border-color',
+    borderRadius: '--uxm-stat-card-border-radius',
+    padding: '--uxm-stat-card-padding',
+  },
+  tag: {
+    borderRadius: '--uxm-tag-border-radius',
+    fontWeight: '--uxm-tag-font-weight',
+  },
+  thumbnail: {
+    borderRadius: '--uxm-thumbnail-border-radius',
+    backgroundColor: '--uxm-thumbnail-background-color',
+    borderColor: '--uxm-thumbnail-border-color',
+    borderWidth: '--uxm-thumbnail-border-width',
+  },
+  'timeline-entry': {
+    gap: '--uxm-timeline-entry-gap',
+  },
+  tooltip: {
+    backgroundColor: '--uxm-tooltip-background-color',
+    color: '--uxm-tooltip-color',
+    borderRadius: '--uxm-tooltip-border-radius',
+    paddingX: '--uxm-tooltip-padding-x',
+    paddingY: '--uxm-tooltip-padding-y',
+    fontSize: '--uxm-tooltip-font-size',
+  },
+  'content-tooltip': {
+    backgroundColor: '--uxm-content-tooltip-background-color',
+    borderColor: '--uxm-content-tooltip-border-color',
+    borderRadius: '--uxm-content-tooltip-border-radius',
+    padding: '--uxm-content-tooltip-padding',
+    maxWidth: '--uxm-content-tooltip-max-width',
+  },
+  'type-overview-card': {
+    backgroundColor: '--uxm-typeoverview-bg',
+    borderColor: '--uxm-typeoverview-border-color',
+    borderRadius: '--uxm-typeoverview-radius',
+    padding: '--uxm-typeoverview-padding',
+    accentColor: '--uxm-typeoverview-accent-color',
+    accentWidth: '--uxm-typeoverview-accent-width',
+    iconBg: '--uxm-typeoverview-icon-bg',
+    iconColor: '--uxm-typeoverview-icon-color',
+    iconBoxSize: '--uxm-typeoverview-icon-tile-size',
+    iconRadius: '--uxm-typeoverview-icon-tile-radius',
+    labelSize: '--uxm-typeoverview-label-size',
+    labelColor: '--uxm-typeoverview-label-color',
+    valueSize: '--uxm-typeoverview-value-size',
+    valueColor: '--uxm-typeoverview-value-color',
   },
 };
 

@@ -16,8 +16,15 @@ export function IconPreview({ styles, variants }: PreviewProps) {
   const size = styles.size as number;
   const strokeWidth = styles.strokeWidth as number;
   return (
-    <div style={{ padding: 16, display: 'inline-flex', color: styles.color as string }}>
-      <Icon glyph={id} size={size} strokeWidth={strokeWidth} />
+    <div style={{ padding: 16, display: 'inline-flex' }}>
+      {/* Color flows through the atom's own `--uxm-icon-color` re-theme
+          surface — the same variable a production consumer would set. */}
+      <Icon
+        glyph={id}
+        size={size}
+        strokeWidth={strokeWidth}
+        style={{ ['--uxm-icon-color' as string]: styles.color as string }}
+      />
     </div>
   );
 }

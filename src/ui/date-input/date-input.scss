@@ -106,4 +106,10 @@
   &--error &__icon {
     color: var(--uxm-date-input-error-color, var(--color-danger-text));
   }
+
+  &__error-message {
+    color: var(--uxm-date-input-error-color, var(--color-danger-text));
+    font-size: var(--uxm-date-input-error-message-size, 12px);
+    margin-top: 4px;
+  }
 }

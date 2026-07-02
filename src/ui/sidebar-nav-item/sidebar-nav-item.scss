@@ -3,14 +3,14 @@
 .uxm-sidebar-nav-item {
   align-items: center;
   background-color: var(--uxm-sidebar-nav-item-inactive-bg, transparent);
-  border-radius: 8px;
+  border-radius: var(--uxm-sidebar-nav-item-border-radius, 8px);
   color: var(--uxm-sidebar-nav-item-inactive-text, var(--color-text-strong));
   cursor: pointer;
   display: flex;
-  font-size: 13px;
-  font-weight: 500;
-  gap: 10px;
-  padding: 10px 12px;
+  font-size: var(--uxm-sidebar-nav-item-font-size, 13px);
+  font-weight: var(--uxm-sidebar-nav-item-font-weight, 500);
+  gap: var(--uxm-sidebar-nav-item-gap, 10px);
+  padding: var(--uxm-sidebar-nav-item-padding-y, 10px) var(--uxm-sidebar-nav-item-padding-x, 12px);
   text-decoration: none;
   transition: background-color 0.15s, color 0.15s;
 
@@ -39,19 +39,19 @@
 
   &__icon {
     align-items: center;
-    background-color: var(--uxm-snavitem-icon-bg, color-mix(in srgb, var(--color-text) 6%, transparent));
-    border-radius: var(--uxm-snavitem-icon-tile-radius, 6px);
-    color: var(--uxm-snavitem-icon-color, var(--color-text));
+    background-color: var(--uxm-sidebar-nav-item-icon-bg, color-mix(in srgb, var(--color-text) 6%, transparent));
+    border-radius: var(--uxm-sidebar-nav-item-icon-radius, 6px);
+    color: var(--uxm-sidebar-nav-item-icon-color, var(--color-text));
     display: inline-flex;
     flex-shrink: 0;
-    height: var(--uxm-snavitem-icon-tile-size, 24px);
+    height: var(--uxm-sidebar-nav-item-icon-box-size, 24px);
     justify-content: center;
     padding: 4px;
-    width: var(--uxm-snavitem-icon-tile-size, 24px);
+    width: var(--uxm-sidebar-nav-item-icon-box-size, 24px);
 
     & > svg {
-      height: var(--uxm-snavitem-icon-size, 14px);
-      width: var(--uxm-snavitem-icon-size, 14px);
+      height: var(--uxm-sidebar-nav-item-icon-size, 14px);
+      width: var(--uxm-sidebar-nav-item-icon-size, 14px);
     }
   }
 

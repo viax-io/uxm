@@ -42,6 +42,7 @@ function buildVars(styles: Styles): CSSProperties {
       styles.disabledOpacity != null ? String(styles.disabledOpacity) : undefined,
     '--uxm-view-switcher-button-size': `${styles.buttonSize}px`,
     '--uxm-view-switcher-button-radius': `${styles.buttonRadius}px`,
+    '--uxm-view-switcher-icon-size': `${styles.iconSize}px`,
   } as CSSProperties;
 }
 
@@ -55,7 +56,7 @@ function buildVars(styles: Styles): CSSProperties {
  * Hand-rendered (not the real `<ViewSwitcher>` atom) because the atom
  * doesn't expose per-option `className` for the forced-state class.
  */
-function StaticShowcase({ state, iconSize }: { state: string; iconSize: number }) {
+function StaticShowcase({ state }: { state: string }) {
   return (
     <div className="uxm-view-switcher" role="group" style={{ pointerEvents: 'none' }}>
       <button
@@ -71,7 +72,7 @@ function StaticShowcase({ state, iconSize }: { state: string; iconSize: number }
         )}
         disabled={state === 'disabled'}
       >
-        <Icon glyph={VIEW_GLYPH.grid} size={iconSize} />
+        <Icon glyph={VIEW_GLYPH.grid} />
       </button>
     </div>
   );
@@ -79,7 +80,6 @@ function StaticShowcase({ state, iconSize }: { state: string; iconSize: number }
 
 export function ViewSwitcherPreview({ styles, variants }: PreviewProps) {
   const state = (variants.state as string) ?? 'default';
-  const iconSize = styles.iconSize as number;
   const [view, setView] = useState<View>('grid');
   const cssVars = buildVars(styles);
 
@@ -95,7 +95,7 @@ export function ViewSwitcherPreview({ styles, variants }: PreviewProps) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32, ...cssVars } as CSSProperties}>
       <div>
         <div style={sectionLabel}>{state} state</div>
-        <StaticShowcase state={state} iconSize={iconSize} />
+        <StaticShowcase state={state} />
       </div>
 
       {/* Interactive instance — full <ViewSwitcher> atom with two icon
@@ -112,13 +112,13 @@ export function ViewSwitcherPreview({ styles, variants }: PreviewProps) {
             {
               value: 'grid',
               label: 'Grid view',
-              icon: <Icon glyph={VIEW_GLYPH.grid} size={iconSize} />,
+              icon: <Icon glyph={VIEW_GLYPH.grid} />,
               disabled: state === 'disabled',
             },
             {
               value: 'list',
               label: 'List view',
-              icon: <Icon glyph={VIEW_GLYPH.list} size={iconSize} />,
+              icon: <Icon glyph={VIEW_GLYPH.list} />,
               disabled: state === 'disabled',
             },
           ]}

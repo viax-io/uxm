@@ -40,7 +40,8 @@ export function LoaderPreview({ styles, variants }: PreviewProps) {
         flexDirection: inline ? 'row' : 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap,
+        ['--uxm-loader-gap' as string]: gap,
+        gap: 'var(--uxm-loader-gap)',
         padding: 12,
       }}
     >

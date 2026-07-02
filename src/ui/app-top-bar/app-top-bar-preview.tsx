@@ -9,13 +9,13 @@ import type { CSSProperties } from 'react';
 
 export function AppTopBarPreview({ styles }: PreviewProps) {
   const cssVars: CSSProperties = {
-    backgroundColor: styles.backgroundColor as string,
-    borderColor: styles.borderColor as string,
-    height: styles.height as number,
-    padding: `0 ${styles.paddingX}px`,
-    gap: styles.gap as number,
+    '--uxm-app-top-bar-background-color': styles.backgroundColor as string,
+    '--uxm-app-top-bar-border-color': styles.borderColor as string,
+    '--uxm-app-top-bar-height': `${styles.height}px`,
+    '--uxm-app-top-bar-padding-x': `${styles.paddingX}px`,
+    '--uxm-app-top-bar-gap': `${styles.gap}px`,
     width: 720,
-  };
+  } as CSSProperties;
   const searchStyle: CSSProperties = { maxWidth: styles.searchMaxWidth as number };
   return (
     <AppTopBar

@@ -1,6 +1,8 @@
 import type { PreviewProps } from '@/previews/types';
 import { Avatar, type AvatarType } from '@/ui';
 
+import type { CSSProperties } from 'react';
+
 const TEXT_AVATARS = [
   { initials: 'SC', name: 'Sarah Chen' },
   { initials: 'MR', name: 'Marcus Rivera' },
@@ -25,15 +27,14 @@ export function AvatarPreview({ styles, variants }: PreviewProps) {
   const sharedStyle = {
     width: size,
     height: size,
-    borderRadius: styles.borderRadius as number,
-    backgroundColor: styles.backgroundColor as string,
-    borderColor: styles.borderColor as string,
-    borderWidth: styles.borderWidth as number,
-    borderStyle: 'solid' as const,
-    color: styles.color as string,
-    fontSize: styles.fontSize as number,
-    fontWeight: styles.fontWeight as string,
-  };
+    '--uxm-avatar-border-radius': `${styles.borderRadius as number}px`,
+    '--uxm-avatar-background-color': styles.backgroundColor as string,
+    '--uxm-avatar-border-color': styles.borderColor as string,
+    '--uxm-avatar-border-width': `${styles.borderWidth as number}px`,
+    '--uxm-avatar-color': styles.color as string,
+    '--uxm-avatar-font-size': `${styles.fontSize as number}px`,
+    '--uxm-avatar-font-weight': styles.fontWeight as string,
+  } as CSSProperties;
 
   if (type === 'image') {
     return (

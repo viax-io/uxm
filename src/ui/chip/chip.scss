@@ -90,6 +90,12 @@
       color: var(--uxm-chip-assist-hover-text, var(--color-text));
     }
 
+    &[aria-pressed="true"] {
+      background-color: var(--uxm-chip-assist-selected-bg, var(--color-accent-bold));
+      border-color: var(--uxm-chip-assist-selected-border, var(--color-accent-bold));
+      color: var(--uxm-chip-assist-selected-text, var(--color-text-inverse));
+    }
+
     &:disabled {
       background-color: var(--uxm-chip-assist-disabled-bg, var(--color-surface-alt));
       border-color: var(--uxm-chip-assist-disabled-border, var(--color-border));
@@ -156,6 +162,12 @@
       color: var(--uxm-chip-input-hover-text, var(--color-text));
     }
 
+    &[aria-pressed="true"] {
+      background-color: var(--uxm-chip-input-selected-bg, var(--color-accent-bold));
+      border-color: var(--uxm-chip-input-selected-border, var(--color-accent-bold));
+      color: var(--uxm-chip-input-selected-text, var(--color-text-inverse));
+    }
+
     &:disabled {
       background-color: var(--uxm-chip-input-disabled-bg, var(--color-surface-alt));
       border-color: var(--uxm-chip-input-disabled-border, var(--color-border));
@@ -184,6 +196,12 @@
       background-color: var(--uxm-chip-suggestion-hover-bg, var(--color-surface-alt));
       border-color: var(--uxm-chip-suggestion-hover-border, var(--color-surface-alt));
       color: var(--uxm-chip-suggestion-hover-text, var(--color-text-strong));
+    }
+
+    &[aria-pressed="true"] {
+      background-color: var(--uxm-chip-suggestion-selected-bg, var(--color-accent-subtle));
+      border-color: var(--uxm-chip-suggestion-selected-border, var(--color-accent-subtle));
+      color: var(--uxm-chip-suggestion-selected-text, var(--color-accent-bold));
     }
 
     &:disabled {
