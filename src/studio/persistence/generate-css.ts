@@ -174,6 +174,12 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   checkbox: {
     borderRadius: '--uxm-checkbox-border-radius',
   },
+  card: {
+    backgroundColor: '--uxm-card-bg',
+    borderColor: '--uxm-card-border-color',
+    borderRadius: '--uxm-card-radius',
+    padding: '--uxm-card-padding',
+  },
   'toggle-switch': {
     width: '--uxm-toggle-switch-width',
     height: '--uxm-toggle-switch-height',
