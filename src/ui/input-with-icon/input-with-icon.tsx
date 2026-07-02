@@ -1,6 +1,7 @@
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 import { Icon } from '@/ui/icon';
+import { IconButton } from '@/ui/icon-button';
 
 import type { InputHTMLAttributes, ReactNode } from 'react';
 
@@ -64,14 +65,13 @@ export function InputWithIcon({
           {...rest}
         />
         {showClear && (
-          <button
-            type="button"
+          <IconButton
             onClick={onClear}
-            className="uxm-input-with-icon__clear"
+            className="uxm-field-clear uxm-input-with-icon__clear"
             aria-label="Clear"
           >
-            <Icon glyph="close" size={10} strokeWidth={2.5} />
-          </button>
+            <Icon glyph="close" />
+          </IconButton>
         )}
       </div>
       {error && <FieldError className="uxm-input-with-icon__error-message">{error}</FieldError>}
