@@ -788,7 +788,13 @@ export function EditableCell({
       </span>
       <input
         ref={inputRef}
-        type={type === 'number' ? 'number' : 'text'}
+        // `type="text"` + `inputMode` — the input-family convention (see
+        // NumberInput): native number inputs ship browser spinner UI, trigger
+        // autofill, and disagree across browsers on accepted characters. The
+        // NaN parse boundary in handleCommit already guards number commits.
+        type="text"
+        inputMode={type === 'number' ? 'decimal' : undefined}
+        autoComplete="off"
         className="uxm-editable-cell__input"
         value={draft}
         onChange={(e) => {
