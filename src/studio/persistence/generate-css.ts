@@ -193,6 +193,7 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   'data-table': {
     borderColor: '--uxm-data-table-border-color',
     fontSize: '--uxm-data-table-font-size',
+    borderRadius: '--uxm-data-table-border-radius',
   },
   'app-sidebar': {
     borderColor: '--uxm-app-sidebar-border-color',

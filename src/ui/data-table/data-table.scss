@@ -9,7 +9,7 @@
 .uxm-data-table {
   container-type: inline-size;
   border: 1px solid var(--uxm-data-table-border-color, var(--color-border));
-  border-radius: 8px;
+  border-radius: var(--uxm-data-table-border-radius, 8px);
   overflow: hidden;
 }
 /* Card-list mode for narrow containers — a real HTML table starts to
@@ -116,10 +116,18 @@
 .uxm-data-table__row:last-child .uxm-data-table__td {
   border-bottom: none;
 }
+/* Density presets set their own padding DEFAULT via the same cell-padding
+   vars, so the cellPaddingX/Y knobs still win when set (they were previously
+   hard-overridden here and went dead in compact/relaxed). Unset → the density
+   default (6/16px) applies, so the shipped look is unchanged. */
 .uxm-data-table--compact .uxm-data-table__th,
-.uxm-data-table--compact .uxm-data-table__td { padding: 6px 12px; }
+.uxm-data-table--compact .uxm-data-table__td {
+  padding: var(--uxm-data-table-cell-padding-y, 6px) var(--uxm-data-table-cell-padding-x, 12px);
+}
 .uxm-data-table--relaxed .uxm-data-table__th,
-.uxm-data-table--relaxed .uxm-data-table__td { padding: 16px 12px; }
+.uxm-data-table--relaxed .uxm-data-table__td {
+  padding: var(--uxm-data-table-cell-padding-y, 16px) var(--uxm-data-table-cell-padding-x, 12px);
+}
 
 /* Trailing row-action column — `width: 1%` + `nowrap` is the table idiom
    for "shrink to content", so the column hugs the ⋮ trigger and the data
