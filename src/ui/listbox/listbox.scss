@@ -105,10 +105,13 @@
      the path the listbox preview's hand-rendered open panel relies on,
      since the preview doesn't track active state in React). `:disabled`
      is excluded — disabled rows don't highlight.
-     When a selected row is also hover/keyboard-highlighted, the selected
-     bg wins by CSS source order (--selected comes after --active). */
-  &__option--active,
-  &__option:hover:not(:disabled) {
+     The selected row is EXCLUDED from active/hover so its `--selected`
+     styling always wins: on open the atom sets the active index to the
+     selected row, so without this exclusion the (equal-specificity, later-
+     source-order) active rule shadowed the selected colour until the pointer
+     moved the highlight away. */
+  &__option--active:not(.uxm-listbox__option--selected),
+  &__option:hover:not(:disabled):not(.uxm-listbox__option--selected) {
     background-color: var(--uxm-listbox-option-active-bg, var(--color-surface-alt));
     color: var(--uxm-listbox-option-active-color, var(--color-text));
   }
