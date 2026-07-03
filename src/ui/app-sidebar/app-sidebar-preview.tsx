@@ -82,7 +82,7 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
 
   const cssVars: CSSProperties = {
     ['--uxm-app-sidebar-background-color' as string]: styles.backgroundColor as string,
-    borderColor: styles.borderColor as string,
+    ['--uxm-app-sidebar-border-color' as string]: styles.borderColor as string,
     width: collapsed ? (styles.collapsedWidth as number) : (styles.expandedWidth as number),
     height: 480,
   };
