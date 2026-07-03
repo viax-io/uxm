@@ -24,6 +24,7 @@ import {
 import { HoverTooltip } from '../hover-tooltip';
 import { Icon } from '../icon';
 import { Listbox, MultiListbox, type ListboxRenderTriggerState } from '../listbox';
+import { maskNumeric } from '../number-input';
 import { Popover } from '../popover';
 
 export type EditableCellType = 'text' | 'number' | 'date' | 'select' | 'multiselect';
@@ -187,7 +188,10 @@ export function EditableCell({
   }, [isEditing]);
 
   const parseDraft = useCallback((): EditableCellValue => {
-    if (type === 'number') return Number(draft);
+    // `Number('')` is 0, not NaN — map the empty draft to NaN explicitly so
+    // blur-with-empty hits the "Enter a number" boundary instead of
+    // silently committing 0.
+    if (type === 'number') return draft === '' ? Number.NaN : Number(draft);
     if (type === 'date') return draft;
     return draft;
   }, [type, draft]);
@@ -790,15 +794,21 @@ export function EditableCell({
         ref={inputRef}
         // `type="text"` + `inputMode` — the input-family convention (see
         // NumberInput): native number inputs ship browser spinner UI, trigger
-        // autofill, and disagree across browsers on accepted characters. The
-        // NaN parse boundary in handleCommit already guards number commits.
+        // autofill, and disagree across browsers on accepted characters.
+        // `maskNumeric` replaces the native filtering per keystroke (same as
+        // the date editor's `maskDate`); without it, `Number()`'s loose
+        // coercion would let e.g. "0x1A" commit as 26.
         type="text"
         inputMode={type === 'number' ? 'decimal' : undefined}
         autoComplete="off"
         className="uxm-editable-cell__input"
         value={draft}
         onChange={(e) => {
-          setDraft(e.target.value);
+          setDraft(
+            type === 'number'
+              ? maskNumeric(e.target.value, true, true, Number.POSITIVE_INFINITY)
+              : e.target.value,
+          );
           // Clear stale validation error as the user types — they'll
           // see a new one on the next commit attempt if it still fails.
           if (error) setError(null);

@@ -62,7 +62,7 @@ export interface NumberInputProps
  * Permissive about partial states like `"-"` or `"12."` so the user
  * can type naturally; the empty string is a legal value.
  */
-function maskNumeric(
+export function maskNumeric(
   raw: string,
   allowNegative: boolean,
   allowDecimal: boolean,
