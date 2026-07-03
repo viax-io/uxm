@@ -1,8 +1,9 @@
-'use client';
-
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 
 import { cn } from '@/helpers';
+import { FieldError } from '@/ui/field-error';
+import { Icon } from '@/ui/icon';
+import { IconButton } from '@/ui/icon-button';
 
 import type { ChangeEvent, FocusEvent, InputHTMLAttributes } from 'react';
 
@@ -37,6 +38,19 @@ export interface NumberInputProps
    * Defaults to 2 (e.g. "12.34" max, "12.345" → "12.34").
    */
   decimals?: number;
+  /**
+   * Show a clear (✕) button at the trailing edge when the field has a value.
+   * On by default (opt out with `clearable={false}`). The component owns the
+   * reset — it clears its own uncontrolled state and fires `onChange("")`, so
+   * no separate `onClear` is needed (mirrors Select / DateInput).
+   */
+  clearable?: boolean;
+  /**
+   * When set to a non-empty string, the field renders in its error state:
+   * red border (`.uxm-number-input--error`), `aria-invalid`, and the message
+   * below the input. Omit (or pass an empty string) for the normal state.
+   */
+  error?: string;
 }
 
 /**
@@ -46,7 +60,7 @@ export interface NumberInputProps
  * Permissive about partial states like `"-"` or `"12."` so the user
  * can type naturally; the empty string is a legal value.
  */
-function maskNumeric(
+export function maskNumeric(
   raw: string,
   allowNegative: boolean,
   allowDecimal: boolean,
@@ -110,10 +124,14 @@ export function NumberInput({
   allowNegative = false,
   allowDecimal = false,
   decimals = 2,
+  clearable = true,
   className,
+  error,
+  disabled,
   onBlur,
   ...rest
 }: NumberInputProps) {
+  const errorId = useId();
   const [internal, setInternal] = useState<string>(
     () => maskNumeric(defaultValue ?? '', allowNegative, allowDecimal, decimals),
   );
@@ -144,22 +162,73 @@ export function NumberInput({
     [current, min, max, isControlled, onChange, onBlur],
   );
 
-  return (
+  // Clear owns its own reset: wipe uncontrolled state and notify via
+  // onChange(""). Mirrors Select / DateInput (components that hold their own
+  // value state, unlike TextInput which needs an onClear).
+  const handleClear = useCallback(() => {
+    if (!isControlled) setInternal('');
+    onChange?.('');
+  }, [isControlled, onChange]);
+  const showClear = clearable && !!current && !disabled;
+
+  const input = (
+    // `{...rest}` is spread FIRST so the managed props below always win
+    // (same rule as TextInput) — a consumer prop can't clobber the mask's
+    // value/onChange or the computed error state.
     <input
-      // `type="text"` with `inputMode="numeric"` (not `type="number"`)
-      // for the same reasons as PhoneInput: native number inputs ship
-      // browser spinner UI we'd have to suppress, trigger autofill /
-      // smart-keypad heuristics that fight controlled values, and
-      // disagree across browsers on what characters they accept. Our
-      // mask is the source of truth.
+      {...rest}
+      // `type="text"` with `inputMode` (not `type="number"`) for the same
+      // reasons as PhoneInput: native number inputs ship browser spinner UI
+      // we'd have to suppress, trigger autofill / smart-keypad heuristics that
+      // fight controlled values, and disagree across browsers on accepted
+      // characters. Our mask is the source of truth.
       type="text"
       inputMode={allowDecimal ? 'decimal' : 'numeric'}
       autoComplete="off"
-      className={cn('uxm-number-input', className)}
+      className={cn(
+        'uxm-number-input',
+        error && 'uxm-number-input--error',
+        clearable && 'uxm-number-input--clearable',
+        className,
+      )}
+      aria-invalid={error ? true : undefined}
+      aria-describedby={error ? errorId : undefined}
       value={current}
       onChange={handleChange}
       onBlur={handleBlur}
-      {...rest}
+      disabled={disabled}
     />
   );
+
+  return (
+    <>
+      {clearable ? (
+        // Layout-only wrapper so the clear button sits at the trailing edge;
+        // visible chrome stays on `.uxm-number-input` so saved --uxm vars apply.
+        <div className="uxm-number-input-wrap">
+          {input}
+          {showClear && (
+            <IconButton
+              className="uxm-field-clear uxm-number-input__clear"
+              aria-label="Clear"
+              // Keep focus in the input so the clear-click doesn't trigger a
+              // blur-clamp on the about-to-be-wiped value first.
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={handleClear}
+            >
+              <Icon glyph="close" />
+            </IconButton>
+          )}
+        </div>
+      ) : (
+        input
+      )}
+      {error && (
+        <FieldError id={errorId} className="uxm-number-input__error-message">
+          {error}
+        </FieldError>
+      )}
+    </>
+  );
 }
+NumberInput.hasError = true;

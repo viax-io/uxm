@@ -31,6 +31,8 @@ export function LifecycleMinimapPreview({ styles }: PreviewProps) {
     '--uxm-lifecycle-minimap-viewport-border': styles.viewportBorder as string,
     '--uxm-lifecycle-minimap-viewport-fill': styles.viewportFill as string,
     '--uxm-lifecycle-minimap-radius': `${styles.borderRadius}px`,
+    '--uxm-lifecycle-minimap-width': `${styles.width}px`,
+    '--uxm-lifecycle-minimap-height': `${styles.height}px`,
   } as CSSProperties;
 
   return (

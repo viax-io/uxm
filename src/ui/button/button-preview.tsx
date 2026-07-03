@@ -94,10 +94,15 @@ function plainButtonStateStyle(
   const style: CSSProperties = {
     ...cssVars,
     ...forcedDirectOverrides,
-    borderRadius: styles.borderRadius as number | undefined,
-    padding: `${styles.paddingY}px ${styles.paddingX}px`,
-    fontSize: styles.fontSize as number | undefined,
-    fontWeight: styles.fontWeight as string | undefined,
+    // Geometry/type projected as custom props (same contract as colours) so the
+    // atom's own base rule resolves them — keeps the editor consistent with the
+    // production generate-css output and with the `--uxm` variable layer,
+    // instead of inlining real properties that would shadow the var.
+    [`--uxm-button-${variant}-border-radius`]: styles.borderRadius != null ? `${styles.borderRadius}px` : undefined,
+    [`--uxm-button-${variant}-padding-y`]: styles.paddingY != null ? `${styles.paddingY}px` : undefined,
+    [`--uxm-button-${variant}-padding-x`]: styles.paddingX != null ? `${styles.paddingX}px` : undefined,
+    [`--uxm-button-${variant}-font-size`]: styles.fontSize != null ? `${styles.fontSize}px` : undefined,
+    [`--uxm-button-${variant}-font-weight`]: styles.fontWeight != null ? String(styles.fontWeight) : undefined,
     [gapVar]: styles.gap != null ? `${styles.gap}px` : undefined,
     ...(isDisabled ? { opacity: styles.disabledOpacity as number | undefined } : {}),
     ...(isFocused

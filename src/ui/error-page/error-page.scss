@@ -11,19 +11,19 @@
 
   &__icon {
     align-items: center;
-    background-color: var(--color-accent-subtle);
+    background-color: var(--uxm-error-page-icon-bg, var(--color-accent-subtle));
     border-radius: 16px;
-    color: var(--color-accent-bold);
+    color: var(--uxm-error-page-icon-color, var(--color-accent-bold));
     display: flex;
-    height: 56px;
+    height: var(--uxm-error-page-icon-size, 56px);
     justify-content: center;
     margin-bottom: 16px;
-    width: 56px;
+    width: var(--uxm-error-page-icon-size, 56px);
   }
 
   &__code {
-    color: var(--color-text-subtle);
-    font-size: 88px;
+    color: var(--uxm-error-page-code-color, var(--color-text-subtle));
+    font-size: var(--uxm-error-page-code-size, 88px);
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1;
@@ -31,18 +31,18 @@
   }
 
   &__title {
-    color: var(--color-text);
-    font-size: 24px;
+    color: var(--uxm-error-page-title-color, var(--color-text));
+    font-size: var(--uxm-error-page-title-size, 24px);
     font-weight: 600;
     margin: 16px 0 0;
   }
 
   &__message {
-    color: var(--color-text-muted);
-    font-size: 14px;
+    color: var(--uxm-error-page-message-color, var(--color-text-muted));
+    font-size: var(--uxm-error-page-message-size, 14px);
     line-height: 1.5;
     margin: 8px 0 0;
-    max-width: 28rem;
+    max-width: var(--uxm-error-page-message-max-width, 28rem);
   }
 
   &__actions {

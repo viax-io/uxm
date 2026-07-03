@@ -17,7 +17,7 @@
      resting value as fallback (default look unchanged). */
 
   &__track {
-    background-color: var(--uxm-toggle-switch-track-off, var(--color-border));
+    background-color: var(--uxm-toggle-switch-off-track, var(--color-border));
     border-radius: 99px;
     flex-shrink: 0;
     height: var(--uxm-toggle-switch-height, 24px);
@@ -27,7 +27,7 @@
   }
 
   &__thumb {
-    background-color: var(--uxm-toggle-switch-thumb, var(--color-card));
+    background-color: var(--uxm-toggle-switch-off-thumb, var(--color-card));
     border-radius: 50%;
     box-shadow: var(--shadow-sm);
     height: calc(var(--uxm-toggle-switch-height, 24px) - 4px);
@@ -60,11 +60,19 @@
   }
 
   &__input:checked + &__track {
-    background-color: var(--uxm-toggle-switch-track-on, var(--color-accent));
+    background-color: var(--uxm-toggle-switch-on-track, var(--color-accent));
   }
 
   &__input:checked + &__track > &__thumb {
+    background-color: var(--uxm-toggle-switch-on-thumb, var(--color-card));
     left: calc(var(--uxm-toggle-switch-width, 44px) - var(--uxm-toggle-switch-height, 24px) + 2px);
+  }
+
+  /* Disabled — dims via the registry's disabledOpacity knob. Fallback 1 keeps
+     the shipped default undimmed (unchanged); a saved/previewed override dims. */
+  &--disabled {
+    cursor: not-allowed;
+    opacity: var(--uxm-toggle-switch-disabled-opacity, 1);
   }
 }
 

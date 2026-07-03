@@ -1,9 +1,8 @@
-'use client';
-
 import {
   Children,
   isValidElement,
   useCallback,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -61,6 +60,7 @@ export function TextInput({
   disabled,
   ...rest
 }: TextInputProps) {
+  const errorId = useId();
   const innerRef = useRef<HTMLInputElement>(null);
   const isControlled = value !== undefined;
   const [hasTextUncontrolled, setHasTextUncontrolled] = useState(
@@ -105,6 +105,7 @@ export function TextInput({
         className,
       )}
       aria-invalid={error ? true : undefined}
+      aria-describedby={error ? errorId : undefined}
     />
   );
 
@@ -129,7 +130,11 @@ export function TextInput({
       ) : (
         input
       )}
-      {error && <FieldError className="uxm-input-text__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-input-text__error-message">
+          {error}
+        </FieldError>
+      )}
     </>
   );
 }
@@ -157,6 +162,7 @@ export function Textarea({
   disabled,
   ...rest
 }: TextareaProps) {
+  const errorId = useId();
   const innerRef = useRef<HTMLTextAreaElement>(null);
   const isControlled = value !== undefined;
   const [hasTextUncontrolled, setHasTextUncontrolled] = useState(
@@ -197,6 +203,7 @@ export function Textarea({
         className,
       )}
       aria-invalid={error ? true : undefined}
+      aria-describedby={error ? errorId : undefined}
     />
   );
 
@@ -218,7 +225,11 @@ export function Textarea({
       ) : (
         textarea
       )}
-      {error && <FieldError className="uxm-textarea__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-textarea__error-message">
+          {error}
+        </FieldError>
+      )}
     </>
   );
 }
@@ -334,6 +345,7 @@ export function Select({
   searchable = 'auto',
   'aria-label': ariaLabel,
 }: SelectProps) {
+  const errorId = useId();
   // Uncontrolled state — only used when `value` is not provided. Matches
   // the native `<select>`'s controlled/uncontrolled duality.
   const [internal, setInternal] = useState<string>(() => String(defaultValue ?? ''));
@@ -403,6 +415,7 @@ export function Select({
           tabIndex={disabled ? -1 : 0}
           aria-disabled={disabled || undefined}
           aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
           id={id}
           style={style}
           className={cn(
@@ -454,7 +467,11 @@ export function Select({
       )}
       renderItem={(o) => o.label}
     />
-    {error && <FieldError className="uxm-select-dropdown__error-message">{error}</FieldError>}
+    {error && (
+      <FieldError id={errorId} className="uxm-select-dropdown__error-message">
+        {error}
+      </FieldError>
+    )}
     </>
   );
 }

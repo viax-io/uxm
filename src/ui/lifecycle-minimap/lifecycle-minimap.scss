@@ -4,8 +4,10 @@
   background-color: var(--uxm-lifecycle-minimap-bg, var(--color-surface-alt));
   border: 1px solid var(--uxm-lifecycle-minimap-border-color, var(--color-border));
   border-radius: var(--uxm-lifecycle-minimap-radius, 6px);
+  height: var(--uxm-lifecycle-minimap-height, 104px);
   overflow: hidden;
   position: relative;
+  width: var(--uxm-lifecycle-minimap-width, 240px);
 
   &__svg {
     inset: 0;

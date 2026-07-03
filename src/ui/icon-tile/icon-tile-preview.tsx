@@ -11,6 +11,7 @@ export function IconTilePreview({ styles }: PreviewProps) {
     '--uxm-icon-tile-radius': `${styles.borderRadius}px`,
     '--uxm-icon-tile-bg': styles.iconBg as string,
     '--uxm-icon-tile-color': styles.iconColor as string,
+    '--uxm-icon-tile-icon-size': `${styles.iconSize}px`,
   } as CSSProperties;
   return (
     <IconTile style={cssVars}>

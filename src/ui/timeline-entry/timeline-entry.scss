@@ -2,7 +2,7 @@
 
 .uxm-timeline-entry {
   display: flex;
-  gap: 12px;
+  gap: var(--uxm-timeline-entry-gap, 12px);
   padding: 8px;
 
   &__rail {
@@ -12,11 +12,11 @@
   }
 
   &__line {
-    background-color: var(--color-border);
+    background-color: var(--uxm-timeline-entry-line-color, var(--color-border));
     left: 50%;
     position: absolute;
     transform: translateX(-50%);
-    width: 2px;
+    width: var(--uxm-timeline-entry-line-width, 2px);
 
     &--before {
       height: 8px;
@@ -30,26 +30,26 @@
   }
 
   &__dot {
-    background-color: var(--color-accent);
+    background-color: var(--uxm-timeline-entry-dot-color, var(--color-accent));
     border-radius: 50%;
-    box-shadow: 0 0 0 2px var(--color-card);
-    height: 12px;
+    box-shadow: 0 0 0 2px var(--uxm-timeline-entry-dot-ring-color, var(--color-card));
+    height: var(--uxm-timeline-entry-dot-size, 12px);
     left: 0;
     position: absolute;
     top: 8px;
-    width: 12px;
+    width: var(--uxm-timeline-entry-dot-size, 12px);
   }
 
   &--idle &__dot {
-    background-color: var(--color-text-subtle);
+    background-color: var(--uxm-timeline-entry-dot-idle-color, var(--color-text-subtle));
   }
 
   &__content {
-    background-color: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
+    background-color: var(--uxm-timeline-entry-content-bg, var(--color-card));
+    border: 1px solid var(--uxm-timeline-entry-content-border-color, var(--color-border));
+    border-radius: var(--uxm-timeline-entry-content-radius, 6px);
     flex: 1;
-    padding: 6px 12px;
+    padding: var(--uxm-timeline-entry-content-padding, 6px 12px);
   }
 
   &__row {
@@ -59,8 +59,8 @@
   }
 
   &__title {
-    color: var(--color-text);
-    font-size: 13px;
+    color: var(--uxm-timeline-entry-title-color, var(--color-text));
+    font-size: var(--uxm-timeline-entry-title-size, 13px);
     font-weight: 600;
   }
 
@@ -72,8 +72,8 @@
   }
 
   &__meta {
-    color: var(--color-text-muted);
-    font-size: 11px;
+    color: var(--uxm-timeline-entry-meta-color, var(--color-text-muted));
+    font-size: var(--uxm-timeline-entry-meta-size, 11px);
     margin: 2px 0 0;
   }
 

@@ -5,11 +5,11 @@
   position: relative;
 
   &__body {
-    background-color: var(--color-text);
-    border-radius: 6px;
-    color: var(--color-text-inverse);
-    font-size: 12px;
-    padding: 6px 10px;
+    background-color: var(--uxm-tooltip-background-color, var(--color-text));
+    border-radius: var(--uxm-tooltip-border-radius, 6px);
+    color: var(--uxm-tooltip-color, var(--color-text-inverse));
+    font-size: var(--uxm-tooltip-font-size, 12px);
+    padding: var(--uxm-tooltip-padding-y, 6px) var(--uxm-tooltip-padding-x, 10px);
     white-space: nowrap;
   }
 
@@ -46,11 +46,11 @@
 }
 
 .uxm-content-tooltip {
-  background-color: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  max-width: 320px;
-  padding: 12px;
+  background-color: var(--uxm-content-tooltip-background-color, var(--color-card));
+  border: 1px solid var(--uxm-content-tooltip-border-color, var(--color-border));
+  border-radius: var(--uxm-content-tooltip-border-radius, 8px);
+  max-width: var(--uxm-content-tooltip-max-width, 320px);
+  padding: var(--uxm-content-tooltip-padding, 12px);
 
   &--shadow {
     box-shadow: var(--shadow-md);

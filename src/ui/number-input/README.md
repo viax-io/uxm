@@ -40,6 +40,8 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `allowNegative` | `boolean` | `false` | Allow a leading `-` sign. |
 | `allowDecimal` | `boolean` | `false` | Allow a single `.` separator. |
 | `decimals` | `number` | `2` | Maximum number of decimal places when `allowDecimal` is true. |
+| `clearable` | `boolean` | `true` | Render a trailing clear (✕) button (the shared `.uxm-field-clear` affordance) when the input has a non-empty value and isn't disabled. Clearing wipes the value and fires `onChange('')`. |
+| `error` | `string` | – | Non-empty string switches the input to its error state: the `--error` modifier re-tones background/border, `aria-invalid` + `aria-describedby` land on the `<input>`, and the message renders below. |
 | `className` | `string` | – | Merged with `uxm-number-input`. |
 | `onBlur` | `FocusEventHandler` | – | Invoked after blur-time clamping. |
 | _(any other native input attribute)_ | – | – | Spread onto the `<input>`. |
@@ -66,6 +68,8 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `--uxm-number-input-disabled-opacity` | – | `0.6` | Disabled opacity. |
 | `--uxm-number-input-error-bg` | `--color-card` | – | Error background. |
 | `--uxm-number-input-error-border` | `--color-danger-text` | – | Error border. |
+| `--uxm-number-input-error-color` | `--color-danger-text` | – | Error-message colour. |
+| `--uxm-number-input-error-message-size` | – | `12px` | Error-message font size. |
 
 ## Design tokens (MODO-configurable)
 
@@ -87,7 +91,8 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | Hover | `:hover` (non-disabled, non-error) or `--state-hover` modifier | Border shifts to accent. |
 | Focus | `:focus` or `--state-focus` modifier | Accent border + 2px accent outline ring with 2px offset. |
 | Disabled | `disabled` attribute | Surface-alt fill, muted text, `not-allowed` cursor, 0.6 opacity. |
-| Error | `.uxm-number-input--error` class | Danger-text border. |
+| Error | non-empty `error` prop (or `.uxm-number-input--error` class) | Danger-text border; message rendered below the input. |
+| Clearable | `clearable` (default) + non-empty value | Trailing padding reserved; shared 22×22 `.uxm-field-clear` button with `close` icon. |
 | Decimal mode | `allowDecimal={true}` | Allows a single `.`; trims excess decimal places to `decimals`. `inputMode="decimal"`. |
 | Negative allowed | `allowNegative={true}` | Allows a leading `-`. |
 
@@ -98,3 +103,5 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 - Supply a visible label or `aria-label` — the component does not render its own label.
 - Forced state modifiers (`--state-hover`, `--state-focus`) are visual-only — they don't affect focus management, so use them only in preview / catalog contexts.
 - Clamping is intentionally deferred to `blur` so users typing intermediate values (`"-"`, `"12."`) aren't disrupted mid-keystroke.
+- A non-empty `error` sets `aria-invalid` on the `<input>` and links it to the message via `aria-describedby`, so assistive tech announces both the state and the reason.
+- The clear button is a real `<button type="button">` with `aria-label="Clear"`; it keeps focus in the input (mousedown is prevented) so clearing doesn't trigger a blur-clamp on the wiped value.

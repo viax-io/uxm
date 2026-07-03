@@ -75,31 +75,35 @@
   &--clearable &__input {
     padding-right: calc(
       var(--uxm-input-with-icon-icon-offset, 12px)
-      + 18px
+      + 22px
       + 8px
     );
   }
 
+  /* Positioning only — chrome comes from the shared `.uxm-field-clear`
+     IconButton (matches TextInput / NumberInput / Textarea and modo). */
   &__clear {
-    align-items: center;
-    background-color: color-mix(in srgb, var(--color-text) 12%, transparent);
-    border: none;
-    border-radius: 999px;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    display: inline-flex;
-    height: 18px;
-    justify-content: center;
     position: absolute;
     right: var(--uxm-input-with-icon-icon-offset, 12px);
     top: 50%;
     transform: translateY(-50%);
-    transition: background-color 0.12s ease, color 0.12s ease;
-    width: 18px;
-
-    &:hover {
-      background-color: color-mix(in srgb, var(--color-text) 20%, transparent);
-      color: var(--color-text);
-    }
   }
+}
+
+/* Error state — the `--error` modifier on the wrapper re-tones the inner input
+   and the leading icon; the message below reads the errorColor / size knobs.
+   Every value falls back to the current default, so a field without `error`
+   is unchanged. Mirrors the rest of the input family. */
+.uxm-input-with-icon--error .uxm-input-with-icon__input {
+  background-color: var(--uxm-input-with-icon-error-bg, var(--color-card));
+  border-color: var(--uxm-input-with-icon-error-border, var(--color-danger-text));
+}
+.uxm-input-with-icon--error .uxm-input-with-icon__icon {
+  color: var(--uxm-input-with-icon-error-color, var(--color-danger-text));
+}
+.uxm-input-with-icon__error-message {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--uxm-input-with-icon-error-message-size, 12px);
+  color: var(--uxm-input-with-icon-error-color, var(--color-danger-text));
 }

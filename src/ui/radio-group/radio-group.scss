@@ -32,8 +32,8 @@
 .uxm-radio {
   &__circle {
     align-items: center;
-    background-color: transparent;
-    border: 2px solid var(--uxm-radio-group-border-color, var(--color-border));
+    background-color: var(--uxm-radio-group-unselected-bg, transparent);
+    border: 2px solid var(--uxm-radio-group-unselected-border, var(--uxm-radio-group-border-color, var(--color-border)));
     border-radius: 50%;
     display: inline-flex;
     flex-shrink: 0;
@@ -44,7 +44,7 @@
   }
 
   &__dot {
-    background-color: var(--uxm-radio-group-active-color, var(--color-accent));
+    background-color: var(--uxm-radio-group-dot-color, var(--uxm-radio-group-active-color, var(--color-accent)));
     border-radius: 50%;
     height: calc(var(--uxm-radio-group-size, 20px) / 2);
     opacity: 0;
@@ -70,7 +70,7 @@
   }
 
   &__input:checked + &__circle {
-    border-color: var(--uxm-radio-group-active-color, var(--color-accent));
+    border-color: var(--uxm-radio-group-selected-border, var(--uxm-radio-group-active-color, var(--color-accent)));
   }
 
   &__input:checked + &__circle > &__dot {

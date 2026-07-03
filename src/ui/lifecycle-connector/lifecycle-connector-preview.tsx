@@ -15,14 +15,13 @@ export function LifecycleConnectorPreview({ styles, variants }: PreviewProps) {
   // pass-through props so the preview reflects "what would this look like
   // with these settings."
   const cssVars = {
-    '--uxm-lifecycle-connector-color':
-      state === 'active'
-        ? (styles.connectorActiveColor as string)
-        : (styles.connectorIdleColor as string),
-    '--uxm-lifecycle-connector-width':
-      state === 'active'
-        ? (styles.connectorActiveStrokeWidth as number)
-        : (styles.connectorIdleStrokeWidth as number),
+    '--uxm-lifecycle-connector-connector-idle-color': styles.connectorIdleColor as string,
+    '--uxm-lifecycle-connector-connector-active-color': styles.connectorActiveColor as string,
+    '--uxm-lifecycle-connector-connector-idle-stroke-width':
+      styles.connectorIdleStrokeWidth as number,
+    '--uxm-lifecycle-connector-connector-active-stroke-width':
+      styles.connectorActiveStrokeWidth as number,
+    '--uxm-lifecycle-connector-connector-dash-pattern': styles.connectorDashPattern as string,
   } as CSSProperties;
 
   return (

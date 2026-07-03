@@ -1,12 +1,12 @@
 /* ── lifecycle-connector ── */
 
 .uxm-lifecycle-connector {
-  --uxm-lifecycle-connector-color: var(--color-border);
-  --uxm-lifecycle-connector-width: 1.5;
+  --uxm-lifecycle-connector-color: var(--uxm-lifecycle-connector-connector-idle-color, var(--color-border));
+  --uxm-lifecycle-connector-width: var(--uxm-lifecycle-connector-connector-idle-stroke-width, 1.5);
 
   &--active {
-    --uxm-lifecycle-connector-color: var(--color-accent);
-    --uxm-lifecycle-connector-width: 2;
+    --uxm-lifecycle-connector-color: var(--uxm-lifecycle-connector-connector-active-color, var(--color-accent));
+    --uxm-lifecycle-connector-width: var(--uxm-lifecycle-connector-connector-active-stroke-width, 2);
   }
 
   &--dashed {
@@ -17,6 +17,10 @@
   &__path {
     stroke: var(--uxm-lifecycle-connector-color);
     stroke-width: var(--uxm-lifecycle-connector-width);
+  }
+
+  &--dashed &__path {
+    stroke-dasharray: var(--uxm-lifecycle-connector-connector-dash-pattern, 6 4);
   }
 
   &__start {

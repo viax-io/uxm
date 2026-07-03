@@ -1,6 +1,4 @@
-'use client';
-
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 
 import { cn } from '@/helpers';
 
@@ -75,6 +73,7 @@ export function PillSelect({
   error,
   ...rest
 }: PillSelectProps) {
+  const errorId = useId();
   const isControlled = value !== undefined;
   const [internal, setInternal] = useState<string[]>(defaultValue);
   const selected = isControlled ? value : internal;
@@ -132,6 +131,7 @@ export function PillSelect({
             tabIndex={disabled ? -1 : 0}
             aria-disabled={disabled || undefined}
             aria-invalid={error ? true : undefined}
+            aria-describedby={error ? errorId : undefined}
             className={cn(
               'uxm-pill-select__field',
               error && 'uxm-pill-select__field--error',
@@ -195,7 +195,11 @@ export function PillSelect({
           ))}
         </div>
       )}
-      {error && <FieldError className="uxm-pill-select__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-pill-select__error-message">
+          {error}
+        </FieldError>
+      )}
     </div>
   );
 }

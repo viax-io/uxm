@@ -13,6 +13,12 @@ export interface FieldErrorProps {
    * the others (and to Banner / Toast).
    */
   className: string;
+  /**
+   * Stable id so the owning control can point at this message via
+   * `aria-describedby` — `aria-invalid` alone says the field is wrong,
+   * not why.
+   */
+  id?: string;
   children: ReactNode;
 }
 
@@ -29,9 +35,9 @@ export interface FieldErrorProps {
  * class. It's `aria-hidden` because the message text already conveys the
  * error to assistive tech (and `aria-invalid` lives on the control).
  */
-export function FieldError({ className, children }: FieldErrorProps) {
+export function FieldError({ className, id, children }: FieldErrorProps) {
   return (
-    <span className={className}>
+    <span className={className} id={id}>
       <Icon
         glyph="exclamation-circle"
         aria-hidden="true"

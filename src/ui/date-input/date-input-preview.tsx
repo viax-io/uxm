@@ -104,11 +104,11 @@ function DateInputDemo({
       />
       {isError && (
         <p
+          className="uxm-date-input__error-message"
           style={{
-            fontSize: (styles.errorMessageSize as number) ?? 12,
-            color: styles.errorColor as string,
-            marginTop: 4,
-          }}
+            '--uxm-date-input-error-message-size':
+              styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : '12px',
+          } as CSSProperties}
         >
           Pick a date in the future.
         </p>
