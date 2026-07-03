@@ -604,11 +604,6 @@ function toCSS(key: string, componentId: string): string {
   const mapping: Record<string, string> = {
     paddingX: 'padding-inline',
     paddingY: 'padding-block',
-    connectorIdleColor: '--lc-idle-color',
-    connectorActiveColor: '--lc-active-color',
-    connectorIdleStrokeWidth: '--lc-stroke-width',
-    connectorActiveStrokeWidth: '--lc-active-stroke-width',
-    connectorDashPattern: '--lc-dash-pattern',
   };
   if (mapping[key]) return mapping[key];
 
