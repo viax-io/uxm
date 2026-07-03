@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
@@ -133,6 +133,7 @@ export function NumberInput({
   onBlur,
   ...rest
 }: NumberInputProps) {
+  const errorId = useId();
   const [internal, setInternal] = useState<string>(
     () => maskNumeric(defaultValue ?? '', allowNegative, allowDecimal, decimals),
   );
@@ -173,7 +174,11 @@ export function NumberInput({
   const showClear = clearable && !!current && !disabled;
 
   const input = (
+    // `{...rest}` is spread FIRST so the managed props below always win
+    // (same rule as TextInput) — a consumer prop can't clobber the mask's
+    // value/onChange or the computed error state.
     <input
+      {...rest}
       // `type="text"` with `inputMode` (not `type="number"`) for the same
       // reasons as PhoneInput: native number inputs ship browser spinner UI
       // we'd have to suppress, trigger autofill / smart-keypad heuristics that
@@ -189,11 +194,11 @@ export function NumberInput({
         className,
       )}
       aria-invalid={error ? true : undefined}
+      aria-describedby={error ? errorId : undefined}
       value={current}
       onChange={handleChange}
       onBlur={handleBlur}
       disabled={disabled}
-      {...rest}
     />
   );
 
@@ -220,7 +225,11 @@ export function NumberInput({
       ) : (
         input
       )}
-      {error && <FieldError className="uxm-number-input__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-number-input__error-message">
+          {error}
+        </FieldError>
+      )}
     </>
   );
 }

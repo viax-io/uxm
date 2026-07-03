@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 import { Icon } from '@/ui/icon';
@@ -40,6 +42,7 @@ export function InputWithIcon({
   error,
   ...rest
 }: InputWithIconProps) {
+  const errorId = useId();
   const isClearable = clearable ?? type === 'search';
   const hasValue = typeof value === 'string' && value.length > 0;
   const showClear = isClearable && hasValue && typeof onClear === 'function';
@@ -57,12 +60,16 @@ export function InputWithIcon({
         <span className="uxm-input-with-icon__icon" aria-hidden="true">
           {icon}
         </span>
+        {/* `{...rest}` is spread FIRST so the managed props below always win
+            (same rule as TextInput) — a consumer prop can't clobber the
+            computed error state. */}
         <input
+          {...rest}
           type={type}
           className="uxm-input-with-icon__input"
           value={value}
           aria-invalid={error ? true : undefined}
-          {...rest}
+          aria-describedby={error ? errorId : undefined}
         />
         {showClear && (
           <IconButton
@@ -74,7 +81,11 @@ export function InputWithIcon({
           </IconButton>
         )}
       </div>
-      {error && <FieldError className="uxm-input-with-icon__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-input-with-icon__error-message">
+          {error}
+        </FieldError>
+      )}
     </>
   );
 }

@@ -1,5 +1,7 @@
 'use client';
 
+import { useId } from 'react';
+
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 
@@ -32,6 +34,7 @@ export function RadioGroup({
   children,
   error,
 }: RadioGroupProps) {
+  const errorId = useId();
   return (
     <>
       <div
@@ -43,10 +46,15 @@ export function RadioGroup({
           className,
         )}
         aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
       >
         {children}
       </div>
-      {error && <FieldError className="uxm-radio-group__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-radio-group__error-message">
+          {error}
+        </FieldError>
+      )}
     </>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, type CSSProperties, type ReactNode } from 'react';
+import { useId, useMemo, type CSSProperties, type ReactNode } from 'react';
 
 import { cn } from '@/helpers';
 
@@ -74,6 +74,7 @@ export function SearchDropdown({
   style,
   'aria-label': ariaLabel,
 }: SearchDropdownProps) {
+  const errorId = useId();
   const selected = useMemo(
     () => options.find((o) => o.value === value) ?? null,
     [options, value],
@@ -110,6 +111,7 @@ export function SearchDropdown({
           tabIndex={disabled ? -1 : 0}
           aria-disabled={disabled || undefined}
           aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
           className={cn(
             'uxm-search-dropdown__trigger',
             open && 'uxm-search-dropdown__trigger--open',
@@ -172,7 +174,11 @@ export function SearchDropdown({
         </>
       )}
     />
-    {error && <FieldError className="uxm-search-dropdown__error-message">{error}</FieldError>}
+    {error && (
+      <FieldError id={errorId} className="uxm-search-dropdown__error-message">
+        {error}
+      </FieldError>
+    )}
     </>
   );
 }

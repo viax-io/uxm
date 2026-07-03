@@ -1,5 +1,7 @@
 'use client';
 
+import { useId } from 'react';
+
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 import { Icon } from '@/ui/icon';
@@ -38,6 +40,7 @@ export function Checkbox({
   value,
   error,
 }: CheckboxProps) {
+  const errorId = useId();
   return (
     <>
       <label
@@ -57,6 +60,7 @@ export function Checkbox({
           name={name}
           value={value}
           aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
           onChange={(e) => onChange?.(e.target.checked, e)}
         />
         <span className="uxm-checkbox__box" aria-hidden="true">
@@ -67,7 +71,11 @@ export function Checkbox({
         </span>
         {children && <span className="uxm-checkbox__label">{children}</span>}
       </label>
-      {error && <FieldError className="uxm-checkbox__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-checkbox__error-message">
+          {error}
+        </FieldError>
+      )}
     </>
   );
 }
