@@ -1,5 +1,3 @@
-'use client';
-
 import { useId, useMemo, type CSSProperties, type ReactNode } from 'react';
 
 import { cn } from '@/helpers';
