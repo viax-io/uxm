@@ -30,6 +30,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `defaultValue` | `PhoneValue` | `{ country: 'US', number: '' }` | Initial value for uncontrolled usage. |
 | `onChange` | `(next: PhoneValue) => void` | – | Fires after each keystroke or country selection. |
 | `countries` | `PhoneCountry[]` | `CURATED_COUNTRIES` | Country list shown in the picker. Each entry's `format` controls the per-country digit mask and `maxDigitsFor` cap. |
+| `clearable` | `boolean` | `true` | Show a clear (✕) button at the trailing edge when the national number has a value. Clearing wipes the number and keeps the selected country; the component owns the reset (fires `onChange` with an empty number), so no `onClear` is needed. |
 | `placeholder` | `string` | derived from country format | Placeholder for the national-number input. Defaults to the country's format string with `X` → `0`. |
 | `disabled` | `boolean` | – | Disables the whole field (country button + input). |
 | `className` | `string` | – | Merged with `uxm-phone-input` on the wrapper. |
@@ -102,6 +103,7 @@ interface PhoneValue {
 | Open popover | `isOpen` (country button click / `aria-expanded="true"`) | Anchored 4px below the field, full-width, drop-shadowed, max-height 320px scroll list with a leading search input. |
 | Empty filter | `search` matches no countries | Single "No countries match." row. |
 | Selected row | `c.iso === current.country` | Accent background + inverse text + bold weight. |
+| Clearable | `clearable` (default) + non-empty number, non-disabled | Trailing ✕ (`.uxm-field-clear`, 22×22) clears the number, keeps the country. |
 
 ## Accessibility
 
@@ -109,6 +111,7 @@ interface PhoneValue {
 - Popover: `role="dialog"` with `aria-label="Choose country"`; the list inside is `role="listbox"` and each row is a `<button role="option">` with `aria-selected`.
 - Search input is auto-focused on popover open (via `requestAnimationFrame`) so users can filter immediately.
 - Outside click and `Escape` close the popover.
+- Clear button: `<button aria-label="Clear">`; `onMouseDown` is prevented so the click doesn't blur the input before the reset lands.
 - National-number input uses `type="text"` + `inputMode="numeric"` for digit-only soft keyboards on mobile while avoiding `type="tel"`'s autofill collisions.
 - Forced state modifiers (`--state-hover`, `--state-focus`, `--state-disabled`) are visual-only.
 - The component does not provide a visible label — wrap with a `<label>` or supply `aria-label` / `aria-labelledby` on the input via spread props.
