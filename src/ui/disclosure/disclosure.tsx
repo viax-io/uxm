@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
 
 import { cn } from '@/helpers';

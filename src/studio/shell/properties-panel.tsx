@@ -376,10 +376,14 @@ export function PropertiesPanel({
                     : visibleOptions.some((o) => o.value === variant.defaultValue)
                       ? variant.defaultValue
                       : visibleOptions[0]?.value ?? rawValue;
-                  if (!valid) {
+                  if (!valid && value !== rawValue) {
                     // Stale variant selection (showWhen filtered out the option).
                     // Repair to a valid value via the variant channel, not overrides —
-                    // variants are ephemeral session state.
+                    // variants are ephemeral session state. Guarded on
+                    // `value !== rawValue` so an empty `visibleOptions` (no
+                    // fallback available) doesn't re-queue this microtask
+                    // forever — `value` would otherwise fall back to
+                    // `rawValue` itself and never settle.
                     queueMicrotask(() => setVariant(variant.key, value));
                   }
                   return (

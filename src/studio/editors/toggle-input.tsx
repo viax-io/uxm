@@ -11,7 +11,7 @@ export function ToggleInput({ label, value, onChange }: ToggleInputProps) {
     <div className="flex items-center gap-3">
       <span className="text-[13px] text-text-strong flex-1 min-w-0 truncate">{label}</span>
       <div className="w-44 shrink-0 flex justify-end">
-        <ToggleSwitch checked={value} onChange={(checked) => onChange(checked)} />
+        <ToggleSwitch aria-label={label} checked={value} onChange={(checked) => onChange(checked)} />
       </div>
     </div>
   );

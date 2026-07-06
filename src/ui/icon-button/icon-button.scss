@@ -5,19 +5,17 @@
    Previously the CSS hardcoded 40×40, surface-alt bg — the editor
    preview disagreed with production right out of the gate.
 
-   Two registry components share this CSS: `icon-button` (`.uxm-icon-button`,
-   `--uxm-icon-button-*` vars) and `button-icon` (`.uxm-button-icon`,
-   `--uxm-button-icon-*` vars). Each declaration reads its `button-icon` var
-   first, then the `icon-button` var, then the current value — so a saved
-   override from either editor paints, and the default look is unchanged. */
+   `.uxm-button-icon` (the separate `button-icon` registry component) owns
+   its own rules in `button-icon/button-icon.scss` — it must NOT be
+   re-declared here, or whichever stylesheet loads later wins the cascade
+   and silently overrides the other component's look. */
 
-.uxm-icon-button,
-.uxm-button-icon {
+.uxm-icon-button {
   align-items: center;
-  background-color: var(--uxm-button-icon-background-color, var(--uxm-icon-button-bg, transparent));
+  background-color: var(--uxm-icon-button-bg, transparent);
   border: none;
   border-radius: var(--uxm-icon-button-radius, 6px);
-  color: var(--uxm-button-icon-color, var(--uxm-icon-button-color, var(--color-text-muted)));
+  color: var(--uxm-icon-button-color, var(--color-text-muted));
   cursor: pointer;
   display: inline-flex;
   height: var(--uxm-icon-button-size, 32px);
@@ -26,30 +24,26 @@
   width: var(--uxm-icon-button-size, 32px);
 }
 
-.uxm-icon-button:hover,
-.uxm-button-icon:hover {
-  background-color: var(--uxm-button-icon-hover-background-color, var(--uxm-icon-button-hover-bg, var(--color-surface-alt)));
-  color: var(--uxm-button-icon-hover-color, var(--uxm-icon-button-hover-color, var(--color-text)));
+.uxm-icon-button:hover {
+  background-color: var(--uxm-icon-button-hover-bg, var(--color-surface-alt));
+  color: var(--uxm-icon-button-hover-color, var(--color-text));
 }
 
-.uxm-icon-button:active,
-.uxm-button-icon:active {
-  background-color: var(--uxm-button-icon-active-background-color, var(--uxm-icon-button-active-bg, var(--color-surface-alt)));
-  color: var(--uxm-button-icon-active-color, var(--uxm-icon-button-active-color, var(--color-text)));
+.uxm-icon-button:active {
+  background-color: var(--uxm-icon-button-active-bg, var(--color-surface-alt));
+  color: var(--uxm-icon-button-active-color, var(--color-text));
 }
 
-.uxm-icon-button:focus-visible,
-.uxm-button-icon:focus-visible {
-  color: var(--uxm-button-icon-focus-color, var(--uxm-icon-button-focus-color, var(--color-text)));
-  outline: 2px solid var(--uxm-button-icon-focus-ring-color, var(--uxm-icon-button-focus-ring-color, var(--color-accent)));
+.uxm-icon-button:focus-visible {
+  color: var(--uxm-icon-button-focus-color, var(--color-text));
+  outline: 2px solid var(--uxm-icon-button-focus-ring-color, var(--color-accent));
   outline-offset: 2px;
 }
 
-.uxm-icon-button:disabled,
-.uxm-button-icon:disabled {
-  color: var(--uxm-button-icon-disabled-color, var(--uxm-icon-button-disabled-color, var(--color-text-muted)));
+.uxm-icon-button:disabled {
+  color: var(--uxm-icon-button-disabled-color, var(--color-text-muted));
   cursor: not-allowed;
-  opacity: var(--uxm-button-icon-disabled-opacity, var(--uxm-icon-button-disabled-opacity, 0.4));
+  opacity: var(--uxm-icon-button-disabled-opacity, 0.4);
 }
 
 /* Inner SVG sizing — without this, the `iconSize` and `strokeWidth`
@@ -59,8 +53,7 @@
    <Icon size={N} strokeWidth={X}> inside an IconButton now inherits
    the IconButton's saved sizing instead of its own per-call prop. */
 
-.uxm-icon-button > svg,
-.uxm-button-icon > svg {
+.uxm-icon-button > svg {
   height: var(--uxm-icon-button-icon-size, 16px);
   stroke-width: var(--uxm-icon-button-stroke-width, 1.75);
   width: var(--uxm-icon-button-icon-size, 16px);

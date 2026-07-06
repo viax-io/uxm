@@ -44,6 +44,11 @@ const PER_COMPONENT_SELECTOR: Record<string, string> = {
   // trigger, but the `.uxm-menu__panel` portals to document.body, so vars on
   // the wrapper never reach it. Emit on both so the panel carries them.
   menu: '.uxm-menu, .uxm-menu__panel',
+  // PhoneInput's country picker portals via `Popover`: the field wrapper
+  // stays in-page but `.uxm-phone-input__popover` mounts to document.body,
+  // so the `--uxm-phone-input-popover-*` knobs must be emitted on the panel
+  // selector too or they never reach it.
+  'phone-input': '.uxm-phone-input, .uxm-phone-input__popover',
 };
 
 const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
@@ -346,7 +351,12 @@ function formatValue(value: string | number | boolean, key: string): string {
     if (unitless.includes(key) || key.endsWith('Opacity')) return String(value);
     return `${value}px`;
   }
-  return String(value);
+  // String style-override values are user/attacker-controlled and persisted
+  // to a stylesheet served to every browser session — sanitise the same way
+  // as brand token values so one can't break out of the declaration (e.g.
+  // `red; } body{display:none}/*`). An unsafe value is dropped to '' rather
+  // than throwing, so a single bad override can't blank the whole rule.
+  return safeTokenValue(value) ?? '';
 }
 
 // CSS sanitizers — applied to every brand value before interpolation. The
@@ -364,10 +374,10 @@ function safeFontFamily(v: unknown): string | undefined {
   const trimmed = v.trim();
   return /^[A-Za-z0-9 _-]+$/.test(trimmed) ? trimmed : undefined;
 }
-function safeTokenKey(v: string): boolean {
+export function safeTokenKey(v: string): boolean {
   return /^--[A-Za-z0-9-]+$/.test(v);
 }
-function safeTokenValue(v: unknown): string | undefined {
+export function safeTokenValue(v: unknown): string | undefined {
   if (typeof v !== 'string') return undefined;
   return /[{};\n\r]/.test(v) ? undefined : v;
 }

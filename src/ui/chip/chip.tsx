@@ -1,13 +1,11 @@
-'use client';
-
 import { cn } from '@/helpers';
 import { Icon } from '@/ui/icon';
 
-import type { CSSProperties, MouseEvent, ReactNode } from 'react';
+import type { HTMLAttributes, MouseEvent, ReactNode } from 'react';
 
 export type ChipMode = 'assist' | 'filter' | 'input' | 'suggestion';
 
-export interface ChipProps {
+export interface ChipProps extends Omit<HTMLAttributes<HTMLElement>, 'onClick'> {
   children: ReactNode;
   /** Material Design Chip mode. Inferred from props when omitted: `onRemove` → input, otherwise → assist. */
   mode?: ChipMode;
@@ -20,15 +18,12 @@ export interface ChipProps {
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   /** Removal handler. When set, mode defaults to "input" and a trailing × button appears. */
   onRemove?: () => void;
-  className?: string;
   /**
-   * Inline style on the rendered chip element. Used by the editor preview
-   * to project draft `--uxm-chip-*` CSS variables directly onto the chip,
-   * since inline styles take precedence over the saved-overrides CSS rule
-   * on `.uxm-chip` (which would otherwise win the cascade).
+   * `style` (inherited) is used by the editor preview to project draft
+   * `--uxm-chip-*` CSS variables directly onto the chip, since inline styles
+   * take precedence over the saved-overrides CSS rule on `.uxm-chip` (which
+   * would otherwise win the cascade).
    */
-  style?: CSSProperties;
-  'aria-label'?: string;
 }
 
 function inferMode(props: ChipProps): ChipMode {
@@ -55,6 +50,7 @@ function inferMode(props: ChipProps): ChipMode {
 export function Chip(props: ChipProps) {
   const {
     children,
+    mode: _mode,
     selected = false,
     disabled = false,
     iconLeft,
@@ -63,6 +59,7 @@ export function Chip(props: ChipProps) {
     className,
     style,
     'aria-label': ariaLabel,
+    ...rest
   } = props;
   const mode = inferMode(props);
 
@@ -98,6 +95,7 @@ export function Chip(props: ChipProps) {
     return (
       <button
         type="button"
+        {...rest}
         className={classes}
         style={style}
         disabled={disabled}
@@ -112,6 +110,7 @@ export function Chip(props: ChipProps) {
 
   return (
     <span
+      {...rest}
       className={classes}
       style={style}
       aria-disabled={disabled || undefined}

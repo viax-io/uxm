@@ -123,19 +123,16 @@
   cursor: not-allowed;
 }
 
-/* Country popover — searchable scrollable list. Anchored to the bottom
-   of the wrapper, full-width by default so long country names don't
-   truncate. Drop-shadow follows the rounded outline. */
+/* Country popover — searchable scrollable list. Rendered through the shared
+   `Popover` primitive, which portals it to document.body and owns
+   positioning (position: fixed, placement, matchAnchorWidth) so an ancestor's
+   `overflow: hidden` can't clip it. This block contributes visual chrome
+   only. Drop-shadow follows the rounded outline. */
 .uxm-phone-input__popover {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  z-index: 10;
   background-color: var(--uxm-phone-input-popover-bg, var(--color-card));
   border: 1px solid var(--uxm-phone-input-popover-border, var(--color-border));
   border-radius: var(--uxm-phone-input-popover-radius, 8px);
-  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.18));
+  box-shadow: var(--shadow-xl);
   overflow: hidden;
   display: flex;
   flex-direction: column;

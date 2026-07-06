@@ -1,5 +1,3 @@
-'use client';
-
 import {
   useCallback,
   useId,
@@ -7,6 +5,7 @@ import {
   type ChangeEvent,
   type CSSProperties,
   type DragEvent,
+  type HTMLAttributes,
   type ReactNode,
 } from 'react';
 
@@ -71,7 +70,8 @@ export interface FileUploadFileMeta {
   errorMessage?: string;
 }
 
-export interface FileUploadProps {
+export interface FileUploadProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'onError' | 'onDragEnter' | 'onDragLeave'> {
   /**
    * Forced drop-area visual state — overrides internal drag detection.
    * The workbench uses this to paint each state without real interaction.
@@ -148,10 +148,6 @@ export interface FileUploadProps {
   onDragLeave?: (e: DragEvent<HTMLLabelElement>) => void;
   /** Fires when a drop is rejected (e.g. wrong type — for caller-driven validation). */
   onError?: (reason: string) => void;
-  /** Extra classes appended to the wrapper. */
-  className?: string;
-  /** Inline styles forwarded to the wrapper. Workbench preview uses this to project knob vars. */
-  style?: CSSProperties;
   /** Optional override for the drop-area icon glyph. */
   iconGlyph?: string;
   /** Optional slot rendered above the file list (e.g. a summary line). */
@@ -173,10 +169,12 @@ export function FileUpload({
   onRemove,
   onDragEnter,
   onDragLeave,
+  onError: _onError,
   className,
   style,
   iconGlyph = 'cloud-arrow-up',
   children,
+  ...rest
 }: FileUploadProps) {
   const inputId = useId();
   const helpId = useId();
@@ -272,7 +270,7 @@ export function FileUpload({
   const resolvedHelp = isUploading ? 'Uploading…' : baseHelp;
 
   return (
-    <div className={cn('uxm-file-upload-wrapper', className)} style={style}>
+    <div className={cn('uxm-file-upload-wrapper', className)} style={style} {...rest}>
       <label
         className="uxm-file-upload"
         htmlFor={inputId}

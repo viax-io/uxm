@@ -1,12 +1,11 @@
-'use client';
-
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 import { Icon } from '@/ui/icon';
 
-import type { ChangeEvent, ReactNode } from 'react';
+import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
 
-export interface CheckboxProps {
+export interface CheckboxProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'checked' | 'defaultChecked' | 'onChange' | 'type' | 'value'> {
   checked?: boolean;
   defaultChecked?: boolean;
   disabled?: boolean;
@@ -37,6 +36,7 @@ export function Checkbox({
   name,
   value,
   error,
+  ...rest
 }: CheckboxProps) {
   return (
     <>
@@ -49,6 +49,7 @@ export function Checkbox({
         )}
       >
         <input
+          {...rest}
           type="checkbox"
           className="uxm-checkbox__input"
           checked={checked}

@@ -301,5 +301,4 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
     `isTokenValue`, `ThemeToken` type.
   - `@viax/uxm/tokens.css` — CSS custom-property declarations for tokens.
 - `tsup`-based build pipeline producing ESM + CJS + `.d.ts` with per-file
-  output to preserve `"use client"` directives for Next.js App Router
-  consumers.
+  output.

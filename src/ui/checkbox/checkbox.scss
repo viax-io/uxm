@@ -98,7 +98,7 @@
    (kebab → `--uxm-checkbox-error-color` / `-error-message-size`). The
    `.uxm-checkbox--error` class rides the root as a state hook + aria-invalid
    companion, even though it paints nothing itself. */
-.uxm--message {
+.uxm-checkbox__error-message {
   display: block;
   margin-top: 4px;
   font-size: var(--uxm-checkbox-error-message-size, 12px);

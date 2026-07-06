@@ -1,5 +1,3 @@
-'use client';
-
 import {
   useCallback,
   useEffect,
@@ -187,7 +185,10 @@ export function EditableCell({
   }, [isEditing]);
 
   const parseDraft = useCallback((): EditableCellValue => {
-    if (type === 'number') return Number(draft);
+    // An empty/whitespace draft must parse to NaN, not 0 — `Number('') === 0`
+    // would otherwise slip past the `Number.isNaN` guard in `handleCommit`
+    // and silently commit `0` on blur.
+    if (type === 'number') return draft.trim() === '' ? NaN : Number(draft);
     if (type === 'date') return draft;
     return draft;
   }, [type, draft]);

@@ -48,6 +48,7 @@
   &:disabled {
     color: var(--uxm-link-disabled-text, var(--color-text-muted));
     opacity: var(--uxm-link-disabled-opacity, 1);
+    pointer-events: none;
   }
 
   &__external-icon {

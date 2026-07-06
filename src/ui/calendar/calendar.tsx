@@ -1,13 +1,11 @@
-'use client';
-
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
 import { computeMonthGrid, type WeekStart } from '../../lib/calendar-grid';
 import { Icon } from '../icon';
 
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, KeyboardEvent } from 'react';
 
 export interface CalendarValue {
   start: Date | null;
@@ -100,6 +98,26 @@ function yearOverlapsSelection(year: number, value: CalendarValue): boolean {
 
 const EMPTY_VALUE: CalendarValue = { start: null, end: null };
 
+/**
+ * Default roving-tabindex target for the day grid: the selected day if
+ * it's in the visible grid and enabled, else today if visible and
+ * enabled, else the first enabled cell, else 0. Keeps the grid reachable
+ * via Tab even when the "obvious" cell happens to be disabled.
+ */
+function defaultDayFocusIndex(
+  cells: { date: Date; outside: boolean }[],
+  start: Date | null,
+  today: Date,
+  isCellDisabled: (date: Date) => boolean,
+): number {
+  const startIndex = start ? cells.findIndex((c) => sameDay(c.date, start)) : -1;
+  if (startIndex >= 0 && !isCellDisabled(cells[startIndex].date)) return startIndex;
+  const todayIndex = cells.findIndex((c) => sameDay(c.date, today));
+  if (todayIndex >= 0 && !isCellDisabled(cells[todayIndex].date)) return todayIndex;
+  const firstEnabled = cells.findIndex((c) => !isCellDisabled(c.date));
+  return firstEnabled >= 0 ? firstEnabled : 0;
+}
+
 export function Calendar({
   month,
   value,
@@ -142,6 +160,17 @@ export function Calendar({
     () => computeMonthGrid(currentMonth, weekStartsOn),
     [currentMonth, weekStartsOn],
   );
+
+  const isCellDisabled = useCallback((date: Date) => isDisabled?.(date) ?? false, [isDisabled]);
+
+  // Roving tabindex across the day grid (ARIA grid pattern): only one cell
+  // is a Tab stop at a time; arrow keys move it. `dayRefs` lets the arrow
+  // handler call `.focus()` on the target cell after moving the index.
+  const dayRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [focusedDayIndex, setFocusedDayIndex] = useState<number>(() =>
+    defaultDayFocusIndex(dayCells, currentStart, realToday, isCellDisabled),
+  );
+
   const weekdays = useMemo(
     () => getWeekdayLabels(locale, weekStartsOn),
     [locale, weekStartsOn],
@@ -169,8 +198,13 @@ export function Calendar({
     (next: Date) => {
       if (month === undefined) setInternalMonth(next);
       onMonthChange?.(next);
+      // Re-target the day grid's roving tab stop for the month we're
+      // navigating to — the previous index otherwise points at an
+      // unrelated cell (or none) in the new grid.
+      const nextCells = computeMonthGrid(next, weekStartsOn);
+      setFocusedDayIndex(defaultDayFocusIndex(nextCells, currentStart, realToday, isCellDisabled));
     },
-    [month, onMonthChange],
+    [month, onMonthChange, weekStartsOn, currentStart, realToday, isCellDisabled],
   );
 
   // Prev/next nav stepping is view-aware: day → ±1 month, month → ±1 year,
@@ -262,6 +296,56 @@ export function Calendar({
     setHoveredDate((prev) => (sameDay(prev, date) ? null : prev));
   }, []);
 
+  // ARIA grid keyboard navigation for the day view: ArrowLeft/Right move a
+  // day, ArrowUp/Down move a week, Home/End jump to the start/end of the
+  // current week row. Stays within the visible 6×7 grid (doesn't cross
+  // into the previous/next month) — disabled cells are skipped so arrow
+  // navigation never lands on (and gets stuck at) an inert cell.
+  const handleDayKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
+      const rowStart = i - (i % 7);
+      let step = 0;
+      let bound: number | null = null;
+      switch (e.key) {
+        case 'ArrowLeft':
+          step = -1;
+          break;
+        case 'ArrowRight':
+          step = 1;
+          break;
+        case 'ArrowUp':
+          step = -7;
+          break;
+        case 'ArrowDown':
+          step = 7;
+          break;
+        case 'Home':
+          step = -1;
+          bound = rowStart;
+          break;
+        case 'End':
+          step = 1;
+          bound = rowStart + 6;
+          break;
+        default:
+          return;
+      }
+      e.preventDefault();
+      let next = bound ?? i + step;
+      while (
+        next >= 0 &&
+        next < dayCells.length &&
+        isCellDisabled(dayCells[next].date)
+      ) {
+        next += step;
+      }
+      if (next < 0 || next >= dayCells.length) return;
+      setFocusedDayIndex(next);
+      dayRefs.current[next]?.focus();
+    },
+    [dayCells, isCellDisabled],
+  );
+
   return (
     <div className={cn('uxm-calendar', `uxm-calendar--view-${view}`, shadow && 'uxm-calendar--shadow', className)} {...rest}>
       <div className="uxm-calendar__header">
@@ -300,41 +384,58 @@ export function Calendar({
             ))}
           </div>
           <div className="uxm-calendar__grid" role="grid">
-            {dayCells.map(({ date, outside }, i) => {
-              const isToday = sameDay(date, realToday);
-              const isStart = sameDay(date, currentStart);
-              const isEnd = !!previewEnd && sameDay(date, previewEnd);
-              const isSelected = !isRangeView && isStart;
-              const isRangeStart = isRangeView && isStart;
-              const isRangeEnd = isRangeView && isEnd;
-              const isInRange = isStrictlyBetween(date, currentStart, previewEnd);
-              const disabled = isDisabled?.(date) ?? false;
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  role="gridcell"
-                  disabled={disabled}
-                  onClick={() => handleDayClick(date, outside, disabled)}
-                  onMouseEnter={() => handleMouseEnter(date, disabled)}
-                  onMouseLeave={() => handleMouseLeave(date)}
-                  className={cn(
-                    'uxm-calendar__day',
-                    outside && 'uxm-calendar__day--outside',
-                    isToday && 'uxm-calendar__day--today',
-                    isSelected && 'uxm-calendar__day--selected',
-                    isRangeStart && 'uxm-calendar__day--range-start',
-                    isRangeEnd && 'uxm-calendar__day--range-end',
-                    isInRange && 'uxm-calendar__day--in-range',
-                    disabled && 'uxm-calendar__day--disabled',
-                  )}
-                  aria-selected={isSelected || isRangeStart || isRangeEnd || undefined}
-                  aria-current={isToday ? 'date' : undefined}
-                >
-                  {date.getDate()}
-                </button>
-              );
-            })}
+            {Array.from({ length: dayCells.length / 7 }, (_, week) => (
+              // `display: contents` (see calendar.scss) keeps these cells as
+              // direct participants in the parent's CSS grid while giving
+              // each week its own `role="row"` — the ARIA grid pattern
+              // requires gridcells to be grouped into rows.
+              <div key={week} role="row" className="uxm-calendar__grid-row">
+                {dayCells.slice(week * 7, week * 7 + 7).map(({ date, outside }, col) => {
+                  const i = week * 7 + col;
+                  const isToday = sameDay(date, realToday);
+                  const isStart = sameDay(date, currentStart);
+                  const isEnd = !!previewEnd && sameDay(date, previewEnd);
+                  const isSelected = !isRangeView && isStart;
+                  const isRangeStart = isRangeView && isStart;
+                  const isRangeEnd = isRangeView && isEnd;
+                  const isInRange = isStrictlyBetween(date, currentStart, previewEnd);
+                  const disabled = isDisabled?.(date) ?? false;
+                  return (
+                    <button
+                      key={i}
+                      ref={(el) => {
+                        dayRefs.current[i] = el;
+                      }}
+                      type="button"
+                      role="gridcell"
+                      disabled={disabled}
+                      tabIndex={i === focusedDayIndex ? 0 : -1}
+                      onClick={() => {
+                        handleDayClick(date, outside, disabled);
+                        if (!disabled && !outside) setFocusedDayIndex(i);
+                      }}
+                      onKeyDown={(e) => handleDayKeyDown(e, i)}
+                      onMouseEnter={() => handleMouseEnter(date, disabled)}
+                      onMouseLeave={() => handleMouseLeave(date)}
+                      className={cn(
+                        'uxm-calendar__day',
+                        outside && 'uxm-calendar__day--outside',
+                        isToday && 'uxm-calendar__day--today',
+                        isSelected && 'uxm-calendar__day--selected',
+                        isRangeStart && 'uxm-calendar__day--range-start',
+                        isRangeEnd && 'uxm-calendar__day--range-end',
+                        isInRange && 'uxm-calendar__day--in-range',
+                        disabled && 'uxm-calendar__day--disabled',
+                      )}
+                      aria-selected={isSelected || isRangeStart || isRangeEnd || undefined}
+                      aria-current={isToday ? 'date' : undefined}
+                    >
+                      {date.getDate()}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </>
       )}

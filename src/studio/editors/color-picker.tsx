@@ -117,6 +117,19 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [open]);
 
+  // Close on Escape, restoring focus to the trigger
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key !== 'Escape') return;
+      setOpen(false);
+      setCustomMode(false);
+      triggerRef.current?.focus();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open]);
+
   function selectToken(t: ThemeToken) {
     onChange(t.variable);
     setOpen(false);
@@ -276,6 +289,8 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
       {/* Trigger button */}
       <button
         ref={triggerRef}
+        aria-expanded={open}
+        aria-haspopup="listbox"
         onClick={() => { setOpen(!open); setCustomMode(false); }}
         className="w-44 shrink-0 flex items-center gap-2 rounded-lg border border-border bg-surface px-2 py-1.5 text-[12px] text-text-strong hover:border-accent/40 transition-colors cursor-pointer"
       >

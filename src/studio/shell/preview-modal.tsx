@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, type CSSProperties } from 'react';
+import { useState, useMemo, useCallback, useEffect, type CSSProperties } from 'react';
 
 import { Banner } from '@/ui';
 import { ButtonPrimary } from '@/ui';
@@ -537,7 +537,7 @@ function BuildSuccess({ onClose }: { onClose: () => void }) {
         </svg>
       </div>
       <div>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-text)', margin: '0 0 6px' }}>Design system ready</h2>
+        <h2 id="uxm-preview-modal-title" style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-text)', margin: '0 0 6px' }}>Design system ready</h2>
         <p style={{ fontSize: 14, color: 'var(--color-text-muted)', margin: 0 }}>{registry.length} components configured</p>
       </div>
       <ButtonPrimary onClick={onClose} style={{ marginTop: 8 }}>
@@ -558,6 +558,16 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
   const [building, setBuilding] = useState(false);
   const [buildError, setBuildError] = useState<string | null>(null);
   const [bannerVisible, setBannerVisible] = useState(true);
+
+  // Escape-to-close — the modal has no focus trap, so this is the primary
+  // keyboard dismissal path.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose]);
 
   const handleBuild = useCallback(async () => {
     setBuilding(true);
@@ -623,8 +633,11 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
         }
       `}</style>
 
-      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- wrapper only stops backdrop dismiss from bubbling; not itself interactive */}
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events -- backdrop-dismiss guard: stops clicks inside the dialog from bubbling to the backdrop; the dialog panel isn't itself an interactive control */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="uxm-preview-modal-title"
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '90vw', maxWidth: 960, height: '85vh', maxHeight: 680,
@@ -682,7 +695,7 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                   />
                   <div style={{ height: 22, width: 1, backgroundColor: 'var(--color-border)', flexShrink: 0 }} />
                   <div style={{ minWidth: 0 }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>Dashboard</h3>
+                    <h3 id="uxm-preview-modal-title" style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>Dashboard</h3>
                     <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: '2px 0 0' }}>Revenue overview for Q1 2026</p>
                   </div>
                 </div>

@@ -1,9 +1,8 @@
-'use client';
-
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
+import { useRovingTabIndex } from '../../hooks/use-roving-tab-index';
 import {
   CURATED_COUNTRIES,
   findCountry,
@@ -12,6 +11,7 @@ import {
   type PhoneCountry,
 } from '../../lib/phone-countries';
 import { Icon } from '../icon';
+import { Popover } from '../popover';
 
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 
@@ -43,10 +43,13 @@ export interface PhoneInputProps
    */
   countries?: PhoneCountry[];
   /**
-   * Inline style applied to the WRAPPER (not the inner <input>). CSS
-   * custom properties set here cascade to the inner field AND the
-   * country popover (a sibling of the input) so theming knobs reach
-   * all parts.
+   * Inline style applied to the WRAPPER (and forwarded to the country
+   * popover panel). CSS custom properties set here cascade to the inner
+   * field, and — because the popover portals out to document.body and so
+   * can't inherit the wrapper cascade — are forwarded onto the popover
+   * panel too, so theming knobs still reach every part. In production the
+   * studio emits popover overrides on the `.uxm-phone-input__popover`
+   * selector directly (see PER_COMPONENT_SELECTOR in generate-css).
    */
   style?: React.CSSProperties;
 }
@@ -81,33 +84,13 @@ export function PhoneInput({
     setSearch('');
   }, []);
 
-  // Close on outside click or Escape. Same pattern as DateInput / TimeInput.
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        closePopover();
-      }
-    };
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closePopover();
-    };
-    document.addEventListener('mousedown', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [isOpen, closePopover]);
-
-  // When the popover opens, focus the search input so the user can type
-  // immediately to filter — the most common picker interaction with 30+
-  // entries. Runs after paint so the input is mounted.
-  useEffect(() => {
-    if (!isOpen) return;
-    const id = requestAnimationFrame(() => searchRef.current?.focus());
-    return () => cancelAnimationFrame(id);
-  }, [isOpen]);
+  // Dismissal (outside-click + Escape), portal mounting, positioning, and
+  // opening focus are all owned by the shared `Popover` primitive in the
+  // JSX below — the country list portals to document.body so an ancestor's
+  // `overflow: hidden` can't clip it, and `initialFocus={searchRef}` focuses
+  // the search box on open so the user can filter immediately. The `anchor`
+  // is the OUTER wrapper (`containerRef`) so clicks on the trigger toggle via
+  // its own handler rather than being treated as an outside click.
 
   const commit = useCallback(
     (next: PhoneValue) => {
@@ -153,6 +136,20 @@ export function PhoneInput({
     );
   }, [countries, search]);
 
+  // Roving tabindex across the country list — ARIA listbox pattern: only
+  // one option is a Tab stop; ArrowUp/Down move the highlight. Enter/Space
+  // and Escape are already covered for free — the options are real
+  // <button>s (native Enter/Space activation) and Escape is wired above
+  // (closes the whole popover, same as an outside click).
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const safeHighlightedIndex = Math.min(highlightedIndex, filtered.length - 1);
+  const { getItemRef, onItemKeyDown } = useRovingTabIndex({
+    count: filtered.length,
+    activeIndex: safeHighlightedIndex,
+    orientation: 'vertical',
+    onNavigate: setHighlightedIndex,
+  });
+
   const masked = maskNumber(current.number, country);
 
   return (
@@ -196,9 +193,20 @@ export function PhoneInput({
         disabled={disabled}
         {...rest}
       />
-      {isOpen && (
-        <div className="uxm-phone-input__popover" role="dialog" aria-label="Choose country">
-          <div className="uxm-phone-input__search">
+      <Popover
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open) closePopover();
+        }}
+        anchor={containerRef}
+        placement="bottom-start"
+        matchAnchorWidth
+        initialFocus={searchRef}
+        className="uxm-phone-input__popover"
+        style={style}
+        aria-label="Choose country"
+      >
+        <div className="uxm-phone-input__search">
             <Icon glyph="search" size={14} strokeWidth={2} />
             <input
               ref={searchRef}
@@ -215,16 +223,19 @@ export function PhoneInput({
             {filtered.length === 0 ? (
               <li className="uxm-phone-input__empty">No countries match.</li>
             ) : (
-              filtered.map((c) => (
+              filtered.map((c, i) => (
                 <li key={c.iso}>
                   <button
                     type="button"
                     role="option"
+                    ref={getItemRef(i)}
+                    tabIndex={i === safeHighlightedIndex ? 0 : -1}
                     className={cn(
                       'uxm-phone-input__row',
                       c.iso === current.country && 'uxm-phone-input__row--selected',
                     )}
                     onClick={() => handleCountryPick(c.iso)}
+                    onKeyDown={(e) => onItemKeyDown(e, i)}
                     aria-selected={c.iso === current.country}
                   >
                     <span className="uxm-phone-input__row-flag" aria-hidden="true">{c.flag}</span>
@@ -235,8 +246,7 @@ export function PhoneInput({
               ))
             )}
           </ul>
-        </div>
-      )}
+      </Popover>
     </div>
   );
 }

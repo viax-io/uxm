@@ -1,5 +1,3 @@
-'use client';
-
 import { useMemo, type CSSProperties, type ReactNode } from 'react';
 
 import { cn } from '@/helpers';

@@ -1,5 +1,3 @@
-'use client';
-
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 
@@ -13,6 +11,8 @@ export interface ToggleSwitchProps {
   children?: ReactNode;
   className?: string;
   name?: string;
+  /** Accessible name for the switch when no visible `children` label is given. */
+  'aria-label'?: string;
   /** Inline style on the wrapping label — used to project `--uxm-toggle-switch-*` overrides. */
   style?: CSSProperties;
   /**
@@ -36,6 +36,7 @@ export function ToggleSwitch({
   name,
   style,
   error,
+  'aria-label': ariaLabel,
 }: ToggleSwitchProps) {
   return (
     <>
@@ -56,6 +57,7 @@ export function ToggleSwitch({
           defaultChecked={defaultChecked}
           disabled={disabled}
           name={name}
+          aria-label={ariaLabel}
           aria-invalid={error ? true : undefined}
           onChange={(e) => onChange?.(e.target.checked, e)}
         />

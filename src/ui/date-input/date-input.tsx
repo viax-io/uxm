@@ -1,10 +1,9 @@
-'use client';
-
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
 import { Calendar, type CalendarValue } from '../calendar';
+import { FieldError } from '../field-error';
 import { Icon } from '../icon';
 
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
@@ -42,6 +41,13 @@ export interface DateInputProps
    * popover (a sibling of the input) — so theming knobs reach all parts.
    */
   style?: React.CSSProperties;
+  /**
+   * When set to a non-empty string, the field renders in its error state:
+   * red border (`.uxm-date-input--error`), `aria-invalid` on the input,
+   * and the message rendered below the field. Omit (or pass an empty
+   * string) for the normal state.
+   */
+  error?: string;
 }
 
 export const FORMAT_SPEC: Record<DateInputFormat, { segments: number[]; sep: string; placeholder: string }> = {
@@ -140,6 +146,7 @@ export function DateInput({
   calendar = true,
   style,
   onFocus,
+  error,
   ...rest
 }: DateInputProps) {
   // Initial state — same masker for single, plain string for range (typing
@@ -153,10 +160,13 @@ export function DateInput({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Mode switch resets the internal value — a range string is invalid input
-  // in single mode (and vice versa). Also close the popover so the user starts
-  // a fresh pick under the new mode. Only touches uncontrolled state; if the
-  // consumer is driving `value` they own the reset themselves.
+  // Mode OR format switch resets the internal value — a range string is
+  // invalid input in single mode (and vice versa), and an existing digit
+  // string would otherwise be mis-parsed under a new format's segment
+  // boundaries (e.g. "mdy" digits re-sliced as "ymd"). Also close the
+  // popover so the user starts a fresh pick under the new mode/format.
+  // Only touches uncontrolled state; if the consumer is driving `value`
+  // they own the reset themselves.
   //
   // The ref guard skips the FIRST run of this effect so the `useState`
   // initializer (which masks `defaultValue`) doesn't get clobbered on mount.
@@ -171,7 +181,7 @@ export function DateInput({
     }
     setInternal('');
     setIsOpen(false);
-  }, [mode]);
+  }, [mode, format]);
 
   // Close on click outside or Escape. Mounting only when `isOpen` is true
   // keeps the global listeners off when the popover is closed.
@@ -239,7 +249,12 @@ export function DateInput({
   })();
 
   return (
-    <div className={cn('uxm-date-input', className)} ref={containerRef} style={style}>
+    <>
+    <div
+      className={cn('uxm-date-input', error && 'uxm-date-input--error', className)}
+      ref={containerRef}
+      style={style}
+    >
       <input
         type="text"
         inputMode="numeric"
@@ -252,6 +267,7 @@ export function DateInput({
           if (calendar) setIsOpen(true);
           onFocus?.(e);
         }}
+        aria-invalid={error ? true : undefined}
         {...rest}
       />
       {calendar && (
@@ -266,10 +282,15 @@ export function DateInput({
         </button>
       )}
       {calendar && isOpen && (
-        <div className="uxm-date-input__popover" role="dialog">
+        <div className="uxm-date-input__popover" role="dialog" aria-label="Choose date">
           <Calendar value={calendarValue} onChange={handleCalendarChange} />
         </div>
       )}
     </div>
+    {error && <FieldError className="uxm-date-input__error-message">{error}</FieldError>}
+    </>
   );
 }
+// Static marker so FormField only forwards its `error` prop into children
+// that accept one (avoids React unknown-prop warnings on non-input children).
+DateInput.hasError = true;

@@ -31,7 +31,7 @@ export function SelectInput({ label, value, onChange, options }: SelectInputProp
             searchPlaceholder={`Search ${label.toLowerCase()}…`}
           />
         ) : (
-          <Select value={value} onChange={(e) => onChange(e.target.value)}>
+          <Select value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
             {options.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}

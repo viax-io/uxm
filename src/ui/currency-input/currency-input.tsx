@@ -1,5 +1,3 @@
-'use client';
-
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
@@ -9,6 +7,7 @@ import {
   findCurrency,
   type Currency,
 } from '../../lib/currencies';
+import { FieldError } from '../field-error';
 import { Icon } from '../icon';
 
 import type { ChangeEvent, FocusEvent, InputHTMLAttributes } from 'react';
@@ -67,9 +66,14 @@ export interface CurrencyInputProps
    * popover so theming knobs reach all parts.
    */
   style?: React.CSSProperties;
+  /**
+   * When set to a non-empty string, the field renders in its error state:
+   * red border (`.uxm-currency-input--error`), `aria-invalid` on the
+   * amount input, and the message rendered below the field. Omit (or pass
+   * an empty string) for the normal state.
+   */
+  error?: string;
 }
-
-const EMPTY_VALUE: CurrencyValue = { currency: 'USD', amount: '' };
 
 /** Strip non-digit-non-dot and cap decimals to the active currency's precision. */
 function maskAmount(raw: string, allowNegative: boolean, decimals: number): string {
@@ -161,9 +165,16 @@ export function CurrencyInput({
   onFocus,
   onBlur,
   placeholder,
+  error,
   ...rest
 }: CurrencyInputProps) {
-  const [internal, setInternal] = useState<CurrencyValue>(() => defaultValue ?? EMPTY_VALUE);
+  // Uncontrolled default currency must match what's actually displayed —
+  // `currencies[0]` when the consumer restricts the list, `'USD'` only when
+  // no list is given at all. Hardcoding `'USD'` here would desync every
+  // `onChange` from the displayed currency whenever `currencies` excludes it.
+  const [internal, setInternal] = useState<CurrencyValue>(
+    () => defaultValue ?? { currency: currencies[0]?.code ?? 'USD', amount: '' },
+  );
   const isControlled = value !== undefined;
   const current = isControlled ? value : internal;
 
@@ -282,11 +293,13 @@ export function CurrencyInput({
     : formatForDisplay(current.amount, locale, decimals);
 
   return (
+    <>
     <div
       className={cn(
         'uxm-currency-input',
         `uxm-currency-input--picker-${pickerPosition}`,
         disabled && 'uxm-currency-input--disabled',
+        error && 'uxm-currency-input--error',
         className,
       )}
       style={style}
@@ -321,6 +334,7 @@ export function CurrencyInput({
         onBlur={handleBlur}
         disabled={disabled}
         placeholder={placeholder ?? (decimals > 0 ? '0.00' : '0')}
+        aria-invalid={error ? true : undefined}
         {...rest}
       />
       {isOpen && (
@@ -365,5 +379,10 @@ export function CurrencyInput({
         </div>
       )}
     </div>
+    {error && <FieldError className="uxm-currency-input__error-message">{error}</FieldError>}
+    </>
   );
 }
+// Static marker so FormField only forwards its `error` prop into children
+// that accept one (avoids React unknown-prop warnings on non-input children).
+CurrencyInput.hasError = true;

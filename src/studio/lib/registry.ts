@@ -17,17 +17,6 @@ export const categoryColors: Record<Category, string> = {
   Icons: 'var(--color-text-muted)',
 };
 
-const labelPositionVariant = {
-  key: 'labelPosition',
-  label: 'Label Position',
-  options: [
-    { value: 'top', label: 'Top' },
-    { value: 'side', label: 'Side' },
-    { value: 'floating', label: 'Floating' },
-  ],
-  defaultValue: 'top',
-};
-
 export const registry: ComponentDef[] = [
   // ── App ──
   {
@@ -3174,9 +3163,8 @@ export const registry: ComponentDef[] = [
       },
     ],
     events: [
-      { name: 'onChange', description: 'Fires when the user adds or removes a pill. Payload is the full current selection.', payload: '{ values: string[] }' },
-      { name: 'onAdd', description: 'Fires when a single pill is added.', payload: '{ value: string }' },
-      { name: 'onRemove', description: 'Fires when a single pill is removed (× click).', payload: '{ value: string }' },
+      { name: 'onRowClick', description: 'Fires when the user clicks a row (not bubbled from clicks inside the row-actions cell).', payload: '{ row: T }' },
+      { name: 'onCommit', description: 'Fires when an editable cell commits a new value — Enter or blur.', payload: '{ row: T, value: EditableCellValue }' },
     ],
   },
   {
@@ -4467,7 +4455,7 @@ export const registry: ComponentDef[] = [
     category: 'Diagram',
     description: "Start / End pill used as the graph's terminal nodes.",
     styleProperties: [
-      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: '#FFFFFF', section: 'colors' },
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
       { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 20, step: 1, unit: 'px' },
@@ -4692,7 +4680,7 @@ export const registry: ComponentDef[] = [
     category: 'Diagram',
     description: 'Modal for inserting a new lifecycle step — type radio list + name input.',
     styleProperties: [
-      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: '#FFFFFF', section: 'colors' },
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 6, min: 0, max: 16, step: 1, unit: 'px' },
       { key: 'width', label: 'Width', control: 'number', defaultValue: 420, min: 320, max: 560, step: 10, unit: 'px' },
@@ -4708,7 +4696,7 @@ export const registry: ComponentDef[] = [
     category: 'Diagram',
     description: 'Popover menu appearing on an edge with State / Condition / Task pickers.',
     styleProperties: [
-      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: '#FFFFFF', section: 'colors' },
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 4, min: 0, max: 16, step: 1, unit: 'px' },

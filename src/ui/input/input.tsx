@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Children,
   isValidElement,
@@ -114,7 +112,7 @@ export function TextInput({
         // Layout-only wrapper so the clear button can sit absolutely at the
         // trailing edge. The visible chrome stays on `.uxm-input-text` (the
         // input itself), so save-emitted `--uxm-input-text-*` vars still land.
-        <div className="uxm-input-text-wrap">
+        <div className="uxm-input-text__wrap">
           {input}
           {showClear && (
             <IconButton
@@ -203,7 +201,7 @@ export function Textarea({
   return (
     <>
       {clearable ? (
-        <div className="uxm-textarea-wrap">
+        <div className="uxm-textarea__wrap">
           {textarea}
           {showClear && (
             <IconButton

@@ -209,11 +209,11 @@
   flex-shrink: 0;
 }
 
-.uxm-input-text-wrap {
+.uxm-input-text__wrap {
   position: relative;
   display: block;
 }
-.uxm-input-text-wrap .uxm-input-text {
+.uxm-input-text__wrap .uxm-input-text {
   width: 100%;
 }
 .uxm-input-text--clearable {
@@ -228,11 +228,11 @@
 
 /* Clearable textarea — the ✕ pins to the top-right corner, away from the
    bottom-right resize handle. */
-.uxm-textarea-wrap {
+.uxm-textarea__wrap {
   position: relative;
   display: block;
 }
-.uxm-textarea-wrap .uxm-textarea {
+.uxm-textarea__wrap .uxm-textarea {
   width: 100%;
   display: block;
 }
