@@ -49,4 +49,33 @@
     border-top: 1px solid var(--color-border);
     padding: var(--uxm-side-flexpane-padding-y, 12px) var(--uxm-side-flexpane-padding-x, 16px);
   }
+
+  /* Resize handle — a thin grab strip flush with the inside-left edge.
+     Positioning/sizing/cursor match the previous Tailwind utilities
+     (`absolute z-20 left-0 top-0 bottom-0 w-1.5 cursor-col-resize`); the
+     inner bar re-tones on hover/active the same way `group-hover:` /
+     `group-active:` did. */
+  &__resize-handle {
+    position: absolute;
+    z-index: 20;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    cursor: col-resize;
+
+    &-bar {
+      height: 100%;
+      width: 100%;
+      transition: background-color 0.15s;
+    }
+
+    &:hover &-bar {
+      background-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    }
+
+    &:active &-bar {
+      background-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+    }
+  }
 }

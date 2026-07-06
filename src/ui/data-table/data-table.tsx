@@ -1,5 +1,3 @@
-'use client';
-
 import { cn } from '@/helpers';
 
 import { EditableCell, type EditableCellOption, type EditableCellType, type EditableCellValue } from '../editable-cell';

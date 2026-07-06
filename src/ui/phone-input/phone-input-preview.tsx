@@ -7,12 +7,13 @@ import { PhoneInput, type PhoneValue } from '@/ui';
 type Styles = PreviewProps['styles'];
 
 /**
- * Project every state knob as a `--uxm-phone-input-*` custom prop on the
- * wrapper. The wrapper IS the visible surface here (border + bg live on
- * `.uxm-phone-input` itself), unlike date/time/password which put those
- * on the inner input. Popover + country-button knobs also flow through
- * the wrapper-level cascade and reach the popover (a child of the
- * wrapper) and the country button respectively.
+ * Project every state knob as a `--uxm-phone-input-*` custom prop and hand
+ * the bag to `PhoneInput` as its `style`. The wrapper IS the visible surface
+ * here (border + bg live on `.uxm-phone-input` itself), unlike
+ * date/time/password which put those on the inner input. The country popover
+ * portals out to document.body, so it can't inherit the wrapper cascade —
+ * PhoneInput forwards this same `style` onto the popover panel, keeping the
+ * popover + country-button knobs live in the preview.
  */
 function buildVars(styles: Styles): CSSProperties {
   return {
@@ -73,12 +74,13 @@ export function PhoneInputPreview({ styles, variants }: PreviewProps) {
   );
 
   return (
-    <div style={{ width: 320, ...cssVars } as CSSProperties}>
+    <div style={{ width: 320 }}>
       <PhoneInputHost
         key={state}
         seed={seed}
         disabled={state === 'disabled'}
         className={forcedClass || undefined}
+        style={cssVars}
       />
       {isError && (
         <p
@@ -110,10 +112,12 @@ function PhoneInputHost({
   seed,
   disabled,
   className,
+  style,
 }: {
   seed: PhoneValue;
   disabled: boolean;
   className?: string;
+  style?: CSSProperties;
 }) {
   const [value, setValue] = useState<PhoneValue>(seed);
   return (
@@ -122,6 +126,7 @@ function PhoneInputHost({
       onChange={setValue}
       disabled={disabled}
       className={className}
+      style={style}
     />
   );
 }

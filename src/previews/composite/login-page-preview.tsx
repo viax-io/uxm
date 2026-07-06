@@ -18,19 +18,21 @@ export function LoginPagePreview({ styles, variants, shell }: PreviewProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadNotice, setUploadNotice] = useState<string | null>(null);
 
   const upload = async (file: File) => {
     if (!shell?.uploadAsset) return;
     setUploading(true);
     setUploadError(null);
+    setUploadNotice(null);
     try {
       const data = await shell.uploadAsset(file, 'logo');
       if (!data?.url) throw new Error('Upload failed');
-      // Surface the new URL by syncing it through the same field — preview reads styles.imageUrl,
-      // but we don't have a direct setter here, so we just blink a notice for the designer.
-      // The user can paste this into the Image URL field in the properties panel.
+      // Surface the new URL by copying it to the clipboard and showing an inline
+      // notice — preview reads styles.imageUrl but has no direct setter here, so
+      // the designer pastes the copied URL into the Image URL field.
       navigator.clipboard?.writeText(data.url).catch(() => {});
-      alert(`Uploaded. URL copied to clipboard:\n${data.url}`);
+      setUploadNotice('Uploaded — URL copied to clipboard');
     } catch (e) {
       setUploadError(e instanceof Error ? e.message : 'Upload failed');
     } finally {
@@ -121,6 +123,9 @@ export function LoginPagePreview({ styles, variants, shell }: PreviewProps) {
           />
           {uploadError && (
             <span style={{ color: 'var(--color-danger-text)' }}>{uploadError}</span>
+          )}
+          {uploadNotice && (
+            <span style={{ color: 'var(--color-success-text)' }}>{uploadNotice}</span>
           )}
         </div>
       )}

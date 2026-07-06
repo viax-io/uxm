@@ -19,10 +19,6 @@ function toKebab(str: string): string {
   return str.replace(/([A-Z])/g, '-$1').toLowerCase();
 }
 
-function toCamel(str: string): string {
-  return str.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-}
-
 // ── Generate CSS from resolved styles ──
 
 function stylesToCSS(
@@ -315,9 +311,19 @@ export function CodeEditor() {
 
   const [code, setCode] = useState(cssText);
 
+  // Tracks the CSS text the editor itself last produced by round-tripping
+  // the user's own edits through `setOverride`/`resetOverride` (see
+  // `handleCodeChange` below). When `cssText` recomputes to exactly this
+  // value, the change originated from the user's own typing, not an
+  // external source (Reset, component switch, cascade-sync) — so the sync
+  // effect below must skip `setCode`, or it clobbers whatever the user has
+  // typed since (the 300ms debounce means `cssText` can settle well after
+  // the user has moved on to their next keystroke).
+  const lastAppliedCssTextRef = useRef<string | null>(null);
+
   // Sync from visual → code when resolved styles change
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional visual → code-editor text sync
+    if (cssText === lastAppliedCssTextRef.current) return;
     setCode(cssText);
   }, [cssText]);
 
@@ -351,9 +357,21 @@ export function CodeEditor() {
             resetOverride(selectedId, prop.key);
           }
         }
+
+        // Record the canonical CSS this transaction will produce once
+        // `resolved`/`cssText` recompute from the edits above, so the sync
+        // effect can recognize the resulting change as self-inflicted and
+        // leave `code` alone (see `lastAppliedCssTextRef`).
+        const projected: Record<string, string | number | boolean> = { ...resolved, ...values };
+        for (const prop of def.styleProperties) {
+          if (prop.key in overrides && !linesByPropKey.has(prop.key)) {
+            projected[prop.key] = prop.defaultValue;
+          }
+        }
+        lastAppliedCssTextRef.current = stylesToCSS(def.id, def.styleProperties, projected);
       }, 300);
     },
-    [def, overrides, selectedId, setOverride, resetOverride],
+    [def, overrides, resolved, selectedId, setOverride, resetOverride],
   );
 
   // Error count for the status bar — counts unknown-prop + invalid-value

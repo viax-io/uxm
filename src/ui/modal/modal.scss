@@ -18,7 +18,7 @@
   border-radius: var(--uxm-modal-border-radius, 12px);
   /* Shadow comes from the global `--shadow-modal` token — designers tune
      elevation once at the brand level, not per-modal. */
-  box-shadow: var(--shadow-modal);
+  box-shadow: var(--shadow-modal, var(--shadow-2xl));
   display: flex;
   flex-direction: column;
   overflow: hidden;

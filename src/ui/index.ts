@@ -20,6 +20,7 @@ export type { BulkAction, BulkActionBarProps } from './bulk-action-bar';
 export { Breadcrumb } from './breadcrumb';
 export type { BreadcrumbCrumb, BreadcrumbProps, BreadcrumbSeparator } from './breadcrumb';
 export { ButtonDanger, ButtonGhost, ButtonPrimary, ButtonSecondary, ButtonTertiary } from './button';
+export type { ButtonProps } from './button';
 export { ButtonGroup } from './button-group';
 export type { ButtonGroupOption, ButtonGroupProps } from './button-group';
 export { ButtonIcon } from './button-icon';

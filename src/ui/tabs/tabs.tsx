@@ -1,8 +1,8 @@
-'use client';
-
 import { useState } from 'react';
 
 import { cn } from '@/helpers';
+
+import { useRovingTabIndex } from '../../hooks/use-roving-tab-index';
 
 import type { HTMLAttributes, ReactNode } from 'react';
 
@@ -39,19 +39,33 @@ export function Tabs({
     onChange?.(next);
   };
 
+  // Roving tabindex: only the active tab is a Tab stop; ArrowLeft/Right +
+  // Home/End move (and select) within the group, matching the ARIA tabs
+  // pattern's "automatic activation" model — the same thing a click does.
+  const activeIndex = Math.max(0, options.findIndex((opt) => opt.value === active));
+  const { getItemRef, onItemKeyDown } = useRovingTabIndex({
+    count: options.length,
+    activeIndex,
+    isDisabled: (i) => !!options[i]?.disabled,
+    onNavigate: (i) => select(options[i].value),
+  });
+
   return (
     <div role="tablist" className={cn('uxm-tabs', className)} {...rest}>
-      {options.map((opt) => {
+      {options.map((opt, i) => {
         const isActive = opt.value === active;
         return (
           <button
             key={opt.value}
+            ref={getItemRef(i)}
             type="button"
             role="tab"
             aria-selected={isActive}
+            tabIndex={i === activeIndex ? 0 : -1}
             disabled={opt.disabled}
             className={cn('uxm-tabs__tab', isActive && 'uxm-tabs__tab--active')}
             onClick={() => select(opt.value)}
+            onKeyDown={(e) => onItemKeyDown(e, i)}
           >
             {opt.icon && <span className="uxm-tabs__icon">{opt.icon}</span>}
             <span className="uxm-tabs__label">{opt.label}</span>

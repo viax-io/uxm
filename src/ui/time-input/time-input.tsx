@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 
 import { cn } from '@/helpers';
 
+import { useRovingTabIndex } from '../../hooks/use-roving-tab-index';
 import { FieldError } from '../field-error';
 import { Icon } from '../icon';
 import { Popover } from '../popover';
@@ -250,6 +251,36 @@ export function TimeInput({
   const hours = useMemo(() => buildHours(format), [format]);
   const minutes = useMemo(() => buildMinutes(minuteStep, mm), [minuteStep, mm]);
 
+  // Roving tabindex for each popover column — ARIA listbox pattern: only
+  // one row per column is a Tab stop; ArrowUp/Down move the highlight
+  // within that column. Enter/Space and Escape are already covered for
+  // free — rows are real <button>s (native Enter/Space activation) and
+  // Escape/outside-click close the whole popover via `Popover`'s defaults.
+  const [hourHighlight, setHourHighlight] = useState(0);
+  const [minuteHighlight, setMinuteHighlight] = useState(0);
+  const [meridiemHighlight, setMeridiemHighlight] = useState(0);
+  const safeHourHighlight = Math.min(hourHighlight, hours.length - 1);
+  const safeMinuteHighlight = Math.min(minuteHighlight, minutes.length - 1);
+  const safeMeridiemHighlight = Math.min(meridiemHighlight, MERIDIEMS.length - 1);
+  const hourRoving = useRovingTabIndex({
+    count: hours.length,
+    activeIndex: safeHourHighlight,
+    orientation: 'vertical',
+    onNavigate: setHourHighlight,
+  });
+  const minuteRoving = useRovingTabIndex({
+    count: minutes.length,
+    activeIndex: safeMinuteHighlight,
+    orientation: 'vertical',
+    onNavigate: setMinuteHighlight,
+  });
+  const meridiemRoving = useRovingTabIndex({
+    count: MERIDIEMS.length,
+    activeIndex: safeMeridiemHighlight,
+    orientation: 'vertical',
+    onNavigate: setMeridiemHighlight,
+  });
+
   // The clock icon doubles as the popover trigger only when both `clock`
   // and `picker` are on. When picker is off (or clock is off), the icon
   // — if rendered — stays a decorative <span>.
@@ -317,16 +348,19 @@ export function TimeInput({
           <div className="uxm-time-input__column" role="listbox" aria-label="Hour">
             <div className="uxm-time-input__column-head">{hh || hours[0]}</div>
             <div className="uxm-time-input__column-body" ref={hourBodyRef}>
-              {hours.map((h) => (
+              {hours.map((h, i) => (
                 <button
                   type="button"
                   role="option"
                   key={h}
+                  ref={hourRoving.getItemRef(i)}
+                  tabIndex={i === safeHourHighlight ? 0 : -1}
                   className={cn(
                     'uxm-time-input__row',
                     h === hh && 'uxm-time-input__row--selected',
                   )}
                   onClick={() => handleHourPick(h)}
+                  onKeyDown={(e) => hourRoving.onItemKeyDown(e, i)}
                   aria-selected={h === hh}
                 >
                   {h}
@@ -337,16 +371,19 @@ export function TimeInput({
           <div className="uxm-time-input__column" role="listbox" aria-label="Minute">
             <div className="uxm-time-input__column-head">{mm || '00'}</div>
             <div className="uxm-time-input__column-body" ref={minuteBodyRef}>
-              {minutes.map((m) => (
+              {minutes.map((m, i) => (
                 <button
                   type="button"
                   role="option"
                   key={m}
+                  ref={minuteRoving.getItemRef(i)}
+                  tabIndex={i === safeMinuteHighlight ? 0 : -1}
                   className={cn(
                     'uxm-time-input__row',
                     m === mm && 'uxm-time-input__row--selected',
                   )}
                   onClick={() => handleMinutePick(m)}
+                  onKeyDown={(e) => minuteRoving.onItemKeyDown(e, i)}
                   aria-selected={m === mm}
                 >
                   {m}
@@ -358,16 +395,19 @@ export function TimeInput({
             <div className="uxm-time-input__column" role="listbox" aria-label="AM or PM">
               <div className="uxm-time-input__column-head">{meridiem}</div>
               <div className="uxm-time-input__column-body">
-                {MERIDIEMS.map((m) => (
+                {MERIDIEMS.map((m, i) => (
                   <button
                     type="button"
                     role="option"
                     key={m}
+                    ref={meridiemRoving.getItemRef(i)}
+                    tabIndex={i === safeMeridiemHighlight ? 0 : -1}
                     className={cn(
                       'uxm-time-input__row',
                       m === meridiem && 'uxm-time-input__row--selected',
                     )}
                     onClick={() => handleMeridiemPick(m)}
+                    onKeyDown={(e) => meridiemRoving.onItemKeyDown(e, i)}
                     aria-selected={m === meridiem}
                   >
                     {m}

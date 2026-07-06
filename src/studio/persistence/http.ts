@@ -27,9 +27,21 @@ export function createHttpPersistence(baseUrl = '/api/uxm'): StudioPersistence {
       fd.append('file', file);
       fd.append('kind', kind);
       const res = await fetch(`${baseUrl}/upload`, { method: 'POST', body: fd });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? 'Upload failed');
-      return data;
+      if (!res.ok) {
+        // Error responses aren't guaranteed to be JSON (proxies/gateways can
+        // return an HTML/plain-text body) — parse defensively so a non-JSON
+        // error body surfaces as the real HTTP failure, not a raw JSON
+        // parse error.
+        const message = await res.text().catch(() => '');
+        let parsedMessage: string | undefined;
+        try {
+          parsedMessage = JSON.parse(message)?.error;
+        } catch {
+          // not JSON — fall through to the status-based message
+        }
+        throw new Error(parsedMessage ?? `Upload failed (${res.status})`);
+      }
+      return res.json();
     },
     capabilities: { persist: true, upload: true },
   };

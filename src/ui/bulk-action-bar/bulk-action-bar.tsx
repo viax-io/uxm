@@ -2,7 +2,7 @@ import { cn } from '../../helpers/cn';
 import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
 
-import type { CSSProperties, ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 
 /**
  * One action in a {@link BulkActionBar}. Presentational — the consumer
@@ -23,7 +23,7 @@ export type BulkAction = {
   onClick?: () => void;
 };
 
-export interface BulkActionBarProps {
+export interface BulkActionBarProps extends HTMLAttributes<HTMLDivElement> {
   /** Number of selected items. Drives the default count label. */
   count: number;
   /** Action buttons, in display order. */
@@ -35,8 +35,6 @@ export interface BulkActionBarProps {
    * a different noun ("3 rows"). Receives the current count.
    */
   countLabel?: (count: number) => ReactNode;
-  className?: string;
-  style?: CSSProperties;
 }
 
 /**
@@ -52,7 +50,7 @@ export function BulkActionBar({
   onClear,
   countLabel,
   className,
-  style,
+  ...rest
 }: BulkActionBarProps) {
   const label = countLabel ? countLabel(count) : `${count} selected`;
 
@@ -61,7 +59,7 @@ export function BulkActionBar({
       className={cn('uxm-bulk-action-bar', className)}
       role="toolbar"
       aria-label="Bulk actions"
-      style={style}
+      {...rest}
     >
       <span className="uxm-bulk-action-bar__count">{label}</span>
 

@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useMemo, useRef, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -127,8 +125,8 @@ export function Dialog({
   if (!open || !mounted) return null;
 
   const tree = (
-    <div className="uxm-dialog-root" data-state="open">
-      <div className="uxm-dialog-backdrop" aria-hidden="true" />
+    <div className="uxm-dialog__root" data-state="open">
+      <div className="uxm-dialog__backdrop" aria-hidden="true" />
       <div
         ref={panelRef}
         role="dialog"
@@ -139,7 +137,7 @@ export function Dialog({
         // itself when there are no focusable children (rare, but the trap
         // still has to keep focus from escaping).
         tabIndex={-1}
-        className={cn('uxm-dialog-panel', className)}
+        className={cn('uxm-dialog__panel', className)}
       >
         {children}
       </div>

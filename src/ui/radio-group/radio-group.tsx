@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { createContext, useContext, useId, useState } from 'react';
 
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
@@ -26,13 +26,48 @@ export interface RadioGroupProps {
   error?: string;
 }
 
+// Carries the group-level `name` / selected `value` / change handler down to
+// each `RadioOption` without forcing every consumer to repeat `name` and wire
+// `checked`/`onChange` by hand on every option. `RadioOption` still accepts
+// its own `name` / `checked` / `defaultChecked` / `onChange` so existing call
+// sites that set those directly (bypassing the group) keep working unchanged.
+//
+// `hasValue` is fixed for the lifetime of the group (derived from whether
+// `value`/`defaultValue` was passed at all, not from the current value) so a
+// `RadioOption` that defers to the group never flips between an
+// uncontrolled (`checked={undefined}`) and controlled (`checked={boolean}`)
+// input across renders — that flip is what triggers React's "changing an
+// uncontrolled input to be controlled" warning.
+interface RadioGroupContextValue {
+  name?: string;
+  value?: string;
+  hasValue: boolean;
+  onChange: (value: string, e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
+
 export function RadioGroup({
+  name,
+  value: controlledValue,
+  defaultValue,
+  onChange,
   direction = 'vertical',
   className,
   children,
   error,
 }: RadioGroupProps) {
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const isControlled = controlledValue !== undefined;
+  const value = isControlled ? controlledValue : uncontrolledValue;
+  const hasValue = controlledValue !== undefined || defaultValue !== undefined;
   const errorId = useId();
+
+  function handleChange(nextValue: string, e: ChangeEvent<HTMLInputElement>) {
+    if (!isControlled) setUncontrolledValue(nextValue);
+    onChange?.(nextValue, e);
+  }
+
   return (
     <>
       <div
@@ -46,7 +81,9 @@ export function RadioGroup({
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? errorId : undefined}
       >
-        {children}
+        <RadioGroupContext.Provider value={{ name, value, hasValue, onChange: handleChange }}>
+          {children}
+        </RadioGroupContext.Provider>
       </div>
       {error && (
         <FieldError id={errorId} className="uxm-radio-group__error-message">
@@ -61,7 +98,7 @@ export function RadioGroup({
 RadioGroup.hasError = true;
 
 export interface RadioOptionProps {
-  name: string;
+  name?: string;
   value: string;
   checked?: boolean;
   defaultChecked?: boolean;
@@ -81,17 +118,38 @@ export function RadioOption({
   children,
   className,
 }: RadioOptionProps) {
+  const group = useContext(RadioGroupContext);
+  const resolvedName = name ?? group?.name;
+  // Only defer to the group's selected value when this option doesn't
+  // already manage its own checked state (explicit `checked`/`defaultChecked`
+  // always wins, matching the controlled/uncontrolled convention) AND the
+  // group was actually given a `value`/`defaultValue` to manage — otherwise
+  // `checked` stays `undefined` so the input remains a plain native
+  // uncontrolled radio (as it always has been for consumers who only use
+  // `RadioGroup` for the shared `name` + layout, not selection state).
+  const resolvedChecked =
+    checked !== undefined
+      ? checked
+      : defaultChecked !== undefined || !group?.hasValue
+        ? undefined
+        : group.value === value;
+
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    onChange?.(value, e);
+    group?.onChange?.(value, e);
+  }
+
   return (
     <label className={cn('uxm-radio', disabled && 'uxm-radio--disabled', className)}>
       <input
         type="radio"
         className="uxm-radio__input"
-        name={name}
+        name={resolvedName}
         value={value}
-        checked={checked}
+        checked={resolvedChecked}
         defaultChecked={defaultChecked}
         disabled={disabled}
-        onChange={(e) => onChange?.(value, e)}
+        onChange={handleChange}
       />
       <span className="uxm-radio__circle" aria-hidden="true">
         <span className="uxm-radio__dot" />

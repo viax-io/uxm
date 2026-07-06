@@ -1,5 +1,3 @@
-'use client';
-
 import { cn } from '@/helpers';
 
 import type { CSSProperties, HTMLAttributes } from 'react';

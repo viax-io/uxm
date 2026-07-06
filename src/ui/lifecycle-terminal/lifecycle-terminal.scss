@@ -2,7 +2,7 @@
 
 .uxm-lifecycle-terminal {
   align-items: center;
-  background-color: var(--uxm-lifecycle-terminal-bg, #FFFFFF);
+  background-color: var(--uxm-lifecycle-terminal-bg, var(--color-card));
   border: 1px solid var(--uxm-lifecycle-terminal-border-color, var(--color-border));
   border-radius: var(--uxm-lifecycle-terminal-radius, 4px);
   color: var(--uxm-lifecycle-terminal-color, var(--color-text-muted));

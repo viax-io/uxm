@@ -1,5 +1,3 @@
-'use client';
-
 import {
   useCallback,
   useRef,
@@ -148,9 +146,9 @@ export function SideFlexpane({
           aria-label="Resize panel"
           role="separator"
           aria-orientation="vertical"
-          className="uxm-side-flexpane__resize-handle group absolute z-20 left-0 top-0 bottom-0 w-1.5 cursor-col-resize"
+          className="uxm-side-flexpane__resize-handle"
         >
-          <div className="h-full w-full transition-colors group-hover:bg-accent/30 group-active:bg-accent/50" />
+          <div className="uxm-side-flexpane__resize-handle-bar" />
         </div>
       )}
       <header className="uxm-side-flexpane__header">

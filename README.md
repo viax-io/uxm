@@ -33,7 +33,6 @@ import '@viax/uxm/ui.css';
 
 ```tsx
 // app/page.tsx
-'use client';
 import { ButtonPrimary, Icon } from '@viax/uxm/ui';
 
 export default function Page() {

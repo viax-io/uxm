@@ -1,5 +1,3 @@
-'use client';
-
 import { useSyncExternalStore } from 'react';
 
 import type { ToastVariant as ToastAtomVariant } from '../ui/toast/toast';

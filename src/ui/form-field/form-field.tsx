@@ -1,3 +1,5 @@
+import { cloneElement, isValidElement, useId } from 'react';
+
 import { cn } from '@/helpers';
 
 import type { HTMLAttributes, ReactNode } from 'react';
@@ -16,6 +18,14 @@ export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
    *   hint sits below the input, aligned with the input column.
    */
   labelPosition?: FormFieldLabelPosition;
+  /**
+   * Associates the rendered `<label>` with the control via `htmlFor`.
+   * Optional — when omitted and `children` is a single element, FormField
+   * generates an id itself and injects it into the child automatically
+   * (unless the child already declares its own `id`), so the label stays
+   * accessible without any extra props in the common case.
+   */
+  htmlFor?: string;
   /**
    * The input control — typically `<TextInput />`, `<Textarea />`, `<Select />`,
    * `<ToggleSwitch />`, or any other UXM input. Anything ReactNode is accepted.
@@ -44,17 +54,31 @@ export function FormField({
   label,
   hint,
   labelPosition = 'top',
+  htmlFor,
   children,
   className,
   ...rest
 }: FormFieldProps) {
+  // Associate the label with the control so labeled inputs have an
+  // accessible name. Prefer an explicit `htmlFor`; otherwise, when the
+  // child is a single element, reuse its own `id` if it already declares
+  // one, or generate one and inject it via `cloneElement`.
+  const generatedId = useId();
+  const childElement = isValidElement<{ id?: string }>(children) ? children : null;
+  const childId = childElement?.props.id;
+  const controlId = htmlFor ?? childId ?? generatedId;
+  const control =
+    childElement && !childId ? cloneElement(childElement, { id: controlId }) : children;
+
   return (
     <div
       className={cn('uxm-form-field', `uxm-form-field--${labelPosition}`, className)}
       {...rest}
     >
-      <span className="uxm-form-field__label">{label}</span>
-      <div className="uxm-form-field__control">{children}</div>
+      <label htmlFor={controlId} className="uxm-form-field__label">
+        {label}
+      </label>
+      <div className="uxm-form-field__control">{control}</div>
       {hint && <span className="uxm-form-field__hint">{hint}</span>}
     </div>
   );

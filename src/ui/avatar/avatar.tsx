@@ -1,6 +1,4 @@
-'use client';
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { cn } from '@/helpers';
 
@@ -24,6 +22,13 @@ export function Avatar({
   ...rest
 }: AvatarProps) {
   const [errored, setErrored] = useState(false);
+  // A later valid `src` should get a fresh chance to load — without this,
+  // a failed image permanently pins the avatar to initials even after the
+  // `src` prop changes to a working URL.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset of the failed-image flag when `src` changes
+    setErrored(false);
+  }, [src]);
   const showImage = type === 'image' && Boolean(src) && !errored;
   const text = initials ? initials.slice(0, 2).toUpperCase() : null;
 

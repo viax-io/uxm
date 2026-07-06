@@ -32,6 +32,7 @@ export function SliderInput({ label, value, onChange, min, max, step, unit }: Sl
         min={min}
         max={max}
         step={step}
+        aria-label={label}
       />
     </div>
   );

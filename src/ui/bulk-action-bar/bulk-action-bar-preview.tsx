@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, type CSSProperties } from 'react';
 
 import type { PreviewProps } from '@/previews/types';

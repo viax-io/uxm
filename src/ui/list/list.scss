@@ -39,6 +39,7 @@
     background-color: var(--uxm-list-item-disabled-bg, transparent);
     color: var(--uxm-list-item-disabled-text, var(--color-text));
     opacity: var(--uxm-list-item-disabled-opacity, 1);
+    pointer-events: none;
   }
 
   &--active {

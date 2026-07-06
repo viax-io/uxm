@@ -2,7 +2,8 @@ import { cn } from '@/helpers';
 
 import type { ButtonHTMLAttributes } from 'react';
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- ButtonProps is a named alias for native button attrs (no extra members needed yet); shared by all button variants.
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 export function ButtonPrimary({ className, type = 'button', ...rest }: ButtonProps) {
   return <button type={type} className={cn('uxm-button-primary', className)} {...rest} />;

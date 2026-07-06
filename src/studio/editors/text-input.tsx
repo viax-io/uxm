@@ -10,7 +10,7 @@ export function TextInput({ label, value, onChange }: TextInputProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <span className="text-[13px] text-text-strong">{label}</span>
-      <UxmTextInput value={value} onChange={(e) => onChange(e.target.value)} />
+      <UxmTextInput value={value} onChange={(e) => onChange(e.target.value)} aria-label={label} />
     </div>
   );
 }

@@ -1,13 +1,11 @@
-'use client';
-
 import { cn } from '@/helpers';
 
-import type { CSSProperties, ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export type TagType = 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
 export type TagSize = 'small' | 'medium';
 
-export interface TagProps {
+export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
   children: ReactNode;
   type?: TagType;
   /**
@@ -18,14 +16,6 @@ export interface TagProps {
    */
   size?: TagSize;
   iconLeft?: ReactNode;
-  className?: string;
-  /**
-   * Inline style on the rendered tag element. Used by the editor preview
-   * to project draft `--uxm-tag-*` CSS variables directly onto the tag,
-   * since inline styles take precedence over saved-overrides at the
-   * `.uxm-tag` class level.
-   */
-  style?: CSSProperties;
 }
 
 /**
@@ -34,9 +24,9 @@ export interface TagProps {
  * Styled via `.uxm-tag` + `.uxm-tag--{type}` + `.uxm-tag--{size}` CSS
  * reading `--uxm-tag-*` custom properties.
  */
-export function Tag({ children, type = 'neutral', size = 'medium', iconLeft, className, style }: TagProps) {
+export function Tag({ children, type = 'neutral', size = 'medium', iconLeft, className, ...rest }: TagProps) {
   return (
-    <span className={cn('uxm-tag', `uxm-tag--${type}`, `uxm-tag--${size}`, className)} style={style}>
+    <span className={cn('uxm-tag', `uxm-tag--${type}`, `uxm-tag--${size}`, className)} {...rest}>
       {iconLeft && (
         <span className="uxm-tag__icon-left" aria-hidden="true">
           {iconLeft}

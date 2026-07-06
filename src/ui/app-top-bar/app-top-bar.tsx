@@ -1,5 +1,3 @@
-'use client';
-
 import { cn } from '@/helpers';
 import { Icon } from '@/ui/icon';
 

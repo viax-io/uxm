@@ -200,7 +200,6 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
           hint={inheritsHint('favicon', faviconUrl, 'Browser tab icon. Accepts .ico, .png, .svg.')}
           previewBox={
             <Preview box={{ width: 32, height: 32 }} dim={identityTab === 'dark'}>
-              {(logoUrl || faviconFallback) && null}
               {(faviconUrl || faviconFallback) && (
                 <PreviewImg
                   key={faviconUrl || faviconFallback!}

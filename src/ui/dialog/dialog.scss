@@ -7,7 +7,7 @@
    contribute positioning + z-index only.
    ──────────────────────────────────────────────────────────────────────── */
 
-.uxm-dialog-root {
+.uxm-dialog__root {
   position: fixed;
   inset: 0;
   z-index: var(--z-dialog, 60);
@@ -20,7 +20,7 @@
   padding: 24px;
 }
 
-.uxm-dialog-backdrop {
+.uxm-dialog__backdrop {
   position: fixed;
   inset: 0;
   background-color: var(--backdrop-color, rgba(0, 0, 0, 0.50));
@@ -28,7 +28,7 @@
   -webkit-backdrop-filter: blur(var(--backdrop-blur, 4px));
 }
 
-.uxm-dialog-panel {
+.uxm-dialog__panel {
   position: relative;
   /* The panel itself owns no chrome — consumer (Modal) provides it. */
   outline: none;

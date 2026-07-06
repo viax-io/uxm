@@ -186,10 +186,10 @@ export function EditableCell({
   }, [isEditing]);
 
   const parseDraft = useCallback((): EditableCellValue => {
-    // `Number('')` is 0, not NaN — map the empty draft to NaN explicitly so
-    // blur-with-empty hits the "Enter a number" boundary instead of
-    // silently committing 0.
-    if (type === 'number') return draft === '' ? Number.NaN : Number(draft);
+    // `Number('')` is 0, not NaN — map an empty/whitespace draft to NaN so
+    // blur-with-empty hits the "Enter a number" boundary instead of silently
+    // committing 0.
+    if (type === 'number') return draft.trim() === '' ? Number.NaN : Number(draft);
     if (type === 'date') return draft;
     return draft;
   }, [type, draft]);
