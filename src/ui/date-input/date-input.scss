@@ -112,4 +112,38 @@
     font-size: var(--uxm-date-input-error-message-size, 12px);
     margin-top: 4px;
   }
+
+  /* Clear (✕) — positioning only; chrome comes from the shared
+     `.uxm-field-clear` IconButton (same 22×22 affordance as the other
+     inputs). Base position is the trailing edge (typing-only fields with
+     no calendar icon). */
+  &__clear {
+    position: absolute;
+    right: var(--uxm-date-input-icon-offset, 12px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* With a calendar icon present, the ✕ sits just to its left (6px gap). */
+  &--has-calendar &__clear {
+    right: calc(
+      var(--uxm-date-input-icon-offset, 12px)
+      + var(--uxm-date-input-icon-size, 16px)
+      + 6px
+    );
+  }
+
+  /* Reserve trailing room so the value never slides under the ✕. Without a
+     calendar icon the base right padding already reserves ~one icon's worth,
+     so we bump it for the ✕; with the icon we reserve room for BOTH. */
+  &--clearable &__input {
+    padding-right: calc(var(--uxm-date-input-icon-offset, 12px) + 22px + 8px);
+  }
+  &--clearable.uxm-date-input--has-calendar &__input {
+    padding-right: calc(
+      var(--uxm-date-input-icon-offset, 12px)
+      + var(--uxm-date-input-icon-size, 16px)
+      + 6px + 22px + 8px
+    );
+  }
 }

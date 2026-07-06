@@ -36,6 +36,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `defaultValue` | `string` | – | Initial value for uncontrolled usage. Masked once on mount (single mode). |
 | `onChange` | `(formatted: string) => void` | – | Fires with the masked, formatted value after every keystroke or calendar pick. |
 | `calendar` | `boolean` | `true` | Render the calendar icon button and enable the popover. Pass `false` for a typing-only field. |
+| `clearable` | `boolean` | `true` | Show a clear (✕) button when the field has a value. The ✕ sits just left of the calendar icon (or at the trailing edge when `calendar={false}`). The component owns the reset (fires `onChange("")`), so no `onClear` is needed. Works in single and range mode. |
 | `placeholder` | `string` | format-derived | Defaults to `"MM/DD/YYYY"` etc., doubled with `" – "` in range mode. |
 | `style` | `CSSProperties` | – | Applied to the **wrapper** (not the inner input) so `--uxm-date-input-*` overrides cascade to the popover too. |
 | `className` | `string` | – | Merged onto the wrapper via `cn`. |
@@ -103,6 +104,7 @@ Set these on the wrapper (via `style` or a higher scope) — because `style` is 
 | Disabled | `disabled` attribute | Surface-alt background, muted text, `not-allowed` cursor, dimmed opacity. |
 | Error | `--error` modifier on wrapper | Danger border on input; icon re-tints to danger. |
 | Typing-only | `calendar={false}` | Icon button and popover are not rendered. |
+| Clearable | `clearable` (default) + non-empty value, non-disabled | Trailing ✕ (`.uxm-field-clear`, 22×22) sits just left of the calendar icon (or at the edge when `calendar={false}`); clears the value. |
 | Popover open | Icon click toggles `isOpen` | Calendar appears 4px below input, with a `drop-shadow` filter; `aria-expanded` flips on the icon button. |
 | Range mode | `mode="range"` | Input is read-only; placeholder doubles; popover stays open after the first click and closes only when `value.end` commits. |
 
@@ -111,6 +113,7 @@ Set these on the wrapper (via `style` or a higher scope) — because `style` is 
 - The trailing calendar control is a real `<button type="button">` with `aria-label="Open calendar"` and `aria-expanded` reflecting the popover state.
 - Popover is wrapped in `role="dialog"`. There is **no** focus trap or initial-focus management — keyboard focus stays on the trigger when the popover opens.
 - Popover closes on outside `mousedown` and on `Escape`; listeners are mounted only while open.
+- Clear button: `<button aria-label="Clear">`; `onMouseDown` is prevented so clearing doesn't refocus the input and re-open the calendar.
 - The inner `<input>` uses `inputMode="numeric"` so mobile keyboards surface the digit pad.
 - In `range` mode the input is rendered with `readOnly` — assistive tech announces it as non-editable; the calendar popover is the only entry path.
 - No `aria-invalid` is wired automatically when the `--error` modifier is applied; consumers should set it on the input via `...rest` when surfacing validation errors.
