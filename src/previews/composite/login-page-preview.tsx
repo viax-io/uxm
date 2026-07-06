@@ -138,7 +138,7 @@ export function LoginPagePreview({ styles, variants, shell }: PreviewProps) {
           border: `${styles.cardBorderWidth}px solid ${styles.cardBorderColor}`,
           borderRadius: styles.cardRadius as number,
           padding: cardPadding,
-          boxShadow: cardShadow ? '0 12px 32px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.04)' : 'none',
+          boxShadow: cardShadow ? 'var(--shadow-xl)' : 'none',
         }}
       >
         {/* Logo */}

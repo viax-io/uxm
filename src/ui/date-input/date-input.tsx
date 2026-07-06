@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
+import { useFocusOnMount } from '../../hooks/use-focus-on-mount';
 import { Calendar, type CalendarValue } from '../calendar';
 import { FieldError } from '../field-error';
 import { Icon } from '../icon';
@@ -202,6 +203,12 @@ export function DateInput({
       document.removeEventListener('keydown', handleKey);
     };
   }, [isOpen]);
+
+  // Return focus to whatever was focused when the popover opened (the
+  // calendar icon button, or the input itself when opened via focus) once
+  // it closes — same restore-focus contract as Popover/Dialog, so dismissing
+  // via outside-click or Escape doesn't strand keyboard focus on a removed panel.
+  useFocusOnMount({ active: isOpen });
 
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {

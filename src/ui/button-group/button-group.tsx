@@ -29,7 +29,13 @@ export function ButtonGroup({
 }: ButtonGroupProps) {
   const isControlled = value !== undefined;
   const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? '');
-  const active = isControlled ? value : internal;
+  // Derived on render (no effect): if the uncontrolled value no longer
+  // exists in `options` (e.g. the seeded/selected option was removed),
+  // fall back to the first option instead of pointing at a stale value.
+  const resolvedInternal = options.some((opt) => opt.value === internal)
+    ? internal
+    : (options[0]?.value ?? '');
+  const active = isControlled ? value : resolvedInternal;
 
   const select = (next: string) => {
     if (!isControlled) setInternal(next);

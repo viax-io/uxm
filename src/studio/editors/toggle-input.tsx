@@ -1,6 +1,6 @@
 import { ToggleSwitch } from '@/ui';
 
-interface ToggleInputProps {
+export interface ToggleInputProps {
   label: string;
   value: boolean;
   onChange: (value: string | number | boolean) => void;

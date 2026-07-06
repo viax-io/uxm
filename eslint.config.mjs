@@ -58,6 +58,12 @@ export default tseslint.config(
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+      // Enforce the `import type` convention (style guide D3/I3): type-only
+      // symbols come in via a separate `import type { … }` statement.
+      '@typescript-eslint/consistent-type-imports': [
+        'warn',
+        { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
+      ],
       'import/order': [
         'warn',
         {

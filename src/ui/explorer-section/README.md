@@ -2,14 +2,15 @@
 
 A disclosure-style section header for grouping rows in a navigation list (e.g. component-explorer categories, file-tree folders). Renders a chevron that rotates with `open`, an optional indicator slot (typically a category color dot), the heading, and an optional trailing slot.
 
-`ExplorerSection` renders as a `<button>` because clicking toggles the section. The component is **controlled-only**: the caller owns the open/close state via `open` and provides `onClick` to toggle. This keeps the atom testable and lets consumers persist state (e.g. to localStorage) without the atom needing storage knowledge. The chevron is always rendered as the first child, rotated `-90deg` when closed and `0deg` when open via the `--open` modifier.
+`ExplorerSection` renders as a `<button>` because clicking toggles the section. Like `Disclosure`, it supports both **controlled** (`open` + `onOpenChange`) and **uncontrolled** (`defaultOpen`, with internal `useState`) usage. Pass `open` when the caller owns the state (e.g. to persist it to localStorage); omit it to let the atom track it internally. `onClick` still fires either way — chain your own toggle handler off it if you need it, same as before. The chevron is always rendered as the first child, rotated `-90deg` when closed and `0deg` when open via the `--open` modifier.
 
 ## Usage
 
 ```tsx
 import { ExplorerSection } from '@viax/uxm';
 
-function Example() {
+// Controlled — caller owns the state (e.g. to persist to localStorage).
+function ControlledExample() {
   const [open, setOpen] = useState(false);
   return (
     <ExplorerSection
@@ -18,6 +19,15 @@ function Example() {
       indicator={<span style={{ width: 8, height: 8, background: 'hotpink', borderRadius: 999 }} />}
       trailing="12"
     >
+      Components
+    </ExplorerSection>
+  );
+}
+
+// Uncontrolled — the atom tracks its own state.
+function UncontrolledExample() {
+  return (
+    <ExplorerSection defaultOpen trailing="12">
       Components
     </ExplorerSection>
   );
@@ -33,12 +43,15 @@ Extends `Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>` — `childre
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | – | **Required.** Section heading text rendered in `&__label`. |
-| `open` | `boolean` | – | **Required.** Whether the section is currently expanded; drives chevron rotation and `aria-expanded`. |
+| `open` | `boolean` | – | Controlled open state. When defined, `defaultOpen` is ignored and internal state isn't used. Drives chevron rotation and `aria-expanded`. |
+| `defaultOpen` | `boolean` | `false` | Initial open state for uncontrolled usage. |
+| `onOpenChange` | `(open: boolean) => void` | – | Fires with the next open state on every click (controlled or uncontrolled). |
+| `id` | `string` | – | Native button id. Also seeds the generated `` `${id}-panel` `` value used for `aria-controls` — see Accessibility. |
 | `indicator` | `ReactNode` | – | Optional leading slot — typically a category color dot or small icon/swatch. |
 | `trailing` | `ReactNode` | – | Optional trailing slot — typically a count or status (muted, tabular-nums). |
 | `disabled` | `boolean` | `false` | Native disabled state — CSS `:disabled` paints the dimmed treatment and clicks are blocked. |
 | `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | Overridden default — prevents accidental form submission. |
-| `onClick` | `(e: MouseEvent) => void` | – | Required in practice — the caller's toggle handler. |
+| `onClick` | `(e: MouseEvent) => void` | – | Runs **after** the internal toggle + `onOpenChange`. Optional in uncontrolled usage; typically the caller's toggle handler in controlled usage. |
 | `className` | `string` | – | Merged onto the root via `cn`. |
 | _(any native button attribute)_ | – | – | Spread onto the root `<button>`. |
 
@@ -84,8 +97,8 @@ Extends `Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>` — `childre
 ## Accessibility
 
 - Renders a native `<button>` — full keyboard activation and screen-reader semantics come for free.
-- `aria-expanded` is wired to the `open` prop, modeling the disclosure pattern correctly.
+- `aria-expanded` is wired to the resolved `open` state, modeling the disclosure pattern correctly.
 - Chevron and indicator both carry `aria-hidden="true"` — purely decorative.
-- The component does **not** wire `aria-controls` — if your expanded content has a stable id, set `aria-controls` via `...rest` to link them for assistive tech.
+- The grouped rows below this header are **not** rendered by this component, so `ExplorerSection` can't set an `id` on them directly. Instead it computes `aria-controls` as `` `${id}-panel` `` (falling back to a `useId()`-generated base when no `id` prop is passed) per the WAI-ARIA disclosure pattern (§F2). Pass an explicit `id` and give your rendered group wrapper the matching `` `${id}-panel` `` id to complete the wiring.
 - Label uppercases visually via CSS but the underlying text node is preserved at its original casing for screen readers.
 - No focus-visible styling defined — relies on the UA default focus ring.

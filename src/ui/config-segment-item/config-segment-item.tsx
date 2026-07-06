@@ -2,12 +2,15 @@ import { cn } from '@/helpers';
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-// `name` here is the visible segment label (ReactNode). The native HTML
-// `name` attribute on <button> is a form-control name — not what we want
-// surfaced. Strip it from the props surface; consumers don't put buttons in
-// forms here.
+// Drop two native button attributes from the props surface, mirroring
+// ConfigComponentRow's sibling row atom:
+//   - `type`: we always render `<button type="button">` so this row can
+//     never accidentally submit a parent form — the native attribute isn't
+//     a knob consumers should be able to override here.
+//   - `name`: HTML form-control name; consumers mean the segment's display
+//     name (ReactNode) when they say "name".
 export interface ConfigSegmentItemProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'name'> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'name'> {
   /** Segment name (primary text). */
   name: ReactNode;
   /**
@@ -31,12 +34,11 @@ export function ConfigSegmentItem({
   meta,
   active,
   className,
-  type = 'button',
   ...rest
 }: ConfigSegmentItemProps) {
   return (
     <button
-      type={type}
+      type="button"
       aria-pressed={active}
       className={cn(
         'uxm-config-segment-item',

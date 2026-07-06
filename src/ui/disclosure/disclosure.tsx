@@ -1,4 +1,4 @@
-import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { useId, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
 
 import { cn } from '@/helpers';
 
@@ -33,17 +33,29 @@ export function Disclosure({
   className,
   type = 'button',
   onClick,
+  id,
   ...rest
 }: DisclosureProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : uncontrolledOpen;
 
+  // Disclosure is header-only — the collapsible body lives outside this
+  // component, owned by the consumer. We can't set an id on an element we
+  // don't render, so we generate a stable `-panel` id (derived from a
+  // caller-supplied `id` when present, otherwise from `useId`) and expose
+  // it via `aria-controls` per WAI-ARIA's disclosure pattern (§F2). Give
+  // your rendered body the matching `id` to complete the wiring.
+  const generatedId = useId();
+  const panelId = `${id ?? generatedId}-panel`;
+
   return (
     <button
       type={type}
+      id={id}
       className={cn('uxm-disclosure', open && 'uxm-disclosure--open', className)}
       aria-expanded={open}
+      aria-controls={panelId}
       onClick={(e) => {
         const next = !open;
         if (!isControlled) setUncontrolledOpen(next);

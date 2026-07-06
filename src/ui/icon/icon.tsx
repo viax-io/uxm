@@ -13,6 +13,8 @@ export function Icon({ glyph, size = 24, strokeWidth = 1.75, className, ...rest 
   const def = getIcon(glyph);
   if (!def) return null;
 
+  const ariaLabel = (rest as { 'aria-label'?: string })['aria-label'] ?? def.label;
+
   const commonProps = {
     className: cn('uxm-icon', className),
     width: size,
@@ -23,7 +25,8 @@ export function Icon({ glyph, size = 24, strokeWidth = 1.75, className, ...rest 
     strokeWidth,
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
-    'aria-label': def.label,
+    'aria-label': ariaLabel,
+    role: ariaLabel ? ('img' as const) : undefined,
     ...rest,
   };
 
@@ -32,7 +35,7 @@ export function Icon({ glyph, size = 24, strokeWidth = 1.75, className, ...rest 
   }
 
   if (def.path) {
-    const segments = def.path.split(' M ').map((seg, i) => (i === 0 ? seg : `M ${seg}`));
+    const segments = def.path.split(/(?=M)/);
     return (
       <svg {...commonProps}>
         {segments.map((d, i) => (
