@@ -200,8 +200,8 @@
    trailing room so the value never slides under the ✕. The visible field
    chrome stays on `.uxm-input-text` / `.uxm-textarea` (the input element), so
    the wrapper is layout-only and save-emitted `--uxm-{id}-*` vars still land.
-   (Input with Icon keeps its own `&__clear` chrome — this pair uses the
-   IconButton-backed clear introduced with `clearFieldValue`.) */
+   Number Input and Input with Icon share this same `.uxm-field-clear`
+   IconButton chrome (positioning only per atom) so every clear ✕ is identical. */
 .uxm-field-clear {
   --uxm-icon-button-size: 22px;
   --uxm-icon-button-icon-size: 12px;

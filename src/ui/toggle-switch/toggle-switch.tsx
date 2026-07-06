@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 
@@ -38,6 +40,7 @@ export function ToggleSwitch({
   error,
   'aria-label': ariaLabel,
 }: ToggleSwitchProps) {
+  const errorId = useId();
   return (
     <>
       <label
@@ -59,6 +62,7 @@ export function ToggleSwitch({
           name={name}
           aria-label={ariaLabel}
           aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
           onChange={(e) => onChange?.(e.target.checked, e)}
         />
         <span className="uxm-toggle-switch__track" aria-hidden="true">
@@ -66,7 +70,11 @@ export function ToggleSwitch({
         </span>
         {children && <span className="uxm-toggle-switch__label">{children}</span>}
       </label>
-      {error && <FieldError className="uxm-toggle-switch__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-toggle-switch__error-message">
+          {error}
+        </FieldError>
+      )}
     </>
   );
 }

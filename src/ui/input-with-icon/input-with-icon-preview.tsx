@@ -32,6 +32,8 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-input-with-icon-error-bg': styles.errorBg as string,
     '--uxm-input-with-icon-error-border': styles.errorBorder as string,
     '--uxm-input-with-icon-error-color': styles.errorColor as string,
+    '--uxm-input-with-icon-error-message-size':
+      styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
     width: 320,
   } as CSSProperties;
 }
@@ -53,11 +55,12 @@ function InputWithIconDemo({ state, styles }: { state: string; styles: Styles })
   const cssVars = buildVars(styles);
 
   // Forced state classes live on the wrapper. The inner `__input`
-  // receives the visual via descendant selectors in styles.css.
+  // receives the visual via descendant selectors in styles.css. The error
+  // state is NOT forced here — it goes through the real `error` prop so the
+  // preview exercises the component's own error path (class + message).
   const forcedClass = cn(
     state === 'hover' && 'uxm-input-with-icon--state-hover',
     state === 'focus' && 'uxm-input-with-icon--state-focus',
-    state === 'error' && 'uxm-input-with-icon--error',
   );
 
   return (
@@ -68,19 +71,9 @@ function InputWithIconDemo({ state, styles }: { state: string; styles: Styles })
         value={value}
         onChange={(e) => setValue(e.target.value)}
         disabled={state === 'disabled'}
+        error={isError ? 'No matching models.' : undefined}
         className={forcedClass || undefined}
       />
-      {isError && (
-        <p
-          style={{
-            fontSize: (styles.errorMessageSize as number) ?? 12,
-            color: styles.errorColor as string,
-            marginTop: 4,
-          }}
-        >
-          No matching models.
-        </p>
-      )}
     </div>
   );
 }

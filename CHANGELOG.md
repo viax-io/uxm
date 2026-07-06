@@ -1,3 +1,49 @@
+# [2.9.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.8.0...v2.9.0) (2026-07-03)
+
+
+### Bug Fixes
+
+* **button:** route geometry/type knobs through --uxm vars ([d393c98](https://gitlab.viax.tech/services-viax/uxm/commit/d393c98a4bc7822ac5d386cb8cdc24ef26caacde))
+* **card:** route colour/geometry knobs through --uxm vars ([45180fc](https://gitlab.viax.tech/services-viax/uxm/commit/45180fc0e07d7ecf5d0fb8ab7c4c70f63113a61e))
+* **data-table:** cell-padding knobs work in every density; radius via var ([70fa741](https://gitlab.viax.tech/services-viax/uxm/commit/70fa7410102c8abcbb008e791aa836524e401317))
+* **editable-cell:** mask the number editor's input per keystroke ([3fdede2](https://gitlab.viax.tech/services-viax/uxm/commit/3fdede2fef98733736278bef1b919c1dbe500c23))
+* **editable-cell:** number editor uses text + inputMode, not native number input ([98d291e](https://gitlab.viax.tech/services-viax/uxm/commit/98d291e5cc97cdf42256db6ea8e02b4baf767960))
+* **input-with-icon:** use the shared clear affordance (atomize the ✕) ([bca0eb9](https://gitlab.viax.tech/services-viax/uxm/commit/bca0eb9b69d5c15ab8792a5d527e4f014db32237))
+* **listbox:** selected option shows its colour on open, not after mouse-move ([7be2b75](https://gitlab.viax.tech/services-viax/uxm/commit/7be2b75c21ec57b09501bf33ea9b6e808dd35dff))
+* **studio:** drop stale --lc-* mapping so lifecycle-connector knobs persist ([f30e9fa](https://gitlab.viax.tech/services-viax/uxm/commit/f30e9faa902f05e1e123295b9fe0ef90eb23cda7))
+* **studio:** previews exercise the real error prop + border knob var ([c5d6c46](https://gitlab.viax.tech/services-viax/uxm/commit/c5d6c468d9b674e6307ba18f0723f41f1a70bb12))
+* **toggle-switch:** revive dead resting-state + disabled knobs ([78edabc](https://gitlab.viax.tech/services-viax/uxm/commit/78edabc8b239343123cefb13ef9d1f5290088841))
+* **uxm:** route knob-backed props through --uxm vars + revive dead knobs (sweep) ([0765996](https://gitlab.viax.tech/services-viax/uxm/commit/0765996f9ec160f6cbd404649afe73bfccc823f0))
+
+
+### Features
+
+* **input-with-icon:** port error state so its error knobs work ([d0e614c](https://gitlab.viax.tech/services-viax/uxm/commit/d0e614c67ce2d5250f66f14c4acd1b5bb0f35702))
+* **number-input:** add clear (✕) button + error state (parity with modo) ([9bdfef7](https://gitlab.viax.tech/services-viax/uxm/commit/9bdfef7186bdcc958b7389ccce7cc572fb7dda4a))
+* **ui:** link every FieldError to its control via aria-describedby ([455879d](https://gitlab.viax.tech/services-viax/uxm/commit/455879dca499ea68da3acd6060f9d5bb569b7908))
+
+# [2.8.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.7.0...v2.8.0) (2026-07-01)
+
+
+### Features
+
+* **ui:** add error state to Checkbox, RadioGroup and ToggleSwitch ([c14f3c9](https://gitlab.viax.tech/services-viax/uxm/commit/c14f3c9dda429a381b94cc308e9c00798d0677ea))
+* **ui:** align file-upload page-error prop with the input family ([885fa34](https://gitlab.viax.tech/services-viax/uxm/commit/885fa3478a04b8bf9b2ec6b35606c30b6e1ff53e))
+
+# [2.7.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.6.0...v2.7.0) (2026-07-01)
+
+
+### Bug Fixes
+
+* **studio:** keep the properties panel white for text contrast ([1ace2b8](https://gitlab.viax.tech/services-viax/uxm/commit/1ace2b8cf8df83bcf9985118574e2b32dc34f6fd)), closes [#F2F1F0](https://gitlab.viax.tech/services-viax/uxm/issues/F2F1F0)
+* **studio:** render all five Editable Cell types in the preview ([76ab019](https://gitlab.viax.tech/services-viax/uxm/commit/76ab01918723c61e67c362d3e8c1e1ba4f8e234f))
+
+
+### Features
+
+* **ui:** add Clearable (✕) to TextInput and Textarea ([6798a74](https://gitlab.viax.tech/services-viax/uxm/commit/6798a74f07ba639aee641e10fcbe315973c5f466))
+* **ui:** add Progress Bar — determinate Feedback atom (linear + ring) ([72f033f](https://gitlab.viax.tech/services-viax/uxm/commit/72f033f144ef0341adaec5c55fd90ba138446c2a))
+
 # [2.6.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.5.4...v2.6.0) (2026-06-29)
 
 

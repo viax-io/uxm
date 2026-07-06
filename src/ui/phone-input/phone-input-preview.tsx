@@ -84,11 +84,11 @@ export function PhoneInputPreview({ styles, variants }: PreviewProps) {
       />
       {isError && (
         <p
+          className="uxm-phone-input__error-message"
           style={{
-            fontSize: (styles.errorMessageSize as number) ?? 12,
-            color: styles.errorColor as string,
-            marginTop: 4,
-          }}
+            '--uxm-phone-input-error-message-size':
+              styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : '12px',
+          } as CSSProperties}
         >
           Enter a complete phone number.
         </p>

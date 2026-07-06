@@ -3,7 +3,7 @@
 .uxm-list {
   background-color: var(--color-card);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--uxm-list-item-border-radius, 8px);
   overflow: hidden;
 }
 
@@ -13,9 +13,9 @@
   border-bottom: 1px solid var(--uxm-list-item-border-color, var(--color-border));
   color: var(--uxm-list-item-inactive-text, var(--color-text));
   display: flex;
-  font-size: 14px;
-  gap: 12px;
-  padding: 12px 16px;
+  font-size: var(--uxm-list-item-font-size, 14px);
+  gap: var(--uxm-list-item-gap, 12px);
+  padding: var(--uxm-list-item-padding-y, 12px) var(--uxm-list-item-padding-x, 16px);
 
   &:last-child {
     border-bottom: none;
@@ -71,7 +71,7 @@
   }
 
   &__trailing {
-    color: var(--color-text-muted);
+    color: var(--uxm-list-item-chevron-color, var(--color-text-muted));
     font-size: 12px;
   }
 }

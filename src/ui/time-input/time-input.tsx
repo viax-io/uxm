@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
@@ -161,6 +161,7 @@ export function TimeInput({
   onFocus,
   ...rest
 }: TimeInputProps) {
+  const errorId = useId();
   const [internal, setInternal] = useState<string>(() => {
     const seed = defaultValue ?? '';
     const { time, meridiem } = splitValue(seed, format);
@@ -302,6 +303,7 @@ export function TimeInput({
         onChange={handleInputChange}
         disabled={disabled}
         aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         onFocus={(e) => {
           if (triggerEnabled) setIsOpen(true);
           onFocus?.(e);
@@ -417,7 +419,11 @@ export function TimeInput({
         </Popover>
       )}
     </div>
-    {error && <FieldError className="uxm-time-input__error-message">{error}</FieldError>}
+    {error && (
+      <FieldError id={errorId} className="uxm-time-input__error-message">
+        {error}
+      </FieldError>
+    )}
     </>
   );
 }

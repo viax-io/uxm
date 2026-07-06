@@ -9,11 +9,17 @@ export function TooltipPreview({ styles }: PreviewProps) {
       <div style={{ position: 'relative', display: 'inline-block' }}>
         <div
           style={{
-            backgroundColor: styles.backgroundColor as string,
-            color: styles.color as string,
-            borderRadius: styles.borderRadius as number,
-            padding: `${styles.paddingY}px ${styles.paddingX}px`,
-            fontSize: styles.fontSize as number,
+            ['--uxm-tooltip-background-color' as string]: styles.backgroundColor as string,
+            ['--uxm-tooltip-color' as string]: styles.color as string,
+            ['--uxm-tooltip-border-radius' as string]: `${styles.borderRadius}px`,
+            ['--uxm-tooltip-padding-y' as string]: `${styles.paddingY}px`,
+            ['--uxm-tooltip-padding-x' as string]: `${styles.paddingX}px`,
+            ['--uxm-tooltip-font-size' as string]: `${styles.fontSize}px`,
+            backgroundColor: 'var(--uxm-tooltip-background-color)',
+            color: 'var(--uxm-tooltip-color)',
+            borderRadius: 'var(--uxm-tooltip-border-radius)',
+            padding: 'var(--uxm-tooltip-padding-y) var(--uxm-tooltip-padding-x)',
+            fontSize: 'var(--uxm-tooltip-font-size)',
             whiteSpace: 'nowrap',
           }}
         >

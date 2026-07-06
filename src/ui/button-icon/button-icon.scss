@@ -4,7 +4,7 @@
   align-items: center;
   background-color: var(--uxm-button-icon-background-color, var(--color-surface-alt));
   border: none;
-  border-radius: 8px;
+  border-radius: var(--uxm-button-icon-border-radius, 8px);
   color: var(--uxm-button-icon-color, var(--color-text));
   cursor: pointer;
   display: inline-flex;

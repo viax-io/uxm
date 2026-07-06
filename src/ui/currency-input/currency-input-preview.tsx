@@ -39,6 +39,8 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-currency-input-error-bg': styles.errorBg as string,
     '--uxm-currency-input-error-border': styles.errorBorder as string,
     '--uxm-currency-input-error-color': styles.errorColor as string,
+    '--uxm-currency-input-error-message-size':
+      styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
     '--uxm-currency-input-popover-bg': styles.popoverBg as string,
     '--uxm-currency-input-popover-border': styles.popoverBorder as string,
     '--uxm-currency-input-popover-radius': `${styles.popoverRadius}px`,
@@ -113,7 +115,7 @@ function CurrencyInputDemo({
       {isError && (
         <p
           style={{
-            fontSize: (styles.errorMessageSize as number) ?? 12,
+            fontSize: 'var(--uxm-currency-input-error-message-size, 12px)',
             color: styles.errorColor as string,
             marginTop: 4,
           }}

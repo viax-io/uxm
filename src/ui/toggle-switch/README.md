@@ -42,9 +42,11 @@ function Example() {
 |----------|----------------|---------|---------|
 | `--uxm-toggle-switch-width` | – | `44px` | Track width. Drives the "on" thumb position arithmetic. |
 | `--uxm-toggle-switch-height` | – | `24px` | Track height. Thumb size derives as `height − 4px`. |
-| `--uxm-toggle-switch-track-off` | `--color-border` | – | Track background when off. |
-| `--uxm-toggle-switch-track-on` | `--color-accent` | – | Track background when on (`:checked`). |
-| `--uxm-toggle-switch-thumb` | `--color-card` | – | Thumb background. |
+| `--uxm-toggle-switch-off-track` | `--color-border` | – | Track background when off. |
+| `--uxm-toggle-switch-on-track` | `--color-accent` | – | Track background when on (`:checked`). |
+| `--uxm-toggle-switch-off-thumb` | `--color-card` | – | Thumb background when off. |
+| `--uxm-toggle-switch-on-thumb` | `--color-card` | – | Thumb background when on (`:checked`). |
+| `--uxm-toggle-switch-disabled-opacity` | `1` | – | Opacity when disabled (`.uxm-toggle-switch--disabled`). |
 
 > The `--shadow-sm` token applies a small drop-shadow under the thumb. The "on" thumb position is computed via `calc()` from `width` / `height`, so the math survives custom dimensions.
 

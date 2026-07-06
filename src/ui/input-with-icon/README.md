@@ -2,7 +2,7 @@
 
 A text input with a leading icon slot and (optionally) a trailing clear button. The standard "search field" shape, but generalised — any icon can lead, and clearability is opt-in for non-search inputs.
 
-`InputWithIcon` composes three elements: a positioned icon span (`aria-hidden`), a native `<input>`, and an optional clear `<button>`. Left padding is computed from `iconOffset + iconSize + 8px` so the input text can never overlap the leading glyph. The browser's native search-clear button is suppressed via `::-webkit-search-cancel-button` so `type="search"` doesn't render two clear affordances.
+`InputWithIcon` composes three elements: a positioned icon span (`aria-hidden`), a native `<input>`, and an optional clear button (the shared `.uxm-field-clear` `IconButton`, same as TextInput / NumberInput / Textarea). Left padding is computed from `iconOffset + iconSize + 8px` so the input text can never overlap the leading glyph. The browser's native search-clear button is suppressed via `::-webkit-search-cancel-button` so `type="search"` doesn't render two clear affordances.
 
 ## Usage
 
@@ -38,6 +38,7 @@ Extends `InputHTMLAttributes<HTMLInputElement>` — any standard input attribute
 | `clearable` | `boolean` | `type === 'search'` | Reserve trailing space for a clear button and render it when the input has a non-empty `value` and an `onClear` handler. |
 | `onClear` | `() => void` | – | Required for the clear button to render. Typically `() => setValue('')`. Only fires when the input has a string `value` — uncontrolled inputs can't be reset from the outside. |
 | `value` | `string \| number \| readonly string[]` | – | Forwarded to the `<input>`. The clear button is only rendered when `typeof value === 'string'` and `value.length > 0`. |
+| `error` | `string` | – | Non-empty string switches the field to its error state: the `--error` modifier re-tones the border/background and leading icon, `aria-invalid` + `aria-describedby` land on the `<input>`, and the message renders below the field. |
 | `className` | `string` | – | Applied to the wrapper `<div>` (not the input). |
 | _(any native input attribute)_ | – | – | Spread onto the inner `<input>` (except `value`, which is handled explicitly). |
 
@@ -55,8 +56,12 @@ Extends `InputHTMLAttributes<HTMLInputElement>` — any standard input attribute
 | `--uxm-input-with-icon-icon-color` | `--color-text-muted` | – | Leading icon colour. |
 | `--uxm-input-with-icon-icon-size` | – | `16px` | Leading icon SVG sizing (used in the left-padding computation). |
 | `--uxm-input-with-icon-icon-offset` | – | `12px` | Leading and trailing icon offsets from the edge. |
+| `--uxm-input-with-icon-error-bg` | `--color-card` | – | Input background in the error state. |
+| `--uxm-input-with-icon-error-border` | `--color-danger-text` | – | Input border in the error state. |
+| `--uxm-input-with-icon-error-color` | `--color-danger-text` | – | Leading icon and error-message colour. |
+| `--uxm-input-with-icon-error-message-size` | – | `12px` | Error-message font size. |
 
-> Leading padding is computed as `iconOffset + iconSize + 8px`. When `clearable`, trailing padding is `iconOffset + 18px + 8px` so the input text never slides under the clear button.
+> Leading padding is computed as `iconOffset + iconSize + 8px`. When `clearable`, trailing padding is `iconOffset + 22px + 8px` so the input text never slides under the clear button.
 
 Focus border (`var(--color-accent)`) and the clear button styling (`color-mix` derived from `--color-text`) are hard-coded — not exposed as `--uxm-*` overrides.
 
@@ -79,8 +84,9 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Default | – | Leading icon, surface background, border, 8px radius. |
 | Focus | `:focus` on `<input>` | Border colour transitions (0.15s) to `--color-accent`. |
 | Clearable (reserved) | `type="search"` or `clearable={true}` | Extra trailing padding reserved even when value is empty (prevents jitter). |
-| Clearable (button visible) | `clearable` + non-empty `value` + `onClear` | 18×18 pill button at the trailing edge with `close` icon. |
+| Clearable (button visible) | `clearable` + non-empty `value` + `onClear` | Shared 22×22 `.uxm-field-clear` button at the trailing edge with `close` icon. |
 | Clear button hover | `:hover` on clear | Background and colour shift via `color-mix` to a stronger token-derived shade. |
+| Error | non-empty `error` prop | Border/background re-toned via the `error*` variables, leading icon re-coloured, message rendered below the field. |
 
 ## Accessibility
 
@@ -89,4 +95,5 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Webkit-native search clear is suppressed via CSS to avoid double clear buttons; non-webkit browsers don't render a native one for `type="search"` anyway.
 - The clear button only appears for controlled inputs (`typeof value === 'string'`). Uncontrolled inputs intentionally have no clear affordance — there's no way to externally reset their DOM value from React.
 - Default focus indication is border-only (no outline). Verify against your background; add a `:focus-visible` box-shadow on critical surfaces if needed.
-- Clear-button hit target is 18×18 — below WCAG 2.1 AAA 44×44. Acceptable for dense desktop search bars but consider enlarging for touch-primary surfaces.
+- Clear-button hit target is 22×22 — below WCAG 2.1 AAA 44×44. Acceptable for dense desktop search bars but consider enlarging for touch-primary surfaces.
+- A non-empty `error` sets `aria-invalid` on the `<input>` and links it to the message via `aria-describedby`, so assistive tech announces both the state and the reason.

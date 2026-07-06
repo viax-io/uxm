@@ -34,6 +34,9 @@ function buildVars(styles: Styles): CSSProperties {
       styles.disabledOpacity != null ? String(styles.disabledOpacity) : undefined,
     '--uxm-number-input-error-bg': styles.errorBg as string,
     '--uxm-number-input-error-border': styles.errorBorder as string,
+    '--uxm-number-input-error-color': styles.errorColor as string,
+    '--uxm-number-input-error-message-size':
+      styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
     '--uxm-number-input-text-align': styles.textAlign as string,
   } as CSSProperties;
 }
@@ -75,8 +78,8 @@ function NumberInputDemo({ state, styles }: { state: string; styles: Styles }) {
       {isError && (
         <p
           style={{
-            fontSize: (styles.errorMessageSize as number) ?? 12,
-            color: styles.errorColor as string,
+            fontSize: 'var(--uxm-number-input-error-message-size, 12px)',
+            color: 'var(--uxm-number-input-error-color, var(--color-danger-text))',
             marginTop: 4,
           }}
         >

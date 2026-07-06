@@ -55,7 +55,7 @@
 
   &__current {
     color: var(--uxm-breadcrumb-active-text, var(--uxm-breadcrumb-current-color, var(--color-text)));
-    font-weight: var(--uxm-breadcrumb-current-weight, 600);
+    font-weight: var(--uxm-breadcrumb-active-font-weight, var(--uxm-breadcrumb-current-weight, 600));
   }
 
   &__separator {

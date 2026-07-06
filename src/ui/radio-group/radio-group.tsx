@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useId, useState } from 'react';
 
 import { cn } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
@@ -61,6 +61,7 @@ export function RadioGroup({
   const isControlled = controlledValue !== undefined;
   const value = isControlled ? controlledValue : uncontrolledValue;
   const hasValue = controlledValue !== undefined || defaultValue !== undefined;
+  const errorId = useId();
 
   function handleChange(nextValue: string, e: ChangeEvent<HTMLInputElement>) {
     if (!isControlled) setUncontrolledValue(nextValue);
@@ -78,12 +79,17 @@ export function RadioGroup({
           className,
         )}
         aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
       >
         <RadioGroupContext.Provider value={{ name, value, hasValue, onChange: handleChange }}>
           {children}
         </RadioGroupContext.Provider>
       </div>
-      {error && <FieldError className="uxm-radio-group__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-radio-group__error-message">
+          {error}
+        </FieldError>
+      )}
     </>
   );
 }

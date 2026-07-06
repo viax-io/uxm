@@ -1,6 +1,8 @@
 import type { PreviewProps } from '@/previews/types';
 import { Icon } from '@/ui';
 
+import type { CSSProperties } from 'react';
+
 const stats = [
   { label: 'Total Revenue', value: '$48.2K', trend: '+12.5%', up: true },
   { label: 'Active Users', value: '2,847', trend: '+8.2%', up: true },
@@ -14,12 +16,16 @@ export function StatCardPreview({ styles }: PreviewProps) {
         <div
           key={stat.label}
           style={{
-            backgroundColor: styles.backgroundColor as string,
-            border: `1px solid ${styles.borderColor}`,
-            borderRadius: styles.borderRadius as number,
-            padding: styles.padding as number,
+            '--uxm-stat-card-background-color': styles.backgroundColor as string,
+            '--uxm-stat-card-border-color': styles.borderColor as string,
+            '--uxm-stat-card-border-radius': `${styles.borderRadius}px`,
+            '--uxm-stat-card-padding': `${styles.padding}px`,
+            backgroundColor: 'var(--uxm-stat-card-background-color)',
+            border: '1px solid var(--uxm-stat-card-border-color)',
+            borderRadius: 'var(--uxm-stat-card-border-radius)',
+            padding: 'var(--uxm-stat-card-padding)',
             minWidth: 160,
-          }}
+          } as CSSProperties}
         >
           <p style={{ fontSize: styles.labelSize as number, color: 'var(--color-text-muted)', fontWeight: 500, margin: 0 }}>
             {stat.label}

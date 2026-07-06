@@ -45,5 +45,10 @@
       box-shadow: var(--shadow-xs);
       color: var(--uxm-view-switcher-active-icon, var(--color-text));
     }
+
+    .uxm-icon {
+      height: var(--uxm-view-switcher-icon-size, 16px);
+      width: var(--uxm-view-switcher-icon-size, 16px);
+    }
   }
 }

@@ -7,11 +7,16 @@ export function ContentTooltipPreview({ styles }: PreviewProps) {
       {/* Rich tooltip */}
       <div
         style={{
-          backgroundColor: styles.backgroundColor as string,
-          border: `1px solid ${styles.borderColor}`,
-          borderRadius: styles.borderRadius as number,
-          padding: styles.padding as number,
-          maxWidth: styles.maxWidth as number,
+          ['--uxm-content-tooltip-background-color' as string]: styles.backgroundColor as string,
+          ['--uxm-content-tooltip-border-color' as string]: styles.borderColor as string,
+          ['--uxm-content-tooltip-border-radius' as string]: `${styles.borderRadius}px`,
+          ['--uxm-content-tooltip-padding' as string]: `${styles.padding}px`,
+          ['--uxm-content-tooltip-max-width' as string]: `${styles.maxWidth}px`,
+          backgroundColor: 'var(--uxm-content-tooltip-background-color)',
+          border: '1px solid var(--uxm-content-tooltip-border-color)',
+          borderRadius: 'var(--uxm-content-tooltip-border-radius)',
+          padding: 'var(--uxm-content-tooltip-padding)',
+          maxWidth: 'var(--uxm-content-tooltip-max-width)',
           boxShadow: styles.shadow
             ? '0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)'
             : 'none',

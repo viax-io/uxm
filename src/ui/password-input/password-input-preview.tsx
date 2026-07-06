@@ -76,11 +76,11 @@ function PasswordInputDemo({ state, styles }: { state: string; styles: Styles })
       />
       {isError && (
         <p
+          className="uxm-password-input__error-message"
           style={{
-            fontSize: (styles.errorMessageSize as number) ?? 12,
-            color: styles.errorColor as string,
-            marginTop: 4,
-          }}
+            '--uxm-password-input-error-message-size':
+              styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : '12px',
+          } as CSSProperties}
         >
           Password must be at least 8 characters.
         </p>

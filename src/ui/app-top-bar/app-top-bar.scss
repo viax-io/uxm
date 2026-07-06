@@ -8,13 +8,13 @@
 
 .uxm-app-top-bar {
   align-items: center;
-  background-color: color-mix(in srgb, var(--color-surface-alt) 50%, transparent);
+  background-color: var(--uxm-app-top-bar-background-color, color-mix(in srgb, var(--color-surface-alt) 50%, transparent));
   border-bottom: 1px solid var(--uxm-app-top-bar-border-color, var(--color-border));
   display: flex;
-  gap: 12px;
-  height: 64px;
+  gap: var(--uxm-app-top-bar-gap, 12px);
+  height: var(--uxm-app-top-bar-height, 64px);
   justify-content: space-between;
-  padding: 0 16px;
+  padding: var(--uxm-app-top-bar-padding-y, 0) var(--uxm-app-top-bar-padding-x, 16px);
 
   &__left {
     align-items: center;

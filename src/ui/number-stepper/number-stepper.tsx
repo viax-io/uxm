@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 import { cn } from '@/helpers';
 
 import { FieldError } from '../field-error';
@@ -75,6 +77,7 @@ export function NumberStepper({
   style,
   'aria-label': ariaLabel,
 }: NumberStepperProps) {
+  const errorId = useId();
   const adjust = (delta: number) => {
     let next = value + delta;
     if (min !== undefined) next = Math.max(min, next);
@@ -92,7 +95,7 @@ export function NumberStepper({
         )}
         style={style}
         {...(disabled ? { 'aria-disabled': true as const } : {})}
-        {...(error ? { 'aria-invalid': true as const } : {})}
+        {...(error ? { 'aria-invalid': true as const, 'aria-describedby': errorId } : {})}
       >
         <IconButton
           onClick={() => adjust(-step)}
@@ -121,7 +124,11 @@ export function NumberStepper({
         </IconButton>
         {unit && <span className="uxm-number-stepper__unit">{unit}</span>}
       </div>
-      {error && <FieldError className="uxm-number-stepper__error-message">{error}</FieldError>}
+      {error && (
+        <FieldError id={errorId} className="uxm-number-stepper__error-message">
+          {error}
+        </FieldError>
+      )}
     </>
   );
 }
