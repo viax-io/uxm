@@ -5,6 +5,7 @@ import { cn } from '@/helpers';
 import { useRovingTabIndex } from '../../hooks/use-roving-tab-index';
 import { FieldError } from '../field-error';
 import { Icon } from '../icon';
+import { IconButton } from '../icon-button';
 import { Popover } from '../popover';
 
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
@@ -46,6 +47,14 @@ export interface TimeInputProps
    * the column so a typed `09:03` doesn't vanish under `minuteStep={5}`.
    */
   minuteStep?: number;
+  /**
+   * Show a clear (✕) button when the field has a value. On by default (opt out
+   * with `clearable={false}`). The ✕ sits inboard of the trailing clock icon
+   * (and, in 12h, inboard of the AM/PM badge). The component owns the reset —
+   * it wipes its own uncontrolled state and fires `onChange("")` — so no
+   * separate `onClear` is needed.
+   */
+  clearable?: boolean;
   /**
    * Inline style applied to the WRAPPER (not the inner <input>). CSS custom
    * properties set here cascade to every descendant — the input, the AM/PM
@@ -155,6 +164,7 @@ export function TimeInput({
   clock = true,
   picker = true,
   minuteStep = 1,
+  clearable = true,
   style,
   disabled,
   error,
@@ -286,10 +296,24 @@ export function TimeInput({
   // — if rendered — stays a decorative <span>.
   const triggerEnabled = clock && picker && !disabled;
 
+  // Clear owns its own reset: wipe the value (time + meridiem) and notify via
+  // onChange(""). Mirrors DateInput / NumberInput — the component holds its own
+  // state, so no onClear prop is needed.
+  const handleClear = useCallback(() => {
+    if (!isControlled) setInternal('');
+    onChange?.('');
+  }, [isControlled, onChange]);
+  const showClear = clearable && time.length > 0 && !disabled;
+
   return (
     <>
     <div
-      className={cn('uxm-time-input', error && 'uxm-time-input--error', className)}
+      className={cn(
+        'uxm-time-input',
+        error && 'uxm-time-input--error',
+        clearable && 'uxm-time-input--clearable',
+        className,
+      )}
       style={style}
       data-format={format}
       ref={containerRef}
@@ -335,6 +359,18 @@ export function TimeInput({
           {meridiem}
         </span>
       )}
+      {showClear && (
+        <IconButton
+          className="uxm-field-clear uxm-time-input__clear"
+          aria-label="Clear"
+          // Keep focus off the input so clearing doesn't re-open the picker
+          // popover via the input's onFocus handler.
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={handleClear}
+        >
+          <Icon glyph="close" />
+        </IconButton>
+      )}
       {triggerEnabled && (
         <Popover
           open={isOpen}
@@ -342,6 +378,13 @@ export function TimeInput({
           anchor={containerRef}
           placement="bottom-start"
           matchAnchorWidth
+          // The field opens the popover on input `onFocus`. If Popover
+          // restored focus to the input on close (its default), that focus
+          // would immediately re-fire `onFocus` and reopen the popover —
+          // so an outside click could never dismiss it. Opting out of focus
+          // restoration breaks that loop (matches DateInput, which opens on
+          // focus too and uses a non-restoring popover).
+          restoreFocus={false}
           className="uxm-time-input__popover"
           aria-label="Pick a time"
         >

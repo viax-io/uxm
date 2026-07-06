@@ -965,6 +965,7 @@ export const registry: ComponentDef[] = [
         { name: 'clock', type: 'boolean', defaultValue: 'true', description: 'Render the trailing clock icon. Pass `false` for an icon-less field.' },
         { name: 'picker', type: 'boolean', defaultValue: 'true', description: 'Mount the click-list popover (hour / minute / AM-PM). Pass `false` for a typing-only field — the clock icon stays decorative.' },
         { name: 'minuteStep', type: 'number', defaultValue: '1', description: "Increment shown in the minute column of the popover. Off-step values typed into the field are still included (sorted), so a typed `09:03` under `minuteStep={5}` doesn't vanish." },
+        { name: 'clearable', type: 'boolean', defaultValue: 'true', description: 'Show a trailing clear (✕) button when the field has a value. The ✕ sits inboard of the clock icon (and the AM/PM badge in 12h) and resets the value.' },
         { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Disables the input, the AM/PM selector, and the picker trigger.' },
         { name: '...rest', type: 'InputHTMLAttributes<HTMLInputElement>', description: 'All other native input attributes (placeholder, name, aria-label, etc.) pass through.' },
       ],

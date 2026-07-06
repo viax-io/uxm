@@ -35,6 +35,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `clock` | `boolean` | `true` | Render the trailing clock icon. Set `false` for an icon-less field. |
 | `picker` | `boolean` | `true` | Mount the popover. When both `clock` and `picker` are on, the icon doubles as the toggle; otherwise the icon (if rendered) is decorative. |
 | `minuteStep` | `number` | `1` | Minute-column step in the popover (1 / 5 / 15 / 30, etc.). Off-step current values are inserted at the correct sorted position so typed-then-picked values never disappear. |
+| `clearable` | `boolean` | `true` | Show a clear (✕) button when the field has a value. The ✕ sits inboard of the clock icon (and the AM/PM badge in 12h). The component owns the reset (fires `onChange("")`), so no `onClear` is needed. |
 | `placeholder` | `string` | `'HH:MM'` | Custom placeholder. Falls back to the `HH:MM` default. |
 | `disabled` | `boolean` | – | Native disabled state on the inner `<input>`; the clock-button toggle is also suppressed. |
 | `style` | `CSSProperties` | – | Inline style on the WRAPPER (not the input). Use to project `--uxm-time-input-*` overrides. |
@@ -116,6 +117,7 @@ The `TimeInputFormat` union (`'24h' \| '12h'`) is exported.
 | Format 24h | `format="24h"` (default) | No AM/PM badge; two-column popover. |
 | Format 12h | `format="12h"` | Trailing AM/PM badge inboard of icon; three-column popover. |
 | Popover open | Click clock button | Three-column scroll picker with selected row centred. |
+| Clearable | `clearable` (default) + non-empty value, non-disabled | Trailing ✕ (`.uxm-field-clear`, 22×22) sits inboard of the clock icon (and AM/PM badge in 12h); clears the value. |
 | Format switch | `format` prop changes | Uncontrolled state cleared; popover closes. |
 
 ## Accessibility
@@ -125,5 +127,6 @@ The `TimeInputFormat` union (`'24h' \| '12h'`) is exported.
 - The popover container has `role="dialog" aria-label="Pick a time"`; each column is `role="listbox"` with a column-named `aria-label`; rows are `role="option"` with `aria-selected`.
 - AM/PM badge is `aria-hidden="true"` — the popover's AM/PM column is the sole interactive way to flip it. The value still surfaces to assistive tech because the formatted string lives in the input's value.
 - Popover dismisses on outside-click and `Escape`. Listeners only mount while open.
+- Clear button: `<button aria-label="Clear">`; `onMouseDown` is prevented so clearing doesn't refocus the input and re-open the picker.
 - Keyboard navigation **within** the popover relies on `Tab` (no roving tab index / arrow-key navigation); rows activate via `Enter`/`Space` since they are real `<button>`s.
 - Mask is permissive — `09:99` is not rejected at the input layer. Validate strictly downstream if business rules require it.
