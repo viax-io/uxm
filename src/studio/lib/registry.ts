@@ -1320,20 +1320,8 @@ export const registry: ComponentDef[] = [
     ],
     layoutVariants: [
       // No `currency` variant — that's an end-user runtime choice
-      // handled by the picker. Picker POSITION on the other hand is
-      // a design-time decision: US/UK/JP apps put it on the left
-      // (matches the prefix `$1,234.56` read); EU apps that primarily
-      // transact in EUR/SEK/NOK often prefer it on the right
-      // (matches the suffix `1.234,56 €` read).
-      {
-        key: 'pickerPosition',
-        label: 'Picker Position',
-        options: [
-          { value: 'left', label: 'Left ($ USD | 0.00)' },
-          { value: 'right', label: 'Right (0.00 | EUR €)' },
-        ],
-        defaultValue: 'left',
-      },
+      // handled by the picker. The picker always sits on the left
+      // (the prefix `$1,234.56` read), so there's no position knob.
       {
         key: 'state',
         label: 'State',
@@ -1363,8 +1351,8 @@ export const registry: ComponentDef[] = [
         { name: 'defaultValue', type: 'CurrencyValue', defaultValue: '{ currency: "USD", amount: "" }', description: 'Initial value for uncontrolled usage.' },
         { name: 'currencies', type: 'Currency[]', defaultValue: 'CURATED_CURRENCIES', description: 'List shown in the picker. Default is ~20 curated currencies. Pass a single-entry array to effectively lock currency selection.' },
         { name: 'locale', type: 'string', defaultValue: '"en-US"', description: 'BCP-47 locale tag. Drives thousands separator style on blur display.' },
-        { name: 'pickerPosition', type: '"left" | "right"', defaultValue: '"left"', description: 'Side of the field the currency picker sits on. `"left"` matches modern fintech-app convention; `"right"` matches the EU display convention (`1.234,56 €`) and is preferred for EUR/SEK/NOK-primary apps.' },
         { name: 'allowNegative', type: 'boolean', defaultValue: 'false', description: 'Allow a leading `-` sign for refunds / credits.' },
+        { name: 'clearable', type: 'boolean', defaultValue: 'true', description: 'Show a trailing clear (✕) button when the amount has a value. Clearing wipes the amount and keeps the selected currency.' },
         { name: 'min', type: 'number', description: 'Lower bound on the amount. Clamped on blur.' },
         { name: 'max', type: 'number', description: 'Upper bound on the amount. Clamped on blur.' },
         { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Disables the input and the currency picker.' },

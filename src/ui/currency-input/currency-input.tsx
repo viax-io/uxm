@@ -9,6 +9,7 @@ import {
 } from '../../lib/currencies';
 import { FieldError } from '../field-error';
 import { Icon } from '../icon';
+import { IconButton } from '../icon-button';
 
 import type { ChangeEvent, FocusEvent, InputHTMLAttributes } from 'react';
 
@@ -52,14 +53,13 @@ export interface CurrencyInputProps
   /** Allow a leading `-` sign for refunds / credits. Defaults to `false`. */
   allowNegative?: boolean;
   /**
-   * Which side of the field the currency picker sits on. `"left"` is
-   * the modern fintech-app convention (Stripe, Wise, Revolut, etc.)
-   * and is the default. `"right"` matches the European display
-   * convention where the symbol/code suffixes the value (e.g.
-   * `1.234,56 €` in de-DE) — useful for EUR/SEK/NOK-primary apps
-   * where the suffix read feels natural at the input layer too.
+   * Show a clear (✕) button at the trailing edge when the amount has a
+   * value. On by default (opt out with `clearable={false}`). The component
+   * owns the reset — it wipes its own uncontrolled state and fires `onChange`
+   * with an empty amount (keeping the selected currency), so no separate
+   * `onClear` is needed (mirrors NumberInput / PhoneInput).
    */
-  pickerPosition?: 'left' | 'right';
+  clearable?: boolean;
   /**
    * Inline style applied to the WRAPPER (not the inner <input>). CSS
    * custom properties set here cascade to the inner field AND the
@@ -158,7 +158,7 @@ export function CurrencyInput({
   min,
   max,
   allowNegative = false,
-  pickerPosition = 'left',
+  clearable = true,
   className,
   style,
   disabled,
@@ -274,6 +274,15 @@ export function CurrencyInput({
     [current.amount, current.currency, min, max, commit, onBlur],
   );
 
+  // Clear owns its own reset: wipe the amount but KEEP the selected currency
+  // (the picker is a separate affordance — clearing the value shouldn't reset
+  // it). Mirrors NumberInput / PhoneInput which hold their own value state,
+  // so no `onClear` prop is needed.
+  const handleClear = useCallback(() => {
+    commit({ currency: current.currency, amount: '' });
+  }, [commit, current.currency]);
+  const showClear = clearable && current.amount !== '' && !disabled;
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return currencies;
@@ -297,7 +306,6 @@ export function CurrencyInput({
     <div
       className={cn(
         'uxm-currency-input',
-        `uxm-currency-input--picker-${pickerPosition}`,
         disabled && 'uxm-currency-input--disabled',
         error && 'uxm-currency-input--error',
         className,
@@ -327,7 +335,10 @@ export function CurrencyInput({
         type="text"
         inputMode={decimals > 0 ? 'decimal' : 'numeric'}
         autoComplete="off"
-        className="uxm-currency-input__input"
+        className={cn(
+          'uxm-currency-input__input',
+          clearable && 'uxm-currency-input__input--clearable',
+        )}
         value={displayValue}
         onChange={handleAmountChange}
         onFocus={handleFocus}
@@ -337,6 +348,18 @@ export function CurrencyInput({
         aria-invalid={error ? true : undefined}
         {...rest}
       />
+      {showClear && (
+        <IconButton
+          className="uxm-field-clear uxm-currency-input__clear"
+          aria-label="Clear"
+          // Keep focus in the input so the clear-click doesn't blur-clamp the
+          // about-to-be-wiped value first (same guard as NumberInput).
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={handleClear}
+        >
+          <Icon glyph="close" />
+        </IconButton>
+      )}
       {isOpen && (
         <div className="uxm-currency-input__popover" role="dialog" aria-label="Choose currency">
           <div className="uxm-currency-input__search">
