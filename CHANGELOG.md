@@ -1,3 +1,10 @@
+## [2.9.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.9.0...v2.9.1) (2026-07-06)
+
+
+### Bug Fixes
+
+* resolve all critical and warning findings from project audit ([172ebdb](https://gitlab.viax.tech/services-viax/uxm/commit/172ebdbfb35970107ec59f42836068df88bebc08))
+
 # [2.9.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.8.0...v2.9.0) (2026-07-03)
 
 
