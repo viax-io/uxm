@@ -66,6 +66,8 @@ Type alias for `SelectHTMLAttributes<HTMLSelectElement>`. Every native select at
 
 The native dropdown caret is suppressed (`appearance: none`) and replaced with an inline SVG chevron painted at `#9CA3AF` — a hard-coded match for the `Text Muted` token.
 
+**Clearing rule.** There is no `clearable` prop. A clear (✕) button appears automatically once a value is selected **iff the select declares a placeholder option** — `<option value="" disabled>…</option>`. That placeholder is what marks "no selection" as a valid state, so returning to it via ✕ is meaningful. A select without a placeholder is mandatory (a value is always chosen, like a native `<select>`), so no ✕ is rendered. In short: **want it clearable → give it a placeholder option.**
+
 ## CSS variables
 
 The shared rule reads no `--uxm-input-*` variables — every visual property reads design tokens directly or is a hard-coded literal (8px radius, 14px font size, 10px/12px padding, 100px textarea min-height, 32px select right padding).
@@ -93,6 +95,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Error | `uxm-input-text--error` or `uxm-input-error` className | Border forced to `--color-danger-text` with `!important`. |
 | Textarea resize | – | `resize: vertical`, `min-height: 100px`. |
 | Select caret | – | Inline SVG chevron at 16px, 10px from the right edge; field reserves `padding-right: 32px`. |
+| Select clear | A value is selected, the field isn't disabled, **and** it has a placeholder option (`<option value="" disabled>`) | A clear ✕ (`.uxm-select-dropdown__trigger-clear`, 22×22) appears inline before the chevron; clicking it resets to the placeholder. Mandatory selects (no placeholder) never show it — clearing to empty makes no sense there. |
 
 ## Accessibility
 

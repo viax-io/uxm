@@ -62,17 +62,8 @@ export function SelectPreview({ styles, variants }: PreviewProps & { componentId
   // itself is previewed + themed in the `listbox` entry. So there's
   // nothing Select-specific to toggle here — `searchable` stays a runtime
   // prop (default "auto").
-  const clearable = (variants.clearable as string) === 'on';
   const multiSelect = (variants.multiSelect as string) === 'multi';
-  return (
-    <SelectDemo
-      key={state}
-      state={state}
-      styles={styles}
-      clearable={clearable}
-      multiSelect={multiSelect}
-    />
-  );
+  return <SelectDemo key={state} state={state} styles={styles} multiSelect={multiSelect} />;
 }
 
 // Keyed by state in the parent so changing the State knob remounts this
@@ -80,12 +71,10 @@ export function SelectPreview({ styles, variants }: PreviewProps & { componentId
 function SelectDemo({
   state,
   styles,
-  clearable,
   multiSelect,
 }: {
   state: string;
   styles: Styles;
-  clearable: boolean;
   multiSelect: boolean;
 }) {
   const isError = state === 'error';
@@ -107,10 +96,7 @@ function SelectDemo({
   return (
     <div style={{ width: 280, ...cssVars } as CSSProperties}>
       {multiSelect ? (
-        <MultiSelectPreviewInstance
-          clearable={clearable}
-          disabled={state === 'disabled'}
-        />
+        <MultiSelectPreviewInstance disabled={state === 'disabled'} />
       ) : (
         // The Select trigger is what this entry themes. `searchable` defaults
         // to "auto"; the full country list is past the threshold, so opening
@@ -120,7 +106,6 @@ function SelectDemo({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           disabled={state === 'disabled'}
-          clearable={clearable}
           className={forcedClass || undefined}
           error={isError ? SELECT_ERROR : undefined}
         >
@@ -145,13 +130,7 @@ function SelectDemo({
 type MultiItem = { value: string; label: string };
 const MULTI_ITEMS: MultiItem[] = SAMPLE.map((s) => ({ value: s, label: s }));
 
-function MultiSelectPreviewInstance({
-  clearable,
-  disabled,
-}: {
-  clearable: boolean;
-  disabled: boolean;
-}) {
+function MultiSelectPreviewInstance({ disabled }: { disabled: boolean }) {
   const [value, setValue] = useState<MultiItem[]>([]);
 
   // Trigger reads the same `--uxm-select-dropdown-*` vars the native
@@ -204,7 +183,7 @@ function MultiSelectPreviewInstance({
           >
             {value.length === 0 ? 'Select countries' : `${value.length} selected`}
           </span>
-          {clearable && value.length > 0 && !disabled && (
+          {value.length > 0 && !disabled && (
             <IconButton
               aria-label="Clear all selections"
               onClick={(e) => {
@@ -220,11 +199,9 @@ function MultiSelectPreviewInstance({
                   e.stopPropagation();
                 }
               }}
-              style={{
-                ['--uxm-icon-button-size' as string]: '22px',
-                ['--uxm-icon-button-icon-size' as string]: '12px',
-                flexShrink: 0,
-              }}
+              // Shared clear chrome (22×22, 12px glyph, flex-shrink:0) — same
+              // as every other field's ✕, instead of bespoke inline vars.
+              className="uxm-field-clear"
             >
               <Icon glyph="close" />
             </IconButton>

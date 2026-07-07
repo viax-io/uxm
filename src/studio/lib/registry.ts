@@ -1543,9 +1543,9 @@ export const registry: ComponentDef[] = [
   },
   {
     id: 'select-dropdown',
-    name: 'Select / Dropdown',
+    name: 'Select Dropdown',
     category: 'Inputs',
-    description: 'Dropdown selection field — internally a Listbox-backed picker. This entry themes the trigger (default / hover / focus / disabled / error); the trigger is identical whether or not the panel searches, so searchability isn\'t a knob here — it\'s the `searchable` prop (default auto: the panel grows a search box once the option list is long enough), and the search box itself is previewed + themed in the Listbox entry. For a search-first combobox with its own trigger chrome (icon glyphs, dial codes), use the SearchDropdown atom instead.',
+    description: 'Dropdown selection field — internally a Listbox-backed picker. This entry themes the trigger (default / hover / focus / disabled / error); the trigger is identical whether or not the panel searches, so searchability isn\'t a knob here — it\'s the `searchable` prop (default auto: the panel grows a search box once the option list is long enough), and the search box itself is previewed + themed in the Listbox entry. Clearability isn\'t a knob either: a clear (✕) button appears automatically once a value is picked IF the select has a placeholder option (`<option value="" disabled>`), which marks "empty" as a valid state. Mandatory selects (no placeholder — a value is always chosen) never show it. For a search-first combobox with its own trigger chrome (icon glyphs, dial codes), use the SearchDropdown atom instead.',
     styleProperties: [
       // Default
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'fieldColors', showWhen: { state: 'default' } },
@@ -1608,15 +1608,6 @@ export const registry: ComponentDef[] = [
           { value: 'multi', label: 'Multi' },
         ],
         defaultValue: 'single',
-      },
-      {
-        key: 'clearable',
-        label: 'Clearable',
-        options: [
-          { value: 'off', label: 'Off' },
-          { value: 'on', label: 'On' },
-        ],
-        defaultValue: 'off',
       },
     ],
     events: [

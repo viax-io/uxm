@@ -237,15 +237,6 @@ Textarea.hasError = true;
 
 export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   /**
-   * Show a clear (✕) button inside the trigger when a value is
-   * selected. Off by default — matches native `<select>` semantics
-   * where one option is always picked. Turn it on for filter selects,
-   * optional form fields, or anywhere returning to the no-selection
-   * state via UI is a legitimate user action. Mirrors Mantine /
-   * Ant Design conventions; consumers that need clearable opt in.
-   */
-  clearable?: boolean;
-  /**
    * When set to a non-empty string, the trigger renders in its error
    * state: red border (`.uxm-select-dropdown--error`), `aria-invalid` on
    * the combobox, and the message below the trigger. Omit (or pass an
@@ -312,7 +303,7 @@ function parseSelectOptions(children: ReactNode): {
 }
 
 /**
- * Select / Dropdown — internally a Listbox-backed picker. Its public
+ * Select Dropdown — internally a Listbox-backed picker. Its public
  * API stays compatible with the previous native-`<select>` shape:
  * pass `<option>` children, controlled (`value`) or uncontrolled
  * (`defaultValue`) state, and an `onChange(e)` handler that reads
@@ -340,7 +331,6 @@ export function Select({
   style,
   name,
   id,
-  clearable = false,
   error,
   searchable = 'auto',
   'aria-label': ariaLabel,
@@ -433,7 +423,12 @@ export function Select({
           >
             {selected ? selected.label : (placeholder ?? '')}
           </span>
-          {clearable && selected && !disabled && (
+          {/* Clear ✕ shows only when the field CAN be empty — i.e. it has a
+              placeholder option (`<option value="" disabled>`), which stands
+              for the "no selection" state. A select without a placeholder is
+              mandatory (a value is always picked, native-<select> style), so
+              clearing to empty makes no sense and no ✕ is rendered. */}
+          {selected && !disabled && placeholder !== undefined && (
             <IconButton
               aria-label="Clear selection"
               onClick={(e) => {
@@ -452,7 +447,7 @@ export function Select({
                   e.stopPropagation();
                 }
               }}
-              className="uxm-select-dropdown__trigger-clear"
+              className="uxm-field-clear uxm-select-dropdown__trigger-clear"
             >
               <Icon glyph="close" />
             </IconButton>

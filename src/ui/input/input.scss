@@ -152,18 +152,13 @@
   color: var(--color-text-muted);
   transition: transform 0.15s;
 }
-/* Clear ✕ inside the trigger — rendered only when `clearable={true}`
-   and a value is selected. Off by default to match native <select>
-   semantics; opt in for filter selects / optional fields / "reset"
-   patterns. Same trim treatment as SearchDropdown: IconButton sized
-   down (22×22 with a 12px icon) to fit inline between label and
-   chevron. Click handlers in JSX stopPropagation so clearing doesn't
-   ALSO toggle the popover. */
-.uxm-select-dropdown__trigger-clear {
-  --uxm-icon-button-size: 22px;
-  --uxm-icon-button-icon-size: 12px;
-  flex-shrink: 0;
-}
+/* Clear ✕ inside the trigger — rendered when a value is selected AND the
+   field can be empty (it has a placeholder option). Mandatory selects (no
+   placeholder, a value is always picked) don't render it. Shared chrome
+   (22×22, 12px glyph) comes from `.uxm-field-clear` below; this per-atom
+   class is just a hook — the ✕ is a flex child of the trigger, so it needs
+   no positioning of its own. Click handlers in JSX stopPropagation so
+   clearing doesn't ALSO toggle the popover. */
 .uxm-select-dropdown--state-hover,
 .uxm-select-dropdown:hover:not([aria-disabled="true"]):not(.uxm-select-dropdown--error) {
   background-color: var(--uxm-select-dropdown-hover-bg, var(--color-card));
@@ -200,8 +195,9 @@
    trailing room so the value never slides under the ✕. The visible field
    chrome stays on `.uxm-input-text` / `.uxm-textarea` (the input element), so
    the wrapper is layout-only and save-emitted `--uxm-{id}-*` vars still land.
-   Number Input and Input with Icon share this same `.uxm-field-clear`
-   IconButton chrome (positioning only per atom) so every clear ✕ is identical. */
+   Number Input, Input with Icon, Phone / Currency / Date / Time Input, and
+   Select all share this same `.uxm-field-clear` IconButton chrome
+   (positioning only per atom) so every clear ✕ is identical. */
 .uxm-field-clear {
   --uxm-icon-button-size: 22px;
   --uxm-icon-button-icon-size: 12px;

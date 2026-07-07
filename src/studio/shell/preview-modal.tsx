@@ -242,7 +242,7 @@ function MiniSelect({ label, options, initial }: { label: string; options: strin
   // :disabled, so live edits to the registry flow through automatically.
   // Native <select> means clicking opens the platform picker, which is a
   // small UX change from the prior custom popover but keeps the Mini in
-  // sync with the actual Select / Dropdown atom we ship.
+  // sync with the actual Select Dropdown atom we ship.
   const s = useResolved('select-dropdown');
   const [value, setValue] = useState(initial ?? options[0]);
   const cssVars = {
