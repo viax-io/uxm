@@ -19,6 +19,7 @@
 @import "./checkbox/checkbox.css";
 @import "./chip/chip.css";
 @import "./cluster/cluster.css";
+@import "./color-input/color-input.css";
 @import "./config-component-row/config-component-row.css";
 @import "./config-segment-item/config-segment-item.css";
 @import "./currency-input/currency-input.css";

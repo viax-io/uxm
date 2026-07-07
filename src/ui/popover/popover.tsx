@@ -22,6 +22,9 @@ export type PopoverPlacement =
   | 'top-start'
   | 'top-end';
 
+// Module-level so the useDismiss deps stay referentially stable.
+const NESTED_FLOATING_LAYERS = ['.uxm-popover'];
+
 export interface PopoverProps {
   /** Whether the popover is open. Controlled — pair with `onOpenChange`. */
   open: boolean;
@@ -217,6 +220,11 @@ export function Popover({
     enabled: open,
     onDismiss: () => onOpenChange(false),
     refs: dismissRefs,
+    // A floating layer opened FROM this popover (e.g. a Select/Listbox inside
+    // the panel) portals to document.body, so it's not a DOM descendant of
+    // panelRef — without this, picking one of its options would read as an
+    // outside click and dismiss us. Same convention Dialog uses.
+    excludeClosest: NESTED_FLOATING_LAYERS,
     closeOnEscape,
     closeOnOutsideClick,
   });

@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { hexToHsl, retintHue } from '@/lib/contrast';
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
-import { ButtonPrimary, ButtonTertiary, Dialog, Modal, Tabs } from '@/ui';
+import { ButtonPrimary, ButtonTertiary, ColorInputPopover, Dialog, Modal, Tabs } from '@/ui';
 
 export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
   { label: 'Inter (default)', value: 'Inter', stack: "'Inter', var(--font-inter), system-ui, sans-serif" },
@@ -356,14 +356,6 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
     });
   };
 
-  // Called when any token in the Accent group changes: stash the changed token
-  // and ask (via modal) whether to re-tint the rest of the group to its hue. The
-  // changed token becomes the base, so editing any shade can drive the others.
-  const onAccentTokenChange = (cssVar: string, hex: string | undefined) => {
-    setOverride(cssVar, hex);
-    setPendingAccent(hex ? { cssVar, hex } : null);
-  };
-
   // Re-tint the accent ramp to the base's hue across BOTH themes, so the brand
   // hue stays consistent in light and dark. Each derived shade is rebuilt from
   // its DEFAULT colour (its designed saturation + lightness step) re-tinted to
@@ -441,8 +433,14 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
                   token={t}
                   theme={theme}
                   override={overrides[t.cssVar]}
-                  onChange={(hex) =>
-                    t.group === 'accent' ? onAccentTokenChange(t.cssVar, hex) : setOverride(t.cssVar, hex)
+                  onChange={(hex) => setOverride(t.cssVar, hex)}
+                  onCommitColor={
+                    // Accent tokens prompt (via modal) to re-tint the ramp to the
+                    // new hue — but only once the pick is COMMITTED (popover close
+                    // or hex entry), never mid-drag while onChange streams.
+                    t.group === 'accent'
+                      ? (hex) => setPendingAccent({ cssVar: t.cssVar, hex })
+                      : undefined
                   }
                 />
               ))}
@@ -481,23 +479,34 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
 }
 
 function TokenRow({
-  token, theme, override, onChange,
+  token, theme, override, onChange, onCommitColor,
 }: {
   token: ThemeToken;
   theme: 'light' | 'dark';
   override: string | undefined;
+  /** Live update — streams during a drag in the picker. */
   onChange: (hex: string | undefined) => void;
+  /** Fires once the pick is committed (popover close or hex entry), not mid-drag. */
+  onCommitColor?: (hex: string) => void;
 }) {
   const defaultHex = theme === 'dark' ? token.darkHex : token.hex;
   const effective = (override ?? defaultHex).toUpperCase();
   const isOverridden = override !== undefined;
   const [draft, setDraft] = useState<string | null>(null);
   const shown = draft ?? effective;
+  // Whether the color changed during the current popover session — so opening
+  // and closing an accent swatch without editing doesn't trigger the recalc
+  // prompt. `latestHex` holds the freshest picked value so a commit-then-close
+  // in the same tick (Enter in the picker field) prompts with the right color.
+  const changedWhileOpen = useRef(false);
+  const latestHex = useRef(effective);
 
   const commit = (raw: string) => {
     const v = raw.trim();
     if (/^#[0-9A-Fa-f]{6}$/.test(v) || /^#[0-9A-Fa-f]{3}$/.test(v)) {
-      onChange(v.toUpperCase());
+      const hex = v.toUpperCase();
+      onChange(hex);
+      onCommitColor?.(hex);
     }
     setDraft(null);
   };
@@ -514,26 +523,30 @@ function TokenRow({
         fontSize: 12,
       }}
     >
-      <label
-        aria-label={`Pick colour for ${token.name}`}
-        style={{
-          position: 'relative',
-          width: 20, height: 20,
-          borderRadius: 4,
-          border: '1px solid var(--color-border)',
-          backgroundColor: effective,
-          cursor: 'pointer',
-          overflow: 'hidden',
+      <ColorInputPopover
+        value={effective}
+        onChange={(c) => {
+          const hex = c.toUpperCase();
+          changedWhileOpen.current = true;
+          latestHex.current = hex;
+          onChange(hex);
         }}
+        onOpenChange={(open) => {
+          if (open) changedWhileOpen.current = false;
+          else if (changedWhileOpen.current) {
+            changedWhileOpen.current = false;
+            onCommitColor?.(latestHex.current);
+          }
+        }}
+        outputFormat="hex"
+        alpha={false}
+        triggerLabel={`Pick colour for ${token.name}`}
         title="Pick a color"
-      >
-        <input
-          type="color"
-          value={effective}
-          onChange={(e) => onChange(e.target.value.toUpperCase())}
-          style={{ position: 'absolute', inset: 0, opacity: 0, width: '100%', height: '100%', cursor: 'pointer', border: 'none' }}
-        />
-      </label>
+        style={{
+          '--uxm-color-input-trigger-size': '20px',
+          '--uxm-color-input-border-radius': '4px',
+        } as React.CSSProperties}
+      />
       <span style={{ color: 'var(--color-text)', fontWeight: isOverridden ? 600 : 400, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {token.name}
         <span style={{ marginLeft: 6, color: 'var(--color-text-muted)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 11 }}>

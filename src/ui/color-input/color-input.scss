@@ -1,0 +1,319 @@
+/* ── Color Input ──
+   Inline color picker: saturation/brightness area, hue + opacity tracks, a
+   swatch, an eyedropper button, a format select and a per-format value editor
+   (one hex field, or R/G/B(/A) or H/S/L numeric fields). Themable chrome
+   (surface, border, radius, focus ring, fields) reads `--uxm-color-input-*`
+   vars with token fallbacks, matching the input family.
+
+   Exception to token-first (Constitution I): the picker gradients are the
+   geometry of the color space itself, not themable design values — pure white
+   → hue on one axis, transparent → black on the other, the hue rainbow, and
+   the alpha checkerboard. Those literals are intrinsic to how the control
+   encodes a color and have no dark-mode variant. The dynamic hue / solid /
+   value inputs arrive as `--uxm-color-input-hue|solid|value` from the TSX. */
+
+.uxm-color-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: var(--uxm-color-input-width, 260px);
+  font-family: inherit;
+  color: var(--uxm-color-input-color, var(--color-text));
+}
+
+/* Saturation × brightness plane for the current hue. */
+.uxm-color-input__saturation {
+  --_hue: hsl(var(--uxm-color-input-hue, 0), 100%, 50%);
+  position: relative;
+  height: var(--uxm-color-input-area-height, 160px);
+  border-radius: var(--uxm-color-input-border-radius, 8px);
+  cursor: crosshair;
+  touch-action: none;
+  outline: none;
+  background:
+    linear-gradient(to top, #000, transparent),
+    linear-gradient(to right, #fff, var(--_hue));
+}
+.uxm-color-input__saturation:focus-visible {
+  outline: 2px solid var(--uxm-color-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-color-input__saturation-thumb {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.uxm-color-input__body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.uxm-color-input__sliders {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Hue + opacity tracks share thumb chrome and pointer geometry. */
+.uxm-color-input__hue,
+.uxm-color-input__alpha {
+  position: relative;
+  height: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+}
+.uxm-color-input__hue:focus-visible,
+.uxm-color-input__alpha:focus-visible {
+  outline: 2px solid var(--uxm-color-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-color-input__hue {
+  background: linear-gradient(
+    to right,
+    #f00 0%,
+    #ff0 17%,
+    #0f0 33%,
+    #0ff 50%,
+    #00f 67%,
+    #f0f 83%,
+    #f00 100%
+  );
+}
+.uxm-color-input__alpha {
+  background-color: #fff;
+  background-image:
+    linear-gradient(to right, transparent, var(--uxm-color-input-solid, #000)),
+    linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%),
+    linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%);
+  background-size: 100% 100%, 8px 8px, 8px 8px;
+  background-position: 0 0, 0 0, 4px 4px;
+}
+.uxm-color-input__track-thumb {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Current-color swatch over a checkerboard so translucency reads. */
+.uxm-color-input__swatch {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--uxm-color-input-border-color, var(--color-border));
+  border-radius: var(--uxm-color-input-border-radius, 8px);
+  background-color: #fff;
+  background-image:
+    linear-gradient(var(--uxm-color-input-value, #000), var(--uxm-color-input-value, #000)),
+    linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%),
+    linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%);
+  background-size: 100% 100%, 8px 8px, 8px 8px;
+  background-position: 0 0, 0 0, 4px 4px;
+}
+
+.uxm-color-input__eyedropper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--uxm-color-input-color, var(--color-text));
+  background-color: var(--uxm-color-input-bg, var(--color-card));
+  border: 1px solid var(--uxm-color-input-border-color, var(--color-border));
+  border-radius: var(--uxm-color-input-border-radius, 8px);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.uxm-color-input__eyedropper:hover:not(:disabled) {
+  border-color: var(--uxm-color-input-hover-border, var(--color-accent));
+}
+.uxm-color-input__eyedropper:focus-visible {
+  outline: 2px solid var(--uxm-color-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+
+.uxm-color-input__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* Format picker — the library Select (combobox + Listbox popover). Its
+   `.uxm-listbox` wrapper is the ACTUAL flex item in the controls row (the
+   combobox sits inside it), and the shared listbox rule makes it width:100% —
+   pin the wrapper to a compact fixed width so the value editor keeps the rest
+   of the row. Chrome comes from `.uxm-select-dropdown`; the class on the
+   combobox only maps our compact sizing onto the Select's override vars. */
+.uxm-color-input__controls > .uxm-listbox {
+  width: var(--uxm-color-input-format-width, 88px);
+  flex-shrink: 0;
+}
+.uxm-color-input__format {
+  --uxm-select-dropdown-padding-y: var(--uxm-color-input-padding-y, 8px);
+  --uxm-select-dropdown-padding-x: var(--uxm-color-input-padding-x, 10px);
+  --uxm-select-dropdown-font-size: var(--uxm-color-input-font-size, 14px);
+  --uxm-select-dropdown-border-radius: var(--uxm-color-input-border-radius, 8px);
+  --uxm-select-dropdown-bg: var(--uxm-color-input-bg, var(--color-card));
+  --uxm-select-dropdown-border-color: var(--uxm-color-input-border-color, var(--color-border));
+}
+
+/* Hex field — a single text input; fills the row after the format select. */
+.uxm-color-input__field {
+  flex: 1;
+  min-width: 0;
+  font-family: inherit;
+  font-size: var(--uxm-color-input-font-size, 14px);
+  color: var(--uxm-color-input-color, var(--color-text));
+  background-color: var(--uxm-color-input-bg, var(--color-card));
+  border: 1px solid var(--uxm-color-input-border-color, var(--color-border));
+  border-radius: var(--uxm-color-input-border-radius, 8px);
+  padding: var(--uxm-color-input-padding-y, 8px) var(--uxm-color-input-padding-x, 10px);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.uxm-color-input__field--state-hover,
+.uxm-color-input__field:hover:not(:disabled) {
+  border-color: var(--uxm-color-input-hover-border, var(--color-accent));
+}
+.uxm-color-input__field--state-focus,
+.uxm-color-input__field:focus {
+  border-color: var(--uxm-color-input-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-color-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-color-input__field--invalid,
+.uxm-color-input__field--invalid:focus {
+  border-color: var(--uxm-color-input-error-border, var(--color-danger-text));
+}
+
+/* Channel editor — R/G/B(/A) or H/S/L. Each channel is a column: the numeric
+   field on top with its letter centered underneath (keeps the fields wide
+   enough for three digits — an inline label would eat the row). */
+.uxm-color-input__channels {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+}
+.uxm-color-input__channel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.uxm-color-input__channel-label {
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+.uxm-color-input__channel-field {
+  width: 100%;
+  min-width: 0;
+  font-family: inherit;
+  font-size: var(--uxm-color-input-font-size, 14px);
+  text-align: center;
+  color: var(--uxm-color-input-color, var(--color-text));
+  background-color: var(--uxm-color-input-bg, var(--color-card));
+  border: 1px solid var(--uxm-color-input-border-color, var(--color-border));
+  border-radius: var(--uxm-color-input-border-radius, 8px);
+  padding: var(--uxm-color-input-padding-y, 8px) 2px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.uxm-color-input__channel-field:hover:not(:disabled) {
+  border-color: var(--uxm-color-input-hover-border, var(--color-accent));
+}
+.uxm-color-input__channel-field:focus {
+  border-color: var(--uxm-color-input-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-color-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+
+.uxm-color-input__error-message {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--uxm-color-input-error-message-size, 12px);
+  color: var(--uxm-color-input-error-color, var(--color-danger-text));
+}
+
+/* Error modifier tints the field borders to match the message. */
+.uxm-color-input--error .uxm-color-input__field,
+.uxm-color-input--error .uxm-color-input__channel-field {
+  border-color: var(--uxm-color-input-error-border, var(--color-danger-text));
+}
+
+/* Disabled: dim the whole panel and block pointer interaction. The tracks/area
+   already early-return in their handlers; this covers the visual + cursor. */
+.uxm-color-input--disabled {
+  opacity: var(--uxm-color-input-disabled-opacity, 0.6);
+  pointer-events: none;
+}
+
+/* Forced-state root modifiers — the studio preview toggles these to show the
+   field's hover / focus chrome without real pointer / keyboard interaction
+   (mirrors the input family's `--state-*` pattern). */
+.uxm-color-input--state-hover .uxm-color-input__field {
+  border-color: var(--uxm-color-input-hover-border, var(--color-accent));
+}
+.uxm-color-input--state-focus .uxm-color-input__field {
+  border-color: var(--uxm-color-input-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-color-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+
+/* ── Popover variant ──
+   Swatch trigger + floating panel. The trigger shows the current color over a
+   checkerboard so translucency reads; the panel carries the surface chrome. */
+.uxm-color-input-popover__trigger {
+  width: var(--uxm-color-input-trigger-size, 32px);
+  height: var(--uxm-color-input-trigger-size, 32px);
+  padding: 0;
+  border: 1px solid var(--uxm-color-input-border-color, var(--color-border));
+  border-radius: var(--uxm-color-input-border-radius, 8px);
+  cursor: pointer;
+  background-color: #fff;
+  background-image:
+    linear-gradient(var(--uxm-color-input-value, #000), var(--uxm-color-input-value, #000)),
+    linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%),
+    linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%);
+  background-size: 100% 100%, 8px 8px, 8px 8px;
+  background-position: 0 0, 0 0, 4px 4px;
+  transition: border-color 0.15s ease;
+}
+.uxm-color-input-popover__trigger:hover:not(:disabled) {
+  border-color: var(--uxm-color-input-hover-border, var(--color-accent));
+}
+.uxm-color-input-popover__trigger:focus-visible {
+  outline: 2px solid var(--uxm-color-input-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-color-input-popover__trigger:disabled {
+  opacity: var(--uxm-color-input-disabled-opacity, 0.6);
+  cursor: not-allowed;
+}
+.uxm-color-input-popover__panel {
+  padding: var(--uxm-color-input-panel-padding, 12px);
+  background-color: var(--uxm-color-input-panel-bg, var(--color-card));
+  border: 1px solid var(--uxm-color-input-panel-border, var(--color-border));
+  border-radius: var(--uxm-color-input-panel-radius, 8px);
+  box-shadow: var(--shadow-modal);
+}

@@ -6,6 +6,9 @@
     ["@semantic-release/changelog", {
       "changelogFile": "CHANGELOG.md"
     }],
+    ["@semantic-release/exec", {
+      "prepareCmd": "node scripts/stamp-skill-version.mjs ${nextRelease.version}"
+    }],
     "@semantic-release/npm",
     ["@semantic-release/gitlab", {
       "gitlabUrl": "https://gitlab.viax.tech/",
@@ -16,7 +19,13 @@
       ]
     }],
     ["@semantic-release/git", {
-      "assets": ["CHANGELOG.md", "package.json", "package-lock.json"],
+      "assets": [
+        "CHANGELOG.md",
+        "package.json",
+        "package-lock.json",
+        "skills/viax-uxm/SKILL.md",
+        "skills/viax-uxm/references/component-catalog.md"
+      ],
       "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }]
   ]
