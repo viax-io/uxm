@@ -158,7 +158,6 @@ export function EditableCell({
   // Anchor for the error popover — the editing wrapper, so the banner hangs
   // under the cell without affecting the table row's layout.
   const wrapRef = useRef<HTMLSpanElement | null>(null);
-  const triggerRef = useRef<HTMLElement | null>(null);
 
   // When the externally-committed value changes (parent state updated, or
   // someone else edited the row), sync the draft — but only when we're
@@ -421,11 +420,6 @@ export function EditableCell({
               <button
                 type="button"
                 {...triggerProps}
-                ref={(el) => {
-                  triggerRef.current = el;
-                  const refProp = triggerProps.ref as (el: HTMLElement | null) => void;
-                  refProp(el);
-                }}
                 className={cn(
                   'uxm-editable-cell__select-trigger',
                   isOpen && 'uxm-editable-cell__select-trigger--open',
@@ -517,11 +511,6 @@ export function EditableCell({
             <button
               type="button"
               {...triggerProps}
-              ref={(el) => {
-                triggerRef.current = el;
-                const refProp = triggerProps.ref as (el: HTMLElement | null) => void;
-                refProp(el);
-              }}
               className={cn(
                 'uxm-editable-cell__select-trigger',
                 isOpen && 'uxm-editable-cell__select-trigger--open',

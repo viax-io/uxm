@@ -1,0 +1,12 @@
+// FieldError — shared error-message icon sizing.
+//
+// The icon is sized in `em` and colored via `currentColor`, so it inherits
+// the per-atom message's `font-size` and `color` automatically. See
+// `field-error.tsx` for the rationale (no shared text/color class — only
+// the icon's own static layout lives here).
+.uxm-field-error__icon {
+  width: 1em;
+  height: 1em;
+  margin-inline-end: 0.4em;
+  vertical-align: -0.15em;
+}

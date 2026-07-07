@@ -38,16 +38,7 @@ export interface FieldErrorProps {
 export function FieldError({ className, id, children }: FieldErrorProps) {
   return (
     <span className={className} id={id}>
-      <Icon
-        glyph="exclamation-circle"
-        aria-hidden="true"
-        style={{
-          width: '1em',
-          height: '1em',
-          marginInlineEnd: '0.4em',
-          verticalAlign: '-0.15em',
-        }}
-      />
+      <Icon glyph="exclamation-circle" aria-hidden="true" className="uxm-field-error__icon" />
       {children}
     </span>
   );

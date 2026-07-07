@@ -36,6 +36,7 @@ Extends `Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'>` — all othe
 | `label` | `ReactNode` | – | **Required.** Rendered into the content column. |
 | `icon` | `ReactNode` | – | Optional leading slot. When omitted, the icon span is not rendered. |
 | `open` | `boolean` | – | Controlled open state. When defined, `defaultOpen` is ignored and internal state isn't used. |
+| `id` | `string` | – | Native button id. Also seeds the generated `` `${id}-panel` `` value used for `aria-controls` — see Accessibility. |
 | `defaultOpen` | `boolean` | `false` | Initial open state for uncontrolled usage. |
 | `onOpenChange` | `(open: boolean) => void` | – | Fires with the next open state on every click (controlled or uncontrolled). |
 | `onClick` | `(e: MouseEvent) => void` | – | Standard click handler. Runs **after** the internal toggle + `onOpenChange`. |
@@ -80,6 +81,6 @@ Extends `Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'>` — all othe
 - Renders a native `<button>` with `type="button"` by default — full keyboard activation (`Space` / `Enter`) and screen-reader semantics come for free.
 - `aria-expanded` is wired to the resolved `open` state, so screen readers announce the disclosure pattern correctly.
 - The chevron is `aria-hidden="true"` — decorative only.
-- The body is **not** owned by this component — there is no `aria-controls` wired. If your content has a stable id, set `aria-controls` via `...rest` to link them.
+- The body is **not** rendered by this component, so `Disclosure` can't set an `id` on it directly. Instead it computes `aria-controls` as `` `${id}-panel` `` (falling back to a `useId()`-generated base when no `id` prop is passed) per the WAI-ARIA disclosure pattern (§F2). Pass an explicit `id` and give your rendered body the matching `` `${id}-panel` `` id to complete the wiring.
 - Disabled state uses the native `disabled` attribute, removing the row from the tab order. The component comment notes `aria-disabled` selector parity for the family but does not set it automatically.
 - No `role="button"` override — relies entirely on the native element semantics.

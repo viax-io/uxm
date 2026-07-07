@@ -10,6 +10,12 @@ export interface UseDismissOptions {
    * (or their descendants) do NOT dismiss. Pass the trigger AND the panel
    * for popovers; pass just the panel for modal dialogs (clicks outside
    * the panel = backdrop = dismiss).
+   *
+   * **Must be a stable/memoized array** (e.g. built with `useMemo`, or a
+   * ref/module-level constant) — it's a direct dependency of the outside-click
+   * effect below, so passing a fresh inline array literal on every render
+   * causes the `mousedown` listener to be torn down and re-subscribed on
+   * every render. See `popover.tsx`'s `dismissRefs` for the pattern.
    */
   refs: Array<RefObject<HTMLElement | null>>;
   /**
@@ -40,6 +46,10 @@ export interface UseDismissOptions {
  * Why `stopPropagation` on Escape: nested floating things (popover
  * inside a dialog) should close one layer at a time. The innermost
  * handler stops propagation so the outer's Escape doesn't also fire.
+ *
+ * Caller contract: `refs` (and `excludeClosest`, if passed) must be
+ * stable/memoized — see the `refs` option doc below. An inline array
+ * literal re-subscribes the outside-click listener on every render.
  */
 export function useDismiss({
   enabled,

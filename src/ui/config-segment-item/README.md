@@ -2,7 +2,7 @@
 
 A row in a Configuration model's left-pane segment list. Renders as a `<button>` — selecting a segment swaps the components shown in the middle pane.
 
-A segment groups a set of components (e.g. Account Profile → Account Name, Account Type, …). The user selects one segment at a time; active state is "selected" (not navigated-to), so this is a button, not a link. The native `<button>` `name` attribute is stripped from the public props surface because consumers reach for `name` meaning "segment display name", which is the `ReactNode` prop below.
+A segment groups a set of components (e.g. Account Profile → Account Name, Account Type, …). The user selects one segment at a time; active state is "selected" (not navigated-to), so this is a button, not a link. Two native `<button>` attributes are stripped from the public props surface, matching `ConfigComponentRow`: `type` (always rendered as `"button"`, so the row can never accidentally submit a parent form) and `name` (consumers reach for `name` meaning "segment display name", which is the `ReactNode` prop below).
 
 ## Usage
 
@@ -28,17 +28,16 @@ function SegmentList({ segments, activeId, onSelect }: Props) {
 
 ## Props
 
-`ConfigSegmentItemProps` extends `Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'name'>`.
+`ConfigSegmentItemProps` extends `Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'name'>`.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `name` | `ReactNode` | – | **Required.** Segment display name — the primary row label. |
 | `meta` | `ReactNode` | – | Optional small line below the name (e.g. `"5 components"`). Hidden when omitted. |
 | `active` | `boolean` | `false` | Renders the selected state and sets `aria-pressed="true"`. |
-| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | Overridden default. |
 | `className` | `string` | – | Merged with `uxm-config-segment-item` via `cn`. |
 | `onClick` | `(e: MouseEvent) => void` | – | Selection handler. |
-| _(any native button attribute except `name`)_ | – | – | Spread onto the root `<button>`. |
+| _(any native button attribute except `type`, `name`)_ | – | – | Spread onto the root `<button>`. |
 
 ## CSS variables
 
@@ -77,6 +76,6 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 - Renders a native `<button>` — `Space`/`Enter` activation and screen-reader semantics come for free.
 - `aria-pressed={active}` exposes the selected state to assistive tech as a toggle button — even though selection is single-choice across the list, this matches the "I am the chosen one" semantic without requiring `role="radio"` and the keyboard-navigation overhead that comes with it.
-- `type="button"` default prevents form submission when nested inside a form.
+- `type` is forcibly `"button"` (not overridable) so the row never accidentally submits a parent form — same guarantee as `ConfigComponentRow`.
 - The native HTML `name` attribute is intentionally stripped from the props surface; if you need form-control name semantics here, you're using the wrong component.
 - The hover background is the same lightness as the active background's parent (`--color-surface-alt`) — verify legibility of `--color-text` against both when overriding tokens.

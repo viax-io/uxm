@@ -153,7 +153,7 @@ export function FileUploadPreview({ styles, variants }: PreviewProps) {
           state={forcedAtomState}
           disabled={state === 'disabled'}
           files={files}
-          errorMessage={state === 'error' ? 'Upload failed — please try again.' : undefined}
+          error={state === 'error' ? 'Upload failed — please try again.' : undefined}
           allowedTypesText="PDF, DOCX · up to 10 MB"
         />
       </div>

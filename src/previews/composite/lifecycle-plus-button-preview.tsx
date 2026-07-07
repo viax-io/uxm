@@ -22,7 +22,7 @@ export function LifecyclePlusButtonPreview({ styles }: PreviewProps) {
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
+        boxShadow: 'var(--shadow-xs)',
         transition: 'background-color 0.15s, transform 0.15s',
         transform: hover ? 'scale(1.1)' : 'scale(1)',
       }}

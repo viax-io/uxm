@@ -138,7 +138,7 @@ export function DataTable<T>({
                 const cellContent = rowEditable ? (
                   <EditableCell
                     value={(row as Record<string, EditableCellValue>)[c.key]}
-                    onCommit={(next) => c.onCommit?.(row, next) ?? undefined}
+                    onCommit={(next) => c.onCommit?.(row, next)}
                     type={c.editor ?? 'text'}
                     dateFormat={c.dateFormat}
                     options={c.editorOptions}
@@ -148,7 +148,7 @@ export function DataTable<T>({
                     format={c.formatValue}
                     validate={
                       c.validate
-                        ? (next) => c.validate?.(next, row) ?? null
+                        ? (next) => c.validate?.(next, row)
                         : undefined
                     }
                     // Column-level cap routes through the atom's own
@@ -203,7 +203,7 @@ export function DataTable<T>({
                 const actions = rowActions(row);
                 return (
                   <td
-                    className="uxm-data-table__td uxm-data-table__actions"
+                    className="uxm-data-table__td uxm-data-table__td--actions"
                     data-label="Actions"
                     // Opening the menu must not also fire the row click —
                     // same guard the editable cells use.

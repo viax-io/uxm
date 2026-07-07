@@ -1,6 +1,6 @@
 import { NumberStepper } from '@/ui';
 
-interface NumberInputProps {
+export interface NumberInputProps {
   label: string;
   value: number;
   onChange: (value: string | number | boolean) => void;

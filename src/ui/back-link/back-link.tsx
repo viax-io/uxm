@@ -4,6 +4,14 @@ import { Icon } from '@/ui/icon';
 import type { AnchorHTMLAttributes, ReactNode } from 'react';
 
 export interface BackLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+  /**
+   * `href` is inherited from `AnchorHTMLAttributes` and therefore optional,
+   * but an `<a>` without an `href` is not keyboard-focusable and is not
+   * exposed as a link to assistive tech. Always provide `href` (or an
+   * `onClick`-driven navigation target) so BackLink stays operable via
+   * Tab + Enter.
+   */
+  href?: string;
   children: ReactNode;
 }
 

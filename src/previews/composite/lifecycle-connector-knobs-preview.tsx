@@ -30,7 +30,7 @@ export function LifecycleConnectorKnobsPreview({ styles, variants }: PreviewProp
     cursor: 'pointer',
     transition: 'transform 0.12s, box-shadow 0.12s',
     transform: hover ? 'scale(1.08)' : 'scale(1)',
-    boxShadow: hover ? '0 2px 6px rgba(0,0,0,0.12)' : '0 1px 2px rgba(0,0,0,0.05)',
+    boxShadow: hover ? 'var(--shadow-sm)' : 'var(--shadow-xs)',
   });
 
   const iconSize = Math.round(size * 0.45);
