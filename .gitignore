@@ -7,11 +7,8 @@ dist-portal/
 .vscode/
 coverage/
 
-# work with claude agents — local tooling stays untracked, but team-shared
-# commands are explicitly whitelisted below
-.claude/*
-!.claude/commands
-.claude/commands/*
-!.claude/commands/update-ai-skill.md
-.mcp.json
+# work with claude agents — team-shared config (.claude/ commands, agents,
+# handbooks, templates, memory, settings.json, and .mcp.json) is tracked;
+# only per-user state stays local
+.claude/settings.local.json
 /todo
