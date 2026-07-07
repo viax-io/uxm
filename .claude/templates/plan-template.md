@@ -16,7 +16,8 @@ deviation under §7 *Complexity / Tradeoffs*).
 - [ ] **II. BEM Discipline (uxm- prefix, canonical)** — no ad-hoc class names or CSS-in-JS
 - [ ] **III. Component API Stability & Semver** — additive change OR documented major bump
 - [ ] **IV. Accessibility & WCAG Contrast** — keyboard nav, ARIA, AA contrast verified
-- [ ] **V. Build Hygiene & Strict Typing** — `npm run typecheck` and `npm run build` clean
+- [ ] **V. Build Hygiene & Strict Typing** — `npm run lint`, `npm run typecheck` and `npm run build` clean
+- [ ] **AI Skill** — new/renamed/removed public component reflected in `skills/viax-uxm/` (same MR; markers untouched — CI stamps them)
 
 ## 3. Affected Surface
 
@@ -34,15 +35,17 @@ Ordered, reviewable steps; each step ends in a green typecheck + build.
 
 ## 5. Test / Verification Plan
 
+- Lint: `npm run lint`
 - Type-check: `npm run typecheck`
 - Build: `npm run build`
-- Consumer smoke (linked `modo`): …
+- Studio smoke (`npm run dev:modo`) / consumer smoke (linked `modo`): …
 - Manual contrast / a11y checks: …
 
 ## 6. Rollout
 
-- Version bump: patch / minor / major (justify)
-- CHANGELOG entry: …
+- Expected semver bump: patch / minor / major — driven by Conventional Commit
+  types; CI (semantic-release) computes the version, writes CHANGELOG, stamps
+  the skill markers and publishes
 - Consumer migration notes (if any): …
 
 ## 7. Complexity / Tradeoffs

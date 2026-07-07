@@ -8,11 +8,11 @@ one task or an explicit `N/A — rationale` line.
 ## A. Tokens & Styling (Principle I, II)
 
 - [ ] T-A1 Add / reuse semantic tokens for … (`src/tokens/index.ts`, `index.css`)
-- [ ] T-A2 Author BEM rules using `uxm-` prefix in `src/ui/styles.css`
+- [ ] T-A2 Author BEM rules using `uxm-` prefix in `src/ui/<name>/<name>.scss` (+ `@import` line in `src/ui/styles.css`)
 
 ## B. Component Implementation (Principle III, V)
 
-- [ ] T-B1 Implement `<ComponentName>` in `src/ui/component-name.tsx`
+- [ ] T-B1 Implement `<ComponentName>` in `src/ui/<name>/<name>.tsx` (+ folder `index.ts` barrel)
 - [ ] T-B2 Export from `src/ui/index.ts` (named export + type re-export)
 
 ## C. Accessibility (Principle IV)
@@ -23,14 +23,17 @@ one task or an explicit `N/A — rationale` line.
 
 ## D. Verification (Principle V)
 
-- [ ] T-D1 `npm run typecheck` clean
-- [ ] T-D2 `npm run build` clean (tsup multi-entry)
-- [ ] T-D3 Manual smoke in linked `modo` consumer
+- [ ] T-D1 `npm run lint` clean
+- [ ] T-D2 `npm run typecheck` clean
+- [ ] T-D3 `npm run build` clean (tsup multi-entry)
+- [ ] T-D4 Manual smoke in the studio portal (`npm run dev:modo`) or linked `modo` consumer
 
 ## E. Release & Docs
 
-- [ ] T-E1 Update `CHANGELOG.md` with semver-correct entry
-- [ ] T-E2 Bump `package.json` version (patch / minor / major)
+- [ ] T-E1 Commit messages carry the correct Conventional Commit types (CI derives the semver
+      bump, CHANGELOG, and skill-marker stamps from them — no manual version/CHANGELOG edits)
+- [ ] T-E2 AI skill updated for public-surface changes (`skills/viax-uxm/` — same MR,
+      "(unreleased)" marks, markers untouched)
 - [ ] T-E3 Update README / handbooks if public surface changed
 
 ## F. Out-of-band / Follow-ups
