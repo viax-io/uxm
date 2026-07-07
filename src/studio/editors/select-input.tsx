@@ -1,7 +1,7 @@
 import { Select } from '@/ui';
 import { SearchDropdown } from '@/ui';
 
-interface SelectInputProps {
+export interface SelectInputProps {
   label: string;
   value: string;
   onChange: (value: string | number | boolean) => void;

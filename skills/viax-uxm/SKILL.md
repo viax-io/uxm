@@ -1,0 +1,431 @@
+---
+name: viax-uxm
+description: >
+  Build React 19 apps and components using @viax/uxm — the Viax UI primitive library
+  (88 BEM-classed React components as of v2.10.0, design tokens, per-component/per-state themable
+  previews, and an embeddable studio style editor). TRIGGER
+  when: user asks to create, scaffold, or modify a React app/page/component AND mentions
+  @viax/uxm or the Viax design system; the working directory contains @viax/uxm in package.json
+  dependencies; user mentions Viax tokens, themeTokens, MODO brand-settings, the @viax/uxm/studio editor (UxmApp), or UXM previews;
+  user asks which component to use for a UX task (e.g. "button vs link", "banner vs badge",
+  "toast vs banner", "how to render a tabular list") within a Viax React context; user pastes a
+  Figma design that needs to be implemented with Viax UI primitives in React. Use this skill to
+  pick the right primitive, look up its props/CSS-vars/design-tokens, and produce code that
+  conforms to the library's conventions (subpath imports, BEM classnames, token-driven theming,
+  no `"use client"` unless required by Next.js App Router).
+keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-system, modo, brand-settings, primitives, themable, previews, studio, style-editor, UxmApp, generateOverridesCss
+---
+
+# @viax/uxm — React 19 Component Library
+
+> Documents `@viax/uxm` **v2.10.0** (88 components). To refresh after a new library release, run
+> the `viax-uxm-skill-update` skill — it reads this marker to compute the delta.
+>
+> ✅ **2.9.0 is the current Nexus registry latest** — `NumberInput` clearable ✕ + `error`,
+> `InputWithIcon` `error`, `FieldError` `id` + `aria-describedby` wiring across the whole input
+> family, and a studio-knob reliability sweep (`--uxm-*` var routing). Everything from 2.8.0
+> (form-control error states), 2.7.0 (`ProgressBar`, `TextInput`/`Textarea` `clearable`) and the
+> 2.6.0 block (`Menu`, `BulkActionBar`, `ButtonDanger`, `DataTable.rowActions`) is published and
+> resolves on a fresh `npm install`.
+> ⚠️ **modo installs behind** — the VX-1736 branch pins `^2.8.0` (a `npm install`/lock refresh
+> pulls 2.9.0) and `main` pins `^2.3.3`. The skill documents the *released* 2.9.0 surface
+> regardless of what modo currently installs.
+
+This skill turns Claude into a competent consumer of `@viax/uxm`. It does not generate Vue MFA
+apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
+(Next.js App Router or Vite SPA) and that `@viax/uxm` is or will be a dependency of the project.
+
+## v2.10.0 — current API surface (overrides training data)
+
+The library went through a fast release train (1.1.0 → 2.9.0, June–July 2026). If your knowledge
+of the library or old code conflicts with this list, THIS list wins.
+
+### 2.0.0 baseline
+
+- **`Alert` is REMOVED** → use `Banner` (same `variant`/`title`/`icon`/`children`; adds
+  `onDismiss`/`dismissLabel`). CSS: `--uxm-alert-*` → `--uxm-banner-{variant}-*`.
+- **`NumberField` is RENAMED to `NumberStepper`** (same props + new `error`).
+  CSS: `--uxm-number-field-*` → `--uxm-number-stepper-*`.
+- **New since 1.1.0:** `Toast`/`Toaster` + imperative `toast.*()` API, `Dialog` + `Modal`
+  (compound `Modal.Header/Body/Footer`), `Popover`, `Listbox`/`MultiListbox`, `Banner`,
+  `EditableCell`, `FieldError`, `NumberStepper`.
+- **`Select` is now Listbox-backed** (cross-browser panel) with a compatible native-like API
+  (`<option>` children, `onChange(e.target.value)`) + opt-in `clearable`. `SearchDropdown` and
+  `PillSelect` ride the same Listbox/MultiListbox infrastructure; `PillSelect` gained
+  `chipsPosition: 'inside' | 'below'`.
+- **Error convention:** every input-family atom (`TextInput`, `Textarea`, `Select`,
+  `SearchDropdown`, `PillSelect`, `TimeInput`, `NumberStepper`, …) takes `error?: string` —
+  red border + `aria-invalid` + an icon-led message below the field (rendered via the shared
+  `FieldError`). Field errors belong on the ATOM, not on `FormField` (which owns only
+  label + help) and not on a `Banner`.
+- **`DataTable` supports inline editing** (per-column `editable`, `editor`, `formatValue`,
+  `validate`, `isEditable`, async `onCommit`) and per-column `maxWidth` clamping, both built
+  on `EditableCell`.
+
+### New since 2.0.0 (2.1.0–2.3.0)
+
+- **`HoverTooltip` — new atom (84th component).** Behavior layer the render-only `Tooltip`
+  lacks: pairs a hover trigger (owned `openDelay`) + optional truncation gate
+  (`truncatedOnly` — only reveals when the wrapped element actually overflows) with `Popover`
+  for positioning/portal, rendering the existing `Tooltip` inside. Props: `content`,
+  `children` (a single `ReactElement`), `placement: 'top' | 'bottom'`, `truncatedOnly`,
+  `openDelay`, `disabled`, `showArrow`. Non-interactive (closes on pointer-leave). Use it to
+  reveal clamped table/cell values on hover.
+- **`EditableCell` gained 3 editor types.** `type` is now
+  `'text' | 'number' | 'date' | 'select' | 'multiselect'`; value type widened to
+  `EditableCellValue = string | number | string[]`. New props: `dateFormat`
+  (`'mdy' | 'dmy' | 'ymd'`, default `'ymd'` — date editor is a masked input + Calendar hybrid,
+  commits an ISO string), `options: EditableCellOption[]` (for select/multiselect, rendered via
+  Listbox/MultiListbox with optimistic toggles), `searchable?: boolean | 'auto'`, `clearable`.
+  Truncated display values reveal via the built-in `HoverTooltip`. New exports
+  `EditableCellValue`, `EditableCellOption`.
+- **`DataTable` editable columns** now accept the full editor surface: `editor` is an
+  `EditableCellType` (`date`/`select`/`multiselect` too), plus `dateFormat`, `editorOptions`,
+  `editorSearchable`, `editorClearable`. Capped (`maxWidth`) plain cells auto-wrap in
+  `HoverTooltip`.
+- **`Listbox` / `Select` auto-search.** `searchable?: boolean | 'auto'` — `'auto'` reveals the
+  search box only past `SEARCHABLE_AUTO_THRESHOLD` (6 items, exported). `Listbox` also gained
+  `maxPanelWidth` (caps panel width; long labels truncate). `Select` defaults `searchable` to
+  `'auto'`.
+- **`Popover` width control + first-open fix.** `matchAnchorWidth?: boolean | 'min'` (`'min'`
+  floors at the anchor width but grows to content), new `maxWidth`. Positioning now resolves
+  correctly for popovers that mount already-open.
+- **`Calendar`** gained a "Today" footer button (jumps the view to the current month) and a
+  `shadow?: boolean` prop (default `true`; pass `false` for a flat, embedded calendar).
+- **`DateInput` / `TimeInput` open-on-focus.** Focusing the field opens the picker popover —
+  type-or-pick, no separate trigger click. (Behavioral; no new prop.)
+
+### New since 2.3.0 (2.3.1–2.4.1) — embeddable style editor + per-state theming
+
+- **Every atom is fully themeable via per-component CSS vars — now including per-STATE colours
+  (2.4.0).** Each atom reads `--uxm-{id}-{prop}` and, for stateful atoms,
+  `--uxm-{id}-{state}-{prop}` (`hover`/`active`/`focus`/`disabled`) with the design token as
+  fallback — so the default look is unchanged, but any of these can be overridden per instance or
+  globally. The var names match what the studio's `generateOverridesCss` emits
+  (`--uxm-{id}-{kebab(prop)}`). This is what makes a host's saved theme repaint real component
+  *states* (hover/checked/…), not just the resting look.
+- **`@viax/uxm/studio` ships the live style editor as a mountable component (`UxmApp`)** — the MODO
+  design workbench, embeddable in any host portal. See "Embedding the style editor" below. (Present
+  since 2.2.x; matured through 2.3.1–2.4.1 with brand-asset handling, a light/dark toggle, and a
+  brand-aware colour picker.)
+- **Studio colour picker is brand-aware (2.4.1).** Swatch markers paint the token's live
+  `var(--color-*)` value, so they reflect the applied brand, not the library's static default.
+- **Accent-ramp recalc + exported palette maths (unreleased — `fix(studio)`).** `--color-accent`
+  is now the lead of the Accent token group (first in `themeTokens`); editing any accent shade in
+  Brand Settings prompts a "Recalculate accent palette?" modal that re-tints the rest of the group
+  to that hue across both light and dark, rebuilding each derived shade from its designed default.
+  The colour-space maths is now **public API on `@viax/uxm`**: `rgbToHsl`, `hslToRgb`, `hexToHsl`,
+  `hslToHex`, `retintHue` (+ the `HSL` type). Use `retintHue(color, hue)` to derive a palette from
+  one brand hue. See `references/design-tokens.md` → "HEX ↔ HSL / palette maths".
+
+### New in 2.6.0 — action menus, bulk bar, destructive button
+
+- **`Menu` — new atom (85th component).** Action / dropdown menu built on the headless `Popover`
+  (positioning, portal, outside-click, Escape) with proper menu semantics (`role="menu"` /
+  `menuitem` / `separator`), arrow-key nav that skips separators + disabled rows, leading icons,
+  trailing hints, and destructive (danger) rows. **Distinct from `Listbox`/`Select` by design: a
+  menu has NO selected value and NO checkmarks** — picking a row runs its action and closes the
+  menu. Reach for `Listbox`/`Select` to HOLD a chosen value; reach for `Menu` for row ⋮ actions,
+  overflow menus, and command lists. The consumer owns the trigger via `renderTrigger` (spread
+  `triggerProps` onto an `IconButton` ⋮, a `Button`, anything) — same contract as `Listbox`.
+  Props: `items: MenuEntry[]`, `renderTrigger: (api: { open, triggerProps }) => ReactNode`,
+  `placement?: PopoverPlacement` (default `'bottom-end'`), controlled `open?` / `onOpenChange?`,
+  `minWidth?` (160) / `maxWidth?` (280), `aria-label?`, `className?`, `panelClassName?`,
+  `panelStyle?`. Exports: `Menu`, `MenuProps`, `MenuItem`, `MenuSeparator`, `MenuEntry`,
+  `MenuTriggerProps`. `MenuEntry = MenuItem | MenuSeparator`; `MenuItem = { key, label, icon?,
+  hint?, onSelect?, disabled?, danger? }`; `MenuSeparator = { separator: true, key? }`. The
+  portaled panel is studio-themed on BOTH selectors (`.uxm-menu, .uxm-menu__panel`).
+- **`BulkActionBar` — new atom (86th component).** Floating toolbar that appears once rows are
+  selected: "{N} selected · actions · × clear". Purely presentational — the consumer wires it to
+  its own `selectedKeys` state and positions it (typically fixed/sticky near the bottom of a table
+  view); pairs with `DataTable` row selection. Props: `count: number`, `actions?: BulkAction[]`,
+  `onClear?: () => void` (renders the trailing ×), `countLabel?: (count) => ReactNode` (override
+  the "{n} selected" label), `className?`, `style?`. Exports: `BulkActionBar`,
+  `BulkActionBarProps`, `BulkAction` (`{ key, label, icon?, danger?, disabled?, onClick? }`).
+- **`ButtonDanger` — new Button-family export.** Outlined destructive action button for
+  irreversible operations (Delete / Remove / Discard): danger-tinted surface + danger text +
+  danger border at rest, deepening to a solid danger fill when pressed. Reuses the semantic
+  `--color-danger-*` token trio (no new palette tokens) and reads per-state
+  `--uxm-button-danger-{state}-*` vars. Same API as the rest of the family (`ButtonPrimary` /
+  `ButtonSecondary` / `ButtonTertiary` / `ButtonGhost`) — native `<button>` attributes via
+  `...rest`, `type` defaults to `"button"`. Reserve for genuinely destructive actions; everything
+  else uses primary/secondary/tertiary/ghost. From `./button`.
+- **`DataTable` gained `rowActions`.** `rowActions?: (row: T) => MenuEntry[]` — when provided,
+  `DataTable` appends a trailing column whose cell is a ⋮ `IconButton` that opens a `Menu` of the
+  row's entries. The callback receives the row, so each action's `onSelect` closes over its row.
+  Return an empty array to leave a row without a trigger (the column stays for alignment). Clicks
+  inside the actions cell don't bubble to `onRowClick`.
+- **`Listbox` panel shadow decomposed (studio).** The single `panelShadow` text knob is **REMOVED**
+  → replaced by three studio knobs Color / Blur / Offset-Y (`--uxm-listbox-shadow-color`,
+  `--uxm-listbox-shadow-blur`, `--uxm-listbox-shadow-offset-y`), matching the `Calendar` / `Menu`
+  pattern. The `<Listbox>` component API and default look are unchanged; only the editable shadow
+  surface changed. Any saved studio override for `panelShadow` must be re-applied after upgrade.
+
+### New in 2.7.0 — determinate progress + clearable text fields
+
+- **`ProgressBar` — new atom (87th component).** Determinate progress (0–100%) in the Feedback
+  category — the companion to `Loader`'s indeterminate spinner/dots/bar. Use it when the share of
+  work done is known (uploads, batch ops, stepped flows); use `Loader` for "something is happening,
+  no ETA". Two variants share one value: **`linear`** (default — a track with a filling bar,
+  caption + percentage above) and **`ring`** (a circular gauge drawn with a CSS `conic-gradient`,
+  no SVG, percentage centered, caption below). Props: `value: number` (0–100, clamped),
+  `variant?: 'linear' | 'ring'` (default `'linear'`), `label?: string` (caption; also the
+  accessible name), `valueText?: string` (override the `${Math.round(value)}%` text), plus
+  `...rest` (`HTMLAttributes<HTMLDivElement>` minus `color`). Renders `role="progressbar"` with
+  `aria-valuenow/min/max`. Root is layout-only; all theming routes through `--uxm-progress-bar-*`
+  vars on inner elements (studio kebab-fallback, no PER_COMPONENT_MAPPING). The single
+  `--uxm-progress-bar-value` var (set inline from `value`) drives both the linear fill width and
+  the ring sweep. Exports `ProgressBar`, `ProgressBarProps`, `ProgressBarVariant` from `./progress-bar`.
+- **`TextInput` & `Textarea` gained `clearable` (✕).** Both free-text atoms now render a trailing
+  clear button when they have content: `clearable?: boolean` — **defaults to `true`** — plus an
+  optional `onClear?: () => void`. The ✕ self-clears (resets the field and fires `onChange` with
+  `""`), so any controlled `value` + `onChange` usage gets it for free; pass `clearable={false}`
+  to opt out. `onClear` is only for custom reset logic beyond emptying the value. (`Select` keeps
+  its own opt-in `clearable` defaulting to `false`; `InputWithIcon` already had a clear ✕. Only the
+  plain `TextInput`/`Textarea` are new here.)
+- **Studio-only polish (no app API change):** the editable-cell canvas preview now re-renders to
+  the selected editor type for all five `EditableCell` types (was text/number only), and the
+  right-hand properties panel is always white (`bg-card`) for text contrast in both standalone and
+  embedded studio.
+
+### New in 2.8.0 — form-control error states
+
+Found by the `/sync-audit` parity check — these existed in the modo `@modo/uxm` version but had not
+reached the published library; now shipped in 2.8.0.
+
+- **`Checkbox`, `RadioGroup`, `ToggleSwitch` gained `error?: string`.** Same convention as the rest
+  of the input family: a non-empty string sets `aria-invalid` and renders a `FieldError` message
+  below in the danger color. Per the small-control convention the box / track / circle AND the label
+  stay neutral — the message is the sole signal; `.uxm-{id}--error` rides the root as a state hook.
+  Each also sets `{Component}.hasError = true`, so `FormField` forwards its `error` into them. New
+  editor knobs `errorColor` / `errorMessageSize` + an `error` state-variant option.
+- **`FileUpload` page-error prop renamed `errorMessage` → `error`.** The atom-level prop is now
+  `error?: string` (matches the input family); `errorMessage` stays as a **deprecated alias**
+  (`error` wins when both are set). Per-file `FileUploadFileMeta.errorMessage` is unchanged.
+
+### New in 2.9.0 — NumberInput clear/error, InputWithIcon error, aria-describedby wiring
+
+- **`NumberInput` gained `clearable?: boolean` + `error?: string`** (parity with the rest of the
+  input family). `clearable` **defaults to `true`** and renders a trailing ✕ when the field has a
+  value; the component owns the reset — it clears its own uncontrolled state and fires
+  `onChange("")`, so there is **no `onClear`** (mirrors `Select`/`DateInput`, unlike
+  `TextInput`'s optional `onClear`). A non-empty `error` sets the red border
+  (`.uxm-number-input--error`), `aria-invalid`, and a `FieldError` message below. When clearable,
+  the input sits in a layout-only `.uxm-number-input-wrap`; visible chrome stays on
+  `.uxm-number-input` so saved studio vars keep applying.
+- **`InputWithIcon` gained `error?: string`** — the `--error` modifier re-tones the border,
+  background and leading icon, `aria-invalid` lands on the `<input>`, and the message renders
+  below via `FieldError`. Its clear ✕ is now the shared atomized affordance (an `IconButton` with
+  the `uxm-field-clear` class) instead of a bespoke button.
+- **`FieldError` gained `id?: string`, and every input-family control now links its error message
+  via `aria-describedby`.** When `error` is set, the control renders `aria-invalid` +
+  `aria-describedby` pointing at the `FieldError`'s id (a `useId` per instance) — so assistive
+  tech reads *why* the field is wrong, not just that it is. Applies across the family
+  (`TextInput`, `Textarea`, `Select`, `NumberInput`, `InputWithIcon`, `NumberStepper`,
+  `TimeInput`, `PillSelect`, `SearchDropdown`, `Checkbox`, `RadioGroup`, `ToggleSwitch`, …). No
+  consumer change needed.
+- **`EditableCell` number editor is masked per keystroke.** The `number` editor uses
+  `type="text"` + `inputMode="decimal"` (input-family convention — no native number input) and
+  filters each keystroke through the shared `maskNumeric` from `NumberInput`, so illegal
+  characters never land in the cell.
+- **Studio-knob reliability sweep (no app API change).** Knob-backed props across many atoms
+  (`Button` geometry/type, `Card` colour/geometry, `DataTable` cell padding in every density +
+  radius, `ToggleSwitch` resting/disabled, lifecycle-connector, and more) now route through
+  `--uxm-*` component vars, so saved studio overrides actually repaint them; `Listbox`'s selected
+  option shows its colour as soon as the panel opens; studio previews exercise the real `error`
+  props. Also `'use client'` directives were dropped from the touched files (the library never
+  needed them — see "Writing the JSX").
+
+The library lives at `https://gitlab.viax.tech/services-viax/uxm` and publishes as `@viax/uxm`
+to the Viax Nexus npm registry (`https://nexus.viax.tech/repository/viax-npm/`). When a checkout
+of that repo is available (search the workspace for a `package.json` with
+`"name": "@viax/uxm"`), **prefer the per-component READMEs there as the authoritative
+reference** (paths relative to the repo root):
+
+- Top-level: `README.md` — install, subpath exports, full component catalog, MODO theming flow,
+  architecture diagram.
+- Per-component: `src/ui/{component}/README.md` — props table, CSS vars, MODO-configurable
+  design tokens, states/variants, accessibility caveats. Atoms added in 1.1.0–2.0.0 (toast,
+  dialog, modal, popover, listbox, banner, editable-cell, field-error, number-stepper) may not
+  have READMEs yet — for those, read the `.tsx` JSDoc, which is thorough.
+- Tokens: `src/tokens/index.ts` — canonical `themeTokens` array.
+
+When no checkout is available (working in a project that only `npm install`s the package), the
+installed package still carries `node_modules/@viax/uxm/README.md`, `CHANGELOG.md`, and full
+`.d.ts` types with the same JSDoc. Beyond that, fall back to the bundled references in this
+skill:
+
+- `references/component-catalog.md` — every export, grouped by purpose, with one-line summaries
+  and key prop signatures. Use this to pick the right primitive.
+- `references/design-tokens.md` — all 30 MODO-configurable design tokens with hex values,
+  groups, and intended use. Use this when wiring custom CSS or token-based styling.
+- `references/quick-recipes.md` — copy-pasteable patterns for the most common compositions
+  (page shell, form, list view, theme override).
+
+### New in 2.10.0
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. -->
+
+- **`ColorInput` / `ColorInputPopover` — new atoms.** Full color picker in the Inputs
+  category: saturation/brightness area, hue + opacity sliders, current-color swatch, screen
+  eyedropper (EyeDropper API — Chromium only, auto-hidden elsewhere), and a format select
+  (HEX/RGB/RGBA/HSL) whose value editor adapts per format — one hex text field, or R/G/B(/A)
+  or H/S/L numeric fields; switching format converts the current color. Two concerns are
+  deliberately separate: the select changes only the DISPLAYED representation, while
+  `outputFormat?: ColorFormat` (default `'hex'`) fixes what `onChange(color: string)` returns
+  (hex with alpha < 1 → 8-digit `#rrggbbaa`). `formats?: ColorFormat[]` limits the offered
+  representations (a single entry hides the select). Enter commits the focused field and fires
+  `onEnter(color)`; Escape reverts the draft and fires `onEsc()`. `ColorInputPopover` wraps the
+  same panel behind a swatch trigger button (`open`/`defaultOpen`/`onOpenChange`,
+  `placement`, `triggerLabel`) — Enter/Escape additionally close the popover. Both are
+  controlled/uncontrolled (`value`/`defaultValue`) and take `alpha`, `eyedropper`, `disabled`,
+  `error`. Theming: `--uxm-color-input-*`.
+- **`Popover` tolerates nested floating layers.** A Select/Listbox/Menu opened from INSIDE a
+  popover panel portals to `document.body`; picking one of its options no longer
+  outside-click-dismisses the hosting popover (same `.uxm-popover` exclusion Dialog uses).
+- **New icon `eyedropper`** in the shared glyph set.
+
+## Workflow
+
+### Before writing any code
+
+1. Confirm the project is a React/Next.js consumer of `@viax/uxm`:
+   - Check `package.json` for `@viax/uxm` in `dependencies`.
+   - Check for `react@^19` peer.
+   - If absent and the user wants to add it, refer them to the install section of the
+     `@viax/uxm` README (the package comes from the Viax Nexus registry —
+     `npm config set registry https://nexus.viax.tech/repository/viax-npm/` or a scoped
+     `.npmrc` entry is required).
+2. Confirm CSS imports are in place. Both stylesheets must be imported once at the app entry:
+   ```ts
+   // app/layout.tsx (Next.js) or main.tsx (Vite/CRA)
+   import '@viax/uxm/tokens.css';
+   import '@viax/uxm/ui.css';
+   ```
+   If missing, add them before any visual work.
+
+### Picking the right component
+
+Open `references/component-catalog.md` (or the top-level README if uxm is local) and locate the
+category that matches the user's intent. Categories are: **Forms & inputs · Buttons & actions ·
+Navigation · Feedback & status · Layout & structure · Data display · Configuration editor ·
+Lifecycle diagrams.**
+
+Then read the chosen component's README (per-component, when uxm is local) before writing JSX —
+the README documents the prop signature, states, design tokens, and a11y obligations. Do not
+guess prop names from training data.
+
+### Writing the JSX
+
+- **Import from the narrowest subpath available** for tree-shaking:
+  - `import { ButtonPrimary } from '@viax/uxm/ui'` (preferred) over
+    `import { ButtonPrimary } from '@viax/uxm'`.
+  - `import { themeTokens } from '@viax/uxm/tokens'` for token-aware tooling.
+  - `import { UxmApp } from '@viax/uxm/studio'` + `import '@viax/uxm/studio.css'` to embed the
+    live style editor (see "Embedding the style editor").
+- **No `"use client"` directive** unless the file uses client-only React features (hooks, state,
+  event handlers). UXM components themselves do not require it.
+- **BEM classnames are part of the public contract**. If the user wants to extend styling, they
+  should target the `uxm-{component}` class or its modifier classes (e.g. `uxm-button-primary`,
+  `uxm-chip--state-focus`). Document this when delivering.
+- **`className` always merges via the library's `cn` helper internally** — pass any extra class
+  freely; it composes with the BEM base class.
+
+### Styling and theming
+
+The library exposes a two-layer customisation model:
+
+| Layer | Where to set | When to use |
+|-------|--------------|-------------|
+| **Component CSS vars** (`--uxm-{component}-*`, incl. per-state `--uxm-{component}-{hover,active,focus,disabled}-*`) | Inline `style`, a scoped CSS rule, or the studio's saved overrides | Per-instance / per-state tweaks (e.g. a specific button's hover background). |
+| **Global design tokens** (`--color-*`) | App-level CSS file, or the embedded studio's brand settings | Brand-wide theming. Cascades into every component instantly. |
+
+For any custom colour, **prefer mapping to an existing design token** before introducing a literal
+hex. Use `references/design-tokens.md` to find the right token by intent (e.g. "I need a success
+green" → `--color-success-text`, not `#166534`).
+
+If the user is building a host shell that lets designers tune the brand live, prefer the
+**ready-made editor**: mount `UxmApp` from `@viax/uxm/studio` (see "Embedding the style editor").
+Only drop down to raw `@viax/uxm/previews` (the `PreviewProps` preview primitives) when building a
+bespoke editor surface — see `references/quick-recipes.md`.
+
+### Accessibility
+
+Each component README's **Accessibility** section is the authoritative checklist for that
+primitive (native semantics it provides, what's missing, ARIA hooks the consumer must wire). Cite
+those when delivering work — do not invent your own a11y story without checking.
+
+Some honestly-flagged gaps to know about:
+- `data-table` has no `scope` attribute on `<th>`; for sortable / large tables, consumers must
+  layer additional ARIA.
+- `loader` does not honour `prefers-reduced-motion`.
+- `app-sidebar` references `--mobile-*` rules that are missing from its SCSS.
+- Several `lifecycle-*` primitives are visual-only and rely on the parent canvas for a11y.
+
+## Embedding the style editor (`@viax/uxm/studio`)
+
+The full MODO design workbench ships as a mountable component, so a host portal can offer a live
+brand/style editor without rebuilding it. Import it from the `studio` subpath + its CSS once:
+
+```tsx
+import { UxmApp, createClientPersistence } from '@viax/uxm/studio';
+import '@viax/uxm/studio.css'; // Tailwind v4 bundle — see leakage note below
+
+<UxmApp embed persistence={createClientPersistence({ brand: seed })} />
+```
+
+**`UxmApp` props:** `embed` (no full-page chrome — use when mounting inside a host), `persistence`
+(the backend contract), `syncFavicon` (drive the tab favicon from the brand).
+
+**Persistence adapters** — pick by whether you have a backend:
+
+- `createHttpPersistence('/api/uxm')` — full read/write/upload against a Hono backend (Save / Quick
+  Save / Publish enabled).
+- `createClientPersistence({ brand })` — preview-only: live edits + working logo/favicon upload via
+  `data:` URLs, nothing saved across reload. For static portals with no backend.
+- `createReadOnlyPersistence({ brand })` — live-preview only, uploads disabled.
+- For a no-backend portal that still wants **Save-that-persists**, implement the tiny
+  `StudioPersistence` interface (`load` / `save` / `uploadAsset` / `capabilities`) over `localStorage`.
+
+**Apply the editor's config to the host globally.** Import `generateOverridesCss` from
+`@viax/uxm/studio/generate-css`, run it over the saved `{ overrides, brand }`, and inject the result
+into a single global `<style>`. It emits the `:root` / `[data-theme="dark"]` brand-token blocks plus
+per-component override rules (which the per-state atom CSS now reads), re-theming the whole host on
+every route — and survives reload if you persist the state.
+
+**Brand tokens.** Seed the studio's `brand.tokens.light` / `.dark` with the host's brand colours so
+the editor adopts them as its own managed Accent tokens; `BrandTokenStyles` (rendered even in
+`embed`) writes them to `:root`, so editing re-tints the host live. The host owns `data-theme`
+(light/dark) in `embed` mode — drive it yourself.
+
+**CSS-leakage caveat for non-Tailwind hosts.** `@viax/uxm/studio.css` is a Tailwind v4 bundle: a
+global preflight reset (`@layer base`, lower priority than your unlayered CSS) plus an UNLAYERED
+`:root { … }` block of the library's *default* tokens. In a non-Tailwind host (e.g. a BEM/SCSS
+portal), import it **before** the host's own global stylesheet so the host's `:root` brand stays the
+base; the studio's runtime `<style>` still wins live on the editor route.
+
+## Hard rules
+
+1. **Never guess prop names.** Always read the component's README (or `component-catalog.md` if
+   not available) before writing the JSX.
+2. **Never duplicate primitives.** If `@viax/uxm` already ships a `Card`, do not handroll a div
+   with the same intent. The library covers ~76 patterns; check first.
+3. **Never inline literal hex codes** when an existing design token covers the intent. Map to
+   `--color-*` via `var()` so MODO brand-settings can re-tint.
+4. **Never import preview components into application code.** Previews live in
+   `@viax/uxm/previews` and are for editor/host shells only. Tree-shake guarantees they don't
+   leak into `/ui` consumers — keep it that way.
+5. **For new components that don't fit any existing primitive**, propose extending the library
+   rather than building one-offs. The contribution flow is in the top-level README's
+   "Contributing" section.
+
+## Out of scope
+
+- **Vue MFA components** — use `viax-mfa-component` skill.
+- **A *bespoke* editor surface hand-rolled from raw previews** — `@viax/uxm/previews` provides the
+  preview primitives for that, but prefer the ready-made `UxmApp` from `@viax/uxm/studio`
+  ("Embedding the style editor"). Only the bespoke-from-previews path is out of scope here.
+- **Design token additions** — propose them via PR to the `@viax/uxm` repo, do not invent local
+  `--color-*` declarations.

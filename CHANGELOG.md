@@ -1,3 +1,18 @@
+# [2.10.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.9.1...v2.10.0) (2026-07-07)
+
+
+### Bug Fixes
+
+* **popover:** keep open on clicks inside nested floating layers ([264ceea](https://gitlab.viax.tech/services-viax/uxm/commit/264ceeac273937239406e689e213cfbb0c34bb46))
+
+
+### Features
+
+* **brand-settings:** pick token colors with ColorInputPopover ([cd2604b](https://gitlab.viax.tech/services-viax/uxm/commit/cd2604b14890cec12adb1a92b8cc69411ba8d5e7))
+* **color-input:** add ColorInput and ColorInputPopover atoms ([e2ffe9f](https://gitlab.viax.tech/services-viax/uxm/commit/e2ffe9feeb73d34c5476369e5c8bf592051653ce)), closes [#rrggbbaa](https://gitlab.viax.tech/services-viax/uxm/issues/rrggbbaa)
+* **icons:** add eyedropper glyph ([fb11a09](https://gitlab.viax.tech/services-viax/uxm/commit/fb11a09e63b5538c8100ba4157e1fb56c7139f5d))
+* **studio:** register Color Input preview and knobs ([338206a](https://gitlab.viax.tech/services-viax/uxm/commit/338206ad05d7daef20960ac18226de8c9ff2eef1))
+
 ## [2.9.1](https://gitlab.viax.tech/services-viax/uxm/compare/v2.9.0...v2.9.1) (2026-07-06)
 
 

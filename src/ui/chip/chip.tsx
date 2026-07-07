@@ -80,6 +80,7 @@ export function Chip(props: ChipProps) {
             if (!disabled) onRemove();
           }}
           aria-label="Remove"
+          disabled={disabled}
           tabIndex={disabled ? -1 : 0}
         >
           <Icon glyph="close" size={10} strokeWidth={2.5} aria-hidden="true" />

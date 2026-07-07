@@ -20,7 +20,7 @@ export function LifecycleAddStepModalPreview({ styles }: PreviewProps) {
         backgroundColor: styles.backgroundColor as string,
         border: `1px solid ${styles.borderColor}`,
         borderRadius: styles.borderRadius as number,
-        boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+        boxShadow: 'var(--shadow-modal)',
       }}
     >
       {/* Header */}

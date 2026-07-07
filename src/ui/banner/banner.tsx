@@ -54,7 +54,11 @@ export function Banner({
   ...rest
 }: BannerProps) {
   return (
-    <div role="alert" className={cn('uxm-banner', `uxm-banner--${variant}`, className)} {...rest}>
+    <div
+      role={variant === 'error' ? 'alert' : 'status'}
+      className={cn('uxm-banner', `uxm-banner--${variant}`, className)}
+      {...rest}
+    >
       <span className="uxm-banner__icon" aria-hidden="true">
         {icon ?? <Icon glyph={VARIANT_GLYPH[variant]} size={20} strokeWidth={1.5} />}
       </span>

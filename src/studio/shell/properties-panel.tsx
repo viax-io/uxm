@@ -21,6 +21,7 @@ import { getComponentDef, registry } from '../lib/registry';
 import { previewMap } from './canvas';
 import { WcagPanel } from './wcag-panel';
 
+import type { LoggedEvent } from '../lib/context';
 import type { ComponentDef, PreviewProps, StyleOverrides } from '../lib/types';
 
 type Tab = 'visual' | 'dev' | 'code';
@@ -538,7 +539,7 @@ function DevTab({
   def: ComponentDef;
   api: ComponentDef['api'];
   events: ComponentDef['events'];
-  eventLog: import('../lib/context').LoggedEvent[];
+  eventLog: LoggedEvent[];
   onClearLog: () => void;
   orientation: 'horizontal' | 'vertical';
   currentVariants: Record<string, string | number | boolean>;

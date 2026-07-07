@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
+import { useFocusOnMount } from '../../hooks/use-focus-on-mount';
 import {
   CURATED_CURRENCIES,
   findCurrency,
@@ -217,6 +218,12 @@ export function CurrencyInput({
     const id = requestAnimationFrame(() => searchRef.current?.focus());
     return () => cancelAnimationFrame(id);
   }, [isOpen]);
+
+  // Return focus to whatever was focused when the popover opened (the
+  // picker button, in every real flow) once it closes — same restore-focus
+  // contract as Popover/Dialog, so dismissing via outside-click or Escape
+  // doesn't strand keyboard focus on a removed panel.
+  useFocusOnMount({ active: isOpen });
 
   const commit = useCallback(
     (next: CurrencyValue) => {

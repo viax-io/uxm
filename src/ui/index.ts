@@ -108,6 +108,8 @@ export { InlineAction } from './inline-action';
 export type { InlineActionProps } from './inline-action';
 export { InlineFilter } from './inline-filter';
 export type { InlineFilterProps } from './inline-filter';
+export { ColorInput, ColorInputPopover } from './color-input';
+export type { ColorFormat, ColorInputPopoverProps, ColorInputProps } from './color-input';
 export { InputWithIcon } from './input-with-icon';
 export type { InputWithIconProps } from './input-with-icon';
 export { Select, Textarea, TextInput } from './input';

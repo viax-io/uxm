@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 
 
 import {
@@ -19,6 +19,7 @@ import {
   CheckboxPreview,
   ChipPreview,
   ClusterPreview,
+  ColorInputPreview,
   ConfigComponentRowPreview,
   ConfigSegmentItemPreview,
   ContentTooltipPreview,
@@ -156,6 +157,7 @@ export const previewMap: Record<string, PreviewComponent> = {
   'button-with-icon': ButtonWithIconPreview,
   'input-text': InputPreview,
   'input-with-icon': InputWithIconPreview,
+  'color-input': ColorInputPreview,
   textarea: TextareaPreview,
   'file-upload': FileUploadPreview,
   'select-dropdown': SelectPreview,
@@ -260,6 +262,7 @@ export function Canvas({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const saveStatusTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { selectedId, getOverrides, getAllOverrides, resetOverrides, brand, getCurrentVariants, pushEvent, persistence, capabilities, theme, setTheme } = useUxm();
   const shell = usePreviewShell();
   const def = getComponentDef(selectedId);
@@ -289,14 +292,22 @@ export function Canvas({
     try {
       await persistence.save({ overrides: allOverrides, brand });
       setSaveStatus('success');
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      if (saveStatusTimeout.current) clearTimeout(saveStatusTimeout.current);
+      saveStatusTimeout.current = setTimeout(() => setSaveStatus('idle'), 2000);
     } catch {
       setSaveStatus('error');
-      setTimeout(() => setSaveStatus('idle'), 3000);
+      if (saveStatusTimeout.current) clearTimeout(saveStatusTimeout.current);
+      saveStatusTimeout.current = setTimeout(() => setSaveStatus('idle'), 3000);
     } finally {
       setSaving(false);
     }
   }, [allOverrides, brand, persistence]);
+
+  useEffect(() => {
+    return () => {
+      if (saveStatusTimeout.current) clearTimeout(saveStatusTimeout.current);
+    };
+  }, []);
 
   if (!def) return null;
 

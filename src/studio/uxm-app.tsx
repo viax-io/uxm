@@ -105,6 +105,7 @@ function DesktopShell({ embed, headerActions }: { embed: boolean; headerActions?
   const dragging = useRef(false);
   const startPos = useRef(0);
   const startSize = useRef(0);
+  const dragCleanup = useRef<(() => void) | null>(null);
 
   const onResizeStart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -124,19 +125,31 @@ function DesktopShell({ embed, headerActions }: { embed: boolean; headerActions?
       }
     };
 
-    const onMouseUp = () => {
+    const cleanup = () => {
       dragging.current = false;
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
+      dragCleanup.current = null;
+    };
+
+    const onMouseUp = () => {
+      cleanup();
     };
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
     document.body.style.cursor = isHorizontal ? 'col-resize' : 'row-resize';
     document.body.style.userSelect = 'none';
+    dragCleanup.current = cleanup;
   }, [orientation, panelWidth, panelHeight]);
+
+  useEffect(() => {
+    return () => {
+      dragCleanup.current?.();
+    };
+  }, []);
 
   const toggleOrientation = useCallback(
     () => setOrientation((o) => (o === 'horizontal' ? 'vertical' : 'horizontal')),

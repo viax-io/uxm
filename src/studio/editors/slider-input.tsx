@@ -1,6 +1,6 @@
 import { Slider } from '@/ui';
 
-interface SliderInputProps {
+export interface SliderInputProps {
   label: string;
   value: number;
   onChange: (value: string | number | boolean) => void;

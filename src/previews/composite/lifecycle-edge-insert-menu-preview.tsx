@@ -23,7 +23,7 @@ export function LifecycleEdgeInsertMenuPreview({ styles }: PreviewProps) {
         backgroundColor: styles.backgroundColor as string,
         border: `1px solid ${styles.borderColor}`,
         borderRadius: styles.borderRadius as number,
-        boxShadow: '0 8px 24px rgba(0,0,0,0.10)',
+        boxShadow: 'var(--shadow-xl)',
       }}
     >
       {items.map((it) => (

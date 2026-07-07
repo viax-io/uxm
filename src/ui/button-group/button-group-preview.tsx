@@ -66,8 +66,6 @@ function StaticShowcase({ state }: { state: string }) {
         className={cn(
           'uxm-button-group__item',
           state === 'active' && 'uxm-button-group__item--active',
-          state === 'hover' && 'uxm-button-group__item--state-hover',
-          state === 'focus' && 'uxm-button-group__item--state-focus',
         )}
         disabled={state === 'disabled'}
       >

@@ -19,6 +19,7 @@
 @import "./checkbox/checkbox.css";
 @import "./chip/chip.css";
 @import "./cluster/cluster.css";
+@import "./color-input/color-input.css";
 @import "./config-component-row/config-component-row.css";
 @import "./config-segment-item/config-segment-item.css";
 @import "./currency-input/currency-input.css";
@@ -33,6 +34,7 @@
 @import "./error-page/error-page.css";
 @import "./explorer-list-item/explorer-list-item.css";
 @import "./explorer-section/explorer-section.css";
+@import "./field-error/field-error.css";
 @import "./file-upload/file-upload.css";
 @import "./filter-tabs/filter-tabs.css";
 @import "./form-field/form-field.css";
