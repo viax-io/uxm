@@ -38,7 +38,7 @@ apps — for that, use `viax-mfa-component` instead. It assumes the target frame
 
 ## v3.0.1 — current API surface (overrides training data)
 
-The library went through a fast release train (1.1.0 → 2.9.0, June–July 2026). If your knowledge
+The library went through a fast release train (1.1.0 → 3.0.1, June–July 2026). If your knowledge
 of the library or old code conflicts with this list, THIS list wins.
 
 ### 2.0.0 baseline
