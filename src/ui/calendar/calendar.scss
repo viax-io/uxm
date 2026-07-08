@@ -98,6 +98,15 @@
     grid-template-columns: repeat(7, 1fr);
   }
 
+  &__grid-row {
+    /* ARIA-only wrapper: keeps each week's gridcells grouped under a
+       role="row" element while `display: contents` lets the day cells
+       participate directly in the parent's 7-column grid. Without it the
+       wrapper itself becomes one grid item and the month renders transposed
+       (weeks as columns). */
+    display: contents;
+  }
+
   &__day {
     align-items: center;
     background: transparent;
