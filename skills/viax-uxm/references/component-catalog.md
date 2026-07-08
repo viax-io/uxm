@@ -13,6 +13,10 @@ Import path for all: `import { … } from '@viax/uxm/ui';`
 > variant/title/icon/children; adds `onDismiss`). `NumberField` is RENAMED to `NumberStepper`
 > (same props + new `error`). If training data or old code suggests `Alert` / `NumberField`,
 > they no longer exist.
+>
+> **v3.0.0 breaking change:** `Select` no longer accepts a `clearable` prop. Clearability is
+> inferred from a placeholder `<option value="" disabled>` — include one to get the reset ✕; omit
+> it for a non-clearable select.
 
 ---
 
@@ -22,24 +26,24 @@ Import path for all: `import { … } from '@viax/uxm/ui';`
 |-----------|-------------|------------|
 | **Calendar** | `Calendar`, `CalendarValue`, `CalendarProps` | Three-view (day/month/year) calendar, single + range selection, controlled or uncontrolled. "Today" footer button jumps to the current month; `shadow` boolean (default true — pass false for a flat embedded calendar). |
 | **Checkbox** | `Checkbox`, `CheckboxProps` | Label-wrapped native input + custom box; controlled. `error?: string` (2.8.0) — sets `aria-invalid` + a FieldError message below; box/label stay neutral. |
-| **ColorInput** | `ColorInput`, `ColorInputPopover`, `ColorFormat`, `ColorInputProps`, `ColorInputPopoverProps` | Color picker (unreleased): saturation/brightness area, hue + opacity sliders, swatch, screen eyedropper (Chromium-only, auto-hidden), format select HEX/RGB/RGBA/HSL with a per-format value editor (hex text field, or R/G/B(/A) / H/S/L numeric fields). `outputFormat` (default `'hex'`; alpha<1 → `#rrggbbaa`) fixes what `onChange` returns — independent of the displayed representation; `formats` limits the select. Enter commits + `onEnter`, Esc reverts + `onEsc`; `ColorInputPopover` = swatch trigger + panel in a Popover, Enter/Esc also close it. |
-| **CurrencyInput** | `CurrencyInput`, `CurrencyValue`, `CurrencyInputProps` | Amount + currency picker with searchable popover, locale formatting. |
-| **DateInput** | `DateInput`, `DateInputFormat`, `DateInputMode`, `DateInputProps` | Masked date field, single/range, formats `mdy`/`dmy`/`ymd`. Focusing the field opens the Calendar picker (type-or-pick). |
+| **ColorInput** | `ColorInput`, `ColorInputPopover`, `ColorFormat`, `ColorInputProps`, `ColorInputPopoverProps` | Color picker (2.10.0): saturation/brightness area, hue + opacity sliders, swatch, screen eyedropper (Chromium-only, auto-hidden), format select HEX/RGB/RGBA/HSL with a per-format value editor (hex text field, or R/G/B(/A) / H/S/L numeric fields). `outputFormat` (default `'hex'`; alpha<1 → `#rrggbbaa`) fixes what `onChange` returns — independent of the displayed representation; `formats` limits the select. Enter commits + `onEnter`, Esc reverts + `onEsc`; `ColorInputPopover` = swatch trigger + panel in a Popover, Enter/Esc also close it. |
+| **CurrencyInput** | `CurrencyInput`, `CurrencyValue`, `CurrencyInputProps` | Left-aligned amount + currency picker with searchable popover, locale formatting. `clearable?: boolean` (**default `true`**) — self-clearing trailing ✕, no `onClear` (3.0.0, which also dropped `pickerPosition`). |
+| **DateInput** | `DateInput`, `DateInputFormat`, `DateInputMode`, `DateInputProps` | Masked date field, single/range, formats `mdy`/`dmy`/`ymd`. Focusing the field opens the Calendar picker (type-or-pick). `clearable?: boolean` (**default `true`**) — self-clearing ✕ by the calendar icon, no `onClear` (3.0.0). |
 | **FileUpload** | `FileUpload`, `FileUploadFileMeta`, `FileUploadState`, `FileStatus`, `FileUploadProps` | Drop area + per-file progress rows; controlled via state prop. Page-level error via `error?: string` (2.8.0; renamed from `errorMessage`, which stays a deprecated alias); per-file errors via `FileUploadFileMeta.errorMessage`. |
 | **FieldError** | `FieldError`, `FieldErrorProps` | Shared error-message renderer (exclamation icon + text) used internally by every input atom's `error` prop. Pass the atom's own `uxm-{atom}__error-message` class; `id?: string` (2.9.0) lets the owning control reference it via `aria-describedby` — every input atom wires this automatically. Rarely used directly. |
 | **FormField** | `FormField`, `FormFieldLabelPosition`, `FormFieldProps` | Label + optional help text wrapper. `position: 'top' \| 'side'`. **Owns label rendering** — atoms below render bare. Field errors live on the ATOM's `error` prop, not here. |
-| **TextInput / Select / Textarea** | `TextInput`, `Select`, `Textarea`, `TextInputProps`, `SelectProps`, `TextareaProps` | Bare input/textarea atoms + Select. All three take `error?: string` (red border + `aria-invalid` + message below via FieldError). `TextInput` & `Textarea` have `clearable?: boolean` (**default `true`**) + optional `onClear` — a trailing ✕ that self-clears and fires `onChange('')` for free on any controlled field (2.7.0). Select is **Listbox-backed** (cross-browser panel, shared listbox theming) with a compatible native-like API: `<option>` children, `value`/`defaultValue`, `onChange(e.target.value)`; plus opt-in `clearable` (defaults `false`) and `searchable?: boolean \| 'auto'` (`'auto'` reveals the search box past 6 options; default). From `./input`. |
+| **TextInput / Select / Textarea** | `TextInput`, `Select`, `Textarea`, `TextInputProps`, `SelectProps`, `TextareaProps` | Bare input/textarea atoms + Select. All three take `error?: string` (red border + `aria-invalid` + message below via FieldError). `TextInput` & `Textarea` have `clearable?: boolean` (**default `true`**) + optional `onClear` — a trailing ✕ that self-clears and fires `onChange('')` for free on any controlled field (2.7.0). Select is **Listbox-backed** (cross-browser panel, shared listbox theming) with a compatible native-like API: `<option>` children, `value`/`defaultValue`, `onChange(e.target.value)`; plus `searchable?: boolean \| 'auto'` (`'auto'` reveals the search box past 6 options; default). **Clearability is placeholder-driven** (3.0.0): include a placeholder `<option value="" disabled>` and the trigger shows a ✕ to reset to it — the standalone `clearable` prop was REMOVED. From `./input`. |
 | **InputWithIcon** | `InputWithIcon`, `InputWithIconProps` | Text input with leading icon + optional clear ✕ (shared `uxm-field-clear` affordance). `error?: string` (2.9.0) — re-tones border/background/leading icon, `aria-invalid` + FieldError message below. |
 | **NumberStepper** | `NumberStepper`, `NumberStepperProps` | Numeric input with ± steppers (composed IconButton) + optional unit suffix + `error`. Renamed from `NumberField` in 2.0.0. |
 | **NumberInput** | `NumberInput`, `NumberInputProps` | Typing-only masked numeric input; supports decimal / negative. 2.9.0: `clearable?: boolean` (**default `true`**) — trailing ✕ that self-clears and fires `onChange('')`, no `onClear` (mirrors Select/DateInput); `error?: string` — red border + `aria-invalid` + FieldError message below. |
 | **PasswordInput** | `PasswordInput`, `PasswordInputProps` | Masked password field with eye toggle. |
-| **PhoneInput** | `PhoneInput`, `PhoneValue`, `PhoneInputProps` | Country picker + national number, searchable popover. |
+| **PhoneInput** | `PhoneInput`, `PhoneValue`, `PhoneInputProps` | Country picker + national number, searchable popover. `clearable?: boolean` (**default `true`**) — self-clearing ✕, no `onClear` (3.0.0). |
 | **PillSelect** | `PillSelect`, `PillSelectProps` | Multi-select chip field backed by MultiListbox. `chipsPosition: 'inside'` (tag-input style) `\| 'below'` (compact "N selected" trigger, default); `error`. |
 | **RadioGroup / RadioOption** | `RadioGroup`, `RadioOption`, `RadioGroupDirection`, `RadioGroupProps`, `RadioOptionProps` | Radio group with composable options. `direction: 'vertical' \| 'horizontal'`. `RadioGroup` takes `error?: string` (2.8.0) — `aria-invalid` + a group FieldError message below; circles/labels stay neutral. |
 | **RangeSlider** | `RangeSlider`, `RangeSliderProps` | Dual-thumb range; shares slider styling. |
 | **SearchDropdown** | `SearchDropdown`, `SearchDropdownOption`, `SearchDropdownProps` | Combobox: trigger + searchable Listbox panel; clear ✕ in the trigger; `error`. Thin wrapper over `Listbox` — panel theming flows from the shared listbox surface. |
 | **Slider** | `Slider`, `SliderProps` | Native range input with gradient-painted progress. |
-| **TimeInput** | `TimeInput`, `TimeInputFormat`, `TimeInputProps` | Masked HH:MM field, column-scroll picker popover (shared Popover shell), 24h or 12h, `minuteStep`, `error`. Focusing the field opens the picker (type-or-pick). |
+| **TimeInput** | `TimeInput`, `TimeInputFormat`, `TimeInputProps` | Masked HH:MM field, column-scroll picker popover (shared Popover shell), 24h or 12h, `minuteStep`, `error`. Focusing the field opens the picker (type-or-pick). `clearable?: boolean` (**default `true`**) — self-clearing ✕ inboard of the clock icon, no `onClear` (3.0.0). |
 | **ToggleSwitch** | `ToggleSwitch`, `ToggleSwitchProps` | On/off toggle; thumb width derived from height. `error?: string` (2.8.0) — `aria-invalid` + a FieldError message below; track/label stay neutral. |
 
 ## Buttons & actions
@@ -176,7 +180,7 @@ positioning and a11y.
 | Pick one from a few options | `RadioGroup` (≤5 options) or `Select` (more) |
 | Pick one from a large list | `SearchDropdown` |
 | Pick many from a large list | `PillSelect` (or `MultiListbox` with a custom trigger) |
-| Pick a color (theme/brand token, style editor) | `ColorInput` (inline panel) or `ColorInputPopover` (swatch → popover) — unreleased |
+| Pick a color (theme/brand token, style editor) | `ColorInput` (inline panel) or `ColorInputPopover` (swatch → popover) |
 | Custom dropdown no picker covers | `Listbox` / `MultiListbox` + `renderTrigger` |
 | Show error feedback near a field | the atom's own `error` prop (red border + message), not a banner |
 | Show page-level / persistent status strip | `Banner` (stays until dismissed) |
