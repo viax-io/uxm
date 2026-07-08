@@ -33,7 +33,7 @@ export function InlineFilterPreview({ styles }: PreviewProps) {
         style={{ '--uxm-inline-filter-gap': `${styles.gap}px` } as CSSProperties}
         search={
           <InputWithIcon
-            placeholder="Search..."
+            placeholder="Search…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             icon={<Icon glyph="search" size={14} strokeWidth={1.5} />}

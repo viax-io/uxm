@@ -24,7 +24,7 @@ export function AppTopBarPreview({ styles }: PreviewProps) {
       search={
         <div style={searchStyle}>
           <InputWithIcon
-            placeholder="Search models..."
+            placeholder="Search…"
             icon={<Icon glyph="search" size={14} strokeWidth={1.5} />}
           />
         </div>

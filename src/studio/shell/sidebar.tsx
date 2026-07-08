@@ -119,7 +119,7 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
             <div className="flex-1 min-w-0">
               <InputWithIcon
                 type="search"
-                placeholder={`Search ${registry.length} components...`}
+                placeholder="Search…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onClear={() => setQuery('')}
