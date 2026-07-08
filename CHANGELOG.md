@@ -1,3 +1,12 @@
+## [3.0.2](https://gitlab.viax.tech/services-viax/uxm/compare/v3.0.1...v3.0.2) (2026-07-08)
+
+
+### Bug Fixes
+
+* **app-top-bar:** match README search placeholder to "Search…" ([f8632bf](https://gitlab.viax.tech/services-viax/uxm/commit/f8632bf70605f9023d2673c308a8470ef73bf6e6))
+* **pickers:** address code-review findings on the Listbox migration ([0da7430](https://gitlab.viax.tech/services-viax/uxm/commit/0da7430250bbacb44f875a350c56b163488532ac))
+* **search:** unify search-bar placeholders to "Search…" ([e051426](https://gitlab.viax.tech/services-viax/uxm/commit/e051426d8a24ea93e076f56fbb2cde71d0473243))
+
 ## [3.0.1](https://gitlab.viax.tech/services-viax/uxm/compare/v3.0.0...v3.0.1) (2026-07-08)
 
 
