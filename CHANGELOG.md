@@ -1,3 +1,10 @@
+## [3.0.1](https://gitlab.viax.tech/services-viax/uxm/compare/v3.0.0...v3.0.1) (2026-07-08)
+
+
+### Bug Fixes
+
+* **calendar:** render weeks as rows via display:contents on ARIA row wrappers ([f6fea61](https://gitlab.viax.tech/services-viax/uxm/commit/f6fea61dd12301f94833177cb10b64c1654c7b06))
+
 # [3.0.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.10.0...v3.0.0) (2026-07-08)
 
 
