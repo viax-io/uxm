@@ -9,10 +9,11 @@ type Styles = PreviewProps['styles'];
 /**
  * Project every state knob as a `--uxm-currency-input-*` custom prop
  * on the wrapper. The wrapper IS the visible surface (border + bg on
- * `.uxm-currency-input` itself, with the picker button on the left
- * and the popover anchored below). State pseudos target the wrapper
- * directly; `:focus-within` lets the wrapper light up when the inner
- * amount input has focus.
+ * `.uxm-currency-input` itself, with the picker button on the left).
+ * The currency picker is the shared Listbox panel — themed via the
+ * `listbox` registry entry, not currency-input vars — so there are no
+ * popover knobs here. `:focus-within` lets the wrapper light up when the
+ * inner amount input has focus.
  */
 function buildVars(styles: Styles): CSSProperties {
   return {
@@ -41,12 +42,6 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-currency-input-error-color': styles.errorColor as string,
     '--uxm-currency-input-error-message-size':
       styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
-    '--uxm-currency-input-popover-bg': styles.popoverBg as string,
-    '--uxm-currency-input-popover-border': styles.popoverBorder as string,
-    '--uxm-currency-input-popover-radius': `${styles.popoverRadius}px`,
-    '--uxm-currency-input-popover-row-hover-bg': styles.popoverRowHoverBg as string,
-    '--uxm-currency-input-popover-row-selected-bg': styles.popoverRowSelectedBg as string,
-    '--uxm-currency-input-popover-row-selected-color': styles.popoverRowSelectedColor as string,
   } as CSSProperties;
 }
 

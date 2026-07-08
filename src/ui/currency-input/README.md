@@ -1,8 +1,8 @@
 # CurrencyInput
 
-A monetary input with a leading interactive currency picker and a searchable popover. Value is `{ currency, amount }` — ISO 4217 code plus raw digit string.
+A monetary input with a leading interactive currency picker (the shared `<Listbox>` — searchable, keyboard-navigable). Value is `{ currency, amount }` — ISO 4217 code plus raw digit string.
 
-Architecturally mirrors `PhoneInput`: the wrapper is the visible surface, the picker slot is a `<button>` that toggles a searchable popover, and the inner `<input type="text">` handles the amount with `inputMode="decimal"` (or `"numeric"` for zero-decimal currencies like JPY). Display flips on focus: raw digits while the input has focus (easy to edit), locale-formatted thousands on blur (easy to read). The mask enforces the active currency's `decimals` precision; switching currencies re-masks the amount under the new precision (USD/2 → JPY/0 drops the decimals). Outside-click and `Escape` close the popover; opening the popover focuses the search input.
+Architecturally mirrors `PhoneInput`: the wrapper is the visible surface, the picker slot is a `<button>` that opens the shared `<Listbox>` (positioning, portal, dismiss, keyboard nav, search, and ARIA all owned by Listbox), and the inner `<input type="text">` handles the amount with `inputMode="decimal"` (or `"numeric"` for zero-decimal currencies like JPY). Display flips on focus: raw digits while the input has focus (easy to edit), locale-formatted thousands on blur (easy to read). The mask enforces the active currency's `decimals` precision; switching currencies re-masks the amount under the new precision (USD/2 → JPY/0 drops the decimals).
 
 ## Usage
 
@@ -38,7 +38,7 @@ function Example() {
 | `max` | `number` | – | Clamp the committed amount up to this maximum on blur. |
 | `allowNegative` | `boolean` | `false` | Allow a leading `-` sign (refunds / credits). |
 | `clearable` | `boolean` | `true` | Show a clear (✕) button at the trailing edge when the amount has a value. Clearing wipes the amount and keeps the selected currency; the component owns the reset (fires `onChange` with an empty amount), so no `onClear` is needed. |
-| `style` | `CSSProperties` | – | Inline style on the WRAPPER (not the inner input). Custom-property declarations here cascade to the field and popover. |
+| `style` | `CSSProperties` | – | Inline style on the WRAPPER, forwarded to the Listbox panel (`panelStyle`). Custom-property declarations here reach the field and the picker. |
 | `className` | `string` | – | Merged onto the wrapper via `cn`. |
 | `disabled` | `boolean` | `false` | Disables both picker and amount input; adds the `--disabled` modifier. |
 | `onFocus` / `onBlur` | `(e: FocusEvent) => void` | – | Forwarded after internal focus-state and clamp logic run. |
@@ -85,12 +85,8 @@ interface CurrencyValue {
 | `--uxm-currency-input-symbol-color` | `--color-text` | – | Currency symbol colour in the picker. |
 | `--uxm-currency-input-caret-color` | `--color-text-muted` | – | Chevron colour in the picker. |
 | `--uxm-currency-input-picker-hover-bg` | `--color-surface-alt` | – | Picker-button hover background. |
-| `--uxm-currency-input-popover-bg` | `--color-card` | – | Popover background. |
-| `--uxm-currency-input-popover-border` | `--color-border` | – | Popover border + search divider. |
-| `--uxm-currency-input-popover-radius` | – | `8px` | Popover border-radius. |
-| `--uxm-currency-input-popover-row-hover-bg` | `--color-surface-alt` | – | List-row hover background. |
-| `--uxm-currency-input-popover-row-selected-bg` | `--color-accent` | – | Selected list-row background. |
-| `--uxm-currency-input-popover-row-selected-color` | `--color-text-inverse` | – | Selected list-row text. |
+
+The currency picker panel is the shared `<Listbox>` (`.uxm-listbox__panel`) — its chrome (background, border, radius, row states, search box) is themed once via the **Listbox** registry entry / `--uxm-listbox-*` vars, so CurrencyInput has no popover vars of its own.
 
 The error state (`uxm-currency-input--error`) is opt-in via consumer-applied class; the component itself does not toggle it from props.
 
