@@ -66,10 +66,12 @@ function InputWithIconDemo({ state, styles }: { state: string; styles: Styles })
   return (
     <div style={cssVars}>
       <InputWithIcon
+        type="search"
         placeholder="Search models..."
         icon={<Icon glyph="search" size={iconSize} strokeWidth={1.5} />}
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        onClear={() => setValue('')}
         disabled={state === 'disabled'}
         error={isError ? 'No matching models.' : undefined}
         className={forcedClass || undefined}

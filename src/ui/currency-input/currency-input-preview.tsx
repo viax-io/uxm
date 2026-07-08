@@ -52,46 +52,19 @@ function buildVars(styles: Styles): CSSProperties {
 
 export function CurrencyInputPreview({ styles, variants }: PreviewProps) {
   const state = (variants.state as string) ?? 'default';
-  const pickerPosition = ((variants.pickerPosition as string) ?? 'left') as 'left' | 'right';
-  return (
-    <CurrencyInputDemo
-      key={`${state}-${pickerPosition}`}
-      state={state}
-      pickerPosition={pickerPosition}
-      styles={styles}
-    />
-  );
+  return <CurrencyInputDemo key={state} state={state} styles={styles} />;
 }
 
-// Keyed by state+pickerPosition in the parent so changing either knob
-// remounts and re-seeds `value` — no effect needed to sync.
-function CurrencyInputDemo({
-  state,
-  pickerPosition,
-  styles,
-}: {
-  state: string;
-  pickerPosition: 'left' | 'right';
-  styles: Styles;
-}) {
+// Keyed by state in the parent so changing the knob remounts and re-seeds
+// `value` — no effect needed to sync.
+function CurrencyInputDemo({ state, styles }: { state: string; styles: Styles }) {
   const isError = state === 'error';
 
-  // Default to USD on the left (modern fintech convention) and EUR
-  // on the right (European suffix convention) so the variant flip
-  // also shows a realistic currency for the chosen layout.
-  const buildSeed = (errored: boolean, position: 'left' | 'right'): CurrencyValue => {
-    const cur = position === 'right' ? 'EUR' : 'USD';
-    return errored
-      ? { currency: cur, amount: '9999999' }
-      : { currency: cur, amount: '' };
-  };
-
-  const [value, setValue] = useState<CurrencyValue>(buildSeed(isError, pickerPosition));
-
-  // EU-style picker on the right pairs with a EUR-default and a
-  // de-DE locale so blur-display formats as `1.234,56` (the suffix
-  // read consumers actually see in EU receipts).
-  const locale = pickerPosition === 'right' ? 'de-DE' : 'en-US';
+  // Error state pre-fills an over-limit amount so the message reads true;
+  // otherwise start empty. USD in the leading picker is the canonical layout.
+  const [value, setValue] = useState<CurrencyValue>(
+    isError ? { currency: 'USD', amount: '9999999' } : { currency: 'USD', amount: '' },
+  );
 
   const cssVars = buildVars(styles);
 
@@ -106,8 +79,7 @@ function CurrencyInputDemo({
       <CurrencyInput
         value={value}
         onChange={setValue}
-        pickerPosition={pickerPosition}
-        locale={locale}
+        locale="en-US"
         max={1_000_000}
         disabled={state === 'disabled'}
         className={forcedClass || undefined}

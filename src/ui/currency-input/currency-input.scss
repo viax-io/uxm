@@ -57,12 +57,10 @@
   color: var(--uxm-currency-input-error-color, var(--color-danger-text));
 }
 
-/* Currency picker button — sits on one side of the field (left by
-   default, right for European-suffix layouts). The order / border /
-   radius rules below adjust per `--picker-left` vs `--picker-right`
-   modifier so the picker always reads as a peer of the field, with
-   the dividing border between picker and input and rounded corners
-   matching the wrapper's outline. */
+/* Currency picker button — the leading affordance. Divider on its right
+   edge; left corners match the wrapper's rounding so the hover bg follows
+   the outline. `-1px` accounts for the wrapper's 1px border (inner radius is
+   one pixel tighter). */
 .uxm-currency-input__picker {
   display: inline-flex;
   align-items: center;
@@ -70,6 +68,9 @@
   padding: var(--uxm-currency-input-padding-y, 10px) var(--uxm-currency-input-padding-x, 12px);
   background: transparent;
   border: none;
+  border-right: 1px solid var(--uxm-currency-input-divider-color, var(--color-border));
+  border-top-left-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
+  border-bottom-left-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
   color: var(--uxm-currency-input-color, var(--color-text));
   font-family: inherit;
   font-size: var(--uxm-currency-input-font-size, 14px);
@@ -77,23 +78,6 @@
   white-space: nowrap;
   user-select: none;
   transition: background-color 0.12s;
-}
-.uxm-currency-input--picker-left .uxm-currency-input__picker {
-  /* Picker on the left: divider on its right edge, left corners
-     match the wrapper's rounding so hover bg follows the outline. */
-  border-right: 1px solid var(--uxm-currency-input-divider-color, var(--color-border));
-  border-top-left-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
-  border-bottom-left-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
-}
-.uxm-currency-input--picker-right .uxm-currency-input__picker {
-  /* Picker on the right: mirror the left case. JSX order stays
-     stable; flex `order` puts the picker visually last so screen
-     readers still read in the source order (amount → picker), which
-     matches the conventional EU receipt read of "amount, currency". */
-  order: 2;
-  border-left: 1px solid var(--uxm-currency-input-divider-color, var(--color-border));
-  border-top-right-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
-  border-bottom-right-radius: calc(var(--uxm-currency-input-border-radius, 8px) - 1px);
 }
 .uxm-currency-input__picker:hover:not(:disabled) {
   background-color: var(--uxm-currency-input-picker-hover-bg, var(--color-surface-alt));
@@ -117,11 +101,8 @@
 }
 
 /* Amount input — fills the remaining width, no border (the wrapper
-   provides it). Right-aligned digits with tabular-nums so monetary
-   values line up across stacked fields (invoice rows, totals, etc.).
-   When the picker is on the right (EU-style), the amount is the
-   leftmost element so we left-align the digits to flow naturally
-   toward the suffix picker — matches the `1.234,56 €` read. */
+   provides it). Left-aligned digits (flowing from the leading picker)
+   with tabular-nums so figures stay monospaced as they're typed. */
 .uxm-currency-input__input {
   flex: 1;
   min-width: 0;
@@ -132,18 +113,27 @@
   color: var(--uxm-currency-input-color, var(--color-text));
   font-family: inherit;
   font-size: var(--uxm-currency-input-font-size, 14px);
-  text-align: right;
+  text-align: left;
   font-variant-numeric: tabular-nums;
 }
-.uxm-currency-input--picker-right .uxm-currency-input__input {
-  order: 1;
-  text-align: left;
+/* Reserve trailing room so the right-aligned amount never slides under the ✕. */
+.uxm-currency-input__input--clearable {
+  padding-right: calc(var(--uxm-currency-input-padding-x, 12px) + var(--uxm-field-clear-size, 22px) + 4px);
 }
 .uxm-currency-input__input::placeholder {
   color: var(--color-text-muted);
 }
 .uxm-currency-input__input:disabled {
   cursor: not-allowed;
+}
+/* Clear (✕) — positioning only; chrome comes from the shared `.uxm-field-clear`
+   IconButton (same 22×22 affordance as Text / Number / Phone). The wrapper is
+   `position: relative`, so this pins to its trailing edge. */
+.uxm-currency-input__clear {
+  position: absolute;
+  right: var(--uxm-currency-input-padding-x, 12px);
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /* Currency popover — searchable scrollable list, full-width below the

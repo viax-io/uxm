@@ -6,6 +6,7 @@ import { useFocusOnMount } from '../../hooks/use-focus-on-mount';
 import { Calendar, type CalendarValue } from '../calendar';
 import { FieldError } from '../field-error';
 import { Icon } from '../icon';
+import { IconButton } from '../icon-button';
 
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 
@@ -36,6 +37,14 @@ export interface DateInputProps
    * Defaults to true. Pass false for a typing-only date field (no icon, no popover).
    */
   calendar?: boolean;
+  /**
+   * Show a clear (✕) button when the field has a value. On by default (opt out
+   * with `clearable={false}`). The ✕ sits just left of the calendar icon (or
+   * at the trailing edge when `calendar={false}`). The component owns the reset
+   * — it wipes its own uncontrolled state and fires `onChange("")` — so no
+   * separate `onClear` is needed. Works in both single and range mode.
+   */
+  clearable?: boolean;
   /**
    * Inline style applied to the WRAPPER (not the inner <input>). CSS custom
    * properties set here cascade to every descendant — the input AND the
@@ -145,8 +154,10 @@ export function DateInput({
   defaultValue,
   onChange,
   calendar = true,
+  clearable = true,
   style,
   onFocus,
+  disabled,
   error,
   ...rest
 }: DateInputProps) {
@@ -204,11 +215,13 @@ export function DateInput({
     };
   }, [isOpen]);
 
-  // Return focus to whatever was focused when the popover opened (the
-  // calendar icon button, or the input itself when opened via focus) once
-  // it closes — same restore-focus contract as Popover/Dialog, so dismissing
-  // via outside-click or Escape doesn't strand keyboard focus on a removed panel.
-  useFocusOnMount({ active: isOpen });
+  // No focus restoration on close: the field opens the popover on input
+  // `onFocus`, so restoring focus to the input after an outside-click close
+  // would immediately re-fire `onFocus` and reopen the popover — the same
+  // reopen loop TimeInput opts out of. Dismissal paths (outside click on
+  // another surface, Escape while the input keeps focus) don't strand focus
+  // on the removed panel because the panel itself never takes focus.
+  useFocusOnMount({ active: isOpen, returnFocus: false });
 
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -243,6 +256,15 @@ export function DateInput({
     [mode, isControlled, onChange, format],
   );
 
+  // Clear owns its own reset: wipe the value in both single and range mode
+  // and notify via onChange(""). Mirrors NumberInput / CurrencyInput — the
+  // component holds its own state, so no onClear prop is needed.
+  const handleClear = useCallback(() => {
+    if (!isControlled) setInternal('');
+    onChange?.('');
+  }, [isControlled, onChange]);
+  const showClear = clearable && (current ?? '').length > 0 && !disabled;
+
   // Mirror the input's current value into the Calendar so it highlights what
   // the user has selected. Range mode parses two halves; single mode parses one.
   // In single mode we set `end = start` (same-day "range") so Calendar's click
@@ -258,7 +280,13 @@ export function DateInput({
   return (
     <>
     <div
-      className={cn('uxm-date-input', error && 'uxm-date-input--error', className)}
+      className={cn(
+        'uxm-date-input',
+        calendar && 'uxm-date-input--has-calendar',
+        clearable && 'uxm-date-input--clearable',
+        error && 'uxm-date-input--error',
+        className,
+      )}
       ref={containerRef}
       style={style}
     >
@@ -275,8 +303,22 @@ export function DateInput({
           onFocus?.(e);
         }}
         aria-invalid={error ? true : undefined}
+        disabled={disabled}
         {...rest}
       />
+      {showClear && (
+        <IconButton
+          className="uxm-field-clear uxm-date-input__clear"
+          aria-label="Clear"
+          // Prevent the button from stealing focus away from whatever's
+          // currently focused — clearing must not re-open the calendar
+          // popover via the input's onFocus handler.
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={handleClear}
+        >
+          <Icon glyph="close" />
+        </IconButton>
+      )}
       {calendar && (
         <button
           type="button"
@@ -284,6 +326,7 @@ export function DateInput({
           onClick={() => setIsOpen((o) => !o)}
           aria-label="Open calendar"
           aria-expanded={isOpen}
+          disabled={disabled}
         >
           <Icon glyph="calendar" />
         </button>

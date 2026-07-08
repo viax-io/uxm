@@ -141,6 +141,48 @@ span.uxm-time-input__icon {
   color: var(--uxm-time-input-error-color, var(--color-danger-text));
 }
 
+/* Clear (✕) — positioning only; chrome comes from the shared
+   `.uxm-field-clear` IconButton (same 22×22 affordance as the other inputs).
+   Sits inboard of the trailing clock icon; in 12h it also clears the AM/PM
+   badge that sits between them. */
+.uxm-time-input__clear {
+  position: absolute;
+  right: calc(
+    var(--uxm-time-input-icon-offset, 12px)
+    + var(--uxm-time-input-icon-size, 16px)
+    + 6px
+  );
+  top: 50%;
+  transform: translateY(-50%);
+}
+.uxm-time-input[data-format="12h"] .uxm-time-input__clear {
+  right: calc(
+    var(--uxm-time-input-icon-offset, 12px)
+    + var(--uxm-time-input-icon-size, 16px)
+    + 8px
+    + var(--uxm-time-input-meridiem-width, 24px)
+    + 6px
+  );
+}
+/* Reserve trailing room so the value never slides under the ✕ — on top of the
+   room already reserved for the icon (and, in 12h, the AM/PM badge). */
+.uxm-time-input--clearable .uxm-time-input__input {
+  padding-right: calc(
+    var(--uxm-time-input-icon-offset, 12px)
+    + var(--uxm-time-input-icon-size, 16px)
+    + 6px + var(--uxm-field-clear-size, 22px) + 8px
+  );
+}
+.uxm-time-input--clearable[data-format="12h"] .uxm-time-input__input {
+  padding-right: calc(
+    var(--uxm-time-input-icon-offset, 12px)
+    + var(--uxm-time-input-icon-size, 16px)
+    + 8px
+    + var(--uxm-time-input-meridiem-width, 24px)
+    + 6px + var(--uxm-field-clear-size, 22px) + 8px
+  );
+}
+
 /* TimeInput popover — three click-list columns (hour / minute / AM-PM).
    Anchored to the wrapper's bottom-left so it lines up with the field
    width. Filter drop-shadow gives the rounded corners a soft surround

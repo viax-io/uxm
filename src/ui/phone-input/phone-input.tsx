@@ -11,6 +11,7 @@ import {
   type PhoneCountry,
 } from '../../lib/phone-countries';
 import { Icon } from '../icon';
+import { IconButton } from '../icon-button';
 import { Popover } from '../popover';
 
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
@@ -43,6 +44,14 @@ export interface PhoneInputProps
    */
   countries?: PhoneCountry[];
   /**
+   * Show a clear (✕) button at the trailing edge when the national number
+   * has a value. On by default (opt out with `clearable={false}`). The
+   * component owns the reset — it wipes its own uncontrolled state and fires
+   * `onChange` with an empty number (keeping the selected country), so no
+   * separate `onClear` is needed (mirrors NumberInput / Select).
+   */
+  clearable?: boolean;
+  /**
    * Inline style applied to the WRAPPER (and forwarded to the country
    * popover panel). CSS custom properties set here cascade to the inner
    * field, and — because the popover portals out to document.body and so
@@ -62,6 +71,7 @@ export function PhoneInput({
   defaultValue,
   onChange,
   countries = CURATED_COUNTRIES,
+  clearable = true,
   className,
   placeholder,
   style,
@@ -125,6 +135,15 @@ export function PhoneInput({
     [countries, current.number, commit, closePopover],
   );
 
+  // Clear owns its own reset: wipe the national number but KEEP the selected
+  // country (the country picker is a separate affordance — clearing the field
+  // shouldn't reset it to a default). Mirrors NumberInput / Select which hold
+  // their own value state, so no `onClear` prop is needed.
+  const handleClear = useCallback(() => {
+    commit({ country: current.country, number: '' });
+  }, [commit, current.country]);
+  const showClear = clearable && current.number.length > 0 && !disabled;
+
   // Filter the country list by search query. Match against both the
   // country name (case-insensitive) and the dial code so a user typing
   // "+44" or "United" lands on the right entry quickly.
@@ -186,13 +205,28 @@ export function PhoneInput({
         type="text"
         inputMode="numeric"
         autoComplete="off"
-        className="uxm-phone-input__input"
+        className={cn(
+          'uxm-phone-input__input',
+          clearable && 'uxm-phone-input__input--clearable',
+        )}
         placeholder={placeholder ?? country.format?.replace(/X/g, '0') ?? 'Phone number'}
         value={masked}
         onChange={handleNumberChange}
         disabled={disabled}
         {...rest}
       />
+      {showClear && (
+        <IconButton
+          className="uxm-field-clear uxm-phone-input__clear"
+          aria-label="Clear"
+          // Prevent the button from stealing focus away from whatever's
+          // currently focused — a blur here would land before the reset does.
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={handleClear}
+        >
+          <Icon glyph="close" />
+        </IconButton>
+      )}
       <Popover
         open={isOpen}
         onOpenChange={(open) => {

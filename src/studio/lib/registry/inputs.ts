@@ -584,6 +584,7 @@ export const inputsDefs: ComponentDef[] = [
         { name: 'clock', type: 'boolean', defaultValue: 'true', description: 'Render the trailing clock icon. Pass `false` for an icon-less field.' },
         { name: 'picker', type: 'boolean', defaultValue: 'true', description: 'Mount the click-list popover (hour / minute / AM-PM). Pass `false` for a typing-only field — the clock icon stays decorative.' },
         { name: 'minuteStep', type: 'number', defaultValue: '1', description: "Increment shown in the minute column of the popover. Off-step values typed into the field are still included (sorted), so a typed `09:03` under `minuteStep={5}` doesn't vanish." },
+        { name: 'clearable', type: 'boolean', defaultValue: 'true', description: 'Show a trailing clear (✕) button when the field has a value. The ✕ sits inboard of the clock icon (and the AM/PM badge in 12h) and resets the value.' },
         { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Disables the input, the AM/PM selector, and the picker trigger.' },
         { name: '...rest', type: 'InputHTMLAttributes<HTMLInputElement>', description: 'All other native input attributes (placeholder, name, aria-label, etc.) pass through.' },
       ],
@@ -665,6 +666,7 @@ export const inputsDefs: ComponentDef[] = [
         { name: 'onChange', type: '(value: PhoneValue) => void', description: 'Called with the next value after each keystroke or country pick.' },
         { name: 'defaultValue', type: 'PhoneValue', defaultValue: '{ country: "US", number: "" }', description: 'Initial value for uncontrolled usage.' },
         { name: 'countries', type: 'PhoneCountry[]', defaultValue: 'CURATED_COUNTRIES', description: 'Country list shown in the picker. Default is ~30 curated countries; pass a custom list to extend or restrict coverage.' },
+        { name: 'clearable', type: 'boolean', defaultValue: 'true', description: 'Show a trailing clear (✕) button when the number has digits. Clearing wipes the number and keeps the selected country.' },
         { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Disables the field and country picker.' },
         { name: '...rest', type: 'InputHTMLAttributes<HTMLInputElement>', description: 'All other native input attributes (placeholder, name, aria-label, etc.) pass through to the national-number input.' },
       ],
@@ -939,20 +941,8 @@ export const inputsDefs: ComponentDef[] = [
     ],
     layoutVariants: [
       // No `currency` variant — that's an end-user runtime choice
-      // handled by the picker. Picker POSITION on the other hand is
-      // a design-time decision: US/UK/JP apps put it on the left
-      // (matches the prefix `$1,234.56` read); EU apps that primarily
-      // transact in EUR/SEK/NOK often prefer it on the right
-      // (matches the suffix `1.234,56 €` read).
-      {
-        key: 'pickerPosition',
-        label: 'Picker Position',
-        options: [
-          { value: 'left', label: 'Left ($ USD | 0.00)' },
-          { value: 'right', label: 'Right (0.00 | EUR €)' },
-        ],
-        defaultValue: 'left',
-      },
+      // handled by the picker. The picker always sits on the left
+      // (the prefix `$1,234.56` read), so there's no position knob.
       {
         key: 'state',
         label: 'State',
@@ -982,8 +972,8 @@ export const inputsDefs: ComponentDef[] = [
         { name: 'defaultValue', type: 'CurrencyValue', defaultValue: '{ currency: "USD", amount: "" }', description: 'Initial value for uncontrolled usage.' },
         { name: 'currencies', type: 'Currency[]', defaultValue: 'CURATED_CURRENCIES', description: 'List shown in the picker. Default is ~20 curated currencies. Pass a single-entry array to effectively lock currency selection.' },
         { name: 'locale', type: 'string', defaultValue: '"en-US"', description: 'BCP-47 locale tag. Drives thousands separator style on blur display.' },
-        { name: 'pickerPosition', type: '"left" | "right"', defaultValue: '"left"', description: 'Side of the field the currency picker sits on. `"left"` matches modern fintech-app convention; `"right"` matches the EU display convention (`1.234,56 €`) and is preferred for EUR/SEK/NOK-primary apps.' },
         { name: 'allowNegative', type: 'boolean', defaultValue: 'false', description: 'Allow a leading `-` sign for refunds / credits.' },
+        { name: 'clearable', type: 'boolean', defaultValue: 'true', description: 'Show a trailing clear (✕) button when the amount has a value. Clearing wipes the amount and keeps the selected currency.' },
         { name: 'min', type: 'number', description: 'Lower bound on the amount. Clamped on blur.' },
         { name: 'max', type: 'number', description: 'Upper bound on the amount. Clamped on blur.' },
         { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Disables the input and the currency picker.' },
@@ -1173,9 +1163,9 @@ export const inputsDefs: ComponentDef[] = [
   },
   {
     id: 'select-dropdown',
-    name: 'Select / Dropdown',
+    name: 'Select Dropdown',
     category: 'Inputs',
-    description: 'Dropdown selection field — internally a Listbox-backed picker. This entry themes the trigger (default / hover / focus / disabled / error); the trigger is identical whether or not the panel searches, so searchability isn\'t a knob here — it\'s the `searchable` prop (default auto: the panel grows a search box once the option list is long enough), and the search box itself is previewed + themed in the Listbox entry. For a search-first combobox with its own trigger chrome (icon glyphs, dial codes), use the SearchDropdown atom instead.',
+    description: 'Dropdown selection field — internally a Listbox-backed picker. This entry themes the trigger (default / hover / focus / disabled / error); the trigger is identical whether or not the panel searches, so searchability isn\'t a knob here — it\'s the `searchable` prop (default auto: the panel grows a search box once the option list is long enough), and the search box itself is previewed + themed in the Listbox entry. Clearability isn\'t a knob either: a clear (✕) button appears automatically once a value is picked IF the select has a placeholder option (`<option value="" disabled>`), which marks "empty" as a valid state. Mandatory selects (no placeholder — a value is always chosen) never show it. For a search-first combobox with its own trigger chrome (icon glyphs, dial codes), use the SearchDropdown atom instead.',
     styleProperties: [
       // Default
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'fieldColors', showWhen: { state: 'default' } },
@@ -1238,15 +1228,6 @@ export const inputsDefs: ComponentDef[] = [
           { value: 'multi', label: 'Multi' },
         ],
         defaultValue: 'single',
-      },
-      {
-        key: 'clearable',
-        label: 'Clearable',
-        options: [
-          { value: 'off', label: 'Off' },
-          { value: 'on', label: 'On' },
-        ],
-        defaultValue: 'off',
       },
     ],
     events: [

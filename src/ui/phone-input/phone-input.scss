@@ -130,6 +130,19 @@
 .uxm-phone-input__input:disabled {
   cursor: not-allowed;
 }
+/* Reserve trailing room so the masked number never slides under the ✕. */
+.uxm-phone-input__input--clearable {
+  padding-right: calc(var(--uxm-phone-input-padding-x, 12px) + var(--uxm-field-clear-size, 22px) + 4px);
+}
+/* Clear (✕) — positioning only; chrome comes from the shared `.uxm-field-clear`
+   IconButton (same 22×22 affordance as Text / Number / Input-with-Icon). The
+   wrapper is `position: relative`, so this pins to its trailing edge. */
+.uxm-phone-input__clear {
+  position: absolute;
+  right: var(--uxm-phone-input-padding-x, 12px);
+  top: 50%;
+  transform: translateY(-50%);
+}
 
 /* Country popover — searchable scrollable list. Rendered through the shared
    `Popover` primitive, which portals it to document.body and owns

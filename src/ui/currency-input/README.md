@@ -1,6 +1,6 @@
 # CurrencyInput
 
-A monetary input with a leading (or trailing) interactive currency picker and a searchable popover. Value is `{ currency, amount }` — ISO 4217 code plus raw digit string.
+A monetary input with a leading interactive currency picker and a searchable popover. Value is `{ currency, amount }` — ISO 4217 code plus raw digit string.
 
 Architecturally mirrors `PhoneInput`: the wrapper is the visible surface, the picker slot is a `<button>` that toggles a searchable popover, and the inner `<input type="text">` handles the amount with `inputMode="decimal"` (or `"numeric"` for zero-decimal currencies like JPY). Display flips on focus: raw digits while the input has focus (easy to edit), locale-formatted thousands on blur (easy to read). The mask enforces the active currency's `decimals` precision; switching currencies re-masks the amount under the new precision (USD/2 → JPY/0 drops the decimals). Outside-click and `Escape` close the popover; opening the popover focuses the search input.
 
@@ -18,7 +18,6 @@ function Example() {
       locale="en-US"
       min={0}
       max={1_000_000}
-      pickerPosition="left"
     />
   );
 }
@@ -38,7 +37,7 @@ function Example() {
 | `min` | `number` | – | Clamp the committed amount down to this minimum on blur. |
 | `max` | `number` | – | Clamp the committed amount up to this maximum on blur. |
 | `allowNegative` | `boolean` | `false` | Allow a leading `-` sign (refunds / credits). |
-| `pickerPosition` | `'left' \| 'right'` | `'left'` | Which side the picker sits on. Left = fintech convention (Stripe / Wise); right = EU suffix convention (`1.234,56 €`). |
+| `clearable` | `boolean` | `true` | Show a clear (✕) button at the trailing edge when the amount has a value. Clearing wipes the amount and keeps the selected currency; the component owns the reset (fires `onChange` with an empty amount), so no `onClear` is needed. |
 | `style` | `CSSProperties` | – | Inline style on the WRAPPER (not the inner input). Custom-property declarations here cascade to the field and popover. |
 | `className` | `string` | – | Merged onto the wrapper via `cn`. |
 | `disabled` | `boolean` | `false` | Disables both picker and amount input; adds the `--disabled` modifier. |
@@ -114,13 +113,12 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 | State / variant | Trigger | Visual |
 |-----------------|---------|--------|
-| Default | – | Card bg, border outline, right-aligned digits (picker-left) or left-aligned digits (picker-right). |
+| Default | – | Card bg, border outline, leading currency picker with divider on its right edge; amount text left-aligned. |
 | Hover | `:hover` on wrapper (not disabled / not error) | Border shifts to `--color-accent`; 0.15s transition. |
 | Focus-within | `:focus-within` (input or popover search focused) | Border + 2px outline in `--color-accent`. |
 | Disabled | `disabled` prop | `--disabled` modifier: muted text, surface-alt bg, 0.6 opacity, `cursor: not-allowed`. |
 | Error | consumer adds `uxm-currency-input--error` class | Danger border + danger-toned caret. The amount text stays in default colour for readability. |
-| Picker left | `pickerPosition="left"` (default) | Picker rendered first (JSX order) with divider on its right edge; amount text right-aligned. |
-| Picker right | `pickerPosition="right"` | Picker flex-ordered to position 2 with divider on its left edge; amount text left-aligned (matches `1.234,56 €` EU read). JSX order is unchanged so screen readers read amount → currency. |
+| Clearable | `clearable` (default) + non-empty amount, non-disabled | Trailing ✕ (`.uxm-field-clear`, 22×22) clears the amount, keeps the currency. |
 | Focused (raw digits) | input has focus | Input shows raw `current.amount`; mask runs over keystrokes directly. |
 | Blurred (formatted) | input loses focus | Input shows `Intl.NumberFormat(locale, { decimals })` of `amount`; on next change the value is parsed back through `parseFromDisplay`. |
 | Popover open | picker click | Searchable list of currencies; search input auto-focused on next animation frame; outside-click or `Escape` closes. |
@@ -135,7 +133,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Popover root is `role="dialog"` with `aria-label="Choose currency"`; the inner `<ul>` is `role="listbox"` and each row is `role="option"` with `aria-selected` reflecting the active currency.
 - The amount input uses `type="text"` + `inputMode="decimal"` (or `"numeric"` for zero-decimal currencies) and `autoComplete="off"` — same rationale as `PhoneInput`: native `type="number"` ships browser spinners and autofill heuristics that fight the mask.
 - Outside-click and `Escape` close the popover; on open, focus moves to the search input via `requestAnimationFrame`.
-- For `pickerPosition="right"`, only the visual order is flipped (CSS `order: 2`); the DOM keeps the picker first, so screen readers read picker → amount in both layouts. The CSS comment claims source order is amount → picker for the right layout; the actual JSX renders picker → input regardless. Verify against your target SR if order matters.
+- Clear button: `<button aria-label="Clear">`; `onMouseDown` is prevented so the click doesn't blur-clamp the input before the reset lands.
 - The disabled state is implemented via both the `disabled` attribute on the picker and amount input AND the `--disabled` modifier class — assistive tech announces both controls as unavailable.
 - The error state has no aria affordance built in; consumers should pair the `--error` class with `aria-invalid="true"` and an associated error message (e.g. via `aria-describedby`).
 - Row symbols are wrapped in `aria-hidden="true"`; the accessible name of each option is the currency name and code.
