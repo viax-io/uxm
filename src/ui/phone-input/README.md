@@ -104,7 +104,7 @@ The country picker panel is the shared `<Listbox>` (`.uxm-listbox__panel`) — i
 ## Accessibility
 
 - Country button: `<button>` with `aria-label="Country: {name}"`, `aria-expanded`, and `aria-haspopup="listbox"`.
-- Popover: `role="dialog"` with `aria-label="Choose country"`; the list inside is `role="listbox"` and each row is a `<button role="option">` with `aria-selected`.
+- The country picker is the shared `Listbox`: the portaled panel is `role="listbox"` with `aria-label="Choose country"`, and each row is a `<button role="option">` with `aria-selected`. The search input carries `aria-label="Search countries"` and points `aria-activedescendant` at the arrow-highlighted row.
 - Search input is auto-focused on popover open (via `requestAnimationFrame`) so users can filter immediately.
 - Outside click and `Escape` close the popover.
 - Clear button: `<button aria-label="Clear">`; `onMouseDown` is prevented so the click doesn't blur the input before the reset lands.

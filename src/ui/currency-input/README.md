@@ -88,7 +88,7 @@ interface CurrencyValue {
 
 The currency picker panel is the shared `<Listbox>` (`.uxm-listbox__panel`) — its chrome (background, border, radius, row states, search box) is themed once via the **Listbox** registry entry / `--uxm-listbox-*` vars, so CurrencyInput has no popover vars of its own.
 
-The error state (`uxm-currency-input--error`) is opt-in via consumer-applied class; the component itself does not toggle it from props.
+The error state (`uxm-currency-input--error`) is driven by the `error?: string` prop: a non-empty value toggles the modifier class, sets `aria-invalid` on the amount input, and renders a `FieldError` message below the field.
 
 ## Design tokens (MODO-configurable)
 
@@ -113,7 +113,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Hover | `:hover` on wrapper (not disabled / not error) | Border shifts to `--color-accent`; 0.15s transition. |
 | Focus-within | `:focus-within` (input or popover search focused) | Border + 2px outline in `--color-accent`. |
 | Disabled | `disabled` prop | `--disabled` modifier: muted text, surface-alt bg, 0.6 opacity, `cursor: not-allowed`. |
-| Error | consumer adds `uxm-currency-input--error` class | Danger border + danger-toned caret. The amount text stays in default colour for readability. |
+| Error | non-empty `error` prop | `--error` modifier: danger border + danger-toned caret + `aria-invalid` on the amount input + a `FieldError` message below. The amount text stays in default colour for readability. |
 | Clearable | `clearable` (default) + non-empty amount, non-disabled | Trailing ✕ (`.uxm-field-clear`, 22×22) clears the amount, keeps the currency. |
 | Focused (raw digits) | input has focus | Input shows raw `current.amount`; mask runs over keystrokes directly. |
 | Blurred (formatted) | input loses focus | Input shows `Intl.NumberFormat(locale, { decimals })` of `amount`; on next change the value is parsed back through `parseFromDisplay`. |
@@ -126,10 +126,10 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 ## Accessibility
 
 - Picker button carries `aria-label="Currency: {name}"`, `aria-expanded`, and `aria-haspopup="listbox"`.
-- Popover root is `role="dialog"` with `aria-label="Choose currency"`; the inner `<ul>` is `role="listbox"` and each row is `role="option"` with `aria-selected` reflecting the active currency.
+- The picker panel is the shared `Listbox`: the portaled panel is `role="listbox"` with `aria-label="Choose currency"`, and each row is a `role="option"` button with `aria-selected` reflecting the active currency. The search input carries `aria-label="Search currencies"` and points `aria-activedescendant` at the arrow-highlighted row.
 - The amount input uses `type="text"` + `inputMode="decimal"` (or `"numeric"` for zero-decimal currencies) and `autoComplete="off"` — same rationale as `PhoneInput`: native `type="number"` ships browser spinners and autofill heuristics that fight the mask.
 - Outside-click and `Escape` close the popover; on open, focus moves to the search input via `requestAnimationFrame`.
 - Clear button: `<button aria-label="Clear">`; `onMouseDown` is prevented so the click doesn't blur-clamp the input before the reset lands.
 - The disabled state is implemented via both the `disabled` attribute on the picker and amount input AND the `--disabled` modifier class — assistive tech announces both controls as unavailable.
-- The error state has no aria affordance built in; consumers should pair the `--error` class with `aria-invalid="true"` and an associated error message (e.g. via `aria-describedby`).
+- The error state is wired from the `error` prop: a non-empty value sets `aria-invalid` on the amount input and renders a `FieldError` message below the field.
 - Row symbols are wrapped in `aria-hidden="true"`; the accessible name of each option is the currency name and code.

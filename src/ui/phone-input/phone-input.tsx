@@ -157,6 +157,7 @@ export function PhoneInput({
         anchorRef={containerRef}
         placement="bottom-start"
         searchPlaceholder="Search countries"
+        searchAriaLabel="Search countries"
         showCheckmark={false}
         panelClassName="uxm-phone-input__panel"
         panelStyle={style}

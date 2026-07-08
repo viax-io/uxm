@@ -44,11 +44,11 @@ const PER_COMPONENT_SELECTOR: Record<string, string> = {
   // trigger, but the `.uxm-menu__panel` portals to document.body, so vars on
   // the wrapper never reach it. Emit on both so the panel carries them.
   menu: '.uxm-menu, .uxm-menu__panel',
-  // PhoneInput's country picker portals via `Popover`: the field wrapper
-  // stays in-page but `.uxm-phone-input__popover` mounts to document.body,
-  // so the `--uxm-phone-input-popover-*` knobs must be emitted on the panel
-  // selector too or they never reach it.
-  'phone-input': '.uxm-phone-input, .uxm-phone-input__popover',
+  // PhoneInput no longer needs a panel-scoped selector: its country picker
+  // now delegates to the shared `Listbox`, whose portaled panel already gets
+  // its vars via the `listbox` entry above. All `--uxm-phone-input-*` knobs
+  // target the in-page field, so the default `.uxm-phone-input` selector is
+  // correct.
 };
 
 const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {

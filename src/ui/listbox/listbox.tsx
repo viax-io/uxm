@@ -70,6 +70,14 @@ interface ListboxCommonProps<T> {
   /** Render a search input above the list. `true`/`false` force it; `"auto"` shows it only when the item count exceeds `SEARCHABLE_AUTO_THRESHOLD`. Default true. */
   searchable?: boolean | 'auto';
   searchPlaceholder?: string;
+  /**
+   * Accessible name for the search input. A `searchPlaceholder` is NOT a
+   * reliable accessible name (it vanishes once the field has a value and AT
+   * support for placeholder-as-name is inconsistent), so pickers with a
+   * domain-specific search (PhoneInput → "Search countries", CurrencyInput →
+   * "Search currencies") should pass this. Falls back to the placeholder text.
+   */
+  searchAriaLabel?: string;
   /** Override default case-insensitive substring filter on `getLabel`. */
   filterItems?: (items: T[], query: string) => T[];
 
@@ -207,6 +215,7 @@ function ListboxCore<T>({
   renderItem,
   searchable = true,
   searchPlaceholder = 'Search…',
+  searchAriaLabel,
   filterItems,
   groupBy,
   renderGroupHeader,
@@ -428,6 +437,17 @@ function ListboxCore<T>({
     [disabled, open, setOpen, onTriggerKeyDown, panelId],
   );
 
+  // Stable per-row option id, so the focused search input can point
+  // `aria-activedescendant` at the arrow-highlighted option — otherwise DOM
+  // focus stays pinned in the search box and AT announces nothing as the user
+  // arrows through the list.
+  const optionId = (rowIdx: number) => `${panelId}-opt-${rowIdx}`;
+  const activeRowIdx = selectableIndices[active];
+  const activeDescendantId =
+    open && activeRowIdx != null && rows[activeRowIdx]?.kind === 'item'
+      ? optionId(activeRowIdx)
+      : undefined;
+
   return (
     <div className={cn('uxm-listbox', className)} style={style}>
       {/* eslint-disable-next-line react-hooks/refs -- triggerProps is memoised above and contains a ref-setter callback; the rule flags the pattern but the callback is the React-blessed way to wire a ref through a consumer-rendered element */}
@@ -468,8 +488,10 @@ function ListboxCore<T>({
               placeholder={searchPlaceholder}
               autoComplete="off"
               spellCheck={false}
+              aria-label={searchAriaLabel}
               aria-controls={panelId}
               aria-autocomplete="list"
+              aria-activedescendant={activeDescendantId}
             />
           </div>
         )}
@@ -499,6 +521,7 @@ function ListboxCore<T>({
               return (
                 <button
                   key={row.key}
+                  id={optionId(rowIdx)}
                   ref={(el) => {
                     if (el) optionRefs.current.set(row.key, el);
                     else optionRefs.current.delete(row.key);

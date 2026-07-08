@@ -297,6 +297,7 @@ export function CurrencyInput({
         anchorRef={containerRef}
         placement="bottom-start"
         searchPlaceholder="Search currencies"
+        searchAriaLabel="Search currencies"
         showCheckmark={false}
         panelClassName="uxm-currency-input__panel"
         panelStyle={style}
