@@ -1,3 +1,28 @@
+# [3.0.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.10.0...v3.0.0) (2026-07-08)
+
+
+### Bug Fixes
+
+* **input-with-icon:** wire up clear button in Studio preview ([527fa0f](https://gitlab.viax.tech/services-viax/uxm/commit/527fa0f6729c4d5606c9c390b7aad0c0ed8a11d8))
+* **inputs:** address code-review findings for clear-button rollout ([e52627b](https://gitlab.viax.tech/services-viax/uxm/commit/e52627b88c1595f8a20cc6e5725dca384ed0a8be))
+
+
+### Features
+
+* **currency-input:** add clear button, left-align amount, drop pickerPosition ([09a2091](https://gitlab.viax.tech/services-viax/uxm/commit/09a209152807dfe8721768faba88a4f49bb244e6))
+* **date-input:** add clearable clear button ([0004909](https://gitlab.viax.tech/services-viax/uxm/commit/0004909e03fe6bc2266c164c9f875ae58c824d5d))
+* **phone-input:** add clearable clear button ([d3a404c](https://gitlab.viax.tech/services-viax/uxm/commit/d3a404cde4525c04bb2ce379e484a70383affbfd))
+* **select:** placeholder-driven clear, drop clearable knob, rename ([89afd6c](https://gitlab.viax.tech/services-viax/uxm/commit/89afd6cee1700b27c1c1643d0b9526079b13b0d7))
+* **time-input:** add clearable clear button, fix outside-click dismiss ([f91e088](https://gitlab.viax.tech/services-viax/uxm/commit/f91e088f8e4ea4a6439d3212851037f10e5c6ceb))
+
+
+### BREAKING CHANGES
+
+* **select:** Select no longer accepts a `clearable` prop. Clearability is
+inferred from the presence of a placeholder option instead.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+
 # [2.10.0](https://gitlab.viax.tech/services-viax/uxm/compare/v2.9.1...v2.10.0) (2026-07-07)
 
 
