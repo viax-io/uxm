@@ -132,7 +132,7 @@
 }
 /* Reserve trailing room so the masked number never slides under the ✕. */
 .uxm-phone-input__input--clearable {
-  padding-right: calc(var(--uxm-phone-input-padding-x, 12px) + 22px + 4px);
+  padding-right: calc(var(--uxm-phone-input-padding-x, 12px) + var(--uxm-field-clear-size, 22px) + 4px);
 }
 /* Clear (✕) — positioning only; chrome comes from the shared `.uxm-field-clear`
    IconButton (same 22×22 affordance as Text / Number / Input-with-Icon). The

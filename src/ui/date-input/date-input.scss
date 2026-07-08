@@ -137,13 +137,13 @@
      calendar icon the base right padding already reserves ~one icon's worth,
      so we bump it for the ✕; with the icon we reserve room for BOTH. */
   &--clearable &__input {
-    padding-right: calc(var(--uxm-date-input-icon-offset, 12px) + 22px + 8px);
+    padding-right: calc(var(--uxm-date-input-icon-offset, 12px) + var(--uxm-field-clear-size, 22px) + 8px);
   }
   &--clearable.uxm-date-input--has-calendar &__input {
     padding-right: calc(
       var(--uxm-date-input-icon-offset, 12px)
       + var(--uxm-date-input-icon-size, 16px)
-      + 6px + 22px + 8px
+      + 6px + var(--uxm-field-clear-size, 22px) + 8px
     );
   }
 }

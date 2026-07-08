@@ -1,6 +1,6 @@
 # CurrencyInput
 
-A monetary input with a leading (or trailing) interactive currency picker and a searchable popover. Value is `{ currency, amount }` — ISO 4217 code plus raw digit string.
+A monetary input with a leading interactive currency picker and a searchable popover. Value is `{ currency, amount }` — ISO 4217 code plus raw digit string.
 
 Architecturally mirrors `PhoneInput`: the wrapper is the visible surface, the picker slot is a `<button>` that toggles a searchable popover, and the inner `<input type="text">` handles the amount with `inputMode="decimal"` (or `"numeric"` for zero-decimal currencies like JPY). Display flips on focus: raw digits while the input has focus (easy to edit), locale-formatted thousands on blur (easy to read). The mask enforces the active currency's `decimals` precision; switching currencies re-masks the amount under the new precision (USD/2 → JPY/0 drops the decimals). Outside-click and `Escape` close the popover; opening the popover focuses the search input.
 

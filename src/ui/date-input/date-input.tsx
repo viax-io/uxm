@@ -215,11 +215,13 @@ export function DateInput({
     };
   }, [isOpen]);
 
-  // Return focus to whatever was focused when the popover opened (the
-  // calendar icon button, or the input itself when opened via focus) once
-  // it closes — same restore-focus contract as Popover/Dialog, so dismissing
-  // via outside-click or Escape doesn't strand keyboard focus on a removed panel.
-  useFocusOnMount({ active: isOpen });
+  // No focus restoration on close: the field opens the popover on input
+  // `onFocus`, so restoring focus to the input after an outside-click close
+  // would immediately re-fire `onFocus` and reopen the popover — the same
+  // reopen loop TimeInput opts out of. Dismissal paths (outside click on
+  // another surface, Escape while the input keeps focus) don't strand focus
+  // on the removed panel because the panel itself never takes focus.
+  useFocusOnMount({ active: isOpen, returnFocus: false });
 
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -308,7 +310,8 @@ export function DateInput({
         <IconButton
           className="uxm-field-clear uxm-date-input__clear"
           aria-label="Clear"
-          // Keep focus off the input so clearing doesn't re-open the calendar
+          // Prevent the button from stealing focus away from whatever's
+          // currently focused — clearing must not re-open the calendar
           // popover via the input's onFocus handler.
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleClear}
@@ -323,6 +326,7 @@ export function DateInput({
           onClick={() => setIsOpen((o) => !o)}
           aria-label="Open calendar"
           aria-expanded={isOpen}
+          disabled={disabled}
         >
           <Icon glyph="calendar" />
         </button>

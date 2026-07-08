@@ -666,6 +666,7 @@ export const inputsDefs: ComponentDef[] = [
         { name: 'onChange', type: '(value: PhoneValue) => void', description: 'Called with the next value after each keystroke or country pick.' },
         { name: 'defaultValue', type: 'PhoneValue', defaultValue: '{ country: "US", number: "" }', description: 'Initial value for uncontrolled usage.' },
         { name: 'countries', type: 'PhoneCountry[]', defaultValue: 'CURATED_COUNTRIES', description: 'Country list shown in the picker. Default is ~30 curated countries; pass a custom list to extend or restrict coverage.' },
+        { name: 'clearable', type: 'boolean', defaultValue: 'true', description: 'Show a trailing clear (✕) button when the number has digits. Clearing wipes the number and keeps the selected country.' },
         { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Disables the field and country picker.' },
         { name: '...rest', type: 'InputHTMLAttributes<HTMLInputElement>', description: 'All other native input attributes (placeholder, name, aria-label, etc.) pass through to the national-number input.' },
       ],

@@ -359,8 +359,9 @@ export function CurrencyInput({
         <IconButton
           className="uxm-field-clear uxm-currency-input__clear"
           aria-label="Clear"
-          // Keep focus in the input so the clear-click doesn't blur-clamp the
-          // about-to-be-wiped value first (same guard as NumberInput).
+          // Prevent the button from stealing focus away from whatever's
+          // currently focused — a blur here would clamp the about-to-be-wiped
+          // value first (same guard as NumberInput).
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleClear}
         >

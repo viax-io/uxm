@@ -334,6 +334,21 @@ export function TimeInput({
         }}
         {...rest}
       />
+      {/* DOM order matches the visual left-to-right layout (value → clear →
+          clock icon) so the tab order reads naturally (WCAG 2.4.3). */}
+      {showClear && (
+        <IconButton
+          className="uxm-field-clear uxm-time-input__clear"
+          aria-label="Clear"
+          // Prevent the button from stealing focus away from whatever's
+          // currently focused — clearing must not re-open the picker popover
+          // via the input's onFocus handler.
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={handleClear}
+        >
+          <Icon glyph="close" />
+        </IconButton>
+      )}
       {clock && (triggerEnabled ? (
         <button
           type="button"
@@ -358,18 +373,6 @@ export function TimeInput({
         <span className="uxm-time-input__meridiem" aria-hidden="true">
           {meridiem}
         </span>
-      )}
-      {showClear && (
-        <IconButton
-          className="uxm-field-clear uxm-time-input__clear"
-          aria-label="Clear"
-          // Keep focus off the input so clearing doesn't re-open the picker
-          // popover via the input's onFocus handler.
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={handleClear}
-        >
-          <Icon glyph="close" />
-        </IconButton>
       )}
       {triggerEnabled && (
         <Popover

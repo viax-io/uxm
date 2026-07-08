@@ -170,7 +170,7 @@ span.uxm-time-input__icon {
   padding-right: calc(
     var(--uxm-time-input-icon-offset, 12px)
     + var(--uxm-time-input-icon-size, 16px)
-    + 6px + 22px + 8px
+    + 6px + var(--uxm-field-clear-size, 22px) + 8px
   );
 }
 .uxm-time-input--clearable[data-format="12h"] .uxm-time-input__input {
@@ -179,7 +179,7 @@ span.uxm-time-input__icon {
     + var(--uxm-time-input-icon-size, 16px)
     + 8px
     + var(--uxm-time-input-meridiem-width, 24px)
-    + 6px + 22px + 8px
+    + 6px + var(--uxm-field-clear-size, 22px) + 8px
   );
 }
 

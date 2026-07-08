@@ -118,7 +118,7 @@
 }
 /* Reserve trailing room so the right-aligned amount never slides under the ✕. */
 .uxm-currency-input__input--clearable {
-  padding-right: calc(var(--uxm-currency-input-padding-x, 12px) + 22px + 4px);
+  padding-right: calc(var(--uxm-currency-input-padding-x, 12px) + var(--uxm-field-clear-size, 22px) + 4px);
 }
 .uxm-currency-input__input::placeholder {
   color: var(--color-text-muted);

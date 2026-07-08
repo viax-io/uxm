@@ -199,7 +199,9 @@
    Select all share this same `.uxm-field-clear` IconButton chrome
    (positioning only per atom) so every clear ✕ is identical. */
 .uxm-field-clear {
-  --uxm-icon-button-size: 22px;
+  /* Single source for the ✕ footprint. The per-atom padding reserves reference
+     `var(--uxm-field-clear-size, 22px)` — keep the fallback in sync here. */
+  --uxm-icon-button-size: var(--uxm-field-clear-size, 22px);
   --uxm-icon-button-icon-size: 12px;
   --uxm-icon-button-stroke-width: 2;
   flex-shrink: 0;

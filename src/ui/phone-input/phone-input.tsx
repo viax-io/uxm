@@ -219,8 +219,8 @@ export function PhoneInput({
         <IconButton
           className="uxm-field-clear uxm-phone-input__clear"
           aria-label="Clear"
-          // Keep focus in the input so the clear-click doesn't blur the field
-          // before the reset lands.
+          // Prevent the button from stealing focus away from whatever's
+          // currently focused — a blur here would land before the reset does.
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleClear}
         >
