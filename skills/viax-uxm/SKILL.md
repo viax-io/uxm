@@ -21,15 +21,16 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 > Documents `@viax/uxm` **v3.0.1** (88 components). To refresh after a new library release, run
 > the `viax-uxm-skill-update` skill — it reads this marker to compute the delta.
 >
-> ✅ **2.9.0 is the current Nexus registry latest** — `NumberInput` clearable ✕ + `error`,
-> `InputWithIcon` `error`, `FieldError` `id` + `aria-describedby` wiring across the whole input
-> family, and a studio-knob reliability sweep (`--uxm-*` var routing). Everything from 2.8.0
-> (form-control error states), 2.7.0 (`ProgressBar`, `TextInput`/`Textarea` `clearable`) and the
-> 2.6.0 block (`Menu`, `BulkActionBar`, `ButtonDanger`, `DataTable.rowActions`) is published and
-> resolves on a fresh `npm install`.
-> ⚠️ **modo installs behind** — the VX-1736 branch pins `^2.8.0` (a `npm install`/lock refresh
-> pulls 2.9.0) and `main` pins `^2.3.3`. The skill documents the *released* 2.9.0 surface
-> regardless of what modo currently installs.
+> ✅ **3.0.1 is the current Nexus registry latest.** 3.0.0 rolled a clear-button ✕ across the
+> remaining input atoms (`CurrencyInput`, `DateInput`, `PhoneInput`, `TimeInput`) and shipped ONE
+> breaking change — `Select` dropped its `clearable` prop; clearability is now inferred from a
+> placeholder `<option value="" disabled>` (see "New in 3.0.0"). 2.10.0 added the `ColorInput` /
+> `ColorInputPopover` picker + `eyedropper` glyph and made `Popover` tolerate nested floating
+> layers. Everything from 2.9.0 (`NumberInput` clearable + `error`, family-wide `aria-describedby`)
+> and earlier remains published and resolves on a fresh `npm install`.
+> ⚠️ **A consumer may install behind** the published latest — check its `@viax/uxm` pin in that
+> project's `package.json`. The skill documents the *released* 3.0.1 surface regardless of what any
+> consumer currently installs.
 
 This skill turns Claude into a competent consumer of `@viax/uxm`. It does not generate Vue MFA
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
@@ -50,7 +51,9 @@ of the library or old code conflicts with this list, THIS list wins.
   (compound `Modal.Header/Body/Footer`), `Popover`, `Listbox`/`MultiListbox`, `Banner`,
   `EditableCell`, `FieldError`, `NumberStepper`.
 - **`Select` is now Listbox-backed** (cross-browser panel) with a compatible native-like API
-  (`<option>` children, `onChange(e.target.value)`) + opt-in `clearable`. `SearchDropdown` and
+  (`<option>` children, `onChange(e.target.value)`). (It gained an opt-in `clearable` here that
+  3.0.0 later REMOVED — clearability is now placeholder-driven; see "New in 3.0.0".)
+  `SearchDropdown` and
   `PillSelect` ride the same Listbox/MultiListbox infrastructure; `PillSelect` gained
   `chipsPosition: 'inside' | 'below'`.
 - **Error convention:** every input-family atom (`TextInput`, `Textarea`, `Select`,
@@ -110,7 +113,7 @@ of the library or old code conflicts with this list, THIS list wins.
   brand-aware colour picker.)
 - **Studio colour picker is brand-aware (2.4.1).** Swatch markers paint the token's live
   `var(--color-*)` value, so they reflect the applied brand, not the library's static default.
-- **Accent-ramp recalc + exported palette maths (unreleased — `fix(studio)`).** `--color-accent`
+- **Accent-ramp recalc + exported palette maths.** `--color-accent`
   is now the lead of the Accent token group (first in `themeTokens`); editing any accent shade in
   Brand Settings prompts a "Recalculate accent palette?" modal that re-tints the rest of the group
   to that hue across both light and dark, rebuilding each derived shade from its designed default.
@@ -180,9 +183,9 @@ of the library or old code conflicts with this list, THIS list wins.
   clear button when they have content: `clearable?: boolean` — **defaults to `true`** — plus an
   optional `onClear?: () => void`. The ✕ self-clears (resets the field and fires `onChange` with
   `""`), so any controlled `value` + `onChange` usage gets it for free; pass `clearable={false}`
-  to opt out. `onClear` is only for custom reset logic beyond emptying the value. (`Select` keeps
-  its own opt-in `clearable` defaulting to `false`; `InputWithIcon` already had a clear ✕. Only the
-  plain `TextInput`/`Textarea` are new here.)
+  to opt out. `onClear` is only for custom reset logic beyond emptying the value. (`Select` had its
+  own opt-in `clearable` here — REMOVED in 3.0.0, now placeholder-driven; `InputWithIcon` already
+  had a clear ✕. Only the plain `TextInput`/`Textarea` are new here.)
 - **Studio-only polish (no app API change):** the editable-cell canvas preview now re-renders to
   the selected editor type for all five `EditableCell` types (was text/number only), and the
   right-hand properties panel is always white (`bg-card`) for text contrast in both standalone and
@@ -264,10 +267,6 @@ skill:
 
 ### New in 2.10.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. -->
-
 - **`ColorInput` / `ColorInputPopover` — new atoms.** Full color picker in the Inputs
   category: saturation/brightness area, hue + opacity sliders, current-color swatch, screen
   eyedropper (EyeDropper API — Chromium only, auto-hidden elsewhere), and a format select
@@ -286,6 +285,28 @@ skill:
   popover panel portals to `document.body`; picking one of its options no longer
   outside-click-dismisses the hosting popover (same `.uxm-popover` exclusion Dialog uses).
 - **New icon `eyedropper`** in the shared glyph set.
+
+### New in 3.0.0 — clear-button rollout across inputs (breaking: `Select`)
+
+- **BREAKING — `Select` no longer accepts a `clearable` prop.** Clearability is now inferred from
+  the presence of a placeholder option: include `<option value="" disabled>Choose…</option>` and
+  the trigger shows a ✕ (once a value is selected) that resets to that placeholder; a select with
+  NO placeholder option is not clearable. Migration: drop `clearable` / `clearable={false}` and
+  model the empty state as a disabled placeholder `<option value="">`. `searchable` is unchanged.
+- **Clear ✕ reached the rest of the input family.** `CurrencyInput`, `DateInput`, `PhoneInput` and
+  `TimeInput` each gained `clearable?: boolean` (**defaults to `true`**) — a trailing ✕ shown when
+  the field has a value that self-clears (the component owns its own state and fires the change), so
+  there is **no `onClear`** (mirrors `NumberInput` / `Select`). Opt out with `clearable={false}`.
+  This completes the family-wide clear affordance started in 2.7.0 (`TextInput`/`Textarea`) and
+  2.9.0 (`NumberInput`).
+- **`CurrencyInput` also left-aligns the amount and dropped `pickerPosition`.** The currency-picker
+  position is no longer configurable.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. -->
 
 ## Workflow
 
