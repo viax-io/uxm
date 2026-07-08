@@ -12,7 +12,7 @@ import { AppTopBar, InputWithIcon, ButtonIcon, Icon } from '@viax/uxm';
 function Shell() {
   return (
     <AppTopBar
-      search={<InputWithIcon placeholder="Search" icon={<Icon glyph="search" />} />}
+      search={<InputWithIcon placeholder="Search…" icon={<Icon glyph="search" />} />}
       actions={
         <>
           <ButtonIcon aria-label="Toggle theme"><Icon glyph="moon" /></ButtonIcon>

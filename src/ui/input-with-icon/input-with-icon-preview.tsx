@@ -67,7 +67,7 @@ function InputWithIconDemo({ state, styles }: { state: string; styles: Styles })
     <div style={cssVars}>
       <InputWithIcon
         type="search"
-        placeholder="Search models..."
+        placeholder="Search…"
         icon={<Icon glyph="search" size={iconSize} strokeWidth={1.5} />}
         value={value}
         onChange={(e) => setValue(e.target.value)}
