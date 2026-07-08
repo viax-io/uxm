@@ -136,83 +136,16 @@
   transform: translateY(-50%);
 }
 
-/* Currency popover — searchable scrollable list, full-width below the
-   field. Same architecture as PhoneInput's country popover. */
-.uxm-currency-input__popover {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  z-index: 10;
-  background-color: var(--uxm-currency-input-popover-bg, var(--color-card));
-  border: 1px solid var(--uxm-currency-input-popover-border, var(--color-border));
-  border-radius: var(--uxm-currency-input-popover-radius, 8px);
-  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.18));
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  max-height: 320px;
+/* The currency picker is a shared <Listbox>, which wraps its trigger in a
+   `.uxm-listbox` element. `display: contents` dissolves that wrapper so the
+   `__picker` button stays a direct flex child of the field (keeping the
+   divider + seamless currency|amount layout). The panel is portaled. */
+.uxm-currency-input__picker-wrap {
+  display: contents;
 }
-.uxm-currency-input__search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--uxm-currency-input-popover-border, var(--color-border));
-  color: var(--color-text-muted);
-}
-.uxm-currency-input__search-input {
-  flex: 1;
-  min-width: 0;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--uxm-currency-input-color, var(--color-text));
-  font-family: inherit;
-  font-size: 13px;
-}
-.uxm-currency-input__search-input::placeholder {
-  color: var(--color-text-muted);
-}
-.uxm-currency-input__list {
-  list-style: none;
-  margin: 0;
-  padding: 4px 0;
-  overflow-y: auto;
-  flex: 1;
-}
-.uxm-currency-input__empty {
-  padding: 12px;
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: 13px;
-}
-.uxm-currency-input__row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 8px 12px;
-  background: transparent;
-  border: none;
-  font-family: inherit;
-  font-size: 13px;
-  color: var(--uxm-currency-input-color, var(--color-text));
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.1s, color 0.1s;
-}
-.uxm-currency-input__row:hover {
-  background-color: var(--uxm-currency-input-popover-row-hover-bg, var(--color-surface-alt));
-}
-.uxm-currency-input__row--selected {
-  background-color: var(--uxm-currency-input-popover-row-selected-bg, var(--color-accent));
-  color: var(--uxm-currency-input-popover-row-selected-color, var(--color-text-inverse));
-  font-weight: 600;
-}
-.uxm-currency-input__row--selected:hover {
-  background-color: var(--uxm-currency-input-popover-row-selected-bg, var(--color-accent));
-}
+
+/* Currency-row parts, rendered inside the shared `.uxm-listbox__option` (which
+   provides the flex row, padding, and hover/selected states). */
 .uxm-currency-input__row-symbol {
   /* Fixed-width column so symbols of different widths (¥, د.إ, S$)
      keep the name column aligned vertically. */
@@ -234,8 +167,4 @@
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
-}
-.uxm-currency-input__row--selected .uxm-currency-input__row-code {
-  color: inherit;
-  opacity: 0.85;
 }

@@ -1,6 +1,6 @@
 # PhoneInput
 
-A composite phone-number input with a leading country picker (flag + dial code + caret) and a national-number text field. Opens a searchable, scrollable country popover on country-button click; selecting a country closes it.
+A composite phone-number input with a leading country picker (flag + dial code + caret) and a national-number text field. The country button opens the shared `<Listbox>` — a searchable, scrollable panel (positioning, portal, dismiss, keyboard nav, and ARIA all owned by Listbox); selecting a country closes it.
 
 The value is split into `{ country, number }` — country as an ISO-3166 alpha-2 code, number as raw digits (no formatting). Display formatting is applied via `maskNumber()` from the per-country `format` mask; the stored value stays normalized so consumers don't have to round-trip the mask. Uses `type="text"` + `inputMode="numeric"` (rather than `type="tel"`) to avoid browser phone-autofill heuristics that intercept keystrokes and fight controlled values.
 
@@ -22,7 +22,7 @@ function ContactForm() {
 
 ## Props
 
-Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'defaultValue' | 'type' | 'style'>` — most native input props pass through to the number field. `style` is applied to the WRAPPER so CSS custom properties cascade to both the inner input and the popover.
+Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'defaultValue' | 'type' | 'style'>` — most native input props pass through to the number field. `style` is applied to the WRAPPER (and forwarded to the Listbox panel via `panelStyle`) so CSS custom properties reach both the field and the picker.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -34,7 +34,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `placeholder` | `string` | derived from country format | Placeholder for the national-number input. Defaults to the country's format string with `X` → `0`. |
 | `disabled` | `boolean` | – | Disables the whole field (country button + input). |
 | `className` | `string` | – | Merged with `uxm-phone-input` on the wrapper. |
-| `style` | `CSSProperties` | – | Applied to the WRAPPER. Use to set per-instance `--uxm-phone-input-*` vars (cascades into the popover). |
+| `style` | `CSSProperties` | – | Applied to the WRAPPER and forwarded to the Listbox panel (`panelStyle`). Use to set per-instance `--uxm-phone-input-*` vars. |
 | _(any other native input attribute)_ | – | – | Spread onto the inner number `<input>`. |
 
 ### `PhoneValue`
@@ -71,12 +71,8 @@ interface PhoneValue {
 | `--uxm-phone-input-error-bg` | `--color-card` | – | Error background. |
 | `--uxm-phone-input-error-border` | `--color-danger-text` | – | Error border. |
 | `--uxm-phone-input-error-color` | `--color-danger-text` | – | Country caret colour in error mode. |
-| `--uxm-phone-input-popover-bg` | `--color-card` | – | Popover background. |
-| `--uxm-phone-input-popover-border` | `--color-border` | – | Popover border + search divider. |
-| `--uxm-phone-input-popover-radius` | – | `8px` | Popover corner radius. |
-| `--uxm-phone-input-popover-row-hover-bg` | `--color-surface-alt` | – | Country row hover background. |
-| `--uxm-phone-input-popover-row-selected-bg` | `--color-accent` | – | Selected country row background. |
-| `--uxm-phone-input-popover-row-selected-color` | `--color-text-inverse` | – | Selected country row text colour. |
+
+The country picker panel is the shared `<Listbox>` (`.uxm-listbox__panel`) — its chrome (background, border, radius, row hover/selected states, search box) is themed once via the **Listbox** registry entry / `--uxm-listbox-*` vars, so PhoneInput has no popover vars of its own.
 
 ## Design tokens (MODO-configurable)
 
@@ -108,7 +104,7 @@ interface PhoneValue {
 ## Accessibility
 
 - Country button: `<button>` with `aria-label="Country: {name}"`, `aria-expanded`, and `aria-haspopup="listbox"`.
-- Popover: `role="dialog"` with `aria-label="Choose country"`; the list inside is `role="listbox"` and each row is a `<button role="option">` with `aria-selected`.
+- The country picker is the shared `Listbox`: the portaled panel is `role="listbox"` with `aria-label="Choose country"`, and each row is a `<button role="option">` with `aria-selected`. The search input carries `aria-label="Search countries"` and points `aria-activedescendant` at the arrow-highlighted row.
 - Search input is auto-focused on popover open (via `requestAnimationFrame`) so users can filter immediately.
 - Outside click and `Escape` close the popover.
 - Clear button: `<button aria-label="Clear">`; `onMouseDown` is prevented so the click doesn't blur the input before the reset lands.

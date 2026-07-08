@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
-import { useFocusOnMount } from '../../hooks/use-focus-on-mount';
 import {
   CURATED_CURRENCIES,
   findCurrency,
@@ -11,6 +10,7 @@ import {
 import { FieldError } from '../field-error';
 import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
+import { Listbox } from '../listbox';
 
 import type { ChangeEvent, FocusEvent, InputHTMLAttributes } from 'react';
 
@@ -133,6 +133,18 @@ function clampNumeric(value: string, min?: number, max?: number): string {
   return String(clamped);
 }
 
+/** Case-insensitive currency filter — matches name, ISO code, or symbol. */
+function filterCurrencies(items: Currency[], query: string): Currency[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return items;
+  return items.filter(
+    (c) =>
+      c.name.toLowerCase().includes(q) ||
+      c.code.toLowerCase().includes(q) ||
+      c.symbol.toLowerCase().includes(q),
+  );
+}
+
 /**
  * A monetary input with a leading interactive currency picker. Mirrors
  * PhoneInput's architecture: the leading slot is a clickable button
@@ -179,51 +191,13 @@ export function CurrencyInput({
   const isControlled = value !== undefined;
   const current = isControlled ? value : internal;
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState('');
   const [focused, setFocused] = useState(false);
+  // The field wrapper is the picker's popover anchor: the clickable trigger is
+  // the small currency button, but the panel spans the full field width.
   const containerRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
 
   const currency = findCurrency(current.currency, currencies) ?? currencies[0];
   const decimals = currency.decimals;
-
-  const closePopover = useCallback(() => {
-    setIsOpen(false);
-    setSearch('');
-  }, []);
-
-  // Close on outside click or Escape. Same pattern as PhoneInput.
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        closePopover();
-      }
-    };
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closePopover();
-    };
-    document.addEventListener('mousedown', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [isOpen, closePopover]);
-
-  // Focus the search input on open so the user can filter immediately.
-  useEffect(() => {
-    if (!isOpen) return;
-    const id = requestAnimationFrame(() => searchRef.current?.focus());
-    return () => cancelAnimationFrame(id);
-  }, [isOpen]);
-
-  // Return focus to whatever was focused when the popover opened (the
-  // picker button, in every real flow) once it closes — same restore-focus
-  // contract as Popover/Dialog, so dismissing via outside-click or Escape
-  // doesn't strand keyboard focus on a removed panel.
-  useFocusOnMount({ active: isOpen });
 
   const commit = useCallback(
     (next: CurrencyValue) => {
@@ -256,9 +230,8 @@ export function CurrencyInput({
       const nextDecimals = nextCurrency?.decimals ?? 2;
       const reMasked = maskAmount(current.amount, allowNegative, nextDecimals);
       commit({ currency: code, amount: reMasked });
-      closePopover();
     },
-    [currencies, current.amount, allowNegative, commit, closePopover],
+    [currencies, current.amount, allowNegative, commit],
   );
 
   const handleFocus = useCallback(
@@ -290,17 +263,6 @@ export function CurrencyInput({
   }, [commit, current.currency]);
   const showClear = clearable && current.amount !== '' && !disabled;
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return currencies;
-    return currencies.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.code.toLowerCase().includes(q) ||
-        c.symbol.toLowerCase().includes(q),
-    );
-  }, [currencies, search]);
-
   // Focus toggle drives whether the input shows raw digits or the
   // locale-formatted display value. Same pattern as standard finance
   // inputs (Stripe, Wise, etc.).
@@ -320,21 +282,54 @@ export function CurrencyInput({
       style={style}
       ref={containerRef}
     >
-      <button
-        type="button"
-        className="uxm-currency-input__picker"
-        onClick={() => (isOpen ? closePopover() : setIsOpen(true))}
+      {/* Currency picker — the shared Listbox owns the popover (positioning,
+          portal, dismiss, keyboard nav, search, ARIA). `anchorRef` points at
+          the field wrapper so the panel spans the full width; `showCheckmark`
+          is off because each row already carries its ISO code on the right. */}
+      <Listbox<Currency>
+        items={currencies}
+        getKey={(c) => c.code}
+        getLabel={(c) => c.name}
+        filterItems={filterCurrencies}
+        value={currency}
+        onChange={(next) => next && handleCurrencyPick(next.code)}
         disabled={disabled}
-        aria-label={`Currency: ${currency.name}`}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-      >
-        <span className="uxm-currency-input__symbol" aria-hidden="true">{currency.symbol}</span>
-        <span className="uxm-currency-input__code">{currency.code}</span>
-        <span className="uxm-currency-input__caret" aria-hidden="true">
-          <Icon glyph="chevron-down" size={12} strokeWidth={2.2} />
-        </span>
-      </button>
+        anchorRef={containerRef}
+        placement="bottom-start"
+        searchPlaceholder="Search currencies"
+        searchAriaLabel="Search currencies"
+        showCheckmark={false}
+        panelClassName="uxm-currency-input__panel"
+        panelStyle={style}
+        className="uxm-currency-input__picker-wrap"
+        aria-label="Choose currency"
+        renderTrigger={({ open, triggerProps }) => (
+          <button
+            {...triggerProps}
+            type="button"
+            className="uxm-currency-input__picker"
+            aria-label={`Currency: ${currency.name}`}
+          >
+            <span className="uxm-currency-input__symbol" aria-hidden="true">{currency.symbol}</span>
+            <span className="uxm-currency-input__code">{currency.code}</span>
+            <span className="uxm-currency-input__caret" aria-hidden="true">
+              <Icon
+                glyph="chevron-down"
+                size={12}
+                strokeWidth={2.2}
+                style={{ transform: open ? 'rotate(180deg)' : 'none' }}
+              />
+            </span>
+          </button>
+        )}
+        renderItem={(c) => (
+          <>
+            <span className="uxm-currency-input__row-symbol" aria-hidden="true">{c.symbol}</span>
+            <span className="uxm-currency-input__row-name">{c.name}</span>
+            <span className="uxm-currency-input__row-code">{c.code}</span>
+          </>
+        )}
+      />
       <input
         // Same `type="text"` + `inputMode="decimal"` rationale as
         // PhoneInput / NumberInput: native `type="number"` ships
@@ -367,47 +362,6 @@ export function CurrencyInput({
         >
           <Icon glyph="close" />
         </IconButton>
-      )}
-      {isOpen && (
-        <div className="uxm-currency-input__popover" role="dialog" aria-label="Choose currency">
-          <div className="uxm-currency-input__search">
-            <Icon glyph="search" size={14} strokeWidth={2} />
-            <input
-              ref={searchRef}
-              type="text"
-              autoComplete="off"
-              className="uxm-currency-input__search-input"
-              placeholder="Search currencies"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              aria-label="Search currencies"
-            />
-          </div>
-          <ul className="uxm-currency-input__list" role="listbox">
-            {filtered.length === 0 ? (
-              <li className="uxm-currency-input__empty">No currencies match.</li>
-            ) : (
-              filtered.map((c) => (
-                <li key={c.code}>
-                  <button
-                    type="button"
-                    role="option"
-                    className={cn(
-                      'uxm-currency-input__row',
-                      c.code === current.currency && 'uxm-currency-input__row--selected',
-                    )}
-                    onClick={() => handleCurrencyPick(c.code)}
-                    aria-selected={c.code === current.currency}
-                  >
-                    <span className="uxm-currency-input__row-symbol" aria-hidden="true">{c.symbol}</span>
-                    <span className="uxm-currency-input__row-name">{c.name}</span>
-                    <span className="uxm-currency-input__row-code">{c.code}</span>
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
       )}
     </div>
     {error && <FieldError className="uxm-currency-input__error-message">{error}</FieldError>}

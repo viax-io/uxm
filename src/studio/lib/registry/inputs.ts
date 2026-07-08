@@ -629,13 +629,8 @@ export const inputsDefs: ComponentDef[] = [
       // prevents the misleading "tune these per state" affordance.
       { key: 'dividerColor', label: 'Country Divider', control: 'color', defaultValue: 'var(--color-border)' },
       { key: 'caretColor', label: 'Caret', control: 'color', defaultValue: 'var(--color-text-muted)' },
-      // Popover knobs — the searchable country list under the field.
-      { key: 'popoverBg', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'popover' },
-      { key: 'popoverBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'popover' },
-      { key: 'popoverRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 24, step: 1, unit: 'px', section: 'popover' },
-      { key: 'popoverRowHoverBg', label: 'Row Hover', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'popover' },
-      { key: 'popoverRowSelectedBg', label: 'Selected Row', control: 'color', defaultValue: 'var(--color-accent)', section: 'popover' },
-      { key: 'popoverRowSelectedColor', label: 'Selected Text', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'popover' },
+      // No popover knobs here: the country picker is the shared Listbox panel,
+      // themed once via the `listbox` registry entry (`.uxm-listbox__panel`).
     ],
     layoutVariants: [
       {
@@ -931,13 +926,8 @@ export const inputsDefs: ComponentDef[] = [
       { key: 'dividerColor', label: 'Picker Divider', control: 'color', defaultValue: 'var(--color-border)' },
       { key: 'symbolColor', label: 'Symbol', control: 'color', defaultValue: 'var(--color-text)' },
       { key: 'caretColor', label: 'Caret', control: 'color', defaultValue: 'var(--color-text-muted)' },
-      // Popover knobs — the searchable currency list under the field.
-      { key: 'popoverBg', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'popover' },
-      { key: 'popoverBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'popover' },
-      { key: 'popoverRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 24, step: 1, unit: 'px', section: 'popover' },
-      { key: 'popoverRowHoverBg', label: 'Row Hover', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'popover' },
-      { key: 'popoverRowSelectedBg', label: 'Selected Row', control: 'color', defaultValue: 'var(--color-accent)', section: 'popover' },
-      { key: 'popoverRowSelectedColor', label: 'Selected Text', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'popover' },
+      // No popover knobs here: the currency picker is the shared Listbox panel,
+      // themed once via the `listbox` registry entry (`.uxm-listbox__panel`).
     ],
     layoutVariants: [
       // No `currency` variant — that's an end-user runtime choice

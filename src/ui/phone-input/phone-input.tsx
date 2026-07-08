@@ -1,8 +1,7 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
-import { useRovingTabIndex } from '../../hooks/use-roving-tab-index';
 import {
   CURATED_COUNTRIES,
   findCountry,
@@ -12,7 +11,7 @@ import {
 } from '../../lib/phone-countries';
 import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
-import { Popover } from '../popover';
+import { Listbox } from '../listbox';
 
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 
@@ -52,19 +51,25 @@ export interface PhoneInputProps
    */
   clearable?: boolean;
   /**
-   * Inline style applied to the WRAPPER (and forwarded to the country
-   * popover panel). CSS custom properties set here cascade to the inner
-   * field, and — because the popover portals out to document.body and so
-   * can't inherit the wrapper cascade — are forwarded onto the popover
-   * panel too, so theming knobs still reach every part. In production the
-   * studio emits popover overrides on the `.uxm-phone-input__popover`
-   * selector directly (see PER_COMPONENT_SELECTOR in generate-css).
+   * Inline style applied to the WRAPPER, and forwarded to the country
+   * picker panel via `panelStyle` (the panel portals to document.body, so
+   * it can't inherit the wrapper cascade). CSS custom properties set here
+   * reach both the field and the popover.
    */
   style?: React.CSSProperties;
 }
 
 /** Default value for uncontrolled mounts that don't pass `defaultValue`. */
 const EMPTY_VALUE: PhoneValue = { country: 'US', number: '' };
+
+/** Case-insensitive country filter — matches name, dial code, or ISO. */
+function filterCountries(items: PhoneCountry[], query: string): PhoneCountry[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return items;
+  return items.filter(
+    (c) => c.name.toLowerCase().includes(q) || c.dial.includes(q) || c.iso.toLowerCase().includes(q),
+  );
+}
 
 export function PhoneInput({
   value,
@@ -81,26 +86,11 @@ export function PhoneInput({
   const [internal, setInternal] = useState<PhoneValue>(() => defaultValue ?? EMPTY_VALUE);
   const isControlled = value !== undefined;
   const current = isControlled ? value : internal;
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState('');
+  // The field wrapper is the popover anchor: the clickable trigger is the
+  // small country button, but the panel should span the full field width.
   const containerRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
 
   const country = findCountry(current.country, countries) ?? countries[0];
-
-  const closePopover = useCallback(() => {
-    setIsOpen(false);
-    setSearch('');
-  }, []);
-
-  // Dismissal (outside-click + Escape), portal mounting, positioning, and
-  // opening focus are all owned by the shared `Popover` primitive in the
-  // JSX below — the country list portals to document.body so an ancestor's
-  // `overflow: hidden` can't clip it, and `initialFocus={searchRef}` focuses
-  // the search box on open so the user can filter immediately. The `anchor`
-  // is the OUTER wrapper (`containerRef`) so clicks on the trigger toggle via
-  // its own handler rather than being treated as an outside click.
 
   const commit = useCallback(
     (next: PhoneValue) => {
@@ -130,9 +120,8 @@ export function PhoneInput({
       const cap = maxDigitsFor(next);
       const trimmed = current.number.length > cap ? current.number.slice(0, cap) : current.number;
       commit({ country: iso, number: trimmed });
-      closePopover();
     },
-    [countries, current.number, commit, closePopover],
+    [countries, current.number, commit],
   );
 
   // Clear owns its own reset: wipe the national number but KEEP the selected
@@ -144,31 +133,6 @@ export function PhoneInput({
   }, [commit, current.country]);
   const showClear = clearable && current.number.length > 0 && !disabled;
 
-  // Filter the country list by search query. Match against both the
-  // country name (case-insensitive) and the dial code so a user typing
-  // "+44" or "United" lands on the right entry quickly.
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return countries;
-    return countries.filter(
-      (c) => c.name.toLowerCase().includes(q) || c.dial.includes(q) || c.iso.toLowerCase().includes(q),
-    );
-  }, [countries, search]);
-
-  // Roving tabindex across the country list — ARIA listbox pattern: only
-  // one option is a Tab stop; ArrowUp/Down move the highlight. Enter/Space
-  // and Escape are already covered for free — the options are real
-  // <button>s (native Enter/Space activation) and Escape is wired above
-  // (closes the whole popover, same as an outside click).
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const safeHighlightedIndex = Math.min(highlightedIndex, filtered.length - 1);
-  const { getItemRef, onItemKeyDown } = useRovingTabIndex({
-    count: filtered.length,
-    activeIndex: safeHighlightedIndex,
-    orientation: 'vertical',
-    onNavigate: setHighlightedIndex,
-  });
-
   const masked = maskNumber(current.number, country);
 
   return (
@@ -177,21 +141,55 @@ export function PhoneInput({
       style={style}
       ref={containerRef}
     >
-      <button
-        type="button"
-        className="uxm-phone-input__country"
-        onClick={() => (isOpen ? closePopover() : setIsOpen(true))}
+      {/* Country picker — the shared Listbox owns the popover (positioning,
+          portal, dismiss, keyboard nav, search, ARIA). `anchorRef` points at
+          the field wrapper so the panel spans the full width; `showCheckmark`
+          is off because each row already carries the dial code on its right
+          edge. */}
+      <Listbox<PhoneCountry>
+        items={countries}
+        getKey={(c) => c.iso}
+        getLabel={(c) => c.name}
+        filterItems={filterCountries}
+        value={country}
+        onChange={(next) => next && handleCountryPick(next.iso)}
         disabled={disabled}
-        aria-label={`Country: ${country.name}`}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-      >
-        <span className="uxm-phone-input__flag" aria-hidden="true">{country.flag}</span>
-        <span className="uxm-phone-input__dial">{country.dial}</span>
-        <span className="uxm-phone-input__caret" aria-hidden="true">
-          <Icon glyph="chevron-down" size={12} strokeWidth={2.2} />
-        </span>
-      </button>
+        anchorRef={containerRef}
+        placement="bottom-start"
+        searchPlaceholder="Search countries"
+        searchAriaLabel="Search countries"
+        showCheckmark={false}
+        panelClassName="uxm-phone-input__panel"
+        panelStyle={style}
+        className="uxm-phone-input__picker"
+        aria-label="Choose country"
+        renderTrigger={({ open, triggerProps }) => (
+          <button
+            {...triggerProps}
+            type="button"
+            className="uxm-phone-input__country"
+            aria-label={`Country: ${country.name}`}
+          >
+            <span className="uxm-phone-input__flag" aria-hidden="true">{country.flag}</span>
+            <span className="uxm-phone-input__dial">{country.dial}</span>
+            <span className="uxm-phone-input__caret" aria-hidden="true">
+              <Icon
+                glyph="chevron-down"
+                size={12}
+                strokeWidth={2.2}
+                style={{ transform: open ? 'rotate(180deg)' : 'none' }}
+              />
+            </span>
+          </button>
+        )}
+        renderItem={(c) => (
+          <>
+            <span className="uxm-phone-input__row-flag" aria-hidden="true">{c.flag}</span>
+            <span className="uxm-phone-input__row-name">{c.name}</span>
+            <span className="uxm-phone-input__row-dial">{c.dial}</span>
+          </>
+        )}
+      />
       <input
         // `type="text"` (not `tel`) is deliberate: `type="tel"` triggers
         // Chrome / Safari phone-autofill heuristics that can intercept
@@ -227,60 +225,6 @@ export function PhoneInput({
           <Icon glyph="close" />
         </IconButton>
       )}
-      <Popover
-        open={isOpen}
-        onOpenChange={(open) => {
-          if (!open) closePopover();
-        }}
-        anchor={containerRef}
-        placement="bottom-start"
-        matchAnchorWidth
-        initialFocus={searchRef}
-        className="uxm-phone-input__popover"
-        style={style}
-        aria-label="Choose country"
-      >
-        <div className="uxm-phone-input__search">
-            <Icon glyph="search" size={14} strokeWidth={2} />
-            <input
-              ref={searchRef}
-              type="text"
-              autoComplete="off"
-              className="uxm-phone-input__search-input"
-              placeholder="Search countries"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              aria-label="Search countries"
-            />
-          </div>
-          <ul className="uxm-phone-input__list" role="listbox">
-            {filtered.length === 0 ? (
-              <li className="uxm-phone-input__empty">No countries match.</li>
-            ) : (
-              filtered.map((c, i) => (
-                <li key={c.iso}>
-                  <button
-                    type="button"
-                    role="option"
-                    ref={getItemRef(i)}
-                    tabIndex={i === safeHighlightedIndex ? 0 : -1}
-                    className={cn(
-                      'uxm-phone-input__row',
-                      c.iso === current.country && 'uxm-phone-input__row--selected',
-                    )}
-                    onClick={() => handleCountryPick(c.iso)}
-                    onKeyDown={(e) => onItemKeyDown(e, i)}
-                    aria-selected={c.iso === current.country}
-                  >
-                    <span className="uxm-phone-input__row-flag" aria-hidden="true">{c.flag}</span>
-                    <span className="uxm-phone-input__row-name">{c.name}</span>
-                    <span className="uxm-phone-input__row-dial">{c.dial}</span>
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
-      </Popover>
     </div>
   );
 }
