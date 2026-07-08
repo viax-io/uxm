@@ -144,81 +144,18 @@
   transform: translateY(-50%);
 }
 
-/* Country popover — searchable scrollable list. Rendered through the shared
-   `Popover` primitive, which portals it to document.body and owns
-   positioning (position: fixed, placement, matchAnchorWidth) so an ancestor's
-   `overflow: hidden` can't clip it. This block contributes visual chrome
-   only. Drop-shadow follows the rounded outline. */
-.uxm-phone-input__popover {
-  background-color: var(--uxm-phone-input-popover-bg, var(--color-card));
-  border: 1px solid var(--uxm-phone-input-popover-border, var(--color-border));
-  border-radius: var(--uxm-phone-input-popover-radius, 8px);
-  box-shadow: var(--shadow-xl);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  max-height: 320px;
+/* The country picker is a shared <Listbox>, which wraps its trigger in a
+   `.uxm-listbox` element. `display: contents` dissolves that wrapper so the
+   `__country` button stays a direct flex child of the field (keeping the
+   divider + seamless country|number layout). The panel is portaled, so it's
+   unaffected. */
+.uxm-phone-input__picker {
+  display: contents;
 }
-.uxm-phone-input__search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--uxm-phone-input-popover-border, var(--color-border));
-  color: var(--color-text-muted);
-}
-.uxm-phone-input__search-input {
-  flex: 1;
-  min-width: 0;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--uxm-phone-input-color, var(--color-text));
-  font-family: inherit;
-  font-size: 13px;
-}
-.uxm-phone-input__search-input::placeholder {
-  color: var(--color-text-muted);
-}
-.uxm-phone-input__list {
-  list-style: none;
-  margin: 0;
-  padding: 4px 0;
-  overflow-y: auto;
-  flex: 1;
-}
-.uxm-phone-input__empty {
-  padding: 12px;
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: 13px;
-}
-.uxm-phone-input__row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 8px 12px;
-  background: transparent;
-  border: none;
-  font-family: inherit;
-  font-size: 13px;
-  color: var(--uxm-phone-input-color, var(--color-text));
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.1s, color 0.1s;
-}
-.uxm-phone-input__row:hover {
-  background-color: var(--uxm-phone-input-popover-row-hover-bg, var(--color-surface-alt));
-}
-.uxm-phone-input__row--selected {
-  background-color: var(--uxm-phone-input-popover-row-selected-bg, var(--color-accent));
-  color: var(--uxm-phone-input-popover-row-selected-color, var(--color-text-inverse));
-  font-weight: 600;
-}
-.uxm-phone-input__row--selected:hover {
-  background-color: var(--uxm-phone-input-popover-row-selected-bg, var(--color-accent));
-}
+
+/* Country-row parts, rendered inside the shared `.uxm-listbox__option` (which
+   provides the flex row, padding, and hover/selected states). These just size
+   the flag, let the name flex, and push the dial code to the trailing edge. */
 .uxm-phone-input__row-flag {
   font-size: 1.1em;
   line-height: 1;
@@ -235,8 +172,4 @@
   flex-shrink: 0;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
-}
-.uxm-phone-input__row--selected .uxm-phone-input__row-dial {
-  color: inherit;
-  opacity: 0.85;
 }

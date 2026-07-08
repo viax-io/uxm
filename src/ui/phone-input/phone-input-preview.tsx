@@ -10,10 +10,9 @@ type Styles = PreviewProps['styles'];
  * Project every state knob as a `--uxm-phone-input-*` custom prop and hand
  * the bag to `PhoneInput` as its `style`. The wrapper IS the visible surface
  * here (border + bg live on `.uxm-phone-input` itself), unlike
- * date/time/password which put those on the inner input. The country popover
- * portals out to document.body, so it can't inherit the wrapper cascade —
- * PhoneInput forwards this same `style` onto the popover panel, keeping the
- * popover + country-button knobs live in the preview.
+ * date/time/password which put those on the inner input. The country picker
+ * is the shared Listbox panel — its chrome is themed via the `listbox`
+ * registry entry, not phone-input vars, so there are no popover knobs here.
  */
 function buildVars(styles: Styles): CSSProperties {
   return {
@@ -39,12 +38,6 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-phone-input-error-bg': styles.errorBg as string,
     '--uxm-phone-input-error-border': styles.errorBorder as string,
     '--uxm-phone-input-error-color': styles.errorColor as string,
-    '--uxm-phone-input-popover-bg': styles.popoverBg as string,
-    '--uxm-phone-input-popover-border': styles.popoverBorder as string,
-    '--uxm-phone-input-popover-radius': `${styles.popoverRadius}px`,
-    '--uxm-phone-input-popover-row-hover-bg': styles.popoverRowHoverBg as string,
-    '--uxm-phone-input-popover-row-selected-bg': styles.popoverRowSelectedBg as string,
-    '--uxm-phone-input-popover-row-selected-color': styles.popoverRowSelectedColor as string,
   } as CSSProperties;
 }
 
