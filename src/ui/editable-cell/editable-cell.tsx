@@ -42,6 +42,18 @@ function toISODate(d: Date): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
+/**
+ * Committed dates are stored ISO (`YYYY-MM-DD`); the input and display show
+ * the cell's `dateFormat` mask. Convert ISO → mask so `dmy`/`mdy` cells read
+ * and edit in their own shape. Values that aren't ISO (e.g. a consumer's
+ * already-formatted seed) pass through untouched.
+ */
+function isoToFormatted(value: EditableCellValue, format: DateInputFormat): string {
+  if (typeof value !== 'string' || !value) return '';
+  const d = parseISODate(value);
+  return d ? formatDateAs(d, format) : value;
+}
+
 export interface EditableCellOption {
   value: string;
   label: string;
@@ -141,13 +153,7 @@ export function EditableCell({
 }: EditableCellProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<string>(() => {
-    if (type === 'date') {
-      if (typeof value === 'string' && value) {
-        // If the value is already a formatted date string, use as-is.
-        return value;
-      }
-      return '';
-    }
+    if (type === 'date') return isoToFormatted(value, dateFormat);
     if (Array.isArray(value)) return '';
     return String(value ?? '');
   });
@@ -166,13 +172,13 @@ export function EditableCell({
     if (!isEditing) {
       const next = Array.isArray(value)
         ? ''
-        : type === 'date' && typeof value === 'string'
-          ? value
+        : type === 'date'
+          ? isoToFormatted(value, dateFormat)
           : String(value ?? '');
       // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional external-value → draft sync, gated to non-editing mode
       setDraft(next);
     }
-  }, [value, isEditing, type]);
+  }, [value, isEditing, type, dateFormat]);
 
   // Focus + select-all when entering edit mode. Select-all means typing
   // immediately replaces the value — the most common edit intent — while
@@ -183,6 +189,17 @@ export function EditableCell({
       inputRef.current.select();
     }
   }, [isEditing]);
+
+  // A surfaced problem and the date calendar can't share the anchor, so the
+  // calendar is hidden while an error shows. Close it outright (not just via
+  // the render gate) so clearing the error later — e.g. the next keystroke's
+  // `setError(null)` — doesn't silently reopen a calendar the user dismissed.
+  useEffect(() => {
+    if (error && type === 'date') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- close the calendar exactly when a date error appears, so it can't auto-reopen on clear
+      setOpen(false);
+    }
+  }, [error, type]);
 
   const parseDraft = useCallback((): EditableCellValue => {
     // `Number('')` is 0, not NaN — map an empty/whitespace draft to NaN so
@@ -292,14 +309,14 @@ export function EditableCell({
     if (Array.isArray(value)) {
       setDraft('');
     } else if (type === 'date') {
-      setDraft(typeof value === 'string' ? value : '');
+      setDraft(isoToFormatted(value, dateFormat));
     } else {
       setDraft(String(value ?? ''));
     }
     setIsEditing(false);
     setOpen(false);
     setError(null);
-  }, [value, type]);
+  }, [value, type, dateFormat]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -376,7 +393,7 @@ export function EditableCell({
       : isSelect
         ? (options?.find((o) => o.value === String(value))?.label ?? String(value))
         : isDate
-          ? String(value)
+          ? isoToFormatted(value, dateFormat) || String(value)
           : String(value);
 
   // For select/multiselect in open state, we render a Listbox-driven UI
@@ -557,10 +574,15 @@ export function EditableCell({
     );
   }
 
-  // Date type — display with calendar popover
+  // Date type — click-to-edit like text/number, but the editing surface is a
+  // DateInput-style masked field: type the date OR pick it from the calendar
+  // that opens on focus. Committed values are ISO; the input shows the mask.
   if (type === 'date') {
+    // Committed dates are ISO — parse that first so the calendar highlights the
+    // right day for every `dateFormat` (an ISO string doesn't parse under a
+    // dmy/mdy mask). Fall back to the mask parser for a formatted seed value.
     const parsedDate = typeof value === 'string' && value
-      ? parseFormattedDate(value, dateFormat)
+      ? parseISODate(value) ?? parseFormattedDate(value, dateFormat)
       : null;
     const calendarValue: CalendarValue = { start: parsedDate, end: parsedDate };
     const spec = FORMAT_SPEC[dateFormat];
@@ -570,83 +592,53 @@ export function EditableCell({
         ? placeholder ?? ''
         : format
           ? format(value)
-          : value;
+          : isoToFormatted(value, dateFormat) || value;
 
+      // Single button root — same shape as the text/number display so the
+      // value's left edge and padding match the editing input exactly (no
+      // horizontal jump on enter-edit). A wrapper + inner trigger would
+      // double the padding; the display has no popover to anchor, so the
+      // wrapper span is only needed in edit mode (for the calendar/error
+      // popovers).
       return (
-        <span
-          ref={wrapRef}
+        <button
+          type="button"
           className={cn(
             'uxm-editable-cell',
             `uxm-editable-cell--align-${align}`,
             `uxm-editable-cell--type-date`,
             disabled && 'uxm-editable-cell--disabled',
             isEmpty && 'uxm-editable-cell--empty',
-            open && 'uxm-editable-cell--open',
             className,
           )}
           style={style}
+          onClick={() => {
+            if (disabled) return;
+            // Enter edit AND open the calendar in one deterministic step —
+            // mirrors DateInput's "focus reveals the calendar". Opening here
+            // (rather than on the input's onFocus) avoids the focus-after-
+            // remount race: the display button and editing input are
+            // different elements, so the auto-focus that mounts the input
+            // doesn't reliably deliver a focus event the calendar can hook.
+            setIsEditing(true);
+            setOpen(true);
+          }}
+          disabled={disabled}
+          aria-label={ariaLabel ?? `Edit date ${isoToFormatted(value, dateFormat) || String(value ?? '')}`}
         >
-          <button
-            type="button"
-            className="uxm-editable-cell__date-trigger"
-            onClick={() => {
-              if (!disabled) setOpen((o) => !o);
-            }}
-            disabled={disabled}
-            aria-label={ariaLabel ?? `Edit date ${String(value ?? '')}`}
-            aria-expanded={open}
-          >
-            <HoverTooltip content={titleText} disabled={disabled}>
-              <span className="uxm-editable-cell__value">{displayNode}</span>
-            </HoverTooltip>
-            {!disabled && (
-              <span className="uxm-editable-cell__pencil" aria-hidden="true">
-                <Icon glyph="calendar" size={14} />
-              </span>
-            )}
-          </button>
-          <Popover
-            open={open}
-            onOpenChange={setOpen}
-            anchor={wrapRef}
-            placement="bottom-start"
-            closeOnEscape
-            closeOnOutsideClick
-            restoreFocus={false}
-            role="dialog"
-          >
-            <Calendar
-              value={calendarValue}
-              onChange={handlePick}
-            />
-          </Popover>
-          <Popover
-            open={Boolean(shownError)}
-            onOpenChange={(next) => {
-              if (!next) setError(null);
-            }}
-            anchor={wrapRef}
-            placement="bottom-start"
-            closeOnEscape={false}
-            closeOnOutsideClick={false}
-            restoreFocus={false}
-            role="presentation"
-          >
-            {shownError && (
-              <Banner
-                variant={shownError.severity}
-                id="uxm-editable-cell__error"
-                className="uxm-editable-cell__error-banner"
-              >
-                {shownError.message}
-              </Banner>
-            )}
-          </Popover>
-        </span>
+          <HoverTooltip content={titleText} disabled={disabled}>
+            <span className="uxm-editable-cell__value">{displayNode}</span>
+          </HoverTooltip>
+          {!disabled && (
+            <span className="uxm-editable-cell__pencil" aria-hidden="true">
+              <Icon glyph="calendar" size={14} />
+            </span>
+          )}
+        </button>
       );
     }
 
-    // Date editing — text input with mask
+    // Date editing — DateInput-style masked input plus a calendar popover.
     return (
       <span
         ref={wrapRef}
@@ -685,6 +677,42 @@ export function EditableCell({
           aria-invalid={Boolean(shownError)}
           aria-describedby={shownError ? 'uxm-editable-cell__error' : undefined}
         />
+        <button
+          type="button"
+          className="uxm-editable-cell__date-icon"
+          // preventDefault keeps focus on the input — toggling the calendar
+          // must not blur the field (a blur commits the in-flight draft).
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {
+            if (!submitting) setOpen((o) => !o);
+          }}
+          disabled={submitting}
+          aria-label="Open calendar"
+          // Match the popover's effective visibility (hidden while an error
+          // shows) rather than raw `open`, so the two never disagree.
+          aria-expanded={open && !shownError}
+        >
+          <Icon glyph="calendar" size={14} />
+        </button>
+        <Popover
+          open={open && !shownError}
+          onOpenChange={setOpen}
+          anchor={wrapRef}
+          placement="bottom-start"
+          closeOnEscape
+          closeOnOutsideClick
+          restoreFocus={false}
+          role="dialog"
+        >
+          {/* Swallow mousedown so a calendar click never blurs the input:
+              the pick commits explicitly via handlePick, and a blur-commit of
+              the typed draft would race it. Purely focus management — the
+              wrapper carries no semantics, so it stays a plain element. */}
+          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- focus-retention only; the interactive controls are the Calendar's own buttons */}
+          <div onMouseDown={(e) => e.preventDefault()}>
+            <Calendar value={calendarValue} onChange={handlePick} />
+          </div>
+        </Popover>
         <Popover
           open={Boolean(shownError)}
           onOpenChange={(next) => {
