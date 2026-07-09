@@ -5,7 +5,7 @@ import { Chip, type ChipMode } from '@/ui';
 import { Icon } from '@/ui';
 
 function PlusIcon() {
-  return <Icon glyph="plus" size={16} strokeWidth={2} aria-hidden />
+  return <Icon glyph="plus" size={16} strokeWidth={2} aria-hidden />;
 }
 
 /**

@@ -14,7 +14,7 @@ const SAMPLE_LABEL: Record<TagType, string> = {
 };
 
 function CheckIcon() {
-  return <Icon glyph="check" size={16} strokeWidth={2.5} aria-hidden />
+  return <Icon glyph="check" size={16} strokeWidth={2.5} aria-hidden />;
 }
 
 /**
