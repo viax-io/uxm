@@ -53,6 +53,8 @@ export default tseslint.config(
       'no-var': 'error',
       'prefer-const': 'error',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+      // Semicolons required at the end of every statement.
+      semi: ['error', 'always'],
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',
