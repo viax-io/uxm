@@ -1,3 +1,10 @@
+# [3.1.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.0.2...v3.1.0) (2026-07-13)
+
+
+### Features
+
+* **studio:** remove Quick Save — Publish is the single save path ([3e62ba3](https://gitlab.viax.tech/services-viax/uxm/commit/3e62ba36874f0690d7fe19b7b14ad571e8311780))
+
 ## [3.0.2](https://gitlab.viax.tech/services-viax/uxm/compare/v3.0.1...v3.0.2) (2026-07-08)
 
 
