@@ -130,7 +130,10 @@ export const inputsDefs: ComponentDef[] = [
           { value: 'hover', label: 'Hover' },
           { value: 'focus', label: 'Focus' },
           { value: 'disabled', label: 'Disabled' },
-          { value: 'editing', label: 'Editing' },
+          // Editing is an input-only state — pickers (select/multiselect) have
+          // no text-edit mode, so the knob is hidden for them (a stale
+          // `editing` selection auto-repairs to Default on type switch).
+          { value: 'editing', label: 'Editing', showWhen: { type: ['text', 'number', 'date'] } },
           { value: 'warning', label: 'Warning' },
           { value: 'error', label: 'Error' },
         ],
