@@ -98,21 +98,28 @@
    opposite side gains room — so display→edit causes no text shift. The
    editing branch is excluded; the input fills the cell with its own
    padding. */
-.uxm-editable-cell:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--align-right) {
+.uxm-editable-cell:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--align-right):not(.uxm-editable-cell--type-select):not(.uxm-editable-cell--type-multiselect) {
   /* 20px = the fixed 16px pencil glyph + 4px breathing room. */
   padding-inline-end: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
 }
-.uxm-editable-cell--align-right:not(.uxm-editable-cell--editing) {
+.uxm-editable-cell--align-right:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--type-select):not(.uxm-editable-cell--type-multiselect) {
   padding-inline-start: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
 }
 /* Date cells reserve the ISO editing width up front. */
 .uxm-editable-cell--type-date:not(.uxm-editable-cell--editing) {
   min-width: calc(10ch + (2 * var(--uxm-editable-cell-padding-x, 6px)) + 20px);
 }
-/* Picker cells are pick-only */
+/* Pick cells (select/multiselect) delegate the padded, bordered, chevron-
+   gutter surface to their inner `__select-trigger` button — the wrapper span
+   is only a positioning context for the Listbox + error popover. Strip the
+   wrapper's own box (it's excluded from the gutter rules above too) so the
+   value aligns at the same inset as text/number/date cells instead of sitting
+   double-indented, and so hover/focus tints paint on the trigger alone. */
 .uxm-editable-cell--type-select,
 .uxm-editable-cell--type-multiselect {
   cursor: pointer;
+  padding: 0;
+  border: none;
 }
 /* Chevron affordance for select */
 .uxm-editable-cell__chevron {
