@@ -260,7 +260,18 @@ export function EditableCell({
     // failure; pass `validate` to make the date required.
     if (type === 'date') {
       const raw = String(next).trim();
+      // Current committed value is ISO; used to skip a no-op commit on
+      // blur/click-away with no change (mirrors the text/number guard below).
+      // Since click now always enters edit mode for dates, opening a cell and
+      // clicking away must NOT fire the consumer's onCommit.
+      const current = typeof value === 'string' ? value : '';
       if (raw === '') {
+        if (current === '') {
+          setIsEditing(false);
+          setOpen(false);
+          setError(null);
+          return;
+        }
         await commitValue('');
         return;
       }
@@ -272,7 +283,14 @@ export function EditableCell({
         });
         return;
       }
-      await commitValue(toISODate(parsed));
+      const iso = toISODate(parsed);
+      if (iso === current) {
+        setIsEditing(false);
+        setOpen(false);
+        setError(null);
+        return;
+      }
+      await commitValue(iso);
       return;
     }
 
