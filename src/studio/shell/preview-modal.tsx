@@ -780,7 +780,7 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
                 <p style={{ fontSize: 13, color: buildError ? 'var(--color-danger-text)' : 'var(--color-text-muted)', margin: 0 }}>
-                  {buildError ?? 'Publish writes your overrides to components.css'}
+                  {buildError ?? 'Publish saves your changes to the environment'}
                 </p>
                 <ButtonPrimary
                   onClick={handleBuild}

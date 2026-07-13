@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 
 
 import {
@@ -260,15 +260,11 @@ export function Canvas({
   headerActions?: ReactNode;
 }) {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const saveStatusTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { selectedId, getOverrides, getAllOverrides, resetOverrides, brand, getCurrentVariants, pushEvent, persistence, capabilities, theme, setTheme } = useUxm();
+  const { selectedId, getOverrides, resetOverrides, getCurrentVariants, pushEvent, capabilities, theme, setTheme } = useUxm();
   const shell = usePreviewShell();
   const def = getComponentDef(selectedId);
   const overrides = getOverrides(selectedId);
   const currentVariants = getCurrentVariants();
-  const allOverrides = getAllOverrides();
 
   const resolved = useMemo(() => {
     if (!def) return { styles: {}, variants: {} };
@@ -286,34 +282,10 @@ export function Canvas({
     return { styles, variants };
   }, [def, overrides, currentVariants]);
 
-  const handleSave = useCallback(async () => {
-    setSaving(true);
-    setSaveStatus('idle');
-    try {
-      await persistence.save({ overrides: allOverrides, brand });
-      setSaveStatus('success');
-      if (saveStatusTimeout.current) clearTimeout(saveStatusTimeout.current);
-      saveStatusTimeout.current = setTimeout(() => setSaveStatus('idle'), 2000);
-    } catch {
-      setSaveStatus('error');
-      if (saveStatusTimeout.current) clearTimeout(saveStatusTimeout.current);
-      saveStatusTimeout.current = setTimeout(() => setSaveStatus('idle'), 3000);
-    } finally {
-      setSaving(false);
-    }
-  }, [allOverrides, brand, persistence]);
-
-  useEffect(() => {
-    return () => {
-      if (saveStatusTimeout.current) clearTimeout(saveStatusTimeout.current);
-    };
-  }, []);
-
   if (!def) return null;
 
   const Preview = previewMap[def.id];
   const hasOverrides = Object.keys(overrides).length > 0;
-  const hasAnyOverrides = Object.keys(allOverrides).length > 0 || Object.keys(brand).length > 0;
 
   return (
     <div className="flex h-full flex-col bg-card">
@@ -344,26 +316,6 @@ export function Canvas({
             <ButtonGhost onClick={() => resetOverrides(selectedId)} title="Reset overrides">
               <Icon glyph="refresh" size={14} />
               <span className="hidden @[480px]:inline">Reset</span>
-            </ButtonGhost>
-          )}
-          {capabilities.persist && hasAnyOverrides && (
-            <ButtonGhost onClick={handleSave} disabled={saving} title="Quick Save">
-              {saveStatus === 'success' ? (
-                <>
-                  <Icon glyph="check" size={14} />
-                  <span className="hidden @[480px]:inline">Saved</span>
-                </>
-              ) : saveStatus === 'error' ? (
-                <>
-                  <Icon glyph="info" size={14} />
-                  <span className="hidden @[480px]:inline">Error</span>
-                </>
-              ) : (
-                <>
-                  <Icon glyph="save" size={14} />
-                  <span className="hidden @[480px]:inline">{saving ? 'Saving…' : 'Quick Save'}</span>
-                </>
-              )}
             </ButtonGhost>
           )}
           {/* Light/dark toggle — only in the standalone portal (the studio
