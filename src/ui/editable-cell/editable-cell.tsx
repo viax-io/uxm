@@ -641,7 +641,10 @@ export function EditableCell({
 
     if (!editing) {
       const displayNode = isEmpty
-        ? placeholder ?? ''
+        // Fall back to the format hint (MM/DD/YYYY etc.) so an empty date cell
+        // shows the mask as a placeholder — same as the shared `display` and
+        // the edit-mode input, rather than rendering blank.
+        ? placeholder ?? dateHint
         : format
           ? format(value)
           : displayFormatted || value;
@@ -676,7 +679,9 @@ export function EditableCell({
             setOpen(true);
           }}
           disabled={disabled}
-          aria-label={ariaLabel ?? `Edit date ${displayFormatted || String(value ?? '')}`}
+          // Empty cell has no value to edit — "Add date" reads better than the
+          // trailing-space "Edit date " and signals the fill affordance.
+          aria-label={ariaLabel ?? (isEmpty ? 'Add date' : `Edit date ${displayFormatted || String(value)}`)}
         >
           <HoverTooltip content={titleText} disabled={disabled}>
             <span className="uxm-editable-cell__value">{displayNode}</span>
