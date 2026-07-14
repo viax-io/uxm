@@ -326,6 +326,12 @@ export function EditableCell({
 
     // No-op when value didn't change — exit edit mode without firing
     // the consumer's handler (avoids spurious "save" calls on blur).
+    // NOTE: unlike the date path in `commitDate` (which re-runs `validate`
+    // on an unchanged value so a required / row-dependent rule still
+    // surfaces on blur), text/number intentionally skip `validate` here.
+    // These cells have no cross-row validity story today, so an unchanged
+    // blur is treated as a pure exit; keep the two paths in sync if that
+    // assumption ever changes.
     const valueStr = Array.isArray(value) ? '' : String(value ?? '');
     if (String(next) === valueStr) {
       setIsEditing(false);
@@ -755,6 +761,12 @@ export function EditableCell({
           closeOnOutsideClick
           restoreFocus={false}
           role="dialog"
+          // A `role="dialog"` needs an accessible name. Non-modal by design
+          // (no `aria-modal`): focus deliberately stays in the typed input
+          // — `restoreFocus={false}` and the mousedown-preventDefault above
+          // keep the field focused so the calendar augments typing rather
+          // than trapping focus like a true modal.
+          aria-label="Choose date"
         >
           {/* Swallow mousedown so a calendar click never blurs the input:
               the pick commits explicitly via handlePick, and a blur-commit of
