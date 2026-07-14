@@ -367,7 +367,9 @@ export function PropertiesPanel({
                         vKey,
                         def.layoutVariants.find((v) => v.key === vKey)?.defaultValue ?? '',
                       ) as string;
-                      if (current !== vVal) return false;
+                      // A string[] means "match any of"; a string is exact.
+                      const allowed = Array.isArray(vVal) ? vVal : [vVal];
+                      if (!allowed.includes(current)) return false;
                     }
                     return true;
                   });

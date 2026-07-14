@@ -38,7 +38,10 @@ export interface LayoutVariant {
   options: Array<{
     value: string;
     label: string;
-    showWhen?: Record<string, string>;
+    /** Per-option scoping. A string matches one variant value; a string[]
+     *  matches any of several (e.g. show `editing` only for the input-like
+     *  types `['text','number','date']`, hiding it for the pickers). */
+    showWhen?: Record<string, string | string[]>;
   }>;
   defaultValue: string;
   /** Variant-level scoping — same shape as styleProperties.showWhen. The
