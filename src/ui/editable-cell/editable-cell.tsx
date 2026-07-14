@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -33,14 +34,19 @@ export type EditableCellValue = string | number | string[];
 function parseISODate(s: string): Date | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
   if (!m) return null;
-  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-  return Number.isNaN(d.getTime()) ? null : d;
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const day = Number(m[3]);
+  const d = new Date(y, mo - 1, day);
+  // Reject regex-valid but out-of-range dates: `new Date(2024, 1, 30)` silently
+  // rolls over to Mar 1 rather than producing NaN, which would later read as a
+  // value change and trigger an unprompted rewrite. Require a clean round-trip.
+  if (d.getFullYear() !== y || d.getMonth() !== mo - 1 || d.getDate() !== day) return null;
+  return d;
 }
 
-function toISODate(d: Date): string {
-  const p = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-}
+/** Serialize a Date to ISO (`YYYY-MM-DD`) — reuses the shared `ymd` formatter. */
+const toISODate = (d: Date): string => formatDateAs(d, 'ymd');
 
 /**
  * Committed dates are stored ISO (`YYYY-MM-DD`); the input and display show
@@ -165,6 +171,22 @@ export function EditableCell({
   // under the cell without affecting the table row's layout.
   const wrapRef = useRef<HTMLSpanElement | null>(null);
 
+  // Committed date as a Date and in the cell's mask, memoized so the display,
+  // tooltip, aria-label, calendar highlight, draft sync, and cancel-reset all
+  // share one parse/format instead of each re-running it. Cheap `null`/`''`
+  // no-ops for non-date types. Declared before the effects so they can reuse it.
+  const parsedValue = useMemo(
+    () =>
+      type === 'date' && typeof value === 'string' && value
+        ? parseISODate(value) ?? parseFormattedDate(value, dateFormat)
+        : null,
+    [type, value, dateFormat],
+  );
+  const displayFormatted = useMemo(
+    () => (type === 'date' ? isoToFormatted(value, dateFormat) : ''),
+    [type, value, dateFormat],
+  );
+
   // When the externally-committed value changes (parent state updated, or
   // someone else edited the row), sync the draft — but only when we're
   // NOT mid-edit. Mid-edit syncs would clobber what the user is typing.
@@ -173,12 +195,12 @@ export function EditableCell({
       const next = Array.isArray(value)
         ? ''
         : type === 'date'
-          ? isoToFormatted(value, dateFormat)
+          ? displayFormatted
           : String(value ?? '');
       // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional external-value → draft sync, gated to non-editing mode
       setDraft(next);
     }
-  }, [value, isEditing, type, dateFormat]);
+  }, [value, isEditing, type, displayFormatted]);
 
   // Focus + select-all when entering edit mode. Select-all means typing
   // immediately replaces the value — the most common edit intent — while
@@ -241,6 +263,32 @@ export function EditableCell({
     [validate, onCommit],
   );
 
+  // Shared commit path for both the typed input (handleCommit) and the calendar
+  // (handlePick). Guards a re-entrant commit while one is in flight, and skips
+  // the consumer's onCommit when nothing changed — comparing normalized ISO on
+  // BOTH sides so a formatted seed (or a re-picked day) isn't mistaken for a
+  // change — while still running `validate` on the no-op so a required /
+  // row-dependent rule still surfaces.
+  const commitDate = useCallback(
+    async (iso: string) => {
+      if (submitting) return;
+      const currentIso = parsedValue ? toISODate(parsedValue) : '';
+      if (iso === currentIso) {
+        const validationError = validate?.(iso);
+        if (validationError) {
+          setError({ message: validationError, severity: 'warning' });
+          return;
+        }
+        setIsEditing(false);
+        setOpen(false);
+        setError(null);
+        return;
+      }
+      await commitValue(iso);
+    },
+    [submitting, parsedValue, validate, commitValue],
+  );
+
   const handleCommit = useCallback(async () => {
     const next = parseDraft();
 
@@ -253,26 +301,15 @@ export function EditableCell({
       return;
     }
 
-    // Typed dates parse at the boundary too: per the cell's `dateFormat`
-    // mask first, with canonical ISO always accepted. Whatever parses is
-    // committed normalized to ISO. An emptied draft clears the date
-    // (commits "") — same semantics as the text type, not a validation
-    // failure; pass `validate` to make the date required.
+    // Typed dates parse at the boundary: per the cell's `dateFormat` mask
+    // first, canonical ISO as fallback. An emptied draft clears the date
+    // (commits ""). Unchanged-value / submitting / validation handling all
+    // live in the shared `commitDate` so typing and calendar picking behave
+    // identically.
     if (type === 'date') {
       const raw = String(next).trim();
-      // Current committed value is ISO; used to skip a no-op commit on
-      // blur/click-away with no change (mirrors the text/number guard below).
-      // Since click now always enters edit mode for dates, opening a cell and
-      // clicking away must NOT fire the consumer's onCommit.
-      const current = typeof value === 'string' ? value : '';
       if (raw === '') {
-        if (current === '') {
-          setIsEditing(false);
-          setOpen(false);
-          setError(null);
-          return;
-        }
-        await commitValue('');
+        await commitDate('');
         return;
       }
       const parsed = parseFormattedDate(raw, dateFormat) ?? parseISODate(raw);
@@ -283,14 +320,7 @@ export function EditableCell({
         });
         return;
       }
-      const iso = toISODate(parsed);
-      if (iso === current) {
-        setIsEditing(false);
-        setOpen(false);
-        setError(null);
-        return;
-      }
-      await commitValue(iso);
+      await commitDate(toISODate(parsed));
       return;
     }
 
@@ -304,7 +334,7 @@ export function EditableCell({
     }
 
     await commitValue(next);
-  }, [parseDraft, type, dateFormat, value, commitValue]);
+  }, [parseDraft, type, dateFormat, value, commitValue, commitDate]);
 
   const handleMultiChange = useCallback(
     async (items: EditableCellOption[]) => {
@@ -316,25 +346,27 @@ export function EditableCell({
 
   const handlePick = useCallback(
     async (calValue: CalendarValue) => {
-      if (!calValue.start) return;
+      if (!calValue.start || submitting) return;
       setDraft(formatDateAs(calValue.start, dateFormat));
-      await commitValue(toISODate(calValue.start));
+      // Routes through the shared guard: re-picking the already-selected day is
+      // a no-op (no spurious onCommit), and a pick can't fire mid-commit.
+      await commitDate(toISODate(calValue.start));
     },
-    [dateFormat, commitValue],
+    [dateFormat, submitting, commitDate],
   );
 
   const handleCancel = useCallback(() => {
     if (Array.isArray(value)) {
       setDraft('');
     } else if (type === 'date') {
-      setDraft(isoToFormatted(value, dateFormat));
+      setDraft(displayFormatted);
     } else {
       setDraft(String(value ?? ''));
     }
     setIsEditing(false);
     setOpen(false);
     setError(null);
-  }, [value, type, dateFormat]);
+  }, [value, type, displayFormatted]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -411,7 +443,7 @@ export function EditableCell({
       : isSelect
         ? (options?.find((o) => o.value === String(value))?.label ?? String(value))
         : isDate
-          ? isoToFormatted(value, dateFormat) || String(value)
+          ? displayFormatted || String(value)
           : String(value);
 
   // For select/multiselect in open state, we render a Listbox-driven UI
@@ -596,13 +628,9 @@ export function EditableCell({
   // DateInput-style masked field: type the date OR pick it from the calendar
   // that opens on focus. Committed values are ISO; the input shows the mask.
   if (type === 'date') {
-    // Committed dates are ISO — parse that first so the calendar highlights the
-    // right day for every `dateFormat` (an ISO string doesn't parse under a
-    // dmy/mdy mask). Fall back to the mask parser for a formatted seed value.
-    const parsedDate = typeof value === 'string' && value
-      ? parseISODate(value) ?? parseFormattedDate(value, dateFormat)
-      : null;
-    const calendarValue: CalendarValue = { start: parsedDate, end: parsedDate };
+    // `parsedValue` (memoized above) already parses ISO-first with a mask
+    // fallback, so the calendar highlights the right day for every `dateFormat`.
+    const calendarValue: CalendarValue = { start: parsedValue, end: parsedValue };
     const spec = FORMAT_SPEC[dateFormat];
 
     if (!editing) {
@@ -610,7 +638,7 @@ export function EditableCell({
         ? placeholder ?? ''
         : format
           ? format(value)
-          : isoToFormatted(value, dateFormat) || value;
+          : displayFormatted || value;
 
       // Single button root — same shape as the text/number display so the
       // value's left edge and padding match the editing input exactly (no
@@ -642,7 +670,7 @@ export function EditableCell({
             setOpen(true);
           }}
           disabled={disabled}
-          aria-label={ariaLabel ?? `Edit date ${isoToFormatted(value, dateFormat) || String(value ?? '')}`}
+          aria-label={ariaLabel ?? `Edit date ${displayFormatted || String(value ?? '')}`}
         >
           <HoverTooltip content={titleText} disabled={disabled}>
             <span className="uxm-editable-cell__value">{displayNode}</span>
@@ -702,7 +730,13 @@ export function EditableCell({
           // must not blur the field (a blur commits the in-flight draft).
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => {
-            if (!submitting) setOpen((o) => !o);
+            if (submitting) return;
+            // Clear any shown error as we open, so the calendar and the error
+            // banner (both anchored here) are mutually exclusive — otherwise a
+            // later `setError(null)` from typing would un-hide and reopen the
+            // calendar the user had dismissed.
+            setError(null);
+            setOpen((o) => !o);
           }}
           disabled={submitting}
           aria-label="Open calendar"
