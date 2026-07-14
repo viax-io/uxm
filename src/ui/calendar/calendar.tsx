@@ -15,7 +15,7 @@ export interface CalendarValue {
 type CalendarView = 'day' | 'month' | 'year';
 
 export interface CalendarProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
-  /** Currently-displayed month. Controlled. If omitted, atom owns it (initialized to today's month). */
+  /** Currently-displayed month. Controlled. If omitted, atom owns it (initialized to the selected value's month, else today's). */
   month?: Date;
   /** Selection value. Controlled when passed. `{ start, end: null }` for a single date; `{ start, end }` for a range. */
   value?: CalendarValue;
@@ -133,10 +133,17 @@ export function Calendar({
 }: CalendarProps) {
   const realToday = useMemo(() => today ?? new Date(), [today]);
 
-  // Month state — controlled when `month` prop is provided.
-  const [internalMonth, setInternalMonth] = useState<Date>(
-    () => new Date(realToday.getFullYear(), realToday.getMonth(), 1),
-  );
+  // Month state — controlled when `month` prop is provided. When uncontrolled,
+  // seed from the current selection so opening on an existing date lands on
+  // that date's month, not today's. The popover consumers mount the calendar
+  // fresh per open, so this initial `value` is the selected date; nav then
+  // owns `internalMonth`. Falls back to today's month when nothing's selected.
+  const [internalMonth, setInternalMonth] = useState<Date>(() => {
+    // `end` covers the range-input edge case where only the closing half is
+    // seeded (`{ start: null, end }`); today is the last resort.
+    const seed = value?.start ?? value?.end ?? realToday;
+    return new Date(seed.getFullYear(), seed.getMonth(), 1);
+  });
   const currentMonth = month ?? internalMonth;
 
   // View state — pure UI state, never controlled. Day view by default. Header
