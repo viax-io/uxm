@@ -1,3 +1,15 @@
+## [3.1.1](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.0...v3.1.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* **editable-cell:** address MR review on date commit paths ([684b814](https://gitlab.viax.tech/services-viax/uxm/commit/684b814316f1816491b211c8923f18fdd1e52778))
+* **editable-cell:** align select/multiselect value with other cell types ([48c404d](https://gitlab.viax.tech/services-viax/uxm/commit/48c404d9392d1b3e12d4d57796db05f081d55dca))
+* **editable-cell:** don't commit an unchanged date on blur ([3fc4384](https://gitlab.viax.tech/services-viax/uxm/commit/3fc4384fcce94efc3222b94fe83a0581222c28fe))
+* **editable-cell:** label calendar dialog and document no-op validate asymmetry ([417c22e](https://gitlab.viax.tech/services-viax/uxm/commit/417c22ec0590713bc133d335f0b3ebd1702baa16))
+* **editable-cell:** make date type a typeable DateInput-style field ([bab366e](https://gitlab.viax.tech/services-viax/uxm/commit/bab366e9223e8c90219a09fba9afe9961f41c1ec))
+* **studio:** hide Editing state for picker editable-cells ([087c10f](https://gitlab.viax.tech/services-viax/uxm/commit/087c10fb9be2b52d4f25041aaca2b2ae9560c507))
+
 # [3.1.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.0.2...v3.1.0) (2026-07-13)
 
 
