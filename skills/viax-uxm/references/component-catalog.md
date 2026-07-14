@@ -50,7 +50,7 @@ Import path for all: `import { … } from '@viax/uxm/ui';`
 
 | Component | Key exports | What it is |
 |-----------|-------------|------------|
-| **ButtonPrimary / Secondary / Tertiary / Ghost / Danger** | `ButtonPrimary`, `ButtonSecondary`, `ButtonTertiary`, `ButtonGhost`, `ButtonDanger` | Five button variants on native `<button>`. `type` defaults to `'button'`. **`ButtonDanger`** (2.6.0) is the outlined destructive variant for irreversible actions (Delete/Remove/Discard) — danger token trio, solid danger fill when pressed. From `./button`. |
+| **ButtonPrimary / Secondary / Tertiary / Ghost / Danger** | `ButtonPrimary`, `ButtonSecondary`, `ButtonTertiary`, `ButtonGhost`, `ButtonDanger`, `ButtonProps` | Five button variants on native `<button>`. `type` defaults to `'button'`. **`ButtonDanger`** (2.6.0) is the outlined destructive variant for irreversible actions (Delete/Remove/Discard) — danger token trio, solid danger fill when pressed. From `./button`. |
 | **ButtonGroup** | `ButtonGroup`, `ButtonGroupOption`, `ButtonGroupProps` | Segmented control. Controlled or uncontrolled. |
 | **ButtonIcon** | `ButtonIcon`, `ButtonIconProps` | Square icon button with **required** `aria-label`. |
 | **ButtonWithIcon** | `ButtonWithIcon`, `ButtonWithIconProps` | Bordered button with required `icon` slot + label. |
@@ -135,7 +135,7 @@ directly when no higher-level picker fits; otherwise prefer `Select` / `SearchDr
 | Component | Key exports | What it is |
 |-----------|-------------|------------|
 | **Popover** | `Popover`, `PopoverPlacement`, `PopoverProps` | Portal'd floating panel anchored to a ref: positioning + flip-on-overflow, click-outside, Escape, focus restore. `anchor` (RefObject), `placement` (default `bottom-start`), `matchAnchorWidth` (`boolean \| 'min'` — `'min'` floors at anchor width but grows to content), `minWidth`, `maxWidth`, `closeOnEscape`, `closeOnOutsideClick`, `restoreFocus`, `role`. Controlled via `open` / `onOpenChange`. First-open positioning resolves correctly even when mounted already-open. |
-| **Listbox** | `Listbox`, `ListboxProps`, `ListboxRenderTriggerState`, `ListboxTriggerProps`, `SEARCHABLE_AUTO_THRESHOLD` | Single-select dropdown panel, generic over item shape: keyboard nav (Arrow/Home/End/Enter), ARIA listbox/option roles, ✓ on the selected row. `searchable?: boolean \| 'auto'` (`'auto'` reveals search past `SEARCHABLE_AUTO_THRESHOLD` = 6; default true), `maxPanelWidth` (caps width; long labels truncate). Consumer owns the trigger via `renderTrigger={({ open, triggerProps }) => …}`. Panel theming is the SHARED surface every picker inherits. |
+| **Listbox** | `Listbox`, `ListboxProps`, `ListboxRenderTriggerState`, `ListboxRenderItemState`, `ListboxTriggerProps`, `SEARCHABLE_AUTO_THRESHOLD` | Single-select dropdown panel, generic over item shape: keyboard nav (Arrow/Home/End/Enter), ARIA listbox/option roles, ✓ on the selected row. `searchable?: boolean \| 'auto'` (`'auto'` reveals search past `SEARCHABLE_AUTO_THRESHOLD` = 6; default true), `maxPanelWidth` (caps width; long labels truncate). Consumer owns the trigger via `renderTrigger={({ open, triggerProps }) => …}`. Panel theming is the SHARED surface every picker inherits. |
 | **MultiListbox** | `MultiListbox`, `MultiListboxProps` | Multi-select sibling: `value: T[]`, row checkboxes (`showCheckbox`), optional `excludeSelected` (picked items leave the list). |
 
 ## Configuration editor (MODO-specific)
@@ -157,10 +157,10 @@ positioning and a11y.
 
 | Component | Key exports | What it is |
 |-----------|-------------|------------|
-| **LifecycleConnector** | `LifecycleConnector`, `LifecycleConnectorProps` | SVG edge; idle / active / dashed; auto straight or Bezier. |
-| **LifecycleEdgeLabel** | `LifecycleEdgeLabel`, `LifecycleEdgeLabelProps` | Midpoint pill: `true` / `false` / `neutral`. |
-| **LifecycleMinimap** | `LifecycleMinimap`, `LifecycleMinimapProps` | Birds-eye 0–1 canvas overview + optional viewport overlay. |
-| **LifecycleNodeCard** | `LifecycleNodeCard`, `LifecycleNodeCardProps` | Kind-aware pill (`state` / `condition` / `task`). |
+| **LifecycleConnector** | `LifecycleConnector`, `LifecycleConnectorProps`, `LifecycleConnectorState` | SVG edge; idle / active / dashed; auto straight or Bezier. |
+| **LifecycleEdgeLabel** | `LifecycleEdgeLabel`, `LifecycleEdgeLabelProps`, `LifecycleEdgeLabelVariant` | Midpoint pill: `true` / `false` / `neutral`. |
+| **LifecycleMinimap** | `LifecycleMinimap`, `LifecycleMinimapProps`, `LifecycleMinimapNode`, `LifecycleMinimapViewport` | Birds-eye 0–1 canvas overview + optional viewport overlay. |
+| **LifecycleNodeCard** | `LifecycleNodeCard`, `LifecycleNodeCardProps`, `LifecycleNodeKind` | Kind-aware pill (`state` / `condition` / `task`). |
 | **LifecycleTerminal** | `LifecycleTerminal`, `LifecycleTerminalProps` | Start/End marker pill. |
 | **LifecycleZoomControl** | `LifecycleZoomControl`, `LifecycleZoomControlProps` | `−` / value / `+` cluster. |
 
