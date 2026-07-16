@@ -1,3 +1,10 @@
+## [3.1.2](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.1...v3.1.2) (2026-07-16)
+
+
+### Bug Fixes
+
+* **studio:** apply brand font live and make Typography picker interactive ([bcd0234](https://gitlab.viax.tech/services-viax/uxm/commit/bcd0234a7b4284963ab00748470a2ee9b31d5882))
+
 ## [3.1.1](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.0...v3.1.1) (2026-07-14)
 
 
