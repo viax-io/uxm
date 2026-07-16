@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 
+import { BrandFontStyles } from './brand-font-styles';
 import { BrandTokenStyles } from './brand-token-styles';
 import { FaviconSync } from './favicon-sync';
 import { UxmProvider, useUxm } from './lib/context';
@@ -42,6 +43,7 @@ export function UxmApp({ embed = false, persistence, syncFavicon = false, header
   return (
     <UxmProvider persistence={persistence}>
       <BrandTokenStyles />
+      <BrandFontStyles />
       {syncFavicon && <FaviconSync />}
       {!embed && <ThemeSync />}
       {/* Flex column so the read-only DemoNotice banner takes its own height and

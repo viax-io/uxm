@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { hexToHsl, retintHue } from '@/lib/contrast';
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
-import { ButtonPrimary, ButtonTertiary, ColorInputPopover, Dialog, Modal, Tabs } from '@/ui';
+import { ButtonPrimary, ButtonTertiary, ColorInputPopover, Dialog, Modal, Select, Tabs } from '@/ui';
 
 export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
   { label: 'Inter (default)', value: 'Inter', stack: "'Inter', var(--font-inter), system-ui, sans-serif" },
@@ -245,16 +245,17 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
         description="Primary typeface applied to Modo body text. Google Fonts load automatically after Build."
       >
         <section>
-          <select
+          <Select
             value={fontFamily}
             onChange={(e) => setBrand({ fontFamily: e.target.value || undefined })}
-            style={{ ...inputStyle(), width: '100%' }}
+            aria-label="Primary typeface"
+            style={{ width: '100%' }}
           >
             <option value="">Inter (default)</option>
             {FONT_OPTIONS.slice(1).map((f) => (
               <option key={f.value} value={f.value}>{f.label}</option>
             ))}
-          </select>
+          </Select>
           <p
             style={{
               marginTop: 12, padding: 16,
