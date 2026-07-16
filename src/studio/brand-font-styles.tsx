@@ -18,16 +18,24 @@ import { fontFileUrl, safeFontFamily } from './persistence/generate-css';
  * it to beat the app cascade): a live `<style>` late in `<body>` already
  * wins over the stylesheets, and `!important` would fight the inline
  * monospace font samples the previews set.
+ *
+ * The `<style>` renders even when no font is picked: a host may carry a
+ * previously PUBLISHED font in its own stylesheet (the generated
+ * `components.css` / `#uxm-overrides` sets `--brand-font` + `body` with
+ * `!important`), and reverting to the default live only works by
+ * re-declaring `--brand-font` with the default stack — returning null
+ * would leave the published font in charge until the next Publish.
  */
 export function BrandFontStyles() {
   const { brand } = useUxm();
   const fontFamily = safeFontFamily(brand.fontFamily);
-  if (!fontFamily) return null;
 
   return (
     <>
-      <link rel="stylesheet" precedence="default" href={fontFileUrl(fontFamily)} />
-      <style>{`:root { --brand-font: "${fontFamily}", var(--font-inter), system-ui, sans-serif; }
+      {fontFamily && (
+        <link rel="stylesheet" precedence="default" href={fontFileUrl(fontFamily)} />
+      )}
+      <style>{`:root { --brand-font: ${fontFamily ? `"${fontFamily}", ` : ''}var(--font-inter), system-ui, sans-serif; }
 body { font-family: var(--brand-font); }`}</style>
     </>
   );
