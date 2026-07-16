@@ -1,3 +1,10 @@
+## [3.1.3](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.2...v3.1.3) (2026-07-16)
+
+
+### Bug Fixes
+
+* **studio:** revert brand font live when default is picked over a published font ([a90df4d](https://gitlab.viax.tech/services-viax/uxm/commit/a90df4df66b116de18d67b09f0278b564bef78b7)), closes [#uxm-overrides](https://gitlab.viax.tech/services-viax/uxm/issues/uxm-overrides)
+
 ## [3.1.2](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.1...v3.1.2) (2026-07-16)
 
 
