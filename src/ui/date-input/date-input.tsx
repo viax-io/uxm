@@ -153,6 +153,14 @@ function placeholderFor(format: DateInputFormat, mode: DateInputMode): string {
   return mode === 'range' ? `${single}${RANGE_SEPARATOR}${single}` : single;
 }
 
+/**
+ * Inline-validation message for an unparseable date, naming the expected mask.
+ * Shared with EditableCell's date field so both surface the identical wording.
+ */
+export function invalidDateMessage(format: DateInputFormat): string {
+  return `Enter a valid date (${FORMAT_SPEC[format].placeholder})`;
+}
+
 export function DateInput({
   format = 'mdy',
   mode = 'single',
@@ -319,8 +327,7 @@ export function DateInput({
   // A consumer-supplied `error` wins; otherwise surface the internal
   // invalid-date message. Both drive the same visual: red border,
   // `aria-invalid`, and the message below the field.
-  const shownError =
-    error || (invalid ? `Enter a valid date (${FORMAT_SPEC[format].placeholder})` : undefined);
+  const shownError = error || (invalid ? invalidDateMessage(format) : undefined);
 
   return (
     <>

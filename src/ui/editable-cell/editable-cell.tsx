@@ -16,6 +16,7 @@ import { Calendar, type CalendarValue } from '../calendar';
 import {
   FORMAT_SPEC,
   formatDate as formatDateAs,
+  invalidDateMessage,
   maskDate,
   parseDate as parseFormattedDate,
   type DateInputFormat,
@@ -315,7 +316,7 @@ export function EditableCell({
       const parsed = parseFormattedDate(raw, dateFormat) ?? parseISODate(raw);
       if (!parsed) {
         setError({
-          message: `Enter a valid date (${FORMAT_SPEC[dateFormat].placeholder})`,
+          message: invalidDateMessage(dateFormat),
           severity: 'warning',
         });
         return;
