@@ -40,6 +40,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `placeholder` | `string` | format-derived | Defaults to `"MM/DD/YYYY"` etc., doubled with `" – "` in range mode. |
 | `style` | `CSSProperties` | – | Applied to the **wrapper** (not the inner input) so `--uxm-date-input-*` overrides cascade to the popover too. |
 | `className` | `string` | – | Merged onto the wrapper via `cn`. |
+| `error` | `string` | – | Consumer-supplied error message. When non-empty it renders the error state (red border, `aria-invalid`, message below the field) and **wins over** the component's own inline invalid-date message. Omit (or pass `''`) for the normal state. |
 
 ### `DateInputFormat`
 
@@ -102,11 +103,31 @@ Set these on the wrapper (via `style` or a higher scope) — because `style` is 
 | Hover | `:hover` on input, or `--state-hover` wrapper modifier | Border switches to accent. |
 | Focus | `:focus` on input, or `--state-focus` wrapper modifier | Accent border + 2px accent outline (offset 2px). |
 | Disabled | `disabled` attribute | Surface-alt background, muted text, `not-allowed` cursor, dimmed opacity. |
-| Error | `--error` modifier on wrapper | Danger border on input; icon re-tints to danger. |
+| Error | `--error` modifier on wrapper (driven by the `error` prop **or** the internal invalid-date state — see Validation) | Danger border on input; icon re-tints to danger; message rendered below via `FieldError`. |
 | Typing-only | `calendar={false}` | Icon button and popover are not rendered. |
 | Clearable | `clearable` (default) + non-empty value, non-disabled | Trailing ✕ (`.uxm-field-clear`, 22×22) sits just left of the calendar icon (or at the edge when `calendar={false}`); clears the value. |
 | Popover open | Icon click toggles `isOpen` | Calendar appears 4px below input, with a `drop-shadow` filter; `aria-expanded` flips on the icon button. |
 | Range mode | `mode="range"` | Input is read-only; placeholder doubles; popover stays open after the first click and closes only when `value.end` commits. |
+
+## Validation
+
+In `single` mode the field validates typed input itself:
+
+- **Empty is always valid** — no error while the field is blank.
+- **On blur**, a non-empty value that doesn't parse to a real date flips into
+  the error state and shows `Enter a valid date (<mask>)` below the field. This
+  covers both out-of-range input (`06/36/2024`) and impossible dates that JS
+  `Date` would otherwise silently roll over — `parseDate` round-trips the
+  constructed date, so `02/30/2024` (Feb 30) is rejected rather than becoming
+  Mar 1.
+- **Cleared the moment the user edits again** (or clears the field), and
+  re-checked on the next blur.
+- Picking from the calendar never yields an impossible date, so a calendar pick
+  always clears the error.
+- **`range` mode does not self-validate** — the input is read-only and filled
+  only via the calendar, so there is nothing to reject.
+- A consumer-supplied **`error` prop wins** over the internal message: pass it
+  to surface your own validation and the field shows that instead.
 
 ## Accessibility
 
@@ -116,5 +137,5 @@ Set these on the wrapper (via `style` or a higher scope) — because `style` is 
 - Clear button: `<button aria-label="Clear">`; `onMouseDown` is prevented so clearing doesn't refocus the input and re-open the calendar.
 - The inner `<input>` uses `inputMode="numeric"` so mobile keyboards surface the digit pad.
 - In `range` mode the input is rendered with `readOnly` — assistive tech announces it as non-editable; the calendar popover is the only entry path.
-- No `aria-invalid` is wired automatically when the `--error` modifier is applied; consumers should set it on the input via `...rest` when surfacing validation errors.
+- Error state is wired automatically: whenever an error shows (from the `error` prop or internal invalid-date state) the input gets `aria-invalid="true"` and an `aria-describedby` pointing at the `FieldError` message. A caller-supplied `aria-describedby` is **preserved** — the component's error id is appended to it (both are announced), never overwritten.
 - Disabled state uses the native `disabled` attribute; the calendar icon button is **not** automatically disabled in lockstep — consumers should hide or gate it externally if needed.
