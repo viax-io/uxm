@@ -16,7 +16,7 @@ import type { BrandConfig } from '../lib/types';
 
 const BRAND_FONT_WEIGHTS = 'wght@400;500;600;700';
 
-function fontFileUrl(fontFamily: string): string {
+export function fontFileUrl(fontFamily: string): string {
   const encoded = fontFamily.trim().replace(/\s+/g, '+');
   return `https://fonts.googleapis.com/css2?family=${encoded}:${BRAND_FONT_WEIGHTS}&display=swap`;
 }
@@ -645,7 +645,7 @@ function safeUrl(v: unknown): string | undefined {
   if (/[")\n\r]/.test(trimmed)) return undefined;
   return trimmed;
 }
-function safeFontFamily(v: unknown): string | undefined {
+export function safeFontFamily(v: unknown): string | undefined {
   if (typeof v !== 'string') return undefined;
   const trimmed = v.trim();
   return /^[A-Za-z0-9 _-]+$/.test(trimmed) ? trimmed : undefined;
