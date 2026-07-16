@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
@@ -8,7 +8,7 @@ import { FieldError } from '../field-error';
 import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
 
-import type { ChangeEvent, InputHTMLAttributes } from 'react';
+import type { ChangeEvent, FocusEvent, InputHTMLAttributes } from 'react';
 
 export type DateInputFormat = 'mdy' | 'dmy' | 'ymd';
 export type DateInputMode = 'single' | 'range';
@@ -86,8 +86,9 @@ export function maskDate(raw: string, format: DateInputFormat): string {
 /**
  * Parse a formatted date string back to a Date so the Calendar can highlight
  * it. Returns null until enough digits are typed for a complete date AND the
- * date is valid (month 1–12, day 1–31). Doesn't catch deeper invalidity (Feb 30)
- * — JS Date will silently roll over, which is a benign mismatch.
+ * date is real — a round-trip check rejects impossible dates like Feb 30 or
+ * Apr 31, which JS `Date` would otherwise silently roll into the next month.
+ * A non-null result is therefore always the exact date the digits spell.
  */
 export function parseDate(formatted: string, format: DateInputFormat): Date | null {
   const digits = formatted.replace(/\D/g, '');
@@ -107,7 +108,14 @@ export function parseDate(formatted: string, format: DateInputFormat): Date | nu
     y = Number(digits.slice(4, 8));
   }
   if (!m || !d || !y || m < 1 || m > 12 || d < 1 || d > 31) return null;
-  return new Date(y, m - 1, d);
+  const date = new Date(y, m - 1, d);
+  // Round-trip guard: `new Date(2024, 1, 30)` silently rolls Feb 30 over to
+  // Mar 1 rather than failing. Require the constructed date to spell back the
+  // exact digits so callers can trust a non-null result is a real date.
+  if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
+    return null;
+  }
+  return date;
 }
 
 /** Format a Date back into the chosen mask. Inverse of `parseDate`. */
@@ -145,6 +153,14 @@ function placeholderFor(format: DateInputFormat, mode: DateInputMode): string {
   return mode === 'range' ? `${single}${RANGE_SEPARATOR}${single}` : single;
 }
 
+/**
+ * Inline-validation message for an unparseable date, naming the expected mask.
+ * Shared with EditableCell's date field so both surface the identical wording.
+ */
+export function invalidDateMessage(format: DateInputFormat): string {
+  return `Enter a valid date (${FORMAT_SPEC[format].placeholder})`;
+}
+
 export function DateInput({
   format = 'mdy',
   mode = 'single',
@@ -157,8 +173,10 @@ export function DateInput({
   clearable = true,
   style,
   onFocus,
+  onBlur,
   disabled,
   error,
+  'aria-describedby': ariaDescribedBy,
   ...rest
 }: DateInputProps) {
   // Initial state — same masker for single, plain string for range (typing
@@ -170,6 +188,12 @@ export function DateInput({
   const current = isControlled ? value : internal;
 
   const [isOpen, setIsOpen] = useState(false);
+  // Inline validity: flipped true on blur when the typed value is non-empty
+  // but doesn't resolve to a real date (out-of-range like 06/36, or impossible
+  // like Feb 30). Cleared the moment the user edits again and re-checked on the
+  // next blur — mirrors EditableCell's date field so the two behave the same.
+  const [invalid, setInvalid] = useState(false);
+  const errorId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Mode OR format switch resets the internal value — a range string is
@@ -193,6 +217,7 @@ export function DateInput({
     }
     setInternal('');
     setIsOpen(false);
+    setInvalid(false);
   }, [mode, format]);
 
   // Close on click outside or Escape. Mounting only when `isOpen` is true
@@ -229,6 +254,9 @@ export function DateInput({
       if (mode === 'range') return;
       const formatted = maskDate(e.target.value, format);
       if (!isControlled) setInternal(formatted);
+      // Stop showing the error as soon as the user starts fixing the value;
+      // it's re-evaluated on the next blur. (No-op re-render when already false.)
+      setInvalid(false);
       onChange?.(formatted);
     },
     [mode, isControlled, onChange, format],
@@ -237,6 +265,8 @@ export function DateInput({
   const handleCalendarChange = useCallback(
     (calValue: CalendarValue) => {
       if (!calValue.start) return;
+      // A calendar pick is always a real date — clear any lingering typed-error.
+      setInvalid(false);
       if (mode === 'range') {
         // Calendar fires after every click: end=null after first, end set after second.
         // Update the input either way (so the user sees the in-flight start) but only
@@ -261,9 +291,26 @@ export function DateInput({
   // component holds its own state, so no onClear prop is needed.
   const handleClear = useCallback(() => {
     if (!isControlled) setInternal('');
+    setInvalid(false);
     onChange?.('');
   }, [isControlled, onChange]);
   const showClear = clearable && (current ?? '').length > 0 && !disabled;
+
+  // Validate when focus leaves the field. Empty is always fine; a non-empty
+  // value that doesn't parse to a real date flips into the error state. Range
+  // mode is read-only (filled only via the calendar, which never yields an
+  // impossible date), so it never validates here. Chains the consumer's own
+  // `onBlur` afterward so wiring it up stays possible.
+  const handleBlur = useCallback(
+    (e: FocusEvent<HTMLInputElement>) => {
+      if (mode !== 'range') {
+        const v = current ?? '';
+        setInvalid(v !== '' && parseDate(v, format) === null);
+      }
+      onBlur?.(e);
+    },
+    [mode, current, format, onBlur],
+  );
 
   // Mirror the input's current value into the Calendar so it highlights what
   // the user has selected. Range mode parses two halves; single mode parses one.
@@ -277,6 +324,11 @@ export function DateInput({
     return { start: date, end: date };
   })();
 
+  // A consumer-supplied `error` wins; otherwise surface the internal
+  // invalid-date message. Both drive the same visual: red border,
+  // `aria-invalid`, and the message below the field.
+  const shownError = error || (invalid ? invalidDateMessage(format) : undefined);
+
   return (
     <>
     <div
@@ -284,13 +336,17 @@ export function DateInput({
         'uxm-date-input',
         calendar && 'uxm-date-input--has-calendar',
         clearable && 'uxm-date-input--clearable',
-        error && 'uxm-date-input--error',
+        shownError && 'uxm-date-input--error',
         className,
       )}
       ref={containerRef}
       style={style}
     >
       <input
+        // `{...rest}` is spread FIRST so the managed props below always win —
+        // notably `aria-describedby`, which must stay linked to our error
+        // message and not be clobbered by a caller-supplied value.
+        {...rest}
         type="text"
         inputMode="numeric"
         readOnly={mode === 'range'}
@@ -302,9 +358,13 @@ export function DateInput({
           if (calendar) setIsOpen(true);
           onFocus?.(e);
         }}
-        aria-invalid={error ? true : undefined}
+        onBlur={handleBlur}
+        aria-invalid={shownError ? true : undefined}
+        // Point at our error message while one shows AND keep any
+        // caller-supplied `aria-describedby` (e.g. unrelated help text) —
+        // both ids are announced, ours never clobbers theirs.
+        aria-describedby={[shownError && errorId, ariaDescribedBy].filter(Boolean).join(' ') || undefined}
         disabled={disabled}
-        {...rest}
       />
       {showClear && (
         <IconButton
@@ -333,11 +393,21 @@ export function DateInput({
       )}
       {calendar && isOpen && (
         <div className="uxm-date-input__popover" role="dialog" aria-label="Choose date">
-          <Calendar value={calendarValue} onChange={handleCalendarChange} />
+          {/* Swallow mousedown so a calendar click never blurs the input: blur
+              now runs validation (handleBlur), and a partially-typed value
+              would flash the error state for a frame before the pick lands.
+              Focus-retention only — the interactive controls are the
+              Calendar's own buttons. */}
+          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+          <div onMouseDown={(e) => e.preventDefault()}>
+            <Calendar value={calendarValue} onChange={handleCalendarChange} />
+          </div>
         </div>
       )}
     </div>
-    {error && <FieldError className="uxm-date-input__error-message">{error}</FieldError>}
+    {shownError && (
+      <FieldError id={errorId} className="uxm-date-input__error-message">{shownError}</FieldError>
+    )}
     </>
   );
 }

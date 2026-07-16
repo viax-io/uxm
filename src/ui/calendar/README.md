@@ -29,7 +29,7 @@ function Example() {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `month` | `Date` | uncontrolled (atom owns it, initialised to today's month) | Currently-displayed month. When provided, controlled by the consumer. |
+| `month` | `Date` | uncontrolled (atom owns it, initialised to the selected value's month, else today's) | Currently-displayed month. When provided, controlled by the consumer. |
 | `value` | `CalendarValue` | uncontrolled (atom owns it, initial `{ start: null, end: null }`) | Selection value. `{ start, end: null }` for a single date; `{ start, end }` for a range. |
 | `today` | `Date` | `new Date()` | Override for "today" — useful for stories and tests. |
 | `isDisabled` | `(date: Date) => boolean` | – | Predicate for disabled days. Disabled cells ignore clicks. |
