@@ -242,7 +242,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
 
       <Group
         title="Typography"
-        description="Primary typeface applied to Modo body text. Google Fonts load automatically after Build."
+        description="Primary typeface applied to Modo body text. Changes apply live and persist on Publish."
       >
         <section>
           <Select
