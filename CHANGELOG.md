@@ -1,3 +1,13 @@
+## [3.1.4](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.3...v3.1.4) (2026-07-16)
+
+
+### Bug Fixes
+
+* **calendar:** open on the selected value's month, not today's ([bd622a7](https://gitlab.viax.tech/services-viax/uxm/commit/bd622a7ba66f51cb8d044f69477fec690cb540ac))
+* **date-input:** keep caller aria-describedby alongside the error id ([0f0e45b](https://gitlab.viax.tech/services-viax/uxm/commit/0f0e45bc37ec0f01b08197bf1d522f8a612657fe))
+* **date-input:** reject impossible typed dates with inline feedback ([3b4dfb8](https://gitlab.viax.tech/services-viax/uxm/commit/3b4dfb8e821d7b46dfa227232ab95eb22eed3418))
+* **editable-cell:** show date format hint as placeholder when empty ([e64d8f0](https://gitlab.viax.tech/services-viax/uxm/commit/e64d8f0f14cea9bc72a85aeb6ee21e8cd238b865))
+
 ## [3.1.3](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.2...v3.1.3) (2026-07-16)
 
 
