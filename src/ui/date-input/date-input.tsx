@@ -353,10 +353,10 @@ export function DateInput({
         }}
         onBlur={handleBlur}
         aria-invalid={shownError ? true : undefined}
-        // Point at our error message while one shows; otherwise fall back to
-        // any caller-supplied `aria-describedby` (e.g. unrelated help text)
-        // rather than dropping it.
-        aria-describedby={shownError ? errorId : ariaDescribedBy}
+        // Point at our error message while one shows AND keep any
+        // caller-supplied `aria-describedby` (e.g. unrelated help text) —
+        // both ids are announced, ours never clobbers theirs.
+        aria-describedby={[shownError && errorId, ariaDescribedBy].filter(Boolean).join(' ') || undefined}
         disabled={disabled}
       />
       {showClear && (
