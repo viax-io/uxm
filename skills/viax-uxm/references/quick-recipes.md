@@ -420,6 +420,12 @@ function applyTheme(config) {
 }
 ```
 
+The generated CSS also carries the **brand typeface** when one is set (Brand Settings →
+Typography → `brand.fontFamily`): a Google-Fonts `@import`, `--brand-font` on `:root`, and
+`body { font-family: var(--brand-font) !important }`. Declare the host's base font as
+`body { font-family: var(--brand-font, var(--font-sans)) }` and don't hardcode a competing
+family (see `design-tokens.md` → "Typography").
+
 Persistence: `createHttpPersistence('/api/uxm')` (backend), `createClientPersistence` /
 `createReadOnlyPersistence` (no backend, preview-only), or a `localStorage`-backed
 `StudioPersistence` for save-that-persists. The host owns `data-theme` (light/dark) in `embed`

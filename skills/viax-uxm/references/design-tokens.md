@@ -114,6 +114,27 @@ Status colour triplets: bg / text / border. Used by `Banner`, `Toast`, `Tag`, er
 | `Info Text` | `--color-info-text` | `#1E40AF` | `#93C5FD` | Info body text / icon. |
 | `Info Border` | `--color-info-border` | `#BFDBFE` | `#1E3A6A` | Info border. |
 
+### Typography (font vars — not in `themeTokens`)
+
+Font custom properties. These are NOT colour tokens (they don't appear in the `themeTokens`
+array or the studio's Color editor) but they are part of the same theming contract:
+
+| Var | Declared by | Value / behaviour |
+|-----|-------------|-------------------|
+| `--font-inter` | `@viax/uxm/tokens.css` (`:root`) | `'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`. No font file is bundled — the host loads Inter (e.g. a Google Fonts `<link>`); the stack degrades to system fonts when absent. |
+| `--font-sans` | `@viax/uxm/tokens.css` (`:root`) | `var(--font-inter)` — the library's base UI stack. Use this in app CSS instead of naming Inter directly. |
+| `--brand-font` | **Emitted at runtime, only when a brand font is chosen.** `generateOverridesCss` (from `@viax/uxm/studio/generate-css`) turns `brand.fontFamily` — set in the studio's **Brand Settings → Typography** — into a Google-Fonts `@import`, `:root { --brand-font: "X", var(--font-inter), system-ui, sans-serif; }` and `body { font-family: var(--brand-font) !important; }`. Inside the studio itself, `BrandFontStyles` applies the same output live while editing (pre-Publish). |
+
+**Consumer rules:**
+
+- Base typeface in app CSS: `body { font-family: var(--brand-font, var(--font-sans)); }` —
+  Inter by default, the published brand font when one is set. Don't hardcode a different
+  `font-family` on `body`/`html`; it would fight the injected `!important` rule.
+- Components should use `font-family: inherit` (all `@viax/uxm` atoms already do) so the
+  brand font cascades everywhere.
+- Sanitise before interpolating a font name into CSS/URLs yourself? Don't — reuse the exported
+  `safeFontFamily` / `fontFileUrl` helpers from `@viax/uxm/studio/generate-css`.
+
 ## Programmatic access
 
 ```ts

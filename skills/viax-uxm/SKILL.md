@@ -308,6 +308,19 @@ skill:
      this heading to "New in X.Y.Z" and stamps the version/count markers
      (scripts/stamp-skill-version.mjs) — never hand-edit those. -->
 
+- **Brand Settings → Typography now works end-to-end in the studio.** Two fixes:
+  - **Live font application.** The studio mounts `BrandFontStyles` (alongside `BrandTokenStyles`):
+    when `brand.fontFamily` is set it loads the Google-Fonts stylesheet and applies
+    `:root { --brand-font: … }` + `body { font-family: var(--brand-font) }` — the exact mirror of
+    what `generateOverridesCss` emits after Publish. Picking a typeface re-fonts the studio and
+    all previews immediately (previously nothing visible happened until a host applied the saved
+    config).
+  - **The font picker is the library `Select`** (was a raw native `<select>`, whose OS-level popup
+    dropped picks under the canvas event-capture re-renders — selections never landed).
+- **`fontFileUrl` / `safeFontFamily` are now exported from `@viax/uxm/studio/generate-css`** —
+  the Google-Fonts css2 URL builder (weights 400–700) and the font-name sanitiser the Build path
+  uses. Reuse these in host appliers instead of hand-rolling font URL/escaping logic.
+
 ## Workflow
 
 ### Before writing any code
@@ -414,7 +427,12 @@ import '@viax/uxm/studio.css'; // Tailwind v4 bundle — see leakage note below
 `@viax/uxm/studio/generate-css`, run it over the saved `{ overrides, brand }`, and inject the result
 into a single global `<style>`. It emits the `:root` / `[data-theme="dark"]` brand-token blocks plus
 per-component override rules (which the per-state atom CSS now reads), re-theming the whole host on
-every route — and survives reload if you persist the state.
+every route — and survives reload if you persist the state. When the brand carries a typeface
+(`brand.fontFamily`, set via Brand Settings → Typography), the same output also includes the
+Google-Fonts `@import`, `--brand-font`, and `body { font-family: var(--brand-font) !important }`
+— so the host's base font follows the brand automatically. Host CSS should therefore declare its
+base font as `body { font-family: var(--brand-font, var(--font-sans)); }` and never hardcode a
+competing family (see `references/design-tokens.md` → "Typography").
 
 **Brand tokens.** Seed the studio's `brand.tokens.light` / `.dark` with the host's brand colours so
 the editor adopts them as its own managed Accent tokens; `BrandTokenStyles` (rendered even in
