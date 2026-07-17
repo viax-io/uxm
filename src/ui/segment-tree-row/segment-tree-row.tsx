@@ -1,5 +1,3 @@
-'use client';
-
 import { Children, useId, useState } from 'react';
 
 import { cn } from '@/helpers';
