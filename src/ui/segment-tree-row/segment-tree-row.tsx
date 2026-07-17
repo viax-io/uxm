@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Children, useId, useState } from 'react';
 
 import { cn } from '@/helpers';
 import { Icon } from '@/ui/icon';
@@ -53,6 +53,10 @@ export function SegmentTreeRow({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : uncontrolledOpen;
+  const bodyId = useId();
+  // Only render (and advertise) a body when there's real content — an empty
+  // array of children would otherwise draw an empty bordered strip.
+  const hasBody = Children.count(children) > 0;
 
   const toggle = () => {
     const next = !open;
@@ -78,6 +82,7 @@ export function SegmentTreeRow({
           type="button"
           className="uxm-segment-tree-row__toggle"
           aria-expanded={open}
+          aria-controls={open && hasBody ? bodyId : undefined}
           onClick={toggle}
         >
           <span className="uxm-segment-tree-row__chevron" aria-hidden="true">
@@ -92,8 +97,10 @@ export function SegmentTreeRow({
         </button>
         {actions && <span className="uxm-segment-tree-row__actions">{actions}</span>}
       </div>
-      {open && children != null && (
-        <div className="uxm-segment-tree-row__body">{children}</div>
+      {open && hasBody && (
+        <div id={bodyId} className="uxm-segment-tree-row__body">
+          {children}
+        </div>
       )}
     </div>
   );

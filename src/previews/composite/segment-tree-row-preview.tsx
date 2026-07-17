@@ -34,11 +34,14 @@ export function SegmentTreeRowPreview({ styles, variants }: PreviewProps) {
 
   return (
     <div style={{ width: 460 }}>
+      {/* Uncontrolled + keyed on the variant: the State knob re-seeds the
+          initial open state, while the caret stays interactive in the canvas. */}
       <SegmentTreeRow
+        key={expanded ? 'expanded' : 'collapsed'}
         name="Practice Information"
         count={SAMPLE.length}
         dragHandle
-        open={expanded}
+        defaultOpen={expanded}
         style={vars}
       >
         {SAMPLE.map((c) => (
