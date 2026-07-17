@@ -1,3 +1,4 @@
+import { DemoRowActions } from '@/previews/demo-row-actions';
 import type { PreviewProps } from '@/previews/types';
 import { ConfigComponentRow } from '@/ui';
 import { Icon } from '@/ui';
@@ -38,6 +39,7 @@ export function ConfigComponentRowPreview({ styles }: PreviewProps) {
           type={r.type}
           active={r.active}
           trailing={r.required ? <Tag type="accent">Required</Tag> : undefined}
+          actions={DemoRowActions}
         />
       ))}
     </div>

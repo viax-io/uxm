@@ -183,6 +183,8 @@ export { SideFlexpane } from './side-flexpane';
 export type { SideFlexpaneProps } from './side-flexpane';
 export { SectionHeader } from './section-header';
 export type { SectionHeaderProps } from './section-header';
+export { SegmentTreeRow } from './segment-tree-row';
+export type { SegmentTreeRowProps } from './segment-tree-row';
 export { SidebarNavItem } from './sidebar-nav-item';
 export type { SidebarNavItemProps } from './sidebar-nav-item';
 export { Slider } from './slider';

@@ -569,6 +569,20 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   'timeline-entry': {
     gap: '--uxm-timeline-entry-gap',
   },
+  'segment-tree-row': {
+    backgroundColor: '--uxm-segment-tree-row-background-color',
+    borderColor: '--uxm-segment-tree-row-border-color',
+    borderRadius: '--uxm-segment-tree-row-border-radius',
+    accentColor: '--uxm-segment-tree-row-accent-color',
+    accentWidth: '--uxm-segment-tree-row-accent-width',
+    accentHeight: '--uxm-segment-tree-row-accent-height',
+    titleSize: '--uxm-segment-tree-row-title-size',
+    titleColor: '--uxm-segment-tree-row-title-color',
+    countBadgeBg: '--uxm-segment-tree-row-count-badge-bg',
+    countBadgeText: '--uxm-segment-tree-row-count-badge-text',
+    paddingX: '--uxm-segment-tree-row-padding-x',
+    paddingY: '--uxm-segment-tree-row-padding-y',
+  },
   tooltip: {
     backgroundColor: '--uxm-tooltip-background-color',
     color: '--uxm-tooltip-color',

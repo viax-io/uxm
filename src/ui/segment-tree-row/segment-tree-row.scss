@@ -1,0 +1,130 @@
+/* ── segment-tree-row ──
+   Collapsible configuration-model segment node. Container + rail + title +
+   count badge all read `--uxm-segment-tree-row-*` custom properties (token
+   fallbacks match the studio registry defaults), so a saved override re-themes
+   the row. The toggle is a bare button; the chevron rotates on `--open`. */
+
+.uxm-segment-tree-row {
+  background-color: var(--uxm-segment-tree-row-background-color, var(--color-card));
+  border: 1px solid var(--uxm-segment-tree-row-border-color, var(--color-border));
+  border-radius: var(--uxm-segment-tree-row-border-radius, 12px);
+  overflow: hidden;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: var(--uxm-segment-tree-row-padding-y, 18px) var(--uxm-segment-tree-row-padding-x, 16px);
+    user-select: none;
+  }
+
+  &__drag {
+    flex-shrink: 0;
+    display: inline-flex;
+    color: var(--color-text-subtle);
+    cursor: grab;
+  }
+
+  &__rail {
+    flex-shrink: 0;
+    width: var(--uxm-segment-tree-row-accent-width, 4px);
+    height: var(--uxm-segment-tree-row-accent-height, 20px);
+    border-radius: 999px;
+    background-color: var(--uxm-segment-tree-row-accent-color, var(--color-accent-subtle));
+  }
+
+  &__toggle {
+    flex: 1;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+    outline: none;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  &__chevron {
+    flex-shrink: 0;
+    display: inline-flex;
+    color: var(--color-text-muted);
+    transition: transform 0.15s ease;
+  }
+
+  &__title {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--uxm-segment-tree-row-title-size, 15px);
+    font-weight: 600;
+    color: var(--uxm-segment-tree-row-title-color, var(--color-text));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__count {
+    flex-shrink: 0;
+    padding: 1px 9px;
+    border-radius: 999px;
+    background-color: var(--uxm-segment-tree-row-count-badge-bg, var(--color-surface-alt));
+    color: var(--uxm-segment-tree-row-count-badge-text, var(--color-text-muted));
+    font-size: 11px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Trailing action controls, after the count badge. Collapsed to zero width
+     when idle (so they don't reserve a permanent gap) and revealed on row
+     hover / keyboard focus. On touch (no hover) they stay visible, since there
+     is no hover to trigger them. */
+  &__actions {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-width 0.15s ease, opacity 0.15s ease;
+  }
+
+  &__head:hover &__actions,
+  &__head:focus-within &__actions {
+    max-width: 12rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (hover: none) {
+    &__actions {
+      max-width: 12rem;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  &--open &__chevron {
+    transform: rotate(90deg);
+  }
+
+  &__body {
+    border-top: 1px solid var(--color-border);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+}

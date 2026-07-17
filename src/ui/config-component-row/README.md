@@ -2,7 +2,9 @@
 
 A row in a Configuration model's middle-pane components list. Each row is a clickable card describing one component (a field) within the currently selected segment; selecting it swaps the right-pane editor.
 
-Renders as a `<button>` (click = "select for edit", not navigate). Composes an `IconTile` in the leading slot whose size and radius are bridged to the row's own CSS variables (`--uxm-config-component-row-icon-tile-*` → `--uxm-icon-tile-*` via inline style). Two native button attributes are stripped from the props surface: `type` (always `"button"`) and `name` (consumers mean the visible field name, not the HTML form-control name).
+The root is a `<div>` card; the clickable "select for edit" control is an inner `<button class="uxm-config-component-row__select">` that fills the row (click = select, not navigate). The root is a wrapper — not itself a button — so a trailing `actions` slot can hold its own `IconButton`s as **siblings** of the select button, never nested inside it. Composes an `IconTile` in the leading slot whose size and radius are bridged to the row's own CSS variables (`--uxm-config-component-row-icon-tile-*` → `--uxm-icon-tile-*` via inline style). Two native button attributes are stripped from the props surface: `type` (always `"button"`) and `name` (consumers mean the visible field name, not the HTML form-control name).
+
+> **Note — structure:** the root is a `<div>` wrapper (not itself a button); the inner `.uxm-config-component-row__select` button owns the click/keyboard semantics. `style` (and the `--uxm-config-component-row-*` overrides it carries) applies to the **root** `<div>`; all other spread native button attributes land on the inner select `<button>`. If you previously targeted `button.uxm-config-component-row` in CSS or measured the root as a button, target `.uxm-config-component-row__select` for the interactive element.
 
 ## Usage
 
@@ -37,11 +39,13 @@ function ComponentsList({ rows, activeId, onSelect }: Props) {
 | `icon` | `ReactNode` | – | Optional leading icon node — rendered inside an `<IconTile>`. Omit to drop the tile entirely. |
 | `name` | `ReactNode` | – | **Required.** Component display name (primary text). |
 | `type` | `ReactNode` | – | Optional value-type label rendered below the name (e.g. `"TEXT"`, `"BOOLEAN"`). The registry of value types is consumer-owned. |
-| `trailing` | `ReactNode` | – | Trailing slot — typical content is a `<Tag>` flagging the component (required, deprecated, etc.). |
-| `active` | `boolean` | `false` | Renders the selected state (accent border) and sets `aria-pressed="true"`. |
-| `className` | `string` | – | Merged with `uxm-config-component-row` via `cn`. |
-| `onClick` | `(e: MouseEvent) => void` | – | Selection handler. |
-| _(any native button attribute except `type`, `name`)_ | – | – | Spread onto the root `<button>`. |
+| `trailing` | `ReactNode` | – | Trailing slot — typical content is a `<Tag>` flagging the component (required, deprecated, etc.). Rendered **inside** the select button, so keep it non-interactive. |
+| `actions` | `ReactNode` | – | Trailing action controls (typically `IconButton`s), revealed on row hover or keyboard focus and kept **outside** the select button (siblings), so the buttons aren't nested and clicking one doesn't also select the row. On touch (no hover) they stay visible. |
+| `active` | `boolean` | `false` | Renders the selected state (accent border) and sets `aria-pressed="true"` on the select button. |
+| `className` | `string` | – | Merged with `uxm-config-component-row` on the root `<div>` via `cn`. |
+| `style` | `CSSProperties` | – | Applied to the **root** `<div>` (so `--uxm-config-component-row-*` overrides reach the padding/radius reads and cascade down). |
+| `onClick` | `(e: MouseEvent) => void` | – | Selection handler — fires on the inner select button. |
+| _(any native button attribute except `type`, `name`, `style`)_ | – | – | Spread onto the inner select `<button>`. |
 
 ## CSS variables
 
@@ -79,11 +83,12 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Icon omitted | `icon` undefined | The leading `<IconTile>` is skipped entirely; body becomes the first child. |
 | Type omitted | `type` undefined | The `__type` span is skipped — body shows the name only. |
 | Trailing omitted | `trailing` undefined | The trailing slot is skipped. |
+| Actions | `actions` provided | `.uxm-config-component-row__actions` sits after the select button, collapsed to zero width when idle and revealed (`max-width`/`opacity`) on row `:hover` / `:focus-within`; always visible under `@media (hover: none)`. |
 
 ## Accessibility
 
-- Renders a native `<button>` — `Space`/`Enter` activation and screen-reader semantics come for free.
-- `aria-pressed={active}` exposes the selected state as a toggle button — same rationale as `ConfigSegmentItem`.
+- The inner select control is a native `<button>` — `Space`/`Enter` activation, focus, and screen-reader semantics come for free; the root `<div>` is a non-interactive wrapper.
+- `aria-pressed={active}` on the select button exposes the selected state as a toggle button — same rationale as `ConfigSegmentItem`.
 - `type` is forcibly `"button"` so the row never accidentally submits a parent form, and the prop named `type` is repurposed for the value-type label.
-- The leading `IconTile` is decorative; ensure its icon node is `aria-hidden` or contributes redundant info to the row's accessible name (which is the concatenated text content of `name` + `type` + `trailing`).
-- The trailing slot accepts arbitrary `ReactNode` — if it contains its own interactive control (e.g. a `<button>` inside a `<Tag>`), nested-interactive semantics may confuse some screen readers. Prefer non-interactive trailing content.
+- The leading `IconTile` is decorative; ensure its icon node is `aria-hidden` or contributes redundant info to the select button's accessible name (the concatenated text of `name` + `type` + `trailing`).
+- The `trailing` slot renders **inside** the select button — if it contains its own interactive control (e.g. a `<button>` inside a `<Tag>`), nested-interactive semantics may confuse some screen readers. Prefer non-interactive trailing content. For interactive controls use the `actions` slot instead, which renders them as **siblings** of the select button (no nesting).
