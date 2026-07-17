@@ -25,7 +25,11 @@ export interface SegmentTreeRowProps extends Omit<HTMLAttributes<HTMLDivElement>
   children?: ReactNode;
   /** Show a leading drag-handle affordance (visual only; wire your own DnD). */
   dragHandle?: boolean;
-  /** Trailing slot for hover/row actions (kept outside the toggle button). */
+  /**
+   * Trailing action controls (typically `IconButton`s), revealed on row hover
+   * or keyboard focus, sitting after the count badge. Kept outside the toggle
+   * button so the action buttons aren't nested in a button.
+   */
   actions?: ReactNode;
 }
 

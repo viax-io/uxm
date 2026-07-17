@@ -85,11 +85,21 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* Hover/focus-revealed action controls, to the right of the count badge. */
   &__actions {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+  }
+
+  &__head:hover &__actions,
+  &__head:focus-within &__actions {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   &--open &__chevron {

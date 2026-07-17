@@ -35,6 +35,12 @@ export interface ConfigComponentRowProps
    * configuration component surface here (required, deprecated, etc.).
    */
   trailing?: ReactNode;
+  /**
+   * Trailing action controls (typically `IconButton`s), revealed on row hover
+   * or keyboard focus. Kept OUTSIDE the select `<button>` so the action buttons
+   * aren't nested in a button and clicking one doesn't also select the row.
+   */
+  actions?: ReactNode;
   /** Render the active (selected) state. Adds an accent border. */
   active?: boolean;
 }
@@ -51,29 +57,30 @@ export function ConfigComponentRow({
   name,
   type,
   trailing,
+  actions,
   active,
   className,
   ...rest
 }: ConfigComponentRowProps) {
   return (
-    <button
-      type="button"
-      aria-pressed={active}
+    <div
       className={cn(
         'uxm-config-component-row',
         active && 'uxm-config-component-row--active',
         className,
       )}
-      {...rest}
     >
-      {icon && <IconTile style={ICON_TILE_STYLE}>{icon}</IconTile>}
-      <span className="uxm-config-component-row__body">
-        <span className="uxm-config-component-row__name">{name}</span>
-        {type && <span className="uxm-config-component-row__type">{type}</span>}
-      </span>
-      {trailing && (
-        <span className="uxm-config-component-row__trailing">{trailing}</span>
-      )}
-    </button>
+      {/* The select button owns the whole row's click ("select for edit");
+          actions are a sibling so nested buttons / click-through can't happen. */}
+      <button type="button" aria-pressed={active} className="uxm-config-component-row__select" {...rest}>
+        {icon && <IconTile style={ICON_TILE_STYLE}>{icon}</IconTile>}
+        <span className="uxm-config-component-row__body">
+          <span className="uxm-config-component-row__name">{name}</span>
+          {type && <span className="uxm-config-component-row__type">{type}</span>}
+        </span>
+        {trailing && <span className="uxm-config-component-row__trailing">{trailing}</span>}
+      </button>
+      {actions && <span className="uxm-config-component-row__actions">{actions}</span>}
+    </div>
   );
 }

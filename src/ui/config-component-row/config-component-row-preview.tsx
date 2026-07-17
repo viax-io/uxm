@@ -1,9 +1,22 @@
 import type { PreviewProps } from '@/previews/types';
 import { ConfigComponentRow } from '@/ui';
 import { Icon } from '@/ui';
+import { IconButton } from '@/ui';
 import { Tag } from '@/ui';
 
 import type { CSSProperties } from 'react';
+
+/** Hover/focus-revealed row actions. */
+const ROW_ACTIONS = (
+  <>
+    <IconButton aria-label="Edit">
+      <Icon glyph="pencil" size={14} />
+    </IconButton>
+    <IconButton aria-label="Delete">
+      <Icon glyph="trash" size={14} />
+    </IconButton>
+  </>
+);
 
 const rows: { name: string; type: string; required?: boolean; active?: boolean }[] = [
   { name: 'Account Name', type: 'TEXT', required: true, active: true },
@@ -38,6 +51,7 @@ export function ConfigComponentRowPreview({ styles }: PreviewProps) {
           type={r.type}
           active={r.active}
           trailing={r.required ? <Tag type="accent">Required</Tag> : undefined}
+          actions={ROW_ACTIONS}
         />
       ))}
     </div>
