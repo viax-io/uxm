@@ -1,3 +1,18 @@
+# [3.2.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.4...v3.2.0) (2026-07-17)
+
+
+### Bug Fixes
+
+* **config-component-row:** keep `style` on the root so padding/radius vars apply ([b611482](https://gitlab.viax.tech/services-viax/uxm/commit/b611482961c43f0215f557412c0a3d31b49e6b16))
+* **segment-tree-row:** address self-review — live caret, empty body, aria ([d5ced1d](https://gitlab.viax.tech/services-viax/uxm/commit/d5ced1da9a4cd2cb6ff1b92b991d6d0d60e115b8))
+* **segment-tree-row:** drop stray 'use client'; document row atoms ([8476bd7](https://gitlab.viax.tech/services-viax/uxm/commit/8476bd74a0e55c3124b14fdf220aa6120e077ca6)), closes [#1](https://gitlab.viax.tech/services-viax/uxm/issues/1) [#2](https://gitlab.viax.tech/services-viax/uxm/issues/2)
+
+
+### Features
+
+* **segment-tree-row,config-component-row:** hover-revealed row actions ([188e6a5](https://gitlab.viax.tech/services-viax/uxm/commit/188e6a5ed5ebbe6bfc38e3b17812f7acafa58101))
+* **segment-tree-row:** ship it as a real atom (was studio-only mock) ([b697767](https://gitlab.viax.tech/services-viax/uxm/commit/b69776701f34f9ad73033860aa7bbdb4d4028e6d))
+
 ## [3.1.4](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.3...v3.1.4) (2026-07-16)
 
 
