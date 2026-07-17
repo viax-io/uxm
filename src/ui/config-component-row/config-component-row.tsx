@@ -60,6 +60,7 @@ export function ConfigComponentRow({
   actions,
   active,
   className,
+  style,
   ...rest
 }: ConfigComponentRowProps) {
   return (
@@ -69,6 +70,11 @@ export function ConfigComponentRow({
         active && 'uxm-config-component-row--active',
         className,
       )}
+      // `style` (and the `--uxm-config-component-row-*` overrides it carries)
+      // stays on the ROOT — the root reads the padding/radius vars, and custom
+      // props cascade down to the inner name/type reads. Behaviour props
+      // (onClick, etc.) go to the select button via `...rest`.
+      style={style}
     >
       {/* The select button owns the whole row's click ("select for edit");
           actions are a sibling so nested buttons / click-through can't happen. */}
