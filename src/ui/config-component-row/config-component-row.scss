@@ -73,20 +73,33 @@
     flex-shrink: 0;
   }
 
-  /* Hover/focus-revealed action controls, to the right of the row. */
+  /* Trailing action controls. Collapsed to zero width when idle (so they don't
+     reserve a permanent gap) and revealed on row hover / keyboard focus. On
+     touch (no hover) they stay visible, since there is no hover to trigger. */
   &__actions {
     align-items: center;
     display: inline-flex;
     flex-shrink: 0;
     gap: 4px;
+    max-width: 0;
     opacity: 0;
+    overflow: hidden;
     pointer-events: none;
-    transition: opacity 0.12s ease;
+    transition: max-width 0.15s ease, opacity 0.15s ease;
   }
 
   &:hover &__actions,
   &:focus-within &__actions {
+    max-width: 12rem;
     opacity: 1;
     pointer-events: auto;
+  }
+
+  @media (hover: none) {
+    &__actions {
+      max-width: 12rem;
+      opacity: 1;
+      pointer-events: auto;
+    }
   }
 }

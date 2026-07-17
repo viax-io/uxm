@@ -1,20 +1,8 @@
+import { DemoRowActions } from '@/previews/demo-row-actions';
 import type { PreviewProps } from '@/previews/types';
-import { ConfigComponentRow, Icon, IconButton, SegmentTreeRow } from '@/ui';
+import { ConfigComponentRow, Icon, SegmentTreeRow } from '@/ui';
 
 import type { CSSProperties } from 'react';
-
-/** Hover-revealed edit/delete actions, shared by the segment row and each
- *  component row so the reveal-on-hover behaviour is visible for both. */
-const ROW_ACTIONS = (
-  <>
-    <IconButton aria-label="Edit">
-      <Icon glyph="pencil" size={14} />
-    </IconButton>
-    <IconButton aria-label="Delete">
-      <Icon glyph="trash" size={14} />
-    </IconButton>
-  </>
-);
 
 /**
  * Preview renders the real shipped `<SegmentTreeRow>` atom (not a hand-rolled
@@ -55,7 +43,7 @@ export function SegmentTreeRowPreview({ styles, variants }: PreviewProps) {
         count={SAMPLE.length}
         dragHandle
         defaultOpen={expanded}
-        actions={ROW_ACTIONS}
+        actions={DemoRowActions}
         style={vars}
       >
         {SAMPLE.map((c) => (
@@ -64,7 +52,7 @@ export function SegmentTreeRowPreview({ styles, variants }: PreviewProps) {
             icon={<Icon glyph={c.glyph} size={16} />}
             name={c.name}
             type={c.type}
-            actions={ROW_ACTIONS}
+            actions={DemoRowActions}
           />
         ))}
       </SegmentTreeRow>

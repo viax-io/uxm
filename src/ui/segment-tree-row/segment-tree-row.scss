@@ -85,21 +85,35 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Hover/focus-revealed action controls, to the right of the count badge. */
+  /* Trailing action controls, after the count badge. Collapsed to zero width
+     when idle (so they don't reserve a permanent gap) and revealed on row
+     hover / keyboard focus. On touch (no hover) they stay visible, since there
+     is no hover to trigger them. */
   &__actions {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    max-width: 0;
     opacity: 0;
+    overflow: hidden;
     pointer-events: none;
-    transition: opacity 0.12s ease;
+    transition: max-width 0.15s ease, opacity 0.15s ease;
   }
 
   &__head:hover &__actions,
   &__head:focus-within &__actions {
+    max-width: 12rem;
     opacity: 1;
     pointer-events: auto;
+  }
+
+  @media (hover: none) {
+    &__actions {
+      max-width: 12rem;
+      opacity: 1;
+      pointer-events: auto;
+    }
   }
 
   &--open &__chevron {
