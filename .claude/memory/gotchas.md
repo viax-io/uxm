@@ -57,3 +57,33 @@ A commit that stages **only** files outside that glob — `.md` (READMEs,
 This is a **benign no-op, not a failure.** The commit still completes normally.
 Don't treat it as an error, retry, or re-stage — confirm success via the usual
 `[branch hash] message` + file-count line that follows.
+
+---
+
+## semver: don't force a `major` for internal-atom refactors
+
+Releases are cut by `semantic-release` from conventional commits, and a
+`BREAKING CHANGE:` footer (on **any** commit in the release range) forces a
+**major** bump for the whole `@viax/uxm` package — every consumer must then
+migrate. Reserve that for changes that actually break a **known external
+consumer contract**.
+
+**Don't add a `BREAKING CHANGE:` footer just because a component's internals
+changed** — a changed root element, renamed inner BEM node, or reshuffled
+prop-forwarding on a niche/internal atom is not a semver break when no external
+consumer relies on the old shape. Ship it as the `minor`/`patch` the `feat`/`fix`
+commits already imply, and **document the structural change in the component's
+README** (current DOM + a "target `X` instead of `Y`" migration hint) so anyone
+who was depending on it can adjust.
+
+**Precedent:** `ConfigComponentRow`'s root changed `<button>` → `<div>` (so the
+new `actions` slot could hold sibling `IconButton`s instead of nested ones). It
+was first over-flagged with a `BREAKING CHANGE:` footer; that was removed and it
+shipped as a **minor** in **v3.2.0** with the change documented in
+`src/ui/config-component-row/README.md`. Judgement call, not a blanket rule — if
+a change genuinely alters a widely-consumed public API, a major is still right.
+
+**How to apply:** before writing a `BREAKING CHANGE:` footer, ask "does an
+external consumer's code actually break?" If it's editor-internal / studio-only
+surface, prefer minor + a README note. (See `constitution.md` for the
+semantic-release flow.)
