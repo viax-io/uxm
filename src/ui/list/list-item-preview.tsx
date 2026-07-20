@@ -2,9 +2,11 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 
 import { cn } from '@/helpers';
 import type { PreviewProps } from '@/previews/types';
-import { Icon } from '@/ui';
+import { Icon, IconTile } from '@/ui';
 import { List, ListItem } from '@/ui';
 import { Tag, type TagType } from '@/ui';
+
+import { LIST_ITEM_ICON_TILE_STYLE } from './list';
 
 type Styles = PreviewProps['styles'];
 type Mode = 'static' | 'interactive';
@@ -85,21 +87,21 @@ function StaticShowcase({
   mode,
   state,
   showValue,
-  iconSize,
 }: {
   mode: Mode;
   state: string;
   showValue: boolean;
-  iconSize: number;
 }) {
   const isInteractive = mode === 'interactive';
   const isActive = isInteractive && state === 'active';
   const isDisabled = state === 'disabled';
   const inner = (
     <>
-      <span className="uxm-list-item__icon">
-        <Icon glyph="square" size={iconSize * 0.6} />
-      </span>
+      {/* Mirrors the atom: the icon slot is an IconTile, sized/coloured from
+          the same forwarded knob vars (glyph size comes from the tile var). */}
+      <IconTile className="uxm-list-item__icon" style={LIST_ITEM_ICON_TILE_STYLE}>
+        <Icon glyph="square" />
+      </IconTile>
       <span className="uxm-list-item__content">
         <span className="uxm-list-item__title">Owner</span>
         {showValue && <span className="uxm-list-item__value">Alex Morgan</span>}
@@ -175,12 +177,7 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32, minWidth: 380, ...cssVars } as CSSProperties}>
       <div>
         <div style={sectionLabel}>{state} state</div>
-        <StaticShowcase
-          mode={mode}
-          state={state}
-          showValue={showValue}
-          iconSize={styles.iconSize as number}
-        />
+        <StaticShowcase mode={mode} state={state} showValue={showValue} />
       </div>
 
       {/* List — interactivity is driven by the `mode` variant. Trailing
@@ -209,7 +206,7 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
                 // interactive rows (CSS `:disabled` / `[aria-disabled]`)
                 // and static rows (`[aria-disabled]` on `<div>`).
                 disabled={state === 'disabled' && i === 1}
-                icon={<Icon glyph="square" size={(styles.iconSize as number) * 0.6} />}
+                icon={<Icon glyph="square" />}
                 value={showValue ? row.value : undefined}
                 trailing={trailingForMode(mode, row.meta, row.tagType)}
                 onClick={isInteractive ? () => setActiveKey(row.key) : undefined}
