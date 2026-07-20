@@ -44,6 +44,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-list-item-icon-bg': styles.iconBg as string,
     '--uxm-list-item-icon-color': styles.iconColor as string,
     '--uxm-list-item-icon-size': `${styles.iconSize}px`,
+    '--uxm-list-item-icon-radius': `${styles.iconRadius}px`,
     '--uxm-list-item-chevron-color': styles.chevronColor as string,
   } as CSSProperties;
 }
