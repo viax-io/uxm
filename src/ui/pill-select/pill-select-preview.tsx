@@ -66,6 +66,9 @@ export function PillSelectPreview({ styles, variants }: PreviewProps & { compone
         placeholder="Select tags…"
         disabled={state === 'disabled'}
         chipsPosition={chipsPosition}
+        // Show the clear-all ✕ (next to the chevron) + its in-panel twin, so
+        // the Studio preview exercises the real clearable path.
+        clearable
         // Error is a real prop (not a CSS pseudo), so the preview drives
         // the actual atom path: `error` adds `__field--error` + renders the
         // message. The error vars projected via `cssVars` above theme both.

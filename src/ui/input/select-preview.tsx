@@ -2,7 +2,7 @@ import { useState, type CSSProperties } from 'react';
 
 import { cn } from '@/helpers';
 import type { PreviewProps } from '@/previews/types';
-import { Icon, IconButton, MultiListbox, Select } from '@/ui';
+import { Select } from '@/ui';
 
 type Styles = PreviewProps['styles'];
 
@@ -79,9 +79,10 @@ function SelectDemo({
 }) {
   const isError = state === 'error';
 
-  // Error state pre-selects the first real option so the field reads
-  // "you picked this, and it's wrong" rather than "you haven't picked yet."
-  const [value, setValue] = useState(isError ? SAMPLE[0] : '');
+  // Pre-select a value (except disabled) so the clear affordance is visible in
+  // the preview — the atom renders its ✕ on the trigger AND a "Clear" in the
+  // dropdown once something is picked (needs the placeholder option below).
+  const [value, setValue] = useState(state === 'disabled' ? '' : SAMPLE[0]);
 
   const cssVars = buildVars(styles);
 
@@ -121,104 +122,26 @@ function SelectDemo({
   );
 }
 
-// Multi-select preview variant — demonstrates what consumers get when
-// they want a "N selected" count pattern (distinct from PillSelect's
-// chip-in-trigger pattern). The Select atom itself stays single-only;
-// this preview just visualizes the multi UX for designers tuning the
-// trigger chrome. Production consumers wire `<MultiListbox>` directly
-// with a Select-styled trigger like the one below.
-type MultiItem = { value: string; label: string };
-const MULTI_ITEMS: MultiItem[] = SAMPLE.map((s) => ({ value: s, label: s }));
-
+// Multi-select variant — now the real atom: `<Select mode="multi">`. Same
+// trigger chrome + `<option>` children as single, an array value + "N selected"
+// trigger, clear on the trigger ✕ AND in the panel.
 function MultiSelectPreviewInstance({ disabled }: { disabled: boolean }) {
-  const [value, setValue] = useState<MultiItem[]>([]);
-
-  // Trigger reads the same `--uxm-select-dropdown-*` vars the native
-  // and searchable branches above project, so tuning the Select
-  // registry updates this variant consistently.
-  const triggerStyle: CSSProperties = {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    padding:
-      'var(--uxm-select-dropdown-padding-y, 10px) var(--uxm-select-dropdown-padding-x, 12px)',
-    background: 'var(--uxm-select-dropdown-bg, var(--color-card))',
-    border: '1px solid var(--uxm-select-dropdown-border-color, var(--color-border))',
-    borderRadius: 'var(--uxm-select-dropdown-border-radius, 8px)',
-    color: 'var(--uxm-select-dropdown-color, var(--color-text))',
-    fontSize: 'var(--uxm-select-dropdown-font-size, 14px)',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    textAlign: 'left',
-    outline: 'none',
-    opacity: disabled ? 0.6 : undefined,
-  };
-
+  const [value, setValue] = useState<string[]>([]);
   return (
-    <MultiListbox<MultiItem>
-      items={MULTI_ITEMS}
-      getKey={(o) => o.value}
-      getLabel={(o) => o.label}
+    <Select
+      mode="multi"
       value={value}
       onChange={setValue}
-      searchable="auto"
       disabled={disabled}
-      renderTrigger={({ open, triggerProps }) => (
-        // eslint-disable-next-line jsx-a11y/role-has-required-aria-props -- aria-expanded (always) and aria-controls (while open) arrive via the triggerProps spread; the rule can't see through it
-        <div role="combobox"
-          {...triggerProps}
-          tabIndex={disabled ? -1 : 0}
-          aria-disabled={disabled || undefined}
-          style={triggerStyle}
-        >
-          <span
-            style={{
-              flex: 1,
-              minWidth: 0,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              color: value.length === 0 ? 'var(--color-text-muted)' : undefined,
-            }}
-          >
-            {value.length === 0 ? 'Select countries' : `${value.length} selected`}
-          </span>
-          {value.length > 0 && !disabled && (
-            <IconButton
-              aria-label="Clear all selections"
-              onClick={(e) => {
-                // Stop click + mousedown bubbling so clearing all
-                // doesn't ALSO toggle the popover (Popover's
-                // click-outside fires on mousedown).
-                e.stopPropagation();
-                setValue([]);
-              }}
-              onMouseDown={(e) => e.stopPropagation()}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.stopPropagation();
-                }
-              }}
-              // Shared clear chrome (22×22, 12px glyph, flex-shrink:0) — same
-              // as every other field's ✕, instead of bespoke inline vars.
-              className="uxm-field-clear"
-            >
-              <Icon glyph="close" />
-            </IconButton>
-          )}
-          <Icon
-            glyph="chevron-down"
-            size={14}
-            style={{
-              transform: open ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.15s',
-              color: 'var(--color-text-muted)',
-              flexShrink: 0,
-            }}
-          />
-        </div>
-      )}
-      renderItem={(o) => o.label}
-    />
+      clearable
+      aria-label="Countries"
+    >
+      <option value="" disabled>
+        Select countries
+      </option>
+      {SAMPLE.map((c) => (
+        <option key={c}>{c}</option>
+      ))}
+    </Select>
   );
 }

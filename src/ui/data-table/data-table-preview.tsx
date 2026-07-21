@@ -1,27 +1,89 @@
 import { useState } from 'react';
 
 import type { PreviewProps } from '@/previews/types';
-import { EditableCell, Icon, IconButton, Menu, Tag, type EditableCellValue, type MenuEntry, type TagType } from '@/ui';
+import {
+  EditableCell,
+  Icon,
+  IconButton,
+  Menu,
+  Tag,
+  type EditableCellOption,
+  type EditableCellValue,
+  type MenuEntry,
+  type TagType,
+} from '@/ui';
 
 interface Row {
   name: string;
+  /** Long free text — demonstrates the cell's max-width clip + hover tooltip. */
+  description: string;
   status: string;
-  owner: string;
+  /** Multiselect — stored as an array of option values. */
+  regions: string[];
   /** Stored as a number — display formatting (`$84,500`) is handled by
    *  the EditableCell's `format` so editing returns the raw value. */
   amount: number;
-  date: string;
+  /** ISO `YYYY-MM-DD` — the date EditableCell stores and edits ISO. */
+  closeDate: string;
 }
 
 const initialData: Row[] = [
-  { name: 'Enterprise SaaS', status: 'Active', owner: 'Sarah Chen', amount: 84500, date: 'Mar 28' },
-  { name: 'Product-Led Growth', status: 'Active', owner: 'Marcus Rivera', amount: 215000, date: 'Mar 25' },
-  { name: 'Channel Partner', status: 'Draft', owner: 'Emily Zhao', amount: 32750, date: 'Mar 30' },
-  { name: 'Usage-Based Pricing', status: 'Active', owner: 'David Kim', amount: 156000, date: 'Mar 20' },
-  { name: 'Marketplace Listing', status: 'Archived', owner: 'Priya Sharma', amount: 67800, date: 'Feb 15' },
+  {
+    name: 'Enterprise SaaS',
+    description: 'Annual enterprise agreement with committed seat expansion across every business unit',
+    status: 'Active',
+    regions: ['na', 'emea'],
+    amount: 84500,
+    closeDate: '2026-03-28',
+  },
+  {
+    name: 'Product-Led Growth',
+    description: 'Self-serve',
+    status: 'Active',
+    regions: ['na'],
+    amount: 215000,
+    closeDate: '2026-03-25',
+  },
+  {
+    name: 'Channel Partner',
+    description: 'Reseller agreement covering the EMEA territory with quarterly rebate tiers and co-marketing funds',
+    status: 'Draft',
+    regions: ['emea'],
+    amount: 32750,
+    closeDate: '2026-03-30',
+  },
+  {
+    name: 'Usage-Based Pricing',
+    description: 'Metered API',
+    status: 'Active',
+    regions: ['na', 'apac'],
+    amount: 156000,
+    closeDate: '2026-03-20',
+  },
+  {
+    name: 'Marketplace Listing',
+    description: 'Cloud marketplace private offer with a custom EULA and a multi-year ramp schedule',
+    status: 'Archived',
+    regions: ['na', 'emea', 'apac', 'latam'],
+    amount: 67800,
+    closeDate: '2026-02-15',
+  },
 ];
 
 const formatAmount = (n: EditableCellValue) => `$${Number(Array.isArray(n) ? n[0] : n).toLocaleString()}`;
+
+const STATUS_OPTIONS: EditableCellOption[] = [
+  { value: 'Active', label: 'Active' },
+  { value: 'Draft', label: 'Draft' },
+  { value: 'Archived', label: 'Archived' },
+];
+
+const REGION_OPTIONS: EditableCellOption[] = [
+  { value: 'na', label: 'North America' },
+  { value: 'emea', label: 'EMEA' },
+  { value: 'apac', label: 'APAC' },
+  { value: 'latam', label: 'LATAM' },
+];
 
 const STATUS_TO_TAG_TYPE: Record<string, TagType> = {
   Active: 'accent',
@@ -31,23 +93,24 @@ const STATUS_TO_TAG_TYPE: Record<string, TagType> = {
 
 export function DataTablePreview({ styles, variants }: PreviewProps & { componentId: string }) {
   const [hovered, setHovered] = useState<number | null>(null);
-  // Owning the rows in state lets the Amount column (made editable
-  // below) round-trip its commits back into the table — designers
-  // see the new value persist after the edit.
+  // Owning the rows in state lets every editable column round-trip its
+  // commits back into the table — designers see the new value persist
+  // after the edit.
   const [rows, setRows] = useState<Row[]>(initialData);
   const density = variants.density ?? 'default';
   const densityMultiplier = density === 'compact' ? 0.65 : density === 'relaxed' ? 1.4 : 1;
   const cellPy = Math.round((styles.cellPaddingY as number) * densityMultiplier);
 
-  const commitAmount = (index: number) => async (next: EditableCellValue) => {
-    // Simulated async commit so designers can see the submitting state.
+  // One commit path for every column — a simulated async handler so
+  // designers can see the submitting state, then patches the row field.
+  // EditableCell already hands back the right runtime type per column
+  // (number for Amount, string[] for Regions, string elsewhere).
+  const commit = (index: number, key: keyof Row) => async (next: EditableCellValue) => {
     await new Promise((r) => setTimeout(r, 300));
-    setRows((prev) => prev.map((r, i) => (i === index ? { ...r, amount: Number(next) } : r)));
-  };
-
-  const commitName = (index: number) => async (next: EditableCellValue) => {
-    await new Promise((r) => setTimeout(r, 300));
-    setRows((prev) => prev.map((r, i) => (i === index ? { ...r, name: String(next) } : r)));
+    // `as Row`: `next` is the EditableCellValue union; each column's editor type
+    // already matches its field shape (see comment above), so the cast is safe
+    // here. This is preview/demo code — a real consumer would type per column.
+    setRows((prev) => prev.map((r, i) => (i === index ? ({ ...r, [key]: next } as Row) : r)));
   };
 
   // Per-row action menu — the trailing ⋮ column. Demonstrates the real
@@ -85,16 +148,24 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
     },
   ];
 
+  // Editable columns share the same -6 horizontal padding compensation so
+  // the value's left edge lines up with its header (the cell carries its
+  // own 6px paddingX / the select trigger its own gutter).
+  const editableTd = {
+    padding: `${cellPy}px ${(styles.cellPaddingX as number) - 6}px`,
+    color: 'var(--color-text)',
+    borderBottom: `1px solid ${styles.borderColor}`,
+  } as const;
+
   return (
     <div style={{
       // max-content with a floor: the table grows for wide data (a long
       // committed Amount widens its own column) instead of staying locked
-      // at 580px and squeezing the other columns into wrapping — the
-      // "Name column jumps when I commit a huge number" effect.
-      // (fit-content won't do: the canvas parent's available width clamps
-      // it right back to the floor.)
+      // and squeezing the other columns into wrapping — the "Name column
+      // jumps when I commit a huge number" effect. (fit-content won't do:
+      // the canvas parent's available width clamps it right back.)
       width: 'max-content',
-      minWidth: 580,
+      minWidth: 720,
       border: `1px solid ${styles.borderColor}`,
       borderRadius: styles.borderRadius as number,
       overflow: 'hidden',
@@ -102,7 +173,7 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: styles.fontSize as number }}>
         <thead>
           <tr style={{ backgroundColor: styles.headerBg as string }}>
-            {['Name', 'Status', 'Owner', 'Amount', 'Date'].map((h) => (
+            {['Name', 'Description', 'Status', 'Regions', 'Amount', 'Close date'].map((h) => (
               <th key={h} style={{
                 textAlign: 'left',
                 padding: `${cellPy}px ${styles.cellPaddingX}px`,
@@ -133,35 +204,71 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
                 transition: 'background-color 0.1s',
               }}
             >
-              {/* Name is an editable text cell — together with the numeric
-                  Amount column the preview demos both editor types live in
-                  a table. Horizontal padding compensates for the cell's own
-                  paddingX so the value aligns with the header. */}
-              <td style={{ padding: `${cellPy}px ${(styles.cellPaddingX as number) - 6}px`, fontWeight: 500, color: 'var(--color-text)', borderBottom: `1px solid ${styles.borderColor}` }}>
+              {/* text (short) — required, so validate blocks an empty name. */}
+              <td style={{ ...editableTd, fontWeight: 500 }}>
                 <EditableCell
                   value={row.name}
-                  onCommit={commitName(i)}
+                  onCommit={commit(i, 'name')}
                   type="text"
                   validate={(v) => (String(v).trim() ? null : 'Name is required')}
                 />
               </td>
-              <td style={{ padding: `${cellPy}px ${styles.cellPaddingX}px`, borderBottom: `1px solid ${styles.borderColor}` }}>
-                <Tag type={STATUS_TO_TAG_TYPE[row.status] ?? 'neutral'} size="small">{row.status}</Tag>
+              {/* text (long) — the value overflows the cell's max-width, so it
+                  clips with an ellipsis and reveals the full text on hover. */}
+              <td style={{ ...editableTd }}>
+                <EditableCell
+                  value={row.description}
+                  onCommit={commit(i, 'description')}
+                  type="text"
+                  placeholder="Add a description"
+                />
               </td>
-              <td style={{ padding: `${cellPy}px ${styles.cellPaddingX}px`, color: 'var(--color-text-muted)', borderBottom: `1px solid ${styles.borderColor}` }}>{row.owner}</td>
-              {/* Amount column shows the editable-cell affordance live —
-                  click any value to edit it. Validation blocks negatives;
-                  blur commits via a simulated async handler. */}
-              <td style={{ padding: `${cellPy}px ${(styles.cellPaddingX as number) - 6}px`, fontWeight: 500, color: 'var(--color-text)', borderBottom: `1px solid ${styles.borderColor}` }}>
+              {/* select — status as a single-choice picker; format renders the
+                  chosen value as the same status Tag used elsewhere. */}
+              <td style={{ ...editableTd }}>
+                <EditableCell
+                  value={row.status}
+                  onCommit={commit(i, 'status')}
+                  type="select"
+                  options={STATUS_OPTIONS}
+                  format={(v) => (
+                    <Tag type={STATUS_TO_TAG_TYPE[String(v)] ?? 'neutral'} size="small">
+                      {String(v)}
+                    </Tag>
+                  )}
+                />
+              </td>
+              {/* multiselect — regions; the display joins the selected labels
+                  and clips + tooltips when the list runs long. */}
+              <td style={{ ...editableTd }}>
+                <EditableCell
+                  value={row.regions}
+                  onCommit={commit(i, 'regions')}
+                  type="multiselect"
+                  options={REGION_OPTIONS}
+                  clearable
+                  placeholder="Add regions"
+                />
+              </td>
+              {/* number — validation blocks negatives; blur commits via the
+                  simulated async handler; format shows the currency string. */}
+              <td style={{ ...editableTd, fontWeight: 500 }}>
                 <EditableCell
                   value={row.amount}
-                  onCommit={commitAmount(i)}
+                  onCommit={commit(i, 'amount')}
                   type="number"
                   format={formatAmount}
                   validate={(v) => (Number(v) < 0 ? 'Must be ≥ 0' : null)}
                 />
               </td>
-              <td style={{ padding: `${cellPy}px ${styles.cellPaddingX}px`, color: 'var(--color-text-muted)', borderBottom: `1px solid ${styles.borderColor}` }}>{row.date}</td>
+              {/* date — click opens a masked input + calendar; ISO in, ISO out. */}
+              <td style={{ ...editableTd }}>
+                <EditableCell
+                  value={row.closeDate}
+                  onCommit={commit(i, 'closeDate')}
+                  type="date"
+                />
+              </td>
               {/* Actions column — a ⋮ IconButton that opens the Menu atom
                   with row-bound actions. Right-aligned, hugs the trigger. */}
               <td style={{
