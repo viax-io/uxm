@@ -3,37 +3,6 @@ import type { ComponentDef } from '../types';
 export const feedbackDefs: ComponentDef[] = [
   // ── Feedback ──
   {
-    id: 'segment-tree-row',
-    name: 'Segment Tree Row',
-    category: 'Composite',
-    description: 'Collapsible nested tree node — drag handle, depth-cycled accent rail, chevron, title, item count, hover actions.',
-    styleProperties: [
-      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
-      { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
-      { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 12, min: 0, max: 20, step: 1, unit: 'px' },
-      { key: 'accentColor', label: 'Rail Color', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
-      { key: 'accentWidth', label: 'Rail Width', control: 'number', defaultValue: 4, min: 1, max: 8, step: 1, unit: 'px' },
-      { key: 'accentHeight', label: 'Rail Height', control: 'number', defaultValue: 20, min: 12, max: 40, step: 2, unit: 'px' },
-      { key: 'titleSize', label: 'Title Size', control: 'number', defaultValue: 15, min: 12, max: 20, step: 1, unit: 'px' },
-      { key: 'titleColor', label: 'Title Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
-      { key: 'countBadgeBg', label: 'Count Bg', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'colors' },
-      { key: 'countBadgeText', label: 'Count Text', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
-      { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 16, min: 8, max: 32, step: 2, unit: 'px' },
-      { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 18, min: 8, max: 32, step: 2, unit: 'px' },
-    ],
-    layoutVariants: [
-      {
-        key: 'state',
-        label: 'State',
-        options: [
-          { value: 'expanded', label: 'Expanded' },
-          { value: 'collapsed', label: 'Collapsed' },
-        ],
-        defaultValue: 'expanded',
-      },
-    ],
-  },
-  {
     id: 'timeline-entry',
     name: 'Timeline Entry',
     category: 'Display',

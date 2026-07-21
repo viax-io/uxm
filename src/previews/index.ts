@@ -25,6 +25,7 @@ export { CheckboxPreview } from '@/ui/checkbox/checkbox-preview';
 export { ChipPreview } from '@/ui/chip/chip-preview';
 export { ClusterPreview } from '@/ui/cluster/cluster-preview';
 export { ColorInputPreview } from '@/ui/color-input/color-input-preview';
+export { ComponentRowPreview } from '@/ui/component-row/component-row-preview';
 export { ConfigComponentRowPreview } from '@/ui/config-component-row/config-component-row-preview';
 export { ConfigSegmentItemPreview } from '@/ui/config-segment-item/config-segment-item-preview';
 export { ContentTooltipPreview } from '@/ui/tooltip/content-tooltip-preview';
@@ -64,6 +65,7 @@ export { MetaRowPreview } from '@/ui/meta-row/meta-row-preview';
 export { ModalPreview } from '@/ui/modal/modal-preview';
 export { NumberStepperPreview } from '@/ui/number-stepper/number-stepper-preview';
 export { NumberInputPreview } from '@/ui/number-input/number-input-preview';
+export { OptionListPreview } from '@/ui/option-list/option-list-preview';
 export { PageHeaderPreview } from '@/ui/page-header/page-header-preview';
 export { PageShellPreview } from '@/ui/page-shell/page-shell-preview';
 export { PasswordInputPreview } from '@/ui/password-input/password-input-preview';
@@ -76,6 +78,8 @@ export { RadioGroupPreview } from '@/ui/radio-group/radio-group-preview';
 export { ResponsiveGridPreview } from '@/ui/responsive-grid/responsive-grid-preview';
 export { SearchDropdownPreview } from '@/ui/search-dropdown/search-dropdown-preview';
 export { SectionHeaderPreview } from '@/ui/section-header/section-header-preview';
+export { SegmentRowPreview } from '@/ui/segment-row/segment-row-preview';
+export { SegmentCardPreview } from '@/ui/segment-card/segment-card-preview';
 export { SelectPreview } from '@/ui/input/select-preview';
 export { SideFlexpanePreview } from '@/ui/side-flexpane/side-flexpane-preview';
 export { SidebarNavItemPreview } from '@/ui/sidebar-nav-item/sidebar-nav-item-preview';
@@ -105,7 +109,6 @@ export { LifecycleEdgeInsertMenuPreview } from '@/previews/composite/lifecycle-e
 export { LifecyclePlusButtonPreview } from '@/previews/composite/lifecycle-plus-button-preview';
 export { LoginPagePreview } from '@/previews/composite/login-page-preview';
 export { MultirowFormPreview } from '@/previews/composite/multirow-form-preview';
-export { SegmentTreeRowPreview } from '@/previews/composite/segment-tree-row-preview';
 
 // ── Shared preview-side types ──
 export type { PreviewProps, PreviewShellContext, Theme } from './types';

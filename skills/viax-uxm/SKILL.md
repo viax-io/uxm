@@ -316,6 +316,21 @@ skill:
 - **`fontFileUrl` / `safeFontFamily` are now exported from `@viax/uxm/studio/generate-css`** —
   the Google-Fonts css2 URL builder (weights 400–700) and the font-name sanitiser the Build path
   uses. Reuse these in host appliers instead of hand-rolling font URL/escaping logic.
+- **New `Configuration` component set — `SegmentRow`, `SegmentCard`, `ComponentRow`, `OptionList`.**
+  A studio **Configuration** category groups the four building blocks of a Configuration model's
+  segment tree (ported 1:1 from the v1 config-builder look/feel + knobs):
+  - `SegmentRow` — segment header (drag · accent line · expand chevron · name · count badge).
+  - `SegmentCard` — the container that wraps a nested segment (SegmentRow header · divider · inset
+    body); the compositional segment-tree container. (Supersedes the former monolithic
+    `SegmentTreeRow`, which has been removed.)
+  - `ComponentRow` — a config field row (drag · type-icon badge · optional chevron · name · type
+    label); badge tint is per-type at runtime via `iconBg`/`iconColor`.
+  - `OptionList` — indented options list under a Predefined-Options component (drag · bullet · name).
+
+  All four are fully studio-themeable via `--uxm-segment-row-*` / `--uxm-segment-card-*` /
+  `--uxm-component-row-*` / `--uxm-option-list-*`. Compose a tree as
+  `SegmentCard(header: SegmentRow)` › `ComponentRow`(s) + `OptionList` under options rows, with
+  nested segments wrapped in further `SegmentCard`s.
 
 ### New in 3.3.0
 

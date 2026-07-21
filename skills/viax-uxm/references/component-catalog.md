@@ -146,10 +146,13 @@ end-user apps.
 | Component | Key exports | What it is |
 |-----------|-------------|------------|
 | **ConfigComponentRow** | `ConfigComponentRow`, `ConfigComponentRowProps` | Middle-pane row in MODO's config UI. Root is a `<div>` wrapping an inner select `<button>`; optional `actions` slot holds hover/focus-revealed `IconButton`s as siblings of the button (not nested). |
+| **SegmentRow** | `SegmentRow`, `SegmentRowProps` | Segment header — drag · accent line · expand chevron · name · count badge. Building block. |
+| **SegmentCard** | `SegmentCard`, `SegmentCardProps` | Container for a nested segment — SegmentRow header + divider + inset body. The compositional segment-tree container. |
+| **ComponentRow** | `ComponentRow`, `ComponentRowProps` | Config field row — drag · type-icon badge · optional chevron · name · type label. Building block. |
+| **OptionList** | `OptionList`, `OptionListProps`, `OptionListItem` | Indented list of options under a Predefined-Options component (drag · bullet · name). Building block. |
 | **ConfigSegmentItem** | `ConfigSegmentItem`, `ConfigSegmentItemProps` | Left-pane segment row with `aria-pressed`. |
 | **ExplorerListItem** | `ExplorerListItem`, `ExplorerListItemProps` | Tree explorer row. |
 | **ExplorerSection** | `ExplorerSection`, `ExplorerSectionProps` | Collapsible explorer section. |
-| **SegmentTreeRow** | `SegmentTreeRow`, `SegmentTreeRowProps` | Collapsible segment node (3.2.0): header (optional drag handle · accent rail · chevron · title · `count` badge · hover-revealed `actions`) over a body of `ConfigComponentRow`s. Controlled/uncontrolled `open`, like `Disclosure`. |
 
 ## Lifecycle diagrams
 

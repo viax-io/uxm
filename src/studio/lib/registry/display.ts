@@ -350,8 +350,9 @@ export const displayDefs: ComponentDef[] = [
   // ── Configuration model ──
   // Two pieces specific to the Configuration template's three-pane editor:
   // a clickable segment row (left list) and a clickable component card row
-  // (middle list). Distinct from `segment-tree-row` above, which models a
-  // collapsible single-column tree.
+  // (middle list). Distinct from the `Configuration` category's
+  // `segment-row` / `component-row`, which model the segment-tree building
+  // blocks rather than these three-pane list rows.
   {
     id: 'config-segment-item',
     name: 'Config Segment Item',

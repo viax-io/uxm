@@ -1,0 +1,69 @@
+/* ── option-list ── */
+
+.uxm-option-list {
+  background-color: var(--uxm-option-list-background, var(--color-surface));
+  border: var(--uxm-option-list-border-width, 1px) solid
+    var(--uxm-option-list-border-color, var(--color-border));
+  border-radius: var(--uxm-option-list-border-radius, 8px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--uxm-option-list-gap, 4px);
+  margin-inline-start: var(--uxm-option-list-indent, 38px);
+  padding: var(--uxm-option-list-padding-y, 4px) var(--uxm-option-list-padding-x, 8px);
+
+  &__row {
+    align-items: center;
+    border-radius: var(--uxm-option-list-row-hover-radius, 12px);
+    /* Drag → bullet spacing is fixed; bullet → name is tuned via the bullet's
+       own trailing margin (see &__bullet) so only one knob moves it. */
+    display: flex;
+    gap: 8px;
+    padding: var(--uxm-option-list-row-padding-y, 12px)
+      var(--uxm-option-list-row-padding-x, 8px);
+    user-select: none;
+
+    &:hover {
+      background-color: var(
+        --uxm-option-list-row-hover-bg,
+        color-mix(in srgb, var(--color-text) 4%, transparent)
+      );
+    }
+  }
+
+  &__drag {
+    align-items: center;
+    color: var(--uxm-option-list-drag-color, var(--color-text-muted));
+    cursor: grab;
+    display: inline-flex;
+    flex-shrink: 0;
+    justify-content: center;
+    width: 16px;
+
+    &:hover {
+      color: var(--uxm-option-list-drag-hover-color, var(--color-text-muted));
+    }
+  }
+
+  &__bullet {
+    background-color: var(
+      --uxm-option-list-bullet-color,
+      color-mix(in srgb, var(--color-highlight-cool) 40%, transparent)
+    );
+    border-radius: 999px;
+    flex-shrink: 0;
+    height: var(--uxm-option-list-bullet-size, 6px);
+    margin-inline-end: calc(var(--uxm-option-list-bullet-gap, 8px) - 8px);
+    width: var(--uxm-option-list-bullet-size, 6px);
+  }
+
+  &__name {
+    color: var(--uxm-option-list-name-color, var(--color-text));
+    flex: 1;
+    font-size: var(--uxm-option-list-name-size, 14px);
+    font-weight: var(--uxm-option-list-name-weight, 400);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

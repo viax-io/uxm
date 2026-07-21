@@ -18,6 +18,7 @@
 @import "./card/card.css";
 @import "./checkbox/checkbox.css";
 @import "./chip/chip.css";
+@import "./component-row/component-row.css";
 @import "./cluster/cluster.css";
 @import "./color-input/color-input.css";
 @import "./config-component-row/config-component-row.css";
@@ -61,6 +62,7 @@
 @import "./modal/modal.css";
 @import "./number-stepper/number-stepper.css";
 @import "./number-input/number-input.css";
+@import "./option-list/option-list.css";
 @import "./page-header/page-header.css";
 @import "./page-shell/page-shell.css";
 @import "./password-input/password-input.css";
@@ -74,7 +76,8 @@
 @import "./responsive-grid/responsive-grid.css";
 @import "./search-dropdown/search-dropdown.css";
 @import "./section-header/section-header.css";
-@import "./segment-tree-row/segment-tree-row.css";
+@import "./segment-row/segment-row.css";
+@import "./segment-card/segment-card.css";
 @import "./side-flexpane/side-flexpane.css";
 @import "./sidebar-nav-item/sidebar-nav-item.css";
 @import "./slider/slider.css";

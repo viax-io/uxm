@@ -2,7 +2,7 @@ import { Icon, IconButton } from '@/ui';
 
 /**
  * Sample hover-revealed row actions (edit / delete) shared by the tree-row
- * previews (`SegmentTreeRow`, `ConfigComponentRow`), so the demo stays in one
+ * previews (`SegmentRow`, `ComponentRow`), so the demo stays in one
  * place. A static element is fine to reuse across multiple rows — it's an
  * immutable element description, not shared mutable state.
  */
