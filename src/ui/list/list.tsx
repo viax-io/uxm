@@ -1,11 +1,30 @@
 import { cn } from '@/helpers';
 
+import { IconTile } from '../icon-tile';
+
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
+  CSSProperties,
   HTMLAttributes,
   ReactNode,
 } from 'react';
+
+/**
+ * Forward the studio icon knobs (projected as `--uxm-list-item-icon-*` on the
+ * row) into the `IconTile` atom's own var namespace, so the accent-tile
+ * pattern lives in one place — the `IconTile` atom — instead of being
+ * re-implemented in `list.scss`. The glyph tracks the tile at 0.6× (the
+ * row-icon proportion used across the design system). Kept as a module
+ * constant so the studio preview can reuse the exact same forwarding.
+ */
+export const LIST_ITEM_ICON_TILE_STYLE = {
+  '--uxm-icon-tile-bg': 'var(--uxm-list-item-icon-bg, var(--color-accent))',
+  '--uxm-icon-tile-color': 'var(--uxm-list-item-icon-color, var(--color-card))',
+  '--uxm-icon-tile-size': 'var(--uxm-list-item-icon-size, 24px)',
+  '--uxm-icon-tile-radius': 'var(--uxm-list-item-icon-radius, 6px)',
+  '--uxm-icon-tile-icon-size': 'calc(var(--uxm-list-item-icon-size, 24px) * 0.6)',
+} as CSSProperties;
 
 export interface ListProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
@@ -84,7 +103,11 @@ export function ListItem({
   const isInteractive = interactive || href !== undefined;
   const inner = (
     <>
-      {icon && <span className="uxm-list-item__icon">{icon}</span>}
+      {icon && (
+        <IconTile className="uxm-list-item__icon" style={LIST_ITEM_ICON_TILE_STYLE}>
+          {icon}
+        </IconTile>
+      )}
       <span className="uxm-list-item__content">
         <span className="uxm-list-item__title">{children}</span>
         {value !== undefined && value !== null && (

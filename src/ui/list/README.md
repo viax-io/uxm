@@ -54,7 +54,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | – | **Required.** Primary label. |
-| `icon` | `ReactNode` | – | Leading icon — typically an `<Icon />` from `@viax/uxm`. |
+| `icon` | `ReactNode` | – | Leading icon — typically an `<Icon />` from `@viax/uxm`. Rendered inside a shared `IconTile` (accent-filled rounded tile); the tile owns the glyph size (0.6× the tile via `--uxm-list-item-icon-size`), so any `size` on the passed `<Icon />` is ignored. |
 | `value` | `ReactNode` | – | Secondary text shown under the title. Skipped if `undefined` / `null`. |
 | `trailing` | `ReactNode` | – | Trailing content — meta text, chevron, or custom node. |
 | `interactive` | `boolean` | `false` | Render as a clickable element (`<button>` by default, or `<a>` if `href` also set). |
@@ -72,15 +72,20 @@ Only `ListItem` exposes per-instance variables; structural styling (card backgro
 |----------|----------------|---------|---------|
 | `--uxm-list-item-value-color` | `--color-text-muted` | – | Sub-line (`value`) text colour. |
 | `--uxm-list-item-value-size` | – | `12px` | Sub-line font size. |
+| `--uxm-list-item-icon-bg` | `--color-accent` | – | Leading `IconTile` background. |
+| `--uxm-list-item-icon-color` | `--color-card` | – | Leading `IconTile` glyph colour. |
+| `--uxm-list-item-icon-size` | – | `24px` | `IconTile` box size (glyph is 0.6× this). |
+| `--uxm-list-item-icon-radius` | – | `6px` | `IconTile` corner radius. |
 
 ## Design tokens (MODO-configurable)
 
 | Token | Group / name | Used for |
 |-------|--------------|----------|
-| `--color-card` | Surfaces / Card | List container background. |
+| `--color-card` | Surfaces / Card | List container background; leading icon-tile glyph colour (default). |
 | `--color-border` | Borders / Border | Container border + per-row divider. |
 | `--color-text` | Text / Text | Row title colour. |
-| `--color-text-muted` | Text / Text Muted | Icon, trailing text, and `value` sub-line colour. |
+| `--color-text-muted` | Text / Text Muted | Trailing text and `value` sub-line colour. |
+| `--color-accent` | Accent / Accent | Leading icon-tile background (default). |
 
 The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI.
 

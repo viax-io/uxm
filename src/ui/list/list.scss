@@ -11,11 +11,19 @@
   align-items: center;
   background-color: var(--uxm-list-item-inactive-bg, transparent);
   border-bottom: 1px solid var(--uxm-list-item-border-color, var(--color-border));
+  box-sizing: border-box;
   color: var(--uxm-list-item-inactive-text, var(--color-text));
   display: flex;
   font-size: var(--uxm-list-item-font-size, 14px);
   gap: var(--uxm-list-item-gap, 12px);
   padding: var(--uxm-list-item-padding-y, 12px) var(--uxm-list-item-padding-x, 16px);
+  /* Fill the List container. Static <div> rows stretch on their own, but
+     interactive <button> rows are shrink-to-fit form controls — without
+     `width` they'd size to content and sit narrow. `text-align: left`
+     clears the UA <button> centering so the title/value text nodes inside
+     the flex content column left-align, matching the <div> rows. */
+  text-align: left;
+  width: 100%;
 
   &:last-child {
     border-bottom: none;
@@ -47,12 +55,10 @@
     color: var(--uxm-list-item-active-text, var(--color-text));
   }
 
-  &__icon {
-    color: var(--color-text-muted);
-    display: inline-flex;
-    flex-shrink: 0;
-  }
-
+  /* Icon slot renders as the shared `IconTile` atom (composed in list.tsx),
+     which owns the accent-tile treatment. The studio icon knobs are forwarded
+     into IconTile's var namespace via `LIST_ITEM_ICON_TILE_STYLE`, so the tile
+     pattern is defined once instead of being re-implemented here. */
   &__content {
     display: flex;
     flex: 1;

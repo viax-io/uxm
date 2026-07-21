@@ -1319,6 +1319,7 @@ export const compositeDefs: ComponentDef[] = [
       { key: 'iconBg', label: 'Icon Bg', control: 'color', defaultValue: 'var(--color-accent)', section: 'icon' },
       { key: 'iconColor', label: 'Icon Color', control: 'color', defaultValue: 'var(--color-card)', section: 'icon' },
       { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 24, min: 16, max: 40, step: 2, unit: 'px', section: 'icon' },
+      { key: 'iconRadius', label: 'Icon Radius', control: 'slider', defaultValue: 6, min: 0, max: 16, step: 1, unit: 'px', section: 'icon' },
     ],
     layoutVariants: [
       {
