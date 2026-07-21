@@ -34,7 +34,7 @@ export function SegmentCard({ header, divider = true, children, className, ...re
     <div className={cn('uxm-segment-card', className)} {...rest}>
       {header && <div className="uxm-segment-card__header">{header}</div>}
       {header && hasBody && divider && (
-        <div className="uxm-segment-card__divider" role="separator" aria-hidden="true" />
+        <div className="uxm-segment-card__divider" aria-hidden="true" />
       )}
       {hasBody && <div className="uxm-segment-card__body">{children}</div>}
     </div>

@@ -40,7 +40,7 @@ export function OptionList({ options, dragHandle = true, rowActions, className, 
       {options.map((opt, i) => {
         const actions = rowActions?.(opt, i);
         return (
-          <div className="uxm-option-list__row" key={opt.id ?? i}>
+          <div className="uxm-option-list__row" key={opt.id ?? `__option-${i}`}>
             {dragHandle && (
               <span className="uxm-option-list__drag" aria-hidden="true">
                 <Icon glyph="drag-handle" size={14} />

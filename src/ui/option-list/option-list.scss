@@ -67,7 +67,7 @@
     white-space: nowrap;
   }
 
-  /* Per-row delete action (only rendered when `onDelete` is set). Collapsed to
+  /* Per-row actions (only rendered when `rowActions` is set). Collapsed to
      zero width when idle and revealed on row hover / keyboard focus; on touch
      (no hover) it stays visible, since there is no hover to trigger it. */
   &__actions {
