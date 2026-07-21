@@ -61,6 +61,17 @@ function isoToFormatted(value: EditableCellValue, format: DateInputFormat): stri
   return d ? formatDateAs(d, format) : value;
 }
 
+/**
+ * Emptiness rule for the `required` check — the single definition shared by
+ * every editor type: an empty array (multiselect), a NaN number (blank numeric
+ * draft), or a blank/whitespace string (text/select/date).
+ */
+function isEmptyValue(v: EditableCellValue): boolean {
+  if (Array.isArray(v)) return v.length === 0;
+  if (typeof v === 'number') return Number.isNaN(v);
+  return String(v ?? '').trim() === '';
+}
+
 export interface EditableCellOption {
   value: string;
   label: string;
@@ -94,7 +105,12 @@ export interface EditableCellProps {
   dateFormat?: DateInputFormat;
   /** Options — required for `type="select"` and `type="multiselect"`. */
   options?: EditableCellOption[];
-  /** Whether the select panel includes a search box. Passed to the internal Listbox. */
+  /**
+   * Whether the select panel includes a search box. Defaults to `"auto"` —
+   * the box appears only once the option count passes the shared Listbox
+   * threshold (6) — so a select/multiselect cell matches the `Select` atom's
+   * behavior instead of inheriting the raw Listbox `true` default.
+   */
   searchable?: boolean | 'auto';
   /** Whether the select panel allows clearing the selection. */
   clearable?: boolean;
@@ -104,6 +120,16 @@ export interface EditableCellProps {
   format?: (value: EditableCellValue) => ReactNode;
   /** Synchronous validation. Return an error message to block commit; return null/undefined to accept. */
   validate?: (next: EditableCellValue) => string | null | undefined;
+  /**
+   * Mark the cell required — an empty value blocks commit and surfaces a
+   * warning, checked BEFORE `validate` so you don't hand-write the empty rule.
+   * Uniform across every editor type: `multiselect` → non-empty array (the
+   * rule lives in MultiListbox, shared with every other picker), `select` →
+   * a chosen option, `text`/`number`/`date` → a non-blank value.
+   */
+  required?: boolean;
+  /** Override the default required message (per-type: "Select at least one option" / "Select an option" / "Required"). */
+  requiredMessage?: string;
   /** Read-only — clicking does nothing, no edit affordance. */
   disabled?: boolean;
   /** Shown when value is empty/blank. */
@@ -146,11 +172,13 @@ export function EditableCell({
   type = 'text',
   dateFormat = 'ymd',
   options,
-  searchable,
+  searchable = 'auto',
   clearable,
   align = 'left',
   format,
   validate,
+  required = false,
+  requiredMessage,
   disabled,
   placeholder,
   className,
@@ -233,8 +261,20 @@ export function EditableCell({
     return draft;
   }, [type, draft]);
 
+  // Per-type default required message; overridable via `requiredMessage`.
+  // (multiselect's own default lives in MultiListbox, which owns that rule.)
+  const requiredMsg =
+    requiredMessage ?? (type === 'select' ? 'Select an option' : 'Required');
+
   const commitValue = useCallback(
     async (next: EditableCellValue): Promise<boolean> => {
+      // Required is checked before `validate` so consumers get the empty rule
+      // for free. Multiselect empties are already blocked upstream by
+      // MultiListbox (they never reach here), so this covers the scalar types.
+      if (required && isEmptyValue(next)) {
+        setError({ message: requiredMsg, severity: 'warning' });
+        return false;
+      }
       const validationError = validate?.(next);
       if (validationError) {
         setError({ message: validationError, severity: 'warning' });
@@ -261,7 +301,7 @@ export function EditableCell({
         setSubmitting(false);
       }
     },
-    [validate, onCommit],
+    [required, requiredMsg, validate, onCommit],
   );
 
   // Shared commit path for both the typed input (handleCommit) and the calendar
@@ -342,14 +382,6 @@ export function EditableCell({
 
     await commitValue(next);
   }, [parseDraft, type, dateFormat, value, commitValue, commitDate]);
-
-  const handleMultiChange = useCallback(
-    async (items: EditableCellOption[]) => {
-      const next = items.map((o) => o.value);
-      await commitValue(next);
-    },
-    [commitValue],
-  );
 
   const handlePick = useCallback(
     async (calValue: CalendarValue) => {
@@ -515,7 +547,7 @@ export function EditableCell({
             )}
             footer={clearable && selectedItem ? ({ close }: { close: () => void }) => (
               <ButtonGhost
-                className="uxm-editable-cell__clear-option"
+                className="uxm-listbox__footer-clear-option"
                 onClick={() => {
                   commitValue('');
                   close();
@@ -552,7 +584,10 @@ export function EditableCell({
       );
     }
 
-    // multiselect
+    // multiselect. Staging (draft while open, one commit on close) is the
+    // MultiListbox default — so a required cell survives "clear all → pick one"
+    // and N picks are one commit. This branch just hands over the committed
+    // selection and commits the final array back.
     const selectedItems = Array.isArray(value)
       ? optionItems.filter((o) => value.includes(o.value))
       : [];
@@ -576,11 +611,20 @@ export function EditableCell({
           getKey={getKey}
           getLabel={getLabel}
           value={selectedItems}
-          onChange={handleMultiChange}
+          onChange={(items) => commitValue(items.map((o) => o.value))}
+          required={required}
+          requiredMessage={requiredMessage}
+          // MultiListbox owns the empty rule for multi (shared with every
+          // picker); route its violation into this cell's error Banner.
+          onRequiredViolation={(message) => setError({ message, severity: 'warning' })}
           disabled={disabled}
           searchable={searchable}
           matchAnchorWidth
-          onOpenChange={setOpen}
+          // Clear a stale required warning when the panel reopens for a fresh edit.
+          onOpenChange={(next) => {
+            setOpen(next);
+            if (next) setError(null);
+          }}
           renderTrigger={({ open: isOpen, triggerProps }: ListboxRenderTriggerState<EditableCellOption>) => (
             <button
               type="button"
@@ -604,6 +648,22 @@ export function EditableCell({
           renderItem={(o) => (
             <span className="uxm-editable-cell__option-label">{o.label}</span>
           )}
+          footer={clearable ? ({ clear, selected }: { clear: () => void; selected: EditableCellOption[] }) =>
+            selected.length > 0 ? (
+              <ButtonGhost
+                className="uxm-listbox__footer-clear-option"
+                // `clear` (from MultiListbox) empties the draft and keeps the
+                // panel open, so "clear all then pick one" works even on a
+                // required cell — the empty state is transient and never
+                // reaches `validate` / `onCommit`. `selected` is the live
+                // draft, so the button hides itself once nothing is picked.
+                onClick={clear}
+              >
+                <Icon glyph="close" size={12} />
+                Clear all
+              </ButtonGhost>
+            ) : null
+          : undefined}
         />
         <Popover
           open={Boolean(shownError)}
