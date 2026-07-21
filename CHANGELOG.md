@@ -1,3 +1,11 @@
+## [3.2.1](https://gitlab.viax.tech/services-viax/uxm/compare/v3.2.0...v3.2.1) (2026-07-21)
+
+
+### Bug Fixes
+
+* **list-item:** document icon-tile slot; make its radius studio-themeable ([97ce4cc](https://gitlab.viax.tech/services-viax/uxm/commit/97ce4ccdaaf47b825fb1b12212c30bfb6b7aec1b)), closes [#1](https://gitlab.viax.tech/services-viax/uxm/issues/1)
+* **list-item:** stretch interactive rows to full width; render icon via IconTile ([70f7828](https://gitlab.viax.tech/services-viax/uxm/commit/70f782805cd85a296bee5f1ff05fd28ea8e31fd8))
+
 # [3.2.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.1.4...v3.2.0) (2026-07-17)
 
 
