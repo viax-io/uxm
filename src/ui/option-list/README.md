@@ -7,14 +7,15 @@ The list of options nested under a **Predefined Options** configuration componen
 ## Usage
 
 ```tsx
-import { OptionList } from '@viax/uxm';
+import { OptionList, IconButton, Icon } from '@viax/uxm';
 
 <OptionList
-  options={[
-    { label: 'Single Family Home' },
-    { label: 'Multi Family' },
-    { label: 'Townhouse' },
-  ]}
+  options={options}
+  rowActions={(item, i) => (
+    <IconButton aria-label="Delete option" onClick={() => removeOption(i)}>
+      <Icon glyph="trash" />
+    </IconButton>
+  )}
 />;
 ```
 
@@ -28,6 +29,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — native `div` attributes (`style`, `
 |------|------|---------|-------------|
 | `options` | `OptionListItem[]` | – | **Required.** The options to list, in order. Each is `{ id?: Key; label: ReactNode }`. |
 | `dragHandle` | `boolean` | `true` | Show a leading drag-handle affordance on each row (visual only — wire your own DnD). |
+| `rowActions` | `(item: OptionListItem, index: number) => ReactNode` | – | Optional per-row action controls (e.g. an `IconButton`), revealed on row hover / focus after the label. Called per row so the consumer decides which actions each row gets (delete, edit, …). |
 
 ## CSS variables
 
@@ -62,3 +64,4 @@ Set on the root (or an ancestor scope). Each falls back to a design token.
 - Drag handles are decorative (`aria-hidden`); the affordance is visual only. Wire keyboard-accessible reordering separately if your consumer needs it.
 - Bullets are `aria-hidden` decorative markers.
 - Provide meaningful `label` content — screen readers read the option name directly.
+- `rowActions` controls are revealed on row hover / focus but stay keyboard-reachable, and are always visible on touch (`@media (hover: none)`). Give each control its own `aria-label` (e.g. an `IconButton`'s required `aria-label`).

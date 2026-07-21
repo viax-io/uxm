@@ -1,22 +1,27 @@
+import { useState } from 'react';
+
 import type { PreviewProps } from '@/previews/types';
-import { OptionList } from '@/ui';
+import { Icon, IconButton, OptionList } from '@/ui';
 
 import type { CSSProperties } from 'react';
 
 /**
  * Preview renders the real shipped `<OptionList>` atom, projecting each
- * registry knob onto its `--uxm-option-list-*` custom property. The bullet
- * colour is inherited from the parent component's icon tint at runtime; a
- * sample tint is set here for the editor canvas.
+ * registry knob onto its `--uxm-option-list-*` custom property. `rowActions`
+ * supplies a hover-revealed delete button, wired to local state so it actually
+ * removes a row on the canvas. The bullet colour is inherited from the parent
+ * component's icon tint at runtime; a sample tint is set here.
  */
-const SAMPLE_OPTIONS = [
-  { label: 'Single Family Home' },
-  { label: 'Multi Family' },
-  { label: 'Townhouse' },
-  { label: 'Condo' },
+const INITIAL_OPTIONS = [
+  { id: 'sfh', label: 'Single Family Home' },
+  { id: 'mf', label: 'Multi Family' },
+  { id: 'th', label: 'Townhouse' },
+  { id: 'condo', label: 'Condo' },
 ];
 
 export function OptionListPreview({ styles }: PreviewProps) {
+  const [options, setOptions] = useState(INITIAL_OPTIONS);
+
   const vars = {
     '--uxm-option-list-indent': `${styles.indent}px`,
     '--uxm-option-list-background': styles.backgroundColor,
@@ -43,7 +48,18 @@ export function OptionListPreview({ styles }: PreviewProps) {
 
   return (
     <div style={{ width: 480 }}>
-      <OptionList options={SAMPLE_OPTIONS} style={vars} />
+      <OptionList
+        options={options}
+        style={vars}
+        rowActions={(_item, i) => (
+          <IconButton
+            aria-label="Delete option"
+            onClick={() => setOptions((prev) => prev.filter((_, idx) => idx !== i))}
+          >
+            <Icon glyph="trash" size={14} />
+          </IconButton>
+        )}
+      />
     </div>
   );
 }

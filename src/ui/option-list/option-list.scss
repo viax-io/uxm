@@ -66,4 +66,34 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  /* Per-row delete action (only rendered when `onDelete` is set). Collapsed to
+     zero width when idle and revealed on row hover / keyboard focus; on touch
+     (no hover) it stays visible, since there is no hover to trigger it. */
+  &__actions {
+    align-items: center;
+    display: inline-flex;
+    flex-shrink: 0;
+    margin-inline-start: 4px;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-width 0.15s ease, opacity 0.15s ease;
+  }
+
+  &__row:hover &__actions,
+  &__row:focus-within &__actions {
+    max-width: 12rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (hover: none) {
+    &__actions {
+      max-width: 12rem;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
 }
