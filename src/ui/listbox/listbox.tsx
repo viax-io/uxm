@@ -20,6 +20,13 @@ import { Popover, type PopoverPlacement } from '../popover';
 /** Item count above which `searchable="auto"` enables the search box. */
 export const SEARCHABLE_AUTO_THRESHOLD = 6;
 
+/**
+ * Default message when a `required` multi-select is left empty. Lives here so
+ * every picker (MultiListbox itself, PillSelect's chip-removal path, …) reports
+ * the identical text — the one place that rule's wording lives.
+ */
+export const DEFAULT_MULTI_REQUIRED_MESSAGE = 'Select at least one option';
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  Public types
 // ─────────────────────────────────────────────────────────────────────────────
@@ -162,13 +169,56 @@ export interface ListboxProps<T> extends ListboxCommonProps<T> {
   closeOnSelect?: boolean;
 }
 
-export interface MultiListboxProps<T> extends ListboxCommonProps<T> {
+export interface MultiListboxProps<T> extends Omit<ListboxCommonProps<T>, 'footer'> {
   value: T[];
   onChange: (items: T[]) => void;
   /** Hide items already in `value` from the panel list. Default false. */
   excludeSelected?: boolean;
   /** Close the panel after each selection. Default false. */
   closeOnSelect?: boolean;
+  /**
+   * When the working selection is pushed to `onChange`:
+   *   - `'close'` (default) — toggles stage into an internal draft; `onChange`
+   *     fires ONCE when the panel closes. This is the safe default: "clear all
+   *     → pick one" works on a required cell (the transient empty set never
+   *     commits), N picks are a single commit, and any consumer `validate`
+   *     runs once on the final set (so a required-field warning shows on close
+   *     only when the result is actually empty). Right for a commit-boundary
+   *     editor like EditableCell.
+   *   - `'change'` — every toggle fires `onChange` immediately (live). Opt in
+   *     for chip-style pickers (PillSelect) where each pick must reflect
+   *     instantly, and for a live "N selected" trigger count.
+   * The draft is fully internal — consumers keep passing the committed
+   * `value` and receive the final array via `onChange`; nothing else changes.
+   */
+  commitMode?: 'change' | 'close';
+  /**
+   * Mark the selection as required — an empty set is invalid. The RULE lives
+   * here so every MultiListbox consumer (EditableCell, PillSelect, …) enforces
+   * it identically; the DISPLAY can't (the panel is gone once closed), so the
+   * message is reported via `onRequiredViolation` for the consumer to render.
+   * Enforcement timing follows `commitMode`:
+   *   - `'close'` (staged) — checked on close; empty → NOT committed (the
+   *     committed value stays) + violation reported.
+   *   - `'change'` (live) — checked per toggle; empty → still committed (so the
+   *     user isn't trapped) + violation reported, mirroring the staged
+   *     "transient empty is allowed" model.
+   */
+  required?: boolean;
+  /** Message passed to `onRequiredViolation`. Default `"Select at least one option"`. */
+  requiredMessage?: string;
+  /** Fired when a `required` selection is left/made empty — the consumer renders the message its own way (Banner, inline error, …). */
+  onRequiredViolation?: (message: string) => void;
+  /**
+   * Footer slot below the list. The function form receives the working
+   * selection (`selected` — the draft in `commitMode="close"`, else the live
+   * value) plus a mode-aware `clear` that empties it WITHOUT closing the
+   * panel — so a "Clear all" can hide itself when empty and, on a staged
+   * cell, clear-then-repick never trips validation.
+   */
+  footer?:
+    | ReactNode
+    | ((api: { close: () => void; clear: () => void; selected: T[] }) => ReactNode);
   /**
    * Render a checkbox indicator at the leading edge of each row.
    * Default true (the standard multi-select pattern). Set to `false`
@@ -596,7 +646,14 @@ function ListboxCore<T>({
             })
           )}
         </div>
-        {footer && <div className="uxm-listbox__footer">{typeof footer === 'function' ? footer({ close: () => setOpen(false) }) : footer}</div>}
+        {footer && (() => {
+          // Render the footer wrapper only when there's actual content —
+          // a footer function may legitimately return null (e.g. a "Clear
+          // all" that hides itself once the working selection is empty), and
+          // an always-present wrapper would leave an empty padded strip.
+          const content = typeof footer === 'function' ? footer({ close: () => setOpen(false) }) : footer;
+          return content ? <div className="uxm-listbox__footer">{content}</div> : null;
+        })()}
       </Popover>
     </div>
   );
@@ -667,11 +724,24 @@ export function MultiListbox<T>({
   excludeSelected = false,
   closeOnSelect = false,
   showCheckbox = true,
+  commitMode = 'close',
+  required = false,
+  requiredMessage = DEFAULT_MULTI_REQUIRED_MESSAGE,
+  onRequiredViolation,
+  footer,
+  onOpenChange,
   ...rest
 }: MultiListboxProps<T>) {
+  const staged = commitMode === 'close';
+  // In staged mode the working set lives in a local draft while the panel is
+  // open (`null` = not editing, fall back to the committed `value`). In the
+  // default 'change' mode there's no draft — `value` is the live truth.
+  const [draft, setDraft] = useState<T[] | null>(null);
+  const working = staged ? draft ?? value : value;
+
   const selectedKeys = useMemo(
-    () => new Set(value.map(getKey)),
-    [value, getKey],
+    () => new Set(working.map(getKey)),
+    [working, getKey],
   );
 
   // If `excludeSelected`, drop already-picked items from what the panel
@@ -682,17 +752,67 @@ export function MultiListbox<T>({
     [items, excludeSelected, selectedKeys, getKey],
   );
 
+  // Push to the consumer, applying the `required` rule and skipping a no-op
+  // (same membership) so `onChange` / downstream validation don't fire when
+  // nothing changed. Required timing follows the mode: staged BLOCKS an empty
+  // commit (value stays), live ALLOWS it (so the user isn't trapped mid-edit);
+  // either way the violation is reported for the consumer to display.
+  const emit = useCallback(
+    (next: T[]) => {
+      if (required && next.length === 0) {
+        onRequiredViolation?.(requiredMessage);
+        if (staged) return;
+      }
+      const changed =
+        next.length !== value.length ||
+        next.some((n) => !value.some((v) => getKey(v) === getKey(n)));
+      if (changed) onChange(next);
+    },
+    [required, requiredMessage, onRequiredViolation, staged, value, onChange, getKey],
+  );
+
   const handleSelect = useCallback(
     (item: T) => {
       const k = getKey(item);
-      if (selectedKeys.has(k)) {
-        onChange(value.filter((v) => getKey(v) !== k));
+      const next = selectedKeys.has(k)
+        ? working.filter((v) => getKey(v) !== k)
+        : [...working, item];
+      // Staged: mutate the draft only (commit deferred to close). Live: emit now.
+      if (staged) setDraft(next);
+      else emit(next);
+    },
+    [working, selectedKeys, staged, emit, getKey],
+  );
+
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      onOpenChange?.(open);
+      if (!staged) return;
+      if (open) {
+        // Seed the draft from the committed value on open.
+        setDraft(value);
       } else {
-        onChange([...value, item]);
+        // Commit the staged draft ONCE on close, then drop it.
+        const final = draft ?? value;
+        setDraft(null);
+        emit(final);
       }
     },
-    [value, onChange, getKey, selectedKeys],
+    [staged, value, draft, emit, onOpenChange],
   );
+
+  // Enrich a function footer with the working selection + a mode-aware clear
+  // (empties the draft when staged, else commits [] via `emit` so the
+  // `required` rule + no-op guard still apply) — neither closes the panel.
+  const wrappedFooter = useMemo(() => {
+    if (footer == null || typeof footer !== 'function') return footer;
+    return ({ close }: { close: () => void }) =>
+      footer({
+        close,
+        selected: working,
+        clear: () => (staged ? setDraft([]) : emit([])),
+      });
+  }, [footer, working, staged, emit]);
 
   return (
     <ListboxCore<T>
@@ -705,6 +825,8 @@ export function MultiListbox<T>({
       // visual entirely.
       triggerSelected={null}
       onSelect={handleSelect}
+      onOpenChange={handleOpenChange}
+      footer={wrappedFooter}
       closeOnSelect={closeOnSelect}
       indicator={showCheckbox ? 'checkbox' : 'none'}
     />
