@@ -113,7 +113,7 @@ export type { ColorFormat, ColorInputPopoverProps, ColorInputProps } from './col
 export { InputWithIcon } from './input-with-icon';
 export type { InputWithIconProps } from './input-with-icon';
 export { Select, Textarea, TextInput } from './input';
-export type { SelectProps, TextareaProps, TextInputProps } from './input';
+export type { SelectProps, SelectSingleProps, SelectMultiProps, TextareaProps, TextInputProps } from './input';
 export { Link } from './link';
 export type { LinkProps, LinkUnderline } from './link';
 export { List, ListItem } from './list';
