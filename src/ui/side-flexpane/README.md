@@ -1,6 +1,8 @@
 # SideFlexpane
 
-A right-docked panel surface with an optional eyebrow + title header, an optional close button, an optional footer, and a drag-resizable left edge. Used for detail / properties / create panels that overlay or sit alongside a main view.
+A right-docked panel surface for detail / properties / create panels that overlay or sit alongside a main view. The header composes an optional leading icon, eyebrow, title, subtitle, and a trailing cluster (custom `actions`, an optional expand toggle, and a close button); an optional back-link bar can sit above it, and an optional footer below. The left edge is drag-resizable.
+
+**Expand vs resize:** while collapsed, the left edge resizes as normal. Turning on `expandable` adds a toggle that pins the pane to `expandedWidth` (a distinct "maximized" mode) and hides the resize handle so the two width mechanisms don't fight; collapsing restores the prior dragged width. The `expanded` state is a controlled/uncontrolled pair (`expanded` / `defaultExpanded` / `onExpandedChange`).
 
 The pane is a semantic `<aside>` with `position: relative`, a card background, drop shadow, and rounded corners. A vertical `role="separator"` handle on the left edge supports both mouse drag and keyboard resize (Arrow Left/Right with Shift for larger steps). The resize state is intentionally session-local — once the user drags, an inline `width` style takes over until the next page reload, at which point the CSS rule (and any MODO editor-saved override) reclaims control. The `defaultWidth` prop is retained on the public API for forward compatibility but is not currently read for the visual default; the CSS `width: 380px` rule supplies it.
 
@@ -38,7 +40,17 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` (the `title` prop is tak
 |------|------|---------|-------------|
 | `title` | `ReactNode` | – | **Required.** Heading text rendered as `<h3>`. |
 | `eyebrow` | `ReactNode` | – | Small uppercase label above the title. |
+| `subtitle` | `ReactNode` | – | Secondary line under the title (e.g. a type / path). |
+| `icon` | `ReactNode` | – | Leading header visual, left of the title block. Pass a tinted `<IconTile><Icon/></IconTile>` — kept a generic slot so the tint stays with the consumer. |
 | `onClose` | `() => void` | – | When provided, renders a close `IconButton` in the header. |
+| `onBack` | `() => void` | – | When provided, renders a top back-link bar (`← {backLabel}`) above the header. |
+| `backLabel` | `ReactNode` | `"Back"` | Label for the back-link bar. |
+| `actions` | `ReactNode` | – | Header action controls (e.g. a delete `IconButton`), in the trailing cluster before the expand/close controls. |
+| `expandable` | `boolean` | `false` | Shows an expand/collapse toggle that widens the pane to `expandedWidth`. |
+| `expanded` | `boolean` | – | Controlled expanded state — pair with `onExpandedChange`. |
+| `defaultExpanded` | `boolean` | `false` | Initial expanded state (uncontrolled). |
+| `onExpandedChange` | `(expanded: boolean) => void` | – | Fires with the next expanded state on toggle. |
+| `expandedWidth` | `number` | `960` | Pane width in px while expanded — above the `maxWidth` resize ceiling so Expand always grows; never shrinks below the current width. |
 | `footer` | `ReactNode` | – | Bottom strip separated by a top border; typical use is button rows. |
 | `children` | `ReactNode` | – | Body content; scrolls inside its own padded area. |
 | `defaultWidth` | `number` | `380` | Initial width in px. Currently informational — CSS supplies the visual default. |

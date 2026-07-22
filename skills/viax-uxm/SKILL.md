@@ -398,6 +398,20 @@ skill:
   nested segments wrapped in further `SegmentCard`s. To wire the disclosure→region a11y link, pass
   `SegmentCard`'s `bodyId` to the `SegmentRow` header's `aria-controls`.
 
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR. -->
+
+- **`SideFlexpane` extended (additive) with a fuller detail-pane header.** New optional props:
+  `icon` (leading tinted `IconTile` slot), `subtitle` (line under the title), `actions` (trailing
+  header controls, before expand/close), `onBack`/`backLabel` (a top back-link bar), and
+  `expandable` + `expanded`/`defaultExpanded`/`onExpandedChange`/`expandedWidth` (a maximize toggle
+  that pins the pane to `expandedWidth` and hides the resize handle while expanded). The existing
+  eyebrow/title/close/footer API and the drag-resizable left edge are unchanged.
+
 ## Workflow
 
 ### Before writing any code

@@ -105,7 +105,7 @@ Import path for all: `import { … } from '@viax/uxm/ui';`
 | **PageShell** | `PageShell`, `PageShellVariant`, `PageShellProps` | Sidebar + topBar + content chrome. `variant: 'standard' \| 'canvas'`. |
 | **ResponsiveGrid** | `ResponsiveGrid`, `ResponsiveGridProps` | Breakpoint-free `auto-fit` + `minmax(min, 1fr)`. **No tokens read.** |
 | **SectionHeader** | `SectionHeader`, `SectionHeaderProps` | Uppercase `<h4>` with optional trailing + subtitle. |
-| **SideFlexpane** | `SideFlexpane`, `SideFlexpaneProps` | Right-docked resizable `<aside>` with ARIA separator. |
+| **SideFlexpane** | `SideFlexpane`, `SideFlexpaneProps` | Right-docked resizable `<aside>` with ARIA separator. Header composes optional `icon` · `eyebrow` · `title` · `subtitle` + a trailing `actions` slot; optional `onBack`/`backLabel` back-link bar; `expandable` toggle (`expanded`/`defaultExpanded`/`onExpandedChange`, `expandedWidth`) that maximises and hides the resize handle while expanded. |
 | **Stack** | `Stack`, `StackProps` | Flex-column with `gap` + `align`. **No tokens read.** |
 
 ## Data display
