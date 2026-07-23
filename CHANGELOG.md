@@ -1,3 +1,10 @@
+# [3.3.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.2.1...v3.3.0) (2026-07-23)
+
+
+### Features
+
+* **icon:** add language (globe) glyph ([fc702d3](https://gitlab.viax.tech/services-viax/uxm/commit/fc702d31ee5d89b4b1de32d91264c98a9015e8e9))
+
 ## [3.2.1](https://gitlab.viax.tech/services-viax/uxm/compare/v3.2.0...v3.2.1) (2026-07-21)
 
 
