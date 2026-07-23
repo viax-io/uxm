@@ -83,8 +83,8 @@ If the user answers `skip`, stop here and move to Step 7.
 **6c. Analyze changes and generate summary**
 
 Gather information automatically — do NOT ask the user:
-- Run `git diff main...HEAD --name-only` to get list of changed files
-- Run `git log main...HEAD --oneline` to get commit history
+- Run `git diff master...HEAD --name-only` to get list of changed files (the base branch is `master` — there is no `main`)
+- Run `git log master...HEAD --oneline` to get commit history
 - Analyze the changed files to determine: what was implemented, what was modified, what was improved
 - Use the same analytical approach as `/commit-message`: read git status, diff, and branch name to infer the nature of changes
 
