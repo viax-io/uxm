@@ -302,11 +302,7 @@ skill:
 - **`CurrencyInput` also left-aligns the amount and dropped `pickerPosition`.** The currency-picker
   position is no longer configurable.
 
-### New in 3.0.2
-
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. -->
+### New in 3.1.2
 
 - **Brand Settings → Typography now works end-to-end in the studio.** Two fixes:
   - **Live font application.** The studio mounts `BrandFontStyles` (alongside `BrandTokenStyles`):
@@ -320,6 +316,18 @@ skill:
 - **`fontFileUrl` / `safeFontFamily` are now exported from `@viax/uxm/studio/generate-css`** —
   the Google-Fonts css2 URL builder (weights 400–700) and the font-name sanitiser the Build path
   uses. Reuse these in host appliers instead of hand-rolling font URL/escaping logic.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **New icon `globe`** in the shared glyph set — language / locale switchers, region pickers,
+  website links, public-visibility states.
 
 ## Workflow
 

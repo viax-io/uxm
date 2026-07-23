@@ -87,3 +87,37 @@ a change genuinely alters a widely-consumed public API, a major is still right.
 external consumer's code actually break?" If it's editor-internal / studio-only
 surface, prefer minor + a README note. (See `constitution.md` for the
 semantic-release flow.)
+
+---
+
+## SKILL.md: always leave a bare `### Unreleased` heading behind
+
+`scripts/stamp-skill-version.mjs` renames the skill's unreleased section by
+matching **the exact string `### Unreleased`** and nothing else:
+
+```js
+if (/^### Unreleased$/m.test(skill)) {
+  skill = skill.replace(/^### Unreleased$/m, `### New in ${version}`);
+}
+```
+
+It renames in place — it does **not** open a fresh `### Unreleased` for the next
+cycle. So the heading only survives if the next MR that adds notes recreates it.
+
+**The trap:** a release stamps `### Unreleased` → `### New in 3.0.2`; the next MR
+appends its bullets under that now-versioned heading instead of adding a new
+`### Unreleased`. From then on the stamper's regex matches nothing, so every
+later release is a silent no-op and notes keep piling up under a version they
+didn't ship in.
+
+**This actually happened — 3.0.2 → 3.2.1.** The Typography / `fontFileUrl` items
+shipped in **3.1.2** (see `CHANGELOG.md`) but sat under `### New in 3.0.2` for
+four releases, and the next icon note would have inherited the same wrong label.
+Fixed in the `feat/language-icon` MR (!73): the block was relabelled `New in
+3.1.2` and a fresh `### Unreleased` opened above the new notes.
+
+**How to apply:** when adding skill notes, check the heading you're writing
+under. If it reads `### New in X.Y.Z`, do **not** append to it — add a new
+`### Unreleased` section below it and put your bullets there. Don't hand-edit
+version/count markers either way; the stamper owns those. (See
+`.claude/commands/update-ai-skill.md` for the full lifecycle.)
