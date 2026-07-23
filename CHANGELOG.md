@@ -1,3 +1,20 @@
+# [3.4.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.3.0...v3.4.0) (2026-07-23)
+
+
+### Bug Fixes
+
+* **listbox:** guard staged multiselect commit and restore native Select props ([1f2c939](https://gitlab.viax.tech/services-viax/uxm/commit/1f2c939a2dc67bb03a440fa1b2045bb93450a609))
+* **previews:** showcase multiselect / clear / mode; fix cell text color ([745effe](https://gitlab.viax.tech/services-viax/uxm/commit/745effed3f0da0e24811bf823346d199fe8b22da))
+
+
+### Features
+
+* **data-table:** add editorRequired column option ([7bb6379](https://gitlab.viax.tech/services-viax/uxm/commit/7bb6379fe7ac25ec2943364526eba1ec60e9bf9f))
+* **editable-cell:** staged multiselect, required, clearable, searchable auto ([32cb796](https://gitlab.viax.tech/services-viax/uxm/commit/32cb7962e481e15851a7b4239f2868777f432cb8))
+* **listbox:** add commitMode (staged), required, and shared footer-clear ([6696c8c](https://gitlab.viax.tech/services-viax/uxm/commit/6696c8c0e87525611447f8d4834dc44da87b1c64))
+* **pill-select:** add clearable + required; move clear ✕ beside chevron ([7cd6355](https://gitlab.viax.tech/services-viax/uxm/commit/7cd63555a1bd8588e50ade346d752d14b2a7f57b))
+* **select:** implement real mode="multi", required, in-dropdown clear ([1baaedc](https://gitlab.viax.tech/services-viax/uxm/commit/1baaedc8a9b51d8395d39b4fb24951880f3f4142))
+
 # [3.3.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.2.1...v3.3.0) (2026-07-23)
 
 

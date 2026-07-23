@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax/uxm — the Viax UI primitive library
-  (89 BEM-classed React components as of v3.3.0, design tokens, per-component/per-state themable
+  (89 BEM-classed React components as of v3.4.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax/uxm or the Viax design system; the working directory contains @viax/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax/uxm — React 19 Component Library
 
-> Documents `@viax/uxm` **v3.3.0** (89 components). To refresh after a new library release, run
+> Documents `@viax/uxm` **v3.4.0** (89 components). To refresh after a new library release, run
 > the `viax-uxm-skill-update` skill — it reads this marker to compute the delta.
 >
 > ✅ **3.0.1 is the current Nexus registry latest.** 3.0.0 rolled a clear-button ✕ across the
@@ -36,7 +36,7 @@ This skill turns Claude into a competent consumer of `@viax/uxm`. It does not ge
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax/uxm` is or will be a dependency of the project.
 
-## v3.3.0 — current API surface (overrides training data)
+## v3.4.0 — current API surface (overrides training data)
 
 The library went through a fast release train (1.1.0 → 3.0.1, June–July 2026). If your knowledge
 of the library or old code conflicts with this list, THIS list wins.
@@ -322,7 +322,7 @@ skill:
 - **New icon `globe`** in the shared glyph set — language / locale switchers, region pickers,
   website links, public-visibility states.
 
-### Unreleased
+### New in 3.4.0
 
 <!-- Notes for changes merged but not yet published. The release pipeline renames
      this heading to "New in X.Y.Z" and stamps the version/count markers
