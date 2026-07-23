@@ -1,3 +1,28 @@
+# [4.0.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.4.0...v4.0.0) (2026-07-23)
+
+
+* feat(configuration)!: add Segment Row / Card / Component Row / Option List; remove Segment Tree Row ([0ce8679](https://gitlab.viax.tech/services-viax/uxm/commit/0ce86796969fde858878af444a226c7f713a469d))
+
+
+### Bug Fixes
+
+* **configuration:** resolve review findings — a11y, theming, ordering, skill ([7216c37](https://gitlab.viax.tech/services-viax/uxm/commit/7216c3707ea20313131bcbdaf600e565f53c68f1)), closes [#8](https://gitlab.viax.tech/services-viax/uxm/issues/8) [#1](https://gitlab.viax.tech/services-viax/uxm/issues/1) [#7](https://gitlab.viax.tech/services-viax/uxm/issues/7) [#6](https://gitlab.viax.tech/services-viax/uxm/issues/6) [#3](https://gitlab.viax.tech/services-viax/uxm/issues/3) [#8](https://gitlab.viax.tech/services-viax/uxm/issues/8) [#4](https://gitlab.viax.tech/services-viax/uxm/issues/4) [#5](https://gitlab.viax.tech/services-viax/uxm/issues/5)
+* **option-list:** namespace fallback row key; review cleanups ([20ace2a](https://gitlab.viax.tech/services-viax/uxm/commit/20ace2a2c6e96d02550094567435a2d3075041ce))
+
+
+### Features
+
+* **option-list:** add per-row action slot (rowActions) ([e67001e](https://gitlab.viax.tech/services-viax/uxm/commit/e67001e782821c261b17d767a17bd56d20af252b))
+
+
+### BREAKING CHANGES
+
+* `SegmentTreeRow` / `SegmentTreeRowProps` are removed from
+`@viax/uxm/ui`. Compose `SegmentCard` (with a `SegmentRow` header) over
+`ComponentRow`/`OptionList` children instead.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+
 # [3.4.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.3.0...v3.4.0) (2026-07-23)
 
 
