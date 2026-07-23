@@ -324,13 +324,6 @@ skill:
 
 ### New in 3.4.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
-
 - **`Select` gained `mode="multi"`.** `SelectProps` is now a discriminated union —
   `SelectSingleProps` (`mode="single"`, the default, unchanged) | `SelectMultiProps` (`mode="multi"`).
   Multi keeps the same `.uxm-select-dropdown` trigger chrome and `<option>` children, but takes
@@ -377,6 +370,33 @@ skill:
 - **`EditableCell.searchable` now defaults to `'auto'`** (was `undefined`, which inherited the raw
   Listbox `true`). A select/multiselect cell therefore matches the `Select` atom: the search box
   appears only past 6 options. Pass `searchable` explicitly to force it either way.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **New `Configuration` component set — `SegmentRow`, `SegmentCard`, `ComponentRow`, `OptionList`.**
+  A studio **Configuration** category groups the four building blocks of a Configuration model's
+  segment tree (ported 1:1 from the v1 config-builder look/feel + knobs):
+  - `SegmentRow` — segment header (drag · accent line · expand chevron · name · count badge).
+  - `SegmentCard` — the container that wraps a nested segment (SegmentRow header · divider · inset
+    body); the compositional segment-tree container. (Supersedes the former monolithic
+    `SegmentTreeRow`, which has been removed — a breaking change.)
+  - `ComponentRow` — a config field row (drag · type-icon badge · optional chevron · name · type
+    label); badge tint is per-type at runtime via `iconBg`/`iconColor`.
+  - `OptionList` — indented options list under a Predefined-Options component (drag · bullet · name);
+    optional per-row `rowActions` slot (hover-revealed).
+
+  All four are fully studio-themeable via `--uxm-segment-row-*` / `--uxm-segment-card-*` /
+  `--uxm-component-row-*` / `--uxm-option-list-*`. Compose a tree as
+  `SegmentCard(header: SegmentRow)` › `ComponentRow`(s) + `OptionList` under options rows, with
+  nested segments wrapped in further `SegmentCard`s. To wire the disclosure→region a11y link, pass
+  `SegmentCard`'s `bodyId` to the `SegmentRow` header's `aria-controls`.
 
 ## Workflow
 

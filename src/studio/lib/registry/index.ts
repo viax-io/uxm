@@ -2,6 +2,7 @@
 import { appDefs } from './app';
 import { buttonsDefs } from './buttons';
 import { compositeDefs } from './composite';
+import { configurationDefs } from './configuration';
 import { diagramDefs } from './diagram';
 import { displayDefs } from './display';
 import { feedbackDefs } from './feedback';
@@ -12,7 +13,7 @@ import { layoutDefs } from './layout';
 
 import type { Category, ComponentDef } from '../types';
 
-export const categories: Category[] = ['App', 'Buttons', 'Inputs', 'Display', 'Feedback', 'Forms', 'Composite', 'Layout', 'Diagram', 'Icons'];
+export const categories: Category[] = ['App', 'Buttons', 'Inputs', 'Display', 'Feedback', 'Forms', 'Composite', 'Configuration', 'Layout', 'Diagram', 'Icons'];
 
 export const categoryColors: Record<Category, string> = {
   App: 'var(--color-text)',
@@ -22,6 +23,7 @@ export const categoryColors: Record<Category, string> = {
   Feedback: 'var(--color-highlight-cool)',
   Forms: 'var(--color-accent-bold)',
   Composite: 'var(--color-category-composite)',
+  Configuration: 'var(--color-accent-subtle)',
   Layout: 'var(--color-text-subtle)',
   Diagram: 'var(--color-category-diagram)',
   Icons: 'var(--color-text-muted)',
@@ -38,6 +40,7 @@ export const registry: ComponentDef[] = [
   ...formsDefs,
   ...layoutDefs,
   ...compositeDefs,
+  ...configurationDefs,
   ...diagramDefs,
   ...iconsDefs,
 ];
@@ -55,6 +58,7 @@ export function getComponentsByCategory(): Record<Category, ComponentDef[]> {
     Feedback: [],
     Forms: [],
     Composite: [],
+    Configuration: [],
     Layout: [],
     Diagram: [],
     Icons: [],

@@ -1,4 +1,4 @@
-export type Category = 'App' | 'Buttons' | 'Inputs' | 'Display' | 'Feedback' | 'Forms' | 'Composite' | 'Diagram' | 'Icons' | 'Layout';
+export type Category = 'App' | 'Buttons' | 'Inputs' | 'Display' | 'Feedback' | 'Forms' | 'Composite' | 'Configuration' | 'Diagram' | 'Icons' | 'Layout';
 
 export interface BrandTokens {
   light?: Record<string, string>;

@@ -1,0 +1,128 @@
+/* ── segment-row ── */
+
+.uxm-segment-row {
+  align-items: stretch;
+  border-radius: var(--uxm-segment-row-row-hover-radius, 12px);
+  display: flex;
+  gap: var(--uxm-segment-row-gap, 8px);
+  padding: var(--uxm-segment-row-padding-y, 20px) var(--uxm-segment-row-padding-x, 16px);
+  user-select: none;
+
+  &:hover {
+    background-color: var(
+      --uxm-segment-row-row-hover-bg,
+      color-mix(in srgb, var(--color-text) 4%, transparent)
+    );
+  }
+
+  &__drag {
+    align-items: center;
+    align-self: center;
+    color: var(--uxm-segment-row-drag-color, var(--color-text-subtle));
+    cursor: grab;
+    display: inline-flex;
+    flex-shrink: 0;
+    justify-content: center;
+    width: 16px;
+
+    &:hover {
+      color: var(--uxm-segment-row-drag-hover-color, var(--color-text-muted));
+    }
+  }
+
+  &__accent {
+    align-self: stretch;
+    background-color: var(--uxm-segment-row-accent-color, var(--color-accent-bold));
+    border-radius: var(--uxm-segment-row-accent-radius, 2px);
+    flex-shrink: 0;
+    width: var(--uxm-segment-row-accent-width, 4px);
+  }
+
+  &__toggle {
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    flex: 1;
+    font: inherit;
+    gap: var(--uxm-segment-row-gap, 8px);
+    margin: 0;
+    min-width: 0;
+    padding: 0;
+    text-align: left;
+
+    &:focus-visible {
+      border-radius: 6px;
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+
+  &__chevron {
+    align-items: center;
+    color: var(--uxm-segment-row-chevron-color, var(--color-text-muted));
+    display: inline-flex;
+    flex-shrink: 0;
+    height: var(--uxm-segment-row-chevron-size, 16px);
+    justify-content: center;
+    transition: transform 0.15s ease;
+    width: var(--uxm-segment-row-chevron-size, 16px);
+  }
+
+  &--open &__chevron {
+    transform: rotate(90deg);
+  }
+
+  &__title {
+    color: var(--uxm-segment-row-title-color, var(--color-text));
+    flex: 1;
+    font-size: var(--uxm-segment-row-title-size, 16px);
+    font-weight: var(--uxm-segment-row-title-weight, 600);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__count {
+    background-color: var(--uxm-segment-row-count-bg, var(--color-surface-alt));
+    border-radius: var(--uxm-segment-row-count-radius, 999px);
+    color: var(--uxm-segment-row-count-color, var(--color-text-muted));
+    flex-shrink: 0;
+    font-size: var(--uxm-segment-row-count-size, 12px);
+    font-variant-numeric: tabular-nums;
+    padding: var(--uxm-segment-row-count-padding-y, 2px) var(--uxm-segment-row-count-padding-x, 10px);
+  }
+
+  /* Trailing action controls — collapsed when idle, revealed on hover/focus.
+     On touch (no hover) they stay visible. */
+  &__actions {
+    align-items: center;
+    align-self: center;
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 4px;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-width 0.15s ease, opacity 0.15s ease;
+  }
+
+  &:hover &__actions,
+  &:focus-within &__actions {
+    max-width: 12rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (hover: none) {
+    &__actions {
+      max-width: 12rem;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}

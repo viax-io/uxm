@@ -1,0 +1,109 @@
+/* ── component-row ── */
+
+.uxm-component-row {
+  align-items: center;
+  background-color: var(--uxm-component-row-background, var(--color-card));
+  border-radius: var(--uxm-component-row-row-hover-radius, 12px);
+  display: flex;
+  gap: var(--uxm-component-row-gap, 16px);
+  padding: var(--uxm-component-row-padding-y, 16px) var(--uxm-component-row-padding-x, 12px);
+  user-select: none;
+
+  &:hover {
+    background-color: var(
+      --uxm-component-row-row-hover-bg,
+      color-mix(in srgb, var(--color-text) 4%, transparent)
+    );
+  }
+
+  &__drag {
+    align-items: center;
+    color: var(--uxm-component-row-drag-color, var(--color-text-subtle));
+    cursor: grab;
+    display: inline-flex;
+    flex-shrink: 0;
+    justify-content: center;
+    width: 16px;
+
+    &:hover {
+      color: var(--uxm-component-row-drag-hover-color, var(--color-text-muted));
+    }
+  }
+
+  &__badge {
+    align-items: center;
+    background-color: var(
+      --uxm-component-row-icon-badge-bg,
+      color-mix(in srgb, var(--color-highlight-cool) 20%, transparent)
+    );
+    border-radius: var(--uxm-component-row-icon-badge-radius, 8px);
+    color: var(--uxm-component-row-icon-badge-color, var(--color-text-muted));
+    display: inline-flex;
+    flex-shrink: 0;
+    height: var(--uxm-component-row-icon-badge-size, 30px);
+    justify-content: center;
+    padding: var(--uxm-component-row-icon-badge-padding, 8px);
+    width: var(--uxm-component-row-icon-badge-size, 30px);
+  }
+
+  &__chevron {
+    align-items: center;
+    color: var(--uxm-component-row-chevron-color, var(--color-text-muted));
+    display: inline-flex;
+    flex-shrink: 0;
+    height: var(--uxm-component-row-chevron-size, 16px);
+    justify-content: center;
+    transition: transform 0.15s ease;
+    width: var(--uxm-component-row-chevron-size, 16px);
+  }
+
+  &--open &__chevron {
+    transform: rotate(90deg);
+  }
+
+  &__name {
+    color: var(--uxm-component-row-name-color, var(--color-text));
+    flex: 1;
+    font-size: var(--uxm-component-row-name-size, 15px);
+    font-weight: var(--uxm-component-row-name-weight, 500);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__type {
+    color: var(--uxm-component-row-type-label-color, var(--color-text-muted));
+    flex-shrink: 0;
+    font-size: var(--uxm-component-row-type-label-size, 12px);
+    font-weight: var(--uxm-component-row-type-label-weight, 400);
+    white-space: nowrap;
+  }
+
+  &__actions {
+    align-items: center;
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 4px;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-width 0.15s ease, opacity 0.15s ease;
+  }
+
+  &:hover &__actions,
+  &:focus-within &__actions {
+    max-width: 12rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (hover: none) {
+    &__actions {
+      max-width: 12rem;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}

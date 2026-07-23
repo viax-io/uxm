@@ -1,0 +1,22 @@
+/* ── segment-card ── */
+
+.uxm-segment-card {
+  background-color: var(--uxm-segment-card-background, var(--color-card));
+  border: var(--uxm-segment-card-border-width, 1px) solid
+    var(--uxm-segment-card-border-color, var(--color-border));
+  border-radius: var(--uxm-segment-card-border-radius, 12px);
+  padding: var(--uxm-segment-card-padding-y, 0) var(--uxm-segment-card-padding-x, 0);
+
+  &__divider {
+    background-color: var(--uxm-segment-card-divider-color, var(--color-border));
+    height: var(--uxm-segment-card-divider-width, 1px);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--uxm-segment-card-children-gap, 4px);
+    padding: var(--uxm-segment-card-children-inset-y, 16px)
+      var(--uxm-segment-card-children-inset-x, 16px);
+  }
+}
