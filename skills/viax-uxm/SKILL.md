@@ -320,7 +320,8 @@ skill:
 - **`fontFileUrl` / `safeFontFamily` are now exported from `@viax/uxm/studio/generate-css`** —
   the Google-Fonts css2 URL builder (weights 400–700) and the font-name sanitiser the Build path
   uses. Reuse these in host appliers instead of hand-rolling font URL/escaping logic.
-- **New icon `language`** (globe) in the shared glyph set — for language / locale switchers.
+- **New icon `globe`** in the shared glyph set — language / locale switchers, region pickers,
+  website links, public-visibility states.
 
 ## Workflow
 
