@@ -582,7 +582,7 @@ import type { DisclosureProps } from "@modo/uxm/ui";
 
 - Flat config (`eslint.config.mjs` or `eslint.config.ts`)
 - Base rules: `@typescript-eslint`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y`
-- Run: `npm run lint --workspace=@modo/app` (or root-level script once migrated)
+- Run: `npm run lint` (root-level script; this repo is not a monorepo — no `--workspace` flags)
 - Must pass with zero errors before commit
 - Disabling a rule requires an inline `// eslint-disable-next-line <rule> -- <reason>` comment
 
@@ -624,4 +624,4 @@ Before opening a PR with a new component, verify:
 - [ ] Re-exported from `packages/uxm/src/ui/index.ts` (named + `export type`) AND from the folder barrel `packages/uxm/src/ui/<name>/index.ts`
 - [ ] `<name>.css` only contains `.uxm-<name>*` rules; imported by `packages/uxm/src/ui/styles.css` via `@import "./<name>/<name>.css"`
 - [ ] AI skill updated in the same MR (`skills/viax-uxm/`): catalog row + cheatsheet row marked "(unreleased)", bullet under `### Unreleased` in SKILL.md — do NOT touch the version/count markers (CI stamps them at release; see `/update-ai-skill`)
-- [ ] `npm run lint --workspace=@modo/app` passes
+- [ ] `npm run lint` and `npm run typecheck` pass

@@ -30,13 +30,12 @@ Templates requiring updates:
   ✅ .claude/templates/tasks-template.md (SCSS/folder paths, lint gate, CI-owned release, skill task)
   ✅ .claude/templates/spec-template.md (no change needed — verified)
   ✅ .claude/commands/update-ai-skill.md (already aligned — authored with this amendment)
-  ⚠ .claude/commands/start-task.md (pending — still references the monorepo-era
-    paths `packages/uxm`/`apps/modo` and `--workspace=@modo/app` gates; needs a
-    dedicated realignment pass)
+  ✅ .claude/commands/start-task.md (realigned 2026-07-23 — src/ paths, root
+    npm-script gates, component-folder scaffold, AI-skill step)
 
 Follow-up TODOs:
-  - Realign .claude/commands/start-task.md paths/gates with this repo's actual
-    layout (src/, portal/, root npm scripts).
+  - none (start-task.md realignment completed 2026-07-23; code-review command +
+    agent, react-frontend and runtime-debugger agents realigned the same day)
 -->
 
 # @viax/uxm Constitution
