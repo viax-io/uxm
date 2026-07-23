@@ -5,7 +5,7 @@ import { Icon } from '@/ui/icon';
 
 import type { HTMLAttributes, ReactNode } from 'react';
 
-export interface SegmentRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'onToggle'> {
+export interface SegmentRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Segment title (primary text). */
   name: ReactNode;
   /** Item count — renders a trailing "N items" badge. Omit for no badge. */
@@ -14,8 +14,18 @@ export interface SegmentRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 't
   open?: boolean;
   /** Initial expanded state for uncontrolled usage. Ignored when `open` is set. Default `true`. */
   defaultOpen?: boolean;
-  /** Fires with the next expanded state whenever the title toggle is clicked. */
-  onToggle?: (open: boolean) => void;
+  /**
+   * Fires with the next expanded state whenever the title toggle is clicked.
+   * Matches the `open`/`defaultOpen`/`onOpenChange` triad used by `Disclosure`
+   * and `ExplorerSection`.
+   */
+  onOpenChange?: (open: boolean) => void;
+  /**
+   * `id` of the region this row toggles — set it to the `bodyId` you pass to the
+   * paired `SegmentCard`, and the toggle button gets `aria-controls`, restoring
+   * the disclosure→region link the monolithic `SegmentTreeRow` used to wire.
+   */
+  bodyId?: string;
   /** Show a leading drag-handle affordance (visual only; wire your own DnD). */
   dragHandle?: boolean;
   /**
@@ -40,7 +50,8 @@ export function SegmentRow({
   count,
   open: controlledOpen,
   defaultOpen = true,
-  onToggle,
+  onOpenChange,
+  bodyId,
   dragHandle = false,
   actions,
   className,
@@ -52,7 +63,7 @@ export function SegmentRow({
 
   const toggle = () => {
     const next = !open;
-    onToggle?.(next);
+    onOpenChange?.(next);
     if (!isControlled) setUncontrolledOpen(next);
   };
 
@@ -68,6 +79,7 @@ export function SegmentRow({
         type="button"
         className="uxm-segment-row__toggle"
         aria-expanded={open}
+        aria-controls={bodyId}
         onClick={toggle}
       >
         <span className="uxm-segment-row__chevron" aria-hidden="true">

@@ -79,6 +79,7 @@ export const configurationDefs: ComponentDef[] = [
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 0, max: 24, step: 2, unit: 'px' },
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 16, min: 4, max: 24, step: 2, unit: 'px' },
       { key: 'gap', label: 'Gap', control: 'number', defaultValue: 16, min: 0, max: 24, step: 1, unit: 'px' },
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'dragColor', label: 'Drag Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'colors' },
       { key: 'dragHoverColor', label: 'Drag Hover', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
       { key: 'iconBadgeSize', label: 'Icon Badge Size', control: 'number', defaultValue: 30, min: 24, max: 56, step: 2, unit: 'px' },
@@ -116,7 +117,7 @@ export const configurationDefs: ComponentDef[] = [
       // ── Row ──
       { key: 'rowPaddingX', label: 'Row Padding X', control: 'number', defaultValue: 8, min: 0, max: 24, step: 1, unit: 'px' },
       { key: 'rowPaddingY', label: 'Row Padding Y', control: 'number', defaultValue: 12, min: 4, max: 20, step: 1, unit: 'px' },
-      { key: 'dragColor', label: 'Drag Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
+      { key: 'dragColor', label: 'Drag Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'colors' },
       { key: 'dragHoverColor', label: 'Drag Hover', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
       { key: 'bulletSize', label: 'Bullet Size', control: 'number', defaultValue: 6, min: 4, max: 12, step: 1, unit: 'px' },
       { key: 'bulletGap', label: 'Bullet→Name Gap', control: 'number', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },

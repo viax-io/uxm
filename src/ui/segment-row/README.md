@@ -11,7 +11,7 @@ import { SegmentCard, SegmentRow, ComponentRow } from '@viax/uxm';
 
 const [open, setOpen] = useState(true);
 
-<SegmentCard header={<SegmentRow name="Practice Information" count={4} dragHandle open={open} onToggle={setOpen} />}>
+<SegmentCard header={<SegmentRow name="Practice Information" count={4} dragHandle open={open} onOpenChange={setOpen} />}>
   {open && <ComponentRow name="Practice Name" type="Text" />}
 </SegmentCard>;
 ```
@@ -20,7 +20,7 @@ const [open, setOpen] = useState(true);
 
 ### `SegmentRowProps`
 
-Extends `HTMLAttributes<HTMLDivElement>` (minus `title`/`onToggle`).
+Extends `HTMLAttributes<HTMLDivElement>` (minus `title`).
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -28,7 +28,8 @@ Extends `HTMLAttributes<HTMLDivElement>` (minus `title`/`onToggle`).
 | `count` | `number` | – | Item count → trailing "N items" badge. Omit for no badge. |
 | `open` | `boolean` | – | Controlled expanded state (chevron direction). |
 | `defaultOpen` | `boolean` | `true` | Initial expanded state (uncontrolled). |
-| `onToggle` | `(open: boolean) => void` | – | Fires with the next state when the title toggle is clicked. |
+| `onOpenChange` | `(open: boolean) => void` | – | Fires with the next state when the title toggle is clicked (same `open`/`defaultOpen`/`onOpenChange` triad as `Disclosure`). |
+| `bodyId` | `string` | – | `id` of the toggled region — set to the paired `SegmentCard`'s `bodyId` to wire the toggle's `aria-controls`. |
 | `dragHandle` | `boolean` | `false` | Show a leading drag-handle affordance (visual only). |
 | `actions` | `ReactNode` | – | Trailing controls revealed on hover/focus, after the count. |
 
@@ -54,6 +55,6 @@ Set on the root (or an ancestor scope); each falls back to a design token.
 
 ## Accessibility
 
-- The title toggle is a real `<button>` with `aria-expanded` reflecting the open state.
+- The title toggle is a real `<button>` with `aria-expanded` reflecting the open state, and `aria-controls` pointing at the paired `SegmentCard` body when `bodyId` is supplied.
 - Drag handle and accent line are `aria-hidden` decorative.
 - Actions are kept outside the toggle button so controls aren't nested inside a button.

@@ -609,6 +609,7 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     paddingX: '--uxm-component-row-padding-x',
     paddingY: '--uxm-component-row-padding-y',
     gap: '--uxm-component-row-gap',
+    backgroundColor: '--uxm-component-row-background',
     dragColor: '--uxm-component-row-drag-color',
     dragHoverColor: '--uxm-component-row-drag-hover-color',
     iconBadgeSize: '--uxm-component-row-icon-badge-size',

@@ -2,8 +2,8 @@
 
 .uxm-component-row {
   align-items: center;
-  background-color: var(--color-card);
-  border-radius: var(--uxm-component-row-row-hover-radius, 8px);
+  background-color: var(--uxm-component-row-background, var(--color-card));
+  border-radius: var(--uxm-component-row-row-hover-radius, 12px);
   display: flex;
   gap: var(--uxm-component-row-gap, 16px);
   padding: var(--uxm-component-row-padding-y, 16px) var(--uxm-component-row-padding-x, 12px);

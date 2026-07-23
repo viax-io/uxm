@@ -25,6 +25,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any native `div` attribute (`style`
 |------|------|---------|-------------|
 | `header` | `ReactNode` | – | Segment header row, rendered flush at the top of the card. |
 | `divider` | `boolean` | `true` | Draw a hairline divider between header and body. Only shown when both a header and body content exist. |
+| `bodyId` | `string` | – | `id` applied to the inset body. Pass the same value to the header `SegmentRow`'s `bodyId` to wire `aria-controls` (see Accessibility). |
 | `children` | `ReactNode` | – | Inset child rows — the nested segment's components. |
 
 ## CSS variables
@@ -52,5 +53,13 @@ Set on the root (or an ancestor scope). Every one falls back to a design token, 
 
 ## Accessibility
 
-- The divider is `role="separator"` + `aria-hidden` (decorative — it carries no independent meaning).
+- The divider is `aria-hidden` (purely decorative; it carries no ARIA role).
 - `SegmentCard` is structural and adds no roles of its own; semantics come from the `header` and child content you supply.
+- **Wire the disclosure→region link:** give the card a `bodyId` and pass the same value to the header `SegmentRow`'s `bodyId`, so the toggle button's `aria-controls` points at the body — restoring the relationship the monolithic `SegmentTreeRow` used to own.
+
+```tsx
+const bodyId = useId();
+<SegmentCard bodyId={bodyId} header={<SegmentRow name="Location Details" count={2} bodyId={bodyId} />}>
+  {/* rows */}
+</SegmentCard>;
+```

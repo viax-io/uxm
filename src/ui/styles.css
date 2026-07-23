@@ -76,8 +76,8 @@
 @import "./responsive-grid/responsive-grid.css";
 @import "./search-dropdown/search-dropdown.css";
 @import "./section-header/section-header.css";
-@import "./segment-row/segment-row.css";
 @import "./segment-card/segment-card.css";
+@import "./segment-row/segment-row.css";
 @import "./side-flexpane/side-flexpane.css";
 @import "./sidebar-nav-item/sidebar-nav-item.css";
 @import "./slider/slider.css";

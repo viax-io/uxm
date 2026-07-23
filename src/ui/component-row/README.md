@@ -45,13 +45,14 @@ Set on the root (or an ancestor scope); each falls back to a design token.
 |----------|----------|----------|
 | `--uxm-component-row-padding-x` / `-y` | `12px` / `16px` | Row padding |
 | `--uxm-component-row-gap` | `16px` | Gap between parts |
+| `--uxm-component-row-background` | `var(--color-card)` | Row background fill |
 | `--uxm-component-row-drag-color` / `-drag-hover-color` | `text-subtle` / `text-muted` | Drag handle |
 | `--uxm-component-row-icon-badge-size` / `-radius` / `-padding` | `30px` / `8px` / `8px` | Icon badge box |
 | `--uxm-component-row-icon-badge-bg` / `-color` | `color-mix(highlight-cool 20%)` / `text-muted` | Badge tint (also via `iconBg`/`iconColor`) |
 | `--uxm-component-row-name-color` / `-size` / `-weight` | `text` / `15px` / `500` | Name |
 | `--uxm-component-row-type-label-color` / `-size` / `-weight` | `text-muted` / `12px` / `400` | Type label |
 | `--uxm-component-row-chevron-color` / `-size` | `text-muted` / `16px` | Leading chevron |
-| `--uxm-component-row-row-hover-bg` / `-row-hover-radius` | `color-mix(text 4%)` / `8px` | Row hover highlight |
+| `--uxm-component-row-row-hover-bg` / `-row-hover-radius` | `color-mix(text 4%)` / `12px` | Row hover highlight |
 
 ## Design tokens (MODO-configurable)
 

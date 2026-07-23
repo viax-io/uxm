@@ -31,7 +31,7 @@ function Segment({
   return (
     <SegmentCard
       style={vars}
-      header={<SegmentRow name={name} count={count} dragHandle open={open} onToggle={setOpen} actions={DemoRowActions} />}
+      header={<SegmentRow name={name} count={count} dragHandle open={open} onOpenChange={setOpen} actions={DemoRowActions} />}
     >
       {open ? children : null}
     </SegmentCard>

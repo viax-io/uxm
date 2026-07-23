@@ -15,6 +15,12 @@ export interface SegmentCardProps extends HTMLAttributes<HTMLDivElement> {
    * when there is both a header and body content. Default `true`.
    */
   divider?: boolean;
+  /**
+   * `id` applied to the inset body element. Pass the same value to the header
+   * `SegmentRow`'s `bodyId` so its toggle button's `aria-controls` points here,
+   * wiring the disclosure→region relationship for screen readers.
+   */
+  bodyId?: string;
   /** Inset child rows — the nested segment's component rows. */
   children?: ReactNode;
 }
@@ -27,7 +33,7 @@ export interface SegmentCardProps extends HTMLAttributes<HTMLDivElement> {
  * Every colour/dimension reads a `--uxm-segment-card-*` custom property (with
  * a token fallback) so the UXM studio knobs re-theme it.
  */
-export function SegmentCard({ header, divider = true, children, className, ...rest }: SegmentCardProps) {
+export function SegmentCard({ header, divider = true, bodyId, children, className, ...rest }: SegmentCardProps) {
   const hasBody = Children.count(children) > 0;
 
   return (
@@ -36,7 +42,7 @@ export function SegmentCard({ header, divider = true, children, className, ...re
       {header && hasBody && divider && (
         <div className="uxm-segment-card__divider" aria-hidden="true" />
       )}
-      {hasBody && <div className="uxm-segment-card__body">{children}</div>}
+      {hasBody && <div id={bodyId} className="uxm-segment-card__body">{children}</div>}
     </div>
   );
 }
