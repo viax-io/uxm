@@ -74,6 +74,17 @@
   color: var(--color-text-muted);
   transition: transform 150ms ease;
 }
+/* Clear-all ✕ on the field. `margin-left: auto` on it (the first right-edge
+   item) absorbs the free space, so the ✕ sits right next to the chevron
+   instead of hugging the label. When absent, the chevron's own auto-margin
+   still pushes it to the right. */
+.uxm-pill-select__field .uxm-field-clear {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.uxm-pill-select__field .uxm-field-clear + .uxm-pill-select__chevron {
+  margin-left: var(--uxm-pill-select-clear-chevron-gap, 2px);
+}
 
 /* Chips-below mode — trigger drops its flex-wrap / chip-gap chrome and
    stays a compact Select-like row (label + chevron only). Selected
@@ -99,4 +110,5 @@
 /* The dropdown menu (`__menu` / `__option`) used to live here — the
    shared Listbox atom owns it now via MultiListbox. Panel chrome,
    row states, search input, group headers, keyboard nav all tune
-   via the `listbox` registry entry. */
+   via the `listbox` registry entry. The "Clear all" footer action is
+   the shared `.uxm-listbox__footer-clear-option`. */

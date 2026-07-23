@@ -33,6 +33,10 @@ export interface DataTableColumn<T> {
   editorSearchable?: boolean | 'auto';
   /** Whether the select panel allows clearing the selection. */
   editorClearable?: boolean;
+  /** Require a non-empty value — empty blocks commit with a warning, before `validate`. */
+  editorRequired?: boolean;
+  /** Override the default required message for this column. */
+  editorRequiredMessage?: string;
   /** Display formatter for the editable cell's read-only state. */
   formatValue?: (value: EditableCellValue) => ReactNode;
   /** Synchronous per-cell validation. Returning a string blocks commit. */
@@ -144,6 +148,8 @@ export function DataTable<T>({
                     options={c.editorOptions}
                     searchable={c.editorSearchable}
                     clearable={c.editorClearable}
+                    required={c.editorRequired}
+                    requiredMessage={c.editorRequiredMessage}
                     align={c.align}
                     format={c.formatValue}
                     validate={

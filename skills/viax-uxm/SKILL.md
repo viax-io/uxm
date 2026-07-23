@@ -319,6 +319,11 @@ skill:
 
 ### New in 3.3.0
 
+- **New icon `globe`** in the shared glyph set — language / locale switchers, region pickers,
+  website links, public-visibility states.
+
+### Unreleased
+
 <!-- Notes for changes merged but not yet published. The release pipeline renames
      this heading to "New in X.Y.Z" and stamps the version/count markers
      (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
@@ -326,8 +331,52 @@ skill:
      exact string, so appending notes under an already-stamped "New in X.Y.Z"
      heading silently mislabels them and they never get re-stamped. -->
 
-- **New icon `globe`** in the shared glyph set — language / locale switchers, region pickers,
-  website links, public-visibility states.
+- **`Select` gained `mode="multi"`.** `SelectProps` is now a discriminated union —
+  `SelectSingleProps` (`mode="single"`, the default, unchanged) | `SelectMultiProps` (`mode="multi"`).
+  Multi keeps the same `.uxm-select-dropdown` trigger chrome and `<option>` children, but takes
+  `value?: string[]` / `defaultValue?: string[]`, fires `onChange(next: string[])` on every toggle,
+  renders checkbox rows and a "N selected" trigger, and accepts `clearable?: boolean` (a ✕ on the
+  trigger **and** a "Clear all" in the panel footer). Both modes still extend
+  `SelectHTMLAttributes<HTMLSelectElement>` minus the five keys `mode` re-shapes (`value`,
+  `defaultValue`, `onChange`, `required`, `multiple`), and the leftover native attributes are now
+  actually forwarded onto the trigger instead of silently dropped.
+
+  ```tsx
+  <Select mode="multi" value={regions} onChange={setRegions} clearable aria-label="Regions">
+    <option value="" disabled>Select regions</option>
+    <option value="na">North America</option>
+    <option value="emea">EMEA</option>
+  </Select>
+  ```
+
+  Use `PillSelect` instead when the selection should read as chips; use `Select mode="multi"` for
+  the compact count-in-the-trigger pattern.
+- **`required` + `requiredMessage` across the pickers** — `Select` (both modes), `PillSelect`,
+  `EditableCell` and `DataTable` columns (`editorRequired` / `editorRequiredMessage`). The wording
+  is shared: `DEFAULT_MULTI_REQUIRED_MESSAGE` (`'Select at least one option'`) is exported from
+  `@viax/uxm/ui` so every picker reports the identical text. Semantics differ by family, on purpose:
+  the **live** input-family atoms (`Select`, `PillSelect`) let you empty the field and just flag it
+  (`aria-required` + a `FieldError` below), while the **commit-boundary** `EditableCell` refuses the
+  commit and shows a warning Banner — checked BEFORE your `validate`, so you never hand-write the
+  empty rule again.
+- **A shared "Clear" / "Clear all" action inside every dropdown panel.** Alongside the existing
+  trigger ✕, `Select` (both modes), `PillSelect` and `EditableCell` now render a clear action in the
+  panel footer, all styled by one class — `.uxm-listbox__footer-clear-option`, themable via
+  `--uxm-listbox-footer-clear-{gap,padding,font-size,radius}`. Consumers building their own picker
+  on `Listbox`/`MultiListbox` should reuse that class rather than restyling a `ButtonGhost`.
+- **`MultiListbox` gained `commitMode`, `required` and a richer `footer`.** `commitMode?: 'change' |
+  'close'` defaults to **`'change'`** — the existing behaviour, `onChange` per toggle — so nothing
+  changes for current consumers. Opt into `'close'` for a commit-boundary editor: picks stage in an
+  internal draft and `onChange` fires once when the panel closes, which is what makes "clear all →
+  pick one" safe on a required field (the transient empty set never commits). `required` /
+  `requiredMessage` / `onRequiredViolation(message)` put the empty-set rule in the atom while
+  leaving the *display* to the consumer (the panel is gone by the time it matters). The function
+  form of `footer` now receives `({ close, clear, selected })`, where `clear` empties the working
+  selection **without** closing the panel and `selected` is the live draft — enough to render a
+  self-hiding "Clear all".
+- **`EditableCell.searchable` now defaults to `'auto'`** (was `undefined`, which inherited the raw
+  Listbox `true`). A select/multiselect cell therefore matches the `Select` atom: the search box
+  appears only past 6 options. Pass `searchable` explicitly to force it either way.
 
 ## Workflow
 

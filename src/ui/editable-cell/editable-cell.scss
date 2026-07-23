@@ -157,15 +157,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* "Clear" action in the select dropdown's footer */
-.uxm-editable-cell__clear-option {
-  width: 100%;
-  justify-content: flex-start;
-  gap: 6px;
-  padding: 6px 8px;
-  font-size: 13px;
-  border-radius: 6px;
-}
 /* One-click clear (×) inside every editing cell */
 .uxm-editable-cell--editing .uxm-editable-cell__input {
   padding-inline-end: calc(var(--uxm-editable-cell-padding-x, 6px) + 18px);

@@ -122,6 +122,18 @@
     flex-shrink: 0;
   }
 
+  /* Shared "Clear" / "Clear all" footer action — one full-width, left-aligned
+     ghost button rendered through the footer slot by every picker (Listbox,
+     MultiListbox → EditableCell, PillSelect, Select). All knobs are themable. */
+  &__footer-clear-option {
+    width: 100%;
+    justify-content: flex-start;
+    gap: var(--uxm-listbox-footer-clear-gap, 6px);
+    padding: var(--uxm-listbox-footer-clear-padding, 6px 8px);
+    font-size: var(--uxm-listbox-footer-clear-font-size, 13px);
+    border-radius: var(--uxm-listbox-footer-clear-radius, 6px);
+  }
+
   /* Multi-select indicator slot — fixed-width column BEFORE the row's
      content for the checkbox marker. Reserved on every row (the
      multi-select pattern), `aria-hidden` because aria-selected on the

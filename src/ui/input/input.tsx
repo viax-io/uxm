@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type HTMLAttributes,
   type InputHTMLAttributes,
   type ReactNode,
   type SelectHTMLAttributes,
@@ -15,10 +16,11 @@ import {
 
 import { cn } from '@/helpers';
 
+import { ButtonGhost } from '../button';
 import { FieldError } from '../field-error';
 import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
-import { Listbox } from '../listbox';
+import { DEFAULT_MULTI_REQUIRED_MESSAGE, Listbox, MultiListbox } from '../listbox';
 
 import { clearFieldValue } from './clear-field-value';
 
@@ -235,7 +237,23 @@ export function Textarea({
 }
 Textarea.hasError = true;
 
-export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+/**
+ * Native `<select>` attributes the atom still accepts verbatim. The five
+ * omitted keys are the ones `mode` re-shapes: `value` / `defaultValue` /
+ * `onChange` differ per mode, `required` gains its own message prop, and
+ * `multiple` is replaced by `mode="multi"`. Keeping this base means existing
+ * `<Select onBlur={…} autoFocus data-testid={…}>` call sites — and any
+ * `Omit<SelectProps, …>` in consumer code — keep compiling.
+ */
+type SelectNativeProps = Omit<
+  SelectHTMLAttributes<HTMLSelectElement>,
+  'value' | 'defaultValue' | 'onChange' | 'required' | 'multiple'
+>;
+
+/** Props shared by both single- and multi-select modes. */
+interface SelectCommonProps extends SelectNativeProps {
+  /** `<option>` children — parsed into items (and a placeholder from `<option value="" disabled>`). */
+  children?: ReactNode;
   /**
    * When set to a non-empty string, the trigger renders in its error
    * state: red border (`.uxm-select-dropdown--error`), `aria-invalid` on
@@ -252,7 +270,42 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
    * trigger chrome — icon glyphs, dial codes — use SearchDropdown.)
    */
   searchable?: boolean | 'auto';
+  /**
+   * Require a selection. Clearing to empty is still allowed (input-family,
+   * live model) but flags the error immediately. An explicit `error` prop
+   * takes precedence. Single mode is only clearable with a placeholder
+   * option; multi mode uses `clearable`.
+   */
+  required?: boolean;
+  /**
+   * Override the default required message. Defaults are per-mode:
+   * single → `"Select an option"`, multi → `"Select at least one option"`
+   * (the shared `DEFAULT_MULTI_REQUIRED_MESSAGE`).
+   */
+  requiredMessage?: string;
 }
+
+export interface SelectSingleProps extends SelectCommonProps {
+  /** Single-choice (default) — one value, cleared only when a placeholder option exists. */
+  mode?: 'single';
+  value?: string;
+  defaultValue?: string;
+  /** Fires a synthesized `ChangeEvent` (native-`<select>`-compatible) so `e.target.value` works. */
+  onChange?: (event: ChangeEvent<HTMLSelectElement>) => void;
+}
+
+export interface SelectMultiProps extends SelectCommonProps {
+  /** Multi-choice — an array value with a "N selected" trigger, live commit, checkbox rows. */
+  mode: 'multi';
+  value?: string[];
+  defaultValue?: string[];
+  /** Fires the full selected-value array on every toggle (live). */
+  onChange?: (next: string[]) => void;
+  /** Show a clear-all ✕ on the trigger AND a "Clear all" in the panel. */
+  clearable?: boolean;
+}
+
+export type SelectProps = SelectSingleProps | SelectMultiProps;
 
 interface SelectItem {
   value: string;
@@ -321,7 +374,7 @@ function parseSelectOptions(children: ReactNode): {
  * new code, consider using `<Listbox>` directly with its native
  * `(item: T | null) => void` callback.
  */
-export function Select({
+function SelectSingle({
   className,
   children,
   value,
@@ -333,9 +386,16 @@ export function Select({
   id,
   error,
   searchable = 'auto',
+  required = false,
+  requiredMessage,
   'aria-label': ariaLabel,
-}: SelectProps) {
+  ...rest
+}: SelectSingleProps) {
   const errorId = useId();
+  // Required is flagged (not blocked) on clear — input-family live model.
+  // An explicit `error` prop wins over the internal required one.
+  const [reqError, setReqError] = useState<string | null>(null);
+  const shownError = error ?? reqError ?? undefined;
   // Uncontrolled state — only used when `value` is not provided. Matches
   // the native `<select>`'s controlled/uncontrolled duality.
   const [internal, setInternal] = useState<string>(() => String(defaultValue ?? ''));
@@ -348,6 +408,7 @@ export function Select({
   const commit = useCallback(
     (nextValue: string) => {
       if (!isControlled) setInternal(nextValue);
+      if (required) setReqError(nextValue === '' ? (requiredMessage ?? 'Select an option') : null);
       if (onChange) {
         // Synthesize a ChangeEvent so callers using
         // `onChange={(e) => set(e.target.value)}` keep working. Listbox
@@ -373,7 +434,7 @@ export function Select({
         onChange(event);
       }
     },
-    [isControlled, onChange, name],
+    [isControlled, onChange, name, required, requiredMessage],
   );
 
   return (
@@ -393,25 +454,45 @@ export function Select({
       disabled={disabled}
       searchable={searchable}
       aria-label={ariaLabel}
+      // Clear inside the panel (input-family convention: clear on the trigger
+      // AND in the dropdown). Shown when a value is picked and the field can be
+      // empty (has a placeholder option). Mirrors the trailing ✕ on the trigger.
+      footer={selected && placeholder !== undefined && !disabled
+        ? ({ close }: { close: () => void }) => (
+            <ButtonGhost
+              className="uxm-listbox__footer-clear-option"
+              onClick={() => { commit(''); close(); }}
+            >
+              <Icon glyph="close" size={12} />
+              Clear
+            </ButtonGhost>
+          )
+        : undefined}
       renderTrigger={({ open, triggerProps }) => (
         // Trigger uses `<div role="combobox">` — gives us a focusable
         // surface that can carry the same `.uxm-select-dropdown` chrome
         // the native `<select>` had. `aria-disabled` drives the disabled
         // visual (CSS targets the attribute since `<div>` doesn't honor
         // `:disabled`).
+        // `rest` = the leftover native-select attributes (`onBlur`, `autoFocus`,
+        // `form`, `data-*`, …). It goes FIRST so `triggerProps` and the atom's
+        // own props always win; the cast only bridges the element generic —
+        // the trigger is a `<div>`, not a `<select>`.
         // eslint-disable-next-line jsx-a11y/role-has-required-aria-props -- aria-expanded (always) and aria-controls (while open) arrive via the triggerProps spread; the rule can't see through it
         <div role="combobox"
+          {...(rest as HTMLAttributes<HTMLDivElement>)}
           {...triggerProps}
           tabIndex={disabled ? -1 : 0}
           aria-disabled={disabled || undefined}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
+          aria-required={required || undefined}
+          aria-invalid={shownError ? true : undefined}
+          aria-describedby={shownError ? errorId : undefined}
           id={id}
           style={style}
           className={cn(
             'uxm-select-dropdown',
             open && 'uxm-select-dropdown--open',
-            error && 'uxm-select-dropdown--error',
+            shownError && 'uxm-select-dropdown--error',
             className,
           )}
         >
@@ -462,12 +543,150 @@ export function Select({
       )}
       renderItem={(o) => o.label}
     />
-    {error && (
+    {shownError && (
       <FieldError id={errorId} className="uxm-select-dropdown__error-message">
-        {error}
+        {shownError}
       </FieldError>
     )}
     </>
   );
+}
+
+/**
+ * Multi-select mode — same `.uxm-select-dropdown` trigger chrome as single,
+ * but backed by MultiListbox: an array value, a "N selected" trigger, checkbox
+ * rows, live commit, and (input-family) a clear ✕ on the trigger AND in the
+ * panel. Required flags an empty selection without blocking.
+ */
+function SelectMulti({
+  className,
+  children,
+  value,
+  defaultValue,
+  onChange,
+  disabled,
+  style,
+  id,
+  error,
+  searchable = 'auto',
+  required = false,
+  requiredMessage,
+  clearable = false,
+  'aria-label': ariaLabel,
+  ...rest
+}: SelectMultiProps) {
+  const errorId = useId();
+  const [reqError, setReqError] = useState<string | null>(null);
+  const shownError = error ?? reqError ?? undefined;
+  const [internal, setInternal] = useState<string[]>(() => defaultValue ?? []);
+  const isControlled = value !== undefined;
+  const current = isControlled ? value : internal;
+
+  const { items, placeholder } = useMemo(() => parseSelectOptions(children), [children]);
+  const selectedItems = useMemo(
+    () => items.filter((o) => current.includes(o.value)),
+    [items, current],
+  );
+
+  const commit = useCallback(
+    (next: string[]) => {
+      if (!isControlled) setInternal(next);
+      if (required) {
+        setReqError(next.length === 0 ? (requiredMessage ?? DEFAULT_MULTI_REQUIRED_MESSAGE) : null);
+      }
+      onChange?.(next);
+    },
+    [isControlled, onChange, required, requiredMessage],
+  );
+
+  return (
+    <>
+      <MultiListbox<SelectItem>
+        items={items}
+        getKey={(o) => o.value}
+        getLabel={(o) => o.label}
+        value={selectedItems}
+        onChange={(next) => commit(next.map((o) => o.value))}
+        // Relies on MultiListbox's default `commitMode="change"` — the
+        // "N selected" count has to track each toggle.
+        isItemDisabled={(o) => o.disabled}
+        disabled={disabled}
+        searchable={searchable}
+        aria-label={ariaLabel}
+        footer={clearable
+          ? ({ clear, selected }) =>
+              selected.length > 0 ? (
+                <ButtonGhost className="uxm-listbox__footer-clear-option" onClick={clear}>
+                  <Icon glyph="close" size={12} />
+                  Clear all
+                </ButtonGhost>
+              ) : null
+          : undefined}
+        renderTrigger={({ open, triggerProps }) => (
+          // `rest` (leftover native-select attributes) goes first so
+          // `triggerProps` and the atom's own props win — see SelectSingle.
+          // eslint-disable-next-line jsx-a11y/role-has-required-aria-props -- aria-expanded/controls arrive via the triggerProps spread
+          <div role="combobox"
+            {...(rest as HTMLAttributes<HTMLDivElement>)}
+            {...triggerProps}
+            tabIndex={disabled ? -1 : 0}
+            aria-disabled={disabled || undefined}
+            aria-required={required || undefined}
+            aria-invalid={shownError ? true : undefined}
+            aria-describedby={shownError ? errorId : undefined}
+            id={id}
+            style={style}
+            className={cn(
+              'uxm-select-dropdown',
+              open && 'uxm-select-dropdown--open',
+              shownError && 'uxm-select-dropdown--error',
+              className,
+            )}
+          >
+            <span
+              className={cn(
+                'uxm-select-dropdown__trigger-label',
+                current.length === 0 && 'uxm-select-dropdown__trigger-label--empty',
+              )}
+            >
+              {current.length === 0 ? (placeholder ?? '') : `${current.length} selected`}
+            </span>
+            {clearable && current.length > 0 && !disabled && (
+              <IconButton
+                aria-label="Clear all selections"
+                className="uxm-field-clear uxm-select-dropdown__trigger-clear"
+                onClick={(e) => { e.stopPropagation(); commit([]); }}
+                onMouseDown={(e) => e.stopPropagation()}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); }}
+              >
+                <Icon glyph="close" />
+              </IconButton>
+            )}
+            <Icon
+              glyph="chevron-down"
+              size={14}
+              className="uxm-select-dropdown__trigger-chevron"
+              style={{ transform: open ? 'rotate(180deg)' : 'none' }}
+            />
+          </div>
+        )}
+        renderItem={(o) => o.label}
+      />
+      {shownError && (
+        <FieldError id={errorId} className="uxm-select-dropdown__error-message">
+          {shownError}
+        </FieldError>
+      )}
+    </>
+  );
+}
+
+/**
+ * Select dropdown atom. `mode="single"` (default) picks one value;
+ * `mode="multi"` picks an array. Both share the same trigger chrome and
+ * `<option>` children API — only the value/onChange shape differs.
+ */
+export function Select(props: SelectProps) {
+  return props.mode === 'multi' ? <SelectMulti {...props} /> : <SelectSingle {...props} />;
 }
 Select.hasError = true;
