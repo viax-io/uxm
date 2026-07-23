@@ -51,7 +51,10 @@ const PER_COMPONENT_SELECTOR: Record<string, string> = {
   // correct.
 };
 
-const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
+// A knob may target several variables (string[]): the emitter writes one
+// declaration per target. Used when one semantic knob themes sibling atoms
+// (e.g. Card's Row Gap → both the Stack and Cluster gap vars).
+const PER_COMPONENT_MAPPING: Record<string, Record<string, string | string[]>> = {
   'input-with-icon': {
     backgroundColor: '--uxm-input-with-icon-bg',
     borderColor: '--uxm-input-with-icon-border-color',
@@ -202,6 +205,16 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     borderColor: '--uxm-card-border-color',
     borderRadius: '--uxm-card-radius',
     padding: '--uxm-card-padding',
+    // The spacing knobs collide with REAL_CSS_PROPS (`gap`/`row-gap` would be
+    // emitted as literal properties `.uxm-card` never activates — the card is
+    // only a flex column via the `--gap` modifier). Route them to the vars
+    // the components actually read:
+    // - `gap` ("Header Gap") → the card's own column gap.
+    // - `rowGap` ("Row Gap") → BOTH content-layout atoms' gap vars, emitted on
+    //   `.uxm-card` so the one shared knob cascades as the contextual default
+    //   for a Stack or a Cluster composed inside a card.
+    gap: '--uxm-card-gap',
+    rowGap: ['--uxm-stack-gap', '--uxm-cluster-gap'],
   },
   'toggle-switch': {
     width: '--uxm-toggle-switch-width',
@@ -462,6 +475,13 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   'form-field': {
     gap: '--uxm-form-field-gap',
+    // Per-tint label colours — the component reads `--uxm-form-field-label-
+    // tint-*` (see form-field.scss tone classes); the generic kebab fallback
+    // would emit `--uxm-form-field-tint-strong-color` etc., which nothing
+    // reads, so the saved colour would silently not apply.
+    tintStrongColor: '--uxm-form-field-label-tint-strong',
+    tintDefaultColor: '--uxm-form-field-label-tint-default',
+    tintMutedColor: '--uxm-form-field-label-tint-muted',
   },
   'icon-tile': {
     borderRadius: '--uxm-icon-tile-radius',
@@ -695,7 +715,7 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
 };
 
-function toCSS(key: string, componentId: string): string {
+function toCSS(key: string, componentId: string): string | string[] {
   const componentMapping = PER_COMPONENT_MAPPING[componentId];
   if (componentMapping?.[key]) return componentMapping[key];
 
@@ -831,7 +851,10 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
     for (const [key, value] of entries) {
       const cssProp = toCSS(key, id);
       const cssValue = formatValue(value, key);
-      lines.push(`  ${cssProp}: ${cssValue};`);
+      // A knob may target several variables — one declaration per target.
+      for (const prop of Array.isArray(cssProp) ? cssProp : [cssProp]) {
+        lines.push(`  ${prop}: ${cssValue};`);
+      }
     }
     lines.push('}');
     lines.push('');
