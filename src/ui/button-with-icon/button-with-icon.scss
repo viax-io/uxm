@@ -15,7 +15,10 @@
   transition: background-color 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
 
   &:hover {
-    background-color: var(--uxm-button-with-icon-hover-background-color, var(--color-card));
+    /* Faint accent-subtle fill on hover (was the resting card colour, so the
+       fill never changed — only the border/text did). Matches the studio
+       registry default and stays distinct from the resting surface. */
+    background-color: var(--uxm-button-with-icon-hover-background-color, var(--color-accent-subtle));
     border-color: var(--uxm-button-with-icon-hover-border-color, var(--color-accent));
     color: var(--uxm-button-with-icon-hover-color, var(--color-text));
   }

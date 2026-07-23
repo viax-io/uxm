@@ -11,11 +11,13 @@ export const buttonsDefs: ComponentDef[] = [
     description: 'Primary call-to-action button with solid background.',
     styleProperties: [
       // State-scoped colors — Tag-style filter via showWhen. Designers tune
-      // background + text per state. Defaults walk the accent scale:
-      // bold → accent (brighter) → bold (darker on press).
+      // background + text per state. Hover shades accent-bold slightly toward
+      // text (contrast-safe with white text — a brighter accent would fail);
+      // active returns to bold. Matches the atom's `--uxm-button-primary-*`
+      // fallbacks so the studio default equals the shipped default.
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'states', showWhen: { state: 'default' } },
       { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'default' } },
-      { key: 'hoverBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'hover' } },
+      { key: 'hoverBackgroundColor', label: 'Background', control: 'color', defaultValue: 'color-mix(in srgb, var(--color-accent-bold) 88%, var(--color-text))', section: 'states', showWhen: { state: 'hover' } },
       { key: 'hoverColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'hover' } },
       { key: 'activeBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'states', showWhen: { state: 'active' } },
       { key: 'activeColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'active' } },
