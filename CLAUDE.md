@@ -45,7 +45,7 @@ studio / previews  →  ui  →  tokens
 
 - **`src/ui/`** — one folder per primitive: `<name>.tsx`, `<name>.scss`, `index.ts` barrel, `<name>-preview.tsx` (the preview lives *next to* its component), and a per-component `README.md`. Re-exported from `src/ui/index.ts`.
 - **`src/tokens/`** — `index.ts` is the canonical `themeTokens: ThemeToken[]` catalog (each entry has `name`, `cssVar`, `hex`, `darkHex`, `group`); `index.css` declares the matching `--color-*` variables on `:root` (+ dark overrides).
-- **`src/previews/`** — preview components + `composite/` multi-atom previews. Uniform `PreviewProps = { componentId, styles, variants, shell? }`. Previews project knob values as inline CSS variables onto the real component so they exercise the production CSS path. **Tree-shake guarantee: no `Preview` symbol may leak into `/ui`** (verified at build).
+- **`src/previews/`** — preview components + `composite/` multi-atom previews. Uniform `PreviewProps = { componentId, styles, variants, shell? }`. Previews project knob values as inline CSS variables onto the real component so they exercise the production CSS path. **Tree-shake guarantee: no `Preview` symbol may leak into `/ui`** — enforced by convention only, nothing checks it at build time. When touching barrels, verify by hand that neither `src/ui/index.ts` nor any `src/ui/*/index.ts` re-exports a `*-preview` module.
 - **`src/studio/`** — the UXM design workbench (`UxmApp`), the same app modo serves at `/uxm`. Backend-decoupled via the `StudioPersistence` contract (`src/studio/persistence/`): `createHttpPersistence()` (Hono API), `createClientPersistence()` (live-preview + client-side asset uploads), `createReadOnlyPersistence()` (static). `shell/` = canvas/sidebar/properties-panel/wcag-panel; `editors/` = the knob inputs; `lib/registry/` = the component registry driving the sidebar. Studio styling uses Tailwind (`studio.css`) — this is the **only** place Tailwind is allowed.
 
 ### Two-layer theming model (the core design)
@@ -66,6 +66,12 @@ This is what lets the studio/brand-settings editor re-tint every consumer at onc
 A Vite dev shell that mounts `UxmApp` with `createClientPersistence`. `portal/main.tsx` pulls `src/ui/**/*.scss` via `import.meta.glob` so atoms render with real CSS in dev with **no prior library build**. This is the fastest way to see UI changes live — run `npm run dev:modo`.
 
 ## Conventions
+
+**The repo's own rules and lessons live in `.claude/memory/` — read these first:**
+- `constitution.md` — the *rules* of this codebase (non-negotiable conventions, release flow).
+- `gotchas.md` — the *lessons*: non-obvious tooling traps that have cost time before (never bare-`git push`, the benign lint-staged "no matching files" no-op on docs-only commits, when **not** to write a `BREAKING CHANGE:` footer). Add an entry when something non-obvious bites you.
+
+Both are version-controlled here — update them in-repo, not in a per-session memory store. `.claude/commands/` holds the slash commands (`/code-review`, `/update-ai-skill`, …) and `.claude/agents/` the subagent definitions.
 
 **Authoritative style references live in `.claude/handbooks/`:**
 - `react-style-guide.md` — component/props/hooks/TS/a11y conventions. This is the guide that matches the real code (`uxm-` prefix, canonical `--` BEM modifiers, `.scss` sources, named exports, `cn()` from `@/helpers`, controlled/uncontrolled pairs, extend native HTML attribute interfaces).
