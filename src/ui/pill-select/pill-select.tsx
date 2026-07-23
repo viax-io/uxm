@@ -138,9 +138,8 @@ export function PillSelect({
         getLabel={(o) => o.label}
         value={selectedItems}
         onChange={handleChange}
-        // Chips must appear/disappear the instant a row is picked — the live
-        // model, not staged-until-close.
-        commitMode="change"
+        // Relies on MultiListbox's default `commitMode="change"`: chips must
+        // appear/disappear the instant a row is picked, not on panel close.
         // Clear inside the panel too (input-family: clear on trigger AND in
         // dropdown). `clear` empties via the same setSelected path as the
         // trigger ✕, so the required flag stays in sync.

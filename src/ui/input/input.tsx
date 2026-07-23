@@ -7,9 +7,10 @@ import {
   useRef,
   useState,
   type ChangeEvent,
-  type CSSProperties,
+  type HTMLAttributes,
   type InputHTMLAttributes,
   type ReactNode,
+  type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from 'react';
 
@@ -236,8 +237,21 @@ export function Textarea({
 }
 Textarea.hasError = true;
 
+/**
+ * Native `<select>` attributes the atom still accepts verbatim. The five
+ * omitted keys are the ones `mode` re-shapes: `value` / `defaultValue` /
+ * `onChange` differ per mode, `required` gains its own message prop, and
+ * `multiple` is replaced by `mode="multi"`. Keeping this base means existing
+ * `<Select onBlur={…} autoFocus data-testid={…}>` call sites — and any
+ * `Omit<SelectProps, …>` in consumer code — keep compiling.
+ */
+type SelectNativeProps = Omit<
+  SelectHTMLAttributes<HTMLSelectElement>,
+  'value' | 'defaultValue' | 'onChange' | 'required' | 'multiple'
+>;
+
 /** Props shared by both single- and multi-select modes. */
-interface SelectCommonProps {
+interface SelectCommonProps extends SelectNativeProps {
   /** `<option>` children — parsed into items (and a placeholder from `<option value="" disabled>`). */
   children?: ReactNode;
   /**
@@ -269,12 +283,6 @@ interface SelectCommonProps {
    * (the shared `DEFAULT_MULTI_REQUIRED_MESSAGE`).
    */
   requiredMessage?: string;
-  disabled?: boolean;
-  className?: string;
-  style?: CSSProperties;
-  id?: string;
-  name?: string;
-  'aria-label'?: string;
 }
 
 export interface SelectSingleProps extends SelectCommonProps {
@@ -381,6 +389,7 @@ function SelectSingle({
   required = false,
   requiredMessage,
   'aria-label': ariaLabel,
+  ...rest
 }: SelectSingleProps) {
   const errorId = useId();
   // Required is flagged (not blocked) on clear — input-family live model.
@@ -465,8 +474,13 @@ function SelectSingle({
         // the native `<select>` had. `aria-disabled` drives the disabled
         // visual (CSS targets the attribute since `<div>` doesn't honor
         // `:disabled`).
+        // `rest` = the leftover native-select attributes (`onBlur`, `autoFocus`,
+        // `form`, `data-*`, …). It goes FIRST so `triggerProps` and the atom's
+        // own props always win; the cast only bridges the element generic —
+        // the trigger is a `<div>`, not a `<select>`.
         // eslint-disable-next-line jsx-a11y/role-has-required-aria-props -- aria-expanded (always) and aria-controls (while open) arrive via the triggerProps spread; the rule can't see through it
         <div role="combobox"
+          {...(rest as HTMLAttributes<HTMLDivElement>)}
           {...triggerProps}
           tabIndex={disabled ? -1 : 0}
           aria-disabled={disabled || undefined}
@@ -559,6 +573,7 @@ function SelectMulti({
   requiredMessage,
   clearable = false,
   'aria-label': ariaLabel,
+  ...rest
 }: SelectMultiProps) {
   const errorId = useId();
   const [reqError, setReqError] = useState<string | null>(null);
@@ -592,8 +607,8 @@ function SelectMulti({
         getLabel={(o) => o.label}
         value={selectedItems}
         onChange={(next) => commit(next.map((o) => o.value))}
-        // Live commit so the "N selected" count tracks each toggle.
-        commitMode="change"
+        // Relies on MultiListbox's default `commitMode="change"` — the
+        // "N selected" count has to track each toggle.
         isItemDisabled={(o) => o.disabled}
         disabled={disabled}
         searchable={searchable}
@@ -608,8 +623,11 @@ function SelectMulti({
               ) : null
           : undefined}
         renderTrigger={({ open, triggerProps }) => (
+          // `rest` (leftover native-select attributes) goes first so
+          // `triggerProps` and the atom's own props win — see SelectSingle.
           // eslint-disable-next-line jsx-a11y/role-has-required-aria-props -- aria-expanded/controls arrive via the triggerProps spread
           <div role="combobox"
+            {...(rest as HTMLAttributes<HTMLDivElement>)}
             {...triggerProps}
             tabIndex={disabled ? -1 : 0}
             aria-disabled={disabled || undefined}

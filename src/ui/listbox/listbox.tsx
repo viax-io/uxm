@@ -178,16 +178,15 @@ export interface MultiListboxProps<T> extends Omit<ListboxCommonProps<T>, 'foote
   closeOnSelect?: boolean;
   /**
    * When the working selection is pushed to `onChange`:
-   *   - `'close'` (default) — toggles stage into an internal draft; `onChange`
-   *     fires ONCE when the panel closes. This is the safe default: "clear all
-   *     → pick one" works on a required cell (the transient empty set never
-   *     commits), N picks are a single commit, and any consumer `validate`
-   *     runs once on the final set (so a required-field warning shows on close
-   *     only when the result is actually empty). Right for a commit-boundary
-   *     editor like EditableCell.
-   *   - `'change'` — every toggle fires `onChange` immediately (live). Opt in
-   *     for chip-style pickers (PillSelect) where each pick must reflect
-   *     instantly, and for a live "N selected" trigger count.
+   *   - `'change'` (default) — every toggle fires `onChange` immediately
+   *     (live). The historical behavior, and what chip-style pickers
+   *     (PillSelect) and a live "N selected" trigger count need.
+   *   - `'close'` — toggles stage into an internal draft; `onChange` fires
+   *     ONCE when the panel closes. Opt in for a commit-boundary editor like
+   *     EditableCell: "clear all → pick one" works on a required cell (the
+   *     transient empty set never commits), N picks are a single commit, and
+   *     any consumer `validate` runs once on the final set (so a required-field
+   *     warning shows on close only when the result is actually empty).
    * The draft is fully internal — consumers keep passing the committed
    * `value` and receive the final array via `onChange`; nothing else changes.
    */
@@ -198,10 +197,10 @@ export interface MultiListboxProps<T> extends Omit<ListboxCommonProps<T>, 'foote
    * it identically; the DISPLAY can't (the panel is gone once closed), so the
    * message is reported via `onRequiredViolation` for the consumer to render.
    * Enforcement timing follows `commitMode`:
+   *   - `'change'` (live, default) — checked per toggle; empty → still
+   *     committed (so the user isn't trapped) + violation reported.
    *   - `'close'` (staged) — checked on close; empty → NOT committed (the
-   *     committed value stays) + violation reported.
-   *   - `'change'` (live) — checked per toggle; empty → still committed (so the
-   *     user isn't trapped) + violation reported, mirroring the staged
+   *     committed value stays) + violation reported, mirroring the live
    *     "transient empty is allowed" model.
    */
   required?: boolean;
@@ -724,7 +723,7 @@ export function MultiListbox<T>({
   excludeSelected = false,
   closeOnSelect = false,
   showCheckbox = true,
-  commitMode = 'close',
+  commitMode = 'change',
   required = false,
   requiredMessage = DEFAULT_MULTI_REQUIRED_MESSAGE,
   onRequiredViolation,
@@ -736,7 +735,19 @@ export function MultiListbox<T>({
   // In staged mode the working set lives in a local draft while the panel is
   // open (`null` = not editing, fall back to the committed `value`). In the
   // default 'change' mode there's no draft — `value` is the live truth.
+  //
+  // The draft is mirrored into a ref because a close can happen in the SAME
+  // event as the toggle that preceded it (`closeOnSelect`: ListboxCore calls
+  // `onSelect(item)` then `setOpen(false)` synchronously). Reading `draft`
+  // from the render closure there would commit the selection as it was BEFORE
+  // the click and silently drop the item the user just picked; the ref is
+  // already up to date.
   const [draft, setDraft] = useState<T[] | null>(null);
+  const draftRef = useRef<T[] | null>(null);
+  const setWorkingDraft = useCallback((next: T[] | null) => {
+    draftRef.current = next;
+    setDraft(next);
+  }, []);
   const working = staged ? draft ?? value : value;
 
   const selectedKeys = useMemo(
@@ -778,10 +789,10 @@ export function MultiListbox<T>({
         ? working.filter((v) => getKey(v) !== k)
         : [...working, item];
       // Staged: mutate the draft only (commit deferred to close). Live: emit now.
-      if (staged) setDraft(next);
+      if (staged) setWorkingDraft(next);
       else emit(next);
     },
-    [working, selectedKeys, staged, emit, getKey],
+    [working, selectedKeys, staged, emit, getKey, setWorkingDraft],
   );
 
   const handleOpenChange = useCallback(
@@ -790,16 +801,51 @@ export function MultiListbox<T>({
       if (!staged) return;
       if (open) {
         // Seed the draft from the committed value on open.
-        setDraft(value);
+        setWorkingDraft(value);
       } else {
-        // Commit the staged draft ONCE on close, then drop it.
-        const final = draft ?? value;
-        setDraft(null);
+        // Commit the staged draft ONCE on close, then drop it. Read the REF,
+        // not the state — see the `draftRef` note above (`closeOnSelect`).
+        const final = draftRef.current ?? value;
+        setWorkingDraft(null);
         emit(final);
       }
     },
-    [staged, value, draft, emit, onOpenChange],
+    [staged, value, emit, onOpenChange, setWorkingDraft],
   );
+
+  // A non-null draft means "the panel is open and staging". Keep the latest
+  // `emit` reachable from the unmount cleanup below without re-running it.
+  const emitRef = useRef(emit);
+  useEffect(() => {
+    emitRef.current = emit;
+  }, [emit]);
+
+  // Commit a staged draft if the component unmounts while the panel is still
+  // open — a route change or a table cell torn down mid-edit would otherwise
+  // drop the user's in-flight picks with no commit at all.
+  useEffect(
+    () => () => {
+      const pending = draftRef.current;
+      if (pending !== null) emitRef.current(pending);
+    },
+    [],
+  );
+
+  // Re-seed the draft when the committed `value` changes UNDER an open panel
+  // (an external update — not one of our own commits, which null the draft
+  // first). Without this the stale draft silently overwrites that update on
+  // close. Compared by key membership, not identity: consumers routinely
+  // rebuild the array every render, and identity alone would nuke the draft
+  // on each parent re-render.
+  // Serialised rather than joined: keys are consumer-supplied strings and a
+  // separator character could appear inside one.
+  const valueKeys = useMemo(() => JSON.stringify(value.map(getKey)), [value, getKey]);
+  const prevValueKeys = useRef(valueKeys);
+  useEffect(() => {
+    if (prevValueKeys.current === valueKeys) return;
+    prevValueKeys.current = valueKeys;
+    if (draftRef.current !== null) setWorkingDraft(value);
+  }, [valueKeys, value, setWorkingDraft]);
 
   // Enrich a function footer with the working selection + a mode-aware clear
   // (empties the draft when staged, else commits [] via `emit` so the
@@ -810,9 +856,9 @@ export function MultiListbox<T>({
       footer({
         close,
         selected: working,
-        clear: () => (staged ? setDraft([]) : emit([])),
+        clear: () => (staged ? setWorkingDraft([]) : emit([])),
       });
-  }, [footer, working, staged, emit]);
+  }, [footer, working, staged, emit, setWorkingDraft]);
 
   return (
     <ListboxCore<T>

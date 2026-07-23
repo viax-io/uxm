@@ -56,17 +56,41 @@ Type alias for `TextareaHTMLAttributes<HTMLTextAreaElement>`. Every native texta
 
 ### `Select` — `SelectProps`
 
-Type alias for `SelectHTMLAttributes<HTMLSelectElement>`. Every native select attribute is forwarded as-is.
+`SelectProps` is a **discriminated union** on `mode`: `SelectSingleProps` (`mode="single"`, the default) | `SelectMultiProps` (`mode="multi"`). Both extend `SelectHTMLAttributes<HTMLSelectElement>` minus the five keys `mode` re-shapes — `value`, `defaultValue`, `onChange`, `required`, `multiple` — so every other native attribute (`onBlur`, `autoFocus`, `form`, `data-*`, …) still type-checks and is now forwarded onto the trigger.
+
+The rendered trigger is a `<div role="combobox">`, not a `<select>` — the open-state UI is a `Listbox` panel so it looks identical across browsers. `<optgroup>` children are **not** supported; only `<option>` is parsed.
+
+**Shared props**
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | – | `<option>` / `<optgroup>` elements. |
+| `mode` | `'single' \| 'multi'` | `'single'` | Picks the value shape and the trigger's selection display. |
+| `children` | `ReactNode` | – | `<option>` elements. `<option value="" disabled>` is consumed as the placeholder, not listed. |
+| `error` | `string` | – | Non-empty renders the error state (`--error` modifier, `aria-invalid`, `FieldError` below). Takes precedence over the internal `required` message. |
+| `searchable` | `boolean \| 'auto'` | `'auto'` | `'auto'` shows the panel search box only past the shared Listbox threshold (6 options). |
+| `required` | `boolean` | `false` | Flags an empty selection — it does **not** block. Adds `aria-required` and surfaces `requiredMessage` once the field is emptied (input-family live model). |
+| `requiredMessage` | `string` | per mode | `'Select an option'` (single) / `'Select at least one option'` (multi, the shared `DEFAULT_MULTI_REQUIRED_MESSAGE`). |
 | `className` | `string` | – | Merged with `uxm-select-dropdown` via `cn`. |
-| _(any native select attribute)_ | – | – | Spread onto the root `<select>`. |
+| _(any other native select attribute)_ | – | – | Spread onto the trigger; `triggerProps` and the atom's own props win on collision. |
 
-The native dropdown caret is suppressed (`appearance: none`) and replaced with an inline SVG chevron painted at `#9CA3AF` — a hard-coded match for the `Text Muted` token.
+**`mode="single"` — `SelectSingleProps`**
 
-**Clearing rule.** There is no `clearable` prop. A clear (✕) button appears automatically once a value is selected **iff the select declares a placeholder option** — `<option value="" disabled>…</option>`. That placeholder is what marks "no selection" as a valid state, so returning to it via ✕ is meaningful. A select without a placeholder is mandatory (a value is always chosen, like a native `<select>`), so no ✕ is rendered. In short: **want it clearable → give it a placeholder option.**
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` / `defaultValue` | `string` | – | Controlled / uncontrolled, native-`<select>` duality. |
+| `onChange` | `(e: ChangeEvent<HTMLSelectElement>) => void` | – | Receives a **synthesized** event — `e.target.value` / `e.currentTarget.value` / `type` / `name` are populated. |
+
+**`mode="multi"` — `SelectMultiProps`**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` / `defaultValue` | `string[]` | `[]` | Array of selected option values. |
+| `onChange` | `(next: string[]) => void` | – | Fires the full array on every toggle (live — the trigger shows a running `N selected`). |
+| `clearable` | `boolean` | `false` | Renders a clear-all ✕ on the trigger **and** a "Clear all" action in the panel footer. |
+
+Backed by `MultiListbox` in its default live `commitMode="change"`, with checkbox rows. For a chip-in-trigger multi picker use `PillSelect` instead.
+
+**Clearing rule (single).** There is no `clearable` prop in single mode. A clear (✕) button appears automatically once a value is selected **iff the select declares a placeholder option** — `<option value="" disabled>…</option>`. That placeholder is what marks "no selection" as a valid state, so returning to it via ✕ is meaningful. A select without a placeholder is mandatory (a value is always chosen, like a native `<select>`), so no ✕ is rendered. In short: **want it clearable → give it a placeholder option.** The same condition drives the "Clear" action in the panel footer, so the trigger ✕ and the in-panel action always appear together.
 
 ## CSS variables
 
@@ -83,7 +107,7 @@ The shared rule reads no `--uxm-input-*` variables — every visual property rea
 | `--color-accent` | Accent / Accent | Focused border colour. |
 | `--color-danger-text` | Semantic / Danger Text | Error-modifier border colour. |
 
-The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI. Note: the select caret is a hard-coded `#9CA3AF` SVG and does not retint with the token layer.
+The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI. Note: the select trigger's chevron is the `chevron-down` `Icon` painted at `--color-text-muted` (`.uxm-select-dropdown__trigger-chevron`), so it retints with the token layer.
 
 ## States & variants
 

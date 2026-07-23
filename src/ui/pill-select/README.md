@@ -36,7 +36,12 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `defaultValue` | `string[]` | `[]` | Initial selection for uncontrolled usage. |
 | `placeholder` | `string` | `'Add…'` | Shown when no chips are selected. |
 | `onChange` | `(next: string[]) => void` | – | Fires after add or remove with the next selection. |
+| `chipsPosition` | `'inside' \| 'below'` | `'below'` | `'inside'` renders the chips in the field itself; `'below'` keeps a compact Select-shaped trigger with the chips underneath. |
 | `disabled` | `boolean` | `false` | Disables interaction; field loses tab stop, chips become inert, menu cannot open. |
+| `error` | `string` | – | Non-empty renders the error state (`__field--error`, `aria-invalid`, `FieldError` below). Takes precedence over the internal `required` message. |
+| `required` | `boolean` | `false` | Requires at least one chip. Emptying the field is still **allowed** (live model) but surfaces `requiredMessage` immediately and sets `aria-required`. Enforced in the atom, not in `MultiListbox`, because chips are also removed via their own ×, which bypasses the dropdown. |
+| `requiredMessage` | `string` | `'Select at least one option'` | Overrides the shared `DEFAULT_MULTI_REQUIRED_MESSAGE`. |
+| `clearable` | `boolean` | `false` | Renders a trailing ✕ on the field that clears **all** chips at once, plus its "Clear all" twin in the dropdown footer. Chips always clear individually via their own × regardless. |
 | `className` | `string` | – | Merged with `uxm-pill-select` on the root. |
 | _(any other native div attribute)_ | – | – | Spread onto the root `<div>`. |
 
@@ -58,6 +63,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `--uxm-pill-select-disabled-border` | `--color-border` | – | Disabled border. |
 | `--uxm-pill-select-disabled-opacity` | – | `1` | Disabled opacity (left at 1 by default — disabled signal comes from the chips). |
 | `--uxm-pill-select-placeholder-color` | `--color-text-muted` | – | Placeholder text colour. |
+| `--uxm-pill-select-clear-chevron-gap` | – | `2px` | Gap between the clear-all ✕ and the chevron (`clearable` only). |
 
 The dropdown menu (`.uxm-pill-select__menu`) uses semantic surface tokens directly (`--color-card`, `--color-border`, `--color-surface-alt`, `--color-text`, `--shadow-lg`) without `--uxm-pill-select-*` overrides.
 

@@ -584,9 +584,10 @@ export function EditableCell({
       );
     }
 
-    // multiselect. Staging (draft while open, one commit on close) is the
-    // MultiListbox default — so a required cell survives "clear all → pick one"
-    // and N picks are one commit. This branch just hands over the committed
+    // multiselect. A cell is a commit boundary, so this branch opts into
+    // MultiListbox's staged mode (`commitMode="close"`: draft while open, one
+    // commit on close) — a required cell then survives "clear all → pick one"
+    // and N picks are one `onCommit`. It just hands over the committed
     // selection and commits the final array back.
     const selectedItems = Array.isArray(value)
       ? optionItems.filter((o) => value.includes(o.value))
@@ -611,7 +612,9 @@ export function EditableCell({
           getKey={getKey}
           getLabel={getLabel}
           value={selectedItems}
-          onChange={(items) => commitValue(items.map((o) => o.value))}
+          onChange={(items) => void commitValue(items.map((o) => o.value))}
+          // Commit on close, not per toggle — see the note above.
+          commitMode="close"
           required={required}
           requiredMessage={requiredMessage}
           // MultiListbox owns the empty rule for multi (shared with every
