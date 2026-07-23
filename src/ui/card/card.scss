@@ -2,7 +2,10 @@
 
 /* Card — every registry knob is a CSS variable. The shadow toggle from
    the registry stays as a modifier class; consumers either include the
-   `uxm-card--shadow` class or don't (matches the boolean nature of the knob). */
+   `uxm-card--shadow` class or don't (matches the boolean nature of the knob).
+   Content layout (arrangement within the content) is delegated to the
+   Stack/Cluster atoms — the card itself only owns the optional column gap
+   between its direct children (the `--gap` modifier below). */
 
 .uxm-card {
   background-color: var(--uxm-card-bg, var(--color-card));
@@ -10,7 +13,29 @@
   border-radius: var(--uxm-card-radius, 4px);
   padding: var(--uxm-card-padding, 24px);
 
-  &--shadow {
-    box-shadow: var(--shadow-card);
+  /* Opt-in column layout — applied by the `gap` prop. The gap itself lives
+     in `--uxm-card-gap` so a per-instance prop value and a workbench-saved
+     override round-trip through the same variable. */
+  &--gap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--uxm-card-gap, 16px);
   }
+
+  /* Elevation — gated by the `shadow` prop, tunable through the
+     `--uxm-card-shadow-*` vars (colour / blur / vertical offset) rather than
+     a fixed token, mirroring Calendar's shadow. The DEFAULT colour is
+     theme-aware via the internal `--uxm-card-shadow-default` (dark override
+     below, values in step with the `--shadow-card` token) — an explicit
+     `--uxm-card-shadow-color` wins in both themes. */
+  &--shadow {
+    --uxm-card-shadow-default: rgba(0, 0, 0, 0.12);
+
+    box-shadow: 0 var(--uxm-card-shadow-offset-y, 6px) var(--uxm-card-shadow-blur, 20px)
+      var(--uxm-card-shadow-color, var(--uxm-card-shadow-default));
+  }
+}
+
+[data-theme='dark'] .uxm-card--shadow {
+  --uxm-card-shadow-default: rgba(0, 0, 0, 0.3);
 }

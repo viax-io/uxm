@@ -212,15 +212,50 @@ export const displayDefs: ComponentDef[] = [
     id: 'card',
     name: 'Card',
     category: 'Display',
-    description: 'Content card with border and optional shadow.',
+    description: 'Content surface with border and optional shadow. An optional vertical gap spaces its direct children; content layout is composed inside with Stack/Cluster.',
     styleProperties: [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 24, step: 1, unit: 'px' },
-      { key: 'padding', label: 'Padding', control: 'number', defaultValue: 24, min: 8, max: 48, step: 4, unit: 'px' },
-      { key: 'shadow', label: 'Shadow', control: 'toggle', defaultValue: false },
+      { key: 'padding', label: 'Padding', control: 'number', defaultValue: 24, min: 0, max: 64, step: 4, unit: 'px' },
+      // No on/off toggle: with/without shadow is a value state, not a mode —
+      // zero the offset/blur for a flat card. (Consumers opt in/out in code
+      // via the `shadow` prop; the preview always renders the shadow being
+      // themed.) The box-shadow is built from these three vars (mirrors
+      // Calendar).
+      { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'rgba(0, 0, 0, 0.12)', section: 'shadow' },
+      { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 20, min: 0, max: 48, step: 1, unit: 'px', section: 'shadow' },
+      { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 6, min: 0, max: 24, step: 1, unit: 'px', section: 'shadow' },
+      // Two gaps come from composition, not a layout mode on Card: the card's
+      // own `gap` spaces its direct children (header ↔ content group), and the
+      // nested Stack/Cluster's gap spaces the rows. Row Gap is ONE shared knob
+      // for both content layouts — persistence maps it to both atoms' gap vars
+      // on `.uxm-card` (the contextual default for either atom inside cards).
+      { key: 'gap', label: 'Header Gap', control: 'number', defaultValue: 20, min: 0, max: 48, step: 2, unit: 'px', section: 'spacing' },
+      { key: 'rowGap', label: 'Row Gap', control: 'number', defaultValue: 12, min: 0, max: 48, step: 2, unit: 'px', section: 'spacing' },
+      // Layout-specific knobs — scoped to the Content Layout variant (same
+      // "Per <variant> · <value>" pattern as Calendar's per-cell-state knobs).
+      // Spacing above is shared; alignment/distribution differ per layout.
+      { key: 'stackAlign', label: 'Align', control: 'select', defaultValue: 'stretch', options: ['stretch', 'start', 'center', 'end'], section: 'stack', showWhen: { contentLayout: 'stack' } },
+      { key: 'clusterAlign', label: 'Align', control: 'select', defaultValue: 'center', options: ['center', 'start', 'end', 'baseline'], section: 'cluster', showWhen: { contentLayout: 'cluster' } },
+      { key: 'justify', label: 'Justify', control: 'select', defaultValue: 'start', options: ['start', 'center', 'end', 'between'], section: 'cluster', showWhen: { contentLayout: 'cluster' } },
+      { key: 'wrap', label: 'Wrap', control: 'toggle', defaultValue: true, section: 'cluster', showWhen: { contentLayout: 'cluster' } },
     ],
-    layoutVariants: [],
+    // Content layout is a VARIANT, not a saved style: the preview swaps a
+    // nested Stack/Cluster to show each arrangement. Variant selections are
+    // ephemeral preview state (never persisted to the instance), which is
+    // exactly right for "stack on one page, cluster on another".
+    layoutVariants: [
+      {
+        key: 'contentLayout',
+        label: 'Content Layout',
+        options: [
+          { value: 'stack', label: 'Stack' },
+          { value: 'cluster', label: 'Cluster' },
+        ],
+        defaultValue: 'stack',
+      },
+    ],
   },
   {
     id: 'avatar',
