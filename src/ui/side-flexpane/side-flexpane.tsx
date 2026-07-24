@@ -111,6 +111,17 @@ export function SideFlexpane({
   const expanded = isExpandedControlled ? controlledExpanded : uncontrolledExpanded;
   const toggleExpanded = () => {
     const next = !expanded;
+    // When expanding before any drag (`width === null`), snapshot the pane's
+    // current rendered width into state so the "Expand grows, never shrinks"
+    // guard in `inlineWidth` has a real baseline — otherwise it would compare
+    // against 0 and a small `expandedWidth` (or a saved width override above it)
+    // could shrink the pane. Reading the ref is safe here (event handler, not
+    // render). Snapshotting to the current width also keeps the collapse visual
+    // unchanged, since it equals what CSS was already resolving to.
+    if (next && width === null) {
+      const current = paneRef.current?.offsetWidth;
+      if (current) setWidth(current);
+    }
     onExpandedChange?.(next);
     if (!isExpandedControlled) setUncontrolledExpanded(next);
   };
@@ -170,10 +181,10 @@ export function SideFlexpane({
     [width, minWidth, maxWidth, _defaultWidth],
   );
 
-  // Expanded pins to `expandedWidth`, but never below the current dragged
-  // width — "Expand" must grow, never shrink, even if a consumer configures a
-  // small `expandedWidth` or drags past it. Otherwise the dragged width (once
-  // the user has dragged) wins over the CSS default.
+  // Expanded pins to `expandedWidth`, but never below the current width —
+  // "Expand" must grow, never shrink. `toggleExpanded` snapshots the pane's
+  // rendered width into `width` before this runs (even on the first, un-dragged
+  // expand), so the guard here has a real baseline instead of comparing to 0.
   const inlineWidth = expanded
     ? Math.max(expandedWidth, width ?? 0)
     : resizable && width !== null
@@ -221,8 +232,12 @@ export function SideFlexpane({
         </div>
       )}
       {onBack && (
+        // A `<button>`, not the `BackLink` atom: `BackLink` is an `<a href>`
+        // for navigation, whereas this fires an `onBack` action callback. The
+        // icon+label chrome is themed the same way (`--uxm-side-flexpane-back-*`
+        // mirrors BackLink's `--uxm-back-link-*`).
         <button type="button" className="uxm-side-flexpane__back" onClick={onBack}>
-          <Icon glyph="arrow-left" size={14} />
+          <Icon glyph="arrow-left" size={14} strokeWidth={2} aria-hidden="true" />
           <span>{backLabel}</span>
         </button>
       )}
