@@ -1,3 +1,12 @@
+## [4.1.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.1.0...v4.1.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* **button:** align ButtonWithIcon active registry defaults with the atom ([eca2515](https://gitlab.viax.tech/services-viax/uxm/commit/eca25151b462097cb2f729bfc3ca5b74fc9d24be))
+* **button:** align ButtonWithIcon hover registry default; drop vestigial opacity transition ([38afa91](https://gitlab.viax.tech/services-viax/uxm/commit/38afa91aa850ba369e01fd2176f46cbc8a784d5b)), closes [#1](https://gitlab.viax.tech/services-viax/uxm/issues/1) [#2](https://gitlab.viax.tech/services-viax/uxm/issues/2)
+* **button:** distinct hover fills instead of an opacity dim ([7ab6cec](https://gitlab.viax.tech/services-viax/uxm/commit/7ab6cecae5b051014c8c860ef0de7a71ba889139))
+
 # [4.1.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.0.0...v4.1.0) (2026-07-24)
 
 
