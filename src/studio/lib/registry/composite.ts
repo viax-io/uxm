@@ -460,6 +460,8 @@ export const compositeDefs: ComponentDef[] = [
     events: [
       { name: 'onClose', description: 'Fires when the user dismisses the flexpane via the close affordance or backdrop click.', payload: 'void' },
       { name: 'onResize', description: 'Fires while the user drags the left-edge handle to resize. Final width on drag end.', payload: '{ width: number }' },
+      { name: 'onBack', description: 'Fires when the user clicks the back-link bar (rendered only when `onBack` is set).', payload: 'void' },
+      { name: 'onExpandedChange', description: 'Fires with the next expanded state when the maximize toggle is clicked (`expandable`).', payload: '{ expanded: boolean }' },
     ],
   },
   {

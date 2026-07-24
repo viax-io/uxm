@@ -373,13 +373,6 @@ skill:
 
 ### New in 4.0.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
-
 - **New `Configuration` component set — `SegmentRow`, `SegmentCard`, `ComponentRow`, `OptionList`.**
   A studio **Configuration** category groups the four building blocks of a Configuration model's
   segment tree (ported 1:1 from the v1 config-builder look/feel + knobs):
@@ -397,6 +390,25 @@ skill:
   `SegmentCard(header: SegmentRow)` › `ComponentRow`(s) + `OptionList` under options rows, with
   nested segments wrapped in further `SegmentCard`s. To wire the disclosure→region a11y link, pass
   `SegmentCard`'s `bodyId` to the `SegmentRow` header's `aria-controls`.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **`SideFlexpane` extended (additive) with a fuller detail-pane header.** New optional props:
+  `icon` (leading tinted `IconTile` slot), `subtitle` (line under the title), `actions` (trailing
+  header controls, before expand/close), `onBack`/`backLabel` (a top back-link bar — an `onBack`
+  action `<button>`, not the `BackLink` navigation anchor), and `expandable` +
+  `expanded`/`defaultExpanded`/`onExpandedChange`/`expandedWidth` (a maximize toggle that pins the
+  pane to `expandedWidth` and hides the resize handle while expanded; the toggle uses `aria-pressed`,
+  not `aria-expanded`). New themable knobs
+  `--uxm-side-flexpane-{subtitle-color,divider-color,back-color,back-hover-color,back-focus-ring-color}`.
+  The existing eyebrow/title/close/footer API and the drag-resizable left edge are unchanged.
 
 ## Workflow
 
