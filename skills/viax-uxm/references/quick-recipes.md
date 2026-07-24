@@ -18,16 +18,17 @@ import {
   AppSidebar,
   AppTopBar,
   PageHeader,
+  TextInput,
   Icon,
   type AppSidebarSection,
 } from '@viax/uxm/ui';
 
 const sections: AppSidebarSection[] = [
   {
-    label: 'Workspace',
+    heading: 'Workspace',
     items: [
-      { href: '/dashboard', label: 'Dashboard', icon: <Icon glyph="dashboard" /> },
-      { href: '/projects', label: 'Projects', icon: <Icon glyph="folder" /> },
+      { href: '/dashboard', label: 'Dashboard', icon: <Icon glyph="grid" /> },
+      { href: '/projects', label: 'Projects', icon: <Icon glyph="document" /> },
     ],
   },
 ];
@@ -36,11 +37,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <PageShell
       variant="standard"
-      sidebar={<AppSidebar brand={{ name: 'My App' }} sections={sections} />}
-      topBar={<AppTopBar title="Dashboard" />}
+      sidebar={<AppSidebar brand={{ logoUrl: '/logo.svg', alt: 'My App' }} sections={sections} />}
+      topBar={<AppTopBar search={<TextInput placeholder="Search…" />} />}
     >
       <PageHeader
-        icon={<Icon glyph="dashboard" />}
+        icon={<Icon glyph="grid" />}
         title="Dashboard"
         meta="Updated 2 min ago"
       />
@@ -142,7 +143,7 @@ const columns: DataTableColumn<User>[] = [
     render: (row) => (
       <InlineAction
         onClick={() => alert(row.id)}
-        icon={<Icon glyph="external" />}
+        icon={<Icon glyph="arrow-up-right" />}
       >
         View
       </InlineAction>
@@ -209,9 +210,9 @@ if (error) return <Banner variant="error">{error.message}</Banner>;
 if (!projects.length) {
   return (
     <EmptyState
-      icon={<Icon glyph="folder" />}
+      icon={<Icon glyph="document" />}
       title="No projects yet"
-      body="Create your first project to get started."
+      description="Create your first project to get started."
     />
   );
 }
@@ -343,18 +344,22 @@ import {
   findToken,
   resolveHex,
 } from '@viax/uxm/tokens';
-import { contrastRatio, wcagLevel } from '@viax/uxm';
+import { parseColor, contrastRatio, wcagLevel } from '@viax/uxm';
 
 const accentBold = findToken('--color-accent-bold');
 const textInverse = findToken('--color-text-inverse');
 
-const fg = resolveHex(textInverse?.cssVar ?? '#fff');
-const bg = resolveHex(accentBold?.cssVar ?? '#000');
+// contrastRatio works on RGB objects — parse the resolved hex first
+const fg = parseColor(resolveHex(textInverse?.cssVar ?? '#fff'));
+const bg = parseColor(resolveHex(accentBold?.cssVar ?? '#000'));
 
-console.log({
-  ratio: contrastRatio(fg, bg),
-  level: wcagLevel(fg, bg),   // 'AAA' | 'AA' | 'fail'
-});
+if (fg && bg) {
+  const ratio = contrastRatio(fg, bg);
+  console.log({
+    ratio,
+    level: wcagLevel(ratio),   // 'AAA' | 'AA' | 'AA-large' | 'fail'
+  });
+}
 ```
 
 ---

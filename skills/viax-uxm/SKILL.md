@@ -393,13 +393,6 @@ skill:
 
 ### New in 4.1.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
-
 - **`SideFlexpane` extended (additive) with a fuller detail-pane header.** New optional props:
   `icon` (leading tinted `IconTile` slot), `subtitle` (line under the title), `actions` (trailing
   header controls, before expand/close), `onBack`/`backLabel` (a top back-link bar — an `onBack`
@@ -409,6 +402,15 @@ skill:
   not `aria-expanded`). New themable knobs
   `--uxm-side-flexpane-{subtitle-color,divider-color,back-color,back-hover-color,back-focus-ring-color}`.
   The existing eyebrow/title/close/footer API and the drag-resizable left edge are unchanged.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
 
 ## Workflow
 
