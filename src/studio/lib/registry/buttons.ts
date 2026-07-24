@@ -11,11 +11,13 @@ export const buttonsDefs: ComponentDef[] = [
     description: 'Primary call-to-action button with solid background.',
     styleProperties: [
       // State-scoped colors — Tag-style filter via showWhen. Designers tune
-      // background + text per state. Defaults walk the accent scale:
-      // bold → accent (brighter) → bold (darker on press).
+      // background + text per state. Hover shades accent-bold slightly toward
+      // text (contrast-safe with white text — a brighter accent would fail);
+      // active returns to bold. Matches the atom's `--uxm-button-primary-*`
+      // fallbacks so the studio default equals the shipped default.
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'states', showWhen: { state: 'default' } },
       { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'default' } },
-      { key: 'hoverBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'hover' } },
+      { key: 'hoverBackgroundColor', label: 'Background', control: 'color', defaultValue: 'color-mix(in srgb, var(--color-accent-bold) 88%, var(--color-text))', section: 'states', showWhen: { state: 'hover' } },
       { key: 'hoverColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'hover' } },
       { key: 'activeBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'states', showWhen: { state: 'active' } },
       { key: 'activeColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'active' } },
@@ -292,16 +294,19 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'states', showWhen: { state: 'default' } },
       { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'states', showWhen: { state: 'default' } },
       { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'states', showWhen: { state: 'default' } },
-      // Hover / Pressed — mirror button-primary's accent → accent-bold
-      // progression with inverse text. The outlined-at-rest atom "wakes up
-      // into" a filled primary-style button on interaction. Border matches
-      // the fill so the button reads as fully filled in both states.
-      { key: 'hoverBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'hover' } },
-      { key: 'hoverColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'hover' } },
+      // Hover — a faint accent-subtle wash (like button-secondary), border to
+      // accent and text to `--color-text`. Defaults mirror the atom's
+      // `--uxm-button-with-icon-hover-*` fallbacks so the studio default equals
+      // the shipped default.
+      { key: 'hoverBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'states', showWhen: { state: 'hover' } },
+      { key: 'hoverColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'states', showWhen: { state: 'hover' } },
       { key: 'hoverBorderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'hover' } },
-      { key: 'activeBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'states', showWhen: { state: 'active' } },
-      { key: 'activeColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'active' } },
-      { key: 'activeBorderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'states', showWhen: { state: 'active' } },
+      // Active — pressing settles back to the resting card fill (like the rest
+      // of the family), keeping the hover border/text. Mirrors the atom's
+      // `--uxm-button-with-icon-active-*` fallbacks.
+      { key: 'activeBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'states', showWhen: { state: 'active' } },
+      { key: 'activeColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'states', showWhen: { state: 'active' } },
+      { key: 'activeBorderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'active' } },
       // Focus
       { key: 'focusRingColor', label: 'Ring Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'focus' } },
       { key: 'focusColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'states', showWhen: { state: 'focus' } },

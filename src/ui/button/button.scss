@@ -19,12 +19,17 @@
   gap: var(--uxm-button-primary-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-primary-padding-y, 10px) var(--uxm-button-primary-padding-x, 20px);
-  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background-color: var(--uxm-button-primary-hover-background-color, var(--color-accent-bold));
+    /* Distinct hover fill (a touch darker than the resting accent-bold) rather
+       than an opacity dim — keeps white text contrast-safe. Studio overrides
+       still win via the hover var. */
+    background-color: var(
+      --uxm-button-primary-hover-background-color,
+      color-mix(in srgb, var(--color-accent-bold) 88%, var(--color-text))
+    );
     color: var(--uxm-button-primary-hover-color, var(--color-text-inverse));
-    opacity: 0.9;
   }
 
   &:active {
@@ -57,13 +62,14 @@
   gap: var(--uxm-button-secondary-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-secondary-padding-y, 10px) var(--uxm-button-secondary-padding-x, 20px);
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 
   &:hover {
-    background-color: var(--uxm-button-secondary-hover-background-color, var(--color-card));
+    /* Faint accent-subtle fill on hover (was the resting card colour + an
+       opacity dim, which barely read). Border/text stay accent-bold. */
+    background-color: var(--uxm-button-secondary-hover-background-color, var(--color-accent-subtle));
     border-color: var(--uxm-button-secondary-hover-border-color, var(--color-accent-bold));
     color: var(--uxm-button-secondary-hover-color, var(--color-accent-bold));
-    opacity: 0.9;
   }
 
   &:active {
@@ -97,13 +103,14 @@
   gap: var(--uxm-button-tertiary-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-tertiary-padding-y, 10px) var(--uxm-button-tertiary-padding-x, 20px);
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 
   &:hover {
-    background-color: var(--uxm-button-tertiary-hover-background-color, transparent);
+    /* Faint surface-alt fill on hover (was transparent + an opacity dim, i.e.
+       no visible change). Border/text unchanged. */
+    background-color: var(--uxm-button-tertiary-hover-background-color, var(--color-surface-alt));
     border-color: var(--uxm-button-tertiary-hover-border-color, var(--color-border));
     color: var(--uxm-button-tertiary-hover-color, var(--color-text));
-    opacity: 0.8;
   }
 
   &:active {

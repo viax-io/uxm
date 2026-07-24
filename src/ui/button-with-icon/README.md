@@ -48,6 +48,7 @@ The background, border, and text colours read the design tokens below directly (
 | `--color-card` | Surfaces / Card | Button background. |
 | `--color-border` | Borders / Border | Default border colour. |
 | `--color-text-muted` | Text / Text Muted | Default label + icon colour. |
+| `--color-accent-subtle` | Accent / Accent Subtle | Hover background fill. |
 | `--color-accent` | Accent / Accent | Hover border colour. |
 | `--color-text` | Text / Text | Hover label + icon colour. |
 
@@ -58,7 +59,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | State / variant | Trigger | Visual |
 |-----------------|---------|--------|
 | Default | – | `--color-card` bg, `--color-border` outline, `--color-text-muted` text. |
-| Hover | `:hover` | Border shifts to `--color-accent`, text/icon to `--color-text`; 0.15s transition on `border-color` + `color`. |
+| Hover | `:hover` | Background fills to `--color-accent-subtle`, border shifts to `--color-accent`, text/icon to `--color-text`; 0.15s transition. |
 | Disabled | `disabled` attribute | Native disabled cursor; no built-in opacity dim — handle visually via consumer styling. |
 | Focus | `:focus-visible` | Inherits browser default focus ring; no token-driven focus outline. |
 

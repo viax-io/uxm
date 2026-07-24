@@ -57,10 +57,10 @@ All non-structural visual aspects (background, foreground, border) read from the
 
 | Variant | Background | Foreground / border | Hover |
 |---------|------------|---------------------|-------|
-| `ButtonPrimary` | `--color-accent-bold` (Accent / Accent Bold) | `--color-text-inverse` (Text / Text Inverse) | `opacity: 0.9` |
-| `ButtonSecondary` | `--color-card` (Surfaces / Card) | `--color-accent-bold` (border + text) | `opacity: 0.9` |
-| `ButtonTertiary` | `transparent` | `--color-border` (border), `--color-text` (text) | `opacity: 0.8` |
-| `ButtonGhost` | `transparent` | `--color-accent-bold` (text) | `--color-surface-alt` (bg) |
+| `ButtonPrimary` | `--color-accent-bold` (Accent / Accent Bold) | `--color-text-inverse` (Text / Text Inverse) | bg shades toward text (`color-mix(accent-bold 88%, text)`) |
+| `ButtonSecondary` | `--color-card` (Surfaces / Card) | `--color-accent-bold` (border + text) | bg → `--color-accent-subtle` |
+| `ButtonTertiary` | `transparent` | `--color-border` (border), `--color-text` (text) | bg → `--color-surface-alt` |
+| `ButtonGhost` | `transparent` | `--color-accent-bold` (text) | bg → `--color-surface-alt` |
 
 The token group / token name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI.
 
@@ -69,7 +69,7 @@ The token group / token name pairs map 1-to-1 to entries in `themeTokens` (`src/
 | State | Trigger | Visual |
 |-------|---------|--------|
 | Default | – | Variant base palette. |
-| Hover | `:hover` | `Primary/Secondary`: `opacity: 0.9`; `Tertiary`: `opacity: 0.8`; `Ghost`: `background: var(--color-surface-alt)`. |
+| Hover | `:hover` | Distinct fill per variant (no opacity dim): Primary darkens its accent, Secondary → `--color-accent-subtle`, Tertiary / Ghost → `--color-surface-alt`. Each behind its `--uxm-button-{variant}-hover-background-color` var so studio overrides win. |
 | Disabled | `disabled` attribute | Native disabled cursor; rely on consumer-managed opacity if a dimmer state is desired. |
 | Focus | `:focus-visible` | Inherits the browser's default focus ring; consumers can extend via global focus-ring tokens. |
 
