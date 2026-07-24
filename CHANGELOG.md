@@ -1,3 +1,15 @@
+# [4.1.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.0.0...v4.1.0) (2026-07-24)
+
+
+### Bug Fixes
+
+* **side-flexpane:** resolve review findings — theming, a11y, expand guard ([201f1bf](https://gitlab.viax.tech/services-viax/uxm/commit/201f1bfd414ee229f4eded9b8e5c149f2db7e8ea)), closes [#8](https://gitlab.viax.tech/services-viax/uxm/issues/8) [#1](https://gitlab.viax.tech/services-viax/uxm/issues/1) [#2](https://gitlab.viax.tech/services-viax/uxm/issues/2) [#3](https://gitlab.viax.tech/services-viax/uxm/issues/3) [#4](https://gitlab.viax.tech/services-viax/uxm/issues/4) [#6](https://gitlab.viax.tech/services-viax/uxm/issues/6) [#5](https://gitlab.viax.tech/services-viax/uxm/issues/5) [#7](https://gitlab.viax.tech/services-viax/uxm/issues/7) [#8](https://gitlab.viax.tech/services-viax/uxm/issues/8)
+
+
+### Features
+
+* **side-flexpane:** fold PaneShell features into the pane header ([d809c0c](https://gitlab.viax.tech/services-viax/uxm/commit/d809c0c81a6b4bf510be74b73500acaa1c133abe))
+
 # [4.0.0](https://gitlab.viax.tech/services-viax/uxm/compare/v3.4.0...v4.0.0) (2026-07-23)
 
 
