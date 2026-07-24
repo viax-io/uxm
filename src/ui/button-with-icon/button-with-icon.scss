@@ -12,7 +12,7 @@
   font-weight: 500;
   gap: var(--uxm-button-with-icon-gap, 8px);
   padding: 8px 12px;
-  transition: background-color 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 
   &:hover {
     /* Faint accent-subtle fill on hover (was the resting card colour, so the

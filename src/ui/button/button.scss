@@ -19,7 +19,7 @@
   gap: var(--uxm-button-primary-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-primary-padding-y, 10px) var(--uxm-button-primary-padding-x, 20px);
-  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
     /* Distinct hover fill (a touch darker than the resting accent-bold) rather
@@ -62,7 +62,7 @@
   gap: var(--uxm-button-secondary-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-secondary-padding-y, 10px) var(--uxm-button-secondary-padding-x, 20px);
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 
   &:hover {
     /* Faint accent-subtle fill on hover (was the resting card colour + an
@@ -103,7 +103,7 @@
   gap: var(--uxm-button-tertiary-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-tertiary-padding-y, 10px) var(--uxm-button-tertiary-padding-x, 20px);
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 
   &:hover {
     /* Faint surface-alt fill on hover (was transparent + an opacity dim, i.e.

@@ -294,12 +294,12 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'states', showWhen: { state: 'default' } },
       { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'states', showWhen: { state: 'default' } },
       { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'states', showWhen: { state: 'default' } },
-      // Hover / Pressed — mirror button-primary's accent → accent-bold
-      // progression with inverse text. The outlined-at-rest atom "wakes up
-      // into" a filled primary-style button on interaction. Border matches
-      // the fill so the button reads as fully filled in both states.
-      { key: 'hoverBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'hover' } },
-      { key: 'hoverColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'hover' } },
+      // Hover — a faint accent-subtle wash (like button-secondary), border to
+      // accent and text to `--color-text`. Defaults mirror the atom's
+      // `--uxm-button-with-icon-hover-*` fallbacks so the studio default equals
+      // the shipped default.
+      { key: 'hoverBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'states', showWhen: { state: 'hover' } },
+      { key: 'hoverColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'states', showWhen: { state: 'hover' } },
       { key: 'hoverBorderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'hover' } },
       { key: 'activeBackgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'states', showWhen: { state: 'active' } },
       { key: 'activeColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'states', showWhen: { state: 'active' } },
