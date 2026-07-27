@@ -5,7 +5,7 @@ to pick the right primitive when the `@viax/uxm` repo is not available locally. 
 the per-component README at `src/ui/{name}/README.md` in the uxm repo
 (`https://gitlab.viax.tech/services-viax/uxm`) for the full API
 (note: atoms added in 1.1.0–2.0.0 — toast, dialog, modal, popover, listbox, banner,
-editable-cell, field-error, number-stepper — may not have READMEs yet; read their `.tsx` JSDoc).
+field-error, number-stepper — may not have READMEs yet; read their `.tsx` JSDoc).
 
 Import path for all: `import { … } from '@viax/uxm/ui';`
 
