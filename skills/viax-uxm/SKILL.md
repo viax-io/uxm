@@ -416,6 +416,19 @@ skill:
   un-namespaced `--uxm-editable-cell-{min-height,padding-x,padding-y}` vars are GONE — saved
   studio overrides of Min Height / Padding X/Y made before this version no longer apply
   (padding must be re-saved per size; min-height has no replacement by design).
+- **`EditableCell.clearable` now also covers `text` / `number` / `date`** — a ✕ inside the
+  EDITING input (mirrors TextInput/NumberInput/DateInput; for date it sits inboard of the
+  calendar toggle) that empties the draft and keeps focus. Nothing commits until Enter/blur, so
+  `required`/`validate` still guard, and Esc still restores the committed value — which is why
+  the ✕ works on required cells too (wipe-and-retype). `required` never hides any clear
+  affordance — it guards the outcome: clearing a required cell surfaces the required warning
+  (the value stays), clearing an optional one empties it to the placeholder. Display mode
+  never shows a ✕.
+  ⚠️ `clearable` now **defaults to `true`** (the input-family convention; was opt-in) — every
+  editable cell and DataTable editable column gets the affordance uniformly, including the
+  pickers' dropdown-footer Clear; pass `clearable={false}` / `editorClearable: false` to opt
+  out. Related fix: `format` is no longer called for an empty value — a cleared cell renders
+  its `placeholder` (previously a Tag/Badge `format` would paint an empty pill).
 
 <!-- Notes for changes merged but not yet published. The release pipeline renames
      this heading to "New in X.Y.Z" and stamps the version/count markers

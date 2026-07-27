@@ -100,7 +100,7 @@ export interface EditableCellProps {
    * surfaced inline so the user can correct.
    */
   onCommit: (next: EditableCellValue) => void | Promise<void>;
-  /** Editor type. Text uses a string input; number coerces to Number on commit. Defaults to "text". */
+  /** Editor type. Text uses a string input; number coerces to Number on commit (an emptied draft commits `""` — the uniform "cleared" value). Defaults to "text". */
   type?: EditableCellType;
   /** Date format — only used when `type="date"`. Defaults to `"mdy"`. */
   dateFormat?: DateInputFormat;
@@ -113,7 +113,26 @@ export interface EditableCellProps {
    * behavior instead of inheriting the raw Listbox `true` default.
    */
   searchable?: boolean | 'auto';
-  /** Whether the select panel allows clearing the selection. */
+  /**
+   * Clear affordance — the surface differs per editor type:
+   *   - `select` / `multiselect` — a "Clear" / "Clear all" action in the
+   *     dropdown footer (commits "" / empties the draft).
+   *   - `text` / `number` / `date` — a ✕ inside the EDITING input (mirrors
+   *     TextInput/NumberInput/DateInput) that empties the draft and keeps
+   *     focus; nothing commits until Enter/blur, so `required`/`validate`
+   *     still guard, and Esc still restores the old value. Available on
+   *     required cells too — "wipe it and type the right value" is the
+   *     point. Display mode never shows a ✕ — the pencil owns that gutter,
+   *     and a one-click destroy on a static table cell invites accidents.
+   *
+   * `required` never hides the affordance — it guards the OUTCOME instead:
+   * clearing a required cell surfaces the required warning (the value stays),
+   * clearing an optional one empties it back to the placeholder.
+   *
+   * Defaults to `true` — the input-family default (TextInput, NumberInput,
+   * DateInput …), so consumers like DataTable get the affordance uniformly
+   * without per-column wiring. Pass `false` to opt out.
+   */
   clearable?: boolean;
   /** Text alignment — pass through from a DataTable column's `align` so the editing input matches the display alignment. */
   align?: EditableCellAlign;
@@ -129,7 +148,12 @@ export interface EditableCellProps {
    * empty cells clickable).
    */
   size?: EditableCellSize;
-  /** Display-mode formatter. Receives the raw value, returns the React node to render in display mode. */
+  /**
+   * Display-mode formatter. Receives the raw value, returns the React node
+   * to render in display mode. Never called for an empty value — a cleared
+   * cell renders its `placeholder` instead (so a Tag/Badge formatter can't
+   * paint an empty pill).
+   */
   format?: (value: EditableCellValue) => ReactNode;
   /** Synchronous validation. Return an error message to block commit; return null/undefined to accept. */
   validate?: (next: EditableCellValue) => string | null | undefined;
@@ -186,7 +210,7 @@ export function EditableCell({
   dateFormat = 'ymd',
   options,
   searchable = 'auto',
-  clearable,
+  clearable = true,
   align = 'left',
   size = 'small',
   format,
@@ -347,11 +371,25 @@ export function EditableCell({
   const handleCommit = useCallback(async () => {
     const next = parseDraft();
 
-    // Number type with a NaN draft (empty / non-numeric) is rejected at
-    // the parse boundary — surface the same error the input gives the
-    // user. This catches blur-with-empty before reaching onCommit.
+    // Number type with a NaN draft is rejected at the parse boundary —
+    // EXCEPT when the draft was emptied outright (the ✕, or select-all +
+    // Delete): that's an intentional clear, not a typo, so it routes
+    // through `commitValue('')` like every other type — `required` blocks
+    // it with its own message, an optional cell commits '' and shows its
+    // placeholder. Half-typed non-numbers ("-", ".") stay input errors.
     // Warning severity: the input is the problem and the user can fix it.
     if (type === 'number' && Number.isNaN(next)) {
+      if (draft.trim() === '') {
+        if (String(value ?? '') === '') {
+          // Already empty — pure exit, no spurious onCommit (mirrors the
+          // unchanged-value no-op below).
+          setIsEditing(false);
+          setError(null);
+          return;
+        }
+        await commitValue('');
+        return;
+      }
       setError({ message: 'Enter a number', severity: 'warning' });
       return;
     }
@@ -395,7 +433,7 @@ export function EditableCell({
     }
 
     await commitValue(next);
-  }, [parseDraft, type, dateFormat, value, commitValue, commitDate]);
+  }, [parseDraft, type, draft, dateFormat, value, commitValue, commitDate]);
 
   const handlePick = useCallback(
     async (calValue: CalendarValue) => {
@@ -407,6 +445,15 @@ export function EditableCell({
     },
     [dateFormat, submitting, commitDate],
   );
+
+  // ✕ inside the editing input (text/number/date, gated by `clearable`).
+  // Empties the DRAFT only — focus stays in the input (the button swallows
+  // its mousedown so the field never blurs) and nothing commits until
+  // Enter/blur, so required/validate still guard and Esc still restores.
+  const handleClearDraft = useCallback(() => {
+    setDraft('');
+    setError(null);
+  }, []);
 
   const handleCancel = useCallback(() => {
     if (Array.isArray(value)) {
@@ -459,9 +506,12 @@ export function EditableCell({
     : value === '' || value === null || value === undefined;
 
   const display = (() => {
+    // Empty wins over `format`: a cleared cell must read as its placeholder,
+    // not as the formatter's rendering of "" (e.g. a Tag formatter would
+    // paint an empty pill). `format` only ever sees real values.
+    if (isEmpty) return placeholder ?? (type === 'date' ? dateHint : '');
     if (format) return format(value);
     if (Array.isArray(value)) {
-      if (value.length === 0) return placeholder ?? '';
       // For multiselect: show labels from options if available
       if (options) {
         return value
@@ -470,7 +520,6 @@ export function EditableCell({
       }
       return value.join(', ');
     }
-    if (isEmpty) return placeholder ?? (type === 'date' ? dateHint : '');
     if (type === 'select' && options) {
       return options.find((o) => o.value === String(value))?.label ?? String(value);
     }
@@ -785,6 +834,7 @@ export function EditableCell({
           `uxm-editable-cell--${size}`,
           `uxm-editable-cell--align-${align}`,
           `uxm-editable-cell--type-date`,
+          clearable && 'uxm-editable-cell--clearable',
           shownError?.severity === 'error' && 'uxm-editable-cell--error',
           shownError?.severity === 'warning' && 'uxm-editable-cell--warning',
           className,
@@ -816,6 +866,20 @@ export function EditableCell({
           aria-invalid={Boolean(shownError)}
           aria-describedby={shownError ? 'uxm-editable-cell__error' : undefined}
         />
+        {/* ✕ sits inboard of the calendar toggle (mirrors DateInput's layout);
+            hidden while the draft is empty — the reserved gutter stays, so
+            typing never shifts the text. */}
+        {clearable && !submitting && draft !== '' && (
+          <button
+            type="button"
+            className="uxm-editable-cell__clear"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={handleClearDraft}
+            aria-label="Clear date"
+          >
+            <Icon glyph="close" size={12} />
+          </button>
+        )}
         <button
           type="button"
           className="uxm-editable-cell__date-icon"
@@ -939,6 +1003,7 @@ export function EditableCell({
         'uxm-editable-cell uxm-editable-cell--editing',
         `uxm-editable-cell--${size}`,
         `uxm-editable-cell--align-${align}`,
+        clearable && 'uxm-editable-cell--clearable',
         shownError?.severity === 'error' && 'uxm-editable-cell--error',
         shownError?.severity === 'warning' && 'uxm-editable-cell--warning',
         className,
@@ -991,6 +1056,20 @@ export function EditableCell({
         aria-invalid={Boolean(shownError)}
         aria-describedby={shownError ? 'uxm-editable-cell__error' : undefined}
       />
+      {/* One-click ✕ (mirrors TextInput/NumberInput): empties the draft and
+          keeps focus; hidden while the draft is already empty. The gutter is
+          reserved via `--clearable` so its appearance never shifts text. */}
+      {clearable && !submitting && draft !== '' && (
+        <button
+          type="button"
+          className="uxm-editable-cell__clear"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={handleClearDraft}
+          aria-label="Clear value"
+        >
+          <Icon glyph="close" size={12} />
+        </button>
+      )}
       {/* Problems hang under the cell in a portal'd popover so the table
           row never changes height. The popover must not manage focus —
           the input keeps it for in-place correction / retry. Escape and

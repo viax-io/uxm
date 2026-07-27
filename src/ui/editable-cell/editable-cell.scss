@@ -156,11 +156,14 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* One-click clear (×) inside every editing cell */
-.uxm-editable-cell--editing .uxm-editable-cell__input {
+/* One-click clear (×) inside the editing input — text/number/date cells with
+   `clearable`. The trailing gutter is reserved by the `--clearable` modifier
+   (not by the ✕'s presence), so the ✕ appearing/hiding with the draft never
+   shifts the text. Non-clearable cells carry no gutter at all. */
+.uxm-editable-cell--clearable.uxm-editable-cell--editing .uxm-editable-cell__input {
   padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 18px);
 }
-.uxm-editable-cell--align-right.uxm-editable-cell--editing .uxm-editable-cell__input {
+.uxm-editable-cell--clearable.uxm-editable-cell--align-right.uxm-editable-cell--editing .uxm-editable-cell__input {
   padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
   padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 18px);
 }
@@ -238,6 +241,23 @@
   padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
   padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
 }
+/* Clearable date cells host TWO gutter controls — the ✕ sits inboard of the
+   calendar toggle (mirrors DateInput's layout), so the input reserves both
+   slots (20px calendar + 22px clear). */
+.uxm-editable-cell--type-date .uxm-editable-cell__clear {
+  right: calc(var(--_uxm-editable-cell-padding-x, 8px) + 22px);
+}
+.uxm-editable-cell--type-date.uxm-editable-cell--align-right .uxm-editable-cell__clear {
+  right: auto;
+  left: calc(var(--_uxm-editable-cell-padding-x, 8px) + 22px);
+}
+.uxm-editable-cell--clearable.uxm-editable-cell--type-date.uxm-editable-cell--editing .uxm-editable-cell__input {
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
+}
+.uxm-editable-cell--clearable.uxm-editable-cell--type-date.uxm-editable-cell--align-right.uxm-editable-cell--editing .uxm-editable-cell__input {
+  padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
+  padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
+}
 .uxm-editable-cell--disabled .uxm-listbox {
   pointer-events: none;
 }
@@ -304,6 +324,15 @@
     var(--_uxm-editable-cell-padding-x, 8px);
   border: 1px solid transparent;
   font: inherit;
+}
+/* Clearable date editing reserves BOTH gutter slots in the input (calendar
+   20px + clear 22px = 42px) — the ghosts must reserve the same, or the grid
+   track (sized by the ghosts) undersizes the input by the clear slot and the
+   date's tail clips out of view. Only the TOTAL horizontal padding matters
+   here (the ghosts are invisible width-keepers), so one physical side is
+   enough for both alignments. */
+.uxm-editable-cell--clearable.uxm-editable-cell--type-date .uxm-editable-cell__ghost {
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
 }
 .uxm-editable-cell__input {
   grid-area: 1 / 1;

@@ -68,7 +68,9 @@ const commitDelay = () => new Promise((r) => setTimeout(r, 400));
 // never leaks into the other (each call is its own hook instance).
 function useCellState() {
   const [text, setText] = useState('Revenue Motion');
-  const [num, setNum] = useState(42);
+  // number | '' — an emptied number cell commits '' (the uniform "cleared"
+  // value), and the preview must round-trip it to show the placeholder.
+  const [num, setNum] = useState<number | ''>(42);
   const [date, setDate] = useState('2026-03-14');
   const [select, setSelect] = useState('growth');
   const [multi, setMulti] = useState<string[]>(['growth', 'expansion']);
@@ -84,7 +86,7 @@ function useCellState() {
     },
     commitNumber: async (n: EditableCellValue) => {
       await commitDelay();
-      setNum(Number(n));
+      setNum(n === '' ? '' : Number(n));
     },
     commitDate: async (n: EditableCellValue) => {
       await commitDelay();
@@ -165,6 +167,7 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
             type="number"
             value={c.num}
             onCommit={c.commitNumber}
+            placeholder="Enter a number…"
             validate={(v) => (typeof v === 'number' && v < 0 ? 'Must be ≥ 0' : null)}
           />
         );
@@ -185,7 +188,6 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
             type="select"
             value={c.select}
             options={SAMPLE_OPTIONS}
-            clearable
             onCommit={c.commitSelect}
             placeholder="Pick a motion…"
           />
@@ -197,7 +199,6 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
             type="multiselect"
             value={c.multi}
             options={SAMPLE_OPTIONS}
-            clearable
             onCommit={c.commitMulti}
             placeholder="Pick motions…"
           />
