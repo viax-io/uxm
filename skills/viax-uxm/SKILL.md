@@ -405,6 +405,18 @@ skill:
 
 ### Unreleased
 
+- **`EditableCell` gained a `size` prop** (`'small' | 'medium'`, new export `EditableCellSize`).
+  `small` (default) is the dense DataTable scale — visually unchanged (its font-size falls back
+  to the inherited `1em` until pinned). `medium` steps the cell up to the input-family scale
+  (12/6px padding, 14px font) for standalone use in side panels / detail views, where a
+  table-dense cell looks undersized next to real inputs. Each size owns a symmetric themable
+  knob set `--uxm-editable-cell-{small|medium}-{padding-x,padding-y,font-size}`. There is no
+  height knob anymore: the cell's height always derives from font-size + padding (a `1lh`
+  floor on the value keeps empty cells one text line tall and clickable). ⚠️ The old
+  un-namespaced `--uxm-editable-cell-{min-height,padding-x,padding-y}` vars are GONE — saved
+  studio overrides of Min Height / Padding X/Y made before this version no longer apply
+  (padding must be re-saved per size; min-height has no replacement by design).
+
 <!-- Notes for changes merged but not yet published. The release pipeline renames
      this heading to "New in X.Y.Z" and stamps the version/count markers
      (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare

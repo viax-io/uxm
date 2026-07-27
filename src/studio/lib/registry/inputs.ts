@@ -79,13 +79,26 @@ export const inputsDefs: ComponentDef[] = [
     id: 'editable-cell',
     name: 'Editable Cell',
     category: 'Inputs',
-    description: 'Inline-editable cell. Text / number swap the display for an input (Enter or blur commits, Esc cancels); date pairs the input with a Calendar popover — type a date or pick a day, either commits an ISO date string; select is pick-only — clicking opens a Listbox dropdown and picking an option commits its value immediately (display can still be a custom Tag/Badge via `format`); multiselect is select\'s array sibling — a MultiListbox toggles options with the panel open, the value is a string[] of picked option values shown as joined labels. Problems surface in a popover Banner under the cell — warning (yellow) for sync validate failures, error (red) for a rejected async `onCommit` — so the table row never changes height. Designed for DataTable cells but works anywhere an inline-edit pattern fits (PageHeader rename, StatCard label, etc.).',
+    description: 'Inline-editable cell. Text / number swap the display for an input (Enter or blur commits, Esc cancels); date pairs the input with a Calendar popover — type a date or pick a day, either commits an ISO date string; select is pick-only — clicking opens a Listbox dropdown and picking an option commits its value immediately (display can still be a custom Tag/Badge via `format`); multiselect is select\'s array sibling — a MultiListbox toggles options with the panel open, the value is a string[] of picked option values shown as joined labels. Problems surface in a popover Banner under the cell — warning (yellow) for sync validate failures, error (red) for a rejected async `onCommit` — so the table row never changes height. Designed for DataTable cells but works anywhere an inline-edit pattern fits (PageHeader rename, StatCard label, etc.) — 2 sizes: small (dense table scale, default) / medium (input-family scale for side panels and detail views), each with its own dimension knobs.',
     styleProperties: [
-      // Layout — shared across all states (no showWhen).
-      { key: 'minHeight', label: 'Min Height', control: 'number', defaultValue: 24, min: 18, max: 48, step: 2, unit: 'px' },
+      // Layout — maxWidth and radius are shared across both sizes; the
+      // padding/font trio is per-size (gated by the Size variant), one
+      // symmetric knob set each, same pattern as Tag. Saves emit as
+      // `--uxm-editable-cell-{size}-{kebab(key)}` (fallback path in toCSS),
+      // which the matching size modifier re-points the private pipe vars at.
+      // There is deliberately NO height knob: the cell's height derives from
+      // Font Size × line-height + paddings (a `1lh` floor covers empty
+      // cells), so no knob can silently stop mattering. Small's Font Size
+      // default mirrors DataTable's 13px cell font; in CSS the fallback is
+      // `1em` (inherit), so an untouched knob keeps the cell reading like
+      // the surrounding text.
+      { key: 'smallPaddingX', label: 'Padding X', control: 'number', defaultValue: 8, min: 2, max: 16, step: 1, unit: 'px', showWhen: { size: 'small' } },
+      { key: 'smallPaddingY', label: 'Padding Y', control: 'number', defaultValue: 4, min: 0, max: 10, step: 1, unit: 'px', showWhen: { size: 'small' } },
+      { key: 'smallFontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 10, max: 16, step: 1, unit: 'px', showWhen: { size: 'small' } },
+      { key: 'mediumPaddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 20, step: 1, unit: 'px', showWhen: { size: 'medium' } },
+      { key: 'mediumPaddingY', label: 'Padding Y', control: 'number', defaultValue: 6, min: 0, max: 14, step: 1, unit: 'px', showWhen: { size: 'medium' } },
+      { key: 'mediumFontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px', showWhen: { size: 'medium' } },
       { key: 'maxWidth', label: 'Max Width', control: 'number', defaultValue: 320, min: 120, max: 640, step: 10, unit: 'px' },
-      { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 6, min: 2, max: 16, step: 1, unit: 'px' },
-      { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 2, min: 0, max: 10, step: 1, unit: 'px' },
       { key: 'radius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px' },
       // Display chrome — one knob per peer state, matching the input
       // family's default / hover / focus / disabled convention. Each is
@@ -152,6 +165,18 @@ export const inputsDefs: ComponentDef[] = [
         defaultValue: 'text',
       },
       {
+        // Small = the dense DataTable scale (the original look, and the
+        // default); medium = the input-family scale for standalone use in
+        // side panels / detail views. Each size owns its own dimension knobs.
+        key: 'size',
+        label: 'Size',
+        options: [
+          { value: 'small', label: 'Small' },
+          { value: 'medium', label: 'Medium' },
+        ],
+        defaultValue: 'small',
+      },
+      {
         // One format drives everything the user sees on a date cell —
         // the rendered value, the empty-cell hint, the input mask, and
         // parsing. Committed values stay ISO regardless.
@@ -191,6 +216,7 @@ export const inputsDefs: ComponentDef[] = [
         { name: 'searchable', type: 'boolean', description: 'Show a search box in the dropdown. Defaults to auto — shown only when there are more than 6 options.' },
         { name: 'clearable', type: 'boolean', description: 'For select / multiselect: show a "Clear" action in the dropdown footer that commits an empty value ("" / [], the cell then shows its placeholder). Use for optional pickers.' },
         { name: 'align', type: '"left" | "right" | "center"', defaultValue: '"left"', description: "Text alignment for both display and edit modes — pass through from a DataTable column's `align`." },
+        { name: 'size', type: '"small" | "medium"', defaultValue: '"small"', description: 'Size preset. `small` is the dense DataTable scale (font inherits until pinned); `medium` steps the cell up to the input-family scale (12/6px padding, 14px font) for standalone use in side panels / detail views. Height always derives from font-size + padding.' },
         { name: 'format', type: '(value: string | number | string[]) => ReactNode', description: 'Display-mode formatter (receives a string[] for multiselect — e.g. render chips). The raw value is still what gets edited.' },
         { name: 'validate', type: '(next: string | number | string[]) => string | null | undefined', description: "Synchronous validation. Return a message to block commit — it surfaces as a yellow warning Banner in the cell's popover (recoverable input problem, vs the red error Banner for a failed save)." },
         { name: 'disabled', type: 'boolean', description: 'Read-only — clicking does nothing, no edit affordance.' },

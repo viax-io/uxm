@@ -6,6 +6,7 @@ import {
   EditableCell,
   type EditableCellAlign,
   type EditableCellOption,
+  type EditableCellSize,
   type EditableCellType,
   type EditableCellValue,
 } from '@/ui';
@@ -22,11 +23,19 @@ const sectionLabel = {
 
 function buildVars(styles: Styles): CSSProperties {
   return {
-    '--uxm-editable-cell-min-height': `${styles.minHeight}px`,
     '--uxm-editable-cell-max-width': `${styles.maxWidth ?? 320}px`,
-    '--uxm-editable-cell-padding-x': `${styles.paddingX}px`,
-    '--uxm-editable-cell-padding-y': `${styles.paddingY}px`,
     '--uxm-editable-cell-radius': `${styles.radius}px`,
+    // Symmetric per-size dimension knobs — each set is read only by its own
+    // size modifier, so writing both alongside each other is harmless. The
+    // small font-size default mirrors DataTable's 13px cell font, so the
+    // canvas shows the size the cell would actually have inside a table
+    // (the canvas' own inherited font is bigger and would misrepresent it).
+    '--uxm-editable-cell-small-padding-x': `${styles.smallPaddingX ?? 8}px`,
+    '--uxm-editable-cell-small-padding-y': `${styles.smallPaddingY ?? 4}px`,
+    '--uxm-editable-cell-small-font-size': `${styles.smallFontSize ?? 13}px`,
+    '--uxm-editable-cell-medium-padding-x': `${styles.mediumPaddingX ?? 12}px`,
+    '--uxm-editable-cell-medium-padding-y': `${styles.mediumPaddingY ?? 6}px`,
+    '--uxm-editable-cell-medium-font-size': `${styles.mediumFontSize ?? 14}px`,
     '--uxm-editable-cell-hover-bg': styles.hoverBg as string,
     '--uxm-editable-cell-pencil-color': styles.pencilColor as string,
     '--uxm-editable-cell-focus-border': styles.focusBorder as string,
@@ -97,6 +106,7 @@ type CellState = ReturnType<typeof useCellState>;
 export function EditableCellPreview({ styles, variants }: PreviewProps & { componentId: string }) {
   const type = (variants.type as EditableCellType) ?? 'text';
   const align = (variants.align as EditableCellAlign) ?? 'left';
+  const size = (variants.size as EditableCellSize) ?? 'small';
   const dateFormat = (variants.dateFormat as 'ymd' | 'dmy' | 'mdy') ?? 'ymd';
   // `state` forces the showcase cell into each peer state so only the
   // matching knobs are shown and they paint without interaction. hover /
@@ -128,6 +138,7 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
   // re-renders the matching editor while keeping the forced state / align.
   const showcaseChrome = {
     align,
+    size,
     forceMode,
     disabled: state === 'disabled',
     className: forcedClass || undefined,
@@ -140,6 +151,7 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
   // `align` so it stays a real, clickable editor.
   type Chrome = {
     align: EditableCellAlign;
+    size?: EditableCellSize;
     forceMode?: 'editing' | 'warning' | 'error';
     disabled?: boolean;
     className?: string;
@@ -205,12 +217,12 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
   const showcaseCell = renderCell(showcaseChrome, showcase);
   // Interactive: same type, but unforced (real click-to-edit) — only `align`,
   // and its OWN state bundle so edits here don't touch the showcase value.
-  const interactiveCell = renderCell({ align }, interactive);
+  const interactiveCell = renderCell({ align, size }, interactive);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       <div>
-        <div style={sectionLabel}>{type} cell ({align}) — {state}</div>
+        <div style={sectionLabel}>{type} cell ({size}, {align}) — {state}</div>
         <div style={vars}>{showcaseCell}</div>
       </div>
 

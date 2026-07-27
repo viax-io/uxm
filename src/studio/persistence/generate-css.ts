@@ -437,10 +437,11 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     gap: '--uxm-divider-gap',
   },
   'editable-cell': {
-    minHeight: '--uxm-editable-cell-min-height',
+    // Dimensions are per-size keys (smallPaddingX, mediumFontSize, …) that
+    // resolve via the generic `--uxm-editable-cell-{kebab(key)}` fallback in
+    // toCSS; only the shared maxWidth needs an explicit entry (it's in
+    // REAL_CSS_PROPS, so the fallback would emit a real CSS property).
     maxWidth: '--uxm-editable-cell-max-width',
-    paddingX: '--uxm-editable-cell-padding-x',
-    paddingY: '--uxm-editable-cell-padding-y',
   },
   'empty-state': {
     padding: '--uxm-empty-state-padding',

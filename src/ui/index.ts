@@ -58,7 +58,7 @@ export type { DisclosureProps } from './disclosure';
 export { Divider } from './divider';
 export type { DividerProps } from './divider';
 export { EditableCell } from './editable-cell';
-export type { EditableCellAlign, EditableCellOption, EditableCellProps, EditableCellType, EditableCellValue } from './editable-cell';
+export type { EditableCellAlign, EditableCellOption, EditableCellProps, EditableCellSize, EditableCellType, EditableCellValue } from './editable-cell';
 export { EmptyState } from './empty-state';
 export type { EmptyStateProps } from './empty-state';
 export { ErrorPage } from './error-page';

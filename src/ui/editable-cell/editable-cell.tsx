@@ -29,6 +29,7 @@ import { Popover } from '../popover';
 
 export type EditableCellType = 'text' | 'number' | 'date' | 'select' | 'multiselect';
 export type EditableCellAlign = 'left' | 'right' | 'center';
+export type EditableCellSize = 'small' | 'medium';
 export type EditableCellValue = string | number | string[];
 
 /** Strict `YYYY-MM-DD` → local Date (no TZ surprises), null if not parseable. */
@@ -116,6 +117,18 @@ export interface EditableCellProps {
   clearable?: boolean;
   /** Text alignment — pass through from a DataTable column's `align` so the editing input matches the display alignment. */
   align?: EditableCellAlign;
+  /**
+   * Size preset. `small` (default) is the dense table scale — the cell reads
+   * like a static text cell inside a DataTable row (its font falls back to
+   * the inherited size). `medium` steps the cell up to the input-family
+   * scale (12/6 padding, 14px font) for standalone use in side panels /
+   * detail views, where a table-dense cell looks undersized next to real
+   * inputs. Each size owns a symmetric
+   * `--uxm-editable-cell-{size}-{padding-x,padding-y,font-size}` knob set;
+   * height always derives from font-size + padding (a `1lh` floor keeps
+   * empty cells clickable).
+   */
+  size?: EditableCellSize;
   /** Display-mode formatter. Receives the raw value, returns the React node to render in display mode. */
   format?: (value: EditableCellValue) => ReactNode;
   /** Synchronous validation. Return an error message to block commit; return null/undefined to accept. */
@@ -175,6 +188,7 @@ export function EditableCell({
   searchable = 'auto',
   clearable,
   align = 'left',
+  size = 'small',
   format,
   validate,
   required = false,
@@ -501,6 +515,7 @@ export function EditableCell({
           ref={wrapRef}
           className={cn(
             'uxm-editable-cell',
+            `uxm-editable-cell--${size}`,
             `uxm-editable-cell--align-${align}`,
             `uxm-editable-cell--type-${type}`,
             disabled && 'uxm-editable-cell--disabled',
@@ -598,6 +613,7 @@ export function EditableCell({
         ref={wrapRef}
         className={cn(
           'uxm-editable-cell',
+          `uxm-editable-cell--${size}`,
           `uxm-editable-cell--align-${align}`,
           `uxm-editable-cell--type-${type}`,
           disabled && 'uxm-editable-cell--disabled',
@@ -724,6 +740,7 @@ export function EditableCell({
           type="button"
           className={cn(
             'uxm-editable-cell',
+            `uxm-editable-cell--${size}`,
             `uxm-editable-cell--align-${align}`,
             `uxm-editable-cell--type-date`,
             disabled && 'uxm-editable-cell--disabled',
@@ -765,6 +782,7 @@ export function EditableCell({
         ref={wrapRef}
         className={cn(
           'uxm-editable-cell uxm-editable-cell--editing',
+          `uxm-editable-cell--${size}`,
           `uxm-editable-cell--align-${align}`,
           `uxm-editable-cell--type-date`,
           shownError?.severity === 'error' && 'uxm-editable-cell--error',
@@ -879,6 +897,7 @@ export function EditableCell({
         type="button"
         className={cn(
           'uxm-editable-cell',
+          `uxm-editable-cell--${size}`,
           `uxm-editable-cell--align-${align}`,
           disabled && 'uxm-editable-cell--disabled',
           isEmpty && 'uxm-editable-cell--empty',
@@ -918,6 +937,7 @@ export function EditableCell({
       ref={wrapRef}
       className={cn(
         'uxm-editable-cell uxm-editable-cell--editing',
+        `uxm-editable-cell--${size}`,
         `uxm-editable-cell--align-${align}`,
         shownError?.severity === 'error' && 'uxm-editable-cell--error',
         shownError?.severity === 'warning' && 'uxm-editable-cell--warning',
