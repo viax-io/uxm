@@ -1,3 +1,10 @@
+# [4.2.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.1.2...v4.2.0) (2026-07-27)
+
+
+### Features
+
+* **icons:** add product, organization, business-interaction glyphs ([a53976d](https://gitlab.viax.tech/services-viax/uxm/commit/a53976d489af64578682f38c1eb89fff0a022704))
+
 ## [4.1.2](https://gitlab.viax.tech/services-viax/uxm/compare/v4.1.1...v4.1.2) (2026-07-27)
 
 
