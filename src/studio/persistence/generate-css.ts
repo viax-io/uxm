@@ -794,7 +794,14 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
     lines.push('}');
     lines.push('');
   };
-  emitTokens(':root', brand.tokens?.light);
+  // Scope customized light-mode color tokens to non-dark. `:root` and
+  // `[data-theme="dark"]` carry equal specificity, so an unconditional
+  // `:root` block would win over this stylesheet's own dark block for any
+  // token NOT also customized for dark (equal specificity, later source
+  // order) — pinning that token to its light value in dark mode too. Scoping
+  // lets an unset dark token fall through the cascade to tokens/index.css's
+  // own `[data-theme="dark"]` default instead.
+  emitTokens(':root:not([data-theme="dark"])', brand.tokens?.light);
   emitTokens('[data-theme="dark"]', brand.tokens?.dark);
 
   const componentIds = Object.keys(allOverrides).sort();

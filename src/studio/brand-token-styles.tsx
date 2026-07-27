@@ -23,7 +23,10 @@ export function BrandTokenStyles() {
   if (!tokens) return null;
 
   const blocks = [
-    renderBlock(':root', tokens.light),
+    // Scope to non-dark so a token customized only for light doesn't pin its
+    // value in dark mode too — see generate-css.ts's identical fix for why
+    // (`:root` / `[data-theme="dark"]` are equal-specificity selectors).
+    renderBlock(':root:not([data-theme="dark"])', tokens.light),
     renderBlock('[data-theme="dark"]', tokens.dark),
   ].filter(Boolean);
 
