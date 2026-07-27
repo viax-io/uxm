@@ -405,6 +405,13 @@ skill:
 
 ### New in 4.1.2
 
+- **New icons `product`, `organization`, `business-interaction`** in the shared glyph set —
+  Viax domain-entity marks (cube / two-tower building / exchange arrows). `business-interaction`
+  is the transaction itself; the existing `model-business-interaction` (chat mark) stays the
+  model/blueprint glyph.
+
+### New in 4.3.0
+
 - **`EditableCell` gained a `size` prop** (`'small' | 'medium'`, new export `EditableCellSize`).
   `small` (default) is the dense DataTable scale — visually unchanged (its font-size falls back
   to the inherited `1em` until pinned). `medium` steps the cell up to the input-family scale
@@ -433,6 +440,8 @@ skill:
   out. Related fix: `format` is no longer called for an empty value — a cleared cell renders
   its `placeholder` (previously a Tag/Badge `format` would paint an empty pill).
 
+### Unreleased
+
 <!-- Notes for changes merged but not yet published. The release pipeline renames
      this heading to "New in X.Y.Z" and stamps the version/count markers
      (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
@@ -440,10 +449,15 @@ skill:
      exact string, so appending notes under an already-stamped "New in X.Y.Z"
      heading silently mislabels them and they never get re-stamped. -->
 
-- **New icons `product`, `organization`, `business-interaction`** in the shared glyph set —
-  Viax domain-entity marks (cube / two-tower building / exchange arrows). `business-interaction`
-  is the transaction itself; the existing `model-business-interaction` (chat mark) stays the
-  model/blueprint glyph.
+- **Card**: `padding` (any value) and opt-in column `gap` between the card's direct
+  children (`number | string | true`; `true` = themed `--uxm-card-gap` default) — content
+  arrangement stays composed (`Stack`/`Cluster` inside; `Divider` between rows). Shadow is
+  now tunable (`--uxm-card-shadow-{color,blur,offset-y}`) with a theme-aware dark default.
+- **FormField**: two orthogonal label axes — `labelTone` (`strong | default | muted`,
+  per-tint colour tokens `--uxm-form-field-label-tint-*`) and `labelVariant`
+  (`default | overline`, caps eyebrow with its own `--uxm-form-field-overline-*` typography
+  tokens; colour comes from the tint). An `EditableCell` child is auto-outdented to align
+  its text with the label edge.
 
 ## Workflow
 
