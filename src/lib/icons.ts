@@ -110,6 +110,17 @@ export const ICONS: IconDef[] = [
     label: 'Configuration (Sliders)',
     body: '<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>',
   },
+  // ── Domain entities (Viax master data) ──
+  // Product, Organization and Business Interaction rendered as the entities
+  // themselves. `business-interaction` is intentionally distinct from
+  // `model-business-interaction` above: that one is the model/blueprint chat
+  // mark, this handshake reads as a transaction between parties.
+  { id: 'product', label: 'Product (Cube)', path: 'M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9' },
+  { id: 'organization', label: 'Organization (Building)', path: 'M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z' },
+  // Exchange arrows: a transaction / two-way flow between parties. Reads as
+  // the interaction itself rather than the chat about it (`model-business-
+  // interaction`) or a deal being struck.
+  { id: 'business-interaction', label: 'Business Interaction (Exchange)', path: 'M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5' },
   { id: 'kebab', label: 'Kebab (More)', path: 'M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm0 6a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm0 6a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z' },
   { id: 'arrow-up-right', label: 'Arrow Up Right', path: 'M4.5 19.5 19.5 4.5m0 0H8.25m11.25 0v11.25' },
   { id: 'info', label: 'Info', path: 'M11.25 11.25l.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12v-.008Z' },
