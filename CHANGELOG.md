@@ -1,3 +1,10 @@
+## [4.1.2](https://gitlab.viax.tech/services-viax/uxm/compare/v4.1.1...v4.1.2) (2026-07-27)
+
+
+### Bug Fixes
+
+* **studio:** scope light-mode brand color tokens away from dark theme ([46be321](https://gitlab.viax.tech/services-viax/uxm/commit/46be321da6df3598570a72e0919f1c3ac082a52d))
+
 ## [4.1.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.1.0...v4.1.1) (2026-07-24)
 
 
