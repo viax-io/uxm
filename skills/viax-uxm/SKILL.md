@@ -412,6 +412,11 @@ skill:
      exact string, so appending notes under an already-stamped "New in X.Y.Z"
      heading silently mislabels them and they never get re-stamped. -->
 
+- **New icons `product`, `organization`, `business-interaction`** in the shared glyph set —
+  Viax domain-entity marks (cube / two-tower building / exchange arrows). `business-interaction`
+  is the transaction itself; the existing `model-business-interaction` (chat mark) stays the
+  model/blueprint glyph.
+
 ## Workflow
 
 ### Before writing any code
