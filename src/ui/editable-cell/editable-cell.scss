@@ -289,7 +289,14 @@
      its paddings and leave no click target. `1lh` guarantees one text
      line's height, so the cell's height always derives from font-size +
      padding alone — there is deliberately NO min-height knob. (The span is
-     a flex item here, so min-height applies despite the inline markup.) */
+     a flex item here, so min-height applies despite the inline markup.)
+     The `1.2em` above is the pre-`lh` fallback (the unit needs Chrome 109 /
+     Safari 16.4 / Firefox 120): an engine that drops the `1lh` declaration
+     keeps a one-line floor approximating `line-height: normal`, rather than
+     collapsing an empty cell — with the min-height knob gone there is no
+     other backstop. Engines that do support `lh` take the exact value from
+     the later declaration. */
+  min-height: 1.2em;
   min-height: 1lh;
 }
 .uxm-editable-cell--align-left { justify-content: flex-start; text-align: left; }
