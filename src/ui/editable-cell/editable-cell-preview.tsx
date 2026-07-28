@@ -6,6 +6,7 @@ import {
   EditableCell,
   type EditableCellAlign,
   type EditableCellOption,
+  type EditableCellSize,
   type EditableCellType,
   type EditableCellValue,
 } from '@/ui';
@@ -22,11 +23,21 @@ const sectionLabel = {
 
 function buildVars(styles: Styles): CSSProperties {
   return {
-    '--uxm-editable-cell-min-height': `${styles.minHeight}px`,
     '--uxm-editable-cell-max-width': `${styles.maxWidth ?? 320}px`,
-    '--uxm-editable-cell-padding-x': `${styles.paddingX}px`,
-    '--uxm-editable-cell-padding-y': `${styles.paddingY}px`,
     '--uxm-editable-cell-radius': `${styles.radius}px`,
+    // Symmetric per-size dimension knobs — each set is read only by its own
+    // size modifier, so writing both alongside each other is harmless.
+    '--uxm-editable-cell-small-padding-x': `${styles.smallPaddingX ?? 8}px`,
+    '--uxm-editable-cell-small-padding-y': `${styles.smallPaddingY ?? 4}px`,
+    // Passed through verbatim, not suffixed with px: the knob is a select whose
+    // default is the literal `inherit`, matching the CSS fallback (`1em`). The
+    // canvas gets its table scale from the `fontSize` context below instead of
+    // by pinning this var — so an untouched knob previews the real inheriting
+    // behaviour rather than a hardcoded 13px the CSS never applies.
+    '--uxm-editable-cell-small-font-size': (styles.smallFontSize as string) ?? 'inherit',
+    '--uxm-editable-cell-medium-padding-x': `${styles.mediumPaddingX ?? 12}px`,
+    '--uxm-editable-cell-medium-padding-y': `${styles.mediumPaddingY ?? 6}px`,
+    '--uxm-editable-cell-medium-font-size': `${styles.mediumFontSize ?? 14}px`,
     '--uxm-editable-cell-hover-bg': styles.hoverBg as string,
     '--uxm-editable-cell-pencil-color': styles.pencilColor as string,
     '--uxm-editable-cell-focus-border': styles.focusBorder as string,
@@ -37,9 +48,17 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-editable-cell-input-color': styles.inputColor as string,
     '--uxm-editable-cell-input-border': styles.inputBorder as string,
     '--uxm-editable-cell-input-focus-border': styles.inputFocusBorder as string,
+    '--uxm-editable-cell-clear-color': styles.clearColor as string,
+    '--uxm-editable-cell-clear-hover-bg': styles.clearHoverBg as string,
     '--uxm-editable-cell-warning-border': styles.warningBorder as string,
     '--uxm-editable-cell-error-border': styles.errorBorder as string,
     width: 280,
+    // The canvas' own font is larger than a table's, which would make a `small`
+    // cell read as oversized. Setting the surrounding CONTEXT to DataTable's
+    // 13px cell font — rather than pinning the cell's font-size var — previews
+    // the dense table scale while keeping `small`'s documented inherit
+    // behaviour intact. `medium` pins 14px itself, so it's unaffected.
+    fontSize: 13,
   } as CSSProperties;
 }
 
@@ -59,7 +78,9 @@ const commitDelay = () => new Promise((r) => setTimeout(r, 400));
 // never leaks into the other (each call is its own hook instance).
 function useCellState() {
   const [text, setText] = useState('Revenue Motion');
-  const [num, setNum] = useState(42);
+  // number | '' — an emptied number cell commits '' (the uniform "cleared"
+  // value), and the preview must round-trip it to show the placeholder.
+  const [num, setNum] = useState<number | ''>(42);
   const [date, setDate] = useState('2026-03-14');
   const [select, setSelect] = useState('growth');
   const [multi, setMulti] = useState<string[]>(['growth', 'expansion']);
@@ -75,7 +96,7 @@ function useCellState() {
     },
     commitNumber: async (n: EditableCellValue) => {
       await commitDelay();
-      setNum(Number(n));
+      setNum(n === '' ? '' : Number(n));
     },
     commitDate: async (n: EditableCellValue) => {
       await commitDelay();
@@ -97,6 +118,7 @@ type CellState = ReturnType<typeof useCellState>;
 export function EditableCellPreview({ styles, variants }: PreviewProps & { componentId: string }) {
   const type = (variants.type as EditableCellType) ?? 'text';
   const align = (variants.align as EditableCellAlign) ?? 'left';
+  const size = (variants.size as EditableCellSize) ?? 'small';
   const dateFormat = (variants.dateFormat as 'ymd' | 'dmy' | 'mdy') ?? 'ymd';
   // `state` forces the showcase cell into each peer state so only the
   // matching knobs are shown and they paint without interaction. hover /
@@ -128,6 +150,7 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
   // re-renders the matching editor while keeping the forced state / align.
   const showcaseChrome = {
     align,
+    size,
     forceMode,
     disabled: state === 'disabled',
     className: forcedClass || undefined,
@@ -140,6 +163,7 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
   // `align` so it stays a real, clickable editor.
   type Chrome = {
     align: EditableCellAlign;
+    size?: EditableCellSize;
     forceMode?: 'editing' | 'warning' | 'error';
     disabled?: boolean;
     className?: string;
@@ -153,6 +177,7 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
             type="number"
             value={c.num}
             onCommit={c.commitNumber}
+            placeholder="Enter a number…"
             validate={(v) => (typeof v === 'number' && v < 0 ? 'Must be ≥ 0' : null)}
           />
         );
@@ -173,7 +198,6 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
             type="select"
             value={c.select}
             options={SAMPLE_OPTIONS}
-            clearable
             onCommit={c.commitSelect}
             placeholder="Pick a motion…"
           />
@@ -185,7 +209,6 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
             type="multiselect"
             value={c.multi}
             options={SAMPLE_OPTIONS}
-            clearable
             onCommit={c.commitMulti}
             placeholder="Pick motions…"
           />
@@ -205,12 +228,12 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
   const showcaseCell = renderCell(showcaseChrome, showcase);
   // Interactive: same type, but unforced (real click-to-edit) — only `align`,
   // and its OWN state bundle so edits here don't touch the showcase value.
-  const interactiveCell = renderCell({ align }, interactive);
+  const interactiveCell = renderCell({ align, size }, interactive);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       <div>
-        <div style={sectionLabel}>{type} cell ({align}) — {state}</div>
+        <div style={sectionLabel}>{type} cell ({size}, {align}) — {state}</div>
         <div style={vars}>{showcaseCell}</div>
       </div>
 

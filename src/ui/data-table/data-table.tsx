@@ -31,7 +31,7 @@ export interface DataTableColumn<T> {
   editorOptions?: EditableCellOption[];
   /** Whether the select panel includes a search box. */
   editorSearchable?: boolean | 'auto';
-  /** Whether the select panel allows clearing the selection. */
+  /** Clear affordance, per editor type: select/multiselect get a "Clear" footer action in the dropdown; text/number/date get a ✕ inside the editing input (draft-only — commit still via Enter/blur). `editorRequired` never hides it — clearing a required column surfaces the required warning; clearing an optional one empties to the placeholder. Defaults to `true` (EditableCell's own default, mirroring the input family) — pass `false` to opt a column out. */
   editorClearable?: boolean;
   /** Require a non-empty value — empty blocks commit with a warning, before `validate`. */
   editorRequired?: boolean;

@@ -437,8 +437,23 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     gap: '--uxm-divider-gap',
   },
   'editable-cell': {
-    minHeight: '--uxm-editable-cell-min-height',
+    // Dimensions are per-size keys (smallPaddingX, mediumFontSize, …) that
+    // resolve via the generic `--uxm-editable-cell-{kebab(key)}` fallback in
+    // toCSS; only the shared maxWidth needs an explicit entry (it's in
+    // REAL_CSS_PROPS, so the fallback would emit a real CSS property).
     maxWidth: '--uxm-editable-cell-max-width',
+    // RETIRED knobs, kept mapped on purpose. The per-size split replaced these
+    // three, but `generateOverridesCss` emits whatever keys are PERSISTED — not
+    // what the registry currently declares — so a config saved before the split
+    // still carries them. Without an entry here they'd fall through to
+    // REAL_CSS_PROPS / the paddingX-paddingY special case in toCSS and emit
+    // REAL `min-height` / `padding-inline` / `padding-block` declarations on
+    // `.uxm-editable-cell`, which land in a sheet loaded after the library CSS
+    // and would hard-override BOTH size presets (killing `medium`) and
+    // resurrect the min-height the size work deliberately removed. Mapped to
+    // their old, now-unread custom properties they are true no-ops instead.
+    // Safe to delete once persisted overrides are pruned against the registry.
+    minHeight: '--uxm-editable-cell-min-height',
     paddingX: '--uxm-editable-cell-padding-x',
     paddingY: '--uxm-editable-cell-padding-y',
   },

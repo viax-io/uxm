@@ -19,8 +19,7 @@
      (display) or scroll inside the input (editing) instead of growing the
      table unboundedly. Themable via the Max Width knob. */
   max-width: var(--uxm-editable-cell-max-width, 320px);
-  min-height: var(--uxm-editable-cell-min-height, 24px);
-  padding: var(--uxm-editable-cell-padding-y, 2px) var(--uxm-editable-cell-padding-x, 6px);
+  padding: var(--_uxm-editable-cell-padding-y, 4px) var(--_uxm-editable-cell-padding-x, 8px);
   margin: 0;
   /* Read inheritance: cells should pick up the surrounding font, size,
      and color so they read identically to a static text cell when not
@@ -72,7 +71,7 @@
 .uxm-editable-cell__pencil {
   position: absolute;
   top: 50%;
-  right: var(--uxm-editable-cell-padding-x, 6px);
+  right: var(--_uxm-editable-cell-padding-x, 8px);
   transform: translateY(-50%);
   display: inline-flex;
   pointer-events: none;
@@ -90,7 +89,7 @@
    never collides with the value sitting against the right edge. */
 .uxm-editable-cell--align-right .uxm-editable-cell__pencil {
   right: auto;
-  left: var(--uxm-editable-cell-padding-x, 6px);
+  left: var(--_uxm-editable-cell-padding-x, 8px);
 }
 /* Reserve a gutter on the pencil's side so the glyph never overlaps the
    value in narrow table cells. The value's anchored edge (left for left /
@@ -100,14 +99,14 @@
    padding. */
 .uxm-editable-cell:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--align-right):not(.uxm-editable-cell--type-select):not(.uxm-editable-cell--type-multiselect) {
   /* 20px = the fixed 16px pencil glyph + 4px breathing room. */
-  padding-inline-end: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
 }
 .uxm-editable-cell--align-right:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--type-select):not(.uxm-editable-cell--type-multiselect) {
-  padding-inline-start: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
+  padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
 }
 /* Date cells reserve the ISO editing width up front. */
 .uxm-editable-cell--type-date:not(.uxm-editable-cell--editing) {
-  min-width: calc(10ch + (2 * var(--uxm-editable-cell-padding-x, 6px)) + 20px);
+  min-width: calc(10ch + (2 * var(--_uxm-editable-cell-padding-x, 8px)) + 20px);
 }
 /* Pick cells (select/multiselect) delegate the padded, bordered, chevron-
    gutter surface to their inner `__select-trigger` button — the wrapper span
@@ -125,7 +124,7 @@
 .uxm-editable-cell__chevron {
   position: absolute;
   top: 50%;
-  right: var(--uxm-editable-cell-padding-x, 6px);
+  right: var(--_uxm-editable-cell-padding-x, 8px);
   transform: translateY(-50%);
   display: inline-flex;
   pointer-events: none;
@@ -147,7 +146,7 @@
 /* Right-aligned select cells anchor the chevron on the leading edge */
 .uxm-editable-cell--align-right .uxm-editable-cell__chevron {
   right: auto;
-  left: var(--uxm-editable-cell-padding-x, 6px);
+  left: var(--_uxm-editable-cell-padding-x, 8px);
 }
 /* Select option labels truncate with an ellipsis */
 .uxm-editable-cell__option-label {
@@ -157,22 +156,31 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* One-click clear (×) inside every editing cell */
-.uxm-editable-cell--editing .uxm-editable-cell__input {
-  padding-inline-end: calc(var(--uxm-editable-cell-padding-x, 6px) + 18px);
+/* One-click clear (×) inside the editing input — text/number/date cells with
+   `clearable`. The trailing gutter is reserved by the `--clearable` modifier
+   (not by the ✕'s presence), so the ✕ appearing/hiding with the draft never
+   shifts the text. Non-clearable cells carry no gutter at all. */
+.uxm-editable-cell--clearable.uxm-editable-cell--editing .uxm-editable-cell__input {
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 18px);
 }
-.uxm-editable-cell--align-right.uxm-editable-cell--editing .uxm-editable-cell__input {
-  padding-inline-end: var(--uxm-editable-cell-padding-x, 6px);
-  padding-inline-start: calc(var(--uxm-editable-cell-padding-x, 6px) + 18px);
+.uxm-editable-cell--clearable.uxm-editable-cell--align-right.uxm-editable-cell--editing .uxm-editable-cell__input {
+  padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
+  padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 18px);
 }
 .uxm-editable-cell--align-right .uxm-editable-cell__clear {
   right: auto;
-  left: var(--uxm-editable-cell-padding-x, 6px);
+  left: var(--_uxm-editable-cell-padding-x, 8px);
 }
+/* Deliberately NOT the family's `.uxm-field-clear` IconButton: that affordance
+   is 22×22, sized for the 12px-padded input family, and a `small` cell is only
+   ~24px tall in total — it would fill the whole row and blow the 18px gutter
+   the ghosts/input reserve above. This is the same glyph at a table-dense
+   footprint (12px icon + 2px padding), themed through the component-scoped
+   layer like every other surface here. */
 .uxm-editable-cell__clear {
   position: absolute;
   top: 50%;
-  right: var(--uxm-editable-cell-padding-x, 6px);
+  right: var(--_uxm-editable-cell-padding-x, 8px);
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
@@ -182,21 +190,20 @@
   background: none;
   border: none;
   border-radius: 4px;
-  color: var(--color-text-muted);
+  color: var(--uxm-editable-cell-clear-color, var(--color-text-muted));
   cursor: pointer;
 }
 .uxm-editable-cell__clear:hover {
-  color: var(--color-text);
-  background-color: var(--color-surface-alt);
+  color: var(--uxm-editable-cell-clear-hover-color, var(--color-text));
+  background-color: var(--uxm-editable-cell-clear-hover-bg, var(--color-surface-alt));
 }
 /* Select trigger — reset to match the editable cell's display surface */
 .uxm-editable-cell__select-trigger {
   display: inline-flex;
   align-items: center;
   width: 100%;
-  min-height: var(--uxm-editable-cell-min-height, 24px);
-  padding: var(--uxm-editable-cell-padding-y, 2px) var(--uxm-editable-cell-padding-x, 6px);
-  padding-inline-end: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
+  padding: var(--_uxm-editable-cell-padding-y, 4px) var(--_uxm-editable-cell-padding-x, 8px);
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
   margin: 0;
   font: inherit;
   color: inherit;
@@ -212,7 +219,7 @@
 .uxm-editable-cell__date-icon {
   position: absolute;
   top: 50%;
-  right: var(--uxm-editable-cell-padding-x, 6px);
+  right: var(--_uxm-editable-cell-padding-x, 8px);
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
@@ -226,19 +233,36 @@
   cursor: pointer;
 }
 .uxm-editable-cell__date-icon:hover {
-  color: var(--color-text);
+  color: var(--uxm-editable-cell-date-icon-hover-color, var(--color-text));
 }
 .uxm-editable-cell--align-right .uxm-editable-cell__date-icon {
   right: auto;
-  left: var(--uxm-editable-cell-padding-x, 6px);
+  left: var(--_uxm-editable-cell-padding-x, 8px);
 }
 /* Reserve room for the calendar toggle so a full date never sits under it. */
 .uxm-editable-cell--type-date.uxm-editable-cell--editing .uxm-editable-cell__input {
-  padding-inline-end: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
 }
 .uxm-editable-cell--type-date.uxm-editable-cell--align-right.uxm-editable-cell--editing .uxm-editable-cell__input {
-  padding-inline-end: var(--uxm-editable-cell-padding-x, 6px);
-  padding-inline-start: calc(var(--uxm-editable-cell-padding-x, 6px) + 20px);
+  padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
+  padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
+}
+/* Clearable date cells host TWO gutter controls — the ✕ sits inboard of the
+   calendar toggle (mirrors DateInput's layout), so the input reserves both
+   slots (20px calendar + 22px clear). */
+.uxm-editable-cell--type-date .uxm-editable-cell__clear {
+  right: calc(var(--_uxm-editable-cell-padding-x, 8px) + 22px);
+}
+.uxm-editable-cell--type-date.uxm-editable-cell--align-right .uxm-editable-cell__clear {
+  right: auto;
+  left: calc(var(--_uxm-editable-cell-padding-x, 8px) + 22px);
+}
+.uxm-editable-cell--clearable.uxm-editable-cell--type-date.uxm-editable-cell--editing .uxm-editable-cell__input {
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
+}
+.uxm-editable-cell--clearable.uxm-editable-cell--type-date.uxm-editable-cell--align-right.uxm-editable-cell--editing .uxm-editable-cell__input {
+  padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
+  padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
 }
 .uxm-editable-cell--disabled .uxm-listbox {
   pointer-events: none;
@@ -261,6 +285,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* An empty value renders no line box, which would collapse the cell to
+     its paddings and leave no click target. `1lh` guarantees one text
+     line's height, so the cell's height always derives from font-size +
+     padding alone — there is deliberately NO min-height knob. (The span is
+     a flex item here, so min-height applies despite the inline markup.)
+     The `1.2em` above is the pre-`lh` fallback (the unit needs Chrome 109 /
+     Safari 16.4 / Firefox 120): an engine that drops the `1lh` declaration
+     keeps a one-line floor approximating `line-height: normal`, rather than
+     collapsing an empty cell — with the min-height knob gone there is no
+     other backstop. Engines that do support `lh` take the exact value from
+     the later declaration. */
+  min-height: 1.2em;
+  min-height: 1lh;
 }
 .uxm-editable-cell--align-left { justify-content: flex-start; text-align: left; }
 .uxm-editable-cell--align-right { justify-content: flex-end; text-align: right; }
@@ -294,13 +331,21 @@
      intrinsic contribution to auto table-column sizing. */
   max-width: var(--uxm-editable-cell-max-width, 320px);
   overflow: hidden;
-  min-height: var(--uxm-editable-cell-min-height, 24px);
-  padding: var(--uxm-editable-cell-padding-y, 2px)
-    calc(var(--uxm-editable-cell-padding-x, 6px) + 20px)
-    var(--uxm-editable-cell-padding-y, 2px)
-    var(--uxm-editable-cell-padding-x, 6px);
+  padding: var(--_uxm-editable-cell-padding-y, 4px)
+    calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px)
+    var(--_uxm-editable-cell-padding-y, 4px)
+    var(--_uxm-editable-cell-padding-x, 8px);
   border: 1px solid transparent;
   font: inherit;
+}
+/* Clearable date editing reserves BOTH gutter slots in the input (calendar
+   20px + clear 22px = 42px) — the ghosts must reserve the same, or the grid
+   track (sized by the ghosts) undersizes the input by the clear slot and the
+   date's tail clips out of view. Only the TOTAL horizontal padding matters
+   here (the ghosts are invisible width-keepers), so one physical side is
+   enough for both alignments. */
+.uxm-editable-cell--clearable.uxm-editable-cell--type-date .uxm-editable-cell__ghost {
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
 }
 .uxm-editable-cell__input {
   grid-area: 1 / 1;
@@ -312,8 +357,7 @@
      width-keeper ghosts above. */
   width: 0;
   min-width: 100%;
-  min-height: var(--uxm-editable-cell-min-height, 24px);
-  padding: var(--uxm-editable-cell-padding-y, 2px) var(--uxm-editable-cell-padding-x, 6px);
+  padding: var(--_uxm-editable-cell-padding-y, 4px) var(--_uxm-editable-cell-padding-x, 8px);
   margin: 0;
   font: inherit;
   color: var(--uxm-editable-cell-input-color, var(--color-text));
@@ -377,4 +421,33 @@
 .uxm-editable-cell__error-banner .uxm-banner__icon svg {
   width: 16px;
   height: 16px;
+}
+/* ── Size presets ──
+   Symmetric per-size knob sets, same pattern as Tag: each size owns
+   `--uxm-editable-cell-{size}-{padding-x,padding-y,font-size}`. There is no
+   height knob — the cell's height always DERIVES from font-size × line-height
+   + paddings (the `1lh` floor on `__value` covers the empty-value case), so
+   no setting can silently stop mattering. Instead of duplicating every
+   consumption site (gutters, ghosts, input, trigger all derive from the same
+   dimension vars), the base rules read private `--_uxm-editable-cell-*` pipe
+   vars and each size modifier re-points them at its own knob set. Defining
+   the pipes ON the cell also means one size's override can't leak into the
+   other. Double-class selector = (0,2,0), beating any single-class override
+   regardless of source order.
+   `small` = the dense DataTable scale (default). Its font-size falls back
+   to `1em` — i.e. exactly the pre-knob `font: inherit` behaviour (a cell in
+   a PageHeader rename keeps the heading's size, a table cell the table's) —
+   until a designer pins a px value.
+   `medium` = the input-family scale for standalone use (side panels,
+   detail views), where a table-dense cell looks undersized next to real
+   inputs. It pins 14px: standalone contexts have no table scale to inherit. */
+.uxm-editable-cell.uxm-editable-cell--small {
+  --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-small-padding-x, 8px);
+  --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-small-padding-y, 4px);
+  font-size: var(--uxm-editable-cell-small-font-size, 1em);
+}
+.uxm-editable-cell.uxm-editable-cell--medium {
+  --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-medium-padding-x, 12px);
+  --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-medium-padding-y, 6px);
+  font-size: var(--uxm-editable-cell-medium-font-size, 14px);
 }

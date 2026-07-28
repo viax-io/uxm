@@ -231,6 +231,7 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
                   onCommit={commit(i, 'status')}
                   type="select"
                   options={STATUS_OPTIONS}
+                  placeholder="Set status"
                   format={(v) => (
                     <Tag type={STATUS_TO_TAG_TYPE[String(v)] ?? 'neutral'} size="small">
                       {String(v)}
@@ -246,7 +247,6 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
                   onCommit={commit(i, 'regions')}
                   type="multiselect"
                   options={REGION_OPTIONS}
-                  clearable
                   placeholder="Add regions"
                 />
               </td>

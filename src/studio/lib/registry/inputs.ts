@@ -79,13 +79,32 @@ export const inputsDefs: ComponentDef[] = [
     id: 'editable-cell',
     name: 'Editable Cell',
     category: 'Inputs',
-    description: 'Inline-editable cell. Text / number swap the display for an input (Enter or blur commits, Esc cancels); date pairs the input with a Calendar popover — type a date or pick a day, either commits an ISO date string; select is pick-only — clicking opens a Listbox dropdown and picking an option commits its value immediately (display can still be a custom Tag/Badge via `format`); multiselect is select\'s array sibling — a MultiListbox toggles options with the panel open, the value is a string[] of picked option values shown as joined labels. Problems surface in a popover Banner under the cell — warning (yellow) for sync validate failures, error (red) for a rejected async `onCommit` — so the table row never changes height. Designed for DataTable cells but works anywhere an inline-edit pattern fits (PageHeader rename, StatCard label, etc.).',
+    description: 'Inline-editable cell. Text / number swap the display for an input (Enter or blur commits, Esc cancels); date pairs the input with a Calendar popover — type a date or pick a day, either commits an ISO date string; select is pick-only — clicking opens a Listbox dropdown and picking an option commits its value immediately (display can still be a custom Tag/Badge via `format`); multiselect is select\'s array sibling — a MultiListbox toggles options with the panel open, the value is a string[] of picked option values shown as joined labels. Problems surface in a popover Banner under the cell — warning (yellow) for sync validate failures, error (red) for a rejected async `onCommit` — so the table row never changes height. Designed for DataTable cells but works anywhere an inline-edit pattern fits (PageHeader rename, StatCard label, etc.) — 2 sizes: small (dense table scale, default) / medium (input-family scale for side panels and detail views), each with its own dimension knobs.',
     styleProperties: [
-      // Layout — shared across all states (no showWhen).
-      { key: 'minHeight', label: 'Min Height', control: 'number', defaultValue: 24, min: 18, max: 48, step: 2, unit: 'px' },
+      // Layout — maxWidth and radius are shared across both sizes; the
+      // padding/font trio is per-size (gated by the Size variant), one
+      // symmetric knob set each, same pattern as Tag. Saves emit as
+      // `--uxm-editable-cell-{size}-{kebab(key)}` (fallback path in toCSS),
+      // which the matching size modifier re-points the private pipe vars at.
+      // There is deliberately NO height knob: the cell's height derives from
+      // Font Size × line-height + paddings (a `1lh` floor covers empty
+      // cells), so no knob can silently stop mattering.
+      { key: 'smallPaddingX', label: 'Padding X', control: 'number', defaultValue: 8, min: 2, max: 16, step: 1, unit: 'px', showWhen: { size: 'small' } },
+      { key: 'smallPaddingY', label: 'Padding Y', control: 'number', defaultValue: 4, min: 0, max: 10, step: 1, unit: 'px', showWhen: { size: 'small' } },
+      // A select, not a stepper like its `medium` twin, because `small` has an
+      // extra state its twin doesn't: it INHERITS the surrounding font by
+      // default (CSS fallback `1em`) so a cell reads like the text around it.
+      // The default must therefore be the literal `inherit` — a numeric 13
+      // default was unpersistable (properties-panel clears an override that
+      // equals its default) and claimed a pinned size the CSS never applied.
+      // The canvas gets DataTable's 13px scale from the preview's font context
+      // instead. `medium` pins 14px in CSS and matches its knob, so it stays a
+      // stepper.
+      { key: 'smallFontSize', label: 'Font Size', control: 'select', defaultValue: 'inherit', options: ['inherit', '11px', '12px', '13px', '14px', '15px', '16px'], showWhen: { size: 'small' } },
+      { key: 'mediumPaddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 20, step: 1, unit: 'px', showWhen: { size: 'medium' } },
+      { key: 'mediumPaddingY', label: 'Padding Y', control: 'number', defaultValue: 6, min: 0, max: 14, step: 1, unit: 'px', showWhen: { size: 'medium' } },
+      { key: 'mediumFontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px', showWhen: { size: 'medium' } },
       { key: 'maxWidth', label: 'Max Width', control: 'number', defaultValue: 320, min: 120, max: 640, step: 10, unit: 'px' },
-      { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 6, min: 2, max: 16, step: 1, unit: 'px' },
-      { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 2, min: 0, max: 10, step: 1, unit: 'px' },
       { key: 'radius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px' },
       // Display chrome — one knob per peer state, matching the input
       // family's default / hover / focus / disabled convention. Each is
@@ -105,6 +124,12 @@ export const inputsDefs: ComponentDef[] = [
       { key: 'inputColor', label: 'Input Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'editingColors', showWhen: { state: 'editing' } },
       { key: 'inputBorder', label: 'Input Border', control: 'color', defaultValue: 'var(--color-border)', section: 'editingColors', showWhen: { state: 'editing' } },
       { key: 'inputFocusBorder', label: 'Input Focus Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'editingColors', showWhen: { state: 'editing' } },
+      // The ✕ in the editing input's trailing gutter (text / number / date —
+      // the pickers clear from their dropdown footer instead, which is the
+      // Listbox atom's surface, not a per-cell knob). Editing-only, so it
+      // shares the gate with the input knobs above.
+      { key: 'clearColor', label: 'Clear Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'editingColors', showWhen: { state: 'editing', type: '!select|multiselect' } },
+      { key: 'clearHoverBg', label: 'Clear Hover Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'editingColors', showWhen: { state: 'editing', type: '!select|multiselect' } },
       // Problem severities — each tints the editing input's border; the
       // message itself rides in a popover Banner whose look comes from the
       // Banner atom's own warning / error tokens (not per-cell knobs), so
@@ -152,6 +177,18 @@ export const inputsDefs: ComponentDef[] = [
         defaultValue: 'text',
       },
       {
+        // Small = the dense DataTable scale (the original look, and the
+        // default); medium = the input-family scale for standalone use in
+        // side panels / detail views. Each size owns its own dimension knobs.
+        key: 'size',
+        label: 'Size',
+        options: [
+          { value: 'small', label: 'Small' },
+          { value: 'medium', label: 'Medium' },
+        ],
+        defaultValue: 'small',
+      },
+      {
         // One format drives everything the user sees on a date cell —
         // the rendered value, the empty-cell hint, the input mask, and
         // parsing. Committed values stay ISO regardless.
@@ -189,8 +226,9 @@ export const inputsDefs: ComponentDef[] = [
         { name: 'dateFormat', type: '"mdy" | "dmy" | "ymd"', defaultValue: '"ymd"', description: 'Display / typing format for date cells (same options as DateInput): one format drives the rendered value, the empty-cell hint, the input mask, and parsing. Committed values stay ISO regardless — presentation, not storage.' },
         { name: 'options', type: '{ value: string; label: string }[]', description: 'Options for `type="select"` / `"multiselect"`. Picking one commits its `value` (or toggles it into the array); display shows the `label`(s) unless `format` overrides it.' },
         { name: 'searchable', type: 'boolean', description: 'Show a search box in the dropdown. Defaults to auto — shown only when there are more than 6 options.' },
-        { name: 'clearable', type: 'boolean', description: 'For select / multiselect: show a "Clear" action in the dropdown footer that commits an empty value ("" / [], the cell then shows its placeholder). Use for optional pickers.' },
+        { name: 'clearable', type: 'boolean', defaultValue: 'true', description: 'Clear affordance, per type. select / multiselect: a "Clear" action in the dropdown footer that commits an empty value ("" / []). text / number / date: a ✕ inside the EDITING input (mirrors TextInput) that empties the draft and keeps focus — nothing commits until Enter/blur. `required` never hides the affordance, it guards the outcome: clearing a required cell surfaces the required warning (the value stays), clearing an optional one empties it to the placeholder. On by default (the input-family convention) — pass `false` to opt out.' },
         { name: 'align', type: '"left" | "right" | "center"', defaultValue: '"left"', description: "Text alignment for both display and edit modes — pass through from a DataTable column's `align`." },
+        { name: 'size', type: '"small" | "medium"', defaultValue: '"small"', description: 'Size preset. `small` is the dense DataTable scale (font inherits until pinned); `medium` steps the cell up to the input-family scale (12/6px padding, 14px font) for standalone use in side panels / detail views. Height always derives from font-size + padding.' },
         { name: 'format', type: '(value: string | number | string[]) => ReactNode', description: 'Display-mode formatter (receives a string[] for multiselect — e.g. render chips). The raw value is still what gets edited.' },
         { name: 'validate', type: '(next: string | number | string[]) => string | null | undefined', description: "Synchronous validation. Return a message to block commit — it surfaces as a yellow warning Banner in the cell's popover (recoverable input problem, vs the red error Banner for a failed save)." },
         { name: 'disabled', type: 'boolean', description: 'Read-only — clicking does nothing, no edit affordance.' },
