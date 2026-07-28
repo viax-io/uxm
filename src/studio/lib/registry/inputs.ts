@@ -118,6 +118,12 @@ export const inputsDefs: ComponentDef[] = [
       { key: 'inputColor', label: 'Input Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'editingColors', showWhen: { state: 'editing' } },
       { key: 'inputBorder', label: 'Input Border', control: 'color', defaultValue: 'var(--color-border)', section: 'editingColors', showWhen: { state: 'editing' } },
       { key: 'inputFocusBorder', label: 'Input Focus Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'editingColors', showWhen: { state: 'editing' } },
+      // The ✕ in the editing input's trailing gutter (text / number / date —
+      // the pickers clear from their dropdown footer instead, which is the
+      // Listbox atom's surface, not a per-cell knob). Editing-only, so it
+      // shares the gate with the input knobs above.
+      { key: 'clearColor', label: 'Clear Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'editingColors', showWhen: { state: 'editing', type: '!select|multiselect' } },
+      { key: 'clearHoverBg', label: 'Clear Hover Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'editingColors', showWhen: { state: 'editing', type: '!select|multiselect' } },
       // Problem severities — each tints the editing input's border; the
       // message itself rides in a popover Banner whose look comes from the
       // Banner atom's own warning / error tokens (not per-cell knobs), so

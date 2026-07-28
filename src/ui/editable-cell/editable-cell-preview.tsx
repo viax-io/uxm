@@ -46,6 +46,8 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-editable-cell-input-color': styles.inputColor as string,
     '--uxm-editable-cell-input-border': styles.inputBorder as string,
     '--uxm-editable-cell-input-focus-border': styles.inputFocusBorder as string,
+    '--uxm-editable-cell-clear-color': styles.clearColor as string,
+    '--uxm-editable-cell-clear-hover-bg': styles.clearHoverBg as string,
     '--uxm-editable-cell-warning-border': styles.warningBorder as string,
     '--uxm-editable-cell-error-border': styles.errorBorder as string,
     width: 280,

@@ -106,6 +106,10 @@ Each size owns a symmetric knob set; the base rules read private `--_uxm-editabl
 | `--uxm-editable-cell-input-color` | `--color-text` | – | Editing input text. |
 | `--uxm-editable-cell-input-border` | `--color-border` | – | Editing input idle border (matches TextInput). |
 | `--uxm-editable-cell-input-focus-border` | `--color-accent` | – | Editing input focused border. |
+| `--uxm-editable-cell-clear-color` | `--color-text-muted` | – | Resting ✕ in the editing gutter (text / number / date). |
+| `--uxm-editable-cell-clear-hover-color` | `--color-text` | – | Hovered ✕ glyph. |
+| `--uxm-editable-cell-clear-hover-bg` | `--color-surface-alt` | – | Hovered ✕ backplate. |
+| `--uxm-editable-cell-date-icon-hover-color` | `--color-text` | – | Hovered calendar toggle (its resting color is `--uxm-editable-cell-pencil-color`). |
 | `--uxm-editable-cell-warning-border` | `--color-warning-text` | – | Input border while a warning shows. |
 | `--uxm-editable-cell-error-border` | `--color-danger-text` | – | Input border while an error shows. |
 
@@ -136,4 +140,5 @@ Each size owns a symmetric knob set; the base rules read private `--_uxm-editabl
 - The editing input carries `aria-invalid` and `aria-describedby` pointing at the Banner message while a problem shows.
 - The date calendar popover is `role="dialog"` with an accessible name, deliberately non-modal: focus stays in the typed input (the calendar augments typing; its mousedown is swallowed so a pick never blur-commits a stale draft).
 - The clear ✕ buttons have explicit `aria-label`s (`"Clear value"` / `"Clear date"`) and swallow mousedown to keep focus in the field.
+- The two in-gutter buttons (✕ and the calendar toggle) are `tabIndex={-1}` — pointer affordances only, so Tab keeps advancing to the next cell. Leaving them focusable would strand focus: the blur Tab fires commits the cell and unmounts them mid-focus-shift. The keyboard has equivalent paths for both — select-all + Delete clears, and entering edit mode on a date cell already opens the calendar.
 - Focus visuals match the family: accent border + 2px offset ring on both the display cell and the editing input.

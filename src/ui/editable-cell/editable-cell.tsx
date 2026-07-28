@@ -873,6 +873,12 @@ export function EditableCell({
           <button
             type="button"
             className="uxm-editable-cell__clear"
+            // Out of the tab order (the in-field-clear convention). Tab must
+            // keep moving to the next real control: the blur it fires commits
+            // and leaves edit mode, which unmounts this button mid-focus-shift
+            // and would drop focus to <body>. Pointer-only; select-all +
+            // Delete is the keyboard path to the same result.
+            tabIndex={-1}
             onMouseDown={(e) => e.preventDefault()}
             onClick={handleClearDraft}
             aria-label="Clear date"
@@ -883,6 +889,10 @@ export function EditableCell({
         <button
           type="button"
           className="uxm-editable-cell__date-icon"
+          // Out of the tab order for the same reason as the ✕ above — Tab's
+          // blur commits and unmounts this button. Keyboard users never need
+          // it: entering edit mode on a date cell already opens the calendar.
+          tabIndex={-1}
           // preventDefault keeps focus on the input — toggling the calendar
           // must not blur the field (a blur commits the in-flight draft).
           onMouseDown={(e) => e.preventDefault()}
@@ -1063,6 +1073,11 @@ export function EditableCell({
         <button
           type="button"
           className="uxm-editable-cell__clear"
+          // Out of the tab order — see the date branch's note: the blur Tab
+          // fires commits and unmounts this button, so leaving it focusable
+          // would strand focus on a removed node instead of advancing to the
+          // next cell.
+          tabIndex={-1}
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleClearDraft}
           aria-label="Clear value"
