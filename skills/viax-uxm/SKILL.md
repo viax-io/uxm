@@ -413,9 +413,12 @@ skill:
   knob set `--uxm-editable-cell-{small|medium}-{padding-x,padding-y,font-size}`. There is no
   height knob anymore: the cell's height always derives from font-size + padding (a `1lh`
   floor on the value keeps empty cells one text line tall and clickable). ⚠️ The old
-  un-namespaced `--uxm-editable-cell-{min-height,padding-x,padding-y}` vars are GONE — saved
-  studio overrides of Min Height / Padding X/Y made before this version no longer apply
-  (padding must be re-saved per size; min-height has no replacement by design).
+  un-namespaced `--uxm-editable-cell-{min-height,padding-x,padding-y}` vars are GONE — nothing
+  reads them any more, so a studio override of Min Height / Padding X/Y saved before this
+  version is now inert (padding must be re-saved per size; min-height has no replacement by
+  design). The retired keys stay mapped in `generate-css.ts` precisely so they emit those dead
+  custom properties instead of falling through to REAL `min-height` / `padding-inline`
+  declarations, which would hard-override both size presets.
 - **`EditableCell.clearable` now also covers `text` / `number` / `date`** — a ✕ inside the
   EDITING input (mirrors TextInput/NumberInput/DateInput; for date it sits inboard of the
   calendar toggle) that empties the draft and keeps focus. Nothing commits until Enter/blur, so
