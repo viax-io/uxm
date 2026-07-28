@@ -82,7 +82,7 @@ Each size owns a symmetric knob set; the base rules read private `--_uxm-editabl
 |----------|---------|---------|
 | `--uxm-editable-cell-small-padding-x` | `8px` | `small` inline padding (also derives every gutter). |
 | `--uxm-editable-cell-small-padding-y` | `4px` | `small` block padding. |
-| `--uxm-editable-cell-small-font-size` | `1em` (inherit) | `small` font — inherits the surrounding text until pinned (the studio knob default, 13px, mirrors DataTable's cell font). |
+| `--uxm-editable-cell-small-font-size` | `1em` (inherit) | `small` font — inherits the surrounding text until pinned (the studio knob is a select defaulting to `inherit`, so an untouched cell keeps reading like the text around it). |
 | `--uxm-editable-cell-medium-padding-x` | `12px` | `medium` inline padding. |
 | `--uxm-editable-cell-medium-padding-y` | `6px` | `medium` block padding. |
 | `--uxm-editable-cell-medium-font-size` | `14px` | `medium` font (pinned — standalone contexts have no table scale to inherit). |

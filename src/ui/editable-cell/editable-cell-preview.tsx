@@ -26,13 +26,15 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-editable-cell-max-width': `${styles.maxWidth ?? 320}px`,
     '--uxm-editable-cell-radius': `${styles.radius}px`,
     // Symmetric per-size dimension knobs — each set is read only by its own
-    // size modifier, so writing both alongside each other is harmless. The
-    // small font-size default mirrors DataTable's 13px cell font, so the
-    // canvas shows the size the cell would actually have inside a table
-    // (the canvas' own inherited font is bigger and would misrepresent it).
+    // size modifier, so writing both alongside each other is harmless.
     '--uxm-editable-cell-small-padding-x': `${styles.smallPaddingX ?? 8}px`,
     '--uxm-editable-cell-small-padding-y': `${styles.smallPaddingY ?? 4}px`,
-    '--uxm-editable-cell-small-font-size': `${styles.smallFontSize ?? 13}px`,
+    // Passed through verbatim, not suffixed with px: the knob is a select whose
+    // default is the literal `inherit`, matching the CSS fallback (`1em`). The
+    // canvas gets its table scale from the `fontSize` context below instead of
+    // by pinning this var — so an untouched knob previews the real inheriting
+    // behaviour rather than a hardcoded 13px the CSS never applies.
+    '--uxm-editable-cell-small-font-size': (styles.smallFontSize as string) ?? 'inherit',
     '--uxm-editable-cell-medium-padding-x': `${styles.mediumPaddingX ?? 12}px`,
     '--uxm-editable-cell-medium-padding-y': `${styles.mediumPaddingY ?? 6}px`,
     '--uxm-editable-cell-medium-font-size': `${styles.mediumFontSize ?? 14}px`,
@@ -51,6 +53,12 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-editable-cell-warning-border': styles.warningBorder as string,
     '--uxm-editable-cell-error-border': styles.errorBorder as string,
     width: 280,
+    // The canvas' own font is larger than a table's, which would make a `small`
+    // cell read as oversized. Setting the surrounding CONTEXT to DataTable's
+    // 13px cell font — rather than pinning the cell's font-size var — previews
+    // the dense table scale while keeping `small`'s documented inherit
+    // behaviour intact. `medium` pins 14px itself, so it's unaffected.
+    fontSize: 13,
   } as CSSProperties;
 }
 

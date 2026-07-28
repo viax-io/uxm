@@ -88,13 +88,19 @@ export const inputsDefs: ComponentDef[] = [
       // which the matching size modifier re-points the private pipe vars at.
       // There is deliberately NO height knob: the cell's height derives from
       // Font Size × line-height + paddings (a `1lh` floor covers empty
-      // cells), so no knob can silently stop mattering. Small's Font Size
-      // default mirrors DataTable's 13px cell font; in CSS the fallback is
-      // `1em` (inherit), so an untouched knob keeps the cell reading like
-      // the surrounding text.
+      // cells), so no knob can silently stop mattering.
       { key: 'smallPaddingX', label: 'Padding X', control: 'number', defaultValue: 8, min: 2, max: 16, step: 1, unit: 'px', showWhen: { size: 'small' } },
       { key: 'smallPaddingY', label: 'Padding Y', control: 'number', defaultValue: 4, min: 0, max: 10, step: 1, unit: 'px', showWhen: { size: 'small' } },
-      { key: 'smallFontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 10, max: 16, step: 1, unit: 'px', showWhen: { size: 'small' } },
+      // A select, not a stepper like its `medium` twin, because `small` has an
+      // extra state its twin doesn't: it INHERITS the surrounding font by
+      // default (CSS fallback `1em`) so a cell reads like the text around it.
+      // The default must therefore be the literal `inherit` — a numeric 13
+      // default was unpersistable (properties-panel clears an override that
+      // equals its default) and claimed a pinned size the CSS never applied.
+      // The canvas gets DataTable's 13px scale from the preview's font context
+      // instead. `medium` pins 14px in CSS and matches its knob, so it stays a
+      // stepper.
+      { key: 'smallFontSize', label: 'Font Size', control: 'select', defaultValue: 'inherit', options: ['inherit', '11px', '12px', '13px', '14px', '15px', '16px'], showWhen: { size: 'small' } },
       { key: 'mediumPaddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 20, step: 1, unit: 'px', showWhen: { size: 'medium' } },
       { key: 'mediumPaddingY', label: 'Padding Y', control: 'number', defaultValue: 6, min: 0, max: 14, step: 1, unit: 'px', showWhen: { size: 'medium' } },
       { key: 'mediumFontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px', showWhen: { size: 'medium' } },
