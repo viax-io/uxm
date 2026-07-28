@@ -96,8 +96,14 @@
    the cell's own padding and must NOT be outdented. Boxed inputs (TextInput
    etc.) are untouched — their visible border makes the inset intentional. */
 .uxm-form-field__control > .uxm-editable-cell {
-  /* padding-x + the cell's 1px transparent border — the full text inset. */
-  margin-inline-start: calc(-1 * var(--uxm-editable-cell-padding-x, 6px) - 1px);
+  /* padding-x + the cell's 1px transparent border — the full text inset.
+     Reads the cell's INTERNAL per-size padding var (4.3.0 replaced the public
+     `--uxm-editable-cell-padding-x` with `--_uxm-editable-cell-padding-x`,
+     resolved from the small/medium presets). It is set by the size class on
+     this very element, so it is always in scope here; the 8px fallback matches
+     the small preset's default. Reading a size-resolved value is the point —
+     a hardcoded inset would misalign `size="medium"` cells by 4px. */
+  margin-inline-start: calc(-1 * var(--_uxm-editable-cell-padding-x, 8px) - 1px);
 }
 
 .uxm-form-field__hint {
