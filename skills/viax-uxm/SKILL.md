@@ -457,7 +457,9 @@ skill:
   per-tint colour tokens `--uxm-form-field-label-tint-*`) and `labelVariant`
   (`default | overline`, caps eyebrow with its own `--uxm-form-field-overline-*` typography
   tokens; colour comes from the tint). An `EditableCell` child is auto-outdented to align
-  its text with the label edge.
+  its text with the label edge. Note for workbench themes: the single `labelColor` knob the
+  tints replaced is migrated to the **strong** tint (the old, and still default, label
+  colour), so a theme saved before the split keeps the look it had.
 
 ## Workflow
 

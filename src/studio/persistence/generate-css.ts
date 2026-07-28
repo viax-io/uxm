@@ -488,6 +488,17 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     tintStrongColor: '--uxm-form-field-label-tint-strong',
     tintDefaultColor: '--uxm-form-field-label-tint-default',
     tintMutedColor: '--uxm-form-field-label-tint-muted',
+    // MIGRATION — `labelColor` was the single label-colour knob the tints
+    // replaced. It is gone from the registry, but `generateOverridesCss` emits
+    // whatever is PERSISTED, and its generic fallback lands on
+    // `--uxm-form-field-label-color` — the very var the tint classes assign,
+    // at equal specificity from a later sheet. Left alone it would beat ALL
+    // THREE tints and silently disable them, with no knob left in the panel to
+    // notice or clear it. Routed to the STRONG tint instead: strong was the
+    // old (only) label colour and is still the default tone, so a pre-split
+    // theme keeps the exact look it saved. A newly-saved `tintStrongColor`
+    // still wins — overrides are appended, so it emits after this one.
+    labelColor: '--uxm-form-field-label-tint-strong',
   },
   'icon-tile': {
     borderRadius: '--uxm-icon-tile-radius',
