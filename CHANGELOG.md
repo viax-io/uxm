@@ -1,3 +1,19 @@
+# [4.3.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.2.0...v4.3.0) (2026-07-28)
+
+
+### Bug Fixes
+
+* **editable-cell:** add a pre-lh fallback under the empty-cell height floor ([b8e9042](https://gitlab.viax.tech/services-viax/uxm/commit/b8e90421d8a1efe4d51fe85ec6f810ee70c88a70))
+* **editable-cell:** make the small Font Size knob honest about inheriting ([91410c4](https://gitlab.viax.tech/services-viax/uxm/commit/91410c4dd3ca3d29a612481b137eabe40504a4f9))
+* **editable-cell:** take gutter buttons out of the tab order; theme the ✕ ([b3e08f0](https://gitlab.viax.tech/services-viax/uxm/commit/b3e08f0fe4bd3acff8cd9279ed8c2702162e28b5))
+* **studio:** keep retired editable-cell dimension keys mapped so they stay inert ([5dba675](https://gitlab.viax.tech/services-viax/uxm/commit/5dba675cf8aec9f63bf0b93b76253d5b6e160920))
+
+
+### Features
+
+* **editable-cell:** clear affordance for every editor type, on by default ([7b15ca9](https://gitlab.viax.tech/services-viax/uxm/commit/7b15ca9476a8eede83269109c2d190c318a7984a))
+* **editable-cell:** size presets with symmetric per-size theming ([0363e1a](https://gitlab.viax.tech/services-viax/uxm/commit/0363e1a9df67edab8341a6899c4df03d26be663d))
+
 # [4.2.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.1.2...v4.2.0) (2026-07-27)
 
 
