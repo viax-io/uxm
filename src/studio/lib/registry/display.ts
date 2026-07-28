@@ -226,25 +226,28 @@ export const displayDefs: ComponentDef[] = [
       { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'rgba(0, 0, 0, 0.12)', section: 'shadow' },
       { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 20, min: 0, max: 48, step: 1, unit: 'px', section: 'shadow' },
       { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 6, min: 0, max: 24, step: 1, unit: 'px', section: 'shadow' },
-      // Two gaps come from composition, not a layout mode on Card: the card's
-      // own `gap` spaces its direct children (header ↔ content group), and the
-      // nested Stack/Cluster's gap spaces the rows. Row Gap is ONE shared knob
-      // for both content layouts — persistence maps it to both atoms' gap vars
-      // on `.uxm-card` (the contextual default for either atom inside cards).
+      // The card owns ONE gap: the distance between its direct children (a
+      // header and the content group below it). The rows INSIDE the content
+      // group are spaced by the nested Stack/Cluster, which already has its own
+      // Gap knob — so there is deliberately no Row Gap here. A Card-side row-gap
+      // knob could only write the sibling atom's var, which loses to that atom's
+      // own knob (a directly-set custom property beats an inherited one) and
+      // would leak to every Stack/Cluster at any depth inside any card.
       { key: 'gap', label: 'Header Gap', control: 'number', defaultValue: 20, min: 0, max: 48, step: 2, unit: 'px', section: 'spacing' },
-      { key: 'rowGap', label: 'Row Gap', control: 'number', defaultValue: 12, min: 0, max: 48, step: 2, unit: 'px', section: 'spacing' },
-      // Layout-specific knobs — scoped to the Content Layout variant (same
-      // "Per <variant> · <value>" pattern as Calendar's per-cell-state knobs).
-      // Spacing above is shared; alignment/distribution differ per layout.
-      { key: 'stackAlign', label: 'Align', control: 'select', defaultValue: 'stretch', options: ['stretch', 'start', 'center', 'end'], section: 'stack', showWhen: { contentLayout: 'stack' } },
-      { key: 'clusterAlign', label: 'Align', control: 'select', defaultValue: 'center', options: ['center', 'start', 'end', 'baseline'], section: 'cluster', showWhen: { contentLayout: 'cluster' } },
-      { key: 'justify', label: 'Justify', control: 'select', defaultValue: 'start', options: ['start', 'center', 'end', 'between'], section: 'cluster', showWhen: { contentLayout: 'cluster' } },
-      { key: 'wrap', label: 'Wrap', control: 'toggle', defaultValue: true, section: 'cluster', showWhen: { contentLayout: 'cluster' } },
     ],
-    // Content layout is a VARIANT, not a saved style: the preview swaps a
-    // nested Stack/Cluster to show each arrangement. Variant selections are
-    // ephemeral preview state (never persisted to the instance), which is
-    // exactly right for "stack on one page, cluster on another".
+    // Content layout and its alignment are VARIANTS, not saved styles: the
+    // preview swaps a nested Stack/Cluster to show each arrangement. Variant
+    // selections are ephemeral preview state (never persisted to the instance),
+    // which is exactly right for "stack on one page, cluster on another".
+    //
+    // Alignment/justify/wrap MUST live here rather than in styleProperties:
+    // Stack and Cluster drive them with modifier CLASSES (`.uxm-stack--center`,
+    // `.uxm-cluster--align-*`, `--justify-*`, `--wrap`), so there is no CSS
+    // variable a saved override could ever write — as styleProperties they
+    // emitted dead `--uxm-card-{stack-align,justify,wrap}` vars that nothing
+    // reads, while still appearing to work in the canvas (the preview passes
+    // them as props). Stack's and Cluster's own registry defs already model
+    // these same axes as layoutVariants; this matches them.
     layoutVariants: [
       {
         key: 'contentLayout',
@@ -254,6 +257,55 @@ export const displayDefs: ComponentDef[] = [
           { value: 'cluster', label: 'Cluster' },
         ],
         defaultValue: 'stack',
+      },
+      {
+        key: 'stackAlign',
+        label: 'Align',
+        options: [
+          { value: 'stretch', label: 'Stretch' },
+          { value: 'start', label: 'Start' },
+          { value: 'center', label: 'Center' },
+          { value: 'end', label: 'End' },
+        ],
+        defaultValue: 'stretch',
+        showWhen: { contentLayout: 'stack' },
+      },
+      {
+        key: 'clusterAlign',
+        label: 'Align',
+        options: [
+          { value: 'center', label: 'Center' },
+          { value: 'start', label: 'Start' },
+          { value: 'end', label: 'End' },
+          { value: 'baseline', label: 'Baseline' },
+        ],
+        defaultValue: 'center',
+        showWhen: { contentLayout: 'cluster' },
+      },
+      {
+        key: 'justify',
+        label: 'Justify',
+        options: [
+          { value: 'start', label: 'Start' },
+          { value: 'center', label: 'Center' },
+          { value: 'end', label: 'End' },
+          { value: 'between', label: 'Between' },
+        ],
+        defaultValue: 'start',
+        showWhen: { contentLayout: 'cluster' },
+      },
+      {
+        // A variant is a string union, so the boolean `wrap` prop becomes an
+        // explicit two-option pick (it was a `toggle` styleProperty that
+        // emitted a meaningless `--uxm-card-wrap: 1`).
+        key: 'wrap',
+        label: 'Wrap',
+        options: [
+          { value: 'wrap', label: 'Wrap' },
+          { value: 'nowrap', label: 'No wrap' },
+        ],
+        defaultValue: 'wrap',
+        showWhen: { contentLayout: 'cluster' },
       },
     ],
   },

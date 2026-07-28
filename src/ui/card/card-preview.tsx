@@ -40,22 +40,23 @@ export function CardPreview({ styles, variants }: PreviewProps) {
     </FormField>,
   ];
 
-  // The Content Layout variant switches the CONTENT group's arrangement only
-  // — the header above stays stacked on top either way. Row Gap is one shared
-  // knob: persistence maps it to both atoms' gap vars, so both branches read
-  // the same value here too.
+  // The Content Layout variant switches the CONTENT group's arrangement only —
+  // the header above stays stacked on top either way. Alignment comes from
+  // VARIANTS, not styles: Stack/Cluster drive it with modifier classes, so
+  // there's no var a saved override could write (see the registry note). No
+  // `gap` is passed either — the row gap belongs to the nested atom and is
+  // themed by ITS own knob, so leaving it off previews what a consumer gets.
   const content =
     variants.contentLayout === 'cluster' ? (
       <Cluster
-        gap={styles.rowGap as number}
-        align={styles.clusterAlign as 'start' | 'center' | 'end' | 'baseline'}
-        justify={styles.justify as 'start' | 'center' | 'end' | 'between'}
-        wrap={styles.wrap as boolean}
+        align={(variants.clusterAlign as 'start' | 'center' | 'end' | 'baseline') ?? 'center'}
+        justify={(variants.justify as 'start' | 'center' | 'end' | 'between') ?? 'start'}
+        wrap={(variants.wrap ?? 'wrap') === 'wrap'}
       >
         {rows}
       </Cluster>
     ) : (
-      <Stack gap={styles.rowGap as number} align={styles.stackAlign as 'start' | 'center' | 'end' | 'stretch'}>
+      <Stack align={(variants.stackAlign as 'start' | 'center' | 'end' | 'stretch') ?? 'stretch'}>
         {rows}
       </Stack>
     );

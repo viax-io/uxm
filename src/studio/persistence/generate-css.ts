@@ -51,10 +51,12 @@ const PER_COMPONENT_SELECTOR: Record<string, string> = {
   // correct.
 };
 
-// A knob may target several variables (string[]): the emitter writes one
-// declaration per target. Used when one semantic knob themes sibling atoms
-// (e.g. Card's Row Gap → both the Stack and Cluster gap vars).
-const PER_COMPONENT_MAPPING: Record<string, Record<string, string | string[]>> = {
+// One knob → one variable. A multi-target (string[]) form was briefly added so
+// Card's Row Gap could write both the Stack and Cluster gap vars; that was the
+// only use, and it was the wrong shape (see the `card` entry below), so the
+// mapping stays single-target on purpose — a knob that themes a SIBLING atom's
+// var cannot win against that atom's own knob.
+const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   'input-with-icon': {
     backgroundColor: '--uxm-input-with-icon-bg',
     borderColor: '--uxm-input-with-icon-border-color',
@@ -205,16 +207,20 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string | string[]>> =
     borderColor: '--uxm-card-border-color',
     borderRadius: '--uxm-card-radius',
     padding: '--uxm-card-padding',
-    // The spacing knobs collide with REAL_CSS_PROPS (`gap`/`row-gap` would be
-    // emitted as literal properties `.uxm-card` never activates — the card is
-    // only a flex column via the `--gap` modifier). Route them to the vars
-    // the components actually read:
-    // - `gap` ("Header Gap") → the card's own column gap.
-    // - `rowGap` ("Row Gap") → BOTH content-layout atoms' gap vars, emitted on
-    //   `.uxm-card` so the one shared knob cascades as the contextual default
-    //   for a Stack or a Cluster composed inside a card.
+    // `gap` ("Header Gap") collides with REAL_CSS_PROPS — the generic fallback
+    // would emit a literal `gap` property that `.uxm-card` never activates (the
+    // card is only a flex column via the `--gap` modifier). Route it to the var
+    // the modifier actually reads.
+    //
+    // There is deliberately NO Card knob for the CONTENT's row gap. It looks
+    // like it belongs here, but the row gap is owned by the nested Stack /
+    // Cluster, which already have their own Gap knobs — and those emit
+    // `--uxm-stack-gap` DIRECTLY on `.uxm-stack`, where a directly-set custom
+    // property always beats one inherited from `.uxm-card`. A Card-side knob
+    // would therefore lose the moment anyone themed Stack, while also leaking
+    // to every Stack/Cluster at any depth inside any card (custom properties
+    // inherit). One owner per visual property; Card owns only its own gap.
     gap: '--uxm-card-gap',
-    rowGap: ['--uxm-stack-gap', '--uxm-cluster-gap'],
   },
   'toggle-switch': {
     width: '--uxm-toggle-switch-width',
@@ -715,7 +721,7 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string | string[]>> =
   },
 };
 
-function toCSS(key: string, componentId: string): string | string[] {
+function toCSS(key: string, componentId: string): string {
   const componentMapping = PER_COMPONENT_MAPPING[componentId];
   if (componentMapping?.[key]) return componentMapping[key];
 
@@ -851,10 +857,7 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
     for (const [key, value] of entries) {
       const cssProp = toCSS(key, id);
       const cssValue = formatValue(value, key);
-      // A knob may target several variables — one declaration per target.
-      for (const prop of Array.isArray(cssProp) ? cssProp : [cssProp]) {
-        lines.push(`  ${prop}: ${cssValue};`);
-      }
+      lines.push(`  ${cssProp}: ${cssValue};`);
     }
     lines.push('}');
     lines.push('');
