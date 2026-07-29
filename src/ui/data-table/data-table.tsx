@@ -53,8 +53,9 @@ export interface DataTableColumn<T> {
    * editable cells receive it as their max-width (display values truncate
    * with an ellipsis, the editing input scrolls internally instead of
    * widening the column); plain cells truncate with an ellipsis. Without
-   * it, editable cells fall back to the atom's themable Max Width and
-   * plain cells are uncapped.
+   * it, editable cells fall back to the atom's own per-size Max Width
+   * (320px at `size="small"`, uncapped at `"medium"`) and plain cells are
+   * uncapped.
    */
   maxWidth?: number;
 }
@@ -158,11 +159,19 @@ export function DataTable<T>({
                         : undefined
                     }
                     // Column-level cap routes through the atom's own
-                    // max-width var so display truncation, editing ghosts,
-                    // and the input all honor the same limit.
+                    // max-width vars so display truncation, editing ghosts,
+                    // and the input all honor the same limit. Written for BOTH
+                    // sizes on purpose: the cap is per-size in the atom (small
+                    // caps at 320px, medium is uncapped so a side-panel cell
+                    // fills its container), and a column cap must win whichever
+                    // size the cell renders at — today always `small`, but this
+                    // stays correct if a size ever gets passed through.
                     style={
                       c.maxWidth != null
-                        ? ({ '--uxm-editable-cell-max-width': `${c.maxWidth}px` } as CSSProperties)
+                        ? ({
+                            '--uxm-editable-cell-small-max-width': `${c.maxWidth}px`,
+                            '--uxm-editable-cell-medium-max-width': `${c.maxWidth}px`,
+                          } as CSSProperties)
                         : undefined
                     }
                   />

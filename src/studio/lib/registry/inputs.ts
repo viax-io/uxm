@@ -104,7 +104,12 @@ export const inputsDefs: ComponentDef[] = [
       { key: 'mediumPaddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 20, step: 1, unit: 'px', showWhen: { size: 'medium' } },
       { key: 'mediumPaddingY', label: 'Padding Y', control: 'number', defaultValue: 6, min: 0, max: 14, step: 1, unit: 'px', showWhen: { size: 'medium' } },
       { key: 'mediumFontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px', showWhen: { size: 'medium' } },
-      { key: 'maxWidth', label: 'Max Width', control: 'number', defaultValue: 320, min: 120, max: 640, step: 10, unit: 'px' },
+      // Per-size, like every other dimension: a table cell needs a cap so one
+      // long value can't push its column, a side-panel field should just fill
+      // the container. `medium`'s is a select (not a stepper) because its
+      // default is the literal `none` — a number control can't express it.
+      { key: 'smallMaxWidth', label: 'Max Width', control: 'number', defaultValue: 320, min: 120, max: 640, step: 10, unit: 'px', showWhen: { size: 'small' } },
+      { key: 'mediumMaxWidth', label: 'Max Width', control: 'select', defaultValue: 'none', options: ['none', '320px', '400px', '480px', '560px', '640px'], showWhen: { size: 'medium' } },
       { key: 'radius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px' },
       // Display chrome — one knob per peer state, matching the input
       // family's default / hover / focus / disabled convention. Each is

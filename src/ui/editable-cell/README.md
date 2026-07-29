@@ -43,7 +43,7 @@ Inside a `DataTable`, don't compose this by hand — mark the column `editable` 
 | `value` | `string \| number \| string[]` | – | **Required.** Current committed value (`string[]` for multiselect). The atom keeps its own draft while editing. |
 | `onCommit` | `(next) => void \| Promise<void>` | – | **Required.** Fires on commit. Resolve → exit edit mode; reject → red error Banner, cell stays editing for retry. |
 | `type` | `'text' \| 'number' \| 'date' \| 'select' \| 'multiselect'` | `'text'` | Editor type. `number` commits a `Number` (emptied → `''`); `date` commits ISO regardless of `dateFormat`; pickers commit an option `value` / `string[]`. |
-| `size` | `'small' \| 'medium'` | `'small'` | Preset density. `small` = the dense DataTable scale (font inherits via `1em` until pinned); `medium` = the input-family scale (12/6px padding, 14px font) for standalone use in side panels / detail views. There is **no height knob** — height always derives from font-size + padding (a `1lh` floor keeps empty cells one line tall and clickable). |
+| `size` | `'small' \| 'medium'` | `'small'` | Preset density. `small` = the dense DataTable scale (font inherits via `1em` until pinned, width capped at 320px); `medium` = the input-family scale (12/6px padding, 14px font, **no width cap** — fills its container) for standalone use in side panels / detail views. There is **no height knob** — height always derives from font-size + padding (a `1lh` floor keeps empty cells one line tall and clickable). |
 | `dateFormat` | `'mdy' \| 'dmy' \| 'ymd'` | `'ymd'` | Date cells only — drives the rendered value, the empty-cell hint, the input mask, and parsing. Presentation only; storage stays ISO. |
 | `options` | `{ value: string; label: string }[]` | – | Required for `select` / `multiselect`. Display shows the label(s) unless `format` overrides. |
 | `searchable` | `boolean \| 'auto'` | `'auto'` | Pickers only — search box in the panel. `'auto'` reveals it past the shared Listbox threshold (6 options), matching the `Select` atom. |
@@ -81,9 +81,11 @@ Each size owns a symmetric knob set; the base rules read private `--_uxm-editabl
 
 | Variable | Default | Affects |
 |----------|---------|---------|
+| `--uxm-editable-cell-small-max-width` | `320px` | `small` width cap — a long value truncates instead of pushing its table column. |
 | `--uxm-editable-cell-small-padding-x` | `8px` | `small` inline padding (also derives every gutter). |
 | `--uxm-editable-cell-small-padding-y` | `4px` | `small` block padding. |
 | `--uxm-editable-cell-small-font-size` | `1em` (inherit) | `small` font — inherits the surrounding text until pinned (the studio knob is a select defaulting to `inherit`, so an untouched cell keeps reading like the text around it). |
+| `--uxm-editable-cell-medium-max-width` | `none` | `medium` width cap — `none` by default, so the cell fills its container like any input-family field. Pin a px value to cap it. |
 | `--uxm-editable-cell-medium-padding-x` | `12px` | `medium` inline padding. |
 | `--uxm-editable-cell-medium-padding-y` | `6px` | `medium` block padding. |
 | `--uxm-editable-cell-medium-font-size` | `14px` | `medium` font (pinned — standalone contexts have no table scale to inherit). |
@@ -96,7 +98,6 @@ Each size owns a symmetric knob set; the base rules read private `--_uxm-editabl
 |----------|----------------|---------|---------|
 | `--uxm-editable-cell-radius` | – | `4px` | Display cell + editing input radius. |
 | `--uxm-editable-cell-color` | `--color-text` | – | The value's text colour. Pinned, not inherited: primary text is `--color-text` system-wide, so inheriting only let a muted column / dimmed row bleed in. |
-| `--uxm-editable-cell-max-width` | – | `320px` | Column-growth cap; longer values truncate (display) / scroll (editing). |
 | `--uxm-editable-cell-hover-bg` | `--color-surface-alt` | – | Display hover tint. |
 | `--uxm-editable-cell-pencil-color` | `--color-text-muted` | – | Hover pencil / calendar glyph. |
 | `--uxm-editable-cell-chevron-color` | `--color-text-muted` | – | Picker hover chevron. |
@@ -131,6 +132,7 @@ Each size owns a symmetric knob set; the base rules read private `--_uxm-editabl
 
 ## Implementation notes
 
+- **Width.** The cell is `width: 100%` + `box-sizing: border-box`, so it fills the column it sits in up to its per-size cap and its own padding/border stay inside that width — a 600px panel with 16px padding yields a 568px cell. Values that don't fit truncate with an ellipsis in display mode (the editing input scrolls internally instead); the ghosts below carry the same cap so editing can't widen the column past it.
 - **Width-keeper ghosts.** Entering edit mode must not resize an auto-sized table column. The editing wrapper is an `inline-grid` stacking two invisible "ghost" spans (the display content and the live draft) under the input; the ghosts size the track, the input contributes zero intrinsic width and stretches to it. The ghosts mirror the display box's paddings *including* the gutters — a clearable date cell reserves both slots (calendar + ✕). 
 - **Gutters are reserved by modifiers**, not by icon presence (`--clearable`, `--type-date`), so the ✕ appearing/hiding with the draft never shifts text.
 - **Date storage is ISO.** Committed date values are `YYYY-MM-DD` regardless of `dateFormat`; parsing accepts the mask first, ISO as fallback; re-picking the same day or blurring an unchanged date never fires `onCommit`.

@@ -15,10 +15,12 @@
   display: inline-flex;
   align-items: center;
   width: 100%;
-  /* Cap how wide a cell can push its column — values past the cap truncate
-     (display) or scroll inside the input (editing) instead of growing the
-     table unboundedly. Themable via the Max Width knob. */
-  max-width: var(--uxm-editable-cell-max-width, 320px);
+  /* Width cap, per size (see the size presets at the bottom): `small` caps so
+     a long value can't push a table column unboundedly — past the cap it
+     truncates (display) or scrolls inside the input (editing); `medium` has NO
+     cap and simply fills its container, like every other input-family field in
+     a side panel. */
+  max-width: var(--_uxm-editable-cell-max-width, 320px);
   padding: var(--_uxm-editable-cell-padding-y, 4px) var(--_uxm-editable-cell-padding-x, 8px);
   /* PUBLISHED measurement, not a knob: how far the cell's TEXT sits from its
      own box edge (inline padding + the transparent border below). A consumer
@@ -422,7 +424,7 @@
      column past max-width while editing — the input scrolls internally
      instead. A fixed-px max (the var resolves to px) also caps the ghost's
      intrinsic contribution to auto table-column sizing. */
-  max-width: var(--uxm-editable-cell-max-width, 320px);
+  max-width: var(--_uxm-editable-cell-max-width, 320px);
   overflow: hidden;
   padding: var(--_uxm-editable-cell-padding-y, 4px)
     calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px)
@@ -533,13 +535,18 @@
    until a designer pins a px value.
    `medium` = the input-family scale for standalone use (side panels,
    detail views), where a table-dense cell looks undersized next to real
-   inputs. It pins 14px: standalone contexts have no table scale to inherit. */
+   inputs. It pins 14px: standalone contexts have no table scale to inherit,
+   and it drops the width cap entirely (`none`) so the field fills whatever
+   column it sits in — a 600px panel with 16px padding gives a 568px cell,
+   `border-box`, its own padding inside that. */
 .uxm-editable-cell.uxm-editable-cell--small {
+  --_uxm-editable-cell-max-width: var(--uxm-editable-cell-small-max-width, 320px);
   --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-small-padding-x, 8px);
   --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-small-padding-y, 4px);
   font-size: var(--uxm-editable-cell-small-font-size, 1em);
 }
 .uxm-editable-cell.uxm-editable-cell--medium {
+  --_uxm-editable-cell-max-width: var(--uxm-editable-cell-medium-max-width, none);
   --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-medium-padding-x, 12px);
   --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-medium-padding-y, 6px);
   font-size: var(--uxm-editable-cell-medium-font-size, 14px);

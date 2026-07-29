@@ -23,7 +23,10 @@ const sectionLabel = {
 
 function buildVars(styles: Styles): CSSProperties {
   return {
-    '--uxm-editable-cell-max-width': `${styles.maxWidth ?? 320}px`,
+    // Per-size width caps. `medium`'s is passed verbatim (not px-suffixed):
+    // its default is the literal `none`, i.e. fill the container.
+    '--uxm-editable-cell-small-max-width': `${styles.smallMaxWidth ?? 320}px`,
+    '--uxm-editable-cell-medium-max-width': (styles.mediumMaxWidth as string) ?? 'none',
     '--uxm-editable-cell-radius': `${styles.radius}px`,
     // Symmetric per-size dimension knobs — each set is read only by its own
     // size modifier, so writing both alongside each other is harmless.

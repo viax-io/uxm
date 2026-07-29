@@ -464,9 +464,8 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     // resolve via the generic `--uxm-editable-cell-{kebab(key)}` fallback in
     // toCSS; only the shared maxWidth needs an explicit entry (it's in
     // REAL_CSS_PROPS, so the fallback would emit a real CSS property).
-    maxWidth: '--uxm-editable-cell-max-width',
     // RETIRED knobs, kept mapped on purpose. The per-size split replaced these
-    // three, but `generateOverridesCss` emits whatever keys are PERSISTED — not
+    // four, but `generateOverridesCss` emits whatever keys are PERSISTED — not
     // what the registry currently declares — so a config saved before the split
     // still carries them. Without an entry here they'd fall through to
     // REAL_CSS_PROPS / the paddingX-paddingY special case in toCSS and emit
@@ -479,6 +478,11 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     minHeight: '--uxm-editable-cell-min-height',
     paddingX: '--uxm-editable-cell-padding-x',
     paddingY: '--uxm-editable-cell-padding-y',
+    // `maxWidth` joined them when the cap went per-size: it is in
+    // REAL_CSS_PROPS, so without this it would emit a real `max-width` that
+    // pins BOTH presets (and would silently re-cap `medium`, whose whole point
+    // is filling its container).
+    maxWidth: '--uxm-editable-cell-max-width',
   },
   'empty-state': {
     padding: '--uxm-empty-state-padding',

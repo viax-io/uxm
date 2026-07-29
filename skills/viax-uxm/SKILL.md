@@ -453,6 +453,13 @@ skill:
   panel is open, the trigger paints the same card surface + accent border + focus halo as the
   text/number/date editing input (same `--uxm-editable-cell-input-*` vars) — "being edited"
   reads identically across all five editor types.
+- **`EditableCell`'s width cap is per size.** `small` keeps the 320px cap (a long value must not
+  push a table column — it truncates with an ellipsis instead); `medium` has **no cap** and fills
+  its container, like every other input-family field in a side panel (`width: 100%` +
+  `border-box`, so a 600px panel with 16px padding gives a 568px cell, its own padding inside).
+  Knobs are `--uxm-editable-cell-{small|medium}-max-width`. `DataTableColumn.maxWidth` writes
+  both, so a column cap still wins. ⚠️ The shared `--uxm-editable-cell-max-width` is retired — a
+  pre-split saved override of Max Width no longer applies and must be re-saved per size.
 - **`EditableCell`'s value colour is now pinned, not inherited.** The cell (and a picker's
   trigger) reads `--uxm-editable-cell-color` with `--color-text` as the fallback, exposed as a
   **Text Color** knob beside Placeholder Color. Font-size still inherits by design (a cell must
