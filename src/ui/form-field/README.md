@@ -78,6 +78,8 @@ Exported as string unions so consumers can build toggle controls without re-decl
 | `--uxm-form-field-overline-weight` | – | `600` | Overline label font weight. |
 | `--uxm-form-field-overline-letter-spacing` | – | `0.06em` | Overline label letter spacing. |
 
+An `EditableCell` child is outdented by a negative margin so its **text** lands on the label's edge while its hover pill bleeds into the gutter. The distance is not FormField's to know: it reads `--uxm-editable-cell-text-inset`, which `EditableCell` publishes as its own text-to-box-edge measurement. Right-aligned cells are outdented on the trailing edge instead; centered cells aren't outdented at all. Boxed inputs (`TextInput` etc.) are never outdented — their visible border makes the inset intentional.
+
 ## Design tokens (MODO-configurable)
 
 | Token | Group / name | Used for |

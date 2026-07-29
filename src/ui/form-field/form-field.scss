@@ -90,20 +90,31 @@
 
 /* Text-like inline controls (EditableCell's display state) carry their own
    horizontal padding as a hover affordance. Inside a labelled field, outdent
-   the cell by that padding so its TEXT sits on the label's edge — the hover
+   the cell by that inset so its TEXT sits on the label's edge — the hover
    pill bleeds into the gutter instead of pushing the text off the content
    grid. Scoped to FormField on purpose: standalone/table cells align against
    the cell's own padding and must NOT be outdented. Boxed inputs (TextInput
-   etc.) are untouched — their visible border makes the inset intentional. */
+   etc.) are untouched — their visible border makes the inset intentional.
+
+   The distance comes from `--uxm-editable-cell-text-inset`, which the cell
+   PUBLISHES for exactly this (see editable-cell.scss). Deriving it here from
+   the cell's own padding var instead would couple this rule to another atom's
+   private spacing: a rename or a changed default there leaves a CSS var
+   fallback silently standing in, and a wrong outdent never errors. One atom
+   owns the measurement, this rule just negates it. */
 .uxm-form-field__control > .uxm-editable-cell {
-  /* padding-x + the cell's 1px transparent border — the full text inset.
-     Reads the cell's INTERNAL per-size padding var (4.3.0 replaced the public
-     `--uxm-editable-cell-padding-x` with `--_uxm-editable-cell-padding-x`,
-     resolved from the small/medium presets). It is set by the size class on
-     this very element, so it is always in scope here; the 8px fallback matches
-     the small preset's default. Reading a size-resolved value is the point —
-     a hardcoded inset would misalign `size="medium"` cells by 4px. */
-  margin-inline-start: calc(-1 * var(--_uxm-editable-cell-padding-x, 8px) - 1px);
+  margin-inline-start: calc(-1 * var(--uxm-editable-cell-text-inset, 9px));
+}
+/* Right-aligned cells anchor their text to the trailing edge, so the outdent
+   has to move with it — otherwise the leading side gets pulled off-grid and
+   the text stays inset. Centered cells anchor to neither edge and get no
+   outdent at all. */
+.uxm-form-field__control > .uxm-editable-cell--align-right {
+  margin-inline-start: 0;
+  margin-inline-end: calc(-1 * var(--uxm-editable-cell-text-inset, 9px));
+}
+.uxm-form-field__control > .uxm-editable-cell--align-center {
+  margin-inline-start: 0;
 }
 
 .uxm-form-field__hint {
