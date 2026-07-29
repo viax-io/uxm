@@ -440,7 +440,7 @@ skill:
   out. Related fix: `format` is no longer called for an empty value — a cleared cell renders
   its `placeholder` (previously a Tag/Badge `format` would paint an empty pill).
 
-### New in 4.4.0
+### Unreleased
 
 <!-- Notes for changes merged but not yet published. The release pipeline renames
      this heading to "New in X.Y.Z" and stamps the version/count markers
@@ -448,6 +448,13 @@ skill:
      "### Unreleased" heading behind for the next MR: the stamper only matches that
      exact string, so appending notes under an already-stamped "New in X.Y.Z"
      heading silently mislabels them and they never get re-stamped. -->
+
+- **`EditableCell` open pickers now wear the editing chrome.** While a select / multiselect
+  panel is open, the trigger paints the same card surface + accent border + focus halo as the
+  text/number/date editing input (same `--uxm-editable-cell-input-*` vars) — "being edited"
+  reads identically across all five editor types.
+
+### New in 4.4.0
 
 - **Card**: `padding` (any value) and opt-in column `gap` between the card's direct
   children (`number | string | true`; `true` = themed `--uxm-card-gap` default) — content

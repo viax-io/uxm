@@ -5,7 +5,7 @@ An inline-editable cell: renders as plain text until clicked, then swaps in the 
 Three modes:
 
 - **Display** (default) — the formatted value as a button-styled text run; hover reveals the affordance glyph (pencil for text/number/date, chevron for the pickers). Click / Enter / Space enters edit mode.
-- **Editing** — a focused, select-all'd input replaces the display (date pairs it with a `Calendar` popover; the pickers open a `Listbox`/`MultiListbox` panel instead of a text input). Enter commits, Esc cancels, blur commits.
+- **Editing** — a focused, select-all'd input replaces the display (date pairs it with a `Calendar` popover; the pickers open a `Listbox`/`MultiListbox` panel instead of a text input, and while the panel is open the trigger takes the same editing chrome — card surface, accent border, focus halo — so "being edited" reads identically across all five types). Enter commits, Esc cancels, blur commits.
 - **Submitting** — the input is disabled while an async `onCommit` is pending.
 
 Problems never change the row's height: they ride in a `Popover`-anchored compact `Banner` under the cell — **warning** (yellow) for recoverable input problems (`validate` failures, `required` violations, unparseable drafts), **error** (red) for a rejected `onCommit`. Either way the cell stays in edit mode for correction / retry.
@@ -119,7 +119,7 @@ Each size owns a symmetric knob set; the base rules read private `--_uxm-editabl
 |-----------------|---------|--------|
 | Display | default | Transparent text run; hover tint + glyph fade-in. |
 | Focus | keyboard | Accent border + 2px offset ring — the family focus language. |
-| Editing | click / Enter / Space | TextInput-look input, auto-focused + select-all'd. |
+| Editing | click / Enter / Space | TextInput-look input, auto-focused + select-all'd. Open pickers paint the same chrome on their trigger (`--open`, same `--uxm-editable-cell-input-*` vars). |
 | Submitting | pending `onCommit` | Input disabled until the promise settles. |
 | Warning | `validate` / `required` / bad draft | Yellow input border + compact Banner in a popover under the cell. |
 | Error | rejected `onCommit` | Red input border + Banner; input refocused for retry. |

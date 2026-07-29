@@ -225,6 +225,18 @@
   border-radius: var(--uxm-editable-cell-radius, 4px);
   cursor: pointer;
   text-align: inherit;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+/* Open picker = this cell's "editing" state. Mirror the text/number/date
+   editing input's chrome exactly (same vars: card surface, accent border,
+   TextInput focus halo) so a cell being edited reads identically across all
+   five editor types instead of the picker staying a bare text run. */
+.uxm-editable-cell--open .uxm-editable-cell__select-trigger {
+  color: var(--uxm-editable-cell-input-color, var(--color-text));
+  background-color: var(--uxm-editable-cell-input-bg, var(--color-card));
+  border-color: var(--uxm-editable-cell-input-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-editable-cell-focus-ring, var(--color-accent));
+  outline-offset: 2px;
 }
 /* Calendar toggle inside the date editing cell — absolutely positioned in the
    input's reserved trailing gutter (like the display pencil), so it overlays
