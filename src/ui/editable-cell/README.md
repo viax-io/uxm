@@ -79,12 +79,14 @@ All theming follows the two-layer model: `var(--uxm-editable-cell-*, var(--color
 
 Each size owns a symmetric knob set; the base rules read private `--_uxm-editable-cell-*` pipe vars that the size modifiers (double-class, specificity `(0,2,0)`) re-point.
 
+In the studio both sizes expose the same control for the same property (Font Size and Max Width are dropdowns for `small` and `medium` alike) — only the default differs, because each has a keyword value no numeric stepper can express: `small`'s font is `inherit` and `medium`'s cap is `none`.
+
 | Variable | Default | Affects |
 |----------|---------|---------|
 | `--uxm-editable-cell-small-max-width` | `320px` | `small` width cap — a long value truncates instead of pushing its table column. |
 | `--uxm-editable-cell-small-padding-x` | `8px` | `small` inline padding (also derives every gutter). |
 | `--uxm-editable-cell-small-padding-y` | `4px` | `small` block padding. |
-| `--uxm-editable-cell-small-font-size` | `1em` (inherit) | `small` font — inherits the surrounding text until pinned (the studio knob is a select defaulting to `inherit`, so an untouched cell keeps reading like the text around it). |
+| `--uxm-editable-cell-small-font-size` | `1em` (inherit) | `small` font — inherits the surrounding text until pinned. |
 | `--uxm-editable-cell-medium-max-width` | `none` | `medium` width cap — `none` by default, so the cell fills its container like any input-family field. Pin a px value to cap it. |
 | `--uxm-editable-cell-medium-padding-x` | `12px` | `medium` inline padding. |
 | `--uxm-editable-cell-medium-padding-y` | `6px` | `medium` block padding. |

@@ -28,7 +28,11 @@ export interface StyleProperty {
   max?: number;
   step?: number;
   unit?: string;
-  showWhen?: Record<string, string>;
+  /** Variant scoping. A string matches one variant value; a string[] matches
+   *  any of several (same shape as a LayoutVariant option's `showWhen`) — use
+   *  the array form for "this knob applies to several types / states" instead
+   *  of a `'a|b'` string, which is compared verbatim and can never match. */
+  showWhen?: Record<string, string | string[]>;
   section?: string;
 }
 

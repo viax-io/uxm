@@ -209,14 +209,19 @@ export function PropertiesPanel({
   // Shared variant-scope filter: an entry with `showWhen` only renders
   // when the current value of every named variant matches. Used by both
   // style properties (existing) and event specs (Events tab).
-  const matchesShowWhen = (showWhen?: Record<string, string>) => {
+  const matchesShowWhen = (showWhen?: Record<string, string | string[]>) => {
     if (!showWhen) return true;
     for (const [vKey, vVal] of Object.entries(showWhen)) {
       const current = resolve(
         vKey,
         def.layoutVariants.find((v) => v.key === vKey)?.defaultValue ?? '',
       ) as string;
-      if (current !== vVal) return false;
+      // A string[] means "match any of" — the same rule the per-option
+      // matcher below uses. Without it a multi-value clause has to be
+      // spelled as one string, which is compared verbatim and never matches
+      // (that silently hid four editable-cell knobs).
+      const allowed = Array.isArray(vVal) ? vVal : [vVal];
+      if (!allowed.includes(current)) return false;
     }
     return true;
   };

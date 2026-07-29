@@ -106,7 +106,9 @@ function findPairs(
     if (!p.showWhen) return true;
     for (const [vKey, vVal] of Object.entries(p.showWhen)) {
       const fallback = def.layoutVariants.find((v) => v.key === vKey)?.defaultValue ?? '';
-      if (resolve(vKey, fallback) !== vVal) return false;
+      // string[] = "match any of", mirroring the properties panel's matcher.
+      const allowed = Array.isArray(vVal) ? vVal : [vVal];
+      if (!allowed.includes(resolve(vKey, fallback) as string)) return false;
     }
     return true;
   });

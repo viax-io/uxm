@@ -457,9 +457,9 @@ skill:
   push a table column — it truncates with an ellipsis instead); `medium` has **no cap** and fills
   its container, like every other input-family field in a side panel (`width: 100%` +
   `border-box`, so a 600px panel with 16px padding gives a 568px cell, its own padding inside).
-  Knobs are `--uxm-editable-cell-{small|medium}-max-width`. `DataTableColumn.maxWidth` writes
-  both, so a column cap still wins. ⚠️ The shared `--uxm-editable-cell-max-width` is retired — a
-  pre-split saved override of Max Width no longer applies and must be re-saved per size.
+  Knobs are `--uxm-editable-cell-{small|medium}-max-width` (medium's is a select defaulting to
+  `none`). ⚠️ The shared `--uxm-editable-cell-max-width` is retired — a pre-split saved override
+  of Max Width no longer applies and must be re-saved per size.
 - **`EditableCell`'s value colour is now pinned, not inherited.** The cell (and a picker's
   trigger) reads `--uxm-editable-cell-color` with `--color-text` as the fallback, exposed as a
   **Text Color** knob beside Placeholder Color. Font-size still inherits by design (a cell must
@@ -469,7 +469,11 @@ skill:
   renders a ✕ on the trigger, inboard of the chevron, revealed **while the panel is open**
   (a picker's editing surface, mirroring where the text/number/date ✕ lives) and kept out of
   the tab order; it commits `""` / `[]` directly — matching the standalone
-  `Select`/`PillSelect` convention, on both sizes. The dropdown-footer Clear stays.
+  `Select`/`PillSelect` convention, on both sizes. The dropdown-footer Clear stays. In the
+  studio both the open chrome and this ✕ are tunable via the new `Open` state (the pickers'
+  counterpart to `Editing`), and the previously unreachable Pencil / Chevron / Clear colour
+  knobs now render — `styleProperties.showWhen` accepts a `string[]` ("match any of"), so the
+  old `'!select|multiselect'` clauses that could never match are gone.
 
 ### New in 4.4.0
 
