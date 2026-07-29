@@ -1,3 +1,23 @@
+# [4.4.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.3.0...v4.4.0) (2026-07-29)
+
+
+### Bug Fixes
+
+* **card:** hoist toLen to module scope ([50d6cea](https://gitlab.viax.tech/services-viax/uxm/commit/50d6cea12a0cea49d472c727cfa5f05c41409b53))
+* **form-field:** align overline's BEM class with the tint axis ([35634a3](https://gitlab.viax.tech/services-viax/uxm/commit/35634a3471e0cd0efccf7aa53072580ec9a20ac4))
+* **form-field:** follow editable-cell's per-size padding var in the outdent ([399ec3d](https://gitlab.viax.tech/services-viax/uxm/commit/399ec3de50cdcb5521cf1de85347a98508bc0a4b))
+* **form-field:** outdent EditableCell via a published inset, not its padding var ([4fccadc](https://gitlab.viax.tech/services-viax/uxm/commit/4fccadcb6becb8e01b15da5f47bb5cf1be7982e7))
+* **form-field:** rename labelTone to labelTint for consistency ([c12a902](https://gitlab.viax.tech/services-viax/uxm/commit/c12a902f4263b0b635bc1506d59ad3ddac4ada67))
+* **studio:** make Card's content-layout axes variants; drop the Row Gap knob ([6a2d065](https://gitlab.viax.tech/services-viax/uxm/commit/6a2d0651a848264f1da6b740549c42828e11f234))
+* **studio:** map card and form-field knobs to their real CSS vars ([e471456](https://gitlab.viax.tech/services-viax/uxm/commit/e4714565f4eca30db2dda8b043f5107493a0f700))
+* **studio:** migrate the retired form-field labelColor knob into the strong tint ([7657c9a](https://gitlab.viax.tech/services-viax/uxm/commit/7657c9af5b47fb70991067f8855f41ba9273ce62))
+
+
+### Features
+
+* **card:** add opt-in column gap, tunable theme-aware shadow, layout variants ([5bee7c0](https://gitlab.viax.tech/services-viax/uxm/commit/5bee7c0b14a02603b8a33dbc3738f37cdc08ed5e))
+* **form-field:** add label tint and overline variant with per-tint theming ([0ef3b26](https://gitlab.viax.tech/services-viax/uxm/commit/0ef3b2628ad90e4400cd0d1492d54031f5be73fa))
+
 # [4.3.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.2.0...v4.3.0) (2026-07-28)
 
 
