@@ -99,7 +99,7 @@ export function FormField({
         'uxm-form-field',
         `uxm-form-field--${labelPosition}`,
         `uxm-form-field--label-${labelTint}`,
-        labelVariant === 'overline' && 'uxm-form-field--overline',
+        labelVariant === 'overline' && 'uxm-form-field--label-overline',
         className,
       )}
       {...rest}
