@@ -25,6 +25,8 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   gap?: number | string | boolean;
 }
 
+const toLen = (v: number | string): string => (typeof v === 'number' ? `${v}px` : v);
+
 /**
  * `Card` — a surface primitive (background, border, radius, padding, optional
  * shadow) with an optional vertical `gap` between its direct children. It is
@@ -40,7 +42,6 @@ export function Card({
   style,
   ...rest
 }: CardProps) {
-  const toLen = (v: number | string): string => (typeof v === 'number' ? `${v}px` : v);
   const mergedStyle: CSSProperties = {
     ...(padding != null ? { ['--uxm-card-padding' as string]: toLen(padding) } : null),
     // Explicit gap value → per-instance override of the `--uxm-card-gap` var
