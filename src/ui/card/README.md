@@ -41,8 +41,8 @@ function Example() {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `shadow` | `boolean` | `false` | Adds `uxm-card--shadow`. The shadow itself is built from the `--uxm-card-shadow-*` vars (colour / blur / vertical offset) — tune it rather than accepting a fixed elevation. |
-| `padding` | `number \| string` | – (CSS `24px`) | Inner padding. Number → px, string passthrough. Any value — no fixed scale. Sets `--uxm-card-padding`. |
-| `gap` | `number \| string \| boolean` | – | Vertical gap between the card's direct children. When set, adds the `uxm-card--gap` modifier (flex column). A number/string sets `--uxm-card-gap` per instance; `true` opts into the column with the themed default gap (workbench-editable). Number → px. |
+| `padding` | `number \| string` | – (CSS `24px`) | Inner padding. Number → px, string passthrough. Any value — no fixed scale. Sets `--uxm-card-padding` as an inline style, which beats any stylesheet rule — including a saved theme override for this instance. Omit the prop (it stays unset) to inherit the theme. |
+| `gap` | `number \| string \| boolean` | – | Vertical gap between the card's direct children. When set, adds the `uxm-card--gap` modifier (flex column). A number/string sets `--uxm-card-gap` per instance as an inline style, which likewise overrides a saved theme for this instance; `true` opts into the column while leaving the var unset, so the themed default (workbench-editable) applies instead. Number → px. |
 | `className` | `string` | – | Merged with `uxm-card` via `cn`. |
 | `children` | `ReactNode` | – | Card content — arbitrary. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div className="uxm-card">`. |
