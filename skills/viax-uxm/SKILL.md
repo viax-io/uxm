@@ -463,7 +463,7 @@ skill:
   `--shadow-card` is still exported as a public
   elevation alias; Card just no longer reads it (the composition needs a colour, not a
   whole `box-shadow`).
-- **FormField**: two orthogonal label axes — `labelTone` (`strong | default | muted`,
+- **FormField**: two orthogonal label axes — `labelTint` (`strong | default | muted`,
   per-tint colour tokens `--uxm-form-field-label-tint-*`) and `labelVariant`
   (`default | overline`, caps eyebrow with its own `--uxm-form-field-overline-*` typography
   tokens; colour comes from the tint). An `EditableCell` child is auto-outdented to align

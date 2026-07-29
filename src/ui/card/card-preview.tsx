@@ -14,7 +14,7 @@ export function CardPreview({ styles, variants }: PreviewProps) {
   // FormField README prescribes. (Want divided rows? Compose the Divider
   // atom between rows — it's not a Card concern.)
   const rows = [
-    <FormField key="name" label="Name" labelPosition="side" labelTone="muted">
+    <FormField key="name" label="Name" labelPosition="side" labelTint="muted">
       <EditableCell
         type="text"
         value={name}
@@ -22,7 +22,7 @@ export function CardPreview({ styles, variants }: PreviewProps) {
         onCommit={(next) => setName(String(next))}
       />
     </FormField>,
-    <FormField key="status" label="Status" labelPosition="side" labelTone="muted">
+    <FormField key="status" label="Status" labelPosition="side" labelTint="muted">
       <EditableCell
         type="text"
         value={status}
@@ -30,7 +30,7 @@ export function CardPreview({ styles, variants }: PreviewProps) {
         onCommit={(next) => setStatus(String(next))}
       />
     </FormField>,
-    <FormField key="owner" label="Owner" labelPosition="side" labelTone="muted">
+    <FormField key="owner" label="Owner" labelPosition="side" labelTint="muted">
       <EditableCell
         type="text"
         value={owner}

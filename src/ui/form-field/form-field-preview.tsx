@@ -2,7 +2,7 @@ import type { PreviewProps } from '@/previews/types';
 import {
   FormField,
   type FormFieldLabelPosition,
-  type FormFieldLabelTone,
+  type FormFieldLabelTint,
   type FormFieldLabelVariant,
 } from '@/ui';
 import { TextInput } from '@/ui';
@@ -23,7 +23,7 @@ export function FormFieldPreview({ styles, variants }: PreviewProps) {
   // rather than reimplementing the markup.
   const labelPosition = ((variants.labelPosition as string) ?? 'top') as FormFieldLabelPosition;
   const labelVariant = ((variants.labelVariant as string) ?? 'default') as FormFieldLabelVariant;
-  const labelTone = ((variants.labelTone as string) ?? 'strong') as FormFieldLabelTone;
+  const labelTint = ((variants.labelTint as string) ?? 'strong') as FormFieldLabelTint;
   const cssVars = {
     // Per-tint colours — each knob themes what its tint MEANS; the active
     // tint (a variant) picks which one the label reads.
@@ -47,7 +47,7 @@ export function FormFieldPreview({ styles, variants }: PreviewProps) {
       <FormField
         labelPosition={labelPosition}
         labelVariant={labelVariant}
-        labelTone={labelTone}
+        labelTint={labelTint}
         style={cssVars}
         label="Display name"
         hint="Shown to teammates in the sidebar and recent activity."

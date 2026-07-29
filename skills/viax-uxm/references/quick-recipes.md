@@ -502,10 +502,10 @@ export function EntityDetailCard() {
       </div>
 
       <Stack gap={12}>
-        <FormField label="Name" labelPosition="side" labelTone="muted">
+        <FormField label="Name" labelPosition="side" labelTint="muted">
           <EditableCell type="text" value={name} aria-label="Name" onCommit={(v) => setName(String(v))} />
         </FormField>
-        <FormField label="Status" labelPosition="side" labelTone="muted">
+        <FormField label="Status" labelPosition="side" labelTint="muted">
           <EditableCell type="text" value={status} aria-label="Status" onCommit={(v) => setStatus(String(v))} />
         </FormField>
       </Stack>
@@ -515,7 +515,7 @@ export function EntityDetailCard() {
 ```
 
 Caps "eyebrow" labels above editable values: swap to `labelVariant="overline"` (typography
-only — the colour still comes from `labelTone`). Read-only metadata keeps using
+only — the colour still comes from `labelTint`). Read-only metadata keeps using
 `PropertyField`/`PropertyGrid`. Hairlines between rows: compose `Divider` between the
 `FormField`s — deliberately not a Card prop.
 

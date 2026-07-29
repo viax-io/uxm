@@ -6,7 +6,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 export type FormFieldLabelPosition = 'top' | 'side';
 
-export type FormFieldLabelTone = 'default' | 'muted' | 'strong';
+export type FormFieldLabelTint = 'default' | 'muted' | 'strong';
 
 export type FormFieldLabelVariant = 'default' | 'overline';
 
@@ -29,13 +29,13 @@ export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
    * label variants: the variant owns typography, the tint owns colour. Each
    * tint's colour is themable via `--uxm-form-field-label-tint-*`.
    */
-  labelTone?: FormFieldLabelTone;
+  labelTint?: FormFieldLabelTint;
   /**
    * Label typography. `"default"` keeps the normal label; `"overline"` is the
    * small uppercase, letter-spaced "eyebrow" treatment for caps labels above
    * editable fields. Its defaults match `PropertyField`'s look but it has its
    * own `--uxm-form-field-overline-*` tokens (nothing shared). Typography
-   * only — the colour comes from `labelTone`.
+   * only — the colour comes from `labelTint`.
    */
   labelVariant?: FormFieldLabelVariant;
   /**
@@ -57,7 +57,7 @@ export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
  * `FormField` — pairs a label with any UXM input. Sole owner of label
  * theming across the form family: edit FormField's per-tint label colours,
  * `labelSize` / `labelWeight`, or the `labelPosition` / `labelVariant` /
- * `labelTone` variants in the workbench
+ * `labelTint` variants in the workbench
  * and the change propagates to every labeled field across the project.
  * Input atoms (TextInput, Textarea, Select, etc.) do NOT own labels —
  * wrap them in FormField when you want one.
@@ -75,7 +75,7 @@ export function FormField({
   label,
   hint,
   labelPosition = 'top',
-  labelTone = 'strong',
+  labelTint = 'strong',
   labelVariant = 'default',
   htmlFor,
   children,
@@ -98,7 +98,7 @@ export function FormField({
       className={cn(
         'uxm-form-field',
         `uxm-form-field--${labelPosition}`,
-        `uxm-form-field--label-${labelTone}`,
+        `uxm-form-field--label-${labelTint}`,
         labelVariant === 'overline' && 'uxm-form-field--overline',
         className,
       )}

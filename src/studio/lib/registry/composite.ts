@@ -1204,9 +1204,9 @@ export const compositeDefs: ComponentDef[] = [
       // One knob per tint, gated to the active tint so the panel reads
       // "Per Label Tint · <value>". Tints apply to both label variants
       // (default + overline) — the variant owns typography, the tint colour.
-      { key: 'tintStrongColor', label: 'Label Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'colors', showWhen: { labelTone: 'strong' } },
-      { key: 'tintDefaultColor', label: 'Label Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors', showWhen: { labelTone: 'default' } },
-      { key: 'tintMutedColor', label: 'Label Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors', showWhen: { labelTone: 'muted' } },
+      { key: 'tintStrongColor', label: 'Label Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'colors', showWhen: { labelTint: 'strong' } },
+      { key: 'tintDefaultColor', label: 'Label Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors', showWhen: { labelTint: 'default' } },
+      { key: 'tintMutedColor', label: 'Label Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors', showWhen: { labelTint: 'muted' } },
       // Typography — per label variant. The overline variant owns only its
       // size here (weight/letter-spacing stay token-level).
       { key: 'labelSize', label: 'Label Size', control: 'number', defaultValue: 13, min: 10, max: 18, step: 1, unit: 'px', showWhen: { labelVariant: 'default' } },
@@ -1269,7 +1269,7 @@ export const compositeDefs: ComponentDef[] = [
       // both label variants; each tint's colour is a knob gated to the active
       // tint ("Per Label Tint · <value>").
       {
-        key: 'labelTone',
+        key: 'labelTint',
         label: 'Label Tint',
         options: [
           { value: 'strong', label: 'Strong' },

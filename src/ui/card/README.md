@@ -26,8 +26,8 @@ function Example() {
           rows? Compose the Divider atom between them — also not a Card
           concern. */}
       <Stack gap={12}>
-        <FormField label="Name" labelPosition="side" labelTone="muted">…</FormField>
-        <FormField label="Status" labelPosition="side" labelTone="muted">…</FormField>
+        <FormField label="Name" labelPosition="side" labelTint="muted">…</FormField>
+        <FormField label="Status" labelPosition="side" labelTint="muted">…</FormField>
       </Stack>
     </Card>
   );

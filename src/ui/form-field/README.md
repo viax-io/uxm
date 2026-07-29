@@ -42,16 +42,16 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | `children` | `ReactNode` | – | **Required.** The input control. Typically a UXM input atom; any ReactNode is accepted. |
 | `hint` | `ReactNode` | – | Optional helper text shown below the control. In `side` layout it is grid-placed in the control column. |
 | `labelPosition` | `'top' \| 'side'` | `'top'` | Label placement. `top` stacks vertically with `margin-bottom` driving the gap; `side` switches to a 2-column grid. |
-| `labelTone` | `'default' \| 'muted' \| 'strong'` | `'strong'` | Label **colour** emphasis (the tint). `strong` = strong text (default, unchanged); `default` = normal text; `muted` = dimmed, for detail panels where the label is secondary to the value. Applies to **both** label variants — the variant owns typography, the tint owns colour. Each tint's colour is themable via `--uxm-form-field-label-tint-*`; an explicit `--uxm-form-field-label-color` still overrides. |
-| `labelVariant` | `'default' \| 'overline'` | `'default'` | Label **typography**. `default` = normal label; `overline` = small uppercase, letter-spaced "eyebrow" caps for caps labels above editable fields. Its defaults match `PropertyField`'s look but it has its **own** `--uxm-form-field-overline-*` tokens (nothing shared with PropertyField). Typography only — colour comes from `labelTone`. |
+| `labelTint` | `'default' \| 'muted' \| 'strong'` | `'strong'` | Label **colour** emphasis (the tint). `strong` = strong text (default, unchanged); `default` = normal text; `muted` = dimmed, for detail panels where the label is secondary to the value. Applies to **both** label variants — the variant owns typography, the tint owns colour. Each tint's colour is themable via `--uxm-form-field-label-tint-*`; an explicit `--uxm-form-field-label-color` still overrides. |
+| `labelVariant` | `'default' \| 'overline'` | `'default'` | Label **typography**. `default` = normal label; `overline` = small uppercase, letter-spaced "eyebrow" caps for caps labels above editable fields. Its defaults match `PropertyField`'s look but it has its **own** `--uxm-form-field-overline-*` tokens (nothing shared with PropertyField). Typography only — colour comes from `labelTint`. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div class="uxm-form-field">`. |
 
-### `FormFieldLabelPosition` / `FormFieldLabelTone`
+### `FormFieldLabelPosition` / `FormFieldLabelTint`
 
 ```ts
 type FormFieldLabelPosition = 'top' | 'side';
-type FormFieldLabelTone = 'default' | 'muted' | 'strong';
+type FormFieldLabelTint = 'default' | 'muted' | 'strong';
 type FormFieldLabelVariant = 'default' | 'overline';
 ```
 
@@ -71,7 +71,7 @@ Exported as string unions so consumers can build toggle controls without re-decl
 | `--uxm-form-field-side-label-width` | – | `120px` | Width of the label column in `side` layout. |
 | `--uxm-form-field-side-gap` | – | `16px` | Horizontal gap between label and control columns in `side` layout. |
 | `--uxm-form-field-side-label-align` | – | `start` | Label text alignment within the side column (`start` / `end` / `center`). |
-| `--uxm-form-field-label-tint-strong` | `--color-text-strong` | – | Colour of the `strong` tint (`labelTone`). |
+| `--uxm-form-field-label-tint-strong` | `--color-text-strong` | – | Colour of the `strong` tint (`labelTint`). |
 | `--uxm-form-field-label-tint-default` | `--color-text` | – | Colour of the `default` tint. |
 | `--uxm-form-field-label-tint-muted` | `--color-text-muted` | – | Colour of the `muted` tint. |
 | `--uxm-form-field-overline-size` | – | `11px` | Overline label font size (`labelVariant="overline"`). |
