@@ -240,9 +240,24 @@
 }
 /* Clearable pickers clear from the field itself (the input-family
    convention), so the trigger reserves a second gutter slot for the ✕
-   inboard of the chevron — the same two-slot layout as the date editor. */
+   inboard of the chevron — the same two-slot layout as the date editor.
+   Reserved unconditionally, not just while open: the ✕ only appears with the
+   panel, and carving its slot out at that moment would re-truncate the label
+   mid-interaction. */
 .uxm-editable-cell--clearable .uxm-editable-cell__select-trigger {
   padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
+}
+/* Right-aligned pickers move BOTH gutter controls to the leading edge (see the
+   chevron / ✕ rules below), so the reservation has to move with them — reserving
+   the trailing side would leave the label running straight under the icons. Same
+   swap the input and the width-keeper ghosts already do. */
+.uxm-editable-cell--align-right .uxm-editable-cell__select-trigger {
+  padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
+  padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
+}
+.uxm-editable-cell--clearable.uxm-editable-cell--align-right .uxm-editable-cell__select-trigger {
+  padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
+  padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
 }
 .uxm-editable-cell__trigger-clear {
   position: absolute;
@@ -263,8 +278,11 @@
   opacity: 0;
   transition: opacity 0.1s ease;
 }
-.uxm-editable-cell:hover .uxm-editable-cell__trigger-clear,
-.uxm-editable-cell:focus-within .uxm-editable-cell__trigger-clear,
+/* Revealed ONLY while the panel is open — a picker's open panel IS its editing
+   surface (it wears the editing chrome above), so the ✕ lives there exactly
+   like the text/number/date ✕ lives inside the editing input. Hover keeps
+   surfacing the chevron alone, so a table at rest stays a quiet text run and
+   never offers a one-click destroy on a display cell. */
 .uxm-editable-cell--open .uxm-editable-cell__trigger-clear {
   opacity: 1;
 }

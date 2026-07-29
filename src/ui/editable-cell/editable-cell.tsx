@@ -306,6 +306,11 @@ export function EditableCell({
 
   const commitValue = useCallback(
     async (next: EditableCellValue): Promise<boolean> => {
+      // Re-entrancy guard lives HERE, not only in each caller's render
+      // condition: every commit path funnels through this function, so a new
+      // call site can't forget to gate itself (`commitDate` keeps its own
+      // early return for the same reason).
+      if (submitting) return false;
       // Required is checked before `validate` so consumers get the empty rule
       // for free. Multiselect empties are already blocked upstream by
       // MultiListbox (they never reach here), so this covers the scalar types.
@@ -339,7 +344,7 @@ export function EditableCell({
         setSubmitting(false);
       }
     },
-    [required, requiredMsg, validate, onCommit],
+    [submitting, required, requiredMsg, validate, onCommit],
   );
 
   // Shared commit path for both the typed input (handleCommit) and the calendar
@@ -623,12 +628,14 @@ export function EditableCell({
               </ButtonGhost>
             ) : undefined}
           />
-          {clearable && !disabled && !isEmpty && (
+          {clearable && !disabled && !submitting && !isEmpty && (
             /* Trigger ✕ — clear from the field itself (the input-family
                convention), on every size: commits the empty value directly,
                complementing the panel-footer Clear. Sibling of the trigger (a
                button can't nest a button), absolutely positioned into the
-               reserved second gutter slot, revealed with the chevron. */
+               reserved second gutter slot. Revealed only while the panel is
+               open (see the `--open` gate in the stylesheet) — unlike the
+               chevron, which also shows on hover. */
             <button
               type="button"
               className="uxm-editable-cell__trigger-clear"
@@ -752,12 +759,14 @@ export function EditableCell({
             ) : null
           : undefined}
         />
-        {clearable && !disabled && !isEmpty && (
+        {clearable && !disabled && !submitting && !isEmpty && (
           /* Trigger ✕ — clear from the field itself (the input-family
              convention), on every size: commits the empty value directly,
              complementing the panel-footer Clear. Sibling of the trigger (a
              button can't nest a button), absolutely positioned into the
-             reserved second gutter slot, revealed with the chevron. */
+             reserved second gutter slot. Revealed only while the panel is
+             open (see the `--open` gate in the stylesheet) — unlike the
+             chevron, which also shows on hover. */
           <button
             type="button"
             className="uxm-editable-cell__trigger-clear"

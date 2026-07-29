@@ -67,7 +67,7 @@ Exports: `EditableCell`, `EditableCellProps`, `EditableCellType`, `EditableCellS
 - **text / number / date** — a ✕ inside the *editing* input (mirrors `TextInput`; date's ✕ sits inboard of the calendar toggle). It empties the **draft** only and keeps focus — nothing commits until Enter/blur, and Esc still restores the committed value. Works on `required` cells too: "wipe it and type the right value".
 - **select** — a "Clear" action in the dropdown footer that commits `''` immediately.
 - **multiselect** — a "Clear all" footer action that empties the *staged draft* and keeps the panel open ("clear all → pick one" never trips the required rule; the one commit happens on panel close).
-- **pickers additionally clear from the field**: a ✕ on the trigger itself (inboard of the chevron, revealed on hover/focus/open, out of the tab order) commits `''` / `[]` directly — the input-family convention (`Select` / `PillSelect` clear from the field), on both sizes.
+- **pickers additionally clear from the field**: a ✕ on the trigger itself, inboard of the chevron, revealed **while the panel is open** and kept out of the tab order; it commits `''` / `[]` directly. The open panel is a picker's editing surface, so its ✕ lives there exactly as the text/number/date ✕ lives inside the editing input — hover keeps surfacing the chevron alone, so a table at rest never offers a one-click destroy.
 
 `required` never hides a clear affordance — it guards the outcome: clearing a required cell surfaces the required warning (the value stays); clearing an optional one empties it back to the `placeholder`. text/number/date cells never show a ✕ in display mode — the pencil owns that gutter, and clearing them is an editing action (enter the cell, then ✕).
 
@@ -94,8 +94,8 @@ Each size owns a symmetric knob set; the base rules read private `--_uxm-editabl
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
-| `--uxm-editable-cell-max-width` | – | `320px` | Column-growth cap; longer values truncate (display) / scroll (editing). |
 | `--uxm-editable-cell-radius` | – | `4px` | Display cell + editing input radius. |
+| `--uxm-editable-cell-max-width` | – | `320px` | Column-growth cap; longer values truncate (display) / scroll (editing). |
 | `--uxm-editable-cell-hover-bg` | `--color-surface-alt` | – | Display hover tint. |
 | `--uxm-editable-cell-pencil-color` | `--color-text-muted` | – | Hover pencil / calendar glyph. |
 | `--uxm-editable-cell-chevron-color` | `--color-text-muted` | – | Picker hover chevron. |
