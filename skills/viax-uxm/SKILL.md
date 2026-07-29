@@ -453,6 +453,16 @@ skill:
   children (`number | string | true`; `true` = themed `--uxm-card-gap` default) — content
   arrangement stays composed (`Stack`/`Cluster` inside; `Divider` between rows). Shadow is
   now tunable (`--uxm-card-shadow-{color,blur,offset-y}`) with a theme-aware dark default.
+  ⚠️ **`shadow` now reads visibly stronger** — it used to paint the very subtle two-layer
+  `--shadow-card` token and now uses Calendar's 6/20 floating-surface geometry (the
+  `--shadow-lg` step) at ~3× the alpha, so EXISTING `<Card shadow>` instances change
+  appearance. To approximate the old flatter look set `--uxm-card-shadow-{offset-y,blur,color}`
+  to `4px` / `12px` / `rgba(0,0,0,0.04)` — that's the token's dominant layer only; the
+  composition is single-layer, so its tight `0 1px 2px` contact shadow can't be expressed
+  (paint `box-shadow: var(--shadow-card)` yourself if you need it exactly).
+  `--shadow-card` is still exported as a public
+  elevation alias; Card just no longer reads it (the composition needs a colour, not a
+  whole `box-shadow`).
 - **FormField**: two orthogonal label axes — `labelTone` (`strong | default | muted`,
   per-tint colour tokens `--uxm-form-field-label-tint-*`) and `labelVariant`
   (`default | overline`, caps eyebrow with its own `--uxm-form-field-overline-*` typography

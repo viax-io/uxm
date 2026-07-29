@@ -2,7 +2,7 @@
 
 A surface primitive — a `<div>` with a card background, border, padding, and optional drop shadow — that can also arrange its own content via an opt-in layout.
 
-`Card` exists so consumers stop hand-rolling `bg-white border rounded p-6` div soup; all visual axes (background, border, radius, padding) read from `--uxm-card-*` CSS variables which fall back to MODO design tokens. The `shadow` boolean toggles a `uxm-card--shadow` modifier that applies the shared `--shadow-card` value (defined in the global tokens layer).
+`Card` exists so consumers stop hand-rolling `bg-white border rounded p-6` div soup; all visual axes (background, border, radius, padding) read from `--uxm-card-*` CSS variables which fall back to MODO design tokens. The `shadow` boolean toggles a `uxm-card--shadow` modifier whose `box-shadow` is composed from the tunable `--uxm-card-shadow-*` vars (it no longer paints the `--shadow-card` token — see the note under CSS variables).
 
 The card's children are arbitrary — a heading, detail rows, a chart, buttons, anything. When `gap` is set, the card becomes a vertical column and spaces its direct children by that amount; the card doesn't care what they are.
 
@@ -60,7 +60,11 @@ function Example() {
 | `--uxm-card-shadow-blur` | – | `20px` | Shadow blur radius. |
 | `--uxm-card-shadow-offset-y` | – | `6px` | Shadow vertical offset. |
 
-The `shadow` modifier composes its `box-shadow` from the three `--uxm-card-shadow-*` vars, so elevation is tunable (colour / blur / offset) instead of a fixed token. The default colour is theme-aware (internal `--uxm-card-shadow-default`, dark override in `card.scss`, values in step with the `--shadow-card` token).
+The `shadow` modifier composes its `box-shadow` from the three `--uxm-card-shadow-*` vars, so elevation is tunable (colour / blur / offset) instead of a fixed token. The default colour is theme-aware (internal `--uxm-card-shadow-default`, dark override in `card.scss`).
+
+> **The shadow got stronger.** `shadow` previously painted the `--shadow-card` token — a very subtle two-layer shadow (`0 1px 2px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.04)` in light). It now uses the 6/20 geometry `Calendar` uses for floating surfaces (the `--shadow-lg` step) at roughly 3× the alpha, so **existing `<Card shadow>` instances read more lifted than before**. To get close to the old, flatter look, set the vars per instance or in your theme: `--uxm-card-shadow-offset-y: 4px; --uxm-card-shadow-blur: 12px; --uxm-card-shadow-color: rgba(0,0,0,0.04)`. That reproduces the token's dominant layer only — the composition is single-layer by design, so the token's tight `0 1px 2px` contact shadow can't be expressed through these vars. If you need it exactly, paint `box-shadow: var(--shadow-card)` yourself via `className`/`style` and leave `shadow` off.
+>
+> `--shadow-card` is still exported in the token layer as a public elevation alias — Card just no longer reads it, and it can't be the default here: this composition needs a *colour*, and the token is a whole `box-shadow`. Note also that an explicit `--uxm-card-shadow-color` wins in **both** themes, so a colour tuned for light will also apply on dark.
 
 ## Design tokens (MODO-configurable)
 
