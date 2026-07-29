@@ -476,6 +476,49 @@ onto any element: `<Menu items={...} renderTrigger={({ triggerProps }) => <IconB
 
 ---
 
+## 14. Detail card with labelled editable rows (unreleased)
+
+The entity-detail pattern — a card whose header and content are spaced by the card itself,
+while the rows are muted side-labels with inline-editable values. Two independent gaps:
+the Card's `gap` (header ↔ content) and the nested Stack's `gap` (row ↔ row). Note the
+explicit `aria-label` on each `EditableCell`: its display state is a `<button>` that can't
+take the label's `htmlFor`, so the cell names itself.
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Card, EditableCell, FormField, Stack } from '@viax/uxm/ui';
+
+export function EntityDetailCard() {
+  const [name, setName] = useState('Dental Customer Onboarding');
+  const [status, setStatus] = useState('Active');
+
+  return (
+    <Card gap={20} padding={24} shadow>
+      <div>
+        <div style={{ fontSize: 15, fontWeight: 600 }}>Analytics Dashboard</div>
+        <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Updated 2 hours ago</div>
+      </div>
+
+      <Stack gap={12}>
+        <FormField label="Name" labelPosition="side" labelTint="muted">
+          <EditableCell type="text" value={name} aria-label="Name" onCommit={(v) => setName(String(v))} />
+        </FormField>
+        <FormField label="Status" labelPosition="side" labelTint="muted">
+          <EditableCell type="text" value={status} aria-label="Status" onCommit={(v) => setStatus(String(v))} />
+        </FormField>
+      </Stack>
+    </Card>
+  );
+}
+```
+
+Caps "eyebrow" labels above editable values: swap to `labelVariant="overline"` (typography
+only — the colour still comes from `labelTint`). Read-only metadata keeps using
+`PropertyField`/`PropertyGrid`. Hairlines between rows: compose `Divider` between the
+`FormField`s — deliberately not a Card prop.
+
 ## Anti-patterns
 
 ❌ **Don't handroll a div with the same intent as an existing primitive.** Check the catalog

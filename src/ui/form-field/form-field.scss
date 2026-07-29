@@ -55,9 +55,66 @@
   margin-bottom: var(--uxm-form-field-gap, 8px);
 }
 
+/* Label tint — semantic emphasis presets. Each tint routes the label-colour
+   var through its own `--uxm-form-field-label-tint-*` token, so a theme can
+   redefine what "muted" / "strong" MEAN once and every field follows. The
+   tint applies to BOTH label variants (default and overline) — the variant
+   owns typography, the tint owns colour. An explicit
+   `--uxm-form-field-label-color` still overrides. */
+.uxm-form-field--label-strong {
+  --uxm-form-field-label-color: var(--uxm-form-field-label-tint-strong, var(--color-text-strong));
+}
+.uxm-form-field--label-default {
+  --uxm-form-field-label-color: var(--uxm-form-field-label-tint-default, var(--color-text));
+}
+.uxm-form-field--label-muted {
+  --uxm-form-field-label-color: var(--uxm-form-field-label-tint-muted, var(--color-text-muted));
+}
+
+/* Overline label — the small uppercase, letter-spaced "eyebrow" caps style
+   for caps labels above editable fields. Owns TYPOGRAPHY only (its own
+   `--uxm-form-field-overline-*` tokens, defaults matching PropertyField's
+   look but nothing shared) — colour comes from the label tint above, so
+   the same tint system drives both variants. */
+.uxm-form-field--label-overline .uxm-form-field__label {
+  font-size: var(--uxm-form-field-overline-size, 11px);
+  font-weight: var(--uxm-form-field-overline-weight, 600);
+  letter-spacing: var(--uxm-form-field-overline-letter-spacing, 0.06em);
+  text-transform: uppercase;
+}
+
 .uxm-form-field__control {
   display: flex;
   flex-direction: column;
+}
+
+/* Text-like inline controls (EditableCell's display state) carry their own
+   horizontal padding as a hover affordance. Inside a labelled field, outdent
+   the cell by that inset so its TEXT sits on the label's edge — the hover
+   pill bleeds into the gutter instead of pushing the text off the content
+   grid. Scoped to FormField on purpose: standalone/table cells align against
+   the cell's own padding and must NOT be outdented. Boxed inputs (TextInput
+   etc.) are untouched — their visible border makes the inset intentional.
+
+   The distance comes from `--uxm-editable-cell-text-inset`, which the cell
+   PUBLISHES for exactly this (see editable-cell.scss). Deriving it here from
+   the cell's own padding var instead would couple this rule to another atom's
+   private spacing: a rename or a changed default there leaves a CSS var
+   fallback silently standing in, and a wrong outdent never errors. One atom
+   owns the measurement, this rule just negates it. */
+.uxm-form-field__control > .uxm-editable-cell {
+  margin-inline-start: calc(-1 * var(--uxm-editable-cell-text-inset, 9px));
+}
+/* Right-aligned cells anchor their text to the trailing edge, so the outdent
+   has to move with it — otherwise the leading side gets pulled off-grid and
+   the text stays inset. Centered cells anchor to neither edge and get no
+   outdent at all. */
+.uxm-form-field__control > .uxm-editable-cell--align-right {
+  margin-inline-start: 0;
+  margin-inline-end: calc(-1 * var(--uxm-editable-cell-text-inset, 9px));
+}
+.uxm-form-field__control > .uxm-editable-cell--align-center {
+  margin-inline-start: 0;
 }
 
 .uxm-form-field__hint {

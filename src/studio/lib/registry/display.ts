@@ -212,15 +212,102 @@ export const displayDefs: ComponentDef[] = [
     id: 'card',
     name: 'Card',
     category: 'Display',
-    description: 'Content card with border and optional shadow.',
+    description: 'Content surface with border and optional shadow. An optional vertical gap spaces its direct children; content layout is composed inside with Stack/Cluster.',
     styleProperties: [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 24, step: 1, unit: 'px' },
-      { key: 'padding', label: 'Padding', control: 'number', defaultValue: 24, min: 8, max: 48, step: 4, unit: 'px' },
-      { key: 'shadow', label: 'Shadow', control: 'toggle', defaultValue: false },
+      { key: 'padding', label: 'Padding', control: 'number', defaultValue: 24, min: 0, max: 64, step: 4, unit: 'px' },
+      // No on/off toggle: with/without shadow is a value state, not a mode —
+      // zero the offset/blur for a flat card. (Consumers opt in/out in code
+      // via the `shadow` prop; the preview always renders the shadow being
+      // themed.) The box-shadow is built from these three vars (mirrors
+      // Calendar).
+      { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'rgba(0, 0, 0, 0.12)', section: 'shadow' },
+      { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 20, min: 0, max: 48, step: 1, unit: 'px', section: 'shadow' },
+      { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 6, min: 0, max: 24, step: 1, unit: 'px', section: 'shadow' },
+      // The card owns ONE gap: the distance between its direct children (a
+      // header and the content group below it). The rows INSIDE the content
+      // group are spaced by the nested Stack/Cluster, which already has its own
+      // Gap knob — so there is deliberately no Row Gap here. A Card-side row-gap
+      // knob could only write the sibling atom's var, which loses to that atom's
+      // own knob (a directly-set custom property beats an inherited one) and
+      // would leak to every Stack/Cluster at any depth inside any card.
+      { key: 'gap', label: 'Header Gap', control: 'number', defaultValue: 20, min: 0, max: 48, step: 2, unit: 'px', section: 'spacing' },
     ],
-    layoutVariants: [],
+    // Content layout and its alignment are VARIANTS, not saved styles: the
+    // preview swaps a nested Stack/Cluster to show each arrangement. Variant
+    // selections are ephemeral preview state (never persisted to the instance),
+    // which is exactly right for "stack on one page, cluster on another".
+    //
+    // Alignment/justify/wrap MUST live here rather than in styleProperties:
+    // Stack and Cluster drive them with modifier CLASSES (`.uxm-stack--center`,
+    // `.uxm-cluster--align-*`, `--justify-*`, `--wrap`), so there is no CSS
+    // variable a saved override could ever write — as styleProperties they
+    // emitted dead `--uxm-card-{stack-align,justify,wrap}` vars that nothing
+    // reads, while still appearing to work in the canvas (the preview passes
+    // them as props). Stack's and Cluster's own registry defs already model
+    // these same axes as layoutVariants; this matches them.
+    layoutVariants: [
+      {
+        key: 'contentLayout',
+        label: 'Content Layout',
+        options: [
+          { value: 'stack', label: 'Stack' },
+          { value: 'cluster', label: 'Cluster' },
+        ],
+        defaultValue: 'stack',
+      },
+      {
+        key: 'stackAlign',
+        label: 'Align',
+        options: [
+          { value: 'stretch', label: 'Stretch' },
+          { value: 'start', label: 'Start' },
+          { value: 'center', label: 'Center' },
+          { value: 'end', label: 'End' },
+        ],
+        defaultValue: 'stretch',
+        showWhen: { contentLayout: 'stack' },
+      },
+      {
+        key: 'clusterAlign',
+        label: 'Align',
+        options: [
+          { value: 'center', label: 'Center' },
+          { value: 'start', label: 'Start' },
+          { value: 'end', label: 'End' },
+          { value: 'baseline', label: 'Baseline' },
+        ],
+        defaultValue: 'center',
+        showWhen: { contentLayout: 'cluster' },
+      },
+      {
+        key: 'justify',
+        label: 'Justify',
+        options: [
+          { value: 'start', label: 'Start' },
+          { value: 'center', label: 'Center' },
+          { value: 'end', label: 'End' },
+          { value: 'between', label: 'Between' },
+        ],
+        defaultValue: 'start',
+        showWhen: { contentLayout: 'cluster' },
+      },
+      {
+        // A variant is a string union, so the boolean `wrap` prop becomes an
+        // explicit two-option pick (it was a `toggle` styleProperty that
+        // emitted a meaningless `--uxm-card-wrap: 1`).
+        key: 'wrap',
+        label: 'Wrap',
+        options: [
+          { value: 'wrap', label: 'Wrap' },
+          { value: 'nowrap', label: 'No wrap' },
+        ],
+        defaultValue: 'wrap',
+        showWhen: { contentLayout: 'cluster' },
+      },
+    ],
   },
   {
     id: 'avatar',

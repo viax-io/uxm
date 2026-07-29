@@ -51,6 +51,11 @@ const PER_COMPONENT_SELECTOR: Record<string, string> = {
   // correct.
 };
 
+// One knob → one variable. A multi-target (string[]) form was briefly added so
+// Card's Row Gap could write both the Stack and Cluster gap vars; that was the
+// only use, and it was the wrong shape (see the `card` entry below), so the
+// mapping stays single-target on purpose — a knob that themes a SIBLING atom's
+// var cannot win against that atom's own knob.
 const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   'input-with-icon': {
     backgroundColor: '--uxm-input-with-icon-bg',
@@ -202,6 +207,20 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     borderColor: '--uxm-card-border-color',
     borderRadius: '--uxm-card-radius',
     padding: '--uxm-card-padding',
+    // `gap` ("Header Gap") collides with REAL_CSS_PROPS — the generic fallback
+    // would emit a literal `gap` property that `.uxm-card` never activates (the
+    // card is only a flex column via the `--gap` modifier). Route it to the var
+    // the modifier actually reads.
+    //
+    // There is deliberately NO Card knob for the CONTENT's row gap. It looks
+    // like it belongs here, but the row gap is owned by the nested Stack /
+    // Cluster, which already have their own Gap knobs — and those emit
+    // `--uxm-stack-gap` DIRECTLY on `.uxm-stack`, where a directly-set custom
+    // property always beats one inherited from `.uxm-card`. A Card-side knob
+    // would therefore lose the moment anyone themed Stack, while also leaking
+    // to every Stack/Cluster at any depth inside any card (custom properties
+    // inherit). One owner per visual property; Card owns only its own gap.
+    gap: '--uxm-card-gap',
   },
   'toggle-switch': {
     width: '--uxm-toggle-switch-width',
@@ -462,6 +481,24 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   'form-field': {
     gap: '--uxm-form-field-gap',
+    // Per-tint label colours — the component reads `--uxm-form-field-label-
+    // tint-*` (see form-field.scss tone classes); the generic kebab fallback
+    // would emit `--uxm-form-field-tint-strong-color` etc., which nothing
+    // reads, so the saved colour would silently not apply.
+    tintStrongColor: '--uxm-form-field-label-tint-strong',
+    tintDefaultColor: '--uxm-form-field-label-tint-default',
+    tintMutedColor: '--uxm-form-field-label-tint-muted',
+    // MIGRATION — `labelColor` was the single label-colour knob the tints
+    // replaced. It is gone from the registry, but `generateOverridesCss` emits
+    // whatever is PERSISTED, and its generic fallback lands on
+    // `--uxm-form-field-label-color` — the very var the tint classes assign,
+    // at equal specificity from a later sheet. Left alone it would beat ALL
+    // THREE tints and silently disable them, with no knob left in the panel to
+    // notice or clear it. Routed to the STRONG tint instead: strong was the
+    // old (only) label colour and is still the default tone, so a pre-split
+    // theme keeps the exact look it saved. A newly-saved `tintStrongColor`
+    // still wins — overrides are appended, so it emits after this one.
+    labelColor: '--uxm-form-field-label-tint-strong',
   },
   'icon-tile': {
     borderRadius: '--uxm-icon-tile-radius',

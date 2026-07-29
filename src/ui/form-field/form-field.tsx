@@ -6,6 +6,10 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 export type FormFieldLabelPosition = 'top' | 'side';
 
+export type FormFieldLabelTint = 'default' | 'muted' | 'strong';
+
+export type FormFieldLabelVariant = 'default' | 'overline';
+
 export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
   /** The field label (e.g. "Name", "Time zone"). */
   label: ReactNode;
@@ -18,6 +22,22 @@ export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
    *   hint sits below the input, aligned with the input column.
    */
   labelPosition?: FormFieldLabelPosition;
+  /**
+   * Label colour emphasis (the tint). `"strong"` (default) keeps the
+   * strong-text label; `"default"` uses normal text; `"muted"` dims it — for
+   * detail panels where the label is secondary to the value. Applies to BOTH
+   * label variants: the variant owns typography, the tint owns colour. Each
+   * tint's colour is themable via `--uxm-form-field-label-tint-*`.
+   */
+  labelTint?: FormFieldLabelTint;
+  /**
+   * Label typography. `"default"` keeps the normal label; `"overline"` is the
+   * small uppercase, letter-spaced "eyebrow" treatment for caps labels above
+   * editable fields. Its defaults match `PropertyField`'s look but it has its
+   * own `--uxm-form-field-overline-*` tokens (nothing shared). Typography
+   * only — the colour comes from `labelTint`.
+   */
+  labelVariant?: FormFieldLabelVariant;
   /**
    * Associates the rendered `<label>` with the control via `htmlFor`.
    * Optional — when omitted and `children` is a single element, FormField
@@ -35,8 +55,9 @@ export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
 
 /**
  * `FormField` — pairs a label with any UXM input. Sole owner of label
- * theming across the form family: edit FormField's `labelColor` /
- * `labelSize` / `labelWeight` / `labelPosition` knobs in the workbench
+ * theming across the form family: edit FormField's per-tint label colours,
+ * `labelSize` / `labelWeight`, or the `labelPosition` / `labelVariant` /
+ * `labelTint` variants in the workbench
  * and the change propagates to every labeled field across the project.
  * Input atoms (TextInput, Textarea, Select, etc.) do NOT own labels —
  * wrap them in FormField when you want one.
@@ -54,6 +75,8 @@ export function FormField({
   label,
   hint,
   labelPosition = 'top',
+  labelTint = 'strong',
+  labelVariant = 'default',
   htmlFor,
   children,
   className,
@@ -72,7 +95,13 @@ export function FormField({
 
   return (
     <div
-      className={cn('uxm-form-field', `uxm-form-field--${labelPosition}`, className)}
+      className={cn(
+        'uxm-form-field',
+        `uxm-form-field--${labelPosition}`,
+        `uxm-form-field--label-${labelTint}`,
+        labelVariant === 'overline' && 'uxm-form-field--label-overline',
+        className,
+      )}
       {...rest}
     >
       <label htmlFor={controlId} className="uxm-form-field__label">

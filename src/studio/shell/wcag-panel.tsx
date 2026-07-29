@@ -65,6 +65,9 @@ const FOREGROUND_KEYS = new Set([
   'errorColor', 'trendUpColor', 'trendDownColor',
   'chipText', 'chipActiveText', 'activeText', 'inactiveText',
   'headerText', 'pillTextColor',
+  // FormField's per-tint label colours (labelColor was split into these —
+  // `muted` especially needs contrast coverage).
+  'tintStrongColor', 'tintDefaultColor', 'tintMutedColor',
 ]);
 // Keys we treat as backgrounds for pairing.
 const BACKGROUND_KEYS = new Set([

@@ -154,7 +154,7 @@ export type {
   FileUploadState,
 } from './file-upload';
 export { FormField } from './form-field';
-export type { FormFieldLabelPosition, FormFieldProps } from './form-field';
+export type { FormFieldLabelPosition, FormFieldLabelTint, FormFieldLabelVariant, FormFieldProps } from './form-field';
 export { HoverTooltip } from './hover-tooltip';
 export type { HoverTooltipProps } from './hover-tooltip';
 export { NumberInput } from './number-input';

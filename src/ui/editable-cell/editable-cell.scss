@@ -20,6 +20,19 @@
      table unboundedly. Themable via the Max Width knob. */
   max-width: var(--uxm-editable-cell-max-width, 320px);
   padding: var(--_uxm-editable-cell-padding-y, 4px) var(--_uxm-editable-cell-padding-x, 8px);
+  /* PUBLISHED measurement, not a knob: how far the cell's TEXT sits from its
+     own box edge (inline padding + the transparent border below). A consumer
+     that has to align the text against something outside the cell reads this
+     instead of re-deriving it from the padding — FormField's outdent does,
+     so the cell's hover pill can bleed into the label gutter while the text
+     stays on the content grid.
+     Reads the INTERNAL per-size padding var (resolved by the size classes
+     below), so this stays correct at both `size="small"` and `size="medium"`
+     without FormField needing to know sizes exist.
+     KEEP IN STEP with the `padding` above and the `border` below: this is the
+     one place the inset is expressed, deliberately adjacent to what it
+     measures so a change to either can't silently drift from it. */
+  --uxm-editable-cell-text-inset: calc(var(--_uxm-editable-cell-padding-x, 8px) + 1px);
   margin: 0;
   /* Read inheritance: cells should pick up the surrounding font, size,
      and color so they read identically to a static text cell when not

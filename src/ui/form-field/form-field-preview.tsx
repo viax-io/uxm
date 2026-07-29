@@ -1,5 +1,10 @@
 import type { PreviewProps } from '@/previews/types';
-import { FormField, type FormFieldLabelPosition } from '@/ui';
+import {
+  FormField,
+  type FormFieldLabelPosition,
+  type FormFieldLabelTint,
+  type FormFieldLabelVariant,
+} from '@/ui';
 import { TextInput } from '@/ui';
 
 import type { CSSProperties } from 'react';
@@ -17,8 +22,14 @@ export function FormFieldPreview({ styles, variants }: PreviewProps) {
   // The preview consumes the real component (with a TextInput inside)
   // rather than reimplementing the markup.
   const labelPosition = ((variants.labelPosition as string) ?? 'top') as FormFieldLabelPosition;
+  const labelVariant = ((variants.labelVariant as string) ?? 'default') as FormFieldLabelVariant;
+  const labelTint = ((variants.labelTint as string) ?? 'strong') as FormFieldLabelTint;
   const cssVars = {
-    '--uxm-form-field-label-color': styles.labelColor as string,
+    // Per-tint colours — each knob themes what its tint MEANS; the active
+    // tint (a variant) picks which one the label reads.
+    '--uxm-form-field-label-tint-strong': styles.tintStrongColor as string,
+    '--uxm-form-field-label-tint-default': styles.tintDefaultColor as string,
+    '--uxm-form-field-label-tint-muted': styles.tintMutedColor as string,
     '--uxm-form-field-label-size': `${styles.labelSize}px`,
     '--uxm-form-field-label-weight': styles.labelWeight as string,
     '--uxm-form-field-hint-color': styles.hintColor as string,
@@ -28,11 +39,15 @@ export function FormFieldPreview({ styles, variants }: PreviewProps) {
     '--uxm-form-field-hint-gap': `${styles.hintGap}px`,
     '--uxm-form-field-side-label-width': `${styles.sideLabelWidth ?? 120}px`,
     '--uxm-form-field-side-label-align': (styles.sideLabelAlign as string) ?? 'start',
+    // Overline variant's own typography knob (colour comes from the tint).
+    '--uxm-form-field-overline-size': `${styles.overlineSize ?? 11}px`,
   } as CSSProperties;
   return (
     <div style={{ width: 480 }}>
       <FormField
         labelPosition={labelPosition}
+        labelVariant={labelVariant}
+        labelTint={labelTint}
         style={cssVars}
         label="Display name"
         hint="Shown to teammates in the sidebar and recent activity."

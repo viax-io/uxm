@@ -405,6 +405,13 @@ skill:
 
 ### New in 4.1.2
 
+- **New icons `product`, `organization`, `business-interaction`** in the shared glyph set —
+  Viax domain-entity marks (cube / two-tower building / exchange arrows). `business-interaction`
+  is the transaction itself; the existing `model-business-interaction` (chat mark) stays the
+  model/blueprint glyph.
+
+### New in 4.3.0
+
 - **`EditableCell` gained a `size` prop** (`'small' | 'medium'`, new export `EditableCellSize`).
   `small` (default) is the dense DataTable scale — visually unchanged (its font-size falls back
   to the inherited `1em` until pinned). `medium` steps the cell up to the input-family scale
@@ -433,6 +440,8 @@ skill:
   out. Related fix: `format` is no longer called for an empty value — a cleared cell renders
   its `placeholder` (previously a Tag/Badge `format` would paint an empty pill).
 
+### Unreleased
+
 <!-- Notes for changes merged but not yet published. The release pipeline renames
      this heading to "New in X.Y.Z" and stamps the version/count markers
      (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
@@ -440,10 +449,27 @@ skill:
      exact string, so appending notes under an already-stamped "New in X.Y.Z"
      heading silently mislabels them and they never get re-stamped. -->
 
-- **New icons `product`, `organization`, `business-interaction`** in the shared glyph set —
-  Viax domain-entity marks (cube / two-tower building / exchange arrows). `business-interaction`
-  is the transaction itself; the existing `model-business-interaction` (chat mark) stays the
-  model/blueprint glyph.
+- **Card**: `padding` (any value) and opt-in column `gap` between the card's direct
+  children (`number | string | true`; `true` = themed `--uxm-card-gap` default) — content
+  arrangement stays composed (`Stack`/`Cluster` inside; `Divider` between rows). Shadow is
+  now tunable (`--uxm-card-shadow-{color,blur,offset-y}`) with a theme-aware dark default.
+  ⚠️ **`shadow` now reads visibly stronger** — it used to paint the very subtle two-layer
+  `--shadow-card` token and now uses Calendar's 6/20 floating-surface geometry (the
+  `--shadow-lg` step) at ~3× the alpha, so EXISTING `<Card shadow>` instances change
+  appearance. To approximate the old flatter look set `--uxm-card-shadow-{offset-y,blur,color}`
+  to `4px` / `12px` / `rgba(0,0,0,0.04)` — that's the token's dominant layer only; the
+  composition is single-layer, so its tight `0 1px 2px` contact shadow can't be expressed
+  (paint `box-shadow: var(--shadow-card)` yourself if you need it exactly).
+  `--shadow-card` is still exported as a public
+  elevation alias; Card just no longer reads it (the composition needs a colour, not a
+  whole `box-shadow`).
+- **FormField**: two orthogonal label axes — `labelTint` (`strong | default | muted`,
+  per-tint colour tokens `--uxm-form-field-label-tint-*`) and `labelVariant`
+  (`default | overline`, caps eyebrow with its own `--uxm-form-field-overline-*` typography
+  tokens; colour comes from the tint). An `EditableCell` child is auto-outdented to align
+  its text with the label edge. Note for workbench themes: the single `labelColor` knob the
+  tints replaced is migrated to the **strong** tint (the old, and still default, label
+  colour), so a theme saved before the split keeps the look it had.
 
 ## Workflow
 
