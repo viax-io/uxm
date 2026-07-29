@@ -23,6 +23,10 @@ import {
   type AppSidebarSection,
 } from '@viax/uxm/ui';
 
+// NOTE: the section key is `heading`, NOT `label`. And `glyph` must be a real id
+// from the registry (see component-catalog.md) — <Icon> renders NOTHING for an
+// unknown glyph, so "dashboard" / "folder" / "package" / "external" all silently
+// disappear.
 const sections: AppSidebarSection[] = [
   {
     heading: 'Workspace',
@@ -37,7 +41,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <PageShell
       variant="standard"
+      // AppSidebarBrand is { logoUrl, iconUrl, alt } — there is NO `name` prop.
       sidebar={<AppSidebar brand={{ logoUrl: '/logo.svg', alt: 'My App' }} sections={sections} />}
+      // AppTopBar takes { search, actions, onMobileMenuClick } — there is NO `title`.
       topBar={<AppTopBar search={<TextInput placeholder="Search…" />} />}
     >
       <PageHeader
@@ -50,6 +56,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 ```
+
+### Client-side nav: `linkAs` needs an `href` → `to` adapter
+
+`AppSidebar` renders each item as `<Component href={item.href}>`, where `Component` is `linkAs`
+(default `'a'`). `next/link` accepts `href`, so passing it directly works — but **react-router's
+`Link` requires `to` and ignores `href`**, so `linkAs={Link}` produces dead links (or a full page
+reload). Wrap it:
+
+```tsx
+import { forwardRef } from 'react';
+import { Link } from 'react-router-dom';
+
+const RouterNavLink = forwardRef<HTMLAnchorElement, { href?: string }>(
+  function RouterNavLink({ href, ...rest }, ref) {
+    return <Link ref={ref} to={href ?? '#'} {...rest} />;
+  },
+);
+
+<AppSidebar brand={brand} sections={sections} linkAs={RouterNavLink} />
+```
+
+Without this every sidebar click tears down the provider tree and visibly re-hydrates the app.
 
 ---
 
@@ -519,6 +547,72 @@ only — the colour still comes from `labelTint`). Read-only metadata keeps usin
 `PropertyField`/`PropertyGrid`. Hairlines between rows: compose `Divider` between the
 `FormField`s — deliberately not a Card prop.
 
+---
+
+## 15. Detail page: `PageHeader` meta, `PropertyField`/`PropertyGrid`, `BackLink`, horizontal rows
+
+The four most commonly misused primitives on a read-only detail page, together:
+
+```tsx
+import {
+  PageHeader,
+  BackLink,
+  PropertyField,
+  PropertyGrid,
+  Cluster,
+  Tag,
+  Avatar,
+} from '@viax/uxm/ui';
+import { useNavigate } from 'react-router-dom';
+
+function OrderDetailPage({ order }: { order: Order }) {
+  const navigate = useNavigate();
+
+  return (
+    <>
+      {/* BackLink is a navigation <a>, not a button — it needs a real href for
+          a11y/focusability even when you intercept the click for client-side nav. */}
+      <BackLink href="/orders" onClick={(e) => { e.preventDefault(); navigate('/orders'); }}>
+        Back to orders
+      </BackLink>
+
+      <PageHeader
+        title={order.name}
+        // `meta` renders inside a <p> — pass INLINE content only (string, <span>,
+        // fragment). A block-level primitive like <Stack> here is invalid
+        // <div>-in-<p> nesting and throws a hydration warning.
+        meta={<>{order.id} &middot; Created {order.createdAt}</>}
+        actions={<Tag type="success">{order.status}</Tag>}
+      />
+
+      {/* PropertyField takes CHILDREN, not a `value` prop — `value="…"` silently
+          renders an empty cell. PropertyGrid's template is fixed
+          (auto-fill, minmax(120px, 1fr)) — it has no `columns` / `minColumnWidth`
+          prop; only the gaps are themable. */}
+      <PropertyGrid>
+        <PropertyField label="Order ID">{order.id}</PropertyField>
+        <PropertyField label="Total">{formatMoney(order.total)}</PropertyField>
+        <PropertyField label="Status">{order.status}</PropertyField>
+      </PropertyGrid>
+
+      {/* Horizontal row of items (e.g. a party card's avatar + name + role) —
+          Stack is flex-COLUMN only; don't fight it with a flexDirection: 'row'
+          override. Cluster is the actual horizontal primitive. */}
+      <Cluster gap={12} align="center">
+        <Avatar type="text" initials="AJ" />
+        <div>{order.customer.name}</div>
+      </Cluster>
+    </>
+  );
+}
+```
+
+`ResponsiveGrid`'s `min` prop is a CSS length **string** (`"280px"`), not a bare number —
+`min={280}` produces the invalid CSS `minmax(280, 1fr)` (missing unit), which the browser drops.
+`PropertyGrid` has no equivalent prop at all — its floor is fixed.
+
+---
+
 ## Anti-patterns
 
 ❌ **Don't handroll a div with the same intent as an existing primitive.** Check the catalog
@@ -548,3 +642,23 @@ imperative `toast.*()` calls render through it.
 
 ❌ **Don't import from the root `@viax/uxm`** for production code. Prefer
 `@viax/uxm/ui` for tree-shake-friendly per-component imports.
+
+❌ **Don't pass `value` to `PropertyField`.** It takes `children`, not a `value` prop —
+`<PropertyField label="Total" value={total} />` silently renders an empty value cell. Use
+`<PropertyField label="Total">{total}</PropertyField>`.
+
+❌ **Don't pass a block-level layout primitive (`Stack`, `Cluster`, a `<div>`) as `PageHeader`'s
+`meta`.** It renders inside a `<p>` — only inline content (string, `<span>`, fragment) is valid
+there; a block element causes invalid `<div>`-in-`<p>` nesting and a hydration warning.
+
+❌ **Don't pass a bare number to `ResponsiveGrid`'s `min`.** It's a CSS length string
+(`"280px"`), not `280` — a bare number produces an invalid `minmax(280, 1fr)` that the browser
+silently drops. (`PropertyGrid` has no equivalent prop — its floor is fixed.)
+
+❌ **Don't force `Stack` horizontal with a `flexDirection: 'row'` style override.** `Stack` is
+flex-column by design (gap + align only, no direction prop) — reach for `Cluster` for any
+horizontal row (party card avatar rows, button groups, inline chips).
+
+❌ **Don't give `BackLink` only an `onClick`.** It renders as an `<a>`, so it needs a real `href`
+for keyboard focus and right-click/open-in-new-tab — even when you `preventDefault()` to do
+client-side navigation instead of a full page load.

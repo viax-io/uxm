@@ -122,16 +122,41 @@ array or the studio's Color editor) but they are part of the same theming contra
 | Var | Declared by | Value / behaviour |
 |-----|-------------|-------------------|
 | `--font-inter` | `@viax/uxm/tokens.css` (`:root`) | `'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`. No font file is bundled — the host loads Inter (e.g. a Google Fonts `<link>`); the stack degrades to system fonts when absent. |
-| `--font-sans` | `@viax/uxm/tokens.css` (`:root`) | `var(--font-inter)` — the library's base UI stack. Use this in app CSS instead of naming Inter directly. |
+| `--font-sans` | ⚠️ **`@viax/uxm/tokens.css` — but ONLY inside its `@theme inline { … }` block, a Tailwind v4 at-rule.** Browsers do not understand `@theme` and drop the whole block, so in a plain (non-Tailwind) host **`--font-sans` is never actually defined.** | Intended as `var(--font-inter)`, the library's base UI stack. **A non-Tailwind host must alias it itself** (see Consumer rules) before using `var(--font-sans)` anywhere. |
 | `--brand-font` | **Emitted at runtime, only when a brand font is chosen.** `generateOverridesCss` (from `@viax/uxm/studio/generate-css`) turns `brand.fontFamily` — set in the studio's **Brand Settings → Typography** — into a Google-Fonts `@import`, `:root { --brand-font: "X", var(--font-inter), system-ui, sans-serif; }` and `body { font-family: var(--brand-font) !important; }`. Inside the studio itself, `BrandFontStyles` applies the same output live while editing (pre-Publish). |
 
 **Consumer rules:**
 
-- Base typeface in app CSS: `body { font-family: var(--brand-font, var(--font-sans)); }` —
-  Inter by default, the published brand font when one is set. Don't hardcode a different
-  `font-family` on `body`/`html`; it would fight the injected `!important` rule.
-- Components should use `font-family: inherit` (all `@viax/uxm` atoms already do) so the
-  brand font cascades everywhere.
+- **A non-Tailwind host MUST alias `--font-sans` itself, or the whole app renders in Times New
+  Roman.** `--font-sans` only exists inside tokens.css's Tailwind-only `@theme inline` block, so a
+  browser never sees it. With `--brand-font` also unset (the default — no brand font published),
+  `font-family: var(--brand-font, var(--font-sans))` resolves to the *guaranteed-invalid value*;
+  the declaration is then **invalid at computed-value time**, so `<body>` falls back to
+  *inherit* — i.e. the browser's default serif. Because every uxm atom uses
+  `font-family: inherit`, that serif propagates through every component. Alias it once in the
+  host's global CSS (loaded after `tokens.css`), using the real `:root` token `--font-inter`:
+
+  ```css
+  :root {
+    /* tokens.css declares --font-sans only inside `@theme inline`, which browsers drop. */
+    --font-sans: var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif);
+  }
+  ```
+
+  There is no `--font-mono` token at all — always give a literal fallback: `var(--font-mono, monospace)`.
+- Base typeface in app CSS: `html, body, #root { font-family: var(--brand-font, var(--font-sans)); }` —
+  Inter by default, the published brand font when one is set (applying the same chain to
+  `html`/`#root` is safe and closes the serif-via-`html` path). Don't hardcode a *different*
+  `font-family` on `body`/`html`; it would fight the injected `!important` rule. This line is
+  only safe **once the alias above is in place**.
+- **Native form controls don't inherit the document font** — the UA stylesheet gives
+  `<button>`/`<input>`/`<select>`/`<textarea>` their own family (Arial / system UI). uxm atoms set
+  `font-family: inherit` themselves, but raw native controls in host code will render in Arial
+  unless the host adds, once: `button, input, select, textarea { font: inherit; }` (element-level
+  specificity — uxm class rules and studio overrides still win).
+- Sanity check when text looks like Times New Roman: open DevTools on `<body>` and confirm
+  `font-family` computes to a real stack rather than showing the declaration struck through.
+  If body text is fine but buttons/inputs show Arial, the `font: inherit` rule above is missing.
 - Sanitise before interpolating a font name into CSS/URLs yourself? Don't — reuse the exported
   `safeFontFamily` / `fontFileUrl` helpers from `@viax/uxm/studio/generate-css`.
 
