@@ -567,6 +567,7 @@ export function EditableCell({
             `uxm-editable-cell--${size}`,
             `uxm-editable-cell--align-${align}`,
             `uxm-editable-cell--type-${type}`,
+            clearable && 'uxm-editable-cell--clearable',
             disabled && 'uxm-editable-cell--disabled',
             isEmpty && 'uxm-editable-cell--empty',
             open && 'uxm-editable-cell--open',
@@ -622,6 +623,23 @@ export function EditableCell({
               </ButtonGhost>
             ) : undefined}
           />
+          {clearable && !disabled && !isEmpty && (
+            /* Trigger ✕ — clear from the field itself (the input-family
+               convention), on every size: commits the empty value directly,
+               complementing the panel-footer Clear. Sibling of the trigger (a
+               button can't nest a button), absolutely positioned into the
+               reserved second gutter slot, revealed with the chevron. */
+            <button
+              type="button"
+              className="uxm-editable-cell__trigger-clear"
+              // Out of the tab order, same as every in-field clear here.
+              tabIndex={-1}
+              onClick={() => void commitValue('')}
+              aria-label="Clear selection"
+            >
+              <Icon glyph="close" size={12} />
+            </button>
+          )}
           <Popover
             open={Boolean(shownError)}
             onOpenChange={(next) => {
@@ -665,6 +683,7 @@ export function EditableCell({
           `uxm-editable-cell--${size}`,
           `uxm-editable-cell--align-${align}`,
           `uxm-editable-cell--type-${type}`,
+          clearable && 'uxm-editable-cell--clearable',
           disabled && 'uxm-editable-cell--disabled',
           isEmpty && 'uxm-editable-cell--empty',
           open && 'uxm-editable-cell--open',
@@ -733,6 +752,23 @@ export function EditableCell({
             ) : null
           : undefined}
         />
+        {clearable && !disabled && !isEmpty && (
+          /* Trigger ✕ — clear from the field itself (the input-family
+             convention), on every size: commits the empty value directly,
+             complementing the panel-footer Clear. Sibling of the trigger (a
+             button can't nest a button), absolutely positioned into the
+             reserved second gutter slot, revealed with the chevron. */
+          <button
+            type="button"
+            className="uxm-editable-cell__trigger-clear"
+            // Out of the tab order, same as every in-field clear here.
+            tabIndex={-1}
+            onClick={() => void commitValue([])}
+            aria-label="Clear selection"
+          >
+            <Icon glyph="close" size={12} />
+          </button>
+        )}
         <Popover
           open={Boolean(shownError)}
           onOpenChange={(next) => {

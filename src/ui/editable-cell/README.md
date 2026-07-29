@@ -67,8 +67,9 @@ Exports: `EditableCell`, `EditableCellProps`, `EditableCellType`, `EditableCellS
 - **text / number / date** — a ✕ inside the *editing* input (mirrors `TextInput`; date's ✕ sits inboard of the calendar toggle). It empties the **draft** only and keeps focus — nothing commits until Enter/blur, and Esc still restores the committed value. Works on `required` cells too: "wipe it and type the right value".
 - **select** — a "Clear" action in the dropdown footer that commits `''` immediately.
 - **multiselect** — a "Clear all" footer action that empties the *staged draft* and keeps the panel open ("clear all → pick one" never trips the required rule; the one commit happens on panel close).
+- **pickers additionally clear from the field**: a ✕ on the trigger itself (inboard of the chevron, revealed on hover/focus/open, out of the tab order) commits `''` / `[]` directly — the input-family convention (`Select` / `PillSelect` clear from the field), on both sizes.
 
-`required` never hides a clear affordance — it guards the outcome: clearing a required cell surfaces the required warning (the value stays); clearing an optional one empties it back to the `placeholder`. Display mode never shows a ✕ — the hover glyph owns that gutter, and a one-click destroy on a static table cell invites accidents.
+`required` never hides a clear affordance — it guards the outcome: clearing a required cell surfaces the required warning (the value stays); clearing an optional one empties it back to the `placeholder`. text/number/date cells never show a ✕ in display mode — the pencil owns that gutter, and clearing them is an editing action (enter the cell, then ✕).
 
 ## CSS variables
 

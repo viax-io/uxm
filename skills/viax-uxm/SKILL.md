@@ -453,6 +453,10 @@ skill:
   panel is open, the trigger paints the same card surface + accent border + focus halo as the
   text/number/date editing input (same `--uxm-editable-cell-input-*` vars) — "being edited"
   reads identically across all five editor types.
+- **`EditableCell` pickers clear from the field.** A clearable select / multiselect also
+  renders a ✕ on the trigger, inboard of the chevron (revealed on hover/focus/open, out of
+  the tab order), that commits `""` / `[]` directly — matching the standalone
+  `Select`/`PillSelect` convention, on both sizes. The dropdown-footer Clear stays.
 
 ### New in 4.4.0
 

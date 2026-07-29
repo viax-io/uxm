@@ -238,6 +238,44 @@
   outline: 2px solid var(--uxm-editable-cell-focus-ring, var(--color-accent));
   outline-offset: 2px;
 }
+/* Clearable pickers clear from the field itself (the input-family
+   convention), so the trigger reserves a second gutter slot for the ✕
+   inboard of the chevron — the same two-slot layout as the date editor. */
+.uxm-editable-cell--clearable .uxm-editable-cell__select-trigger {
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
+}
+.uxm-editable-cell__trigger-clear {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--_uxm-editable-cell-padding-x, 8px) + 22px);
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  margin: 0;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--uxm-editable-cell-clear-color, var(--color-text-muted));
+  cursor: pointer;
+  /* Revealed with the chevron — the cell stays a quiet text run at rest. */
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+.uxm-editable-cell:hover .uxm-editable-cell__trigger-clear,
+.uxm-editable-cell:focus-within .uxm-editable-cell__trigger-clear,
+.uxm-editable-cell--open .uxm-editable-cell__trigger-clear {
+  opacity: 1;
+}
+.uxm-editable-cell__trigger-clear:hover {
+  color: var(--uxm-editable-cell-clear-hover-color, var(--color-text));
+  background-color: var(--uxm-editable-cell-clear-hover-bg, var(--color-surface-alt));
+}
+.uxm-editable-cell--align-right .uxm-editable-cell__trigger-clear {
+  right: auto;
+  left: calc(var(--_uxm-editable-cell-padding-x, 8px) + 22px);
+}
 /* Calendar toggle inside the date editing cell — absolutely positioned in the
    input's reserved trailing gutter (like the display pencil), so it overlays
    the field without contributing width to the editing grid track. */
