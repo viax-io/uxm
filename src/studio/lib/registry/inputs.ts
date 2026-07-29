@@ -109,6 +109,10 @@ export const inputsDefs: ComponentDef[] = [
       // Display chrome — one knob per peer state, matching the input
       // family's default / hover / focus / disabled convention. Each is
       // gated to its own state so the panel shows only what's relevant.
+      // The value's own colour: pinned through the component layer (the cell no
+      // longer inherits it — a muted column / dimmed row must not bleed in), so
+      // it belongs in the panel next to its placeholder twin.
+      { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'cellColors', showWhen: { state: 'default' } },
       { key: 'placeholderColor', label: 'Placeholder Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'cellColors', showWhen: { state: 'default' } },
       { key: 'hoverBg', label: 'Hover Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'cellColors', showWhen: { state: 'hover' } },
       // The hover affordance differs by type: text / number / date reveal a pencil,

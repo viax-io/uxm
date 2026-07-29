@@ -95,6 +95,7 @@ Each size owns a symmetric knob set; the base rules read private `--_uxm-editabl
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-editable-cell-radius` | – | `4px` | Display cell + editing input radius. |
+| `--uxm-editable-cell-color` | `--color-text` | – | The value's text colour. Pinned, not inherited: primary text is `--color-text` system-wide, so inheriting only let a muted column / dimmed row bleed in. |
 | `--uxm-editable-cell-max-width` | – | `320px` | Column-growth cap; longer values truncate (display) / scroll (editing). |
 | `--uxm-editable-cell-hover-bg` | `--color-surface-alt` | – | Display hover tint. |
 | `--uxm-editable-cell-pencil-color` | `--color-text-muted` | – | Hover pencil / calendar glyph. |

@@ -456,6 +456,10 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     gap: '--uxm-divider-gap',
   },
   'editable-cell': {
+    // The value colour needs an explicit entry: `color` is in REAL_CSS_PROPS,
+    // so the generic fallback would emit a real CSS property that outranks the
+    // component layer.
+    color: '--uxm-editable-cell-color',
     // Dimensions are per-size keys (smallPaddingX, mediumFontSize, …) that
     // resolve via the generic `--uxm-editable-cell-{kebab(key)}` fallback in
     // toCSS; only the shared maxWidth needs an explicit entry (it's in

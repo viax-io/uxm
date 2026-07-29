@@ -42,6 +42,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-editable-cell-pencil-color': styles.pencilColor as string,
     '--uxm-editable-cell-focus-border': styles.focusBorder as string,
     '--uxm-editable-cell-focus-ring': styles.focusRing as string,
+    '--uxm-editable-cell-color': styles.color as string,
     '--uxm-editable-cell-placeholder-color': styles.placeholderColor as string,
     '--uxm-editable-cell-disabled-opacity': String(styles.disabledOpacity ?? 0.55),
     '--uxm-editable-cell-input-bg': styles.inputBg as string,

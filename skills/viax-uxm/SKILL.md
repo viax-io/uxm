@@ -453,6 +453,11 @@ skill:
   panel is open, the trigger paints the same card surface + accent border + focus halo as the
   text/number/date editing input (same `--uxm-editable-cell-input-*` vars) — "being edited"
   reads identically across all five editor types.
+- **`EditableCell`'s value colour is now pinned, not inherited.** The cell (and a picker's
+  trigger) reads `--uxm-editable-cell-color` with `--color-text` as the fallback, exposed as a
+  **Text Color** knob beside Placeholder Color. Font-size still inherits by design (a cell must
+  read at the scale around it), but colour never varied that way — inheriting only let a muted
+  column or dimmed row bleed in, which consumers were pinning back on the wrapping `<td>`.
 - **`EditableCell` pickers clear from the field.** A clearable select / multiselect also
   renders a ✕ on the trigger, inboard of the chevron, revealed **while the panel is open**
   (a picker's editing surface, mirroring where the text/number/date ✕ lives) and kept out of

@@ -34,11 +34,15 @@
      measures so a change to either can't silently drift from it. */
   --uxm-editable-cell-text-inset: calc(var(--_uxm-editable-cell-padding-x, 8px) + 1px);
   margin: 0;
-  /* Read inheritance: cells should pick up the surrounding font, size,
-     and color so they read identically to a static text cell when not
-     hovered. */
+  /* Read inheritance for the FONT: a cell must read at the scale of whatever
+     surrounds it (13px table row, a PageHeader heading) — that genuinely
+     varies, which is why `size` exposes it as `1em`-by-default rather than a
+     pinned number. The COLOUR does not vary that way: primary text is
+     `--color-text` everywhere in the system, so inheriting only let a muted
+     column / dimmed row bleed in (consumers were pinning it back on the
+     wrapping cell). Pin it here through the component layer instead. */
   font: inherit;
-  color: inherit;
+  color: var(--uxm-editable-cell-color, var(--color-text));
   background-color: transparent;
   border: 1px solid transparent;
   border-radius: var(--uxm-editable-cell-radius, 4px);
@@ -219,7 +223,9 @@
   padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
   margin: 0;
   font: inherit;
-  color: inherit;
+  /* Same pinned colour as the cell above — the trigger IS the display surface
+     for pickers, so it must not fall back to whatever the row inherits. */
+  color: var(--uxm-editable-cell-color, var(--color-text));
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--uxm-editable-cell-radius, 4px);
@@ -353,7 +359,13 @@
   cursor: default;
   opacity: var(--uxm-editable-cell-disabled-opacity, 0.55);
 }
-.uxm-editable-cell--empty {
+/* The picker's text lives in its trigger, which declares its own `color` (see
+   `__select-trigger` above) — an inherited placeholder colour would lose to it,
+   so the empty rule has to name the trigger too. The (0,2,0) descendant
+   selector outranks the trigger's own (0,1,0) declaration. text/number/date
+   need no such entry: their value spans declare no colour and inherit this. */
+.uxm-editable-cell--empty,
+.uxm-editable-cell--empty .uxm-editable-cell__select-trigger {
   color: var(--uxm-editable-cell-placeholder-color, var(--color-text-subtle));
   font-style: italic;
 }
