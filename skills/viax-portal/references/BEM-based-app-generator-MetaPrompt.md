@@ -78,7 +78,7 @@ The portal **must** use `@viax/uxm` for every interactive UI primitive. See the 
 
 **Hard rules from that skill (apply here too):**
 
-1. **Never handroll a div** with the same intent as an existing `@viax/uxm` primitive. The library covers ~76 patterns — pick the right one (Button*, Card, FormField, DataTable, List, StatCard, PageShell, AppSidebar, AppTopBar, PageHeader, DetailSection, PropertyField, EmptyState, Loader, Tag, Alert, Avatar, Thumbnail, ToggleSwitch, TimelineEntry, BackLink, …).
+1. **Never handroll a div** with the same intent as an existing `@viax/uxm` primitive. The library covers ~76 patterns — pick the right one (Button*, Card, FormField, DataTable, List, StatCard, PageShell, AppSidebar, AppTopBar, PageHeader, DetailSection, PropertyField, EmptyState, Loader, Tag, Banner, Avatar, Thumbnail, ToggleSwitch, TimelineEntry, BackLink, …).
 2. **Never inline literal hex** when a `--color-*` design token covers the intent. Use `var(--color-accent-bold)`, `var(--color-surface)`, etc.
 3. **Import from `@viax/uxm/ui`**, not the root `@viax/uxm`. Tokens from `@viax/uxm/tokens`.
 4. **FormField owns labels** — `<TextInput>`, `<Select>`, `<Textarea>`, etc. render bare; always wrap them in `<FormField label="…">`.
@@ -304,7 +304,7 @@ See [`viax-uxm/references/design-tokens.md`](viax-uxm/references/design-tokens.m
 | **Text** | `--color-text-strong`, `--color-text`, `--color-text-muted`, `--color-text-subtle`, `--color-text-inverse` | Headings → muted → placeholder |
 | **Border** | `--color-border` | All borders/dividers |
 | **Accent (brand)** | `--color-accent-bold`, `--color-accent`, `--color-accent-light`, `--color-accent-subtle` | Primary button bg, link, hover backdrop, soft backdrop |
-| **Semantic** | `--color-success-{bg,text,border}`, `--color-warning-*`, `--color-danger-*`, `--color-info-*` | `<Alert>`, `<Tag>`, field-level errors |
+| **Semantic** | `--color-success-{bg,text,border}`, `--color-warning-*`, `--color-danger-*`, `--color-info-*` | `<Banner>`, `<Tag>`, the input atoms' own `error` prop |
 
 **Apply brand overrides in `src/styles/globals.css`** (loaded AFTER `@viax/uxm/tokens.css` → wins). Example:
 
@@ -327,7 +327,7 @@ Use `--uxm-{component}-*` CSS vars via inline `style` for one-off tweaks. The co
 
 ### Legacy `--primary-*` / `--neutral-*` token table (deprecated — for reference only)
 
-> The viax customer-facing palette below is the OLD viax design system, kept here as reference for visual style. **Do NOT declare these in app code.** They are superseded by `@viax/uxm`'s canonical `--color-*` tokens (table above). Map any old reference (e.g. `--primary-default`) to its `--color-*` equivalent (e.g. `--color-accent-bold` for the primary brand colour). Map the old `--font-family` (Roboto) to `var(--brand-font, var(--font-sans))` — never re-declare a hardcoded family (see the Typography note under Runtime Theming).
+> The viax customer-facing palette below is the OLD viax design system, kept here as reference for visual style. **Do NOT declare these in app code.** They are superseded by `@viax/uxm`'s canonical `--color-*` tokens (table above). Map any old reference (e.g. `--primary-default`) to its `--color-*` equivalent (e.g. `--color-accent-bold` for the primary brand colour). Map the old `--font-family` (Roboto) to `var(--brand-font, var(--font-sans))` — never re-declare a hardcoded family (see the Typography note under Runtime Theming). This assumes the mandatory `:root { --font-sans: … }` bridge from the `globals.css` baseline is present; without it that chain resolves to nothing and the page renders in Times New Roman.
 
 ```css
 --primary-default: #5F859C;
@@ -448,7 +448,7 @@ Use `--uxm-{component}-*` CSS vars via inline `style` for one-off tweaks. The co
 Inherits directly from `@viax/uxm`:
 - **Surfaces** — `--color-surface` page bg, `--color-card` rows/cards with `<Card shadow>`.
 - **Accent** used sparingly for primary CTAs (`<ButtonPrimary>`), active sidebar/nav items, indicators.
-- **Typography** — Inter by default (Google-Fonts `<link>` in `index.html` + the `body` font chain in `globals.css` — see the baseline below); the portal-wide typeface is **brand-controlled**: UXM Studio → Brand Settings → **Typography** sets `brand.fontFamily`, and the published config re-fonts the whole portal via `--brand-font` (the applier's generated CSS auto-imports the chosen Google Font). Sizing/weight handled by `@viax/uxm` per component.
+- **Typography** — Inter by default (Google-Fonts `<link>` in `index.html` + the `html, body, #root` font chain and the `button, input, select, textarea { font: inherit }` rule in `globals.css` — see the baseline below); the portal-wide typeface is **brand-controlled**: UXM Studio → Brand Settings → **Typography** sets `brand.fontFamily`, and the published config re-fonts the whole portal via `--brand-font` (the applier's generated CSS auto-imports the chosen Google Font). Sizing/weight handled by `@viax/uxm` per component.
 - **Sidebar** — `<AppSidebar>` (sections + items, polymorphic `linkAs` so react-router does client nav).
 - **Top bar** — `<AppTopBar search={…} actions={…}>` with `<InputWithIcon>` and `<Avatar>` + `<InlineAction>` sign-out.
 - **Dashboard widgets** — `<StatCard>` for KPIs, recharts wrapped in `<Card>` for charts, `<DataTable>` for tabular activity feeds (Recent orders etc.), `<Checkbox>` for to-do lists, `<EmptyState>` / `<Loader>` for empty/loading.
@@ -519,13 +519,45 @@ The library defaults leave a few visible inconsistencies (mixed radii, asymmetri
    centered content like the studio canvas ends up far below the fold. */
 html, body, #root { height: 100%; }
 
-/* Base typeface chain: Inter (--font-sans from @viax/uxm/tokens.css) by default;
-   when the published studio config carries a brand font (Brand Settings →
-   Typography), the applier's injected stylesheet defines --brand-font and its own
+/* MANDATORY --font-sans bridge — without it the ENTIRE portal renders in Times
+   New Roman. @viax/uxm/tokens.css declares `--font-sans: var(--font-inter)` ONLY
+   inside its `@theme inline { … }` block, which is a Tailwind v4 at-rule. This
+   portal is not a Tailwind host, so the browser does not understand `@theme`,
+   DROPS the whole block, and --font-sans never exists. With no brand font
+   published --brand-font is unset too, so the `body` rule below would collapse to
+   the guaranteed-invalid value → the declaration becomes INVALID AT
+   COMPUTED-VALUE TIME → <body> falls back to `inherit`, i.e. the browser's
+   default serif. Every uxm atom is `font-family: inherit`, so that serif then
+   spreads through every component (mixed with the monospace PropertyField values,
+   which is why it looks like "several different fonts").
+   --font-inter IS declared in the real `:root`, so alias it — literal stack last. */
+:root {
+  --font-sans: var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif);
+}
+
+/* Base typeface chain: Inter by default; when the published studio config carries
+   a brand font (Brand Settings → Typography), the applier's injected stylesheet
+   defines --brand-font and its own
    `body { font-family: var(--brand-font) !important }` rule. Declaring the SAME
    chain here keeps pre-applier paint on Inter (never the browser serif default)
-   and leaves a single source of truth — do NOT hardcode any other family. */
-body { margin: 0; font-family: var(--brand-font, var(--font-sans)); }
+   and leaves a single source of truth — do NOT hardcode any other family.
+   Safe ONLY because of the --font-sans bridge above. Applied to html/#root too
+   so NOTHING in the tree can resolve to the browser serif via the html element. */
+body { margin: 0; }
+html, body, #root { font-family: var(--brand-font, var(--font-sans)); }
+
+/* MANDATORY form-control inheritance — native <button>/<input>/<select>/<textarea>
+   do NOT inherit the document font; browsers give them their own UA default
+   (Arial / system UI). Every @viax/uxm atom already sets `font-family: inherit`,
+   but any RAW native control in portal code (a custom Menu/Listbox trigger, a
+   bare <button>, a plain <select>) silently renders in Arial next to Inter text.
+   Force inheritance once — element-level specificity, so uxm class rules and the
+   studio's injected overrides still win: */
+button, input, select, textarea { font: inherit; }
+
+/* There is no --font-mono token in tokens.css at all — anywhere a monospace
+   treatment is wanted (IDs in tables, PropertyField values), always pass the
+   literal fallback: font-family: var(--font-mono, monospace). */
 
 :root {
   /* NOTE: do NOT declare the brand accent ramp (--color-accent*) here. The UXM
@@ -590,8 +622,16 @@ body { margin: 0; font-family: var(--brand-font, var(--font-sans)); }
 **6. Load Inter in `index.html`.**
 
 `@viax/uxm/tokens.css` only *references* the Inter family (`--font-inter`) — it bundles no font
-file. Without a loader the whole `--font-sans` stack silently degrades to system fonts. Add the
-Google-Fonts link to `index.html` `<head>` (weights match the studio's brand-font emission):
+file. Without a loader the stack degrades to the system-UI fallbacks inside `--font-inter`
+(`system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`) — still sans-serif, just not Inter.
+
+> **Do not confuse that with the Times New Roman failure.** A serif page is a *different* bug: it
+> means `--font-sans` itself never resolved, because tokens.css only declares it inside the
+> Tailwind-only `@theme inline` block. Loading Inter does **not** fix that — the `:root
+> { --font-sans: … }` bridge in the `globals.css` baseline (item 5 above) does. Symptom triage:
+> serif body text → missing bridge; sans-but-not-Inter → missing `<link>` below.
+
+Add the Google-Fonts link to `index.html` `<head>` (weights match the studio's brand-font emission):
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -603,6 +643,53 @@ Only Inter is preloaded here — it's the default. A brand font chosen in Brand 
 Typography is loaded at runtime by the applier's generated CSS (`@import` emitted by
 `generateOverridesCss`); do NOT preload other families.
 
+**7. `PropertyField`'s value is `children`, never a `value` prop.**
+
+```jsx
+// ❌ Wrong — silently renders an empty value cell
+<PropertyField label="Total" value={formatMoney(total)} />
+
+// ✅ Right
+<PropertyField label="Total">{formatMoney(total)}</PropertyField>
+```
+
+`ResponsiveGrid`'s `min` is a CSS length **string** (`"280px"`), not a bare number — a bare number
+emits an invalid, browser-dropped `minmax()`. `PropertyGrid` has no equivalent prop at all — its
+grid template (`auto-fill, minmax(120px, 1fr)`) is fixed; only its gaps are themable.
+
+**8. `PageHeader`'s `meta` renders inside a `<p>` — inline content only.**
+
+```jsx
+// ❌ Wrong — <div>-in-<p> nesting, hydration warning
+<PageHeader title={order.biName} meta={<Stack gap={4}>{order.biId}<span>{order.biCreatedAt}</span></Stack>} />
+
+// ✅ Right — string, <span>, or fragment only
+<PageHeader title={order.biName} meta={<>{order.biId} &middot; Created {order.biCreatedAt}</>} />
+```
+
+**9. Horizontal rows (party cards, avatar+name rows, button groups) = `Cluster`, not
+`Stack` with a `flexDirection: 'row'` override.**
+
+```jsx
+// ❌ Wrong — fights Stack's flex-column design
+<Stack gap={12} style={{ flexDirection: 'row' }}><Avatar .../><span>{party.paName}</span></Stack>
+
+// ✅ Right
+<Cluster gap={12} align="center"><Avatar .../><span>{party.paName}</span></Cluster>
+```
+
+**10. `BackLink` needs a real `href`, not just an `onClick`.**
+
+It renders as an `<a>` — an `onClick`-only usage breaks keyboard focus and right-click/open-in-new-tab.
+
+```jsx
+// ❌ Wrong
+<BackLink onClick={() => navigate('/orders')}>Back to orders</BackLink>
+
+// ✅ Right
+<BackLink href="/orders" onClick={(e) => { e.preventDefault(); navigate('/orders') }}>Back to orders</BackLink>
+```
+
 ### Runtime Theming — consume the UXM Studio config (optionally embed the editor at `/uxm`)
 
 Styles — brand tokens, the accent ramp, per-component/per-state overrides, logos, light/dark accents — are authored in the standalone **UXM Studio** app that is bound to **this client's env**, and published to the server under the MFA config's `uxmStudio` key. **The portal ALWAYS loads that config on boot via `getMfaConfig` and applies it portal-wide** (the app-level applier turns it into a global `<style id="uxm-overrides">`), so the portal re-themes from whatever the env's UXM Studio published — with no custom theme panel to build. Full `@viax/uxm` token/component compatibility is preserved in **both** modes.
@@ -611,7 +698,7 @@ Styles — brand tokens, the accent ramp, per-component/per-state overrides, log
 - **`no` (default) → consumer only.** The portal fetches + applies the published `uxmStudio` config but ships **no editor and no save path**. Styles are edited in the separate, env-bound UXM Studio app; this portal just consumes them.
 - **`yes` → also embed the editor.** Additionally mount the full `UxmApp` (`@viax/uxm/studio`) at `/uxm` ("UXM Studio" under the **Settings** sidebar group) with server-backed save (Quick Save / Publish → `saveMfaConfig`).
 
-**Do NOT build a custom admin theme panel, Zustand `theme-store`, or `ThemeProvider`** in either mode.
+**Do NOT build a custom admin theme EDITOR** (color pickers, brand-token forms, any save path outside the standard files **2a**/**2b** above) **in either mode** — that duplicates UXM Studio's own editing UI and creates a second place saves can diverge. A **read-only theme *picker*** — letting the end user *select* among themes UXM Studio's designer already published, with no create/rename/clone/import/export/delete — is a **different, optional** pattern, gated separately by `{{THEME_PICKER}}` (default `no`); see *"Optional: read-only theme picker"* below. It never calls `saveMfaConfig`, so it does not conflict with this prohibition.
 
 > `@viax/uxm@^3.1.2` (Nexus) is required — `^2.5.2` introduced the studio build (`@viax/uxm/studio`, `@viax/uxm/studio.css`, `@viax/uxm/studio/generate-css`) plus the per-component/per-state SCSS wiring the studio drives; `3.1.2` adds the working Brand Settings → Typography picker + live brand-font preview in the studio. Always `npm i @viax/uxm@latest`. See [`viax-uxm/references/quick-recipes.md` §12](../viax-uxm/references/quick-recipes.md) and [`viax-uxm/SKILL.md` → "Embedding the style editor"](../viax-uxm/SKILL.md).
 
@@ -680,6 +767,38 @@ export function subscribeUxmConfig(listener) {
 ```
 
 **2. Server persistence — config API + adapter.** The studio config (`{ overrides, brand }`) is persisted to the **server** using the standard MFA config mutations (the same `getMfaConfig` / `saveMfaConfig` pair from `viax-base-model` `ConfigRepository`), stored under a dedicated `uxmStudio` key inside the MFA config JSON so it never collides with `routes`/`rootStyles`/`dbsSettings`/`importMap`.
+
+**The wire shape — what `getMfaConfig` returns.** `data.getMfaConfig.config` is a JSON **string** holding the env's entire MFA config (~5 MB) — parse/hydrate it once (`hydrateConfig`) and share the result (the memoized `fetchMfaConfig` below). The `uxmStudio` key is the only slot this portal reads, and it is **environment-authored**: whatever the env's UXM Studio published is what comes back — it can be absent (`null`/missing → library defaults), a v1 single-theme object, a v2 multi-theme object with any number of arbitrarily named themes, or carry unknown future keys. **Never assume a fixed shape, theme set, or theme names** — always route the raw value through defensive normalization (`normalizeStudioConfig` in file 6, or the `?? DEFAULT_UXM_CONFIG` fallbacks in file 5's consume path) and ignore keys you don't know. Annotated shape:
+
+```jsonc
+// JSON.parse(data.getMfaConfig.config)
+{
+  "routes": {}, "rootStyles": {}, "dbsSettings": {}, "importMap": {},   // siblings — NEVER touch; preserve verbatim on any write
+  "uxmStudio": {                          // may be ABSENT or null → fall back to DEFAULT_UXM_CONFIG
+    // —— v1 core (always the shape of "the applied theme") ——
+    "overrides": {                        // Record<componentId, Record<knobKey, string|number|boolean>>
+      "button-primary": { "backgroundColor": "#0F6A4F", "borderRadius": 8 }
+    },
+    "brand": {                            // every field optional
+      "logoUrl": "…", "iconUrl": "…", "faviconUrl": "…",
+      "logoUrlDark": "…", "iconUrlDark": "…", "faviconUrlDark": "…",   // data: URLs allowed (client-side uploads)
+      "fontFamily": "Manrope",            // drives --brand-font via generateOverridesCss
+      "tokens": {                         // global --color-* ramp per mode
+        "light": { "--color-accent-bold": "#0F6A4F", "--color-accent": "#15895F" },
+        "dark":  { "--color-accent-bold": "#8AE6B4" }
+      }
+    },
+    // —— v2 additions (multi-theme). Top-level overrides/brand above REMAIN the default
+    //    theme — that's what keeps v1 consumers wire-compatible with a v2 publish. ——
+    "themesVersion": 2,
+    "defaultTheme": { "name": "Default", "description": "…" },   // metadata for the top-level slot
+    "themes": [                            // 0..n extra named themes — count, ids, names, content all env-defined
+      { "id": "…", "name": "…", "description": "…",
+        "config": { "overrides": { /* same shape */ }, "brand": { /* same shape */ } } }
+    ]
+  }
+}
+```
 
 **2a. Config API additions** — `src/lib/api/config.js` (alongside the existing `getMfaConfig` read). **Always** add the memoized `fetchMfaConfig` (the config is ~5 MB — fetch it ONCE per session and share it across all callers; also collapses React StrictMode's double-invoked effects) and the read helper `fetchStudioConfig`. The **`saveMfaConfig` mutation + `saveStudioConfig` helper are embed-only** — include them only when `{{EMBED_UXM_STUDIO}} = yes` (a consumer-only portal never writes the config):
 
@@ -865,7 +984,138 @@ const iconUrl = (dark ? brand?.iconUrlDark || brand?.iconUrl : brand?.iconUrl) |
 
 > **Single source of truth for the accent ramp — do NOT redeclare `--color-accent*` in `globals.css`.** The studio config owns it: `DEFAULT_UXM_CONFIG.brand.tokens` seeds it, `UxmConfigApplier` injects it on mount, and `BrandTokenStyles` drives it live on `/uxm`. Hardcoding the same tokens in `globals.css` creates a *second* source that ghosts through after a studio **"Reset all"** (the studio's inputs fall back to the library default while the hardcoded values keep painting the buttons → inputs and rendering disagree). Trade-off accepted: a brief library-default flash before React mounts and the applier runs; the `localStorage` cache covers returning users, and the boot sync hook reconciles with the server.
 >
-> Do **not** expose border-radius knobs — shape is owned by `@viax/uxm` tokens, not per-portal brand. The **typeface, however, IS per-portal brand**: UXM Studio → Brand Settings → **Typography** sets `brand.fontFamily`, and the applier's `generateOverridesCss` output turns it into a Google-Fonts `@import` + `:root { --brand-font: … }` + `body { font-family: var(--brand-font) !important }` — re-fonting the portal on Publish (and live inside the embedded studio, which applies the same output while editing; requires `@viax/uxm` ≥ 3.1.2 for the working Typography picker + live preview — the standing "install `@latest`" rule covers this). Do **not** hand-build a font picker in the portal, and do **not** declare any `font-family` beyond the baseline `body { font-family: var(--brand-font, var(--font-sans)) }` chain — a second hardcoded family would fight the injected rule.
+> Do **not** expose border-radius knobs — shape is owned by `@viax/uxm` tokens, not per-portal brand. The **typeface, however, IS per-portal brand**: UXM Studio → Brand Settings → **Typography** sets `brand.fontFamily`, and the applier's `generateOverridesCss` output turns it into a Google-Fonts `@import` + `:root { --brand-font: … }` + `body { font-family: var(--brand-font) !important }` — re-fonting the portal on Publish (and live inside the embedded studio, which applies the same output while editing; requires `@viax/uxm` ≥ 3.1.2 for the working Typography picker + live preview — the standing "install `@latest`" rule covers this). Do **not** hand-build a font picker in the portal, and do **not** declare any `font-family` beyond the baseline `html, body, #root { font-family: var(--brand-font, var(--font-sans)) }` chain — a second hardcoded family would fight the injected rule. Two baseline declarations are required exceptions and do NOT compete with it: the `:root { --font-sans: var(--font-inter, …) }` **bridge** (a *custom property*, not a `font-family`) and `button, input, select, textarea { font: inherit }` (inherits whatever the chain resolves to, including the published brand font). Without the bridge the chain above never resolves at all (tokens.css hides `--font-sans` inside a Tailwind-only `@theme inline` block that browsers drop), leaving the whole portal in Times New Roman; without the form-control rule every raw native control renders in Arial.
+
+### Optional: read-only theme picker (`{{THEME_PICKER}}`, default `no`)
+
+UXM Studio has its own **multi-theme management** feature (independent of `{{EMBED_UXM_STUDIO}}`): a designer can author several named themes under one `uxmStudio` config — `{ ...v1-compatible top level, themesVersion: 2, defaultTheme: {name,description}, themes: [{id,name,description,config:{overrides,brand}}] }` — and publish all of them at once. Default `no`: most portals only ever consume the single top-level `{overrides,brand}` slot via the ALWAYS files (**1**/**3**/**5**) and never show a picker; the v1/v2 shapes are wire-compatible either way (v2 keeps `overrides`/`brand` at top level for exactly this reason), so the default consume-side files need no change regardless of which shape UXM Studio published. Turn `{{THEME_PICKER}} = yes` only when the client explicitly wants end users **selecting** which published theme is applied.
+
+This is **read-only** — no create / rename / clone / import / export / delete; those stay in UXM Studio. It does not conflict with the "no custom admin panel" rule above (it never calls `saveMfaConfig`), and it is orthogonal to `{{EMBED_UXM_STUDIO}}` (a portal can offer the picker with or without also embedding the editor).
+
+> **The theme list is pure environment data.** Everything the picker shows comes from the `uxmStudio` value the connected env returned via `getMfaConfig` (see "The wire shape" above) — the count, ids, names, descriptions, and token sets of `themes[]` are whatever that env's designer published, and can change between sessions (themes added, renamed, deleted). The portal must not hardcode or special-case any theme name, must render strictly from `themeRows(structure)`, and must survive arbitrary content: `normalizeStudioConfig` drops malformed entries, and the store's boot path re-validates the remembered `selectedThemeId` against the *fresh* config — a stale id (its theme was deleted server-side) silently falls back to `DEFAULT_THEME_ID` instead of crashing or applying nothing.
+
+**6. Theme catalog** — `src/lib/theme-catalog.js`. Pure, read-only helpers over the raw `uxmStudio` value; normalizes v1 OR v2 into one shape so file 8 always has something to render:
+
+```javascript
+// src/lib/theme-catalog.js
+import { DEFAULT_UXM_CONFIG } from '@/lib/uxm-studio-config'
+
+export const DEFAULT_THEME_ID = 'default'
+const DEFAULT_THEME_NAME = 'Default'
+
+export function normalizeStudioConfig(raw) {
+  const base = raw && typeof raw === 'object' ? raw : DEFAULT_UXM_CONFIG
+  return {
+    ...base,
+    overrides: base.overrides ?? {},
+    brand: base.brand ?? DEFAULT_UXM_CONFIG.brand,
+    themesVersion: 2,
+    defaultTheme: {
+      name: String(base.defaultTheme?.name ?? '') || DEFAULT_THEME_NAME,
+      description: String(base.defaultTheme?.description ?? ''),
+    },
+    themes: Array.isArray(base.themes)
+      ? base.themes.filter((t) => t && typeof t.id === 'string' && typeof t.name === 'string')
+      : [],
+  }
+}
+
+export function getThemeMeta(structure, id) {
+  if (!structure) return null
+  if (id === DEFAULT_THEME_ID) return structure.defaultTheme
+  const theme = structure.themes.find((t) => t.id === id)
+  return theme ? { name: theme.name, description: theme.description ?? '' } : null
+}
+
+export function resolveThemeConfig(structure, id) {
+  if (!structure) return null
+  if (id === DEFAULT_THEME_ID) return { overrides: structure.overrides, brand: structure.brand }
+  const theme = structure.themes.find((t) => t.id === id)
+  return theme ? { overrides: theme.config?.overrides ?? {}, brand: theme.config?.brand ?? {} } : null
+}
+
+export function getThemeAccentColor(structure, id, mode) {
+  const tokens = resolveThemeConfig(structure, id)?.brand?.tokens?.[mode]
+  return tokens?.['--color-accent-bold'] ?? tokens?.['--color-accent'] ?? null
+}
+
+export function themeRows(structure) {
+  if (!structure) return []
+  return [
+    { id: DEFAULT_THEME_ID, ...structure.defaultTheme },
+    ...structure.themes.map((t) => ({ id: t.id, name: t.name, description: t.description ?? '' })),
+  ]
+}
+```
+
+**7. Theme store** — `src/stores/theme-store.js` (zustand). The ONLY persisted value is **which theme is currently applied** — one `localStorage` key. No key → falls back to `DEFAULT_THEME_ID`. **There is no separate "set as default" concept to build** — selecting a theme in the picker IS setting this browser's default; do not invent a second stored preference or a distinct "Active" vs. "Default" pair of actions (UXM Studio's own theme manager has that split because it also has an *editor* whose in-progress state a switch can discard — this consumer has no such state):
+
+```javascript
+// src/stores/theme-store.js
+import { create } from 'zustand'
+import { fetchStudioConfig } from '@/lib/api/config'
+import { setUxmConfig } from '@/lib/uxm-studio-config'
+import { DEFAULT_THEME_ID, normalizeStudioConfig, resolveThemeConfig } from '@/lib/theme-catalog'
+
+const STORAGE_KEY = '{{CLIENT_SLUG}}-selected-theme'
+
+function readSelectedThemeId() {
+  try { return localStorage.getItem(STORAGE_KEY) || DEFAULT_THEME_ID } catch { return DEFAULT_THEME_ID }
+}
+function writeSelectedThemeId(id) {
+  try { localStorage.setItem(STORAGE_KEY, id) } catch { /* ignore quota/availability */ }
+}
+
+const useThemeStore = create((set, get) => ({
+  structure: null,
+  loading: false,
+  error: null,
+  selectedThemeId: readSelectedThemeId(),
+
+  async loadThemes() {
+    if (get().loading || get().structure) return
+    set({ loading: true, error: null })
+    let structure
+    try {
+      structure = normalizeStudioConfig(await fetchStudioConfig())
+    } catch (err) {
+      structure = normalizeStudioConfig(null)
+      set({ error: err })
+    }
+    const storedId = get().selectedThemeId
+    const resolvedId = resolveThemeConfig(structure, storedId) ? storedId : DEFAULT_THEME_ID
+    set({ structure, loading: false, selectedThemeId: resolvedId })
+    const config = resolveThemeConfig(structure, resolvedId)
+    if (config) setUxmConfig(config)
+  },
+
+  selectTheme(id) {
+    const config = resolveThemeConfig(get().structure, id)
+    if (!config) return
+    writeSelectedThemeId(id)
+    set({ selectedThemeId: id })
+    setUxmConfig(config)
+  },
+}))
+
+export default useThemeStore
+```
+
+This **replaces** file 5's body when `{{THEME_PICKER}} = yes` — `use-hydrate-studio-config.js` becomes a thin wrapper delegating to the store, so there is one hydration path instead of two competing ones:
+
+```javascript
+// src/hooks/use-hydrate-studio-config.js — when {{THEME_PICKER}} = yes
+import { useEffect } from 'react'
+import useThemeStore from '@/stores/theme-store'
+
+export function useHydrateStudioConfig() {
+  useEffect(() => { useThemeStore.getState().loadThemes() }, [])
+}
+```
+
+**8. Header trigger + list** — `src/components/layout/theme-picker.jsx`. A `Tag type="accent"` pill (theme name + `chevron-down` `Icon`) inside `<AppTopBar actions>` opens a **`Listbox` dropdown** (NOT a `Dialog`/`Modal` — this picker is small enough to be a lightweight popover) listing `themeRows(structure)`: an `Avatar` (initials, optionally accent-tinted per row via `getThemeAccentColor`), the theme name, an optional description, and — on the active row only — a `Tag type="success"` "Active" pill (informational, never its own button; the whole row is the click target via `Listbox`'s `onChange`, so other rows carry no badge at all — a "Use" pill on every non-active row would just be redundant with the row already being clickable). `showCheckmark={false}` since the "Active" pill is the selection signal. **No search row** — `searchable={false}`, a 2–4 item theme list never needs it. **Do not add a "Default" badge** on the `row.id === DEFAULT_THEME_ID` row either — it adds noise without being actionable. No confirm-before-switch step (unlike UXM Studio's own theme manager) — there is no editor/unpublished-changes state a switch here could discard. Full component + CSS recipe (`.{{CLIENT_SLUG}}-theme-picker__*` BEM): see [`viax-uxm/references/quick-recipes.md` §16](../viax-uxm/references/quick-recipes.md).
+
+Add `<ThemePicker />` inside `<AppTopBar actions>` as a **sibling to** (never a replacement for) the light/dark toggle, placed **after** it (toggle first, then `<ThemePicker />`) — light/dark mode and the brand "theme" are orthogonal axes; every theme ships both a light and a dark token set.
 
 ---
 
@@ -1389,6 +1639,7 @@ viax-lab-portal/
 │   ├── components/
 │   │   ├── layout/
 │   │   │   ├── uxm-config-applier.jsx       # generateOverridesCss(config) → global <style id="uxm-overrides"> + favicon
+│   │   │   ├── theme-picker.jsx             # OPTIONAL ({{THEME_PICKER}}=yes): header trigger + Listbox dropdown, select-only
 │   │   │   └── shell.jsx                    # PageShell + AppSidebar (linkAs router) + AppTopBar + light/dark toggle
 │   │   ├── dashboard/
 │   │   │   ├── revenue-chart.jsx            # recharts LineChart in <Card>
@@ -1396,11 +1647,11 @@ viax-lab-portal/
 │   │   │   └── progress-ring.jsx            # SVG ring in <Card>
 │   │   ├── detail/
 │   │   │   ├── line-items.jsx               # heading + <DataTable> (no Card wrapper — Gotcha #1)
-│   │   │   ├── party-card.jsx               # <Card> + <Avatar> rows
-│   │   │   └── price-summary.jsx            # <Card> + <PropertyGrid> + <Divider>
+│   │   │   ├── party-card.jsx               # <Card> + <Cluster> (NOT Stack+flexDirection:row — Gotcha #9) of <Avatar> rows
+│   │   │   └── price-summary.jsx            # <Card> + <PropertyGrid> (PropertyField children, not value= — Gotcha #7) + <Divider>
 │   │   ├── bi/
 │   │   │   ├── bi-list-page.jsx             # PageHeader + InlineFilter + DataTable + Loader/EmptyState (feature-flagged)
-│   │   │   └── bi-detail-page.jsx           # PageHeader + LineItems + Timeline + PartyCard + PriceSummary (feature-flagged)
+│   │   │   └── bi-detail-page.jsx           # BackLink (needs href — Gotcha #10) + PageHeader (inline meta only — Gotcha #8) + LineItems + Timeline + PartyCard + PriceSummary (feature-flagged)
 │   │   └── shared/
 │   │       ├── status-badge.jsx             # Maps status → <Tag type="…">
 │   │       ├── money-display.jsx
@@ -1409,6 +1660,7 @@ viax-lab-portal/
 │   │   ├── keycloak.js                      # Keycloak singleton instance
 │   │   ├── graphql-client.js
 │   │   ├── uxm-studio-config.js             # live { overrides, brand } store: localStorage cache + pub/sub + brand seed
+│   │   ├── theme-catalog.js                 # OPTIONAL ({{THEME_PICKER}}=yes): pure read-only helpers over uxmStudio's themes[]
 │   │   ├── uxm-persistence.js               # StudioPersistence adapter: load→live store, save→server (saveMfaConfig)+mirror
 │   │   ├── bi-types.config.js               # AUTO-GENERATED: BI type registry from BEM
 │   │   ├── api/
@@ -1431,7 +1683,8 @@ viax-lab-portal/
 │   │   ├── use-user.js
 │   │   └── use-hydrate-studio-config.js     # boot: server uxmStudio config → live store (one-shot)
 │   ├── stores/
-│   │   └── auth-store.js                    # accessToken + user info synced from Keycloak (in-memory)
+│   │   ├── auth-store.js                    # accessToken + user info synced from Keycloak (in-memory)
+│   │   └── theme-store.js                   # OPTIONAL ({{THEME_PICKER}}=yes): selectedThemeId (1 localStorage key) + loadThemes/selectTheme
 │   ├── types/
 │   │   ├── api.js                           # JSDoc typedefs for GraphQL responses
 │   │   └── entities.js                      # JSDoc typedefs for domain entities
@@ -1485,11 +1738,11 @@ Data is fetched via `useBiList(config)` hook → `lib/api/bi.js` → `filter{con
 
 One detail page per `BI_TYPES` entry. All share the `<BiDetailPage config={config} biId={biId} />` template — sections are conditionally rendered by feature flags:
 
-- Back button, `biId`, `biName`, Created / Completed dates (always)
+- Back button — `<BackLink href="/{config.slug}" onClick={(e) => { e.preventDefault(); navigate(-1) }}>` (always pass a real `href`, not just `onClick` — Gotcha #10), `biId`, `biName`, Created / Completed dates (always). Render `biId`/dates via `<PageHeader meta={<>…</>}>` — **inline content only**, never a `Stack`/block element (Gotcha #8).
 - **`config.hasStatus`**: Status badge
-- **`config.hasParties`**: Party cards — Customer, Ship-To, Bill-To, Sales rep
+- **`config.hasParties`**: Party cards — one `<Card>` per `config.partyFields` entry, each an avatar+name row laid out with `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — Gotcha #9)
 - **`config.hasLineItems`**: Line items table — quantity, product, unit price
-- **`config.isPriceable`**: Price summary card — subtotal, discount, tax, freight, **total**
+- **`config.isPriceable`**: Price summary card — subtotal, discount, tax, freight, **total**, each rendered via `<PropertyField label="…">{value}</PropertyField>` (value as children, never a `value` prop — Gotcha #7)
 - Status / event timeline (always)
 
 Data is fetched via `useBiDetail(config, biId)` hook → `lib/api/bi.js` → `get{config.typeName}` GraphQL query.
@@ -1500,11 +1753,11 @@ Data is fetched via `useBiDetail(config, biId)` hook → `lib/api/bi.js` → `ge
 - **Columns:** Image (`<Thumbnail>` with `style={{ '--uxm-thumbnail-size': '36px', '--uxm-thumbnail-border-radius': '6px' }}`, fallback `<Icon glyph="image" />`), Name (medium weight), ID (monospace, muted), Description (muted), Categories (right-aligned `<Cluster>` of `<Tag type="neutral" size="small">`).
 - `onRowClick` navigates to `/products/{maId}`.
 - Above the table: `<PageHeader>` + `<InlineFilter>` (search via `<InputWithIcon>` + category `<Select>` in a `<FormField labelPosition="side">`).
-- Detail page with full product info (`<DetailSection>` + `<PropertyGrid>`, no `<Card>` wrapper).
+- Detail page with full product info (`<DetailSection>` + `<PropertyGrid>` of `<PropertyField label="…">{value}</PropertyField>` — children, not a `value` prop; Gotcha #7 — no `<Card>` wrapper).
 
 ### Account (`/account`)
 
-- Top profile block: `<Card shadow>` with `<Avatar>` + name/email (no `DetailSection` here — it's a single-row identity card).
+- Top profile block: `<Card shadow>` with a `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — Gotcha #9) of `<Avatar>` + name/email (no `DetailSection` here — it's a single-row identity card).
 - **Below that, render each section as a `<DetailSection>` directly** — Addresses, Notifications, Security — **with no `<Card>` wrapper** (Gotcha #1). DetailSection is already a card.
 - Addresses: `<EmptyState>` until backend wired.
 - Notifications: `<Stack>` of `<ToggleSwitch>`-es.
@@ -1538,7 +1791,8 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 | URL filters, pagination, search, tabs | React Router `useSearchParams` |
 | Auth tokens + user info | Zustand `auth-store` — in-memory only, synced from keycloak-js on init |
 | User party roles for sidebar visibility | Zustand `auth-store.userRoles` — populated by `use-user.js` hook calling `setUserRoles(new Set(paMappedRolesList))` after fetching `getCurrentUserInfo`; **NOT** from the Keycloak token (which carries no viax role data) |
-| Theme / brand configuration | UXM Studio config — `{ overrides, brand }` in the live `lib/uxm-studio-config.js` store (localStorage cache + pub/sub), **persisted to the server** under the MFA config's `uxmStudio` key via `saveMfaConfig` (read back on boot by `useHydrateStudioConfig`); the app-level `UxmConfigApplier` turns the live store into a global stylesheet. **No Zustand `theme-store`.** |
+| Theme / brand configuration | UXM Studio config — `{ overrides, brand }` in the live `lib/uxm-studio-config.js` store (localStorage cache + pub/sub), **persisted to the server** under the MFA config's `uxmStudio` key via `saveMfaConfig` (read back on boot by `useHydrateStudioConfig`); the app-level `UxmConfigApplier` turns the live store into a global stylesheet. **No Zustand `theme-store` for the admin/editor path.** |
+| Which published theme is selected (only when `{{THEME_PICKER}} = yes`) | Zustand `theme-store.js` — `selectedThemeId` in ONE `localStorage` key, no server write; see *"Optional: read-only theme picker"* under Runtime Theming |
 | Light/dark mode | Host-owned `data-theme` on `:root` — session-only `useState` in `shell.jsx` (the embedded studio defers it to the host) |
 | Ephemeral UI (modals, form inputs) | React `useState` |
 
@@ -1559,7 +1813,7 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 - The portal must be fully functional with `VITE_USE_MOCK_DATA=true`
 - Theme changes apply instantly via the UXM Studio — a Save regenerates the global `#uxm-overrides` stylesheet (no page reload, no custom theme code)
 - Every list page filter/search/sort state must live in the URL via React Router `useSearchParams` (shareable links)
-- **Use `@viax/uxm` for every UI primitive** — see [`viax-uxm/SKILL.md`](viax-uxm/SKILL.md). Never handroll a div with the same intent as an existing primitive (Card, FormField, DataTable, List, StatCard, PageShell, EmptyState, Loader, Tag, Alert, …).
+- **Use `@viax/uxm` for every UI primitive** — see [`viax-uxm/SKILL.md`](viax-uxm/SKILL.md). Never handroll a div with the same intent as an existing primitive (Card, FormField, DataTable, List, StatCard, PageShell, EmptyState, Loader, Tag, Banner, …).
 - Layout via `<Stack>`, `<Cluster>`, `<ResponsiveGrid>` — not ad-hoc flex/grid divs.
 - Inline `style` only for one-off overrides via `--uxm-{component}-*` vars or layout sizing the library doesn't expose.
 - JSDoc comments on all function signatures and complex types
@@ -1568,7 +1822,7 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 ### Error Handling
 
 - TanStack Query error boundaries for API failures
-- Toast notifications via `sonner` (`import { toast } from 'sonner'`) for mutation errors
+- Toast notifications via the library's own toast API — `import { Toaster, toast } from '@viax/uxm/ui'`, mount `<Toaster position="top-right" max={5} />` ONCE at the app root, then call `toast.error(...)` / `toast.success(...)`. Do **NOT** add `sonner`: `@viax/uxm` already ships its own `Toast`/`Toaster`/`toast`, and a second toast system violates the "never duplicate a primitive" rule
 - `<Loader>` for in-flight queries, `<EmptyState>` for zero-result lists — not spinners or hand-rolled skeletons
 - 401 response: call `keycloak.logout()` from `lib/keycloak.js` — Keycloak redirects to its login page and clears the session
 
@@ -1579,16 +1833,23 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 Build in this exact sequence:
 
 1. **Project scaffold** — Vite + React 19; create `.npmrc` (private Nexus); install `@viax/uxm` + deps; import `@viax/uxm/tokens.css` and `@viax/uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (Gotcha #6); jsconfig paths.
-2. **Theme system** — `globals.css` with the **full baseline from "UXM Layout & Styling Gotchas → Required `globals.css`"** (panel-radius unification, DetailSection padding override, InputWithIcon icon clamp, the `body` font chain `var(--brand-font, var(--font-sans))`). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No Zustand `theme-store` / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 10). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchMfaConfig`/`fetchStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveMfaConfig`/`saveStudioConfig` write helpers (deferred to step 10).
-3. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow, `auth-store`, `ProtectedRoute`, login page (mock + real Keycloak — built with `Card` + `FormField` + `TextInput`/`PasswordInput` + `ButtonPrimary` + `Alert`)
-4. **Shell layout** — `<PageShell>` + `<AppSidebar linkAs={RouterLink}>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; `useUser()` populates roles for sidebar visibility
+2. **Theme system** — `globals.css` with the **full baseline from "UXM Layout & Styling Gotchas → Required `globals.css`"** (panel-radius unification, DetailSection padding override, InputWithIcon icon clamp, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 10). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchMfaConfig`/`fetchStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveMfaConfig`/`saveStudioConfig` write helpers (deferred to step 10). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 4.
+3. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow, `auth-store`, `ProtectedRoute`, login page (mock + real Keycloak — built with `Card` + `FormField` + `TextInput`/`PasswordInput` + `ButtonPrimary` + `Banner` (NOT `Alert` — it was removed in @viax/uxm 2.0.0))
+4. **Shell layout** — `<PageShell>` + `<AppSidebar linkAs={RouterLink}>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; `useUser()` populates roles for sidebar visibility. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle.
 5. **Mock data** — Realistic data for all entity types using real viax field names
 6. **Dashboard** — `<PageHeader>` + `<StatCard>` × 4 + recharts charts in `<Card>` + `<DataTable>` for Recent orders (no Card wrapper — Gotcha #1) + `<Checkbox>`-driven Tasks (Gotcha #3) + Quick links Card (mock data)
 7. **BEM discovery** — Query active BEM via MCP (`get_type` + `execute_query`); call `get_type` on each discovered BI type to resolve interfaces; populate `bi-types.config.js`; build `<BiListPage>` and `<BiDetailPage>` shared templates using `<DataTable>`, `<PageHeader>`, `<InlineFilter>`, `<TimelineEntry>`, `<PropertyGrid>`; scaffold one thin page pair per `BI_TYPES` entry; populate sidebar `navItems` from `BI_TYPES`
 8. **Products** — `<DataTable>` with 5 columns (image `<Thumbnail>`, name, ID, description, categories `<Tag>`s); **no `<Card>` wrapper** (Gotcha #1). Detail page via `<DetailSection>` + `<PropertyGrid>` rendered directly.
 9. **Account** — top `<Card>` for the Avatar identity row; each section (Addresses, Notifications, Security) as a bare `<DetailSection>` — **no `<Card>` around DetailSection** (Gotcha #1). Wire to `useAuthStore(s => s.user)`.
 10. **Admin index (+ UXM Studio editor only if `{{EMBED_UXM_STUDIO}} = yes`)** — Admin index uses `<DataTable>` for the section list (Gotcha #2: Users / Integrations "coming soon", **no Theme row**). **Always** wire the host light/dark toggle in `<AppTopBar>` and the brand-driven sidebar logo (subscribe to `uxm-studio-config`). **Only when `{{EMBED_UXM_STUDIO}} = yes`:** create `lib/uxm-persistence.js` + the `saveMfaConfig`/`saveStudioConfig` write helpers, import `@viax/uxm/studio.css` in `main.jsx`, build the UXM Studio page (`src/pages/uxm/UxmStudioPage.jsx`) mounting `<UxmApp embed persistence={createConfigRepoPersistence()} />`, register `/uxm` in the router, and add the "UXM Studio" item under the **Settings** sidebar group. See [Runtime Theming](#runtime-theming--consume-the-uxm-studio-config-optionally-embed-the-editor-at-uxm).
-11. **Polish** — `<Loader>` / `<EmptyState>` for all data-fetching pages, error boundaries, sonner toasts, responsive (`<ResponsiveGrid>` does most of the work)
+11. **Polish** — `<Loader>` / `<EmptyState>` for all data-fetching pages, error boundaries, `<Toaster/>` + `toast.*()` from `@viax/uxm/ui` (no sonner), responsive (`<ResponsiveGrid>` does most of the work)
+12. **Font smoke-check (MANDATORY — do not skip).** Before declaring the build done, verify the typography wiring survived generation. In the running app (DevTools → Computed → `font-family`), or by inspecting the built files, confirm ALL of:
+    - `globals.css` contains the `:root { --font-sans: var(--font-inter, …) }` bridge, the `html, body, #root { font-family: var(--brand-font, var(--font-sans)) }` chain, and `button, input, select, textarea { font: inherit }`.
+    - `index.html` contains the Inter Google-Fonts `<link>` (Gotcha #6).
+    - Computed `font-family` on `<body>` is Inter (or the published brand font) — **never a serif**. Serif body text → the bridge is missing.
+    - Computed `font-family` on a native `<button>`/`<input>` matches the body — **never Arial/Helvetica**. Arial controls → the `font: inherit` rule is missing.
+    - Sans-serif but not Inter → the `index.html` `<link>` is missing.
+    If any check fails, fix `globals.css`/`index.html` from the Gotcha #5/#6 baselines verbatim — do not improvise alternative font declarations.
 
 ---
 
@@ -1608,7 +1869,6 @@ Ensure these are installed (no shadcn/Tailwind):
     "@viax/uxm": "^3.1.2",
     "axios": "^1.x",
     "zustand": "^4.x",
-    "sonner": "^1.x",
     "recharts": "^2.x"
   },
   "devDependencies": {

@@ -160,6 +160,35 @@ array or the studio's Color editor) but they are part of the same theming contra
 - Sanitise before interpolating a font name into CSS/URLs yourself? Don't — reuse the exported
   `safeFontFamily` / `fontFileUrl` helpers from `@viax/uxm/studio/generate-css`.
 
+## Theme variants (`data-theme`)
+
+`@viax/uxm/tokens.css` declares the light palette on `:root` and a full dark override set under
+`[data-theme="dark"]`. Setting `data-theme` on the root element switches the palette — every
+component re-tints via the `var(--uxm-*, var(--color-*))` fallback chain, no component code
+involved:
+
+| `data-theme` | Palette | Overrides |
+|--------------|---------|-----------|
+| *(unset)* / `"light"` | Default light | — (the `:root` values). |
+| `"dark"` | Dark | Full override set incl. semantic colors and deeper shadows. |
+
+The host owns the attribute (the embedded studio defers to it); a typical toggle is a session-only
+`useState` that writes `document.documentElement.dataset.theme`. The `themeTokens` array (and the
+studio's Color editor / WCAG panel) documents the **light + dark** hex pairs.
+
+> Two additional CSS-level variants — `data-theme="blue"` (steel-blue light palette around
+> `#5F859C`) and `data-theme="claude"` (pastel-beige surfaces, brown text, orange accent
+> `#D97757`) — exist only on the unmerged `feat/blue-claude-themes` branch. They override
+> surfaces/text/border/accent/highlight only (semantic colors + shadows inherit light) and are
+> **not in any published release** — do not target them from consumer code yet.
+
+These CSS-level variants are a **different axis** from the env-published UXM Studio *brand
+themes*: a consumer portal's `uxmStudio` config (fetched via `getMfaConfig`) can carry an
+arbitrary, environment-defined set of named themes (`themes[]`), each bundling its own
+`--color-*` token ramps for **both** light and dark. Selecting a brand theme swaps the token
+values; `data-theme` still picks which mode's values paint. See quick-recipes.md §16 for the
+read-only picker that consumes them.
+
 ## Programmatic access
 
 ```ts
@@ -230,3 +259,8 @@ pick ONE accent and you want to derive the rest of the ramp — don't hand-roll 
    a PR to `@viax/uxm`. Local declarations bypass the MODO theming layer.
 4. **Pair semantic tokens correctly**: always use the matching `Bg` / `Text` / `Border` triplet
    for a given status (don't mix `Success Bg` with `Danger Text`, etc.).
+5. **`@viax/uxm` ships no spacing-scale token** — there is no `--spacing` (or similar) CSS custom
+   property anywhere in the library or its tokens.css. Never write `gap`/`padding`/`margin` as
+   `calc(var(--spacing) * N)` — it silently resolves to nothing, `calc()` goes invalid, and the
+   whole declaration drops to `0`/initial (rows and elements collapse together with no visible
+   error). Use literal px values for spacing in app code instead.
