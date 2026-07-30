@@ -74,5 +74,5 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 - Renders a native `<span>` — purely presentational. The variant colour is a visual hint only; the textual content must carry the meaning.
 - For high-contrast / colour-blind contexts, do not rely on green vs. warm alone — pair with explicit words ("Yes" / "No") in `children`.
-- No interactive affordances; pass through `aria-*` props if the label is part of a larger interactive element (e.g. an edge-insert button).
+- No interactive affordances; pass through `aria-*` props if the label is part of a larger interactive element (e.g. a clickable edge or connector control).
 - Long labels are clipped horizontally by `white-space: nowrap` — keep copy short or override `white-space` per-instance.
