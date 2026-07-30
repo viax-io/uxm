@@ -84,6 +84,37 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* Two-line row: headline + subtitle stacked in a column. The wrapper owns
+   the row growth (flex: 1) so the trailing hint still right-aligns; inside
+   it the label no longer needs to grow. */
+.uxm-menu__item-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--uxm-menu-item-subtitle-gap, 2px);
+}
+.uxm-menu__item-text .uxm-menu__item-label {
+  flex: 0 0 auto;
+}
+.uxm-menu__item-subtitle {
+  overflow: hidden;
+  font-size: var(--uxm-menu-item-subtitle-font-size, 11px);
+  color: var(--uxm-menu-item-subtitle-color, var(--color-text-muted));
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* On a hover-highlighted or destructive row the subtitle folds to the row's
+   own (full-strength) text colour — like the icon and hint do — so it stays
+   legible against the highlight / danger surface and reads as part of the
+   row. Hierarchy comes from the smaller subtitle font, NOT a dimming
+   opacity: an `opacity` multiplier would composite the 11px text toward the
+   surface and can drop it below WCAG AA (measured: danger-text stays ~7.6:1
+   at full strength but ~0.75 opacity erodes that; Principle IV). */
+.uxm-menu__item--active .uxm-menu__item-subtitle,
+.uxm-menu__item--danger .uxm-menu__item-subtitle {
+  color: inherit;
+}
 .uxm-menu__item-hint {
   flex-shrink: 0;
   margin-left: auto;

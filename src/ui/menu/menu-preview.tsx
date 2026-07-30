@@ -43,6 +43,12 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-menu-item-danger-color': styles.itemDangerColor as string,
     '--uxm-menu-item-danger-active-bg': styles.itemDangerActiveBg as string,
     '--uxm-menu-item-icon-color': styles.itemIconColor as string,
+
+    // Two-line (headline + subtitle) rows.
+    '--uxm-menu-item-subtitle-font-size': `${styles.itemSubtitleFontSize}px`,
+    '--uxm-menu-item-subtitle-color': styles.itemSubtitleColor as string,
+    '--uxm-menu-item-subtitle-gap': `${styles.itemSubtitleGap}px`,
+
     '--uxm-menu-separator-color': styles.separatorColor as string,
   } as CSSProperties;
 }
@@ -50,12 +56,12 @@ function buildVars(styles: Styles): CSSProperties {
 // Demo menu — a realistic row-action set: a couple of plain actions, a
 // separator, then a destructive Delete. Shared shape between the static
 // showcase and the live instance.
-type DemoRow = { key: string; label: string; icon: string; danger?: boolean };
+type DemoRow = { key: string; label: string; subtitle: string; icon: string; danger?: boolean };
 const PLAIN_ROWS: DemoRow[] = [
-  { key: 'edit', label: 'Edit', icon: 'pencil' },
-  { key: 'duplicate', label: 'Duplicate', icon: 'copy' },
+  { key: 'edit', label: 'Edit', subtitle: 'Rename and change fields', icon: 'pencil' },
+  { key: 'duplicate', label: 'Duplicate', subtitle: 'Create a copy in this folder', icon: 'copy' },
 ];
-const DANGER_ROW: DemoRow = { key: 'delete', label: 'Delete', icon: 'trash', danger: true };
+const DANGER_ROW: DemoRow = { key: 'delete', label: 'Delete', subtitle: 'Remove permanently', icon: 'trash', danger: true };
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Static showcase — full panel rendered inline with the real classes
@@ -75,10 +81,12 @@ function StaticShowcase({
   state,
   withIcons,
   withSeparator,
+  withSubtitles,
 }: {
   state: string;
   withIcons: boolean;
   withSeparator: boolean;
+  withSubtitles: boolean;
 }) {
   const renderRow = (row: DemoRow, forceActive: boolean, forceDisabled: boolean) => (
     <button
@@ -94,7 +102,14 @@ function StaticShowcase({
       )}
     >
       {withIcons && <Icon glyph={row.icon} size={16} className="uxm-menu__item-icon" />}
-      <span className="uxm-menu__item-label">{row.label}</span>
+      {withSubtitles ? (
+        <span className="uxm-menu__item-text">
+          <span className="uxm-menu__item-label">{row.label}</span>
+          <span className="uxm-menu__item-subtitle">{row.subtitle}</span>
+        </span>
+      ) : (
+        <span className="uxm-menu__item-label">{row.label}</span>
+      )}
     </button>
   );
 
@@ -131,23 +146,36 @@ export function MenuPreview({ styles, variants }: PreviewProps & { componentId: 
   const state = (variants.state as string) ?? 'default';
   const withIcons = (variants.withIcons ?? 'yes') === 'yes';
   const withSeparator = (variants.withSeparator ?? 'yes') === 'yes';
+  const withSubtitles = (variants.withSubtitles ?? 'no') === 'yes';
 
   const cssVars = buildVars(styles);
   const [lastAction, setLastAction] = useState<string | null>(null);
 
   // Live menu items — the real atom, exercising open/close, keyboard
-  // nav, separators, disabled + danger rows. `panelStyle={cssVars}`
-  // pushes the live knob values onto the portaled panel.
+  // nav, separators, disabled + danger rows. Icons and subtitles are gated
+  // by their variants independently. `panelStyle={cssVars}` pushes the live
+  // knob values onto the portaled panel.
   const liveItems: MenuEntry[] = [
-    ...(withIcons
-      ? PLAIN_ROWS.map((r) => ({ ...r, onSelect: () => setLastAction(r.label) }))
-      : PLAIN_ROWS.map((r) => ({ key: r.key, label: r.label, onSelect: () => setLastAction(r.label) }))),
-    { key: 'archive', label: 'Archive', icon: withIcons ? 'archive-x' : undefined, disabled: true },
+    ...PLAIN_ROWS.map((r) => ({
+      key: r.key,
+      label: r.label,
+      icon: withIcons ? r.icon : undefined,
+      subtitle: withSubtitles ? r.subtitle : undefined,
+      onSelect: () => setLastAction(r.label),
+    })),
+    {
+      key: 'archive',
+      label: 'Archive',
+      icon: withIcons ? 'archive-x' : undefined,
+      subtitle: withSubtitles ? 'Move out of the active list' : undefined,
+      disabled: true,
+    },
     ...(withSeparator ? ([{ separator: true, key: 'sep' }] as MenuEntry[]) : []),
     {
       key: DANGER_ROW.key,
       label: DANGER_ROW.label,
       icon: withIcons ? DANGER_ROW.icon : undefined,
+      subtitle: withSubtitles ? DANGER_ROW.subtitle : undefined,
       danger: true,
       onSelect: () => setLastAction('Delete'),
     },
@@ -165,7 +193,12 @@ export function MenuPreview({ styles, variants }: PreviewProps & { componentId: 
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32, ...cssVars } as CSSProperties}>
       <div>
         <div style={sectionLabel}>{state} state</div>
-        <StaticShowcase state={state} withIcons={withIcons} withSeparator={withSeparator} />
+        <StaticShowcase
+          state={state}
+          withIcons={withIcons}
+          withSeparator={withSeparator}
+          withSubtitles={withSubtitles}
+        />
       </div>
 
       <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>

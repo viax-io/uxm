@@ -29,6 +29,12 @@ export interface MenuItem {
   key: string;
   /** Row content. A plain string renders as the label; pass a node for richer rows. */
   label: ReactNode;
+  /**
+   * Optional secondary line rendered beneath `label`, turning the row into a
+   * two-line item: `label` is the headline, `subtitle` the supporting text
+   * (e.g. a description or the current value). Single-line rows omit it.
+   */
+  subtitle?: ReactNode;
   /** Optional leading icon glyph (see icons.ts). */
   icon?: string;
   /** Optional trailing hint (e.g. a keyboard shortcut "⌘C"). */
@@ -329,7 +335,17 @@ export function Menu({
                 {entry.icon && (
                   <Icon glyph={entry.icon} size={16} className="uxm-menu__item-icon" />
                 )}
-                <span className="uxm-menu__item-label">{entry.label}</span>
+                {entry.subtitle != null ? (
+                  // Two-line row: headline + subtitle stacked in a column so
+                  // the label keeps its ellipsis and the trailing hint still
+                  // right-aligns against the block.
+                  <span className="uxm-menu__item-text">
+                    <span className="uxm-menu__item-label">{entry.label}</span>
+                    <span className="uxm-menu__item-subtitle">{entry.subtitle}</span>
+                  </span>
+                ) : (
+                  <span className="uxm-menu__item-label">{entry.label}</span>
+                )}
                 {entry.hint != null && (
                   <span className="uxm-menu__item-hint">{entry.hint}</span>
                 )}
