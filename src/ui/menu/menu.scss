@@ -97,10 +97,19 @@
 .uxm-menu__item-text .uxm-menu__item-label {
   flex: 0 0 auto;
 }
+/* `--color-text-strong`, NOT `--color-text-muted`, is the resting subtitle
+   colour. Muted is the obvious pick for a supporting line and it is what
+   icons/hints use — but those are decorative or terse, whereas a subtitle
+   carries real information ("Currently in Inbox", "Remove permanently") at
+   11px. Muted measures 2.54:1 on `--color-card` in the light theme, under
+   even the 3:1 large-text floor, and Principle IV requires AA for text.
+   Strong measures 8.86:1 light / 11.76:1 dark and still reads a clear step
+   below `--color-text`, so the hierarchy survives without the contrast
+   failure. Recheck with `contrastRatio()` if this default ever moves. */
 .uxm-menu__item-subtitle {
   overflow: hidden;
   font-size: var(--uxm-menu-item-subtitle-font-size, 11px);
-  color: var(--uxm-menu-item-subtitle-color, var(--color-text-muted));
+  color: var(--uxm-menu-item-subtitle-color, var(--color-text-strong));
   text-overflow: ellipsis;
   white-space: nowrap;
 }

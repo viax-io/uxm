@@ -1565,7 +1565,10 @@ export const inputsDefs: ComponentDef[] = [
       // Two-line rows — a headline (label) plus a supporting subtitle
       // beneath. Only shown when the Subtitles variant is on.
       { key: 'itemSubtitleFontSize', label: 'Font Size', control: 'number', defaultValue: 11, min: 9, max: 16, step: 1, unit: 'px', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
-      { key: 'itemSubtitleColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
+      // Default is text-STRONG, not text-muted: muted fails WCAG AA on the
+      // panel in the light theme (2.54:1) and a subtitle carries real content.
+      // See the note in menu.scss.
+      { key: 'itemSubtitleColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
       { key: 'itemSubtitleGap', label: 'Row Gap', control: 'number', defaultValue: 2, min: 0, max: 8, step: 1, unit: 'px', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
 
       // Separator divider colour.

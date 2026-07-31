@@ -38,6 +38,9 @@ const items: MenuEntry[] = [
 | `open` / `onOpenChange` | `boolean` / `(open) => void` | uncontrolled | Controlled open state. |
 | `minWidth` / `maxWidth` | `number` | `160` / `280` | Panel width bounds; long labels truncate past `maxWidth`. |
 | `aria-label` | `string` | — | Accessible name for the panel. |
+| `className` | `string` | — | Class on the wrapper that hosts the trigger. |
+| `panelClassName` | `string` | — | Class on the portaled panel. |
+| `panelStyle` | `CSSProperties` | — | Inline style on the portaled panel — the seam for pushing `--uxm-menu-*` overrides onto a panel that lives outside your subtree. |
 
 ### `MenuItem`
 
@@ -60,20 +63,21 @@ Panel: `--uxm-menu-panel-{bg,border,radius,max-height}`, `--uxm-menu-shadow-{col
 
 Row: `--uxm-menu-item-{gap,padding-x,padding-y,font-size,radius,color}`, `--uxm-menu-item-active-{bg,color}`, `--uxm-menu-item-disabled-opacity`, `--uxm-menu-item-danger-{color,active-bg}`, `--uxm-menu-item-icon-color`, `--uxm-menu-item-hint-{font-size,color}`.
 
-Two-line row: `--uxm-menu-item-subtitle-font-size` (default `11px`), `--uxm-menu-item-subtitle-color` (default `--color-text-muted`), `--uxm-menu-item-subtitle-gap` (default `2px`, the space between headline and subtitle).
+Two-line row: `--uxm-menu-item-subtitle-font-size` (default `11px`), `--uxm-menu-item-subtitle-color` (default `--color-text-strong` — deliberately *not* the muted tone icons and hints use, which measures 2.54:1 on the panel in the light theme and would fail AA for real text), `--uxm-menu-item-subtitle-gap` (default `2px`, the space between headline and subtitle).
 
 Separator: `--uxm-menu-separator-{color,margin}`.
 
 ## Design tokens (MODO-configurable)
 
-Panel bg/border read `--color-card` / `--color-border`; rows read `--color-text` with `--color-surface-alt` highlight; danger reads `--color-danger-{text,bg}`; icons/hints/subtitle read `--color-text-subtle` / `--color-text-muted`. Editing any of these in MODO re-tints every menu.
+Panel bg/border read `--color-card` / `--color-border`; rows read `--color-text` with `--color-surface-alt` highlight; danger reads `--color-danger-{text,bg}`; icons/hints read `--color-text-subtle` / `--color-text-muted`; the subtitle reads `--color-text-strong` (see above — it carries text, so it needs an AA-passing tone). Editing any of these in MODO re-tints every menu.
 
 ## States & variants
 
 - **Row states:** default · active (keyboard highlight *or* hover, same `--active` class) · disabled · danger.
-- **Two-line rows:** any item with a `subtitle` renders a `.uxm-menu__item-text` column (headline + subtitle). Single-line rows are unchanged (no wrapper element). On an active/danger row the subtitle tracks the row's text colour at reduced opacity so it stays legible while reading as secondary.
+- **Two-line rows:** any item with a `subtitle` renders a `.uxm-menu__item-text` column (headline + subtitle). Single-line rows are unchanged (no wrapper element). On an active/danger row the subtitle inherits the row's text colour at **full strength** — no opacity is applied. Hierarchy comes from the smaller subtitle font instead, because an opacity multiplier composites 11px text toward the surface and can push it under AA.
 
 ## Accessibility
 
 - WAI-ARIA menu-button pattern: `role="menu"` panel, `role="menuitem"` rows, `role="separator"` dividers; Enter/Space/ArrowDown open, arrows navigate (wrapping, skipping separators + disabled), Escape closes, focus restores to the trigger.
-- The subtitle is plain descendant text inside the `menuitem`, so it's announced as part of the row's accessible name — keep it short and meaningful.
+- The subtitle is plain descendant text inside the `menuitem`, so it's announced as part of the row's accessible name — keep it short and meaningful. A row carrying **both** a `subtitle` and a `hint` concatenates all three into one name ("Move to… Currently in Inbox ⌘M"), which gets unwieldy fast; if you need a long subtitle, put an explicit `aria-label` on the row's content or move the detail to `aria-describedby` so the *name* stays terse.
+- The subtitle's resting colour is AA-compliant by default (see CSS variables). If you override `--uxm-menu-item-subtitle-color`, re-check it with the package's `contrastRatio()` helper — 11px text is body text for AA purposes and needs 4.5:1.
