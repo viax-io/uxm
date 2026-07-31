@@ -1,3 +1,15 @@
+# [4.7.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.6.0...v4.7.0) (2026-07-31)
+
+
+### Bug Fixes
+
+* **menu:** give the row subtitle an AA-passing default colour ([90ea3e0](https://gitlab.viax.tech/services-viax/uxm/commit/90ea3e0092f3c11f98973b476ed0d750271bfd4b))
+
+
+### Features
+
+* **menu:** add optional two-line rows via a MenuItem `subtitle` ([b85c9ca](https://gitlab.viax.tech/services-viax/uxm/commit/b85c9ca05d27294c08e77862e429fee53f2437bd))
+
 # [4.6.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.5.0...v4.6.0) (2026-07-31)
 
 
