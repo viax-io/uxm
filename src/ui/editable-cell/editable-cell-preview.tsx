@@ -23,8 +23,12 @@ const sectionLabel = {
 
 function buildVars(styles: Styles): CSSProperties {
   return {
-    '--uxm-editable-cell-max-width': `${styles.maxWidth ?? 320}px`,
     '--uxm-editable-cell-radius': `${styles.radius}px`,
+    // Per-size width caps — passed verbatim, never px-suffixed: both knobs are
+    // selects whose values are already CSS (`none` / `320px`), matching the
+    // Font Size pair below.
+    '--uxm-editable-cell-small-max-width': (styles.smallMaxWidth as string) ?? '320px',
+    '--uxm-editable-cell-medium-max-width': (styles.mediumMaxWidth as string) ?? 'none',
     // Symmetric per-size dimension knobs — each set is read only by its own
     // size modifier, so writing both alongside each other is harmless.
     '--uxm-editable-cell-small-padding-x': `${styles.smallPaddingX ?? 8}px`,
@@ -37,11 +41,12 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-editable-cell-small-font-size': (styles.smallFontSize as string) ?? 'inherit',
     '--uxm-editable-cell-medium-padding-x': `${styles.mediumPaddingX ?? 12}px`,
     '--uxm-editable-cell-medium-padding-y': `${styles.mediumPaddingY ?? 6}px`,
-    '--uxm-editable-cell-medium-font-size': `${styles.mediumFontSize ?? 14}px`,
+    '--uxm-editable-cell-medium-font-size': (styles.mediumFontSize as string) ?? '14px',
     '--uxm-editable-cell-hover-bg': styles.hoverBg as string,
     '--uxm-editable-cell-pencil-color': styles.pencilColor as string,
     '--uxm-editable-cell-focus-border': styles.focusBorder as string,
     '--uxm-editable-cell-focus-ring': styles.focusRing as string,
+    '--uxm-editable-cell-color': styles.color as string,
     '--uxm-editable-cell-placeholder-color': styles.placeholderColor as string,
     '--uxm-editable-cell-disabled-opacity': String(styles.disabledOpacity ?? 0.55),
     '--uxm-editable-cell-input-bg': styles.inputBg as string,
@@ -133,6 +138,10 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
   const forcedClass = cn(
     state === 'hover' && 'uxm-editable-cell--state-hover',
     state === 'focus' && 'uxm-editable-cell--state-focus',
+    // `open` is the pickers' editing state: forcing the real `--open` class
+    // paints the editing chrome on the trigger and reveals its ✕, without
+    // actually mounting the Listbox panel over the canvas.
+    state === 'open' && 'uxm-editable-cell--open',
     inputStates.includes(state) && 'uxm-editable-cell--force-input-focus',
   );
   const forceMode = inputStates.includes(state)

@@ -440,7 +440,7 @@ skill:
   out. Related fix: `format` is no longer called for an empty value — a cleared cell renders
   its `placeholder` (previously a Tag/Badge `format` would paint an empty pill).
 
-### New in 4.4.0
+### Unreleased
 
 <!-- Notes for changes merged but not yet published. The release pipeline renames
      this heading to "New in X.Y.Z" and stamps the version/count markers
@@ -448,6 +448,34 @@ skill:
      "### Unreleased" heading behind for the next MR: the stamper only matches that
      exact string, so appending notes under an already-stamped "New in X.Y.Z"
      heading silently mislabels them and they never get re-stamped. -->
+
+- **`EditableCell` open pickers now wear the editing chrome.** While a select / multiselect
+  panel is open, the trigger paints the same card surface + accent border + focus halo as the
+  text/number/date editing input (same `--uxm-editable-cell-input-*` vars) — "being edited"
+  reads identically across all five editor types.
+- **`EditableCell`'s width cap is per size.** `small` keeps the 320px cap (a long value must not
+  push a table column — it truncates with an ellipsis instead); `medium` has **no cap** and fills
+  its container, like every other input-family field in a side panel (`width: 100%` +
+  `border-box`, so a 600px panel with 16px padding gives a 568px cell, its own padding inside).
+  Knobs are `--uxm-editable-cell-{small|medium}-max-width` (medium's is a select defaulting to
+  `none`). ⚠️ The shared `--uxm-editable-cell-max-width` is retired — a pre-split saved override
+  of Max Width no longer applies and must be re-saved per size.
+- **`EditableCell`'s value colour is now pinned, not inherited.** The cell (and a picker's
+  trigger) reads `--uxm-editable-cell-color` with `--color-text` as the fallback, exposed as a
+  **Text Color** knob beside Placeholder Color. Font-size still inherits by design (a cell must
+  read at the scale around it), but colour never varied that way — inheriting only let a muted
+  column or dimmed row bleed in, which consumers were pinning back on the wrapping `<td>`.
+- **`EditableCell` pickers clear from the field.** A clearable select / multiselect also
+  renders a ✕ on the trigger, inboard of the chevron, revealed **while the panel is open**
+  (a picker's editing surface, mirroring where the text/number/date ✕ lives) and kept out of
+  the tab order; it commits `""` / `[]` directly — matching the standalone
+  `Select`/`PillSelect` convention, on both sizes. The dropdown-footer Clear stays. In the
+  studio both the open chrome and this ✕ are tunable via the new `Open` state (the pickers'
+  counterpart to `Editing`), and the previously unreachable Pencil / Chevron / Clear colour
+  knobs now render — `styleProperties.showWhen` accepts a `string[]` ("match any of"), so the
+  old `'!select|multiselect'` clauses that could never match are gone.
+
+### New in 4.4.0
 
 - **Card**: `padding` (any value) and opt-in column `gap` between the card's direct
   children (`number | string | true`; `true` = themed `--uxm-card-gap` default) — content

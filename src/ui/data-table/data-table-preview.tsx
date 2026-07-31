@@ -153,7 +153,6 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
   // own 6px paddingX / the select trigger its own gutter).
   const editableTd = {
     padding: `${cellPy}px ${(styles.cellPaddingX as number) - 6}px`,
-    color: 'var(--color-text)',
     borderBottom: `1px solid ${styles.borderColor}`,
   } as const;
 

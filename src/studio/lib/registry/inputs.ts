@@ -91,45 +91,58 @@ export const inputsDefs: ComponentDef[] = [
       // cells), so no knob can silently stop mattering.
       { key: 'smallPaddingX', label: 'Padding X', control: 'number', defaultValue: 8, min: 2, max: 16, step: 1, unit: 'px', showWhen: { size: 'small' } },
       { key: 'smallPaddingY', label: 'Padding Y', control: 'number', defaultValue: 4, min: 0, max: 10, step: 1, unit: 'px', showWhen: { size: 'small' } },
-      // A select, not a stepper like its `medium` twin, because `small` has an
-      // extra state its twin doesn't: it INHERITS the surrounding font by
-      // default (CSS fallback `1em`) so a cell reads like the text around it.
-      // The default must therefore be the literal `inherit` — a numeric 13
-      // default was unpersistable (properties-panel clears an override that
-      // equals its default) and claimed a pinned size the CSS never applied.
-      // The canvas gets DataTable's 13px scale from the preview's font context
-      // instead. `medium` pins 14px in CSS and matches its knob, so it stays a
-      // stepper.
-      { key: 'smallFontSize', label: 'Font Size', control: 'select', defaultValue: 'inherit', options: ['inherit', '11px', '12px', '13px', '14px', '15px', '16px'], showWhen: { size: 'small' } },
+      // Font Size and Max Width are SELECTS for both sizes, with the same
+      // option list either way — only the default differs. Two reasons:
+      //   1. Each has a value the CSS genuinely uses that no numeric stepper
+      //      can express — `small`'s font default is the literal `inherit`
+      //      (CSS `1em`, so a cell reads like the text around it) and
+      //      `medium`'s cap default is `none` (fill the container, the
+      //      input-family behaviour in a side panel).
+      //   2. Flipping Size must not change the CONTROL for the same property.
+      //      A stepper for one size and a dropdown for the other made the
+      //      panel unpredictable — the property is the same property.
+      { key: 'smallFontSize', label: 'Font Size', control: 'select', defaultValue: 'inherit', options: ['inherit', '11px', '12px', '13px', '14px', '15px', '16px', '18px'], showWhen: { size: 'small' } },
       { key: 'mediumPaddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 20, step: 1, unit: 'px', showWhen: { size: 'medium' } },
       { key: 'mediumPaddingY', label: 'Padding Y', control: 'number', defaultValue: 6, min: 0, max: 14, step: 1, unit: 'px', showWhen: { size: 'medium' } },
-      { key: 'mediumFontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px', showWhen: { size: 'medium' } },
-      { key: 'maxWidth', label: 'Max Width', control: 'number', defaultValue: 320, min: 120, max: 640, step: 10, unit: 'px' },
+      { key: 'mediumFontSize', label: 'Font Size', control: 'select', defaultValue: '14px', options: ['inherit', '11px', '12px', '13px', '14px', '15px', '16px', '18px'], showWhen: { size: 'medium' } },
+      // Per-size, like every other dimension: a table cell needs a cap so one
+      // long value can't push its column, a side-panel field should just fill
+      // the container. Same control + same options for both sizes (see the
+      // Font Size note above) — only the default differs.
+      { key: 'smallMaxWidth', label: 'Max Width', control: 'select', defaultValue: '320px', options: ['none', '120px', '160px', '240px', '320px', '400px', '480px', '560px', '640px'], showWhen: { size: 'small' } },
+      { key: 'mediumMaxWidth', label: 'Max Width', control: 'select', defaultValue: 'none', options: ['none', '120px', '160px', '240px', '320px', '400px', '480px', '560px', '640px'], showWhen: { size: 'medium' } },
       { key: 'radius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px' },
       // Display chrome — one knob per peer state, matching the input
       // family's default / hover / focus / disabled convention. Each is
       // gated to its own state so the panel shows only what's relevant.
+      // The value's own colour: pinned through the component layer (the cell no
+      // longer inherits it — a muted column / dimmed row must not bleed in), so
+      // it belongs in the panel next to its placeholder twin.
+      { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'cellColors', showWhen: { state: 'default' } },
       { key: 'placeholderColor', label: 'Placeholder Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'cellColors', showWhen: { state: 'default' } },
       { key: 'hoverBg', label: 'Hover Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'cellColors', showWhen: { state: 'hover' } },
       // The hover affordance differs by type: text / number / date reveal a pencil,
       // the pickers (select / multiselect) reveal a chevron. Gate each so only the
       // relevant one shows under Hover.
-      { key: 'pencilColor', label: 'Pencil Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover', type: '!select|multiselect' } },
-      { key: 'chevronColor', label: 'Chevron Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover', type: 'select|multiselect' } },
+      { key: 'pencilColor', label: 'Pencil Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover', type: ['text', 'number', 'date'] } },
+      { key: 'chevronColor', label: 'Chevron Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover', type: ['select', 'multiselect'] } },
       { key: 'focusBorder', label: 'Focus Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'cellColors', showWhen: { state: 'focus' } },
       { key: 'focusRing', label: 'Focus Ring', control: 'color', defaultValue: 'var(--color-accent)', section: 'cellColors', showWhen: { state: 'focus' } },
       { key: 'disabledOpacity', label: 'Disabled Opacity', control: 'slider', defaultValue: 0.55, min: 0.2, max: 1, step: 0.05, section: 'disabledState', showWhen: { state: 'disabled' } },
       // Editing — the active input swapped in on click.
-      { key: 'inputBg', label: 'Input Background', control: 'color', defaultValue: 'var(--color-card)', section: 'editingColors', showWhen: { state: 'editing' } },
-      { key: 'inputColor', label: 'Input Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'editingColors', showWhen: { state: 'editing' } },
+      { key: 'inputBg', label: 'Input Background', control: 'color', defaultValue: 'var(--color-card)', section: 'editingColors', showWhen: { state: ['editing', 'open'] } },
+      { key: 'inputColor', label: 'Input Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'editingColors', showWhen: { state: ['editing', 'open'] } },
       { key: 'inputBorder', label: 'Input Border', control: 'color', defaultValue: 'var(--color-border)', section: 'editingColors', showWhen: { state: 'editing' } },
-      { key: 'inputFocusBorder', label: 'Input Focus Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'editingColors', showWhen: { state: 'editing' } },
-      // The ✕ in the editing input's trailing gutter (text / number / date —
-      // the pickers clear from their dropdown footer instead, which is the
-      // Listbox atom's surface, not a per-cell knob). Editing-only, so it
-      // shares the gate with the input knobs above.
-      { key: 'clearColor', label: 'Clear Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'editingColors', showWhen: { state: 'editing', type: '!select|multiselect' } },
-      { key: 'clearHoverBg', label: 'Clear Hover Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'editingColors', showWhen: { state: 'editing', type: '!select|multiselect' } },
+      { key: 'inputFocusBorder', label: 'Input Focus Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'editingColors', showWhen: { state: ['editing', 'open'] } },
+      // ONE knob pair for every in-field ✕: the same
+      // `--uxm-editable-cell-clear-*` vars theme the editing input's ✕
+      // (text / number / date) and the picker trigger's ✕, which is why the
+      // gate lists both surfaces' states — `editing` for the input,
+      // `open` for a picker (its open panel IS its editing surface). The
+      // pickers' dropdown-footer Clear is separate: that one lives on the
+      // Listbox atom's surface, not a per-cell knob.
+      { key: 'clearColor', label: 'Clear Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'editingColors', showWhen: { state: ['editing', 'open'] } },
+      { key: 'clearHoverBg', label: 'Clear Hover Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'editingColors', showWhen: { state: ['editing', 'open'] } },
       // Problem severities — each tints the editing input's border; the
       // message itself rides in a popover Banner whose look comes from the
       // Banner atom's own warning / error tokens (not per-cell knobs), so
@@ -159,6 +172,10 @@ export const inputsDefs: ComponentDef[] = [
           // no text-edit mode, so the knob is hidden for them (a stale
           // `editing` selection auto-repairs to Default on type switch).
           { value: 'editing', label: 'Editing', showWhen: { type: ['text', 'number', 'date'] } },
+          // A picker's editing surface is its OPEN panel, so `open` is the
+          // pickers' counterpart to `editing`: it forces the open chrome and
+          // reveals the trigger ✕ so both are tunable without live clicking.
+          { value: 'open', label: 'Open', showWhen: { type: ['select', 'multiselect'] } },
           { value: 'warning', label: 'Warning' },
           { value: 'error', label: 'Error' },
         ],

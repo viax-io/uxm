@@ -306,6 +306,11 @@ export function EditableCell({
 
   const commitValue = useCallback(
     async (next: EditableCellValue): Promise<boolean> => {
+      // Re-entrancy guard lives HERE, not only in each caller's render
+      // condition: every commit path funnels through this function, so a new
+      // call site can't forget to gate itself (`commitDate` keeps its own
+      // early return for the same reason).
+      if (submitting) return false;
       // Required is checked before `validate` so consumers get the empty rule
       // for free. Multiselect empties are already blocked upstream by
       // MultiListbox (they never reach here), so this covers the scalar types.
@@ -339,7 +344,7 @@ export function EditableCell({
         setSubmitting(false);
       }
     },
-    [required, requiredMsg, validate, onCommit],
+    [submitting, required, requiredMsg, validate, onCommit],
   );
 
   // Shared commit path for both the typed input (handleCommit) and the calendar
@@ -567,6 +572,7 @@ export function EditableCell({
             `uxm-editable-cell--${size}`,
             `uxm-editable-cell--align-${align}`,
             `uxm-editable-cell--type-${type}`,
+            clearable && 'uxm-editable-cell--clearable',
             disabled && 'uxm-editable-cell--disabled',
             isEmpty && 'uxm-editable-cell--empty',
             open && 'uxm-editable-cell--open',
@@ -622,6 +628,31 @@ export function EditableCell({
               </ButtonGhost>
             ) : undefined}
           />
+          {clearable && !disabled && !submitting && !isEmpty && (
+            /* Trigger ✕ — clear from the field itself (the input-family
+               convention), on every size: commits the empty value directly,
+               complementing the panel-footer Clear. Sibling of the trigger (a
+               button can't nest a button), absolutely positioned into the
+               reserved second gutter slot. Revealed only while the panel is
+               open (see the `--open` gate in the stylesheet) — unlike the
+               chevron, which also shows on hover. */
+            <button
+              type="button"
+              className="uxm-editable-cell__trigger-clear"
+              // Out of the tab order, same as every in-field clear here.
+              tabIndex={-1}
+              // This button is a SIBLING of the Listbox trigger, so it sits
+              // outside the refs `useDismiss` treats as "inside" — and dismiss
+              // runs on mousedown, i.e. BEFORE this click. Left alone, pressing
+              // ✕ would first dismiss the panel and only then clear. Stop the
+              // mousedown here so the clear below is the single thing that acts.
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={() => void commitValue('')}
+              aria-label="Clear selection"
+            >
+              <Icon glyph="close" size={12} />
+            </button>
+          )}
           <Popover
             open={Boolean(shownError)}
             onOpenChange={(next) => {
@@ -665,6 +696,7 @@ export function EditableCell({
           `uxm-editable-cell--${size}`,
           `uxm-editable-cell--align-${align}`,
           `uxm-editable-cell--type-${type}`,
+          clearable && 'uxm-editable-cell--clearable',
           disabled && 'uxm-editable-cell--disabled',
           isEmpty && 'uxm-editable-cell--empty',
           open && 'uxm-editable-cell--open',
@@ -733,6 +765,36 @@ export function EditableCell({
             ) : null
           : undefined}
         />
+        {clearable && !disabled && !submitting && !isEmpty && (
+          /* Trigger ✕ — clear from the field itself (the input-family
+             convention), on every size: commits the empty value directly,
+             complementing the panel-footer Clear. Sibling of the trigger (a
+             button can't nest a button), absolutely positioned into the
+             reserved second gutter slot. Revealed only while the panel is
+             open (see the `--open` gate in the stylesheet) — unlike the
+             chevron, which also shows on hover. */
+          <button
+            type="button"
+            className="uxm-editable-cell__trigger-clear"
+            // Out of the tab order, same as every in-field clear here.
+            tabIndex={-1}
+            // Same sibling-of-the-trigger problem as the select ✕ above, but
+            // costlier here: `useDismiss` fires on mousedown, and this panel
+            // runs `commitMode="close"`, so an unswallowed mousedown would
+            // commit the STAGED DRAFT first and only then clear — two commits
+            // for one press, and if the first is still in flight the
+            // re-entrancy guard in `commitValue` drops the clear entirely.
+            // Stopping it leaves the panel open, which is deliberate and
+            // matches the footer's "Clear all": clear, then pick afresh.
+            // MultiListbox re-seeds its draft from `value` under an open panel,
+            // so the later close commits the cleared set, not the stale draft.
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => void commitValue([])}
+            aria-label="Clear selection"
+          >
+            <Icon glyph="close" size={12} />
+          </button>
+        )}
         <Popover
           open={Boolean(shownError)}
           onOpenChange={(next) => {
