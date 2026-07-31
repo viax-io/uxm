@@ -514,13 +514,6 @@ skill:
 
 ### New in 4.8.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
-
 - **`LifecycleConnector` routes elbows.** New `routing?: 'auto' | 'straight' | 'bezier' |
   'orthogonal'` (default `auto` — the previous straight-when-aligned / Bezier-otherwise split,
   unchanged path output). `orthogonal` draws a square elbow as three axis-aligned runs
@@ -575,6 +568,28 @@ skill:
   `--uxm-lifecycle-connector-{idle,active}-{color,stroke-width}` and
   `--uxm-lifecycle-connector-dash-pattern`. The doubled spellings still resolve as a fallback
   alias for one minor — re-save the component in the studio to move a stored theme across.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **`LifecycleNodeCard` gained a `--uxm-lifecycle-node-card-min-height` knob** (studio: "Min
+  Height", default `0`). Opt-in uniform-height floor for canvas layouts — set it so every node
+  card shares a minimum height and connector endpoints can key off a single number instead of
+  guessing per-kind card heights. Default `0` keeps today's content-driven height. The card now
+  also declares `box-sizing: border-box` itself, so the number **is** the rendered card height —
+  no reliance on the host shipping a reset (`ui.css` ships none, and eight sibling atoms already
+  set it on themselves). ⚠️ That makes the existing `--uxm-lifecycle-node-card-width` (default
+  `280px`) mean 280px **total** rather than 280px plus padding and border. Hosts with a global
+  reset — the studio's Tailwind preflight, modo — are unaffected; a consumer importing `ui.css`
+  with no reset of its own will see the card narrow by its horizontal padding + border (34px at
+  the defaults). Purely a themeable-var addition otherwise — no React API change.
+  From `./lifecycle-node-card`.
 
 ## Workflow
 
