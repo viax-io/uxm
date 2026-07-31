@@ -1,3 +1,20 @@
+# [4.5.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.4.0...v4.5.0) (2026-07-31)
+
+
+### Bug Fixes
+
+* **editable-cell:** correct the picker clear's reveal, gutter and re-entry ([a54159e](https://gitlab.viax.tech/services-viax/uxm/commit/a54159efbd4bb46dce5cddac8fc11d0990830d78))
+* **editable-cell:** dress open pickers in the editing chrome ([74521b2](https://gitlab.viax.tech/services-viax/uxm/commit/74521b24445b13a20656d357793801c58f8d9ff7))
+* **editable-cell:** gate the picker clear's hit area, commit and gutter on open ([c9cc1c9](https://gitlab.viax.tech/services-viax/uxm/commit/c9cc1c934474becdbe43944743df00aa08159950))
+* **studio:** match showWhen values by list, one control per property ([43b75b8](https://gitlab.viax.tech/services-viax/uxm/commit/43b75b8e7a7f22fa5ee5b30a5888c5d80cc3a4ab))
+
+
+### Features
+
+* **editable-cell:** make the width cap per size ([4e44f95](https://gitlab.viax.tech/services-viax/uxm/commit/4e44f95eceb175fd68c95fab53f40808ad8dd048))
+* **editable-cell:** pickers clear from the field on every size ([334fc1a](https://gitlab.viax.tech/services-viax/uxm/commit/334fc1acaaf1e5e049a4b5988878a25b648c2ff3))
+* **editable-cell:** pin the value colour behind a Text Color knob ([55eaad4](https://gitlab.viax.tech/services-viax/uxm/commit/55eaad440e8cd4b705204e0f46ea8a2d2b2ab8c0))
+
 # [4.4.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.3.0...v4.4.0) (2026-07-29)
 
 
