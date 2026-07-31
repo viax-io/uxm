@@ -1,3 +1,15 @@
+# [4.6.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.5.0...v4.6.0) (2026-07-31)
+
+
+### Bug Fixes
+
+* **icon-button:** chain the pressed state off hover instead of the bare default ([718ce1d](https://gitlab.viax.tech/services-viax/uxm/commit/718ce1d760ca3b121c93f10d93daef0eeaf45e3f))
+
+
+### Features
+
+* **previews:** atomize lifecycle diagram previews & drop two mock previews ([445cda5](https://gitlab.viax.tech/services-viax/uxm/commit/445cda52b21a4671f881f02972363d98274bf6a4))
+
 # [4.5.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.4.0...v4.5.0) (2026-07-31)
 
 
