@@ -187,7 +187,10 @@ typecheck or build failure ships broken conventions/types/CSS to every consumer.
 - The `viax-uxm` Claude skill (`skills/viax-uxm/` — SKILL.md + `references/`)
   is **authored in this repo**: the library is the source of truth for every
   fact the skill states. The shared `viax-ai-skills` GitLab repo is a
-  distribution target only, synced from release commits via `/update-ai-skill`.
+  distribution target only, synced from release commits **manually by the
+  maintainer**. `/update-ai-skill` works only locally (drift-check +
+  post-release cleanup in `skills/viax-uxm/`) and ends by reminding about the
+  manual sync — Claude never pushes to the distribution repo.
 - Any MR that adds, renames, or removes a public component **MUST** update the
   skill in the same MR: a catalog/cheatsheet row (marked "(unreleased)") and a
   bullet under `### Unreleased` in SKILL.md.
