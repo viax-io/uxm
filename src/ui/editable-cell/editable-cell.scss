@@ -249,10 +249,18 @@
 /* Clearable pickers clear from the field itself (the input-family
    convention), so the trigger reserves a second gutter slot for the ✕
    inboard of the chevron — the same two-slot layout as the date editor.
-   Reserved unconditionally, not just while open: the ✕ only appears with the
-   panel, and carving its slot out at that moment would re-truncate the label
-   mid-interaction. */
-.uxm-editable-cell--clearable .uxm-editable-cell__select-trigger {
+   Gated on `--open`, the state that actually reveals the ✕, exactly as the
+   text/number/date twin gates its clear gutter on `--editing`. Reserving it
+   unconditionally instead would tax EVERY clearable picker cell ~22px of
+   label width for a control that is only ever reachable while the panel is
+   open — a permanent cost in a dense table, paid by cells that are merely
+   being read. The trade is that a long label can re-ellipsize as the panel
+   opens; that is the cheaper side, because opening already repaints the whole
+   trigger (surface, border, halo) and the open panel is `matchAnchorWidth`,
+   so it shows the full label right under the truncated one. No transition on
+   the padding on purpose — the reflow should land with the chrome, not
+   animate the text through intermediate truncations. */
+.uxm-editable-cell--clearable.uxm-editable-cell--open .uxm-editable-cell__select-trigger {
   padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
 }
 /* Right-aligned pickers move BOTH gutter controls to the leading edge (see the
@@ -263,7 +271,11 @@
   padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
   padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
 }
-.uxm-editable-cell--clearable.uxm-editable-cell--align-right .uxm-editable-cell__select-trigger {
+/* (0,4,0) — outranks BOTH the plain `--align-right` rule above (0,2,0) and the
+   `--clearable.--open` rule (0,3,0), so it has to restate both paddings: the
+   latter would otherwise leave a 42px trailing reservation on a cell whose
+   controls have all moved to the leading edge. */
+.uxm-editable-cell--clearable.uxm-editable-cell--align-right.uxm-editable-cell--open .uxm-editable-cell__select-trigger {
   padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
   padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 42px);
 }
@@ -282,8 +294,14 @@
   border-radius: 4px;
   color: var(--uxm-editable-cell-clear-color, var(--color-text-muted));
   cursor: pointer;
-  /* Revealed with the chevron — the cell stays a quiet text run at rest. */
+  /* Revealed with the chevron — the cell stays a quiet text run at rest.
+     `pointer-events` is gated ALONGSIDE the opacity, the same pairing the
+     pencil and chevron use: this element overlays the trigger, so an
+     `opacity: 0` that stayed hit-testable would turn its slice of a cell at
+     rest into an invisible one-click clear — swallowing the click that should
+     have opened the panel. Hidden means unclickable. */
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.1s ease;
 }
 /* Revealed ONLY while the panel is open — a picker's open panel IS its editing
@@ -293,6 +311,7 @@
    never offers a one-click destroy on a display cell. */
 .uxm-editable-cell--open .uxm-editable-cell__trigger-clear {
   opacity: 1;
+  pointer-events: auto;
 }
 .uxm-editable-cell__trigger-clear:hover {
   color: var(--uxm-editable-cell-clear-hover-color, var(--color-text));

@@ -641,6 +641,12 @@ export function EditableCell({
               className="uxm-editable-cell__trigger-clear"
               // Out of the tab order, same as every in-field clear here.
               tabIndex={-1}
+              // This button is a SIBLING of the Listbox trigger, so it sits
+              // outside the refs `useDismiss` treats as "inside" — and dismiss
+              // runs on mousedown, i.e. BEFORE this click. Left alone, pressing
+              // ✕ would first dismiss the panel and only then clear. Stop the
+              // mousedown here so the clear below is the single thing that acts.
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={() => void commitValue('')}
               aria-label="Clear selection"
             >
@@ -772,6 +778,17 @@ export function EditableCell({
             className="uxm-editable-cell__trigger-clear"
             // Out of the tab order, same as every in-field clear here.
             tabIndex={-1}
+            // Same sibling-of-the-trigger problem as the select ✕ above, but
+            // costlier here: `useDismiss` fires on mousedown, and this panel
+            // runs `commitMode="close"`, so an unswallowed mousedown would
+            // commit the STAGED DRAFT first and only then clear — two commits
+            // for one press, and if the first is still in flight the
+            // re-entrancy guard in `commitValue` drops the clear entirely.
+            // Stopping it leaves the panel open, which is deliberate and
+            // matches the footer's "Clear all": clear, then pick afresh.
+            // MultiListbox re-seeds its draft from `value` under an open panel,
+            // so the later close commits the cleared set, not the stale draft.
+            onMouseDown={(e) => e.stopPropagation()}
             onClick={() => void commitValue([])}
             aria-label="Clear selection"
           >
