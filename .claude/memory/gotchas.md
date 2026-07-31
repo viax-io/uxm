@@ -121,3 +121,20 @@ under. If it reads `### New in X.Y.Z`, do **not** append to it — add a new
 `### Unreleased` section below it and put your bullets there. Don't hand-edit
 version/count markers either way; the stamper owns those. (See
 `.claude/commands/update-ai-skill.md` for the full lifecycle.)
+
+**Second half of the same trap: `### Unreleased` goes at the BOTTOM.** The
+version run is ordered **ascending** — `### 2.0.0 baseline` at the top, newest
+last — so a fresh `### Unreleased` belongs *after* the highest `### New in
+X.Y.Z`, not above it. The stamper renames in place and never reorders, so a
+section parked in the wrong slot is frozen there by the next release and the
+history reads scrambled from then on.
+
+**This actually happened — 4.5.0 landed before 4.4.0.** The
+`fix/editable-cell-picker-open-chrome` MR opened its `### Unreleased` above the
+then-current `### New in 4.4.0`; the 4.5.0 release stamped it where it sat,
+leaving `4.3.0 → 4.5.0 → 4.4.0` on master. Nothing broke (the stamper's
+`/^### Unreleased$/m` is position-independent) but the file had to be reordered
+by hand afterwards in `fix/skill-version-heading-order`. Both the code review
+of that MR and the MR itself missed it — the heading rename looks correct in
+isolation, and only the surrounding order reveals the problem, so check the
+neighbouring headings, not just your own.
