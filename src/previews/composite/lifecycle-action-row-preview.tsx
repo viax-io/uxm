@@ -1,18 +1,29 @@
 import type { PreviewProps } from '@/previews/types';
-import { Icon } from '@/ui';
-import { IconButton } from '@/ui';
+import { Icon, IconButton, Tag, type TagType } from '@/ui';
+
+import type { CSSProperties } from 'react';
 
 type ActionType = 'notify' | 'transform' | 'validate';
 
-const actionConfig: Record<ActionType, { label: string; name: string; bg: string; color: string }> = {
-  notify: { label: 'Notify', name: 'Email customer about status change', bg: 'rgba(144, 233, 184, 0.22)', color: 'var(--color-accent-bold)' },
-  transform: { label: 'Transform', name: 'Recalculate totals with tax', bg: 'rgba(252, 208, 161, 0.3)', color: 'var(--color-on-highlight-warm)' },
-  validate: { label: 'Validate', name: 'Check required fields present', bg: 'rgba(195, 190, 247, 0.25)', color: 'var(--color-on-highlight-cool)' },
+const actionConfig: Record<ActionType, { label: string; name: string; tone: TagType }> = {
+  notify: { label: 'Notify', name: 'Email customer about status change', tone: 'success' },
+  transform: { label: 'Transform', name: 'Recalculate totals with tax', tone: 'warning' },
+  validate: { label: 'Validate', name: 'Check required fields present', tone: 'info' },
 };
 
 export function LifecycleActionRowPreview({ styles, variants }: PreviewProps) {
   const t = (variants.actionType as ActionType) ?? 'notify';
   const cfg = actionConfig[t];
+
+  // Status label is the shipped Tag atom (semantic type per action) rather
+  // than a hand-rolled <span> with hardcoded colours. The two badge knobs map
+  // onto Tag's own custom properties so editor saves still drive it; colours
+  // now come from the semantic tokens Tag reads. Remove control is IconButton.
+  const tagVars = {
+    '--uxm-tag-border-radius': `${styles.badgeRadius}px`,
+    '--uxm-tag-small-font-size': `${styles.badgeSize}px`,
+  } as CSSProperties;
+
   return (
     <div
       style={{
@@ -29,19 +40,9 @@ export function LifecycleActionRowPreview({ styles, variants }: PreviewProps) {
         backgroundColor: 'var(--color-card)',
       }}
     >
-      <span
-        style={{
-          padding: '2px 10px',
-          fontSize: styles.badgeSize as number,
-          fontWeight: 500,
-          borderRadius: styles.badgeRadius as number,
-          backgroundColor: cfg.bg,
-          color: cfg.color,
-          whiteSpace: 'nowrap',
-        }}
-      >
+      <Tag type={cfg.tone} size="small" style={tagVars}>
         {cfg.label}
-      </span>
+      </Tag>
       <span
         style={{
           flex: 1,
@@ -54,8 +55,18 @@ export function LifecycleActionRowPreview({ styles, variants }: PreviewProps) {
       >
         {cfg.name}
       </span>
-      <IconButton aria-label="Remove action">
-        <Icon glyph="close" size={14} strokeWidth={2} />
+      <IconButton
+        aria-label="Remove action"
+        style={
+          {
+            // IconButton's `> svg` CSS wins over the Icon size/strokeWidth
+            // props, so the intended 14px / 2 close glyph must ride its vars.
+            '--uxm-icon-button-icon-size': '14px',
+            '--uxm-icon-button-stroke-width': 2,
+          } as CSSProperties
+        }
+      >
+        <Icon glyph="close" />
       </IconButton>
     </div>
   );

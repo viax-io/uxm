@@ -1,33 +1,33 @@
-import { useState } from 'react';
-
 import type { PreviewProps } from '@/previews/types';
-import { Icon } from '@/ui';
+import { Icon, IconButton } from '@/ui';
+
+import type { CSSProperties } from 'react';
 
 export function LifecyclePlusButtonPreview({ styles }: PreviewProps) {
-  const [hover, setHover] = useState(false);
-  const size = styles.size as number;
-  const iconSize = styles.iconSize as number;
+  // Compose the shipped IconButton atom instead of hand-rolling a <button>.
+  // Every plus-button knob maps onto one of IconButton's --uxm-icon-button-*
+  // custom properties; a 999px radius makes it the round canvas affordance,
+  // and the resting shadow rides through IconButton's style pass-through.
+  // (The old hand-rolled hover scale is dropped — IconButton owns its hover
+  // surface, and re-theming flows through the same vars consumers use.)
+  const cssVars = {
+    '--uxm-icon-button-size': `${styles.size}px`,
+    '--uxm-icon-button-icon-size': `${styles.iconSize}px`,
+    '--uxm-icon-button-stroke-width': 2.5,
+    '--uxm-icon-button-radius': '999px',
+    '--uxm-icon-button-bg': styles.backgroundColor as string,
+    '--uxm-icon-button-hover-bg': styles.hoverBackgroundColor as string,
+    '--uxm-icon-button-color': styles.color as string,
+    // Hover pins the icon tint (IconButton would otherwise take it to
+    // --color-text); pressed needs no pin at all — the atom chains :active
+    // off these hover vars, so the FAB holds its fill and tint on mousedown.
+    '--uxm-icon-button-hover-color': styles.color as string,
+    boxShadow: 'var(--shadow-xs)',
+  } as CSSProperties;
+
   return (
-    <button
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        width: size,
-        height: size,
-        borderRadius: 999,
-        backgroundColor: hover ? (styles.hoverBackgroundColor as string) : (styles.backgroundColor as string),
-        color: styles.color as string,
-        border: 'none',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: 'var(--shadow-xs)',
-        transition: 'background-color 0.15s, transform 0.15s',
-        transform: hover ? 'scale(1.1)' : 'scale(1)',
-      }}
-    >
-      <Icon glyph="plus" size={iconSize} strokeWidth={2.5} />
-    </button>
+    <IconButton aria-label="Add step" style={cssVars}>
+      <Icon glyph="plus" />
+    </IconButton>
   );
 }

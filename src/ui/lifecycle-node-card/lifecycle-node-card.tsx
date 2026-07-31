@@ -44,8 +44,7 @@ const KIND_LABEL: Record<LifecycleNodeKind, string> = {
 };
 
 // Map each node kind to its glyph in the Icon registry. Centralised so
-// other lifecycle components (the add-step-modal, edge-insert-menu)
-// share the exact same kind→glyph contract.
+// other lifecycle components share the exact same kind→glyph contract.
 const KIND_GLYPH: Record<LifecycleNodeKind, string> = {
   state: 'check-circle',
   condition: 'question-mark-circle',

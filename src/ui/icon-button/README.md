@@ -43,6 +43,8 @@ Extends `ButtonHTMLAttributes<HTMLButtonElement>` — any standard button attrib
 | `--uxm-icon-button-color` | `--color-text-muted` | – | Resting icon colour (applied via `color` → `currentColor`). |
 | `--uxm-icon-button-hover-bg` | `--color-surface-alt` | – | Hover background. |
 | `--uxm-icon-button-hover-color` | `--color-text` | – | Hover icon colour. |
+| `--uxm-icon-button-active-bg` | `--uxm-icon-button-hover-bg` → `--color-surface-alt` | – | Pressed background. Falls back to the **hover** value first, so a tinted button that sets `-bg` + `-hover-bg` holds its fill on press instead of flashing to the neutral default. |
+| `--uxm-icon-button-active-color` | `--uxm-icon-button-hover-color` → `--color-text` | – | Pressed icon colour, chained the same way. |
 | `--uxm-icon-button-disabled-opacity` | – | `0.4` | Disabled state opacity. |
 | `--uxm-icon-button-icon-size` | – | `16px` | Inner SVG width/height (CSS overrides the SVG's own attributes). |
 | `--uxm-icon-button-stroke-width` | – | `1.75` | Inner SVG stroke width (CSS overrides the SVG's `stroke-width` attribute). |
