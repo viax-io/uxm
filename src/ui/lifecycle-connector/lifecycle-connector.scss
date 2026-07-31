@@ -1,17 +1,37 @@
 /* ── lifecycle-connector ── */
 
+/* Override vars are read under their canonical `--uxm-lifecycle-connector-*`
+   name, with the doubled `--uxm-lifecycle-connector-connector-*` spelling kept
+   as a fallback alias. The doubled form was never authored — it fell out of the
+   studio generator prefixing an already-`connector`-prefixed knob key — but it
+   is what published themes wrote, so it keeps working for one minor. */
 .uxm-lifecycle-connector {
-  --uxm-lifecycle-connector-color: var(--uxm-lifecycle-connector-connector-idle-color, var(--color-border));
-  --uxm-lifecycle-connector-width: var(--uxm-lifecycle-connector-connector-idle-stroke-width, 1.5);
+  --uxm-lifecycle-connector-color: var(
+    --uxm-lifecycle-connector-idle-color,
+    var(--uxm-lifecycle-connector-connector-idle-color, var(--color-text-subtle))
+  );
+  --uxm-lifecycle-connector-width: var(
+    --uxm-lifecycle-connector-idle-stroke-width,
+    var(--uxm-lifecycle-connector-connector-idle-stroke-width, 1.5)
+  );
 
   &--active {
-    --uxm-lifecycle-connector-color: var(--uxm-lifecycle-connector-connector-active-color, var(--color-accent));
-    --uxm-lifecycle-connector-width: var(--uxm-lifecycle-connector-connector-active-stroke-width, 2);
+    --uxm-lifecycle-connector-color: var(
+      --uxm-lifecycle-connector-active-color,
+      var(--uxm-lifecycle-connector-connector-active-color, var(--color-accent))
+    );
+    --uxm-lifecycle-connector-width: var(
+      --uxm-lifecycle-connector-active-stroke-width,
+      var(--uxm-lifecycle-connector-connector-active-stroke-width, 2)
+    );
   }
 
+  /* No legacy alias here: the dashed state never had an override var to
+     publish under the doubled name — its colour and width were hardcoded, so
+     these two are new surface rather than a rename. */
   &--dashed {
-    --uxm-lifecycle-connector-color: var(--color-text-muted);
-    --uxm-lifecycle-connector-width: 1.5;
+    --uxm-lifecycle-connector-color: var(--uxm-lifecycle-connector-dashed-color, var(--color-text-muted));
+    --uxm-lifecycle-connector-width: var(--uxm-lifecycle-connector-dashed-stroke-width, 1.5);
   }
 
   &__path {
@@ -20,7 +40,10 @@
   }
 
   &--dashed &__path {
-    stroke-dasharray: var(--uxm-lifecycle-connector-connector-dash-pattern, 6 4);
+    stroke-dasharray: var(
+      --uxm-lifecycle-connector-dash-pattern,
+      var(--uxm-lifecycle-connector-connector-dash-pattern, 6 4)
+    );
   }
 
   &__start {

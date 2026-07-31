@@ -512,6 +512,60 @@ skill:
   "Subtitles" On/Off variant (off by default) with Font Size / Color / Row Gap knobs. `MenuItem` is now
   `{ key, label, subtitle?, icon?, hint?, onSelect?, disabled?, danger? }`. From `./menu`.
 
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **`LifecycleConnector` routes elbows.** New `routing?: 'auto' | 'straight' | 'bezier' |
+  'orthogonal'` (default `auto` — the previous straight-when-aligned / Bezier-otherwise split,
+  unchanged path output). `orthogonal` draws a square elbow as three axis-aligned runs
+  (stem → cross → drop) from a single connector, with `crossAt?: number` (0–1, default `0.5`)
+  placing the cross bus along the vertical span — a caller putting group pills on that bus picks
+  its own level rather than inheriting the midpoint. The arrowhead now takes its angle from the
+  path's **last** run instead of the whole-edge vector, so an elbow's head is axis-aligned rather
+  than diagonal; degenerate runs (`crossAt` at 0 or 1, anchors sharing an x) are dropped before
+  that angle is read, and the tip pullback is clamped to the final run so a near-1 `crossAt`
+  can't reverse the drop. Also new: `startDot?: boolean` (default `true`) — turn it off on all but
+  the first edge of a shared fan-out so one bus shows one dot. `cornerRadius?: number` (default
+  `4`, pass `0` for square turns) fillets the elbow, clamped per corner to half the shorter
+  adjoining run — `stroke-linejoin` can't do this on its own, it only rounds by half the 1.5px
+  stroke. Studio adds Routing / Start Dot variants; `crossAt` and `cornerRadius` get no knob by
+  design (see below). ⚠️ Two elbows sharing a `crossAt` stack their cross segments on one line —
+  invisible on a solid stroke, visible with `state="dashed"`. Anchoring both at the bus with
+  `crossAt={0}` collapses the shared stem and avoids it entirely.
+  From `./lifecycle-connector`.
+- **Arrow size follows the theme now — it used to be published and ignored.** The studio has always
+  had an Arrow Size knob, and it moved the canvas (the preview passes it as a prop), but on Publish
+  it emitted a var no rule read, so a consumer's arrowheads never changed. The var is now spelled
+  `--uxm-lifecycle-connector-arrow-size` and the component reads it back off its own element
+  (`getComputedStyle` in a layout effect, re-read when `data-theme` flips) — the cascade can't
+  apply it, since it sizes an SVG polygon rather than setting a CSS property. Resolution is **prop → CSS var → default**, so
+  an explicit `arrowSize` still wins and skips the read; the read lands after mount, so a value
+  differing from `7` paints one frame at the default first. `crossAt` and `cornerRadius` are
+  **props only, with no custom property and no studio knob** — where a cross bus sits is per-edge
+  layout, the same kind of value as `from`/`to`, not something a theme should carry.
+- **`LifecycleConnector`'s dashed state is themable at last.** Its colour and width were hardcoded,
+  so no knob or override reached them — now `--uxm-lifecycle-connector-dashed-{color,stroke-width}`
+  (defaults `--color-text-muted` / `1.5`), matching the idle and active pairs. In the studio the
+  three colour/width pairs are no longer three parallel knobs: they collapse into one **Per State**
+  Color + Stroke Width that follows the State picker (Dash Pattern rides along on `dashed`), with
+  Arrow Size left in a genuinely shared section.
+- **`LifecycleConnector`'s idle stroke is `--color-text-subtle`, not `--color-border`.** Border grey
+  was tuned for edges on white cards and effectively vanished on the sunken canvas the atom is
+  built for; consumers were re-tinting it at canvas level. Arrowhead and start dot follow, since
+  all three read one var.
+- **`LifecycleConnector` override vars lost their doubled segment.** The studio used to publish
+  `--uxm-lifecycle-connector-connector-idle-color` (the generator prefixed an already-`connector`-
+  prefixed knob key); the canonical names are now
+  `--uxm-lifecycle-connector-{idle,active}-{color,stroke-width}` and
+  `--uxm-lifecycle-connector-dash-pattern`. The doubled spellings still resolve as a fallback
+  alias for one minor — re-save the component in the studio to move a stored theme across.
+
 ## Workflow
 
 ### Before writing any code

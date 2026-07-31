@@ -80,6 +80,7 @@ export type { IconTileProps } from './icon-tile';
 export { LifecycleConnector } from './lifecycle-connector';
 export type {
   LifecycleConnectorProps,
+  LifecycleConnectorRouting,
   LifecycleConnectorState,
 } from './lifecycle-connector';
 export { LifecycleEdgeLabel } from './lifecycle-edge-label';

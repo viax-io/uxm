@@ -736,6 +736,28 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     valueSize: '--uxm-typeoverview-value-size',
     valueColor: '--uxm-typeoverview-value-color',
   },
+  // Without an entry here every knob would fall through to the generic
+  // `--uxm-{id}-{kebab}` rule and double the segment — `connectorIdleColor`
+  // under id `lifecycle-connector` becomes
+  // `--uxm-lifecycle-connector-connector-idle-color`. The stylesheet reads the
+  // canonical single-`connector` names (and still accepts the doubled ones as
+  // a fallback alias), so map the knobs explicitly.
+  //
+  // `connectorArrowSize` sizes an SVG polygon rather than setting any CSS
+  // property, so no rule can consume it — `useThemedArrowSize` in
+  // lifecycle-connector.tsx reads `--uxm-lifecycle-connector-arrow-size` back
+  // off the element instead. It is published here for that reason, not for
+  // naming tidiness: drop this line and a saved Arrow Size stops applying.
+  'lifecycle-connector': {
+    connectorIdleColor: '--uxm-lifecycle-connector-idle-color',
+    connectorActiveColor: '--uxm-lifecycle-connector-active-color',
+    connectorIdleStrokeWidth: '--uxm-lifecycle-connector-idle-stroke-width',
+    connectorActiveStrokeWidth: '--uxm-lifecycle-connector-active-stroke-width',
+    connectorDashedColor: '--uxm-lifecycle-connector-dashed-color',
+    connectorDashedStrokeWidth: '--uxm-lifecycle-connector-dashed-stroke-width',
+    connectorDashPattern: '--uxm-lifecycle-connector-dash-pattern',
+    connectorArrowSize: '--uxm-lifecycle-connector-arrow-size',
+  },
 };
 
 function toCSS(key: string, componentId: string): string {
