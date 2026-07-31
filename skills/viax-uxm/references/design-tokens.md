@@ -122,18 +122,72 @@ array or the studio's Color editor) but they are part of the same theming contra
 | Var | Declared by | Value / behaviour |
 |-----|-------------|-------------------|
 | `--font-inter` | `@viax/uxm/tokens.css` (`:root`) | `'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`. No font file is bundled — the host loads Inter (e.g. a Google Fonts `<link>`); the stack degrades to system fonts when absent. |
-| `--font-sans` | `@viax/uxm/tokens.css` (`:root`) | `var(--font-inter)` — the library's base UI stack. Use this in app CSS instead of naming Inter directly. |
+| `--font-sans` | ⚠️ **`@viax/uxm/tokens.css` — but ONLY inside its `@theme inline { … }` block, a Tailwind v4 at-rule.** Browsers do not understand `@theme` and drop the whole block, so in a plain (non-Tailwind) host **`--font-sans` is never actually defined.** | Intended as `var(--font-inter)`, the library's base UI stack. **A non-Tailwind host must alias it itself** (see Consumer rules) before using `var(--font-sans)` anywhere. |
 | `--brand-font` | **Emitted at runtime, only when a brand font is chosen.** `generateOverridesCss` (from `@viax/uxm/studio/generate-css`) turns `brand.fontFamily` — set in the studio's **Brand Settings → Typography** — into a Google-Fonts `@import`, `:root { --brand-font: "X", var(--font-inter), system-ui, sans-serif; }` and `body { font-family: var(--brand-font) !important; }`. Inside the studio itself, `BrandFontStyles` applies the same output live while editing (pre-Publish). |
 
 **Consumer rules:**
 
-- Base typeface in app CSS: `body { font-family: var(--brand-font, var(--font-sans)); }` —
-  Inter by default, the published brand font when one is set. Don't hardcode a different
-  `font-family` on `body`/`html`; it would fight the injected `!important` rule.
-- Components should use `font-family: inherit` (all `@viax/uxm` atoms already do) so the
-  brand font cascades everywhere.
+- **A non-Tailwind host MUST alias `--font-sans` itself, or the whole app renders in Times New
+  Roman.** `--font-sans` only exists inside tokens.css's Tailwind-only `@theme inline` block, so a
+  browser never sees it. With `--brand-font` also unset (the default — no brand font published),
+  `font-family: var(--brand-font, var(--font-sans))` resolves to the *guaranteed-invalid value*;
+  the declaration is then **invalid at computed-value time**, so `<body>` falls back to
+  *inherit* — i.e. the browser's default serif. Because every uxm atom uses
+  `font-family: inherit`, that serif propagates through every component. Alias it once in the
+  host's global CSS (loaded after `tokens.css`), using the real `:root` token `--font-inter`:
+
+  ```css
+  :root {
+    /* tokens.css declares --font-sans only inside `@theme inline`, which browsers drop. */
+    --font-sans: var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif);
+  }
+  ```
+
+  There is no `--font-mono` token at all — always give a literal fallback: `var(--font-mono, monospace)`.
+- Base typeface in app CSS: `html, body, #root { font-family: var(--brand-font, var(--font-sans)); }` —
+  Inter by default, the published brand font when one is set (applying the same chain to
+  `html`/`#root` is safe and closes the serif-via-`html` path). Don't hardcode a *different*
+  `font-family` on `body`/`html`; it would fight the injected `!important` rule. This line is
+  only safe **once the alias above is in place**.
+- **Native form controls don't inherit the document font** — the UA stylesheet gives
+  `<button>`/`<input>`/`<select>`/`<textarea>` their own family (Arial / system UI). uxm atoms set
+  `font-family: inherit` themselves, but raw native controls in host code will render in Arial
+  unless the host adds, once: `button, input, select, textarea { font: inherit; }` (element-level
+  specificity — uxm class rules and studio overrides still win).
+- Sanity check when text looks like Times New Roman: open DevTools on `<body>` and confirm
+  `font-family` computes to a real stack rather than showing the declaration struck through.
+  If body text is fine but buttons/inputs show Arial, the `font: inherit` rule above is missing.
 - Sanitise before interpolating a font name into CSS/URLs yourself? Don't — reuse the exported
   `safeFontFamily` / `fontFileUrl` helpers from `@viax/uxm/studio/generate-css`.
+
+## Theme variants (`data-theme`)
+
+`@viax/uxm/tokens.css` declares the light palette on `:root` and a full dark override set under
+`[data-theme="dark"]`. Setting `data-theme` on the root element switches the palette — every
+component re-tints via the `var(--uxm-*, var(--color-*))` fallback chain, no component code
+involved:
+
+| `data-theme` | Palette | Overrides |
+|--------------|---------|-----------|
+| *(unset)* / `"light"` | Default light | — (the `:root` values). |
+| `"dark"` | Dark | Full override set incl. semantic colors and deeper shadows. |
+
+The host owns the attribute (the embedded studio defers to it); a typical toggle is a session-only
+`useState` that writes `document.documentElement.dataset.theme`. The `themeTokens` array (and the
+studio's Color editor / WCAG panel) documents the **light + dark** hex pairs.
+
+> Two additional CSS-level variants — `data-theme="blue"` (steel-blue light palette around
+> `#5F859C`) and `data-theme="claude"` (pastel-beige surfaces, brown text, orange accent
+> `#D97757`) — exist only on the unmerged `feat/blue-claude-themes` branch. They override
+> surfaces/text/border/accent/highlight only (semantic colors + shadows inherit light) and are
+> **not in any published release** — do not target them from consumer code yet.
+
+These CSS-level variants are a **different axis** from the env-published UXM Studio *brand
+themes*: a consumer portal's `uxmStudio` config (fetched via `getMfaConfig`) can carry an
+arbitrary, environment-defined set of named themes (`themes[]`), each bundling its own
+`--color-*` token ramps for **both** light and dark. Selecting a brand theme swaps the token
+values; `data-theme` still picks which mode's values paint. See quick-recipes.md §16 for the
+read-only picker that consumes them.
 
 ## Programmatic access
 
@@ -205,3 +259,8 @@ pick ONE accent and you want to derive the rest of the ramp — don't hand-roll 
    a PR to `@viax/uxm`. Local declarations bypass the MODO theming layer.
 4. **Pair semantic tokens correctly**: always use the matching `Bg` / `Text` / `Border` triplet
    for a given status (don't mix `Success Bg` with `Danger Text`, etc.).
+5. **`@viax/uxm` ships no spacing-scale token** — there is no `--spacing` (or similar) CSS custom
+   property anywhere in the library or its tokens.css. Never write `gap`/`padding`/`margin` as
+   `calc(var(--spacing) * N)` — it silently resolves to nothing, `calc()` goes invalid, and the
+   whole declaration drops to `0`/initial (rows and elements collapse together with no visible
+   error). Use literal px values for spacing in app code instead.

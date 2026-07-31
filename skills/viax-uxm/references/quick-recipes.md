@@ -23,6 +23,10 @@ import {
   type AppSidebarSection,
 } from '@viax/uxm/ui';
 
+// NOTE: the section key is `heading`, NOT `label`. And `glyph` must be a real id
+// from the registry (see component-catalog.md) — <Icon> renders NOTHING for an
+// unknown glyph, so "dashboard" / "folder" / "package" / "external" all silently
+// disappear.
 const sections: AppSidebarSection[] = [
   {
     heading: 'Workspace',
@@ -37,7 +41,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <PageShell
       variant="standard"
+      // AppSidebarBrand is { logoUrl, iconUrl, alt } — there is NO `name` prop.
       sidebar={<AppSidebar brand={{ logoUrl: '/logo.svg', alt: 'My App' }} sections={sections} />}
+      // AppTopBar takes { search, actions, onMobileMenuClick } — there is NO `title`.
       topBar={<AppTopBar search={<TextInput placeholder="Search…" />} />}
     >
       <PageHeader
@@ -50,6 +56,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 ```
+
+### Client-side nav: `linkAs` needs an `href` → `to` adapter
+
+`AppSidebar` renders each item as `<Component href={item.href}>`, where `Component` is `linkAs`
+(default `'a'`). `next/link` accepts `href`, so passing it directly works — but **react-router's
+`Link` requires `to` and ignores `href`**, so `linkAs={Link}` produces dead links (or a full page
+reload). Wrap it:
+
+```tsx
+import { forwardRef } from 'react';
+import { Link } from 'react-router-dom';
+
+const RouterNavLink = forwardRef<HTMLAnchorElement, { href?: string }>(
+  function RouterNavLink({ href, ...rest }, ref) {
+    return <Link ref={ref} to={href ?? '#'} {...rest} />;
+  },
+);
+
+<AppSidebar brand={brand} sections={sections} linkAs={RouterNavLink} />
+```
+
+Without this every sidebar click tears down the provider tree and visibly re-hydrates the app.
 
 ---
 
@@ -519,6 +547,198 @@ only — the colour still comes from `labelTint`). Read-only metadata keeps usin
 `PropertyField`/`PropertyGrid`. Hairlines between rows: compose `Divider` between the
 `FormField`s — deliberately not a Card prop.
 
+---
+
+## 15. Detail page: `PageHeader` meta, `PropertyField`/`PropertyGrid`, `BackLink`, horizontal rows
+
+The four most commonly misused primitives on a read-only detail page, together:
+
+```tsx
+import {
+  PageHeader,
+  BackLink,
+  PropertyField,
+  PropertyGrid,
+  Cluster,
+  Tag,
+  Avatar,
+} from '@viax/uxm/ui';
+import { useNavigate } from 'react-router-dom';
+
+function OrderDetailPage({ order }: { order: Order }) {
+  const navigate = useNavigate();
+
+  return (
+    <>
+      {/* BackLink is a navigation <a>, not a button — it needs a real href for
+          a11y/focusability even when you intercept the click for client-side nav. */}
+      <BackLink href="/orders" onClick={(e) => { e.preventDefault(); navigate('/orders'); }}>
+        Back to orders
+      </BackLink>
+
+      <PageHeader
+        title={order.name}
+        // `meta` renders inside a <p> — pass INLINE content only (string, <span>,
+        // fragment). A block-level primitive like <Stack> here is invalid
+        // <div>-in-<p> nesting and throws a hydration warning.
+        meta={<>{order.id} &middot; Created {order.createdAt}</>}
+        actions={<Tag type="success">{order.status}</Tag>}
+      />
+
+      {/* PropertyField takes CHILDREN, not a `value` prop — `value="…"` silently
+          renders an empty cell. PropertyGrid's template is fixed
+          (auto-fill, minmax(120px, 1fr)) — it has no `columns` / `minColumnWidth`
+          prop; only the gaps are themable. */}
+      <PropertyGrid>
+        <PropertyField label="Order ID">{order.id}</PropertyField>
+        <PropertyField label="Total">{formatMoney(order.total)}</PropertyField>
+        <PropertyField label="Status">{order.status}</PropertyField>
+      </PropertyGrid>
+
+      {/* Horizontal row of items (e.g. a party card's avatar + name + role) —
+          Stack is flex-COLUMN only; don't fight it with a flexDirection: 'row'
+          override. Cluster is the actual horizontal primitive. */}
+      <Cluster gap={12} align="center">
+        <Avatar type="text" initials="AJ" />
+        <div>{order.customer.name}</div>
+      </Cluster>
+    </>
+  );
+}
+```
+
+`ResponsiveGrid`'s `min` prop is a CSS length **string** (`"280px"`), not a bare number —
+`min={280}` produces the invalid CSS `minmax(280, 1fr)` (missing unit), which the browser drops.
+`PropertyGrid` has no equivalent prop at all — its floor is fixed.
+
+---
+
+## 16. Read-only theme picker (select among UXM Studio's published themes)
+
+A header control letting end users pick which of several UXM Studio-published themes is applied —
+**select only**, no create/rename/clone/import/export/delete (those live in UXM Studio itself). See
+`viax-portal/references/BEM-based-app-generator-MetaPrompt.md` → *"Optional: read-only theme
+picker"* for when a portal should build this (`{{THEME_PICKER}}` flag) and the accompanying
+`theme-catalog.js` / `theme-store.js` data layer. This recipe covers just the header UI.
+
+The `rows` are **pure environment data**: they derive from the `uxmStudio` config the connected
+env published (fetched via `getMfaConfig`) — count, ids, names, and descriptions are arbitrary
+and can change between sessions. Don't hardcode or special-case any theme name; render strictly
+from the normalized rows, and let the data layer handle a remembered selection whose theme no
+longer exists (fall back to the default theme, never crash).
+
+Trigger: an accent `Tag` pill (current theme name + chevron) inside `<AppTopBar actions>`, opening
+a **`Listbox` dropdown** (NOT a `Dialog`/`Modal` — a picker this small should be a lightweight
+popover, not a page-blocking dialog) — one row per theme, each with an `Avatar`, name, optional
+description, and (active row only) a `Tag type="success"` "Active" pill. `Listbox` owns the
+popover, positioning, keyboard nav, and the open/close + selected/hover row styling itself — the
+consumer only supplies `renderTrigger` and `renderItem`. `searchable={false}` — a 2–4 item theme
+list never needs the search row `Listbox` shows by default past its `SEARCHABLE_AUTO_THRESHOLD`
+(6). **No "Use" `Tag`/button on the other rows** — the whole row is already the click target
+(`Listbox`'s own `onChange`), so a second, unlabeled clickable-looking pill on every non-active
+row is redundant; only the current theme needs a badge at all.
+
+```jsx
+import { Avatar, Icon, Listbox, Tag } from '@viax/uxm/ui';
+
+function ThemePicker({ rows, selectedId, onSelect }) {
+  const selectedRow = rows.find((r) => r.id === selectedId) ?? null;
+  const activeName = selectedRow?.name ?? 'Theme';
+
+  return (
+    <Listbox
+      items={rows}
+      getKey={(row) => row.id}
+      getLabel={(row) => row.name}
+      value={selectedRow}
+      onChange={(row) => row && onSelect(row.id)}
+      showCheckmark={false}
+      searchable={false}
+      matchAnchorWidth={false}
+      minPanelWidth={300}
+      maxPanelWidth={360}
+      panelClassName="theme-picker__panel"
+      aria-label="Select theme"
+      renderTrigger={({ triggerProps }) => (
+        <button type="button" {...triggerProps} aria-label={`Manage theme (current: ${activeName})`} className="theme-picker__trigger">
+          <Tag type="accent" className="theme-picker__theme">
+            <span className="theme-picker__theme-name">{activeName}</span>
+            <Icon glyph="chevron-down" size={14} />
+          </Tag>
+        </button>
+      )}
+      renderItem={(row) => {
+        const isActive = row.id === selectedId;
+        return (
+          <div className="theme-picker__row">
+            <Avatar initials={row.name.slice(0, 2).toUpperCase()} className="theme-picker__avatar" />
+            <div className="theme-picker__meta">
+              <span className="theme-picker__name">{row.name}</span>
+              {row.description && <span className="theme-picker__description">{row.description}</span>}
+            </div>
+            {isActive && (
+              <Tag type="success" size="small">Active</Tag>
+            )}
+          </div>
+        );
+      }}
+    />
+  );
+}
+```
+
+**Do not** nest a `<button>` (e.g. a click handler on the "Active" pill) inside `renderItem` —
+the whole row IS the click target (`Listbox`'s own `<button role="option">` wrapper fires
+`onChange`), and a nested interactive element inside it is invalid HTML. The "Active" `Tag` here
+is purely informational; render it as a plain `Tag`, never wrapped in its own `onClick`.
+
+Row layout — spacing between the avatar and the name — needs its own `gap` rule; nothing in
+`@viax/uxm` supplies it for a hand-rolled row like this one (`.uxm-listbox__option` itself
+already spaces the row from its neighbors and supplies selected/hover backgrounds — don't
+re-implement that). Use **literal px values**, never `calc(var(--spacing) * N)` — `@viax/uxm`
+ships no spacing-scale token (`--spacing` doesn't exist anywhere in the library), so that
+`calc()` is invalid at computed-value time and the whole `gap` silently drops to `0`: the avatar
+ends up jammed against the name (see design-tokens.md → Rules #5):
+
+```css
+.theme-picker__panel { --uxm-listbox-option-padding-y: 8px; }
+.theme-picker__row { display: flex; align-items: center; gap: 12px; width: 100%; }
+.theme-picker__avatar { flex-shrink: 0; }
+.theme-picker__meta { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.theme-picker__name { display: block; font-size: 14px; color: var(--color-text); }
+.theme-picker__description { font-size: 13px; color: var(--color-text-muted); }
+```
+
+Plain text dropped into `renderItem` (the row name/description here) has no `@viax/uxm` default
+to inherit — it falls through to whatever the host's base font-size is. Since the `globals.css`
+baseline (see the portal skill's "UXM Layout & Styling Gotchas") never resets `html`/`body`
+font-size (don't add one — a handful of `@viax/uxm` layout widths, e.g. the sidebar, are sized in
+`rem` off the 16px root; shrinking it shifts those too), that base defaults to the browser UA
+16px — visibly bigger than the rest of the library's 11–14px component text. Give host-authored
+text inside library containers (like this row) its own explicit `font-size` rather than relying
+on inheritance.
+
+`Listbox`'s default `matchAnchorWidth: true` would clamp the panel to the (intentionally narrow)
+trigger pill's width — too tight for an avatar + name + description + status pill row. Set
+`matchAnchorWidth={false}` and give the panel its own `minPanelWidth`/`maxPanelWidth` instead
+(300–360px reads well for a 2–4 item theme list).
+
+Optional per-row accent tint on the `Avatar` (paint each row with *that* theme's own accent, not
+the currently-active one) via inline custom-property overrides:
+
+```jsx
+const accentColor = getThemeAccentColor(structure, row.id, uiMode); // 'light' | 'dark'
+const avatarStyle = accentColor
+  ? { '--uxm-avatar-background-color': accentColor, '--uxm-avatar-color': 'var(--color-text-inverse)' }
+  : undefined;
+<Avatar initials={...} style={avatarStyle} />
+```
+
+No confirm-before-switch step is needed here (contrast with a full theme *editor*, which warns
+about discarding unpublished edits) — a pure picker has no in-progress state a switch could lose.
+
+---
+
 ## Anti-patterns
 
 ❌ **Don't handroll a div with the same intent as an existing primitive.** Check the catalog
@@ -548,3 +768,29 @@ imperative `toast.*()` calls render through it.
 
 ❌ **Don't import from the root `@viax/uxm`** for production code. Prefer
 `@viax/uxm/ui` for tree-shake-friendly per-component imports.
+
+❌ **Don't pass `value` to `PropertyField`.** It takes `children`, not a `value` prop —
+`<PropertyField label="Total" value={total} />` silently renders an empty value cell. Use
+`<PropertyField label="Total">{total}</PropertyField>`.
+
+❌ **Don't pass a block-level layout primitive (`Stack`, `Cluster`, a `<div>`) as `PageHeader`'s
+`meta`.** It renders inside a `<p>` — only inline content (string, `<span>`, fragment) is valid
+there; a block element causes invalid `<div>`-in-`<p>` nesting and a hydration warning.
+
+❌ **Don't pass a bare number to `ResponsiveGrid`'s `min`.** It's a CSS length string
+(`"280px"`), not `280` — a bare number produces an invalid `minmax(280, 1fr)` that the browser
+silently drops. (`PropertyGrid` has no equivalent prop — its floor is fixed.)
+
+❌ **Don't force `Stack` horizontal with a `flexDirection: 'row'` style override.** `Stack` is
+flex-column by design (gap + align only, no direction prop) — reach for `Cluster` for any
+horizontal row (party card avatar rows, button groups, inline chips).
+
+❌ **Don't give `BackLink` only an `onClick`.** It renders as an `<a>`, so it needs a real `href`
+for keyboard focus and right-click/open-in-new-tab — even when you `preventDefault()` to do
+client-side navigation instead of a full page load.
+
+❌ **Don't write `gap`/`padding`/`margin` as `calc(var(--spacing) * N)`.** `@viax/uxm` has no
+spacing-scale token — `--spacing` doesn't exist anywhere in the library or its tokens.css. The
+`calc()` becomes invalid at computed-value time and the whole declaration silently drops to
+`0`/initial, collapsing rows and elements together with no error in the console. Use literal px
+values instead (see design-tokens.md → Rules #5).

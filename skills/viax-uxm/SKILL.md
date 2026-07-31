@@ -592,8 +592,27 @@ every route — and survives reload if you persist the state. When the brand car
 (`brand.fontFamily`, set via Brand Settings → Typography), the same output also includes the
 Google-Fonts `@import`, `--brand-font`, and `body { font-family: var(--brand-font) !important }`
 — so the host's base font follows the brand automatically. Host CSS should therefore declare its
-base font as `body { font-family: var(--brand-font, var(--font-sans)); }` and never hardcode a
-competing family (see `references/design-tokens.md` → "Typography").
+base font as `html, body, #root { font-family: var(--brand-font, var(--font-sans)); }` and never
+hardcode a competing family (see `references/design-tokens.md` → "Typography").
+
+> ⚠️ **A non-Tailwind host must alias `--font-sans` first, or everything renders in Times New
+> Roman.** `tokens.css` declares `--font-sans` only inside its `@theme inline { … }` block, a
+> Tailwind v4 at-rule that browsers drop wholesale — so the var never actually exists in a plain
+> BEM/SCSS host. With no brand font published, `--brand-font` is unset too, so the `body` rule
+> above collapses to the guaranteed-invalid value, becomes invalid at computed-value time, and
+> `<body>` inherits the browser's default serif. Every uxm atom uses `font-family: inherit`, so the
+> serif spreads across the whole app. Add this once, after `tokens.css`:
+>
+> ```css
+> :root { --font-sans: var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif); }
+> button, input, select, textarea { font: inherit; }
+> ```
+>
+> `--font-inter` *is* declared in the real `:root`, so it resolves. The second rule is needed
+> because native form controls do NOT inherit the document font (UA default → Arial): uxm atoms
+> set `font-family: inherit` themselves, but any raw `<button>`/`<input>`/`<select>` in host code
+> would otherwise render in Arial next to the body font. There is no `--font-mono` token —
+> use `var(--font-mono, monospace)` with the literal fallback.
 
 **Brand tokens.** Seed the studio's `brand.tokens.light` / `.dark` with the host's brand colours so
 the editor adopts them as its own managed Accent tokens; `BrandTokenStyles` (rendered even in
@@ -620,6 +639,18 @@ base; the studio's runtime `<style>` still wins live on the editor route.
 5. **For new components that don't fit any existing primitive**, propose extending the library
    rather than building one-offs. The contribution flow is in the top-level README's
    "Contributing" section.
+6. **`PropertyField`'s value is `children`, never a `value` prop.** `value="…"` silently renders
+   an empty cell. `PropertyGrid` has no `columns` / `minColumnWidth` prop — its grid template is
+   fixed.
+7. **`PageHeader`'s `meta` renders inside a `<p>` — inline content only.** A block-level primitive
+   (`Stack`, a `<div>`) there is invalid `<div>`-in-`<p>` nesting and triggers a hydration warning.
+8. **`ResponsiveGrid`'s `min` is a CSS length string** (`"280px"`), not a bare number — a bare
+   number emits an invalid, dropped `minmax()`.
+9. **`Stack` is flex-column only — never override it with `flexDirection: 'row'`.** Use `Cluster`
+   for horizontal layouts (avatar/name rows, button groups, inline chips).
+10. **`BackLink` always needs a real `href`**, even when the click is intercepted for
+    client-side nav (`preventDefault()`) — it's an `<a>`, and `onClick`-only breaks keyboard focus
+    and right-click/open-in-new-tab.
 
 ## Out of scope
 
