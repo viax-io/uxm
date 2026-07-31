@@ -478,6 +478,10 @@ import { DataTable, BulkActionBar, type MenuEntry, type BulkAction } from '@viax
 const rowActions = (row: Deal): MenuEntry[] => [
   { key: 'edit', label: 'Edit', icon: 'pencil', onSelect: () => editDeal(row.id) },
   { key: 'duplicate', label: 'Duplicate', icon: 'copy', onSelect: () => cloneDeal(row.id) },
+  // (unreleased) `subtitle` makes a two-line row — headline + supporting line.
+  // Keep it short: it becomes part of the row's accessible name.
+  { key: 'move', label: 'Move to…', subtitle: `Currently in ${row.stage}`, icon: 'folder',
+    onSelect: () => moveDeal(row.id) },
   { separator: true, key: 'sep' },
   { key: 'delete', label: 'Delete', icon: 'trash', danger: true, onSelect: () => removeDeal(row.id) },
 ];

@@ -1534,7 +1534,7 @@ export const inputsDefs: ComponentDef[] = [
     name: 'Menu (Action Menu)',
     category: 'Inputs',
     description:
-      "Action / dropdown menu — a list of commands invoked from a consumer-owned trigger (a ⋮ IconButton, a Button, anything). Built on the same headless Popover as Listbox (positioning, portal, outside-click, Escape) but with menu semantics (role=menu / menuitem / separator) and NO selected-value state: pick a row → run its action → dismiss. Reach for Listbox/Select when you need to HOLD a chosen value; reach for Menu for row ⋮ actions, overflow menus, and command lists. Supports leading icons, trailing hints (e.g. shortcuts), separators, disabled rows, and destructive (danger) items. This entry themes the PANEL + rows; the trigger is owned entirely by the consumer's renderTrigger.",
+      "Action / dropdown menu — a list of commands invoked from a consumer-owned trigger (a ⋮ IconButton, a Button, anything). Built on the same headless Popover as Listbox (positioning, portal, outside-click, Escape) but with menu semantics (role=menu / menuitem / separator) and NO selected-value state: pick a row → run its action → dismiss. Reach for Listbox/Select when you need to HOLD a chosen value; reach for Menu for row ⋮ actions, overflow menus, and command lists. Supports leading icons, trailing hints (e.g. shortcuts), optional two-line rows (a headline label + a supporting subtitle), separators, disabled rows, and destructive (danger) items. This entry themes the PANEL + rows; the trigger is owned entirely by the consumer's renderTrigger.",
     styleProperties: [
       // Panel chrome — the floating card.
       { key: 'panelBg', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'panel' },
@@ -1579,6 +1579,15 @@ export const inputsDefs: ComponentDef[] = [
       // active / danger — no separate knobs for those states).
       { key: 'itemIconColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'icon', showWhen: { withIcons: 'yes' } },
 
+      // Two-line rows — a headline (label) plus a supporting subtitle
+      // beneath. Only shown when the Subtitles variant is on.
+      { key: 'itemSubtitleFontSize', label: 'Font Size', control: 'number', defaultValue: 11, min: 9, max: 16, step: 1, unit: 'px', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
+      // Default is text-STRONG, not text-muted: muted fails WCAG AA on the
+      // panel in the light theme (2.54:1) and a subtitle carries real content.
+      // See the note in menu.scss.
+      { key: 'itemSubtitleColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
+      { key: 'itemSubtitleGap', label: 'Row Gap', control: 'number', defaultValue: 2, min: 0, max: 8, step: 1, unit: 'px', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
+
       // Separator divider colour.
       { key: 'separatorColor', label: 'Color', control: 'color', defaultValue: 'var(--color-border)', section: 'separator', showWhen: { withSeparator: 'yes' } },
     ],
@@ -1617,6 +1626,17 @@ export const inputsDefs: ComponentDef[] = [
         ],
         defaultValue: 'yes',
       },
+      {
+        // Turns each row into a two-line headline + subtitle item. Off by
+        // default so the classic single-line menu is the baseline.
+        key: 'withSubtitles',
+        label: 'Subtitles',
+        options: [
+          { value: 'yes', label: 'On' },
+          { value: 'no', label: 'Off' },
+        ],
+        defaultValue: 'no',
+      },
     ],
     events: [
       { name: 'onSelect', description: "Fires when an item is invoked (click / Enter / Space). The menu closes afterward. Per-item — wired via each item's `onSelect`.", payload: 'void' },
@@ -1626,7 +1646,7 @@ export const inputsDefs: ComponentDef[] = [
       importPath: '@viax/uxm/ui',
       importNames: 'Menu',
       props: [
-        { name: 'items', type: 'MenuEntry[]', required: true, description: 'Menu entries — actionable items ({ key, label, icon?, hint?, onSelect?, disabled?, danger? }) and separators ({ separator: true }), in display order.' },
+        { name: 'items', type: 'MenuEntry[]', required: true, description: 'Menu entries — actionable items ({ key, label, subtitle?, icon?, hint?, onSelect?, disabled?, danger? }) and separators ({ separator: true }), in display order. Pass `subtitle` to render a two-line row (label = headline).' },
         { name: 'renderTrigger', type: '(api: { open, triggerProps }) => ReactNode', required: true, description: 'Render the trigger. Spread `triggerProps` on your interactive element (an IconButton ⋮, a Button) — wires ref + click + ARIA in one go.' },
         { name: 'placement', type: '"bottom-start" | "bottom-end" | "top-start" | "top-end"', defaultValue: '"bottom-end"', description: 'Preferred placement; flips on overflow. Defaults to bottom-end since menus usually align to a trailing ⋮.' },
         { name: 'open', type: 'boolean', description: 'Controlled open state. Pair with onOpenChange. Omit for uncontrolled.' },

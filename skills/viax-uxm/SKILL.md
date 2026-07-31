@@ -499,6 +499,19 @@ skill:
   tints replaced is migrated to the **strong** tint (the old, and still default, label
   colour), so a theme saved before the split keeps the look it had.
 
+### Unreleased
+
+- **`Menu` items gained an optional `subtitle` — two-line rows.** Set `subtitle?: ReactNode` on
+  any `MenuItem` and the row renders as a headline (`label`) with a supporting line beneath it;
+  omit it and the row stays single-line with its exact previous DOM. Themeable via
+  `--uxm-menu-item-subtitle-{font-size,color,gap}` (defaults `11px` / `--color-text-strong` /
+  `2px` — strong, **not** the muted tone icons and hints use, which measures 2.54:1 on the panel
+  in the light theme and fails AA for real text); on an active or danger row the subtitle
+  inherits the row's text colour at full strength, with no opacity applied — hierarchy comes
+  from the smaller font, since an opacity multiplier can push 11px text under AA. Studio adds a
+  "Subtitles" On/Off variant (off by default) with Font Size / Color / Row Gap knobs. `MenuItem` is now
+  `{ key, label, subtitle?, icon?, hint?, onSelect?, disabled?, danger? }`. From `./menu`.
+
 ## Workflow
 
 ### Before writing any code
