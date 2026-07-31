@@ -24,9 +24,9 @@ export function LifecycleConnectorKnobsPreview({ styles, variants }: PreviewProp
       // hover/active bg fall back to IconButton's surface-alt so the circle
       // gives a real hover cue (the old scale/shadow lift is gone); only the
       // icon tint is pinned across states so it keeps its insert/edit colour.
+      // Pressed inherits that tint via the atom's :active -> hover chain.
       '--uxm-icon-button-color': icon,
       '--uxm-icon-button-hover-color': icon,
-      '--uxm-icon-button-active-color': icon,
       borderRadius: '50%',
       border: `${borderWidth}px solid ${border}`,
       boxShadow: 'var(--shadow-xs)',

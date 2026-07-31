@@ -29,9 +29,19 @@
   color: var(--uxm-icon-button-hover-color, var(--color-text));
 }
 
+/* Pressed falls back to HOVER before the bare default. A tinted button (an
+   accent FAB, a coloured canvas affordance) sets `-bg` + `-hover-bg` and has
+   no reason to also spell out `-active-bg`; with a direct jump to
+   `--color-surface-alt` it flashed grey the instant it was pressed — the one
+   state the pointer is guaranteed to be over. Chaining keeps every existing
+   override intact: an explicit `-active-*` still wins, and a button that sets
+   neither still lands on the same default it always did. */
 .uxm-icon-button:active {
-  background-color: var(--uxm-icon-button-active-bg, var(--color-surface-alt));
-  color: var(--uxm-icon-button-active-color, var(--color-text));
+  background-color: var(
+    --uxm-icon-button-active-bg,
+    var(--uxm-icon-button-hover-bg, var(--color-surface-alt))
+  );
+  color: var(--uxm-icon-button-active-color, var(--uxm-icon-button-hover-color, var(--color-text)));
 }
 
 .uxm-icon-button:focus-visible {

@@ -17,12 +17,11 @@ export function LifecyclePlusButtonPreview({ styles }: PreviewProps) {
     '--uxm-icon-button-radius': '999px',
     '--uxm-icon-button-bg': styles.backgroundColor as string,
     '--uxm-icon-button-hover-bg': styles.hoverBackgroundColor as string,
-    // Pressed keeps the darker hover fill instead of IconButton's default
-    // surface-alt, so the accent FAB doesn't flash grey on mousedown.
-    '--uxm-icon-button-active-bg': styles.hoverBackgroundColor as string,
     '--uxm-icon-button-color': styles.color as string,
+    // Hover pins the icon tint (IconButton would otherwise take it to
+    // --color-text); pressed needs no pin at all — the atom chains :active
+    // off these hover vars, so the FAB holds its fill and tint on mousedown.
     '--uxm-icon-button-hover-color': styles.color as string,
-    '--uxm-icon-button-active-color': styles.color as string,
     boxShadow: 'var(--shadow-xs)',
   } as CSSProperties;
 
