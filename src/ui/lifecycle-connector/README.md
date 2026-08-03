@@ -66,7 +66,7 @@ Extends `Omit<SVGAttributes<SVGGElement>, 'from' | 'to'>` — `from` and `to` ar
 | `cornerRadius` | `number` | `4` | Corner rounding in px for the elbow's turns; `0` for square corners. Clamped per corner to half the shorter adjoining run. Read only when the resolved routing is `orthogonal`. |
 | `startDot` | `boolean` | `true` | Render the dot at the source anchor. |
 | `arrowSize` | `number` | `7` | Arrowhead size in px. The line is also pulled back by this amount so the tip lands cleanly on the node edge. |
-| `dashPattern` | `string` | `'6 4'` | SVG `stroke-dasharray` pattern used when `state === 'dashed'`. |
+| `dashPattern` | `string` | – | SVG `stroke-dasharray` pattern used when `state === 'dashed'`. Applied as an inline `--uxm-lifecycle-connector-dash-pattern`; left unset the cascade supplies it (default `6 4`). See [Why `arrow-size` is read](#why-arrow-size-is-read-not-applied) — same **prop → CSS var → default** order. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native SVG group attribute)_ | – | – | Spread onto the root `<g>`. |
 
@@ -96,6 +96,10 @@ Every var above it sets a real CSS property, so the cascade applies it and the c
 
 Resolution is **prop → CSS var → default**, so an explicit `arrowSize={10}` always beats a published theme, and passing the prop skips the DOM read entirely. The read runs in a layout effect, before paint, so a themed size never flashes at the default first.
 
+The read accepts **a bare number or a `px` length only** — `7`, `7px`, `10.5px`. Any other unit (`0.75rem`, `1em`, a `calc()`) is refused and the default stands, because `parseFloat` would strip the unit instead of converting it and paint a sub-pixel, effectively invisible arrowhead. Negative values are refused for the same reason: they turn the head inside out.
+
+`dashPattern` resolves the same way, and for the same underlying reason — an SVG presentation attribute loses to any author rule, and the dashed rule in the stylesheet always resolves (it carries a literal `6 4` fallback), so a `stroke-dasharray` attribute on the path would never paint. The prop therefore writes an inline `--uxm-lifecycle-connector-dash-pattern` instead. It has **no default** on purpose: a defaulted prop would put that inline var on every connector, and no published theme could ever win.
+
 `crossAt` and `cornerRadius` have **no** custom property on purpose. Where a cross bus sits and how sharp its turns are is per-edge layout — the same kind of value as `from` / `to` — so it belongs to the diagram's layout code, not to a saved theme. They are props only, and the studio deliberately exposes no knob for them.
 
 The per-state vars resolve into two internal vars — `--uxm-lifecycle-connector-color` and `--uxm-lifecycle-connector-width` — which the three sub-elements (start dot, path, arrowhead) read, so one state modifier re-tints the whole connector in lockstep. Set the per-state names, not the internal pair.
@@ -122,7 +126,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 |-----------------|---------|--------|
 | `idle` | default | Thin subtle-grey path (`1.5px`), matching dot + arrow. |
 | `active` | `state="active"` | Bolder accent-coloured path (`2px`), accent dot + arrow. |
-| `dashed` | `state="dashed"` | Muted dashed path with `dashPattern` (default `6 4`). Often used for "after deploy" / future branches. |
+| `dashed` | `state="dashed"` | Muted dashed path; pattern from `dashPattern` or `--uxm-lifecycle-connector-dash-pattern` (default `6 4`). Often used for "after deploy" / future branches. |
 | Auto routing | `routing="auto"` (default) | Straight when `from.x === to.x`, Bezier otherwise — the historical behaviour. |
 | Straight routing | `routing="straight"` | `M from L lineEnd` — pulled back by `arrowSize` so the tip sits on the node edge. |
 | Curved routing | `routing="bezier"` | Cubic Bezier with control points at the vertical midpoint — smooth S-curve to a sibling column. |

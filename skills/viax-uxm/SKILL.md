@@ -546,9 +546,19 @@ skill:
   (`getComputedStyle` in a layout effect, re-read when `data-theme` flips) — the cascade can't
   apply it, since it sizes an SVG polygon rather than setting a CSS property. Resolution is **prop → CSS var → default**, so
   an explicit `arrowSize` still wins and skips the read; the read lands after mount, so a value
-  differing from `7` paints one frame at the default first. `crossAt` and `cornerRadius` are
+  differing from `7` paints one frame at the default first. The var takes **a bare number or a `px`
+  length only** (`7`, `7px`, `10.5px`) — any other unit is refused and `7` stands, since `parseFloat`
+  would strip a `rem`/`em` rather than convert it and leave a sub-pixel, invisible arrowhead.
+  `crossAt` and `cornerRadius` are
   **props only, with no custom property and no studio knob** — where a cross bus sits is per-edge
   layout, the same kind of value as `from`/`to`, not something a theme should carry.
+- **`dashPattern` actually applies now — it never did.** The prop was rendered as a `stroke-dasharray`
+  presentation attribute, which CSS ranks below every author rule, and the stylesheet's dashed rule
+  always resolves (literal `6 4` fallback) — so it always won and `dashPattern="2 2"` painted `6 4`.
+  The prop now writes an inline `--uxm-lifecycle-connector-dash-pattern`, giving it the same
+  **prop → CSS var → default** order as `arrowSize`. It has **no default value** any more: a
+  defaulted prop would stamp that inline var on every connector and no published theme could win.
+  Nothing to migrate — the prop had no observable effect to preserve.
 - **`LifecycleConnector`'s dashed state is themable at last.** Its colour and width were hardcoded,
   so no knob or override reached them — now `--uxm-lifecycle-connector-dashed-{color,stroke-width}`
   (defaults `--color-text-muted` / `1.5`), matching the idle and active pairs. In the studio the

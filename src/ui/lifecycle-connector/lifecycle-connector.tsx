@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
-import type { RefObject, SVGAttributes } from 'react';
+import type { CSSProperties, RefObject, SVGAttributes } from 'react';
 
 export type LifecycleConnectorState = 'idle' | 'active' | 'dashed';
 
@@ -74,8 +74,18 @@ export interface LifecycleConnectorProps extends Omit<SVGAttributes<SVGGElement>
    */
   arrowSize?: number;
   /**
-   * SVG `stroke-dasharray` pattern used when `state === "dashed"`. Defaults
-   * to the `connectorDashPattern` registry default ("6 4").
+   * SVG `stroke-dasharray` pattern used when `state === "dashed"`.
+   *
+   * Applied as an inline `--uxm-lifecycle-connector-dash-pattern`, not as a
+   * `stroke-dasharray` attribute: a presentation attribute loses to any author
+   * rule, and the stylesheet's dashed rule always resolves (it carries a
+   * literal fallback), so an attribute here would never paint.
+   *
+   * Left undefined the value comes from the cascade — resolution is
+   * **prop → CSS var → `6 4`**, matching `arrowSize`. Passing it is therefore
+   * an override of a published theme, which is why there is no default: a
+   * defaulted prop would write an inline var on every connector and no theme
+   * could ever win.
    */
   dashPattern?: string;
 }
@@ -118,6 +128,14 @@ function subscribeToThemeChange(onChange: () => void): () => void {
     }
   };
 }
+
+/**
+ * Values `useThemedArrowSize` will accept off the cascade: a non-negative
+ * number, optionally suffixed `px`. No other unit is convertible without a
+ * font-size / viewport context the read doesn't have, and a negative size would
+ * turn the arrowhead inside out.
+ */
+const ARROW_SIZE_PATTERN = /^(?:\d+(?:\.\d+)?|\.\d+)(?:px)?$/;
 
 /**
  * Read the themed arrow size back out of the cascade.
@@ -165,7 +183,14 @@ function useThemedArrowSize(
       const raw = getComputedStyle(el)
         .getPropertyValue('--uxm-lifecycle-connector-arrow-size')
         .trim();
-      const parsed = Number.parseFloat(raw);
+      // Reject anything that isn't a bare number or a `px` length before
+      // parsing. `parseFloat` strips a unit it doesn't understand rather than
+      // failing, so an unguarded read turns `0.75rem` into a 0.75px arrowhead —
+      // a silently invisible one — instead of falling back to the default. The
+      // studio publishes `7px` (its formatter appends the unit) and a
+      // hand-written override is usually bare, so both spellings are accepted
+      // and everything else is refused.
+      const parsed = ARROW_SIZE_PATTERN.test(raw) ? Number.parseFloat(raw) : NaN;
       // `undefined` (not NaN) so the caller can fall through with `??`.
       setSize(Number.isFinite(parsed) ? parsed : undefined);
     };
@@ -245,8 +270,9 @@ export function LifecycleConnector({
   cornerRadius = 4,
   startDot = true,
   arrowSize: arrowSizeProp,
-  dashPattern = '6 4',
+  dashPattern,
   className,
+  style,
   ...rest
 }: LifecycleConnectorProps) {
   const rootRef = useRef<SVGGElement>(null);
@@ -346,6 +372,14 @@ export function LifecycleConnector({
         `uxm-lifecycle-connector--${state}`,
         className,
       )}
+      // Only when the caller passed one — otherwise a connector with no `style`
+      // of its own keeps emitting no `style` attribute at all, and the dash
+      // pattern stays a pure cascade decision.
+      style={
+        dashPattern === undefined
+          ? style
+          : ({ ...style, '--uxm-lifecycle-connector-dash-pattern': dashPattern } as CSSProperties)
+      }
     >
       {startDot && (
         <circle className="uxm-lifecycle-connector__start" cx={from.x} cy={from.y} r={3} />
@@ -360,7 +394,6 @@ export function LifecycleConnector({
         fill="none"
         strokeLinecap="round"
         strokeLinejoin={mode === 'orthogonal' ? 'round' : undefined}
-        strokeDasharray={state === 'dashed' ? dashPattern : undefined}
       />
       <polygon className="uxm-lifecycle-connector__arrow" points={arrow} />
     </g>

@@ -16,7 +16,9 @@ export function LifecycleConnectorPreview({ styles, variants }: PreviewProps) {
 
   // Map the editor knobs onto the connector's own CSS custom properties +
   // pass-through props so the preview reflects "what would this look like
-  // with these settings."
+  // with these settings." Dash Pattern rides the var rather than the
+  // `dashPattern` prop — the prop writes the same var, so passing both would
+  // just set it twice.
   const cssVars = {
     '--uxm-lifecycle-connector-idle-color': styles.connectorIdleColor as string,
     '--uxm-lifecycle-connector-active-color': styles.connectorActiveColor as string,
@@ -49,7 +51,6 @@ export function LifecycleConnectorPreview({ styles, variants }: PreviewProps) {
         routing={routing}
         startDot={startDot}
         arrowSize={styles.connectorArrowSize as number}
-        dashPattern={styles.connectorDashPattern as string}
       />
     </svg>
   );
