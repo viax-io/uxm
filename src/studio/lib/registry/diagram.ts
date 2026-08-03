@@ -105,14 +105,26 @@ export const diagramDefs: ComponentDef[] = [
     id: 'lifecycle-connector',
     name: 'Lifecycle Connector',
     category: 'Diagram',
-    description: 'Edge between two nodes — idle / hovered stroke, thickness, arrow, and dashed variant.',
+    description: 'Edge between two nodes — idle / hovered stroke, thickness, arrow, dashed variant, and straight / Bezier / elbow routing.',
     styleProperties: [
-      { key: 'connectorIdleColor', label: 'Idle Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
-      { key: 'connectorActiveColor', label: 'Active Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'colors' },
-      { key: 'connectorIdleStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 1.5, min: 0.5, max: 4, step: 0.5, unit: 'px' },
-      { key: 'connectorActiveStrokeWidth', label: 'Active Stroke Width', control: 'slider', defaultValue: 2, min: 0.5, max: 5, step: 0.5, unit: 'px' },
+      // Paint is scoped to the State picker — one Color / Stroke Width pair
+      // that follows the selected state, rather than three parallel knobs of
+      // which two are inert at any moment. Keys keep their `connector*` prefix
+      // so themes saved before this regrouping still resolve.
+      { key: 'connectorIdleColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'states', showWhen: { state: 'idle' } },
+      { key: 'connectorIdleStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 1.5, min: 0.5, max: 4, step: 0.5, unit: 'px', section: 'states', showWhen: { state: 'idle' } },
+      { key: 'connectorActiveColor', label: 'Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'active' } },
+      { key: 'connectorActiveStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 2, min: 0.5, max: 5, step: 0.5, unit: 'px', section: 'states', showWhen: { state: 'active' } },
+      { key: 'connectorDashedColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'states', showWhen: { state: 'dashed' } },
+      { key: 'connectorDashedStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 1.5, min: 0.5, max: 4, step: 0.5, unit: 'px', section: 'states', showWhen: { state: 'dashed' } },
+      // Only read when the state is dashed, so it belongs with that state's
+      // paint rather than in the shared section.
+      { key: 'connectorDashPattern', label: 'Dash Pattern', control: 'text', defaultValue: '6 4', section: 'states', showWhen: { state: 'dashed' } },
       { key: 'connectorArrowSize', label: 'Arrow Size', control: 'number', defaultValue: 7, min: 3, max: 14, step: 1, unit: 'px' },
-      { key: 'connectorDashPattern', label: 'Dash Pattern', control: 'text', defaultValue: '6 4' },
+      // No knobs for `crossAt` / `cornerRadius` on purpose. Where an elbow's
+      // cross bus sits is per-edge geometry — the same kind of value as
+      // `from` / `to` — so it belongs to the diagram's layout code, not to a
+      // saved theme. They stay props.
     ],
     layoutVariants: [
       {
@@ -124,6 +136,26 @@ export const diagramDefs: ComponentDef[] = [
           { value: 'dashed', label: 'Dashed (false)' },
         ],
         defaultValue: 'idle',
+      },
+      {
+        key: 'routing',
+        label: 'Routing',
+        options: [
+          { value: 'auto', label: 'Auto' },
+          { value: 'straight', label: 'Straight' },
+          { value: 'bezier', label: 'Bezier' },
+          { value: 'orthogonal', label: 'Elbow' },
+        ],
+        defaultValue: 'auto',
+      },
+      {
+        key: 'startDot',
+        label: 'Start Dot',
+        options: [
+          { value: 'on', label: 'On' },
+          { value: 'off', label: 'Off' },
+        ],
+        defaultValue: 'on',
       },
     ],
   },

@@ -203,7 +203,7 @@ positioning and a11y.
 
 | Component | Key exports | What it is |
 |-----------|-------------|------------|
-| **LifecycleConnector** | `LifecycleConnector`, `LifecycleConnectorProps`, `LifecycleConnectorState` | SVG edge; idle / active / dashed; auto straight or Bezier. |
+| **LifecycleConnector** | `LifecycleConnector`, `LifecycleConnectorProps`, `LifecycleConnectorState`, `LifecycleConnectorRouting` (unreleased) | SVG edge; idle / active / dashed; `routing` auto / straight / bezier / orthogonal elbow (unreleased). |
 | **LifecycleEdgeLabel** | `LifecycleEdgeLabel`, `LifecycleEdgeLabelProps`, `LifecycleEdgeLabelVariant` | Midpoint pill: `true` / `false` / `neutral`. |
 | **LifecycleMinimap** | `LifecycleMinimap`, `LifecycleMinimapProps`, `LifecycleMinimapNode`, `LifecycleMinimapViewport` | Birds-eye 0–1 canvas overview + optional viewport overlay. |
 | **LifecycleNodeCard** | `LifecycleNodeCard`, `LifecycleNodeCardProps`, `LifecycleNodeKind` | Kind-aware pill (`state` / `condition` / `task`). |
