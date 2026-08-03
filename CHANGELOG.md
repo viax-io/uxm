@@ -1,3 +1,10 @@
+# [4.9.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.8.0...v4.9.0) (2026-08-03)
+
+
+### Features
+
+* **lifecycle-node-card:** add a min-height knob for uniform-height nodes ([cd797db](https://gitlab.viax.tech/services-viax/uxm/commit/cd797dbd648a5b4907eda5f839b20f58731d8bac))
+
 # [4.8.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.7.0...v4.8.0) (2026-08-03)
 
 
