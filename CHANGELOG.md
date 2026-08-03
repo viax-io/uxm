@@ -1,3 +1,15 @@
+# [4.8.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.7.0...v4.8.0) (2026-08-03)
+
+
+### Bug Fixes
+
+* **lifecycle-connector:** apply dashPattern via CSS var, guard themed arrow size ([d370554](https://gitlab.viax.tech/services-viax/uxm/commit/d370554e98eb17631d13ad4d405d9f50e4b06211))
+
+
+### Features
+
+* **lifecycle-connector:** elbow routing, themable dashed state and live arrow size ([af04600](https://gitlab.viax.tech/services-viax/uxm/commit/af046007441cfa9ba2ed1c54c6f394a00fa6de80))
+
 # [4.7.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.6.0...v4.7.0) (2026-07-31)
 
 
