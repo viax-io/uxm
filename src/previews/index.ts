@@ -52,6 +52,7 @@ export { InputPreview } from '@/ui/input/input-preview';
 export { InputWithIconPreview } from '@/ui/input-with-icon/input-with-icon-preview';
 export { LifecycleConnectorPreview } from '@/ui/lifecycle-connector/lifecycle-connector-preview';
 export { LifecycleEdgeLabelPreview } from '@/ui/lifecycle-edge-label/lifecycle-edge-label-preview';
+export { LifecycleGroupBoxPreview } from '@/ui/lifecycle-group-box/lifecycle-group-box-preview';
 export { LifecycleMinimapPreview } from '@/ui/lifecycle-minimap/lifecycle-minimap-preview';
 export { LifecycleNodeCardPreview } from '@/ui/lifecycle-node-card/lifecycle-node-card-preview';
 export { LifecycleTerminalPreview } from '@/ui/lifecycle-terminal/lifecycle-terminal-preview';

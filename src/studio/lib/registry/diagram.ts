@@ -188,6 +188,92 @@ export const diagramDefs: ComponentDef[] = [
     ],
   },
   {
+    id: 'lifecycle-group-box',
+    name: 'Lifecycle Group Box',
+    category: 'Diagram',
+    description:
+      'Frosted frame around the sibling nodes of one group — and, on an editable diagram, the drop zone for adding a member to it.',
+    styleProperties: [
+      // Knob keys are the ordinary CSS-ish names every other atom uses
+      // (`backgroundColor`, `borderWidth`, …), deliberately NOT prefixed with
+      // the component's own name: `groupBoxBg` under id `lifecycle-group-box`
+      // would have the generator emit
+      // `--uxm-lifecycle-group-box-group-box-bg`. That doubling is exactly what
+      // happened to lifecycle-connector, whose published themes now need a
+      // permanent fallback alias.
+      // Both colour knobs default to a LIVE token, not to the literal CSS the
+      // rule resolves to: `themeTokens` is what the editor's swatch list is
+      // built from, so a raw `color-mix(…)` / `var(--color-drop-target)` string
+      // renders as unreadable text in the picker instead of a named colour.
+      // The atom applies its own 55% frost around this value (see the
+      // stylesheet), which is why Card — the frosted colour — is the honest
+      // default here rather than the mix.
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
+      { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
+      { key: 'borderWidth', label: 'Border Width', control: 'number', defaultValue: 1, min: 0, max: 4, step: 1, unit: 'px' },
+      { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 14, min: 0, max: 28, step: 1, unit: 'px' },
+      // The group's single spacing number: the canvas insets its members by it
+      // AND derives the box rect from it, so there is one knob rather than a
+      // box padding and a member inset that can drift apart. The inset ring is
+      // internal and deliberately not exposed.
+      { key: 'padding', label: 'Padding', control: 'number', defaultValue: 20, min: 8, max: 40, step: 2, unit: 'px' },
+      { key: 'blur', label: 'Backdrop Blur', control: 'slider', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px' },
+      // The state-scoped knobs get their OWN section, the way
+      // lifecycle-connector's do. Mixed into `colors` / `style` they dragged
+      // those whole sections into a "Per State · Drop target" subtitle — the
+      // panel derives it from every prop in a section — which claimed the
+      // Background, Padding and Radius above were per-state when they are
+      // shared. Split out, each section states the truth: Colors / Style read
+      // "Shared across all states", and only this one is per-state. It also
+      // disappears entirely on `default`, since the panel builds its sections
+      // from VISIBLE props.
+      //
+      // The section is named for what it themes ("Drop Outline") so the three
+      // labels can stay one word each. Prefixing them instead — Outline Color /
+      // Outline Width / Outline Offset — reads as the same set but pays for it
+      // in ellipses: the panel truncates a label around 13 characters in its
+      // narrow orientation, so `Outline Offset` arrives as "Outline O…". One
+      // word in the heading beats the same word truncated three times.
+      //
+      // `var(--color-accent)` rather than `var(--color-drop-target)`: the alias
+      // isn't a `themeTokens` entry (deliberately — see tokens/index.css), so
+      // the picker would show the raw var string, and the two resolve to the
+      // same colour anyway. The CSS chain is still knob → alias → accent, so a
+      // consumer who re-points the alias changes the paint without this
+      // default following.
+      { key: 'targetColor', label: 'Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'dropOutline', showWhen: { state: 'target' } },
+      { key: 'targetWidth', label: 'Width', control: 'slider', defaultValue: 2, min: 1, max: 5, step: 1, unit: 'px', section: 'dropOutline', showWhen: { state: 'target' } },
+      { key: 'targetOffset', label: 'Offset', control: 'number', defaultValue: 2, min: 0, max: 8, step: 1, unit: 'px', section: 'dropOutline', showWhen: { state: 'target' } },
+    ],
+    layoutVariants: [
+      // A State picker, like lifecycle-connector's, rather than a "Drop Target"
+      // On/Off: the panel builds its section subtitles out of the variant LABEL
+      // ("Per {label}" when scoped, "Shared across all {label}s" otherwise), and
+      // "Shared across all drop targets" was actively misleading on the plain
+      // style knobs — they are shared across STATES, and there is one box, not
+      // many targets.
+      //
+      // There is no `interactive` picker: that prop moves hit-testing only,
+      // never a pixel, and a variant that changes nothing on the canvas reads
+      // as a broken toggle. It stays a prop, documented in the README.
+      {
+        key: 'state',
+        label: 'State',
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'target', label: 'Drop target' },
+        ],
+        defaultValue: 'default',
+      },
+    ],
+    events: [
+      { name: 'onDragOver', description: 'Fires while a dragged node is over the group. Requires interactive; call preventDefault to accept the drop.', payload: 'DragEvent' },
+      { name: 'onDragEnter', description: 'Fires when a drag enters the group — the consumer\'s cue to set `target`.', payload: 'DragEvent' },
+      { name: 'onDragLeave', description: 'Fires when a drag leaves the group — clear `target` here.', payload: 'DragEvent' },
+      { name: 'onDrop', description: 'Fires when a node is dropped on the group. The consumer adds the member; the atom carries no logic.', payload: 'DragEvent' },
+    ],
+  },
+  {
     id: 'lifecycle-zoom-control',
     name: 'Lifecycle Zoom Control',
     category: 'Diagram',

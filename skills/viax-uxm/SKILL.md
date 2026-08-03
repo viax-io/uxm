@@ -571,13 +571,6 @@ skill:
 
 ### New in 4.9.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
-
 - **`LifecycleNodeCard` gained a `--uxm-lifecycle-node-card-min-height` knob** (studio: "Min
   Height", default `0`). Opt-in uniform-height floor for canvas layouts — set it so every node
   card shares a minimum height and connector endpoints can key off a single number instead of
@@ -590,6 +583,40 @@ skill:
   with no reset of its own will see the card narrow by its horizontal padding + border (34px at
   the defaults). Purely a themeable-var addition otherwise — no React API change.
   From `./lifecycle-node-card`.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **New atom `LifecycleGroupBox` — the frame around one lifecycle group, and its drop zone.** A
+  frosted, absolutely-positioned region frame: translucent `--color-card` tint over a
+  `backdrop-filter` blur, hairline border, internal inset ring. Position and size are the
+  consumer's (same contract as `LifecycleEdgeLabel`), and the members render as **siblings**, not
+  children — the box is a frame *behind* the cards, not a container. `interactive?: boolean`
+  (default `false`) is what turns on pointer events: the frame paints over its own members, so a
+  read-only diagram must not let it swallow their hover or clicks. `target?: boolean` adds the
+  drop-target outline. Extends `HTMLAttributes<HTMLDivElement>` by design — the consumer hangs
+  `onDragEnter` / `onDragOver` / `onDragLeave` / `onDrop` and its own `data-*` straight on the box.
+  A group's NAME is not a slot here: it's an editable `Chip` the canvas positions on the frame's
+  edge. Themeable via `--uxm-lifecycle-group-box-{bg,border-color,border-width,radius,padding,blur}`
+  and `--uxm-lifecycle-group-box-target-{color,width,offset}`; `padding` (20px) is the group's
+  single spacing number — the canvas insets its members by the same value. `…-bg` takes a **plain**
+  colour (default `--color-card`) — the atom mixes it to 55% itself, so *frosted, not solid* can't be
+  undone by setting an opaque fill. From `./lifecycle-group-box`.
+- **New token `--color-drop-target` — one colour for every "you can drop here" highlight.**
+  Declared in `tokens.css` as `var(--color-accent)`, so it tracks the brand through both themes and
+  needs no dark override. Deliberately **not** in `themeTokens`: an entry there carries a
+  light/dark hex pair, and pinning one would freeze the colour away from accent. Atoms read
+  **own knob → token → accent** (`var(--uxm-…-target-color, var(--color-drop-target,
+  var(--color-accent)))`), so a consumer re-colours every drop target at once by setting the single
+  token, while a per-component override still wins locally. Outline *width* and *offset* stay
+  per-component knobs — the studio's editor model is per-component, and non-colour values don't
+  belong in the token layer.
 
 ## Workflow
 

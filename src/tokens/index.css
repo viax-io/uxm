@@ -20,6 +20,14 @@
   --color-accent: #3ECC87;
   --color-accent-bold: #1E7150;
 
+  /* Drop-target highlight, shared by every canvas atom that can receive a drag
+     (LifecycleGroupBox today). A semantic ALIAS, not a literal: it follows the
+     brand accent through both themes, which is why there is no override in the
+     dark block below and why it is absent from `themeTokens` — an entry there
+     needs a light/dark hex pair, and pinning one would freeze the colour away
+     from accent. Consumers who want a distinct drop colour set this one var. */
+  --color-drop-target: var(--color-accent);
+
   /* ── Highlights ── */
   --color-highlight-warm: #FCD0A1;
   --color-highlight-cool: #C3BEF7;

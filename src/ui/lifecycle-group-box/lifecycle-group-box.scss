@@ -1,0 +1,49 @@
+/* ── lifecycle-group-box ── */
+
+.uxm-lifecycle-group-box {
+  /* Frosted, not solid — see the component doc comment. */
+  backdrop-filter: blur(var(--uxm-lifecycle-group-box-blur, 4px));
+  -webkit-backdrop-filter: blur(var(--uxm-lifecycle-group-box-blur, 4px));
+  /* The knob picks WHICH colour frosts; the 55% is the atom's, not the
+     editor's. Folding the mix in here rather than baking it into the knob's
+     default is what makes "frosted, not solid" an invariant — a knob that
+     carried the whole background could be set to an opaque colour and the
+     region would read as a container instead. Same reason the inset ring
+     below stays internal. */
+  background: color-mix(
+    in srgb,
+    var(--uxm-lifecycle-group-box-bg, var(--color-card)) 55%,
+    transparent
+  );
+  border: var(--uxm-lifecycle-group-box-border-width, 1px) solid
+    var(--uxm-lifecycle-group-box-border-color, var(--color-border));
+  border-radius: var(--uxm-lifecycle-group-box-radius, 14px);
+  /* Inner ring keeps the frost readable over a dot-grid. Internal, not a knob. */
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-card) 60%, transparent);
+  /* The canvas sizes the box, and the same padding value it insets its members
+     by is declared here — border-box so that inset can never widen the rect the
+     canvas computed. */
+  box-sizing: border-box;
+  padding: var(--uxm-lifecycle-group-box-padding, 20px);
+  /* The frame paints over its own members, so a read-only diagram must not let
+     it intercept their hover or clicks. */
+  pointer-events: none;
+  position: absolute;
+
+  &--interactive {
+    pointer-events: auto;
+  }
+
+  &--target {
+    /* Own knob → shared semantic token → accent. The token layer owns the
+       colour so every drop target on the canvas highlights identically and
+       re-tints with the brand; the width and offset are per-component knobs
+       because the studio's editor model is per-component. */
+    outline: var(--uxm-lifecycle-group-box-target-width, 2px) solid
+      var(
+        --uxm-lifecycle-group-box-target-color,
+        var(--color-drop-target, var(--color-accent))
+      );
+    outline-offset: var(--uxm-lifecycle-group-box-target-offset, 2px);
+  }
+}

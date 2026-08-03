@@ -49,6 +49,7 @@
 @import "./input/input.css";
 @import "./lifecycle-connector/lifecycle-connector.css";
 @import "./lifecycle-edge-label/lifecycle-edge-label.css";
+@import "./lifecycle-group-box/lifecycle-group-box.css";
 @import "./lifecycle-minimap/lifecycle-minimap.css";
 @import "./lifecycle-node-card/lifecycle-node-card.css";
 @import "./lifecycle-terminal/lifecycle-terminal.css";

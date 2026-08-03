@@ -531,6 +531,22 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     fontSize: '--uxm-lifecycle-edge-label-font-size',
     fontWeight: '--uxm-lifecycle-edge-label-font-weight',
   },
+  // Only the knobs whose keys collide with REAL_CSS_PROPS need an entry: left
+  // to the generic path they'd emit a real `background-color` / `border-width` /
+  // `padding` on `.uxm-lifecycle-group-box` from a later sheet, hard-overriding
+  // the rule's own `var(--uxm-… , token)` chain — and `padding` is read BY THE
+  // CONSUMER off the custom property to inset the group's members, so a real
+  // declaration would leave that value unreadable.
+  //
+  // `blur` and the three `target*` knobs are absent on purpose: the generic
+  // `--uxm-{id}-{kebab}` rule already lands on the names the stylesheet reads.
+  'lifecycle-group-box': {
+    backgroundColor: '--uxm-lifecycle-group-box-bg',
+    borderColor: '--uxm-lifecycle-group-box-border-color',
+    borderWidth: '--uxm-lifecycle-group-box-border-width',
+    borderRadius: '--uxm-lifecycle-group-box-radius',
+    padding: '--uxm-lifecycle-group-box-padding',
+  },
   'lifecycle-minimap': {
     backgroundColor: '--uxm-lifecycle-minimap-bg',
     borderColor: '--uxm-lifecycle-minimap-border-color',
