@@ -206,7 +206,7 @@ positioning and a11y.
 | **LifecycleConnector** | `LifecycleConnector`, `LifecycleConnectorProps`, `LifecycleConnectorState`, `LifecycleConnectorRouting` (unreleased) | SVG edge; idle / active / dashed; `routing` auto / straight / bezier / orthogonal elbow (unreleased). |
 | **LifecycleEdgeLabel** | `LifecycleEdgeLabel`, `LifecycleEdgeLabelProps`, `LifecycleEdgeLabelVariant` | Midpoint pill: `true` / `false` / `neutral`. |
 | **LifecycleMinimap** | `LifecycleMinimap`, `LifecycleMinimapProps`, `LifecycleMinimapNode`, `LifecycleMinimapViewport` | Birds-eye 0–1 canvas overview + optional viewport overlay. |
-| **LifecycleNodeCard** | `LifecycleNodeCard`, `LifecycleNodeCardProps`, `LifecycleNodeKind` | Kind-aware pill (`state` / `condition` / `task`). |
+| **LifecycleNodeCard** | `LifecycleNodeCard`, `LifecycleNodeCardProps`, `LifecycleNodeKind` | Kind-aware pill (`state` / `condition` / `task`). **(unreleased)** `--uxm-lifecycle-node-card-min-height` knob (default `0` = content-driven) sets an opt-in uniform-height floor for canvas layouts — under a border-box context it equals rendered height, so connector geometry can key off it. |
 | **LifecycleTerminal** | `LifecycleTerminal`, `LifecycleTerminalProps` | Start/End marker pill. |
 | **LifecycleZoomControl** | `LifecycleZoomControl`, `LifecycleZoomControlProps` | `−` / value / `+` cluster. |
 

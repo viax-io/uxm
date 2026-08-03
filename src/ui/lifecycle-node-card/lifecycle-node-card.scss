@@ -5,8 +5,21 @@
   background-color: var(--uxm-lifecycle-node-card-bg, var(--color-card));
   border: 1px solid var(--uxm-lifecycle-node-card-border-color, var(--color-border));
   border-radius: var(--uxm-lifecycle-node-card-radius, 6px);
+  /* Declared here rather than assumed from the host: `ui.css` ships no reset,
+     so a consumer without one would get content-box and every sized var below
+     would mean "plus padding and border" instead of what the knob says. The
+     sibling atoms that care about their own box (thumbnail, calendar,
+     time-input, currency-input, password-input, date-input, listbox,
+     editable-cell) all do the same. */
+  box-sizing: border-box;
   display: inline-flex;
   gap: 12px;
+  /* Opt-in uniform-height floor for canvas layouts (default 0 = content-
+     driven, unchanged). The card is already `align-items: center`, so a
+     grown card keeps its row vertically centred. With border-box above, the
+     value equals the rendered card height 1:1 in every host, so connector
+     geometry can key off the same number. */
+  min-height: var(--uxm-lifecycle-node-card-min-height, 0);
   padding: var(--uxm-lifecycle-node-card-padding-y, 12px)
     var(--uxm-lifecycle-node-card-padding-x, 16px);
   text-align: left;

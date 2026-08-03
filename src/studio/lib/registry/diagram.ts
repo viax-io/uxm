@@ -14,6 +14,7 @@ export const diagramDefs: ComponentDef[] = [
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 16, min: 8, max: 32, step: 2, unit: 'px' },
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 12, min: 6, max: 24, step: 2, unit: 'px' },
       { key: 'width', label: 'Width', control: 'number', defaultValue: 280, min: 200, max: 360, step: 10, unit: 'px' },
+      { key: 'minHeight', label: 'Min Height', control: 'number', defaultValue: 0, min: 0, max: 120, step: 2, unit: 'px' },
       { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 32, min: 24, max: 48, step: 2, unit: 'px' },
       { key: 'titleSize', label: 'Title Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px' },
       { key: 'kindSize', label: 'Kind Label Size', control: 'number', defaultValue: 11, min: 9, max: 14, step: 1, unit: 'px' },

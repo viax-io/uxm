@@ -52,12 +52,15 @@ Kind → glyph mapping (centralised so other lifecycle UI shares the same contra
 
 ## CSS variables
 
+The card sets `box-sizing: border-box` on itself rather than inheriting it from the host, so every sized variable below means what it says: `width: 280px` is 280px of rendered card, and `min-height` is rendered height, not content height. `@viax/uxm/ui.css` ships no global reset, so without this a consumer that doesn't ship one either would silently get padding and border *added* on top of both numbers — and the whole point of `min-height` is that connector geometry can trust a single value.
+
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-lifecycle-node-card-bg` | `--color-card` | – | Root background. |
 | `--uxm-lifecycle-node-card-border-color` | `--color-border` | – | Root border. |
 | `--uxm-lifecycle-node-card-radius` | – | `6px` | Root border radius. |
-| `--uxm-lifecycle-node-card-width` | – | `280px` | Root width (fixed). |
+| `--uxm-lifecycle-node-card-width` | – | `280px` | Root width (fixed) — total width, padding and border included. |
+| `--uxm-lifecycle-node-card-min-height` | – | `0` | Opt-in minimum height for uniform-height nodes on a canvas. `0` keeps the default content-driven height. Equals the rendered card height, so connector endpoints can key off the same number. |
 | `--uxm-lifecycle-node-card-padding-x` | – | `16px` | Horizontal padding. |
 | `--uxm-lifecycle-node-card-padding-y` | – | `12px` | Vertical padding. |
 | `--uxm-lifecycle-node-card-icon-size` | – | `32px` | Icon tile size (bridged into `--uxm-icon-tile-size`). |

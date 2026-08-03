@@ -21,6 +21,7 @@ export function LifecycleNodeCardPreview({ styles, variants }: PreviewProps) {
   // is what ships.
   const cssVars = {
     '--uxm-lifecycle-node-card-width': `${styles.width}px`,
+    '--uxm-lifecycle-node-card-min-height': `${styles.minHeight}px`,
     '--uxm-lifecycle-node-card-padding-x': `${styles.paddingX}px`,
     '--uxm-lifecycle-node-card-padding-y': `${styles.paddingY}px`,
     '--uxm-lifecycle-node-card-radius': `${styles.borderRadius}px`,

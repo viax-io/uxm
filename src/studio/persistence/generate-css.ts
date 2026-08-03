@@ -545,6 +545,7 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     paddingX: '--uxm-lifecycle-node-card-padding-x',
     paddingY: '--uxm-lifecycle-node-card-padding-y',
     width: '--uxm-lifecycle-node-card-width',
+    minHeight: '--uxm-lifecycle-node-card-min-height',
   },
   'lifecycle-terminal': {
     backgroundColor: '--uxm-lifecycle-terminal-bg',
