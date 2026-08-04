@@ -10,6 +10,10 @@ const SAMPLE: Record<LifecycleNodeKind, { title: string; badge?: string }> = {
   state: { title: 'In Cart', badge: '2' },
   condition: { title: 'Validate Price', badge: '$data.price > 100' },
   task: { title: 'Send Notification' },
+  // A BI is an object, so the sample is an entity name rather than a step —
+  // and a generic one: this preview ships and renders in every consumer's
+  // studio, so a tenant or vendor name has no business in it.
+  interaction: { title: 'SalesOrder' },
 };
 
 export function LifecycleNodeCardPreview({ styles, variants }: PreviewProps) {

@@ -2,7 +2,7 @@
 
 The pill card used for each node on a BI lifecycle canvas — a fixed-width row with a kind-coloured `IconTile`, a kind label, a title, and an optional trailing badge.
 
-`LifecycleNodeCard` composes the shared `Icon` + `IconTile` primitives and carries three semantic kinds: `state` (green accent, checkmark, optional action-count badge), `condition` (warm accent, question mark, optional expression badge), and `task` (cool accent, gear). Kind selection drives both the glyph and the colour scheme via `--kind-icon-*` and `--kind-badge-*` CSS variables defined on the kind modifier class — these bridge to the underlying `IconTile`'s own `--uxm-icon-tile-*` surface so the kind-aware tint flows down without re-declaring colours per consumer. Sibling of `LifecycleConnector`, `LifecycleEdgeLabel`, `LifecycleMinimap`, `LifecycleTerminal`, and `LifecycleZoomControl`.
+`LifecycleNodeCard` composes the shared `Icon` + `IconTile` primitives and carries four semantic kinds: `state` (green accent, checkmark, optional action-count badge), `condition` (warm accent, question mark, optional expression badge), `task` (cool accent, gear), and `interaction` (green accent, exchange arrows). The first three describe **steps** in a lifecycle; `interaction` describes the **object** the lifecycle runs on — a Business Interaction — which is why it is its own kind rather than a `state` card with a substituted `kindLabel`. It keeps `state`'s green on purpose — a BI is marked green everywhere else in the product, and the glyph plus the label carry the distinction. Kind selection drives both the glyph and the colour scheme via `--kind-icon-*` and `--kind-badge-*` CSS variables defined on the kind modifier class — these bridge to the underlying `IconTile`'s own `--uxm-icon-tile-*` surface so the kind-aware tint flows down without re-declaring colours per consumer. Sibling of `LifecycleConnector`, `LifecycleEdgeLabel`, `LifecycleMinimap`, `LifecycleTerminal`, and `LifecycleZoomControl`.
 
 ## Usage
 
@@ -30,16 +30,16 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — the native `title` a
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `kind` | `'state' \| 'condition' \| 'task'` | – | **Required.** Drives the icon glyph, default kind label, and accent colour. |
+| `kind` | `'state' \| 'condition' \| 'task' \| 'interaction'` | – | **Required.** Drives the icon glyph, default kind label, and accent colour. |
 | `title` | `ReactNode` | – | **Required.** Primary text — typically the node name. |
 | `badge` | `ReactNode` | – | Trailing pill content — e.g. action count or truncated expression. Hidden if not provided. |
-| `kindLabel` | `ReactNode` | humanised `kind` | Override for the sub-text shown above the title. |
+| `kindLabel` | `ReactNode` | humanised `kind` (`interaction` → `Business Interaction`) | Override for the sub-text shown above the title. |
 | `active` | `boolean` | `false` | Render the active/selected state. Adds the `--active` modifier class. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute except `title`)_ | – | – | Spread onto the root `<div>`. |
 
 ```ts
-type LifecycleNodeKind = 'state' | 'condition' | 'task';
+type LifecycleNodeKind = 'state' | 'condition' | 'task' | 'interaction';
 ```
 
 Kind → glyph mapping (centralised so other lifecycle UI shares the same contract):
@@ -49,6 +49,7 @@ Kind → glyph mapping (centralised so other lifecycle UI shares the same contra
 | `state` | `check-circle` |
 | `condition` | `question-mark-circle` |
 | `task` | `cog-6-tooth` |
+| `interaction` | `business-interaction` (exchange arrows) |
 
 ## CSS variables
 
@@ -81,12 +82,13 @@ Per-kind accent colours are sourced from the shared accent / highlight tokens vi
 | `--color-border` | Borders / Border | Card border. |
 | `--color-text` | Text / Text | Title colour. |
 | `--color-text-muted` | Text / Text Muted | Kind sub-label colour. |
-| `--color-accent-bold` | Accent / Accent Bold | `state` icon + badge tint. |
+| `--color-accent-bold` | Accent / Accent Bold | `state` and `interaction` icon + badge tint. |
 | `--color-accent` | Accent / Accent | Active border + glow. |
 | `--color-highlight-warm` | Highlights / Highlight Warm | `condition` icon + badge tint. |
 | `--color-on-highlight-warm` | Highlights / On Highlight Warm | `condition` icon + badge foreground. |
 | `--color-highlight-cool` | Highlights / Highlight Cool | `task` icon + badge tint. |
 | `--color-on-highlight-cool` | Highlights / On Highlight Cool | `task` icon + badge foreground. |
+
 
 The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI.
 
@@ -97,6 +99,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Kind: `state` | `kind="state"` | Green-tinted icon tile + badge (accent-bold mix), check-circle glyph. |
 | Kind: `condition` | `kind="condition"` | Warm-tinted icon tile + badge, question-mark-circle glyph. |
 | Kind: `task` | `kind="task"` | Cool-tinted icon tile + badge, cog-6-tooth glyph. |
+| Kind: `interaction` | `kind="interaction"` | Same green tint as `state`, exchange-arrows glyph. Default kind label is `Business Interaction`. |
 | Active | `active` prop true | Border switches to `--color-accent` with a 3px accent-mixed glow. |
 | Custom kind label | `kindLabel` prop set | Sub-text replaces the default humanised kind. |
 | No badge | `badge` omitted / null | Trailing pill not rendered. |

@@ -6,7 +6,7 @@ export const diagramDefs: ComponentDef[] = [
     id: 'lifecycle-node-card',
     name: 'Lifecycle Node Card',
     category: 'Diagram',
-    description: 'State / Condition / Task node card used in the BI Lifecycle canvas.',
+    description: 'State / Condition / Task / Business Interaction node card used in the BI Lifecycle canvas.',
     styleProperties: [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
@@ -27,6 +27,7 @@ export const diagramDefs: ComponentDef[] = [
           { value: 'state', label: 'State' },
           { value: 'condition', label: 'Condition' },
           { value: 'task', label: 'Task' },
+          { value: 'interaction', label: 'Business Interaction' },
         ],
         defaultValue: 'state',
       },

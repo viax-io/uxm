@@ -52,6 +52,20 @@
     --kind-icon-color: var(--color-on-highlight-cool);
   }
 
+  /* Deliberately the same green as `state`, not a family of its own. A BI is
+     marked green everywhere else in the product — the execution-model canvas and
+     the Available Targets panel both show it that way — and giving the canvas its
+     own hue for the same entity reads as a different thing rather than a
+     distinction. The semantic separation from `state` is carried by the glyph
+     (exchange arrows vs a checkmark) and the kind label, so re-tinting would buy
+     nothing and cost cross-surface consistency. */
+  &--interaction {
+    --kind-badge-bg: color-mix(in srgb, var(--color-accent-bold) 12%, transparent);
+    --kind-badge-color: var(--color-accent-bold);
+    --kind-icon-bg: color-mix(in srgb, var(--color-accent-bold) 18%, transparent);
+    --kind-icon-color: var(--color-accent-bold);
+  }
+
   &--active {
     border-color: var(--color-accent);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);

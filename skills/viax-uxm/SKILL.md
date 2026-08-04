@@ -608,6 +608,18 @@ skill:
   single spacing number — the canvas insets its members by the same value. `…-bg` takes a **plain**
   colour (default `--color-card`) — the atom mixes it to 55% itself, so *frosted, not solid* can't be
   undone by setting an opaque fill. From `./lifecycle-group-box`.
+- **`LifecycleNodeCard` gained a fourth kind: `interaction`.**
+  `LifecycleNodeKind` is now `'state' | 'condition' | 'task' | 'interaction'`. A Business Interaction
+  node used to ride `kind="state"` with a substituted `kindLabel`, borrowing the green accent and
+  checkmark of a different meaning — the first three kinds describe **steps** in a lifecycle, a BI is
+  the **object** the lifecycle runs on. It takes the `business-interaction` glyph (exchange arrows —
+  the mark the product already uses for a BI in its sidebar and dashboard; deliberately NOT a
+  clipboard, which reads as a checklist and collides with `task`), keeps **`state`'s green tint** on
+  purpose — a BI is marked green everywhere else in the product, including the Available Targets
+  panel, so re-tinting the canvas for the same entity would read as a different thing; the glyph and
+  the label carry the distinction — and defaults its `kindLabel` to `Business Interaction`. Purely
+  additive — existing `kind` values are untouched. Studio adds the kind to the
+  Node Type picker. From `./lifecycle-node-card`.
 - **New atom `LifecycleDropSlot` — the dashed slot showing where a dragged node can land.** Two
   shapes: `shape="card"` (default) is node-sized, standing in for the node a drop would create;
   `shape="pill"` is group-pill sized. **One appearance, no states** — the slot exists only while it
