@@ -83,6 +83,11 @@ export type {
   LifecycleConnectorRouting,
   LifecycleConnectorState,
 } from './lifecycle-connector';
+export { LifecycleDropSlot } from './lifecycle-drop-slot';
+export type {
+  LifecycleDropSlotProps,
+  LifecycleDropSlotShape,
+} from './lifecycle-drop-slot';
 export { LifecycleEdgeLabel } from './lifecycle-edge-label';
 export type {
   LifecycleEdgeLabelProps,

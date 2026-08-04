@@ -188,6 +188,88 @@ export const diagramDefs: ComponentDef[] = [
     ],
   },
   {
+    id: 'lifecycle-drop-slot',
+    name: 'Lifecycle Drop Slot',
+    category: 'Diagram',
+    description:
+      'Dashed slot showing where a dragged node can land — card-sized for a node, pill-sized for the group a drop would mint.',
+    styleProperties: [
+      // Knob keys stay the plain CSS-ish names — no `dropSlot*` prefix, which
+      // the generator would turn into `--uxm-lifecycle-drop-slot-drop-slot-*`
+      // (the lifecycle-connector trap).
+      //
+      // Dashes and label are separate knobs sharing one default, so they read as
+      // one signal until someone deliberately moves them apart. Both default to
+      // `var(--color-accent-bold)` rather than the `--color-drop-target` alias —
+      // the alias isn't a `themeTokens` entry, so the picker would render its raw
+      // var string, and accent (what the alias resolves to) measures 1.92:1 as
+      // ink on this fill.
+      { key: 'borderColor', label: 'Dashes', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
+      { key: 'color', label: 'Text', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
+      // A LIVE token, not a raw expression: `themeTokens` is what the picker's
+      // swatch list is built from, so a `color-mix(…)` default would render as
+      // unreadable text. The fill is flat, so what is picked here is what paints.
+      { key: 'bg', label: 'Fill', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
+      // Style + width are the two levers on how the edge reads, the same pair
+      // FileUpload's drop area exposes. Neither is a dash PATTERN — the UA
+      // derives dash length from the width, and CSS has no property for the
+      // pattern itself.
+      //
+      // Both apply to either shape, so they stay in the unscoped section — the
+      // panel then subtitles them "Shared across all shapes" while the two shape
+      // sections below read "Per Shape · …". Mixing them into one section is what
+      // made the group box's panel claim shared knobs were per-state.
+      { key: 'borderStyle', label: 'Border Style', control: 'select', defaultValue: 'dashed', options: ['dashed', 'solid', 'dotted'] },
+      { key: 'borderWidth', label: 'Border Width', control: 'number', defaultValue: 1, min: 1, max: 3, step: 1, unit: 'px' },
+      // Card-only. Labels drop the "Card" prefix — the section heading carries
+      // it, and short labels don't truncate in the narrow panel orientation.
+      { key: 'cardRadius', label: 'Radius', control: 'slider', defaultValue: 10, min: 0, max: 20, step: 1, unit: 'px', section: 'card', showWhen: { shape: 'card' } },
+      { key: 'cardPaddingX', label: 'Padding X', control: 'number', defaultValue: 16, min: 4, max: 32, step: 2, unit: 'px', section: 'card', showWhen: { shape: 'card' } },
+      { key: 'cardFontSize', label: 'Font Size', control: 'number', defaultValue: 12, min: 9, max: 16, step: 1, unit: 'px', section: 'card', showWhen: { shape: 'card' } },
+      { key: 'cardMinWidth', label: 'Min Width', control: 'number', defaultValue: 72, min: 40, max: 160, step: 4, unit: 'px', section: 'card', showWhen: { shape: 'card' } },
+      // No card HEIGHT knob: that one is shared with the node card through the
+      // token layer, so it isn't per-component. The atom does expose
+      // `--uxm-lifecycle-drop-slot-card-min-height` for a canvas that owns node
+      // geometry and needs to zero the floor — a consumer escape hatch, not a
+      // theme value, so it gets no knob either.
+      //
+      // Pill-only. Same 4–999 range LifecycleEdgeLabel uses for its own pill
+      // radius: everything at or above half the height reads as a full pill, so
+      // the useful travel is the bottom of the slider.
+      { key: 'pillRadius', label: 'Radius', control: 'slider', defaultValue: 999, min: 4, max: 999, step: 1, unit: 'px', section: 'pill', showWhen: { shape: 'pill' } },
+      { key: 'pillPaddingY', label: 'Padding Y', control: 'number', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px', section: 'pill', showWhen: { shape: 'pill' } },
+      { key: 'pillPaddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 24, step: 1, unit: 'px', section: 'pill', showWhen: { shape: 'pill' } },
+      // 13 matches Chip assist (`--uxm-chip-assist-font-size`), which is what the
+      // real group pill is drawn with, so the placeholder doesn't change size on
+      // drop.
+      { key: 'pillFontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 10, max: 16, step: 1, unit: 'px', section: 'pill', showWhen: { shape: 'pill' } },
+    ],
+    layoutVariants: [
+      // The preview renders the SELECTED shape only. A picker that left both on
+      // canvas would be a control that changes nothing there — the same reason
+      // `interactive` gets no knob (it moves hit-testing only, never a pixel, and
+      // the canvas has no drag to demonstrate it with). It stays a prop,
+      // documented in the README.
+      {
+        key: 'shape',
+        label: 'Shape',
+        // Named for what the slot stands in for — the node a drop would create,
+        // or the group it would mint — not for a pixel size. "node-sized" read
+        // as a dimension and obscured that.
+        options: [
+          { value: 'card', label: 'Card (node)' },
+          { value: 'pill', label: 'Pill (group)' },
+        ],
+        defaultValue: 'card',
+      },
+    ],
+    events: [
+      { name: 'onDragOver', description: 'Fires while a dragged node is over the slot. Requires interactive; call preventDefault to accept the drop.', payload: 'DragEvent' },
+      { name: 'onDrop', description: 'Fires when a node is dropped on the slot. The consumer creates the node or group; the atom carries no logic.', payload: 'DragEvent' },
+      { name: 'onDragLeave', description: "Fires when the drag leaves the slot — the consumer's cue to unmount it, since the slot exists only while it is the target.", payload: 'DragEvent' },
+    ],
+  },
+  {
     id: 'lifecycle-group-box',
     name: 'Lifecycle Group Box',
     category: 'Diagram',

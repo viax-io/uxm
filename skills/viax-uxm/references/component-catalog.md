@@ -204,6 +204,7 @@ positioning and a11y.
 | Component | Key exports | What it is |
 |-----------|-------------|------------|
 | **LifecycleConnector** | `LifecycleConnector`, `LifecycleConnectorProps`, `LifecycleConnectorState`, `LifecycleConnectorRouting` | SVG edge; idle / active / dashed; `routing` auto / straight / bezier / orthogonal elbow. |
+| **LifecycleDropSlot** (unreleased) | `LifecycleDropSlot`, `LifecycleDropSlotProps`, `LifecycleDropSlotShape` | Dashed drag slot, `card` / `pill`. One appearance — it exists only while it's the target. `interactive` defaults to false. Width is the consumer's. |
 | **LifecycleEdgeLabel** | `LifecycleEdgeLabel`, `LifecycleEdgeLabelProps`, `LifecycleEdgeLabelVariant` | Midpoint pill: `true` / `false` / `neutral`. |
 | **LifecycleGroupBox** (unreleased) | `LifecycleGroupBox`, `LifecycleGroupBoxProps` | Frosted frame around one group's sibling nodes; `interactive` + `target` make it a drop zone. Members are siblings, not children. |
 | **LifecycleMinimap** | `LifecycleMinimap`, `LifecycleMinimapProps`, `LifecycleMinimapNode`, `LifecycleMinimapViewport` | Birds-eye 0–1 canvas overview + optional viewport overlay. |
@@ -252,3 +253,4 @@ positioning and a11y.
 | Confirm-on-hover affordance | `Tooltip` (text) or `ContentTooltip` (rich card) |
 | Reveal a truncated/clamped value on hover | `HoverTooltip` (`truncatedOnly` — only shows when overflowing) |
 | Frame a group of sibling lifecycle nodes (and accept drops into it) | `LifecycleGroupBox` (unreleased) |
+| Show where a dragged lifecycle node can land | `LifecycleDropSlot` (unreleased) |

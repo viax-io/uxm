@@ -531,6 +531,19 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     fontSize: '--uxm-lifecycle-edge-label-font-size',
     fontWeight: '--uxm-lifecycle-edge-label-font-weight',
   },
+  // Same rule as lifecycle-group-box below — only the REAL_CSS_PROPS collisions
+  // need an entry. `color` is the one that matters: a real `color` declaration
+  // on `.uxm-lifecycle-drop-slot` from a later sheet would paint the text but
+  // leave the dashes on the token, splitting a pair the atom deliberately drives
+  // from one variable. The shape-scoped knobs (`cardRadius`, `pillFontSize`, …)
+  // and `bg` need nothing: the generic `--uxm-{id}-{kebab}` rule already lands
+  // on the names the stylesheet reads.
+  'lifecycle-drop-slot': {
+    borderColor: '--uxm-lifecycle-drop-slot-border-color',
+    borderStyle: '--uxm-lifecycle-drop-slot-border-style',
+    borderWidth: '--uxm-lifecycle-drop-slot-border-width',
+    color: '--uxm-lifecycle-drop-slot-color',
+  },
   // Only the knobs whose keys collide with REAL_CSS_PROPS need an entry: left
   // to the generic path they'd emit a real `background-color` / `border-width` /
   // `padding` on `.uxm-lifecycle-group-box` from a later sheet, hard-overriding
