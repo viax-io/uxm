@@ -98,6 +98,24 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | With hint | `hint` prop provided | Hint span appears below the control with its own top margin. |
 | Without hint | `hint` prop omitted | Hint span not rendered. |
 
+## Implementation notes
+
+- **A labelled field is a definite-width context, and tells its control so.** The control column is whatever the label leaves over, so a nested control must fit that width rather than assert one of its own. `FormField` sets two knobs on the control wrapper (`.uxm-form-field__control`) — **not** on the cell via a child selector — so they inherit to an `EditableCell` at any depth, including one wrapped in a row that pairs it with a translation count or a unit suffix:
+
+  - `--uxm-editable-cell-outdent: 1` — the cell pulls itself back by its own text inset so its **text** lands on the label's content grid while the hover pill bleeds into the gutter. A flag, not a length, deliberately: `--uxm-editable-cell-text-inset` is declared *by* the cell and resolves nowhere above it, so a host computing the length itself silently gets the fallback (9px, the `small` value) instead of the real one — a 4px error at `medium`. The cell also owns the direction: `align-right` pulls on the trailing side, `align-center` not at all. A cell that isn't on its column's leading edge opts out with `--uxm-editable-cell-outdent: 0`.
+  - `--uxm-editable-cell-editing-track-floor: 0` — switches the cell's edit-mode track off the `max-content` floor that exists to keep an *auto-sized* table column from jumping. There is no auto column here, and that floor is what pushed a long draft out through the `Card`.
+
+  Same division of labour in both cases: the cell owns the mechanism and publishes the knob, `FormField` only states which behaviour its context wants. Boxed inputs (`TextInput` etc.) read neither knob — their visible border makes the inset intentional.
+
+  Because both are **inherited** custom properties, they also reach cells this field never meant to touch. A component that renders its own `EditableCell`s inside a control — a `DataTable` nested in a form field — resets both on its own root so it keeps the anti-jump floor and stays un-outdented; `DataTable` does this. Anything else that composes cells should do the same.
+- **The side layout's control column is `minmax(0, 1fr)`, not `1fr`.** The two are not interchangeable: `1fr` means `minmax(auto, 1fr)`, whose automatic minimum is the column's min-content width, and a control that can't wrap contributes its full single-line width to that. An `EditableCell` is exactly such a control (it ellipsizes, so `white-space: nowrap`), so a long value grew the column instead of truncating in it and pushed the field out of its `Card`. The explicit `0` minimum lets the column shrink to the space that's actually there and hands the overflow decision back to the control. Nothing relies on the auto minimum here — the label column is a fixed width and this one is purely the remainder. Worth copying into any consumer-side grid that holds a truncating control. ⚠️ The `0` minimum applies to **every** control composed into a side field, not just `EditableCell`: a child that doesn't manage its own overflow can now be compressed and visually clip, where the implicit min-content floor used to widen the field instead. Most UXM input atoms fill `width: 100%` and truncate their own text, so this is usually invisible — but three shipped atoms do not, and will clip in a control column narrower than their content:
+
+  - **`ColorInput`** is a fixed `width: var(--uxm-color-input-width, 260px)`, not `100%`, and does not shrink.
+  - **`RadioGroup`'s `--horizontal` layout** is a `flex-direction: row` container at the default `nowrap`, with no truncation on the option labels.
+  - **`PillSelect`'s `--chips-below` trigger** forces `flex-wrap: nowrap` but gives its placeholder/summary text no `min-width: 0` or `text-overflow`, unlike `Select`'s `__trigger-label`, which has both.
+
+  Give any of those a wider label column, or an explicit width, when the value can get long. Hand-rolled content (a row of fixed-width chips, say) has the same exposure.
+
 ## Accessibility
 
 - Renders a native `<label htmlFor={id}>` associated with the control automatically: it prefers an explicit `htmlFor`, else reuses the child's own `id`, else generates one (`useId()`) and injects it via `cloneElement`. Screen readers announce the label on focus and clicking it focuses the control. Note: the injection only works when the child accepts an `id` (plain inputs do); a non-input child (e.g. an `EditableCell`, whose display state is a `<button>` that doesn't take `id`) is left with a dangling `htmlFor` — rely on that control's own `aria-label` there.
