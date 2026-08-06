@@ -17,7 +17,7 @@
      `--color-drop-target` like LifecycleGroupBox's ring. The alias resolves to
      `--color-accent`, which measures 1.92:1 as ink on this fill and 1.93:1 as a
      line against the canvas — the slot carries TEXT on a filled surface, so it
-     needs the dark end of the accent ramp (5.53:1 / 5.56:1), whereas the group
+     needs the dark end of the accent ramp (5.54:1 / 5.56:1), whereas the group
      box draws a bare ring where a vivid hue reads. Routing this through the
      alias would also make the studio and production disagree: the alias is
      declared, so its own accent-bold fallback can never paint, while the
