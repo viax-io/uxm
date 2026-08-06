@@ -6,7 +6,7 @@ export const diagramDefs: ComponentDef[] = [
     id: 'lifecycle-node-card',
     name: 'Lifecycle Node Card',
     category: 'Diagram',
-    description: 'State / Condition / Task node card used in the BI Lifecycle canvas.',
+    description: 'State / Condition / Task / Business Interaction node card used in the BI Lifecycle canvas.',
     styleProperties: [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
@@ -27,6 +27,7 @@ export const diagramDefs: ComponentDef[] = [
           { value: 'state', label: 'State' },
           { value: 'condition', label: 'Condition' },
           { value: 'task', label: 'Task' },
+          { value: 'interaction', label: 'Business Interaction' },
         ],
         defaultValue: 'state',
       },
@@ -185,6 +186,174 @@ export const diagramDefs: ComponentDef[] = [
         ],
         defaultValue: 'horizontal',
       },
+    ],
+  },
+  {
+    id: 'lifecycle-drop-slot',
+    name: 'Lifecycle Drop Slot',
+    category: 'Diagram',
+    description:
+      'Dashed slot showing where a dragged node can land — card-sized for a node, pill-sized for the group a drop would mint.',
+    styleProperties: [
+      // Knob keys stay the plain CSS-ish names — no `dropSlot*` prefix, which
+      // the generator would turn into `--uxm-lifecycle-drop-slot-drop-slot-*`
+      // (the lifecycle-connector trap).
+      //
+      // Dashes and label are separate knobs sharing one default, so they read as
+      // one signal until someone deliberately moves them apart. Both default to
+      // `var(--color-accent-bold)` rather than the `--color-drop-target` alias —
+      // the alias isn't a `themeTokens` entry, so the picker would render its raw
+      // var string, and accent (what the alias resolves to) measures 1.92:1 as
+      // ink on this fill.
+      { key: 'borderColor', label: 'Dashes', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
+      { key: 'color', label: 'Text', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
+      // A LIVE token, not a raw expression: `themeTokens` is what the picker's
+      // swatch list is built from, so a `color-mix(…)` default would render as
+      // unreadable text. The fill is flat, so what is picked here is what paints.
+      { key: 'bg', label: 'Fill', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
+      // Style + width are the two levers on how the edge reads, the same pair
+      // FileUpload's drop area exposes. Neither is a dash PATTERN — the UA
+      // derives dash length from the width, and CSS has no property for the
+      // pattern itself.
+      //
+      // Both apply to either shape, so they stay in the unscoped section — the
+      // panel then subtitles them "Shared across all shapes" while the two shape
+      // sections below read "Per Shape · …". Mixing them into one section is what
+      // made the group box's panel claim shared knobs were per-state.
+      { key: 'borderStyle', label: 'Border Style', control: 'select', defaultValue: 'dashed', options: ['dashed', 'solid', 'dotted'] },
+      { key: 'borderWidth', label: 'Border Width', control: 'number', defaultValue: 1, min: 1, max: 3, step: 1, unit: 'px' },
+      // Card-only. Labels drop the "Card" prefix — the section heading carries
+      // it, and short labels don't truncate in the narrow panel orientation.
+      { key: 'cardRadius', label: 'Radius', control: 'slider', defaultValue: 10, min: 0, max: 20, step: 1, unit: 'px', section: 'card', showWhen: { shape: 'card' } },
+      { key: 'cardPaddingX', label: 'Padding X', control: 'number', defaultValue: 16, min: 4, max: 32, step: 2, unit: 'px', section: 'card', showWhen: { shape: 'card' } },
+      { key: 'cardFontSize', label: 'Font Size', control: 'number', defaultValue: 12, min: 9, max: 16, step: 1, unit: 'px', section: 'card', showWhen: { shape: 'card' } },
+      { key: 'cardMinWidth', label: 'Min Width', control: 'number', defaultValue: 72, min: 40, max: 160, step: 4, unit: 'px', section: 'card', showWhen: { shape: 'card' } },
+      // No card HEIGHT knob: that one is shared with the node card through the
+      // token layer, so it isn't per-component. The atom does expose
+      // `--uxm-lifecycle-drop-slot-card-min-height` for a canvas that owns node
+      // geometry and needs to zero the floor — a consumer escape hatch, not a
+      // theme value, so it gets no knob either.
+      //
+      // Pill-only. Same 4–999 range LifecycleEdgeLabel uses for its own pill
+      // radius: everything at or above half the height reads as a full pill, so
+      // the useful travel is the bottom of the slider.
+      { key: 'pillRadius', label: 'Radius', control: 'slider', defaultValue: 999, min: 4, max: 999, step: 1, unit: 'px', section: 'pill', showWhen: { shape: 'pill' } },
+      { key: 'pillPaddingY', label: 'Padding Y', control: 'number', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px', section: 'pill', showWhen: { shape: 'pill' } },
+      { key: 'pillPaddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 24, step: 1, unit: 'px', section: 'pill', showWhen: { shape: 'pill' } },
+      // 13 matches Chip assist (`--uxm-chip-assist-font-size`), which is what the
+      // real group pill is drawn with, so the placeholder doesn't change size on
+      // drop.
+      { key: 'pillFontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 10, max: 16, step: 1, unit: 'px', section: 'pill', showWhen: { shape: 'pill' } },
+    ],
+    layoutVariants: [
+      // The preview renders the SELECTED shape only. A picker that left both on
+      // canvas would be a control that changes nothing there — the same reason
+      // `interactive` gets no knob (it moves hit-testing only, never a pixel, and
+      // the canvas has no drag to demonstrate it with). It stays a prop,
+      // documented in the README.
+      {
+        key: 'shape',
+        label: 'Shape',
+        // Named for what the slot stands in for — the node a drop would create,
+        // or the group it would mint — not for a pixel size. "node-sized" read
+        // as a dimension and obscured that.
+        options: [
+          { value: 'card', label: 'Card (node)' },
+          { value: 'pill', label: 'Pill (group)' },
+        ],
+        defaultValue: 'card',
+      },
+    ],
+    events: [
+      { name: 'onDragOver', description: 'Fires while a dragged node is over the slot. Requires interactive; call preventDefault to accept the drop.', payload: 'DragEvent' },
+      { name: 'onDrop', description: 'Fires when a node is dropped on the slot. The consumer creates the node or group; the atom carries no logic.', payload: 'DragEvent' },
+      { name: 'onDragLeave', description: "Fires when the drag leaves the slot — the consumer's cue to unmount it, since the slot exists only while it is the target.", payload: 'DragEvent' },
+    ],
+  },
+  {
+    id: 'lifecycle-group-box',
+    name: 'Lifecycle Group Box',
+    category: 'Diagram',
+    description:
+      'Frosted frame around the sibling nodes of one group — and, on an editable diagram, the drop zone for adding a member to it.',
+    styleProperties: [
+      // Knob keys are the ordinary CSS-ish names every other atom uses
+      // (`backgroundColor`, `borderWidth`, …), deliberately NOT prefixed with
+      // the component's own name: `groupBoxBg` under id `lifecycle-group-box`
+      // would have the generator emit
+      // `--uxm-lifecycle-group-box-group-box-bg`. That doubling is exactly what
+      // happened to lifecycle-connector, whose published themes now need a
+      // permanent fallback alias.
+      // Both colour knobs default to a LIVE token, not to the literal CSS the
+      // rule resolves to: `themeTokens` is what the editor's swatch list is
+      // built from, so a raw `color-mix(…)` / `var(--color-drop-target)` string
+      // renders as unreadable text in the picker instead of a named colour.
+      // The atom applies its own 55% frost around this value (see the
+      // stylesheet), which is why Card — the frosted colour — is the honest
+      // default here rather than the mix.
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
+      { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
+      { key: 'borderWidth', label: 'Border Width', control: 'number', defaultValue: 1, min: 0, max: 4, step: 1, unit: 'px' },
+      { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 14, min: 0, max: 28, step: 1, unit: 'px' },
+      // The group's single spacing number: the canvas insets its members by it
+      // AND derives the box rect from it, so there is one knob rather than a
+      // box padding and a member inset that can drift apart. The inset ring is
+      // internal and deliberately not exposed.
+      { key: 'padding', label: 'Padding', control: 'number', defaultValue: 20, min: 8, max: 40, step: 2, unit: 'px' },
+      { key: 'blur', label: 'Backdrop Blur', control: 'slider', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px' },
+      // The state-scoped knobs get their OWN section, the way
+      // lifecycle-connector's do. Mixed into `colors` / `style` they dragged
+      // those whole sections into a "Per State · Drop target" subtitle — the
+      // panel derives it from every prop in a section — which claimed the
+      // Background, Padding and Radius above were per-state when they are
+      // shared. Split out, each section states the truth: Colors / Style read
+      // "Shared across all states", and only this one is per-state. It also
+      // disappears entirely on `default`, since the panel builds its sections
+      // from VISIBLE props.
+      //
+      // The section is named for what it themes ("Drop Outline") so the three
+      // labels can stay one word each. Prefixing them instead — Outline Color /
+      // Outline Width / Outline Offset — reads as the same set but pays for it
+      // in ellipses: the panel truncates a label around 13 characters in its
+      // narrow orientation, so `Outline Offset` arrives as "Outline O…". One
+      // word in the heading beats the same word truncated three times.
+      //
+      // `var(--color-accent)` rather than `var(--color-drop-target)`: the alias
+      // isn't a `themeTokens` entry (deliberately — see tokens/index.css), so
+      // the picker would show the raw var string, and the two resolve to the
+      // same colour anyway. The CSS chain is still knob → alias → accent, so a
+      // consumer who re-points the alias changes the paint without this
+      // default following.
+      { key: 'targetColor', label: 'Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'dropOutline', showWhen: { state: 'target' } },
+      { key: 'targetWidth', label: 'Width', control: 'slider', defaultValue: 2, min: 1, max: 5, step: 1, unit: 'px', section: 'dropOutline', showWhen: { state: 'target' } },
+      { key: 'targetOffset', label: 'Offset', control: 'number', defaultValue: 2, min: 0, max: 8, step: 1, unit: 'px', section: 'dropOutline', showWhen: { state: 'target' } },
+    ],
+    layoutVariants: [
+      // A State picker, like lifecycle-connector's, rather than a "Drop Target"
+      // On/Off: the panel builds its section subtitles out of the variant LABEL
+      // ("Per {label}" when scoped, "Shared across all {label}s" otherwise), and
+      // "Shared across all drop targets" was actively misleading on the plain
+      // style knobs — they are shared across STATES, and there is one box, not
+      // many targets.
+      //
+      // There is no `interactive` picker: that prop moves hit-testing only,
+      // never a pixel, and a variant that changes nothing on the canvas reads
+      // as a broken toggle. It stays a prop, documented in the README.
+      {
+        key: 'state',
+        label: 'State',
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'target', label: 'Drop target' },
+        ],
+        defaultValue: 'default',
+      },
+    ],
+    events: [
+      { name: 'onDragOver', description: 'Fires while a dragged node is over the group. Requires interactive; call preventDefault to accept the drop.', payload: 'DragEvent' },
+      { name: 'onDragEnter', description: 'Fires when a drag enters the group — the consumer\'s cue to set `target`.', payload: 'DragEvent' },
+      { name: 'onDragLeave', description: 'Fires when a drag leaves the group — clear `target` here.', payload: 'DragEvent' },
+      { name: 'onDrop', description: 'Fires when a node is dropped on the group. The consumer adds the member; the atom carries no logic.', payload: 'DragEvent' },
     ],
   },
   {

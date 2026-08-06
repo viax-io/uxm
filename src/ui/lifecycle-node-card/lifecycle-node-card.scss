@@ -31,7 +31,17 @@
      `--kind-icon-bg` / `--kind-icon-color` on the card, which bridge to
      IconTile's own CSS-variable surface in the .tsx. */
 
-  &--state {
+  /* `interaction` shares `state`'s green deliberately, and shares the selector
+     so that stays true: a BI is marked green everywhere else in the product —
+     the execution-model canvas and the Available Targets panel both show it
+     that way — and giving the canvas its own hue for the same entity reads as
+     a different thing rather than a distinction. The semantic separation from
+     `state` is carried by the glyph (exchange arrows vs a checkmark) and the
+     kind label, so re-tinting would buy nothing and cost cross-surface
+     consistency. Kept as one rule rather than two identical ones so the two
+     kinds cannot silently drift apart. */
+  &--state,
+  &--interaction {
     --kind-badge-bg: color-mix(in srgb, var(--color-accent-bold) 12%, transparent);
     --kind-badge-color: var(--color-accent-bold);
     --kind-icon-bg: color-mix(in srgb, var(--color-accent-bold) 18%, transparent);

@@ -15,7 +15,7 @@ const ICON_TILE_STYLE: CSSProperties = {
   ['--uxm-icon-tile-radius' as string]: '6px',
 };
 
-export type LifecycleNodeKind = 'state' | 'condition' | 'task';
+export type LifecycleNodeKind = 'state' | 'condition' | 'task' | 'interaction';
 
 // Drop the native HTML `title` attribute (a string, used for tooltips) — our
 // `title` prop is the primary content (ReactNode). Tooltips can still be set
@@ -41,14 +41,21 @@ const KIND_LABEL: Record<LifecycleNodeKind, string> = {
   state: 'State',
   condition: 'Condition',
   task: 'Task',
+  interaction: 'Business Interaction',
 };
 
 // Map each node kind to its glyph in the Icon registry. Centralised so
 // other lifecycle components share the exact same kind→glyph contract.
+//
+// `interaction` takes `business-interaction` (exchange arrows) rather than a
+// clipboard: a clipboard reads as a checklist, which is what `task` already
+// means, and the exchange mark is what the product uses for a BI in its sidebar
+// and dashboard — so the canvas agrees with the rest of the app.
 const KIND_GLYPH: Record<LifecycleNodeKind, string> = {
   state: 'check-circle',
   condition: 'question-mark-circle',
   task: 'cog-6-tooth',
+  interaction: 'business-interaction',
 };
 
 function NodeIcon({ kind }: { kind: LifecycleNodeKind }) {
@@ -56,11 +63,19 @@ function NodeIcon({ kind }: { kind: LifecycleNodeKind }) {
 }
 
 /**
- * The pill card used for each node on a BI lifecycle canvas. Three kinds:
+ * The pill card used for each node on a BI lifecycle canvas. Four kinds — the
+ * first three describe STEPS in a lifecycle, the fourth an OBJECT the lifecycle
+ * runs on, which is why it gets its own kind instead of borrowing `state`'s
+ * green checkmark with a substituted `kindLabel`:
  *
- *   `state`      — green accent · checkmark icon · optional action-count badge
- *   `condition`  — warm accent  · question icon  · optional expression badge
- *   `task`       — cool accent  · gear icon
+ *   `state`        — green accent · checkmark icon · optional action-count badge
+ *   `condition`    — warm accent  · question icon  · optional expression badge
+ *   `task`         — cool accent  · gear icon
+ *   `interaction`  — green accent · exchange icon  · a Business Interaction
+ *
+ * `interaction` shares `state`'s green on purpose: a BI is marked green
+ * everywhere else in the product, so the canvas keeps that. What separates the
+ * two is the glyph and the label, not the tint.
  *
  * Visuals (icon tile color, accent stripe, default size) are driven by CSS
  * custom properties scoped to the kind modifier — see `.uxm-lifecycle-node-card--{kind}`

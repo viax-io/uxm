@@ -83,11 +83,18 @@ export type {
   LifecycleConnectorRouting,
   LifecycleConnectorState,
 } from './lifecycle-connector';
+export { LifecycleDropSlot } from './lifecycle-drop-slot';
+export type {
+  LifecycleDropSlotProps,
+  LifecycleDropSlotShape,
+} from './lifecycle-drop-slot';
 export { LifecycleEdgeLabel } from './lifecycle-edge-label';
 export type {
   LifecycleEdgeLabelProps,
   LifecycleEdgeLabelVariant,
 } from './lifecycle-edge-label';
+export { LifecycleGroupBox } from './lifecycle-group-box';
+export type { LifecycleGroupBoxProps } from './lifecycle-group-box';
 export { LifecycleMinimap } from './lifecycle-minimap';
 export type {
   LifecycleMinimapNode,

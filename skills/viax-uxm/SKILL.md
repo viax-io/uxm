@@ -571,13 +571,6 @@ skill:
 
 ### New in 4.9.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
-
 - **`LifecycleNodeCard` gained a `--uxm-lifecycle-node-card-min-height` knob** (studio: "Min
   Height", default `0`). Opt-in uniform-height floor for canvas layouts — set it so every node
   card shares a minimum height and connector endpoints can key off a single number instead of
@@ -590,6 +583,80 @@ skill:
   with no reset of its own will see the card narrow by its horizontal padding + border (34px at
   the defaults). Purely a themeable-var addition otherwise — no React API change.
   From `./lifecycle-node-card`.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **New atom `LifecycleGroupBox` — the frame around one lifecycle group, and its drop zone.** A
+  frosted, absolutely-positioned region frame: translucent `--color-card` tint over a
+  `backdrop-filter` blur, hairline border, internal inset ring. Position and size are the
+  consumer's (same contract as `LifecycleEdgeLabel`), and the members render as **siblings**, not
+  children — the box is a frame *behind* the cards, not a container. `interactive?: boolean`
+  (default `false`) is what turns on pointer events: the frame paints over its own members, so a
+  read-only diagram must not let it swallow their hover or clicks. `target?: boolean` adds the
+  drop-target outline. Extends `HTMLAttributes<HTMLDivElement>` by design — the consumer hangs
+  `onDragEnter` / `onDragOver` / `onDragLeave` / `onDrop` and its own `data-*` straight on the box.
+  A group's NAME is not a slot here: it's an editable `Chip` the canvas positions on the frame's
+  edge. Themeable via `--uxm-lifecycle-group-box-{bg,border-color,border-width,radius,padding,blur}`
+  and `--uxm-lifecycle-group-box-target-{color,width,offset}`; `padding` (20px) is the group's
+  single spacing number — the canvas insets its members by the same value. `…-bg` takes a **plain**
+  colour (default `--color-card`) — the atom mixes it to 55% itself, so *frosted, not solid* can't be
+  undone by setting an opaque fill. From `./lifecycle-group-box`.
+- **`LifecycleNodeCard` gained a fourth kind: `interaction`.**
+  `LifecycleNodeKind` is now `'state' | 'condition' | 'task' | 'interaction'`. A Business Interaction
+  node used to ride `kind="state"` with a substituted `kindLabel`, borrowing the green accent and
+  checkmark of a different meaning — the first three kinds describe **steps** in a lifecycle, a BI is
+  the **object** the lifecycle runs on. It takes the `business-interaction` glyph (exchange arrows —
+  the mark the product already uses for a BI in its sidebar and dashboard; deliberately NOT a
+  clipboard, which reads as a checklist and collides with `task`), keeps **`state`'s green tint** on
+  purpose — a BI is marked green everywhere else in the product, including the Available Targets
+  panel, so re-tinting the canvas for the same entity would read as a different thing; the glyph and
+  the label carry the distinction — and defaults its `kindLabel` to `Business Interaction`. Purely
+  additive — existing `kind` values are untouched. Studio adds the kind to the
+  Node Type picker. From `./lifecycle-node-card`.
+- **New atom `LifecycleDropSlot` — the dashed slot showing where a dragged node can land.** Two
+  shapes: `shape="card"` (default) is node-sized, standing in for the node a drop would create;
+  `shape="pill"` is group-pill sized. **One appearance, no states** — the slot exists only while it
+  *is* the target (the canvas mounts it for the hovered zone and unmounts it on leave), so its
+  appearance is the signal and there is no quiet variant to keep legible. Text and dashes are
+  `--color-accent-bold` on a flat `--color-accent-subtle` fill: 5.54:1 in light, 8.54:1 in dark. `interactive?: boolean` defaults to **`false`**: a card slot in a real drop zone
+  passes `true`, a preview placeholder stays inert so the drag can't flicker between it and the real
+  slot. `label?: ReactNode` — without it a card shows a centred plus glyph. Width is the consumer's,
+  with a `72px` floor (`--uxm-lifecycle-drop-slot-card-min-width`) so a labelless slot can't collapse
+  to its glyph. Its card height chains `--uxm-lifecycle-drop-slot-card-min-height` → the node card's
+  own `--uxm-lifecycle-node-card-min-height` (4.9.0) → `64px`, so a slot standing alone is node-sized
+  and a canvas that sets the card's height on a COMMON ANCESTOR moves both — the studio's own knob
+  writes it on `.uxm-lifecycle-node-card`, which never reaches a sibling slot. ⚠️ **On a real canvas, give the slot the same `height` you give the nodes and zero its
+  floor** — `--uxm-lifecycle-drop-slot-card-min-height: 0` — because a `min-height` floor outranks a
+  smaller `height` and the shared node-height token is only a floor: a node card whose own type knobs
+  grow outgrows it (90px at `titleSize: 18`) while a slot would stay at 64, and the row goes crooked.
+  Dashes and label take separate colours (`--uxm-lifecycle-drop-slot-border-color` and
+  `--uxm-lifecycle-drop-slot-color`) sharing one `--color-accent-bold` default, so they read as one
+  signal until a theme moves them apart. ⚠️ Unlike `LifecycleGroupBox`, neither rides
+  `--color-drop-target`: that alias resolves to `--color-accent`, which is 1.92:1 as ink on this fill,
+  and a filled slot with text needs the dark end of the ramp where a bare ring does not.
+  ⚠️ **No dash-pattern variable exists**: CSS derives a dashed border's dash length from its
+  width and exposes nothing for the pattern — `border-style` (`dashed`/`solid`/`dotted`, the same
+  select FileUpload's drop area has) and `border-width` are the only levers. Also themeable via
+  `--uxm-lifecycle-drop-slot-{bg,border-style,card-radius,card-padding-x,card-font-size,pill-radius,pill-padding-y,pill-padding-x,pill-font-size}`.
+  Studio adds a Shape picker with the card-only and pill-only knobs in their own
+  per-shape sections (Border Width stays shared); `interactive` gets no knob.
+  From `./lifecycle-drop-slot`.
+- **New token `--color-drop-target` — one colour for every "you can drop here" highlight.**
+  Declared in `tokens.css` as `var(--color-accent)`, so it tracks the brand through both themes and
+  needs no dark override. Deliberately **not** in `themeTokens`: an entry there carries a
+  light/dark hex pair, and pinning one would freeze the colour away from accent. Atoms read
+  **own knob → token → accent** (`var(--uxm-…-target-color, var(--color-drop-target,
+  var(--color-accent)))`), so a consumer re-colours every drop target at once by setting the single
+  token, while a per-component override still wins locally. Outline *width* and *offset* stay
+  per-component knobs — the studio's editor model is per-component, and non-colour values don't
+  belong in the token layer.
 
 ## Workflow
 

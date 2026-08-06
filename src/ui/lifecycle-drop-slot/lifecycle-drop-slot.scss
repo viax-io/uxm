@@ -1,0 +1,72 @@
+/* ── lifecycle-drop-slot ── */
+
+.uxm-lifecycle-drop-slot {
+  align-items: center;
+  /* A flat fill, not a translucent one: the slot is short-lived and reads as its
+     own surface rather than a tint of the canvas, so the colour a theme picks is
+     the colour that paints. */
+  background: var(--uxm-lifecycle-drop-slot-bg, var(--color-accent-subtle));
+  /* Dashes and label take separate colours, defaulting to the same
+     `--color-accent-bold` so they read as one signal until a theme moves them
+     apart. `border-style` and `border-width` are the two levers on how the edge
+     reads — the same split `FileUpload`'s drop area uses. Neither is a dash
+     PATTERN: CSS derives a dashed border's dash length from its width and
+     exposes no property for the pattern itself.
+
+     Both anchored to `--color-accent-bold`, deliberately NOT routed through
+     `--color-drop-target` like LifecycleGroupBox's ring. The alias resolves to
+     `--color-accent`, which measures 1.92:1 as ink on this fill and 1.93:1 as a
+     line against the canvas — the slot carries TEXT on a filled surface, so it
+     needs the dark end of the accent ramp (5.54:1 / 5.56:1), whereas the group
+     box draws a bare ring where a vivid hue reads. Routing this through the
+     alias would also make the studio and production disagree: the alias is
+     declared, so its own accent-bold fallback can never paint, while the
+     editor's knob default writes accent-bold inline. */
+  border: var(--uxm-lifecycle-drop-slot-border-width, 1px)
+    var(--uxm-lifecycle-drop-slot-border-style, dashed)
+    var(--uxm-lifecycle-drop-slot-border-color, var(--color-accent-bold));
+  color: var(--uxm-lifecycle-drop-slot-color, var(--color-accent-bold));
+  display: inline-flex;
+  justify-content: center;
+  /* Off by default: a preview placeholder sits under the cursor and must not
+     compete with the real slot for the drag. */
+  pointer-events: none;
+  white-space: nowrap;
+
+  &--interactive {
+    pointer-events: auto;
+  }
+
+  &--card {
+    border-radius: var(--uxm-lifecycle-drop-slot-card-radius, 10px);
+    font-size: var(--uxm-lifecycle-drop-slot-card-font-size, 12px);
+    /* The shared node height — see tokens/index.css. A slot standing among real
+       members has to agree with them, and custom properties inherit DOWNWARD,
+       so two siblings can only share this through a common ancestor.
+       `min-height` is a FLOOR, and a floor outranks a smaller `height` from the
+       consumer — so a canvas that owns node geometry (the reliable way to keep a
+       diagram from going crooked: it already computes node rects to route
+       connectors) zeroes the floor per instance through the first var and its own
+       `height` then applies in both directions. */
+    min-height: var(
+      --uxm-lifecycle-drop-slot-card-min-height,
+      var(--uxm-lifecycle-node-card-min-height, 64px)
+    );
+    /* Without a floor a labelless card slot collapses to its glyph plus padding
+       (50px), narrower than any real node. Width itself stays the consumer's. */
+    min-width: var(--uxm-lifecycle-drop-slot-card-min-width, 72px);
+    padding: 0 var(--uxm-lifecycle-drop-slot-card-padding-x, 16px);
+  }
+
+  &--pill {
+    /* `999px` is the default rather than a fixed shape, matching
+       LifecycleEdgeLabel's own pill radius knob — anything at or above half the
+       height reads as a full pill, lower values square it off. */
+    border-radius: var(--uxm-lifecycle-drop-slot-pill-radius, 999px);
+    /* 13px matches `Chip` assist, which is what the real group is drawn with,
+       so the pill doesn't jump size on drop. */
+    font-size: var(--uxm-lifecycle-drop-slot-pill-font-size, 13px);
+    padding: var(--uxm-lifecycle-drop-slot-pill-padding-y, 4px)
+      var(--uxm-lifecycle-drop-slot-pill-padding-x, 12px);
+  }
+}

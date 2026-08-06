@@ -152,6 +152,7 @@ export function PropertiesPanel({
     selectedColors: 'Selected',
     fieldColors: 'Field Colors',
     dropAreaColors: 'Drop Area',
+    dropOutline: 'Drop Outline',
     triggerColors: 'Trigger Colors',
     popover: 'Popover',
     option: 'Option',
