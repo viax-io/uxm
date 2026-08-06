@@ -36,6 +36,17 @@
      measures so a change to either can't silently drift from it. */
   --uxm-editable-cell-text-inset: calc(var(--_uxm-editable-cell-padding-x, 8px) + 1px);
   margin: 0;
+  /* Outdent — the cell APPLIES it, a host only asks for it. Hosts that lay the
+     cell out against their own content grid (FormField does) set
+     `--uxm-editable-cell-outdent: 1`; the default `0` leaves standalone and
+     table cells exactly where they were. The host deliberately passes a FLAG
+     rather than a length: the inset above is declared here, so it resolves
+     only on this element and below — a host computing the length itself would
+     read an undefined var and silently land on the fallback. Doing the
+     arithmetic here also means the flag can inherit from any ancestor, so a
+     cell wrapped in a row (paired with a translation count, a unit suffix)
+     lines up like a bare one. Align variants below re-anchor it. */
+  margin-inline-start: calc(-1 * var(--uxm-editable-cell-outdent, 0) * var(--uxm-editable-cell-text-inset));
   /* Read inheritance for the FONT: a cell must read at the scale of whatever
      surrounds it (13px table row, a PageHeader heading) — that genuinely
      varies, which is why `size` exposes it as `1em`-by-default rather than a
@@ -52,6 +63,15 @@
   transition: background-color 0.1s ease, border-color 0.1s ease;
   /* Position to anchor the inline error overlay. */
   position: relative;
+  /* Every width in this atom — the `100%` above, the per-size `max-width`,
+     the input's `min-width: 100%`, the ghosts' cap — is meant to INCLUDE the
+     paddings and border, which is what the README documents and what the
+     input-family siblings (NumberInput, CurrencyInput, …) all declare. Until
+     now the atom inherited that from the consumer's global reset and silently
+     overflowed its container by padding + border in an app without one. State
+     it here; the elements below that carry their own padded, sized box repeat
+     it rather than relying on inheritance (`box-sizing` is not inherited). */
+  box-sizing: border-box;
 }
 .uxm-editable-cell:hover:not(:disabled) {
   background-color: var(--uxm-editable-cell-hover-bg, var(--color-surface-alt));
@@ -234,6 +254,7 @@
   cursor: pointer;
   text-align: inherit;
   transition: background-color 0.1s ease, border-color 0.1s ease;
+  box-sizing: border-box;
 }
 /* Open picker = this cell's "editing" state. Mirror the text/number/date
    editing input's chrome exactly (same vars: card surface, accent border,
@@ -414,8 +435,22 @@
   min-height: 1lh;
 }
 .uxm-editable-cell--align-left { justify-content: flex-start; text-align: left; }
-.uxm-editable-cell--align-right { justify-content: flex-end; text-align: right; }
-.uxm-editable-cell--align-center { justify-content: center; text-align: center; }
+/* The outdent follows the edge the text is anchored to: a right-aligned cell
+   pulls on its TRAILING side, or the leading side would come off-grid while
+   the text stayed inset. A centered cell is anchored to neither edge, so it
+   gets none. (Both re-declare the leading margin rather than relying on the
+   base rule — same specificity, and these come later in the cascade.) */
+.uxm-editable-cell--align-right {
+  justify-content: flex-end;
+  text-align: right;
+  margin-inline-start: 0;
+  margin-inline-end: calc(-1 * var(--uxm-editable-cell-outdent, 0) * var(--uxm-editable-cell-text-inset));
+}
+.uxm-editable-cell--align-center {
+  justify-content: center;
+  text-align: center;
+  margin-inline-start: 0;
+}
 
 .uxm-editable-cell--editing {
   /* inline-grid stacks the invisible width-keeper ghosts and the input in
@@ -423,12 +458,27 @@
      to auto table-column sizing) is sized by the ghosts, while the input —
      which contributes zero width of its own — stretches to the track. */
   display: inline-grid;
-  /* minmax(max-content, 1fr): the track is at least the ghosts' width (the
+  /* minmax(<floor>, 1fr): the track is at least the ghosts' width (the
      cell's stable min-content contribution) and absorbs all free space up
      to the wrapper's 100%. An auto track would NOT stretch here — the
      align modifiers set justify-content on this same element, which
-     disables auto-track stretching. */
-  grid-template-columns: minmax(max-content, 1fr);
+     disables auto-track stretching.
+
+     The floor is a PUBLISHED knob because `max-content` is only the right
+     answer where the container is auto-sized. A `max-content` floor means
+     "never narrower than the whole draft on one line", so in a container
+     that's merely NARROWER than the draft — any fixed-width panel — the
+     track, and the input stretched to it, overflowed the cell's own box
+     (a 436px field in a Card ran 281px past it). Capping to the container
+     and preserving a `max-content` contribution are contradictory demands
+     on one track, so the context that knows which it needs picks: a host
+     laying the cell out at a definite width sets the floor to `0` and the
+     cell simply fills what it's given (FormField does exactly this — see
+     form-field.scss), while a DataTable leaves the default and keeps the
+     anti-jump behaviour the ghosts exist for. The ghosts still render
+     either way; a `0` floor just stops them forcing the track wider than
+     the cell. */
+  grid-template-columns: minmax(var(--uxm-editable-cell-editing-track-floor, max-content), 1fr);
   padding: 0;
   border: none;
 }
@@ -451,6 +501,10 @@
     var(--_uxm-editable-cell-padding-x, 8px);
   border: 1px solid transparent;
   font: inherit;
+  /* Same box model as the display cell whose width these mirror — under
+     `content-box` the cap above would exclude these paddings and the editing
+     track would come out wider than the display cell it replaces. */
+  box-sizing: border-box;
 }
 /* Clearable date editing reserves BOTH gutter slots in the input (calendar
    20px + clear 22px = 42px) — the ghosts must reserve the same, or the grid
@@ -471,6 +525,11 @@
      width-keeper ghosts above. */
   width: 0;
   min-width: 100%;
+  /* `min-width: 100%` is the grid track's width — under `content-box` the
+     paddings and border would be added ON TOP of it and the input would
+     overhang the cell it's editing. (Browsers ship form controls as
+     `content-box`, so this can't be left to inheritance either.) */
+  box-sizing: border-box;
   padding: var(--_uxm-editable-cell-padding-y, 4px) var(--_uxm-editable-cell-padding-x, 8px);
   margin: 0;
   font: inherit;
