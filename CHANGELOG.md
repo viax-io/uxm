@@ -1,3 +1,12 @@
+# [4.10.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.9.0...v4.10.0) (2026-08-06)
+
+
+### Features
+
+* **lifecycle-drop-slot:** dashed slot showing where a dragged node can land ([5269218](https://gitlab.viax.tech/services-viax/uxm/commit/52692185baeabedc689a38b6dfe0bb827845fdb4))
+* **lifecycle-group-box:** frosted group frame that doubles as a drop zone ([a3481f1](https://gitlab.viax.tech/services-viax/uxm/commit/a3481f1342a258b9f05719191f82d87602f1d836))
+* **lifecycle-node-card:** add the `interaction` kind for Business Interactions ([dd74f76](https://gitlab.viax.tech/services-viax/uxm/commit/dd74f76279daf6c2398db89a447d27ded339f566))
+
 # [4.9.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.8.0...v4.9.0) (2026-08-03)
 
 
