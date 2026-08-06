@@ -2,14 +2,16 @@
 
 **React 19 UI primitives, design tokens, and theming previews — packaged as a standalone library.**
 
-76 BEM-classed components, a single design-token layer, and 88 themable previews. Built for React 19 + Next.js App Router, distributed as ESM + CJS with first-class `.d.ts`, no runtime dependencies beyond React, and `sideEffects: ["**/*.css"]` for full tree-shaking.
+BEM-classed components, a single design-token layer, and themable previews. Framework-agnostic React 19 — distributed as ESM + CJS with first-class `.d.ts`, no runtime dependencies beyond React, and `sideEffects: ["**/*.css"]` for full tree-shaking.
+
+The package ships **no `"use client"` / `"use server"` directives** by design: consumers are client-side SPAs, and framework-specific pragmas would leak into every one of them. Under a React Server Components setup (e.g. Next.js App Router) the consuming file is responsible for its own `"use client"` boundary.
 
 ## What's in this package
 
-- **UI primitives** (`@viax/uxm/ui`) — 76 BEM-classed React components for Next.js App Router (React 19).
+- **UI primitives** (`@viax/uxm/ui`) — BEM-classed React 19 components.
 - **Icon registry** (`@viax/uxm/ui`) — `ICONS`, `ICON_OPTIONS`, `getIcon`, `IconDef` for tooling that enumerates the bundled icon set.
 - **Design tokens** (`@viax/uxm/tokens`) — the canonical `themeTokens` array plus helpers (`findToken`, `resolveHex`, `isTokenValue`) and the `ThemeToken` type.
-- **Themable previews** (`@viax/uxm/previews`) — 88 preview components (one per atom + 10 composite previews) used by host shells like MODO's brand-settings editor to render live, knob-driven theme exploration.
+- **Themable previews** (`@viax/uxm/previews`) — preview components (one per atom, plus composite previews) used by host shells like MODO's brand-settings editor to render live, knob-driven theme exploration.
 - **WCAG / contrast helpers** (`@viax/uxm`) — `contrastRatio`, `parseColor`, `rgbToHex`, `suggestAccessibleColor`, `suggestAccessibleToken`, `wcagLevel`, plus `RGB` and `TokenCandidate` types.
 - **Default stylesheets** — `@viax/uxm/ui.css` (component primitive defaults) and `@viax/uxm/tokens.css` (token declarations).
 
@@ -21,21 +23,24 @@ npm install @viax/uxm
 
 Peer deps: `react@^19`, `react-dom@^19`. Node `>=20` for local dev.
 
-The package is published to the Viax GitLab Packages npm registry; see [Configure the GitLab registry](#configure-the-gitlab-registry) below.
+The package is published to the private Viax Nexus npm registry; see [Configure the registry](#configure-the-registry) below.
 
-## Quick start (Next.js App Router)
+## Quick start
+
+Import both stylesheets once, at your application entry point:
 
 ```ts
-// app/layout.tsx
+// e.g. src/main.tsx
 import '@viax/uxm/tokens.css';
 import '@viax/uxm/ui.css';
 ```
 
+Then use the primitives anywhere:
+
 ```tsx
-// app/page.tsx
 import { ButtonPrimary, Icon } from '@viax/uxm/ui';
 
-export default function Page() {
+export function Page() {
   return (
     <ButtonPrimary>
       <Icon glyph="sparkles" /> Hello UXM
@@ -68,34 +73,36 @@ import { ButtonPrimary, themeTokens } from '@viax/uxm';
 | `@viax/uxm/ui.css` | Compiled component stylesheet — required for visual output. |
 | `@viax/uxm/tokens` | `themeTokens` array + `findToken` / `resolveHex` / `isTokenValue` + `ThemeToken` type. |
 | `@viax/uxm/tokens.css` | `--color-*` declarations on `:root`. |
-| `@viax/uxm/previews` | 88 preview components for host shells building theme editors. **No preview symbol leaks into `/ui`** — tree-shake guarantee verified by build. |
+| `@viax/uxm/previews` | Preview components for host shells building theme editors. **No preview symbol leaks into `/ui`** — see the tree-shake guarantee below. |
 
 ## Component catalog
 
-Each component folder ships a `README.md` documenting its props, CSS variables, MODO-configurable design tokens, states/variants, and accessibility. Click through any name for the full reference.
+Most component folders ship a `README.md` documenting props, CSS variables, MODO-configurable design tokens, states/variants, and accessibility. Click through any name for the full reference.
 
-### Forms & inputs (19)
-[`calendar`](src/ui/calendar/README.md) · [`checkbox`](src/ui/checkbox/README.md) · [`currency-input`](src/ui/currency-input/README.md) · [`date-input`](src/ui/date-input/README.md) · [`file-upload`](src/ui/file-upload/README.md) · [`form-field`](src/ui/form-field/README.md) · [`input`](src/ui/input/README.md) (TextInput + Select + Textarea) · [`input-with-icon`](src/ui/input-with-icon/README.md) · [`number-field`](src/ui/number-field/README.md) · [`number-input`](src/ui/number-input/README.md) · [`password-input`](src/ui/password-input/README.md) · [`phone-input`](src/ui/phone-input/README.md) · [`pill-select`](src/ui/pill-select/README.md) · [`radio-group`](src/ui/radio-group/README.md) · [`range-slider`](src/ui/range-slider/README.md) · [`search-dropdown`](src/ui/search-dropdown/README.md) · [`slider`](src/ui/slider/README.md) · [`time-input`](src/ui/time-input/README.md) · [`toggle-switch`](src/ui/toggle-switch/README.md)
+> This catalog is **not exhaustive** — `src/ui/` holds more folders than are listed here. Enumerate that directory for the authoritative set rather than relying on this file. Names shown without a link do not have a component README yet.
 
-### Buttons & actions (8)
+### Forms & inputs
+[`calendar`](src/ui/calendar/README.md) · [`checkbox`](src/ui/checkbox/README.md) · [`currency-input`](src/ui/currency-input/README.md) · [`date-input`](src/ui/date-input/README.md) · [`file-upload`](src/ui/file-upload/README.md) · [`form-field`](src/ui/form-field/README.md) · [`input`](src/ui/input/README.md) (TextInput + Select + Textarea) · [`input-with-icon`](src/ui/input-with-icon/README.md) · `number-stepper` · [`number-input`](src/ui/number-input/README.md) · [`password-input`](src/ui/password-input/README.md) · [`phone-input`](src/ui/phone-input/README.md) · [`pill-select`](src/ui/pill-select/README.md) · [`radio-group`](src/ui/radio-group/README.md) · [`range-slider`](src/ui/range-slider/README.md) · [`search-dropdown`](src/ui/search-dropdown/README.md) · [`slider`](src/ui/slider/README.md) · [`time-input`](src/ui/time-input/README.md) · [`toggle-switch`](src/ui/toggle-switch/README.md)
+
+### Buttons & actions
 [`back-link`](src/ui/back-link/README.md) · [`button`](src/ui/button/README.md) (Primary/Secondary/Tertiary/Ghost) · [`button-group`](src/ui/button-group/README.md) · [`button-icon`](src/ui/button-icon/README.md) · [`button-with-icon`](src/ui/button-with-icon/README.md) · [`icon-button`](src/ui/icon-button/README.md) · [`inline-action`](src/ui/inline-action/README.md) · [`link`](src/ui/link/README.md)
 
-### Navigation (8)
+### Navigation
 [`app-sidebar`](src/ui/app-sidebar/README.md) · [`app-top-bar`](src/ui/app-top-bar/README.md) · [`breadcrumb`](src/ui/breadcrumb/README.md) · [`filter-tabs`](src/ui/filter-tabs/README.md) · [`sidebar-nav-item`](src/ui/sidebar-nav-item/README.md) · [`tabs`](src/ui/tabs/README.md) · [`tabs-underline`](src/ui/tabs-underline/README.md) · [`view-switcher`](src/ui/view-switcher/README.md)
 
-### Feedback & status (8)
-[`alert`](src/ui/alert/README.md) · [`badge`](src/ui/badge/README.md) · [`chip`](src/ui/chip/README.md) · [`empty-state`](src/ui/empty-state/README.md) · [`error-page`](src/ui/error-page/README.md) · [`loader`](src/ui/loader/README.md) · [`tag`](src/ui/tag/README.md) · [`tooltip`](src/ui/tooltip/README.md) (Tooltip + ContentTooltip)
+### Feedback & status
+`banner` · [`badge`](src/ui/badge/README.md) · [`chip`](src/ui/chip/README.md) · [`empty-state`](src/ui/empty-state/README.md) · [`error-page`](src/ui/error-page/README.md) · [`loader`](src/ui/loader/README.md) · [`tag`](src/ui/tag/README.md) · [`tooltip`](src/ui/tooltip/README.md) (Tooltip + ContentTooltip)
 
-### Layout & structure (11)
+### Layout & structure
 [`card`](src/ui/card/README.md) · [`cluster`](src/ui/cluster/README.md) · [`detail-section`](src/ui/detail-section/README.md) · [`divider`](src/ui/divider/README.md) · [`inline-filter`](src/ui/inline-filter/README.md) · [`page-header`](src/ui/page-header/README.md) · [`page-shell`](src/ui/page-shell/README.md) · [`responsive-grid`](src/ui/responsive-grid/README.md) · [`section-header`](src/ui/section-header/README.md) · [`side-flexpane`](src/ui/side-flexpane/README.md) · [`stack`](src/ui/stack/README.md)
 
-### Data display (12)
+### Data display
 [`avatar`](src/ui/avatar/README.md) · [`data-table`](src/ui/data-table/README.md) · [`disclosure`](src/ui/disclosure/README.md) · [`icon`](src/ui/icon/README.md) · [`icon-tile`](src/ui/icon-tile/README.md) · [`list`](src/ui/list/README.md) (List + ListItem) · [`meta-row`](src/ui/meta-row/README.md) · [`property-field`](src/ui/property-field/README.md) (PropertyField + PropertyGrid) · [`stat-card`](src/ui/stat-card/README.md) · [`thumbnail`](src/ui/thumbnail/README.md) · [`timeline-entry`](src/ui/timeline-entry/README.md) · [`type-overview-card`](src/ui/type-overview-card/README.md)
 
-### Configuration editor (4)
+### Configuration editor
 [`config-component-row`](src/ui/config-component-row/README.md) · [`config-segment-item`](src/ui/config-segment-item/README.md) · [`explorer-list-item`](src/ui/explorer-list-item/README.md) · [`explorer-section`](src/ui/explorer-section/README.md)
 
-### Lifecycle diagrams (6)
+### Lifecycle diagrams
 [`lifecycle-connector`](src/ui/lifecycle-connector/README.md) · [`lifecycle-edge-label`](src/ui/lifecycle-edge-label/README.md) · [`lifecycle-minimap`](src/ui/lifecycle-minimap/README.md) · [`lifecycle-node-card`](src/ui/lifecycle-node-card/README.md) · [`lifecycle-terminal`](src/ui/lifecycle-terminal/README.md) · [`lifecycle-zoom-control`](src/ui/lifecycle-zoom-control/README.md)
 
 ## Design tokens & MODO theming
@@ -144,20 +151,20 @@ import { ButtonPreview, type PreviewShellContext } from '@viax/uxm/previews';
 />;
 ```
 
-**Tree-shake guarantee**: no preview symbols leak into `@viax/uxm/ui`. Consumers that only import primitives never pay for preview code. Verified at build time (`grep "Preview" dist/ui/index.js` → 0 results).
+**Tree-shake guarantee**: no preview symbols leak into `@viax/uxm/ui`, so consumers that only import primitives never pay for preview code. This is **upheld by convention, not enforced by the build** — nothing fails if a barrel breaks it. When you touch `src/ui/index.ts` or any `src/ui/*/index.ts`, check by hand that no `*-preview` module is re-exported; after a build, `grep "Preview" dist/ui/index.js` should return nothing.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────┐
 │  @viax/uxm/previews                             │  ← host editors (MODO brand-settings)
-│  88 themable, shell-aware preview components    │
+│  themable, shell-aware preview components       │
 └────────────────┬────────────────────────────────┘
                  │ consumes
                  ▼
 ┌─────────────────────────────────────────────────┐
 │  @viax/uxm/ui                                   │  ← application code
-│  76 BEM-classed React components                │
+│  BEM-classed React components                   │
 │  + Icon registry (ICONS, getIcon, …)            │
 └────────────────┬────────────────────────────────┘
                  │ reads fallbacks
@@ -170,25 +177,42 @@ import { ButtonPreview, type PreviewShellContext } from '@viax/uxm/previews';
 
 Every layer is independently importable; every layer has its own type declarations and own CSS bundle.
 
-## Configure the GitLab registry
+## Configure the registry
 
-This package is private. Configure your local npm to authenticate against the Viax GitLab Packages registry. Copy `.npmrc.example` to your project root or `~/.npmrc` and replace `<PERSONAL_ACCESS_TOKEN>` with a GitLab personal access token (`read_api`, plus `write_api` if you intend to publish):
+This package is private and hosted on the Viax **Nexus** npm registry — not on public npm and not on GitLab Packages. Point npm at it in your project's `.npmrc` or `~/.npmrc`:
 
 ```ini
-@viax:registry=https://gitlab.viax.tech/api/v4/projects/services-viax%2Fuxm/packages/npm/
-//gitlab.viax.tech/api/v4/projects/services-viax%2Fuxm/packages/npm/:_authToken=<PERSONAL_ACCESS_TOKEN>
+registry=https://nexus.viax.tech/repository/viax-npm/
+//nexus.viax.tech/repository/viax-npm/:_auth=<BASE64_NEXUS_TOKEN>
 ```
+
+Two Nexus repositories are involved: CI **publishes** to `npm-private` (see `publishConfig` in `package.json`), while `viax-npm` is the registry both CI and this repo's own `.npmrc` **install** from. Authenticate against whichever you need — CI authenticates against both.
 
 ## Build & develop
 
 ```bash
 npm install
-npm run build      # tsup → dist/ (ESM + CJS + .d.ts + CSS)
-npm run typecheck  # tsc --noEmit
+npm run dev:modo   # Vite dev server for the studio portal — fastest loop, no build needed
+npm run build      # full dist/ (see the pipeline below)
+npm run typecheck  # tsc --noEmit for src + portal
 npm run lint       # eslint .
 npm run lint:fix   # eslint . --fix
-npm run dev        # tsup --watch (useful for local linked dev)
+npm run dev        # tsup --watch — only for local linked dev against a consumer
 ```
+
+**`npm run dev:modo` is the fastest way to see a UI change.** The portal pulls `src/ui/**/*.scss` through `import.meta.glob`, so components render with real CSS over HMR without building `dist/` first.
+
+**There are no tests.** `test:ci` and `test:coverage` are intentional no-op stubs, so "tests pass" is never a meaningful verification here — use `typecheck`, `lint`, `build`, or the portal.
+
+`npm run build` chains five steps, and the order is deliberate:
+
+1. **`tsup`** — ESM + CJS JS with `bundle: false` and **`dts: false`** (one output per source file). Its `onSuccess` hook compiles `src/ui/**/*.scss` → sibling `dist/ui/**/*.css`, then copies `styles.css` and `tokens/index.css`.
+2. **`build:studio-css`** — Tailwind CLI compiles `src/studio/studio.css`.
+3. **`tsc -p tsconfig.build.json`** — a **separate** declaration pass. DTS is off in tsup because its single-worker DTS pass runs out of memory with 100+ unbundled entries.
+4. **`tsc-alias`** — rewrites `@/*` path aliases to relative paths across `dist` (JS + CJS + `.d.ts`).
+5. **`scripts/fix-cjs-requires.mjs`** — post-processes CJS `require()` calls.
+
+Skipping the separate `tsc` pass or the alias rewrite yields a `dist` with either no types or unresolved `@/` imports.
 
 Output layout under `dist/`:
 
@@ -215,24 +239,24 @@ From the consumer project (`apps/modo`):
 npm install file:../../uxm          # adjust path
 ```
 
-Run `npm run dev` here to keep `dist/` fresh; Next.js dev server will pick up changes after recompiling.
+Run `npm run dev` here to keep `dist/` fresh; the consumer's dev server picks up changes after each recompile.
 
-## Publish
+To iterate on the components themselves rather than on the integration, prefer `npm run dev:modo` — it needs no build step at all.
 
-```bash
-npm version <patch|minor|major>
-npm publish
-```
+## Releases
 
-`prepublishOnly` runs `npm run build` automatically. Ensure your `.npmrc` contains a token with `write_api` scope.
+**Releases are fully automated — never publish by hand.** Merging to `master` runs semantic-release in CI, which derives the version bump from the Conventional Commit types, writes `CHANGELOG.md`, stamps the AI-skill version markers, publishes to Nexus, and creates the GitLab release.
+
+This makes commit types carry semver meaning: `fix` → PATCH, `feat` → MINOR, a `BREAKING CHANGE:` footer → MAJOR. Running `npm version` or `npm publish` locally would desynchronise the tags from what CI has already released.
 
 ## Contributing
 
-- **Add a component**: create `src/ui/{name}/` with `{name}.tsx`, `{name}.scss`, `index.ts`. Export from `src/ui/index.ts`. Add a `README.md` mirroring the format of [`button/README.md`](src/ui/button/README.md) (simple) or [`data-table/README.md`](src/ui/data-table/README.md) (complex).
-- **Add a preview**: create `{name}-preview.tsx` next to the component. Use `PreviewProps` and project knob values as inline CSS vars so production CSS rules paint them.
-- **Add a token**: add an entry to `themeTokens` in `src/tokens/index.ts` and declare the `--color-*` variable in `src/tokens/index.css`. Reference the new token from component SCSS via `var(--uxm-foo-bar, var(--color-new-token))`.
-- Commits follow conventional-commit format (`commitizen` + `commitlint` enforced via `husky`).
-- Run `npm run lint && npm run build` before opening a PR.
+- **Add a component**: create `src/ui/{name}/` with `{name}.tsx`, `{name}.scss`, `index.ts`. Re-export from **both** the folder `index.ts` and `src/ui/index.ts`. Add the compiled stylesheet to `src/ui/styles.css` as `@import "./{name}/{name}.css";` in cascade order — the aggregator is hand-written, and a component whose `@import` is missing ships with no CSS. Add a `README.md` mirroring [`button/README.md`](src/ui/button/README.md) (simple) or [`data-table/README.md`](src/ui/data-table/README.md) (complex).
+- **Update the AI skill in the same change**: `skills/viax-uxm/` needs a catalog row, a cheatsheet row, and a bullet under `### Unreleased` in `SKILL.md`. Leave the version and component-count markers alone — CI stamps those at release via `scripts/stamp-skill-version.mjs`.
+- **Add a preview**: create `{name}-preview.tsx` next to the component — previews live beside their component, not in `src/previews/`. Use `PreviewProps` and project knob values as inline CSS vars so production CSS rules paint them. Never re-export a preview from a `src/ui/` barrel (see the tree-shake guarantee above).
+- **Add a token**: add an entry to `themeTokens` in `src/tokens/index.ts` and declare the `--color-*` variable in `src/tokens/index.css`. Reference it from component SCSS via `var(--uxm-foo-bar, var(--color-new-token))` — never hardcode a colour, spacing, or radius.
+- Commits follow conventional-commit format (`commitizen` + `commitlint` enforced via `husky`); `npm run commit` walks you through it. Commit types drive the released version — see [Releases](#releases).
+- Run `npm run lint && npm run typecheck && npm run build` before opening a merge request.
 
 ## License
 
