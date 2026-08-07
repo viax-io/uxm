@@ -135,10 +135,18 @@ export const ICONS: IconDef[] = [
   // one (TimeInput reads `clock`; recent-items / changelog UIs read `history`).
   { id: 'clock', label: 'Clock', path: 'M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' },
   { id: 'save', label: 'Save (Download)', path: 'M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3' },
-  // Heroicons arrow-up-tray — the exact mirror of `save`, so download/upload
-  // controls read as a matched pair.
-  { id: 'upload', label: 'Upload', path: 'M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5' },
-  { id: 'refresh', label: 'Refresh', path: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182' },
+  // Heroicons arrow-up-tray, so download/upload controls read as a matched
+  // pair with `save`. The arrow keeps `save`'s exact dimensions (9×4.5 head,
+  // 9×13.5 arrow) but is nudged down 1 unit (tip y3→y4, base y16.5→y17.5) as
+  // an OPTICAL correction: a pure vertical mirror leaves the arrowhead jammed
+  // against the top edge and reads as floating / top-heavy next to `save`'s
+  // grounded head. Don't "restore" the pure mirror — this offset is deliberate.
+  { id: 'upload', label: 'Upload', path: 'M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-8L12 4m0 0 4.5 4.5M12 4v13.5' },
+  // The top-right arrowhead's vertical arm was `v-.001` (≈0), so that arrowhead
+  // rendered as a bare stub with no corner. Restored to `v-4.992` to mirror the
+  // bottom-left arm (the icon has 180° rotational symmetry) so both arrowheads
+  // are complete.
+  { id: 'refresh', label: 'Refresh', path: 'M16.023 9.348h4.992v-4.992M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182' },
   { id: 'user', label: 'User', path: 'M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z' },
   { id: 'bell', label: 'Bell', path: 'M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0' },
   { id: 'menu', label: 'Menu (Hamburger)', path: 'M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' },
