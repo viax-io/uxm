@@ -34,6 +34,8 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | `buttonSize` | `number` | – | Override button height/width in px (sets `--uxm-lifecycle-zoom-button-size`). |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div>`. |
+| `zoomOutLabel` | `string` | `'Zoom out'` | Accessible name for the − button. |
+| `zoomInLabel` | `string` | `'Zoom in'` | Accessible name for the + button. |
 
 ## CSS variables
 

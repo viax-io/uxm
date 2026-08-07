@@ -14,6 +14,11 @@ export interface LoaderProps extends HTMLAttributes<HTMLDivElement> {
   message?: string;
   /** Cycle interval in ms. */
   messageInterval?: number;
+  /**
+   * Accessible name for the `role="status"` element when no `message` is
+   * showing. Default `"Loading"`. With a message, the message IS the name.
+   */
+  loadingLabel?: string;
 }
 
 export function Loader({
@@ -21,6 +26,7 @@ export function Loader({
   layout = 'stacked',
   message = '',
   messageInterval = 1500,
+  loadingLabel = 'Loading',
   className,
   ...rest
 }: LoaderProps) {
@@ -50,17 +56,17 @@ export function Loader({
   return (
     <div className={cn('uxm-loader', `uxm-loader--${layout}`, className)} {...rest}>
       {variant === 'spinner' && (
-        <div className="uxm-loader__spinner" role="status" aria-label={currentMessage || 'Loading'} />
+        <div className="uxm-loader__spinner" role="status" aria-label={currentMessage || loadingLabel} />
       )}
       {variant === 'dots' && (
-        <div className="uxm-loader__dots" role="status" aria-label={currentMessage || 'Loading'}>
+        <div className="uxm-loader__dots" role="status" aria-label={currentMessage || loadingLabel}>
           <span />
           <span />
           <span />
         </div>
       )}
       {variant === 'bar' && (
-        <div className="uxm-loader__bar" role="status" aria-label={currentMessage || 'Loading'}>
+        <div className="uxm-loader__bar" role="status" aria-label={currentMessage || loadingLabel}>
           <span />
         </div>
       )}

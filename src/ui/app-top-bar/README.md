@@ -36,6 +36,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `onMobileMenuClick` | `() => void` | – | Click handler for the mobile menu button. Button only renders when this prop is provided; hidden at `min-width: 768px`. |
 | `className` | `string` | – | Merged with the `<header>` root class via `cn`. |
 | _(any native HTMLElement attribute)_ | – | – | Spread onto the `<header>` root. |
+| `menuLabel` | `string` | `'Open navigation'` | Accessible name for the mobile menu trigger. |
 
 ## CSS variables
 

@@ -10,12 +10,15 @@ export interface AppTopBarProps extends HTMLAttributes<HTMLElement> {
   actions?: ReactNode;
   /** Mobile-only menu trigger. Hidden on desktop via CSS. */
   onMobileMenuClick?: () => void;
+  /** Accessible name for that trigger. Default `"Open navigation"`. */
+  menuLabel?: string;
 }
 
 export function AppTopBar({
   search,
   actions,
   onMobileMenuClick,
+  menuLabel = 'Open navigation',
   className,
   ...rest
 }: AppTopBarProps) {
@@ -26,7 +29,7 @@ export function AppTopBar({
           <button
             type="button"
             className="uxm-app-top-bar__menu"
-            aria-label="Open navigation"
+            aria-label={menuLabel}
             onClick={onMobileMenuClick}
           >
             <Icon glyph="menu" size={20} />

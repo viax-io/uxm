@@ -33,6 +33,12 @@ export interface CalendarProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
   onMonthChange?: (next: Date) => void;
   /** Drop a soft elevation shadow (the floating-surface look). Default true — pass `false` for a flat, inline / embedded calendar. */
   shadow?: boolean;
+  /** Accessible name for the previous-month button. Default `"Previous"`. */
+  previousMonthLabel?: string;
+  /** Accessible name for the next-month button. Default `"Next"`. */
+  nextMonthLabel?: string;
+  /** Accessible name for the month/year drill-up button. Default `"Drill up"`. */
+  drillUpLabel?: string;
 }
 
 const MS_PER_DAY = 86_400_000;
@@ -128,6 +134,9 @@ export function Calendar({
   onChange,
   onMonthChange,
   shadow = true,
+  previousMonthLabel = 'Previous',
+  nextMonthLabel = 'Next',
+  drillUpLabel = 'Drill up',
   className,
   ...rest
 }: CalendarProps) {
@@ -360,7 +369,7 @@ export function Calendar({
           type="button"
           className="uxm-calendar__nav"
           onClick={() => handleNav(-1)}
-          aria-label="Previous"
+          aria-label={previousMonthLabel}
         >
           <Icon glyph="chevron-left" size={16} />
         </button>
@@ -369,7 +378,7 @@ export function Calendar({
           className="uxm-calendar__title"
           onClick={handleTitleClick}
           disabled={view === 'year'}
-          aria-label={view === 'year' ? undefined : 'Drill up'}
+          aria-label={view === 'year' ? undefined : drillUpLabel}
         >
           {titleLabel}
         </button>
@@ -377,7 +386,7 @@ export function Calendar({
           type="button"
           className="uxm-calendar__nav"
           onClick={() => handleNav(1)}
-          aria-label="Next"
+          aria-label={nextMonthLabel}
         >
           <Icon glyph="chevron-right" size={16} />
         </button>

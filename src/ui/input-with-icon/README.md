@@ -41,6 +41,7 @@ Extends `InputHTMLAttributes<HTMLInputElement>` — any standard input attribute
 | `error` | `string` | – | Non-empty string switches the field to its error state: the `--error` modifier re-tones the border/background and leading icon, `aria-invalid` + `aria-describedby` land on the `<input>`, and the message renders below the field. |
 | `className` | `string` | – | Applied to the wrapper `<div>` (not the input). |
 | _(any native input attribute)_ | – | – | Spread onto the inner `<input>` (except `value`, which is handled explicitly). |
+| `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
 
 ## CSS variables
 

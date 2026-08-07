@@ -41,6 +41,12 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `style` | `CSSProperties` | – | Inline style on the WRAPPER (not the input). Use to project `--uxm-time-input-*` overrides. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native input attribute)_ | – | – | Spread onto the inner `<input>`. |
+| `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
+| `openPickerLabel` | `string` | `'Open time picker'` | Accessible name for the picker trigger. |
+| `pickerDialogLabel` | `string` | `'Pick a time'` | Accessible name for the picker popover dialog. |
+| `hourColumnLabel` | `string` | `'Hour'` | Accessible name for the hour column listbox. |
+| `minuteColumnLabel` | `string` | `'Minute'` | Accessible name for the minute column listbox. |
+| `meridiemColumnLabel` | `string` | `'AM or PM'` | Accessible name for the AM/PM column listbox (`12h` only). |
 
 The `TimeInputFormat` union (`'24h' \| '12h'`) is exported.
 

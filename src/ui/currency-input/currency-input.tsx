@@ -61,6 +61,10 @@ export interface CurrencyInputProps
    * `onClear` is needed (mirrors NumberInput / PhoneInput).
    */
   clearable?: boolean;
+  /** Accessible name for the clear button. Default `"Clear"`. */
+  clearLabel?: string;
+  /** Accessible name for the currency picker trigger. Default `"Choose currency"`. */
+  chooseCurrencyLabel?: string;
   /**
    * Inline style applied to the WRAPPER (not the inner <input>). CSS
    * custom properties set here cascade to the inner field AND the
@@ -172,6 +176,8 @@ export function CurrencyInput({
   max,
   allowNegative = false,
   clearable = true,
+  clearLabel = 'Clear',
+  chooseCurrencyLabel = 'Choose currency',
   className,
   style,
   disabled,
@@ -302,7 +308,7 @@ export function CurrencyInput({
         panelClassName="uxm-currency-input__panel"
         panelStyle={style}
         className="uxm-currency-input__picker-wrap"
-        aria-label="Choose currency"
+        aria-label={chooseCurrencyLabel}
         renderTrigger={({ open, triggerProps }) => (
           <button
             {...triggerProps}
@@ -353,7 +359,7 @@ export function CurrencyInput({
       {showClear && (
         <IconButton
           className="uxm-field-clear uxm-currency-input__clear"
-          aria-label="Clear"
+          aria-label={clearLabel}
           // Prevent the button from stealing focus away from whatever's
           // currently focused — a blur here would clamp the about-to-be-wiped
           // value first (same guard as NumberInput).

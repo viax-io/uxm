@@ -37,6 +37,7 @@ function Example() {
 | `className` | `string` | – | Merged via `cn`. |
 | `style` | `CSSProperties` | – | Inline style on the rendered chip — used by the editor preview to project draft `--uxm-chip-*` vars. |
 | `aria-label` | `string` | – | Forwarded to the root element. |
+| `removeLabel` | `string` | `'Remove'` | Accessible name for the × . Override per chip (`Remove ${label}`) when several share a row. |
 
 ### `ChipMode`
 

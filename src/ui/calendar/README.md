@@ -39,6 +39,9 @@ function Example() {
 | `onMonthChange` | `(next: Date) => void` | – | Fires on prev/next nav, outside-month-cell click, or drill-down from month/year views. |
 | `className` | `string` | – | Merged onto the root via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div className="uxm-calendar uxm-calendar--view-{view}">`. |
+| `previousMonthLabel` | `string` | `'Previous'` | Accessible name for the previous-month button. |
+| `nextMonthLabel` | `string` | `'Next'` | Accessible name for the next-month button. |
+| `drillUpLabel` | `string` | `'Drill up'` | Accessible name for the month/year drill-up button. |
 
 ### `CalendarValue`
 

@@ -86,7 +86,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 ## Accessibility
 
-- Root is a `<nav aria-label="Breadcrumb">` — screen readers announce the landmark with its purpose without consumers needing to do anything.
+- Root is a `<nav aria-label="Breadcrumb">` — screen readers announce the landmark with its purpose without consumers needing to do anything. That default takes **no prop to override**: `...rest` is spread after it, so passing `aria-label` replaces it — do that in a localised UI, or when a page carries more than one trail.
 - The trail is an ordered list (`<ol>`) — listeners get position-in-set semantics ("item 2 of 3").
 - The final crumb is marked `aria-current="page"` and is **not** a link — assistive tech correctly identifies the current page.
 - Separator nodes carry `aria-hidden` so they're skipped by screen readers.

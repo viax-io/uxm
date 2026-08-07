@@ -62,6 +62,14 @@ export interface SideFlexpaneProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   maxWidth?: number;
   /** Whether the drag handle is shown. Defaults to true. */
   resizable?: boolean;
+  /** Accessible name for the close (×) button. Default `"Close"`. */
+  closeLabel?: string;
+  /** Accessible name for the drag handle. Default `"Resize panel"`. */
+  resizeLabel?: string;
+  /** Accessible name for the expand toggle while collapsed. Default `"Expand panel"`. */
+  expandLabel?: string;
+  /** Accessible name for the expand toggle while expanded. Default `"Collapse panel"`. */
+  collapseLabel?: string;
 }
 
 export function SideFlexpane({
@@ -85,6 +93,10 @@ export function SideFlexpane({
   minWidth = 280,
   maxWidth = 720,
   resizable = true,
+  closeLabel = 'Close',
+  resizeLabel = 'Resize panel',
+  expandLabel = 'Expand panel',
+  collapseLabel = 'Collapse panel',
   style,
   ...rest
 }: SideFlexpaneProps) {
@@ -223,7 +235,7 @@ export function SideFlexpane({
           onKeyDown={onHandleKeyDown}
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
-          aria-label="Resize panel"
+          aria-label={resizeLabel}
           role="separator"
           aria-orientation="vertical"
           className="uxm-side-flexpane__resize-handle"
@@ -256,7 +268,7 @@ export function SideFlexpane({
             )}
             {expandable && (
               <IconButton
-                aria-label={expanded ? 'Collapse panel' : 'Expand panel'}
+                aria-label={expanded ? collapseLabel : expandLabel}
                 aria-pressed={expanded}
                 onClick={toggleExpanded}
               >
@@ -264,7 +276,7 @@ export function SideFlexpane({
               </IconButton>
             )}
             {onClose && (
-              <IconButton aria-label="Close" onClick={onClose}>
+              <IconButton aria-label={closeLabel} onClick={onClose}>
                 <Icon glyph="close" />
               </IconButton>
             )}

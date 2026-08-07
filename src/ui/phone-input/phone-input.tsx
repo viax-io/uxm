@@ -50,6 +50,10 @@ export interface PhoneInputProps
    * separate `onClear` is needed (mirrors NumberInput / Select).
    */
   clearable?: boolean;
+  /** Accessible name for the clear button. Default `"Clear"`. */
+  clearLabel?: string;
+  /** Accessible name for the country picker trigger. Default `"Choose country"`. */
+  chooseCountryLabel?: string;
   /**
    * Inline style applied to the WRAPPER, and forwarded to the country
    * picker panel via `panelStyle` (the panel portals to document.body, so
@@ -77,6 +81,8 @@ export function PhoneInput({
   onChange,
   countries = CURATED_COUNTRIES,
   clearable = true,
+  clearLabel = 'Clear',
+  chooseCountryLabel = 'Choose country',
   className,
   placeholder,
   style,
@@ -162,7 +168,7 @@ export function PhoneInput({
         panelClassName="uxm-phone-input__panel"
         panelStyle={style}
         className="uxm-phone-input__picker"
-        aria-label="Choose country"
+        aria-label={chooseCountryLabel}
         renderTrigger={({ open, triggerProps }) => (
           <button
             {...triggerProps}
@@ -216,7 +222,7 @@ export function PhoneInput({
       {showClear && (
         <IconButton
           className="uxm-field-clear uxm-phone-input__clear"
-          aria-label="Clear"
+          aria-label={clearLabel}
           // Prevent the button from stealing focus away from whatever's
           // currently focused — a blur here would land before the reset does.
           onMouseDown={(e) => e.preventDefault()}

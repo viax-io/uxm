@@ -683,6 +683,30 @@ skill:
   not a template: it feeds the 2-D area's `aria-valuetext` (a single `aria-valuenow` can't carry
   both axes), and a translation must be able to reorder the two numbers.
   `ColorInputPopover`'s `triggerLabel` is separate and already existed.
+- **The same rollout across the remaining 19 atoms.** Every icon-only control in the library now
+  takes its accessible name as a prop, each defaulting to the string that was previously
+  hardcoded — so nothing changes unless you pass one. Clear buttons use **`clearLabel`**
+  everywhere (`TextInput`, `Textarea`, `Select` — per-mode default, `NumberInput`,
+  `InputWithIcon`, `DateInput`, `TimeInput`, `CurrencyInput`, `PhoneInput`, `PillSelect`,
+  `SearchDropdown`). Pickers add a trigger and dialog name (`openCalendarLabel` /
+  `calendarDialogLabel`, `openPickerLabel` / `pickerDialogLabel`, `chooseCurrencyLabel`,
+  `chooseCountryLabel`); `TimeInput` also names its three columns (`hourColumnLabel`,
+  `minuteColumnLabel`, `meridiemColumnLabel`). Elsewhere: `Chip.removeLabel`,
+  `Calendar.previousMonthLabel` / `nextMonthLabel` / `drillUpLabel`,
+  `PasswordInput.showLabel` / `hideLabel`, `Loader.loadingLabel`,
+  `AppSidebar.closeLabel` / `expandLabel` / `collapseLabel`, `AppTopBar.menuLabel`,
+  `SideFlexpane.closeLabel` / `resizeLabel` / `expandLabel` / `collapseLabel`,
+  `LifecycleZoomControl.zoomOutLabel` / `zoomInLabel`,
+  `DataTable.actionsColumnLabel` / `rowActionsLabel`, and six on `EditableCell`
+  (`clearSelectionLabel`, `clearDateLabel`, `clearValueLabel`, `openCalendarLabel`,
+  `calendarDialogLabel`, `addDateLabel`).
+- **Two root-level names need no prop — pass `aria-label`.** `Breadcrumb`'s `"Breadcrumb"` and
+  `BulkActionBar`'s `"Bulk actions"` are defaults on the root element with `...rest` spread
+  **after** them, so a plain `aria-label` already wins. Worth passing when a page has two trails
+  or two toolbars, since a repeated landmark name is ambiguous to a screen-reader user.
+- **`DataTable.rowActionsLabel` and `Chip.removeLabel` deserve per-instance values.** Both default
+  to a generic string that repeats identically on every row / chip; `Remove ${name}` and
+  `Actions for ${row}` are what actually tell a screen-reader user which one they are on.
 
 ## Workflow
 

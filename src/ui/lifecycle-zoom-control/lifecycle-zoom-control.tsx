@@ -11,6 +11,10 @@ export interface LifecycleZoomControlProps extends HTMLAttributes<HTMLDivElement
   onZoomOut?: () => void;
   /** Size of each button in px. CSS-token-driven by default. */
   buttonSize?: number;
+  /** Accessible name for the − button. Default `"Zoom out"`. */
+  zoomOutLabel?: string;
+  /** Accessible name for the + button. Default `"Zoom in"`. */
+  zoomInLabel?: string;
 }
 
 /**
@@ -22,6 +26,8 @@ export function LifecycleZoomControl({
   onZoomIn,
   onZoomOut,
   buttonSize,
+  zoomOutLabel = 'Zoom out',
+  zoomInLabel = 'Zoom in',
   className,
   style,
   ...rest
@@ -36,7 +42,7 @@ export function LifecycleZoomControl({
       <button
         type="button"
         className="uxm-lifecycle-zoom-control__btn"
-        aria-label="Zoom out"
+        aria-label={zoomOutLabel}
         onClick={onZoomOut}
         disabled={!onZoomOut}
       >
@@ -49,7 +55,7 @@ export function LifecycleZoomControl({
       <button
         type="button"
         className="uxm-lifecycle-zoom-control__btn"
-        aria-label="Zoom in"
+        aria-label={zoomInLabel}
         onClick={onZoomIn}
         disabled={!onZoomIn}
       >

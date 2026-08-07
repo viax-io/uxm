@@ -42,6 +42,7 @@ Type alias for `InputHTMLAttributes<HTMLInputElement>`. Every native input attri
 |------|------|---------|-------------|
 | `type` | `string` | `'text'` | Overridden default — set explicitly for `'email'`, `'password'`, `'number'`, etc. |
 | `className` | `string` | – | Merged with `uxm-input-text` via `cn`. Add `uxm-input-text--error` or `uxm-input-error` for the error state. |
+| `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
 | _(any native input attribute)_ | – | – | Spread onto the root `<input>`. |
 
 ### `Textarea` — `TextareaProps`
@@ -52,6 +53,7 @@ Type alias for `TextareaHTMLAttributes<HTMLTextAreaElement>`. Every native texta
 |------|------|---------|-------------|
 | `className` | `string` | – | Merged with `uxm-textarea` via `cn`. |
 | `rows` | `number` | browser default | Initial row count; height also gated by `min-height: 100px` and `resize: vertical`. |
+| `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
 | _(any native textarea attribute)_ | – | – | Spread onto the root `<textarea>`. |
 
 ### `Select` — `SelectProps`
@@ -70,6 +72,7 @@ The rendered trigger is a `<div role="combobox">`, not a `<select>` — the open
 | `searchable` | `boolean \| 'auto'` | `'auto'` | `'auto'` shows the panel search box only past the shared Listbox threshold (6 options). |
 | `required` | `boolean` | `false` | Flags an empty selection — it does **not** block. Adds `aria-required` and surfaces `requiredMessage` once the field is emptied (input-family live model). |
 | `requiredMessage` | `string` | per mode | `'Select an option'` (single) / `'Select at least one option'` (multi, the shared `DEFAULT_MULTI_REQUIRED_MESSAGE`). |
+| `clearLabel` | `string` | per mode | Accessible name for the trigger's clear button: `'Clear selection'` (single) / `'Clear all selections'` (multi). |
 | `className` | `string` | – | Merged with `uxm-select-dropdown` via `cn`. |
 | _(any other native select attribute)_ | – | – | Spread onto the trigger; `triggerProps` and the atom's own props win on collision. |
 

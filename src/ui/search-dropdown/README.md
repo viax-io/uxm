@@ -46,6 +46,7 @@ function CountryPicker() {
 | `className` | `string` | – | Merged with `uxm-search-dropdown` via `cn`. |
 | `style` | `CSSProperties` | – | Inline style on the wrapper. |
 | `aria-label` | `string` | – | Forwarded to the trigger button. |
+| `clearLabel` | `string` | `'Clear selection'` | Accessible name for the clear button. |
 
 ### `SearchDropdownOption`
 

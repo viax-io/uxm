@@ -54,6 +54,8 @@ export interface PillSelectProps extends Omit<HTMLAttributes<HTMLDivElement>, 'o
   requiredMessage?: string;
   /** Show a trailing ✕ on the field that clears ALL chips at once. Default false (chips also clear individually via their own ×). */
   clearable?: boolean;
+  /** Accessible name for the clear-all button. Default `"Clear all selections"`. */
+  clearLabel?: string;
 }
 
 type Item = { value: string; label: string };
@@ -87,6 +89,7 @@ export function PillSelect({
   required = false,
   requiredMessage,
   clearable = false,
+  clearLabel = 'Clear all selections',
   ...rest
 }: PillSelectProps) {
   const errorId = useId();
@@ -216,7 +219,7 @@ export function PillSelect({
             )}
             {clearable && selected.length > 0 && !disabled && (
               <IconButton
-                aria-label="Clear all selections"
+                aria-label={clearLabel}
                 className="uxm-field-clear"
                 // Stop click + mousedown bubbling so clearing doesn't ALSO
                 // toggle the dropdown (Popover closes on outside mousedown).

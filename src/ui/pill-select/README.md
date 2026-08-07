@@ -44,6 +44,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `clearable` | `boolean` | `false` | Renders a trailing ✕ on the field that clears **all** chips at once, plus its "Clear all" twin in the dropdown footer. Chips always clear individually via their own × regardless. |
 | `className` | `string` | – | Merged with `uxm-pill-select` on the root. |
 | _(any other native div attribute)_ | – | – | Spread onto the root `<div>`. |
+| `clearLabel` | `string` | `'Clear all selections'` | Accessible name for the clear-all button. |
 
 ## CSS variables
 
