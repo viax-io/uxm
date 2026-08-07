@@ -759,6 +759,13 @@ skill:
   (a labelled field is laid out at a definite width) — while a DataTable leaves the default and
   keeps the anti-jump behaviour unchanged at both sizes. A composition knob like
   `--uxm-editable-cell-text-inset`, not a designer one — deliberately not in the studio registry.
+- **Both new knobs are INHERITED, so a component that composes `EditableCell` must re-assert them.**
+  `FormField` sets them on its control wrapper precisely so they reach a cell at any depth — which
+  means a `DataTable` nested inside that control inherits them too and loses the behaviour it
+  depends on (the `max-content` floor is what stops an auto-sized column jumping on edit; the
+  outdent would pull the first column off the header grid). `DataTable` now resets both on its own
+  root. If you build anything else that renders `EditableCell`s, do the same:
+  `--uxm-editable-cell-editing-track-floor: max-content; --uxm-editable-cell-outdent: 0;`.
 
 ## Workflow
 
