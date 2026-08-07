@@ -118,8 +118,49 @@ function ChannelInput({
   );
 }
 
+/**
+ * Accessible names for the picker's unlabelled controls. Grouped into one
+ * object rather than seven flat props: none of them is individually
+ * interesting, a consumer localising the picker sets ALL of them at once from
+ * its own dictionary, and one object keeps that a single spread instead of
+ * seven prop lines. Every field is optional and falls back to the English
+ * default.
+ */
+export interface ColorInputLabels {
+  /** Saturation / brightness area. Default `"Color"`. */
+  area?: string;
+  /**
+   * Spoken value of the 2-D area. A single `aria-valuenow` can only carry
+   * one axis, so this is what a screen-reader user actually hears.
+   * Default `` `Saturation ${s}%, Brightness ${v}%` ``.
+   */
+  areaValueText?: (saturation: number, brightness: number) => string;
+  /** Hue slider. Default `"Hue"`. */
+  hue?: string;
+  /** Opacity slider. Default `"Opacity"`. */
+  alpha?: string;
+  /** Screen eyedropper button. Default `"Pick color from screen"`. */
+  eyedropper?: string;
+  /** Representation select. Default `"Color format"`. */
+  format?: string;
+  /** Hex text field. Default `"Hex color value"`. */
+  hex?: string;
+}
+
+const DEFAULT_LABELS = {
+  area: 'Color',
+  areaValueText: (s: number, v: number) => `Saturation ${s}%, Brightness ${v}%`,
+  hue: 'Hue',
+  alpha: 'Opacity',
+  eyedropper: 'Pick color from screen',
+  format: 'Color format',
+  hex: 'Hex color value',
+} satisfies Required<ColorInputLabels>;
+
 export interface ColorInputProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+  /** Accessible names for the unlabelled controls. Merged over the English defaults. */
+  labels?: ColorInputLabels;
   /** Current value (controlled) — any supported color string. */
   value?: string;
   /** Initial value for uncontrolled usage. Defaults to `#000000`. */
@@ -164,11 +205,13 @@ export function ColorInput({
   eyedropper = true,
   disabled = false,
   error,
+  labels,
   className,
   style,
   ...rest
 }: ColorInputProps) {
   const isControlled = value !== undefined;
+  const l = { ...DEFAULT_LABELS, ...labels };
 
   const [hsva, setHsva] = useState<HSVA>(() => {
     const parsed = parseColorString((isControlled ? value : defaultValue) ?? '#000000');
@@ -384,11 +427,11 @@ export function ColorInput({
         ref={satRef}
         className="uxm-color-input__saturation"
         role="slider"
-        aria-label="Color"
+        aria-label={l.area}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(hsva.s)}
-        aria-valuetext={`Saturation ${Math.round(hsva.s)}%, Brightness ${Math.round(hsva.v)}%`}
+        aria-valuetext={l.areaValueText(Math.round(hsva.s), Math.round(hsva.v))}
         aria-disabled={disabled || undefined}
         tabIndex={disabled ? -1 : 0}
         onPointerDown={handleSatPointerDown}
@@ -407,7 +450,7 @@ export function ColorInput({
             ref={hueRef}
             className="uxm-color-input__hue"
             role="slider"
-            aria-label="Hue"
+            aria-label={l.hue}
             aria-valuemin={0}
             aria-valuemax={360}
             aria-valuenow={Math.round(hsva.h)}
@@ -424,7 +467,7 @@ export function ColorInput({
               ref={alphaRef}
               className="uxm-color-input__alpha"
               role="slider"
-              aria-label="Opacity"
+              aria-label={l.alpha}
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={Math.round(hsva.a * 100)}
@@ -445,7 +488,7 @@ export function ColorInput({
           <button
             type="button"
             className="uxm-color-input__eyedropper"
-            aria-label="Pick color from screen"
+            aria-label={l.eyedropper}
             disabled={disabled}
             onClick={handleEyeDropper}
           >
@@ -458,7 +501,7 @@ export function ColorInput({
         {showFormat && (
           <Select
             className="uxm-color-input__format"
-            aria-label="Color format"
+            aria-label={l.format}
             value={displayFormat}
             disabled={disabled}
             onChange={(e) => {
@@ -481,7 +524,7 @@ export function ColorInput({
             className={cn('uxm-color-input__field', hexInvalid && 'uxm-color-input__field--invalid')}
             value={hexShown}
             disabled={disabled}
-            aria-label="Hex color value"
+            aria-label={l.hex}
             aria-invalid={hexInvalid || undefined}
             spellCheck={false}
             autoComplete="off"

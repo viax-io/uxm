@@ -55,6 +55,18 @@ export interface TimeInputProps
    * separate `onClear` is needed.
    */
   clearable?: boolean;
+  /** Accessible name for the clear button. Default `"Clear"`. */
+  clearLabel?: string;
+  /** Accessible name for the picker trigger. Default `"Open time picker"`. */
+  openPickerLabel?: string;
+  /** Accessible name for the picker popover dialog. Default `"Pick a time"`. */
+  pickerDialogLabel?: string;
+  /** Accessible name for the hour column listbox. Default `"Hour"`. */
+  hourColumnLabel?: string;
+  /** Accessible name for the minute column listbox. Default `"Minute"`. */
+  minuteColumnLabel?: string;
+  /** Accessible name for the AM/PM column listbox (`12h` only). Default `"AM or PM"`. */
+  meridiemColumnLabel?: string;
   /**
    * Inline style applied to the WRAPPER (not the inner <input>). CSS custom
    * properties set here cascade to every descendant — the input, the AM/PM
@@ -165,6 +177,12 @@ export function TimeInput({
   picker = true,
   minuteStep = 1,
   clearable = true,
+  clearLabel = 'Clear',
+  openPickerLabel = 'Open time picker',
+  pickerDialogLabel = 'Pick a time',
+  hourColumnLabel = 'Hour',
+  minuteColumnLabel = 'Minute',
+  meridiemColumnLabel = 'AM or PM',
   style,
   disabled,
   error,
@@ -339,7 +357,7 @@ export function TimeInput({
       {showClear && (
         <IconButton
           className="uxm-field-clear uxm-time-input__clear"
-          aria-label="Clear"
+          aria-label={clearLabel}
           // Prevent the button from stealing focus away from whatever's
           // currently focused — clearing must not re-open the picker popover
           // via the input's onFocus handler.
@@ -354,7 +372,7 @@ export function TimeInput({
           type="button"
           className="uxm-time-input__icon"
           onClick={() => setIsOpen((o) => !o)}
-          aria-label="Open time picker"
+          aria-label={openPickerLabel}
           aria-expanded={isOpen}
         >
           <Icon glyph="clock" />
@@ -389,9 +407,9 @@ export function TimeInput({
           // focus too and uses a non-restoring popover).
           restoreFocus={false}
           className="uxm-time-input__popover"
-          aria-label="Pick a time"
+          aria-label={pickerDialogLabel}
         >
-          <div className="uxm-time-input__column" role="listbox" aria-label="Hour">
+          <div className="uxm-time-input__column" role="listbox" aria-label={hourColumnLabel}>
             <div className="uxm-time-input__column-head">{hh || hours[0]}</div>
             <div className="uxm-time-input__column-body" ref={hourBodyRef}>
               {hours.map((h, i) => (
@@ -414,7 +432,7 @@ export function TimeInput({
               ))}
             </div>
           </div>
-          <div className="uxm-time-input__column" role="listbox" aria-label="Minute">
+          <div className="uxm-time-input__column" role="listbox" aria-label={minuteColumnLabel}>
             <div className="uxm-time-input__column-head">{mm || '00'}</div>
             <div className="uxm-time-input__column-body" ref={minuteBodyRef}>
               {minutes.map((m, i) => (
@@ -438,7 +456,7 @@ export function TimeInput({
             </div>
           </div>
           {format === '12h' && (
-            <div className="uxm-time-input__column" role="listbox" aria-label="AM or PM">
+            <div className="uxm-time-input__column" role="listbox" aria-label={meridiemColumnLabel}>
               <div className="uxm-time-input__column-head">{meridiem}</div>
               <div className="uxm-time-input__column-body">
                 {MERIDIEMS.map((m, i) => (

@@ -41,6 +41,9 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `style` | `CSSProperties` | – | Applied to the **wrapper** (not the inner input) so `--uxm-date-input-*` overrides cascade to the popover too. |
 | `className` | `string` | – | Merged onto the wrapper via `cn`. |
 | `error` | `string` | – | Consumer-supplied error message. When non-empty it renders the error state (red border, `aria-invalid`, message below the field) and **wins over** the component's own inline invalid-date message. Omit (or pass `''`) for the normal state. |
+| `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
+| `openCalendarLabel` | `string` | `'Open calendar'` | Accessible name for the calendar trigger. |
+| `calendarDialogLabel` | `string` | `'Choose date'` | Accessible name for the calendar popover dialog. |
 
 ### `DateInputFormat`
 

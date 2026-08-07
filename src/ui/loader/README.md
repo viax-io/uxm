@@ -33,6 +33,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | `messageInterval` | `number` | `1500` | Cycle interval in milliseconds (only takes effect with two or more messages). |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div>`. |
+| `loadingLabel` | `string` | `'Loading'` | Accessible name for the `role="status"` element when no `message` is showing. |
 
 ```ts
 type LoaderVariant = 'spinner' | 'dots' | 'bar';

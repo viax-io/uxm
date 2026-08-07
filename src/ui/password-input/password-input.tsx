@@ -14,6 +14,10 @@ export interface PasswordInputProps
    * accessibility policy or kiosk-mode UX requires the value to stay masked.
    */
   toggle?: boolean;
+  /** Accessible name for the eye toggle while the value is masked. Default `"Show password"`. */
+  showLabel?: string;
+  /** Accessible name for the eye toggle while the value is visible. Default `"Hide password"`. */
+  hideLabel?: string;
   /** Initial visibility for uncontrolled toggle. */
   defaultVisible?: boolean;
   /**
@@ -27,6 +31,8 @@ export interface PasswordInputProps
 
 export function PasswordInput({
   toggle = true,
+  showLabel = 'Show password',
+  hideLabel = 'Hide password',
   defaultVisible = false,
   visible,
   onToggleVisible,
@@ -57,7 +63,7 @@ export function PasswordInput({
           type="button"
           className="uxm-password-input__toggle"
           onClick={handleToggle}
-          aria-label={current ? 'Hide password' : 'Show password'}
+          aria-label={current ? hideLabel : showLabel}
           aria-pressed={current}
         >
           <Icon glyph={current ? 'eye-slash' : 'eye'} />

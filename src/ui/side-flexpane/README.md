@@ -60,6 +60,10 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` (the `title` prop is tak
 | `className` | `string` | – | Merged with `uxm-side-flexpane` via `cn`. |
 | `style` | `CSSProperties` | – | Consumer styles WIN over the resize-driven inline width — useful for locking width without disabling resize. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<aside>`. |
+| `closeLabel` | `string` | `'Close'` | Accessible name for the close (×) button. |
+| `resizeLabel` | `string` | `'Resize panel'` | Accessible name for the drag handle. |
+| `expandLabel` | `string` | `'Expand panel'` | Accessible name for the expand toggle while collapsed. |
+| `collapseLabel` | `string` | `'Collapse panel'` | Accessible name for the expand toggle while expanded. |
 
 ## CSS variables
 

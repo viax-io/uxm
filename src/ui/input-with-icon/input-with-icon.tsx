@@ -23,6 +23,8 @@ export interface InputWithIconProps extends InputHTMLAttributes<HTMLInputElement
    * are provided, since uncontrolled inputs can't be reset from the outside.
    */
   onClear?: () => void;
+  /** Accessible name for the clear button. Default `"Clear"`. */
+  clearLabel?: string;
   /**
    * When set to a non-empty string, the field renders in its error state: the
    * `--error` modifier re-tones the input border/background and the leading
@@ -38,6 +40,7 @@ export function InputWithIcon({
   type = 'text',
   clearable,
   onClear,
+  clearLabel = 'Clear',
   value,
   error,
   ...rest
@@ -75,7 +78,7 @@ export function InputWithIcon({
           <IconButton
             onClick={onClear}
             className="uxm-field-clear uxm-input-with-icon__clear"
-            aria-label="Clear"
+            aria-label={clearLabel}
           >
             <Icon glyph="close" />
           </IconButton>

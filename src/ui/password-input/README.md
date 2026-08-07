@@ -34,6 +34,8 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>` — `type` is owne
 | `autoComplete` | `string` | `'current-password'` | Forwarded to the input. Override to `'new-password'` for sign-up forms. |
 | `className` | `string` | – | Merged with `uxm-password-input` on the wrapper. |
 | _(any other native input attribute)_ | – | – | Spread onto the inner `<input>`. |
+| `showLabel` | `string` | `'Show password'` | Accessible name for the eye toggle while masked. |
+| `hideLabel` | `string` | `'Hide password'` | Accessible name for the eye toggle while visible. |
 
 ## CSS variables
 

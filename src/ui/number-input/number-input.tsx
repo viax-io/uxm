@@ -45,6 +45,8 @@ export interface NumberInputProps
    * no separate `onClear` is needed (mirrors Select / DateInput).
    */
   clearable?: boolean;
+  /** Accessible name for the clear button. Default `"Clear"`. */
+  clearLabel?: string;
   /**
    * When set to a non-empty string, the field renders in its error state:
    * red border (`.uxm-number-input--error`), `aria-invalid`, and the message
@@ -125,6 +127,7 @@ export function NumberInput({
   allowDecimal = false,
   decimals = 2,
   clearable = true,
+  clearLabel = 'Clear',
   className,
   error,
   disabled,
@@ -210,7 +213,7 @@ export function NumberInput({
           {showClear && (
             <IconButton
               className="uxm-field-clear uxm-number-input__clear"
-              aria-label="Clear"
+              aria-label={clearLabel}
               // Keep focus in the input so the clear-click doesn't trigger a
               // blur-clamp on the about-to-be-wiped value first.
               onMouseDown={(e) => e.preventDefault()}

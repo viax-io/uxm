@@ -658,6 +658,56 @@ skill:
   per-component knobs — the studio's editor model is per-component, and non-colour values don't
   belong in the token layer.
 
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **Every icon-only control now has a translatable accessible name.** Four atoms hardcoded
+  English `aria-label`s on buttons that carry no visible text, so the label was the *only* thing
+  assistive tech announced and it could not be localised. All are now props with the previous
+  strings as defaults, so nothing changes unless you pass one: `NumberStepper` gains
+  `decrementLabel` / `incrementLabel` (`"Decrement"` / `"Increment"`), `Modal` gains `closeLabel`
+  (`"Close"`, declared on the root next to `onClose` and reaching `Modal.Header` through context),
+  and `BulkActionBar` gains `clearLabel` (`"Clear selection"`). `BulkActionBar`'s *toolbar* name
+  needed no prop — `...rest` is spread after the default, so `aria-label` already overrode
+  `"Bulk actions"`.
+- **`ColorInput` takes a `labels` object.** Seven accessible names — `area`, `areaValueText`,
+  `hue`, `alpha`, `eyedropper`, `format`, `hex` — merged over the English defaults, exported as
+  `ColorInputLabels`. One object rather than seven props because a consumer localising the picker
+  sets all of them at once. `areaValueText` is a **function** `(saturation, brightness) => string`,
+  not a template: it feeds the 2-D area's `aria-valuetext` (a single `aria-valuenow` can't carry
+  both axes), and a translation must be able to reorder the two numbers.
+  `ColorInputPopover`'s `triggerLabel` is separate and already existed.
+- **The same rollout across the remaining 19 atoms.** Every icon-only control in the library now
+  takes its accessible name as a prop, each defaulting to the string that was previously
+  hardcoded — so nothing changes unless you pass one. Clear buttons use **`clearLabel`**
+  everywhere (`TextInput`, `Textarea`, `Select` — per-mode default, `NumberInput`,
+  `InputWithIcon`, `DateInput`, `TimeInput`, `CurrencyInput`, `PhoneInput`, `PillSelect`,
+  `SearchDropdown`). Pickers add a trigger and dialog name (`openCalendarLabel` /
+  `calendarDialogLabel`, `openPickerLabel` / `pickerDialogLabel`, `chooseCurrencyLabel`,
+  `chooseCountryLabel`); `TimeInput` also names its three columns (`hourColumnLabel`,
+  `minuteColumnLabel`, `meridiemColumnLabel`). Elsewhere: `Chip.removeLabel`,
+  `Calendar.previousMonthLabel` / `nextMonthLabel` / `drillUpLabel`,
+  `PasswordInput.showLabel` / `hideLabel`, `Loader.loadingLabel`,
+  `AppSidebar.closeLabel` / `expandLabel` / `collapseLabel`, `AppTopBar.menuLabel`,
+  `SideFlexpane.closeLabel` / `resizeLabel` / `expandLabel` / `collapseLabel`,
+  `LifecycleZoomControl.zoomOutLabel` / `zoomInLabel`,
+  `DataTable.actionsColumnLabel` / `rowActionsLabel`, and six on `EditableCell`
+  (`clearSelectionLabel`, `clearDateLabel`, `clearValueLabel`, `openCalendarLabel`,
+  `calendarDialogLabel`, `addDateLabel`).
+- **Two root-level names need no prop — pass `aria-label`.** `Breadcrumb`'s `"Breadcrumb"` and
+  `BulkActionBar`'s `"Bulk actions"` are defaults on the root element with `...rest` spread
+  **after** them, so a plain `aria-label` already wins. Worth passing when a page has two trails
+  or two toolbars, since a repeated landmark name is ambiguous to a screen-reader user.
+- **`DataTable.rowActionsLabel` and `Chip.removeLabel` deserve per-instance values.** Both default
+  to a generic string that repeats identically on every row / chip; `Remove ${name}` and
+  `Actions for ${row}` are what actually tell a screen-reader user which one they are on.
+
 ## Workflow
 
 ### Before writing any code

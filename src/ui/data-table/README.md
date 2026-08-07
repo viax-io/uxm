@@ -51,6 +51,8 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `onRowClick` | `(row: T) => void` | – | When provided, rows render with a pointer cursor (`uxm-data-table__row--interactive`) and forward clicks. Header clicks are not captured. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div className="uxm-data-table">`. |
+| `actionsColumnLabel` | `string` | `'Actions'` | Accessible name for the visually-empty actions column header. |
+| `rowActionsLabel` | `string` | `'Row actions'` | Accessible name for each row's ⋮ trigger and menu. Repeats on every row — override where the row has a name. |
 
 ### `DataTableColumn<T>`
 

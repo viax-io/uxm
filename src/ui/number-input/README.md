@@ -45,6 +45,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `className` | `string` | – | Merged with `uxm-number-input`. |
 | `onBlur` | `FocusEventHandler` | – | Invoked after blur-time clamping. |
 | _(any other native input attribute)_ | – | – | Spread onto the `<input>`. |
+| `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
 
 ## CSS variables
 

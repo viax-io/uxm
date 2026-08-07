@@ -48,6 +48,8 @@ export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
    * custom reset logic beyond emptying the value.
    */
   onClear?: () => void;
+  /** Accessible name for the clear button. Default `"Clear"`. */
+  clearLabel?: string;
 }
 
 export function TextInput({
@@ -56,6 +58,7 @@ export function TextInput({
   error,
   clearable = true,
   onClear,
+  clearLabel = 'Clear',
   value,
   defaultValue,
   onChange,
@@ -123,7 +126,7 @@ export function TextInput({
             <IconButton
               onClick={handleClear}
               className="uxm-field-clear uxm-input-text__clear"
-              aria-label="Clear"
+              aria-label={clearLabel}
             >
               <Icon glyph="close" />
             </IconButton>
@@ -151,6 +154,8 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
   clearable?: boolean;
   /** See `TextInputProps.onClear` — optional override; the field self-clears otherwise. */
   onClear?: () => void;
+  /** See `TextInputProps.clearLabel`. Default `"Clear"`. */
+  clearLabel?: string;
 }
 
 export function Textarea({
@@ -158,6 +163,7 @@ export function Textarea({
   error,
   clearable = true,
   onClear,
+  clearLabel = 'Clear',
   value,
   defaultValue,
   onChange,
@@ -218,7 +224,7 @@ export function Textarea({
             <IconButton
               onClick={handleClear}
               className="uxm-field-clear uxm-textarea__clear"
-              aria-label="Clear"
+              aria-label={clearLabel}
             >
               <Icon glyph="close" />
             </IconButton>
@@ -283,6 +289,11 @@ interface SelectCommonProps extends SelectNativeProps {
    * (the shared `DEFAULT_MULTI_REQUIRED_MESSAGE`).
    */
   requiredMessage?: string;
+  /**
+   * Accessible name for the trigger's clear button. Defaults are per-mode:
+   * single → `"Clear selection"`, multi → `"Clear all selections"`.
+   */
+  clearLabel?: string;
 }
 
 export interface SelectSingleProps extends SelectCommonProps {
@@ -388,6 +399,7 @@ function SelectSingle({
   searchable = 'auto',
   required = false,
   requiredMessage,
+  clearLabel = 'Clear selection',
   'aria-label': ariaLabel,
   ...rest
 }: SelectSingleProps) {
@@ -511,7 +523,7 @@ function SelectSingle({
               clearing to empty makes no sense and no ✕ is rendered. */}
           {selected && !disabled && placeholder !== undefined && (
             <IconButton
-              aria-label="Clear selection"
+              aria-label={clearLabel}
               onClick={(e) => {
                 // Stop click from bubbling to the trigger div (which
                 // would toggle the popover back open).
@@ -572,6 +584,7 @@ function SelectMulti({
   required = false,
   requiredMessage,
   clearable = false,
+  clearLabel = 'Clear all selections',
   'aria-label': ariaLabel,
   ...rest
 }: SelectMultiProps) {
@@ -653,7 +666,7 @@ function SelectMulti({
             </span>
             {clearable && current.length > 0 && !disabled && (
               <IconButton
-                aria-label="Clear all selections"
+                aria-label={clearLabel}
                 className="uxm-field-clear uxm-select-dropdown__trigger-clear"
                 onClick={(e) => { e.stopPropagation(); commit([]); }}
                 onMouseDown={(e) => e.stopPropagation()}

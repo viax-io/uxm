@@ -60,6 +60,12 @@ export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
   mobileOpen?: boolean;
   /** Called when the user dismisses the mobile drawer (backdrop click). */
   onMobileClose?: () => void;
+  /** Accessible name for the mobile drawer's close button. Default `"Close navigation"`. */
+  closeLabel?: string;
+  /** Accessible name for the collapse toggle while collapsed. Default `"Expand sidebar"`. */
+  expandLabel?: string;
+  /** Accessible name for the collapse toggle while expanded. Default `"Collapse sidebar"`. */
+  collapseLabel?: string;
 }
 
 export function AppSidebar({
@@ -71,6 +77,9 @@ export function AppSidebar({
   linkAs,
   mobileOpen = false,
   onMobileClose,
+  closeLabel = 'Close navigation',
+  expandLabel = 'Expand sidebar',
+  collapseLabel = 'Collapse sidebar',
   className,
   ...rest
 }: AppSidebarProps) {
@@ -85,7 +94,7 @@ export function AppSidebar({
         <button
           type="button"
           className="uxm-app-sidebar__mobile-backdrop"
-          aria-label="Close navigation"
+          aria-label={closeLabel}
           onClick={onMobileClose}
         />
       )}
@@ -104,7 +113,7 @@ export function AppSidebar({
             type="button"
             className="uxm-app-sidebar__brand uxm-app-sidebar__brand--icon"
             onClick={onCollapseToggle}
-            aria-label="Expand sidebar"
+            aria-label={expandLabel}
           >
             {brand.iconUrl && (
               <img src={brand.iconUrl} alt={brand.alt ?? ''} />
@@ -122,7 +131,7 @@ export function AppSidebar({
                 type="button"
                 className="uxm-app-sidebar__toggle"
                 onClick={onCollapseToggle}
-                aria-label="Collapse sidebar"
+                aria-label={collapseLabel}
               >
                 <Icon glyph="chevron-left" size={16} strokeWidth={1.5} />
               </button>

@@ -45,6 +45,12 @@ export interface DateInputProps
    * separate `onClear` is needed. Works in both single and range mode.
    */
   clearable?: boolean;
+  /** Accessible name for the clear button. Default `"Clear"`. */
+  clearLabel?: string;
+  /** Accessible name for the calendar trigger. Default `"Open calendar"`. */
+  openCalendarLabel?: string;
+  /** Accessible name for the calendar popover dialog. Default `"Choose date"`. */
+  calendarDialogLabel?: string;
   /**
    * Inline style applied to the WRAPPER (not the inner <input>). CSS custom
    * properties set here cascade to every descendant — the input AND the
@@ -171,6 +177,9 @@ export function DateInput({
   onChange,
   calendar = true,
   clearable = true,
+  clearLabel = 'Clear',
+  openCalendarLabel = 'Open calendar',
+  calendarDialogLabel = 'Choose date',
   style,
   onFocus,
   onBlur,
@@ -369,7 +378,7 @@ export function DateInput({
       {showClear && (
         <IconButton
           className="uxm-field-clear uxm-date-input__clear"
-          aria-label="Clear"
+          aria-label={clearLabel}
           // Prevent the button from stealing focus away from whatever's
           // currently focused — clearing must not re-open the calendar
           // popover via the input's onFocus handler.
@@ -384,7 +393,7 @@ export function DateInput({
           type="button"
           className="uxm-date-input__icon"
           onClick={() => setIsOpen((o) => !o)}
-          aria-label="Open calendar"
+          aria-label={openCalendarLabel}
           aria-expanded={isOpen}
           disabled={disabled}
         >
@@ -392,7 +401,7 @@ export function DateInput({
         </button>
       )}
       {calendar && isOpen && (
-        <div className="uxm-date-input__popover" role="dialog" aria-label="Choose date">
+        <div className="uxm-date-input__popover" role="dialog" aria-label={calendarDialogLabel}>
           {/* Swallow mousedown so a calendar click never blurs the input: blur
               now runs validation (handleBlur), and a partially-typed value
               would flash the error state for a frame before the pick lands.

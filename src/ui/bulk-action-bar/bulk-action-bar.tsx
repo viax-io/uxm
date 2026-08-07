@@ -35,6 +35,16 @@ export interface BulkActionBarProps extends HTMLAttributes<HTMLDivElement> {
    * a different noun ("3 rows"). Receives the current count.
    */
   countLabel?: (count: number) => ReactNode;
+  /**
+   * Accessible name for the trailing × . Default `"Clear selection"`. The
+   * button has no visible text, so this is the only thing AT announces for
+   * it.
+   *
+   * The toolbar's OWN name needs no prop — `aria-label` is spread from
+   * `...rest` after the default, so `<BulkActionBar aria-label="…" />`
+   * already overrides `"Bulk actions"`.
+   */
+  clearLabel?: string;
 }
 
 /**
@@ -49,6 +59,7 @@ export function BulkActionBar({
   actions = [],
   onClear,
   countLabel,
+  clearLabel = 'Clear selection',
   className,
   ...rest
 }: BulkActionBarProps) {
@@ -91,7 +102,7 @@ export function BulkActionBar({
       {onClear && (
         <>
           <span className="uxm-bulk-action-bar__divider" aria-hidden="true" />
-          <IconButton aria-label="Clear selection" onClick={onClear}>
+          <IconButton aria-label={clearLabel} onClick={onClear}>
             <Icon glyph="close" size={16} />
           </IconButton>
         </>

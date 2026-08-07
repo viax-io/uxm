@@ -36,6 +36,8 @@ export interface SearchDropdownProps {
   className?: string;
   style?: CSSProperties;
   'aria-label'?: string;
+  /** Accessible name for the clear button. Default `"Clear selection"`. */
+  clearLabel?: string;
 }
 
 /**
@@ -71,6 +73,7 @@ export function SearchDropdown({
   className,
   style,
   'aria-label': ariaLabel,
+  clearLabel = 'Clear selection',
 }: SearchDropdownProps) {
   const errorId = useId();
   const selected = useMemo(
@@ -126,7 +129,7 @@ export function SearchDropdown({
           </span>
           {selected && !disabled && (
             <IconButton
-              aria-label="Clear selection"
+              aria-label={clearLabel}
               onClick={(e) => {
                 // Stop the click from bubbling to the trigger div
                 // (which would toggle the popover back open).

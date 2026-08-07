@@ -44,6 +44,8 @@ function Example() {
 | `onFocus` / `onBlur` | `(e: FocusEvent) => void` | – | Forwarded after internal focus-state and clamp logic run. |
 | `placeholder` | `string` | `'0.00'` (decimals > 0) / `'0'` (decimals = 0) | Forwarded to the amount input. |
 | _(other native input attributes)_ | – | – | Spread onto the inner `<input>`. |
+| `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
+| `chooseCurrencyLabel` | `string` | `'Choose currency'` | Accessible name for the currency picker trigger. |
 
 ### `CurrencyValue`
 

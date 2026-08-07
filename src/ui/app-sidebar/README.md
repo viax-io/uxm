@@ -51,6 +51,9 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `mobileOpen` | `boolean` | `false` | Controls the mobile drawer state. Adds `--mobile-open` modifier and renders the backdrop. |
 | `onMobileClose` | `() => void` | – | Backdrop click handler. |
 | `className` | `string` | – | Merged with the `<aside>` root class via `cn`. |
+| `closeLabel` | `string` | `'Close navigation'` | Accessible name for the mobile drawer's close button. |
+| `expandLabel` | `string` | `'Expand sidebar'` | Accessible name for the collapse toggle while collapsed. |
+| `collapseLabel` | `string` | `'Collapse sidebar'` | Accessible name for the collapse toggle while expanded. |
 
 ### `AppSidebarBrand`
 

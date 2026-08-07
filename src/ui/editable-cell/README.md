@@ -57,6 +57,12 @@ Inside a `DataTable`, don't compose this by hand — mark the column `editable` 
 | `disabled` | `boolean` | – | Read-only: no edit affordance, clicks do nothing. |
 | `className` / `style` / `aria-label` | – | – | Root passthroughs. |
 | `forceMode` | `'editing' \| 'warning' \| 'error'` | – | **Preview-only.** Forces the editing branch (plus a sample message at the given severity) so the UXM canvas can paint state knobs without stealing focus. Production consumers leave it unset. |
+| `clearSelectionLabel` | `string` | `'Clear selection'` | Clear button — select / multiselect editors. |
+| `clearDateLabel` | `string` | `'Clear date'` | Clear button — date editor. |
+| `clearValueLabel` | `string` | `'Clear value'` | Clear button — text / number editors. |
+| `openCalendarLabel` | `string` | `'Open calendar'` | Calendar trigger — date editor. |
+| `calendarDialogLabel` | `string` | `'Choose date'` | Calendar popover dialog — date editor. |
+| `addDateLabel` | `string` | `'Add date'` | Trigger name when the date editor is empty. |
 
 Exports: `EditableCell`, `EditableCellProps`, `EditableCellType`, `EditableCellSize`, `EditableCellAlign`, `EditableCellValue`, `EditableCellOption`.
 

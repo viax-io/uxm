@@ -175,6 +175,23 @@ export interface EditableCellProps {
   style?: CSSProperties;
   'aria-label'?: string;
   /**
+   * Accessible names for the editors' icon-only controls. Which ones apply
+   * depends on the editor type. The composed "Edit {value}" trigger names
+   * are not here — pass `aria-label` to replace those wholesale.
+   */
+  /** Clear button, select + multiselect editors. Default `"Clear selection"`. */
+  clearSelectionLabel?: string;
+  /** Clear button, date editor. Default `"Clear date"`. */
+  clearDateLabel?: string;
+  /** Clear button, text / number editors. Default `"Clear value"`. */
+  clearValueLabel?: string;
+  /** Calendar trigger, date editor. Default `"Open calendar"`. */
+  openCalendarLabel?: string;
+  /** Calendar popover dialog, date editor. Default `"Choose date"`. */
+  calendarDialogLabel?: string;
+  /** Trigger name when the date editor is empty. Default `"Add date"`. */
+  addDateLabel?: string;
+  /**
    * Preview-only branch override. UXM's canvas passes this to render the
    * input branch without a real click — `editing` shows the input, `warning`
    * / `error` also surface a sample message at that severity so the matching
@@ -222,6 +239,12 @@ export function EditableCell({
   className,
   style,
   'aria-label': ariaLabel,
+  clearSelectionLabel = 'Clear selection',
+  clearDateLabel = 'Clear date',
+  clearValueLabel = 'Clear value',
+  openCalendarLabel = 'Open calendar',
+  calendarDialogLabel = 'Choose date',
+  addDateLabel = 'Add date',
   forceMode,
 }: EditableCellProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -648,7 +671,7 @@ export function EditableCell({
               // mousedown here so the clear below is the single thing that acts.
               onMouseDown={(e) => e.stopPropagation()}
               onClick={() => void commitValue('')}
-              aria-label="Clear selection"
+              aria-label={clearSelectionLabel}
             >
               <Icon glyph="close" size={12} />
             </button>
@@ -790,7 +813,7 @@ export function EditableCell({
             // so the later close commits the cleared set, not the stale draft.
             onMouseDown={(e) => e.stopPropagation()}
             onClick={() => void commitValue([])}
-            aria-label="Clear selection"
+            aria-label={clearSelectionLabel}
           >
             <Icon glyph="close" size={12} />
           </button>
@@ -873,7 +896,7 @@ export function EditableCell({
           disabled={disabled}
           // Empty cell has no value to edit — "Add date" reads better than the
           // trailing-space "Edit date " and signals the fill affordance.
-          aria-label={ariaLabel ?? (isEmpty ? 'Add date' : `Edit date ${displayFormatted || String(value)}`)}
+          aria-label={ariaLabel ?? (isEmpty ? addDateLabel : `Edit date ${displayFormatted || String(value)}`)}
         >
           <HoverTooltip content={titleText} disabled={disabled}>
             <span className="uxm-editable-cell__value">{displayNode}</span>
@@ -943,7 +966,7 @@ export function EditableCell({
             tabIndex={-1}
             onMouseDown={(e) => e.preventDefault()}
             onClick={handleClearDraft}
-            aria-label="Clear date"
+            aria-label={clearDateLabel}
           >
             <Icon glyph="close" size={12} />
           </button>
@@ -968,7 +991,7 @@ export function EditableCell({
             setOpen((o) => !o);
           }}
           disabled={submitting}
-          aria-label="Open calendar"
+          aria-label={openCalendarLabel}
           // Match the popover's effective visibility (hidden while an error
           // shows) rather than raw `open`, so the two never disagree.
           aria-expanded={open && !shownError}
@@ -989,7 +1012,7 @@ export function EditableCell({
           // — `restoreFocus={false}` and the mousedown-preventDefault above
           // keep the field focused so the calendar augments typing rather
           // than trapping focus like a true modal.
-          aria-label="Choose date"
+          aria-label={calendarDialogLabel}
         >
           {/* Swallow mousedown so a calendar click never blurs the input:
               the pick commits explicitly via handlePick, and a blur-commit of
@@ -1142,7 +1165,7 @@ export function EditableCell({
           tabIndex={-1}
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleClearDraft}
-          aria-label="Clear value"
+          aria-label={clearValueLabel}
         >
           <Icon glyph="close" size={12} />
         </button>

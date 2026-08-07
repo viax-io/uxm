@@ -75,6 +75,17 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * Clicks inside the actions cell don't bubble to `onRowClick`.
    */
   rowActions?: (row: T) => MenuEntry[];
+  /**
+   * Accessible name for the visually-empty actions COLUMN header.
+   * Default `"Actions"`.
+   */
+  actionsColumnLabel?: string;
+  /**
+   * Accessible name for each row's ⋮ trigger and its menu. Default
+   * `"Row actions"`. A bare default repeats identically on every row, so
+   * override it with something row-specific where the row has a name.
+   */
+  rowActionsLabel?: string;
 }
 
 export function DataTable<T>({
@@ -84,6 +95,8 @@ export function DataTable<T>({
   rowKey,
   onRowClick,
   rowActions,
+  actionsColumnLabel = 'Actions',
+  rowActionsLabel = 'Row actions',
   className,
   ...rest
 }: DataTableProps<T>) {
@@ -109,7 +122,7 @@ export function DataTable<T>({
               // name. `--actions` shrinks the column to the trigger width.
               <th
                 className="uxm-data-table__th uxm-data-table__th--actions"
-                aria-label="Actions"
+                aria-label={actionsColumnLabel}
               />
             )}
           </tr>
@@ -227,11 +240,11 @@ export function DataTable<T>({
                     {actions.length > 0 && (
                       <Menu
                         items={actions}
-                        aria-label="Row actions"
+                        aria-label={rowActionsLabel}
                         renderTrigger={({ open, triggerProps }) => (
                           <IconButton
                             {...triggerProps}
-                            aria-label="Row actions"
+                            aria-label={rowActionsLabel}
                             className={cn(
                               'uxm-data-table__actions-trigger',
                               open && 'uxm-icon-button--active',

@@ -36,6 +36,8 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `className` | `string` | – | Merged with `uxm-phone-input` on the wrapper. |
 | `style` | `CSSProperties` | – | Applied to the WRAPPER and forwarded to the Listbox panel (`panelStyle`). Use to set per-instance `--uxm-phone-input-*` vars. |
 | _(any other native input attribute)_ | – | – | Spread onto the inner number `<input>`. |
+| `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
+| `chooseCountryLabel` | `string` | `'Choose country'` | Accessible name for the country picker trigger. |
 
 ### `PhoneValue`
 

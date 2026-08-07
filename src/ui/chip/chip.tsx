@@ -19,6 +19,13 @@ export interface ChipProps extends Omit<HTMLAttributes<HTMLElement>, 'onClick'> 
   /** Removal handler. When set, mode defaults to "input" and a trailing × button appears. */
   onRemove?: () => void;
   /**
+   * Accessible name for that × . Default `"Remove"`. The button has no
+   * visible text, so this is the only thing AT announces for it — and a
+   * bare "Remove" is worth overriding when several chips share a row
+   * (`Remove ${label}` tells the user *which* one).
+   */
+  removeLabel?: string;
+  /**
    * `style` (inherited) is used by the editor preview to project draft
    * `--uxm-chip-*` CSS variables directly onto the chip, since inline styles
    * take precedence over the saved-overrides CSS rule on `.uxm-chip` (which
@@ -56,6 +63,7 @@ export function Chip(props: ChipProps) {
     iconLeft,
     onClick,
     onRemove,
+    removeLabel = 'Remove',
     className,
     style,
     'aria-label': ariaLabel,
@@ -79,7 +87,7 @@ export function Chip(props: ChipProps) {
             e.stopPropagation();
             if (!disabled) onRemove();
           }}
-          aria-label="Remove"
+          aria-label={removeLabel}
           disabled={disabled}
           tabIndex={disabled ? -1 : 0}
         >
