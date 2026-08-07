@@ -1,3 +1,11 @@
+# [4.12.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.11.0...v4.12.0) (2026-08-07)
+
+
+### Features
+
+* **a11y:** finish the translatable-label rollout across the remaining atoms ([c4379a8](https://gitlab.viax.tech/services-viax/uxm/commit/c4379a859f88c0f7ebf719136774f5544a88c7de))
+* **a11y:** make every icon-only control's accessible name translatable ([2a6a631](https://gitlab.viax.tech/services-viax/uxm/commit/2a6a631d8a68fdbc75f1d76adf1dbf8329843329))
+
 # [4.11.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.10.0...v4.11.0) (2026-08-07)
 
 
