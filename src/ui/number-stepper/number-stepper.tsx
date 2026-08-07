@@ -36,6 +36,14 @@ export interface NumberStepperProps {
   className?: string;
   style?: CSSProperties;
   'aria-label'?: string;
+  /**
+   * Accessible name for the − button. Default `"Decrement"`. The buttons
+   * carry no visible text, so this label is the ONLY thing assistive tech
+   * announces for them — it has to be translatable.
+   */
+  decrementLabel?: string;
+  /** Accessible name for the + button. Default `"Increment"`. */
+  incrementLabel?: string;
 }
 
 /**
@@ -76,6 +84,8 @@ export function NumberStepper({
   className,
   style,
   'aria-label': ariaLabel,
+  decrementLabel = 'Decrement',
+  incrementLabel = 'Increment',
 }: NumberStepperProps) {
   const errorId = useId();
   const adjust = (delta: number) => {
@@ -100,7 +110,7 @@ export function NumberStepper({
         <IconButton
           onClick={() => adjust(-step)}
           disabled={disabled}
-          aria-label="Decrement"
+          aria-label={decrementLabel}
         >
           <Icon glyph="minus" size={12} strokeWidth={2} />
         </IconButton>
@@ -118,7 +128,7 @@ export function NumberStepper({
         <IconButton
           onClick={() => adjust(step)}
           disabled={disabled}
-          aria-label="Increment"
+          aria-label={incrementLabel}
         >
           <Icon glyph="plus" size={12} strokeWidth={2} />
         </IconButton>

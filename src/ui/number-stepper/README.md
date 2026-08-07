@@ -57,6 +57,8 @@ Does **not** extend a native attribute interface — the prop list is closed, an
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | `style` | `CSSProperties` | – | Applied to the wrapper — the usual place to project CSS variables. |
 | `aria-label` | `string` | – | Accessible name for the `<input>`. See Accessibility. |
+| `decrementLabel` | `string` | `'Decrement'` | Accessible name for the − button. |
+| `incrementLabel` | `string` | `'Increment'` | Accessible name for the + button. |
 
 The component carries a static `NumberStepper.hasError = true` flag, which the studio reads to know the atom has an error state.
 
@@ -122,7 +124,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 ## Accessibility
 
 - **Pass `aria-label`.** The atom renders no label of its own, so without it the `<input>` has no accessible name. Either provide one or wrap the control in a labelled field.
-- The step buttons carry fixed English `aria-label`s — `"Decrement"` and `"Increment"`. These are **not currently overridable**, which is a real limitation for a localised UI; the labels are the only text an assistive-tech user gets for those buttons.
+- The step buttons have no visible text, so `decrementLabel` / `incrementLabel` are the **only** thing assistive tech announces for them. They default to English (`"Decrement"` / `"Increment"`) — pass translations in a localised UI.
 - `error` wires up the full invalid contract: `aria-invalid` and `aria-describedby` on the wrapper, pointing at a `useId()`-generated id on the message. The message itself is rendered by [`FieldError`](../field-error/README.md), which prefixes an `exclamation-circle` glyph so the error is not signalled by colour alone.
 - `disabled` sets both the native `disabled` on the input and both buttons (which blocks interaction) **and** `aria-disabled` on the wrapper (which drives the dimmed treatment). Note that natively disabled controls are removed from the tab order and are not announced by some screen readers.
 - The native spinner is suppressed via `appearance: textfield` plus the `::-webkit-*-spin-button` reset, so the ± buttons are the only step affordance — but the input is still `type="number"`, so keyboard Up/Down arrows continue to work.

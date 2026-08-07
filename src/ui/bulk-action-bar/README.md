@@ -45,6 +45,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute is forwa
 | `actions` | `BulkAction[]` | `[]` | Action buttons in display order. Empty means no actions block and no divider. |
 | `onClear` | `() => void` | – | When set, renders a trailing × that clears the selection. |
 | `countLabel` | `(count: number) => ReactNode` | `` `${count} selected` `` | Override the count label. Receives the current count. |
+| `clearLabel` | `string` | `'Clear selection'` | Accessible name for the trailing ×. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div>`. |
 
@@ -114,7 +115,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 ## Accessibility
 
-- The root is `role="toolbar"` with `aria-label="Bulk actions"`. That label is **fixed and not overridable** — a limitation for a localised UI, and worth knowing if two toolbars can be on screen at once.
+- The root is `role="toolbar"` with a default `aria-label="Bulk actions"`. Because `...rest` is spread **after** that default, passing `aria-label` overrides it — worth doing when two toolbars can be on screen at once, or in a localised UI. The trailing × takes its name from `clearLabel`.
 - **`role="toolbar"` implies arrow-key roving focus, which this component does not implement.** Buttons are reached with Tab, one stop each. For most bars (2–4 actions) this is acceptable, but it does not match what the role promises to a screen-reader user.
 - Dividers are `aria-hidden="true"` — decorative rules with no semantic meaning.
 - The count label is plain text inside the toolbar and is **not a live region**: a screen reader will not announce the count changing as rows are selected. If that matters, announce it from the table's own live region.

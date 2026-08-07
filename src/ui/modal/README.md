@@ -44,6 +44,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any other standard d
 |------|------|---------|-------------|
 | `size` | `'sm' \| 'md' \| 'lg' \| 'fullscreen'` | `'md'` | Panel width preset. |
 | `onClose` | `() => void` | – | When set, `Modal.Header` renders a close X that calls it. Omit for forms that should close only via an explicit action. |
+| `closeLabel` | `string` | `'Close'` | Accessible name for that X. Lives here rather than on `Modal.Header` because it belongs with `onClose`, and reaches the header through context. |
 | `children` | `ReactNode` | – | **Required.** Usually the three slots. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute except `title`)_ | – | – | Spread onto the root `<div>`. |
@@ -115,7 +116,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 - `Modal.Header` renders a real `<h2>` and gives it a `useId()` title id automatically — consumers never touch ids by hand.
 - **Wire that id to the `Dialog`.** The root also sets `aria-labelledby` on itself, which covers the rare Modal-without-Dialog case (styling previews), but the element that needs the name is the one carrying `role="dialog"` — pass `aria-labelledby` to `Dialog` so the dialog is announced with its title rather than as a bare "dialog".
-- The close button is an `IconButton` with `aria-label="Close"`. That label is fixed and not currently overridable — a real limitation for a localised UI.
+- The close button is an `IconButton` whose accessible name comes from `closeLabel` (default `"Close"`). It has no visible text, so translate it in a localised UI.
 - Omitting `onClose` removes the X entirely. If you also disable the `Dialog`'s Escape and backdrop dismissal, the content itself becomes the only way out — always leave a visible, reachable Cancel.
 - The title truncates visually but the full text stays in the accessible name, since truncation is CSS-only.
 - Focus management, the trap and `aria-modal` belong to `Dialog`, not here. A `Modal` rendered outside a `Dialog` has none of them.

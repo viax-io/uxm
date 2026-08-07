@@ -658,6 +658,32 @@ skill:
   per-component knobs — the studio's editor model is per-component, and non-colour values don't
   belong in the token layer.
 
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **Every icon-only control now has a translatable accessible name.** Four atoms hardcoded
+  English `aria-label`s on buttons that carry no visible text, so the label was the *only* thing
+  assistive tech announced and it could not be localised. All are now props with the previous
+  strings as defaults, so nothing changes unless you pass one: `NumberStepper` gains
+  `decrementLabel` / `incrementLabel` (`"Decrement"` / `"Increment"`), `Modal` gains `closeLabel`
+  (`"Close"`, declared on the root next to `onClose` and reaching `Modal.Header` through context),
+  and `BulkActionBar` gains `clearLabel` (`"Clear selection"`). `BulkActionBar`'s *toolbar* name
+  needed no prop — `...rest` is spread after the default, so `aria-label` already overrode
+  `"Bulk actions"`.
+- **`ColorInput` takes a `labels` object.** Seven accessible names — `area`, `areaValueText`,
+  `hue`, `alpha`, `eyedropper`, `format`, `hex` — merged over the English defaults, exported as
+  `ColorInputLabels`. One object rather than seven props because a consumer localising the picker
+  sets all of them at once. `areaValueText` is a **function** `(saturation, brightness) => string`,
+  not a template: it feeds the 2-D area's `aria-valuetext` (a single `aria-valuenow` can't carry
+  both axes), and a translation must be able to reorder the two numbers.
+  `ColorInputPopover`'s `triggerLabel` is separate and already existed.
+
 ## Workflow
 
 ### Before writing any code

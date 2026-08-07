@@ -57,7 +57,22 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'>` — 
 | `eyedropper` | `boolean` | `true` | Show the screen eyedropper. **Chromium only** — auto-hidden where the EyeDropper API is unavailable. |
 | `disabled` | `boolean` | `false` | Disable all interaction. |
 | `error` | `string` | – | Non-empty renders the error state plus a message below the panel. |
+| `labels` | `ColorInputLabels` | English defaults | Accessible names for the unlabelled controls; merged over the defaults. |
 | `className` / `style` | – | – | Applied to the root. |
+
+```ts
+interface ColorInputLabels {
+  area?: string;            // "Color" — the saturation/brightness area
+  areaValueText?: (saturation: number, brightness: number) => string;
+  hue?: string;             // "Hue"
+  alpha?: string;           // "Opacity"
+  eyedropper?: string;      // "Pick color from screen"
+  format?: string;          // "Color format"
+  hex?: string;             // "Hex color value"
+}
+```
+
+These are grouped into one object rather than seven flat props because none is individually interesting and a consumer localising the picker sets **all** of them at once — one object keeps that a single spread from their own dictionary. Every field is optional and falls back to the English default.
 
 ```ts
 type ColorFormat = 'hex' | 'rgb' | 'rgba' | 'hsl';
@@ -147,12 +162,12 @@ Note the two distinct invalid signals: `--invalid` is the **hex field's own** pa
 
 ## Accessibility
 
-- The saturation/brightness area is `role="slider"` with `aria-label="Color"`, `aria-valuemin={0}`, `aria-valuemax={100}` and `aria-valuenow` tracking saturation. Because a 2-D control cannot express both axes in one `aria-valuenow`, it also carries an **`aria-valuetext`** spelling out both — `"Saturation 62%, Brightness 40%"` — which is what a screen-reader user actually hears.
-- The hue slider is `role="slider"` over 0–360, and the opacity slider over 0–100, each with its own `aria-label` (`"Hue"`, `"Opacity"`).
+- The saturation/brightness area is `role="slider"` with `aria-valuemin={0}`, `aria-valuemax={100}` and `aria-valuenow` tracking saturation. Because a 2-D control cannot express both axes in one `aria-valuenow`, it also carries an **`aria-valuetext`** spelling out both — `"Saturation 62%, Brightness 40%"` by default — which is what a screen-reader user actually hears. That string is a function (`labels.areaValueText`), not a template, so a translation can reorder the two numbers.
+- The hue slider is `role="slider"` over 0–360, and the opacity slider over 0–100, each with its own name (`labels.hue`, `labels.alpha`).
 - All three sliders set `aria-disabled` when the picker is disabled.
 - The swatch is `aria-hidden="true"` — it is a redundant visual of a value already available in the fields.
 - The hex field carries `aria-label="Hex color value"` and `aria-invalid` when the text does not parse.
-- The eyedropper button is labelled `"Pick color from screen"`; the format select `"Color format"`. **These labels are fixed English strings and are not overridable** — a real limitation for a localised UI, and the same applies to `triggerLabel`'s default.
+- Every one of these names — the area, its `aria-valuetext`, both sliders, the eyedropper, the format select and the hex field — comes from `labels` and defaults to English. Pass the whole object in a localised UI; `ColorInputPopover`'s `triggerLabel` is separate and needs translating too.
 - `ColorInputPopover`'s trigger carries `aria-haspopup="dialog"`, `aria-expanded`, and an accessible name that **includes the current colour**, so a screen-reader user knows the value without opening the panel. The panel is `role="dialog"` labelled by `triggerLabel`.
 - Escape reverts the field draft rather than discarding the committed value, so a mistyped hex cannot silently destroy the previous colour.
 - **Colour is the subject here, so it cannot be the only channel** — the value fields are always present and always carry the exact value as text, which is what makes the picker usable without colour perception.

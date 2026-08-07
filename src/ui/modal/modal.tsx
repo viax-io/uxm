@@ -3,6 +3,7 @@ import {
   forwardRef,
   useContext,
   useId,
+  useMemo,
   type HTMLAttributes,
   type ReactNode,
 } from 'react';
@@ -16,6 +17,7 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'fullscreen';
 interface ModalContextValue {
   titleId: string;
   onClose?: () => void;
+  closeLabel: string;
 }
 
 const ModalContext = createContext<ModalContextValue | null>(null);
@@ -38,6 +40,13 @@ export interface ModalProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
    * `closeOnOutsideClick` to disable backdrop dismissal in that case).
    */
   onClose?: () => void;
+  /**
+   * Accessible name for the close X. Default `"Close"`. Lives on the root
+   * rather than on `Modal.Header` because it belongs with `onClose` — the
+   * prop that decides whether the button exists at all — and travels to the
+   * header through context, so consumers never wire it manually.
+   */
+  closeLabel?: string;
   children: ReactNode;
 }
 
@@ -67,13 +76,18 @@ export interface ModalProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
 function ModalRoot({
   size = 'md',
   onClose,
+  closeLabel = 'Close',
   children,
   className,
   ...rest
 }: ModalProps) {
   const titleId = useId();
+  const ctx = useMemo(
+    () => ({ titleId, onClose, closeLabel }),
+    [titleId, onClose, closeLabel],
+  );
   return (
-    <ModalContext.Provider value={{ titleId, onClose }}>
+    <ModalContext.Provider value={ctx}>
       <div
         className={cn('uxm-modal', `uxm-modal--${size}`, className)}
         // Forward titleId to Dialog via aria-labelledby propagation: the
@@ -99,14 +113,14 @@ export interface ModalHeaderProps extends HTMLAttributes<HTMLDivElement> {
 
 const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
   ({ children, hideClose, className, ...rest }, ref) => {
-    const { titleId, onClose } = useModalContext();
+    const { titleId, onClose, closeLabel } = useModalContext();
     return (
       <div ref={ref} className={cn('uxm-modal__header', className)} {...rest}>
         <h2 id={titleId} className="uxm-modal__title">
           {children}
         </h2>
         {onClose && !hideClose && (
-          <IconButton aria-label="Close" onClick={onClose} className="uxm-modal__close">
+          <IconButton aria-label={closeLabel} onClick={onClose} className="uxm-modal__close">
             <Icon glyph="close" size={14} strokeWidth={2} />
           </IconButton>
         )}
