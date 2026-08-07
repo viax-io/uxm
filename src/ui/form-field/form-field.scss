@@ -20,7 +20,20 @@
    it has in top layout — reset to 0 in the side rule below. */
 .uxm-form-field--side {
   display: grid;
-  grid-template-columns: var(--uxm-form-field-side-label-width, 120px) 1fr;
+  /* `minmax(0, 1fr)`, NOT a bare `1fr` — the two are not interchangeable
+     here. `1fr` means `minmax(auto, 1fr)`, whose automatic minimum is the
+     column's min-content width, and a control that can't wrap contributes
+     its FULL single-line width to that. An EditableCell is exactly such a
+     control (`white-space: nowrap` on `__value`, so it can ellipsize), and
+     at `size="medium"` it deliberately carries no width cap — so a long
+     value grew the track instead of truncating in it, pushing the field
+     clean out of its Card and ellipsizing against some distant ancestor's
+     overflow. An explicit `0` minimum lets the track shrink to the space
+     that's actually there and hands the overflow decision back to the
+     control, which already knows how to truncate. Nothing here relies on
+     the auto minimum: the label column is a fixed width and this one is
+     purely the remainder. */
+  grid-template-columns: var(--uxm-form-field-side-label-width, 120px) minmax(0, 1fr);
   /* Horizontal gap between label column and input column. Separate
      from the top-layout `--uxm-form-field-gap` (which controls the
      label↔input vertical distance via margin-bottom). */
@@ -86,36 +99,52 @@
 .uxm-form-field__control {
   display: flex;
   flex-direction: column;
+  /* A labelled field is laid out at a DEFINITE width — the control column is
+     whatever the label leaves over — so a control inside it must fit that
+     width rather than assert one of its own. EditableCell's edit mode defaults
+     to a `max-content` floor on its internal track (the width-keeper ghosts
+     that stop an AUTO-sized table column from jumping when editing starts);
+     there is no auto column to protect here, and that floor is precisely what
+     pushed a long draft out through the Card. Take it to `0` via the knob the
+     cell publishes for it.
+
+     Declared on the CONTROL, not on a `> .uxm-editable-cell` child selector,
+     and deliberately so: custom properties inherit, so this reaches a cell at
+     ANY depth. Fields routinely wrap their control — a row pairing the cell
+     with a translation count or a unit suffix is the common case — and a
+     child combinator would silently drop the fix for exactly those, which is
+     how this was first missed. The outdent below is declared the same way and
+     for the same reason.
+
+     Inheriting reaches cells this field never meant to touch, too: anything
+     nesting its own EditableCells inside a control — a DataTable — resets both
+     knobs on its own root to keep its behaviour. */
+  --uxm-editable-cell-editing-track-floor: 0;
+
+  /* Text-like inline controls (EditableCell's display state) carry their own
+     horizontal padding as a hover affordance. In a labelled field that inset
+     would push the value off the content grid the label defines, so the cell
+     is outdented by it: the hover pill bleeds into the gutter while the TEXT
+     lines up with every other row. Opt-in per host — a standalone or table
+     cell aligns against its own padding and must NOT be outdented, and boxed
+     inputs (TextInput etc.) are untouched, their visible border makes the
+     inset intentional.
+
+     A flag, not a length, and that distinction is the whole point. The
+     measurement (`--uxm-editable-cell-text-inset`) is DECLARED BY the cell, so
+     it only resolves on the cell or below it — a length computed here would
+     silently fall back to the wrong number. Custom properties inherit, so this
+     `1` reaches a cell at any depth and the cell does the arithmetic where the
+     inset is actually in scope. That also makes it work for the common wrapped
+     composition (a row pairing the cell with a translation count or a unit
+     suffix), which a `> .uxm-editable-cell` rule left visibly misaligned.
+
+     A composition where the cell is NOT on the column's leading edge — second
+     item in a row, say — opts out with `--uxm-editable-cell-outdent: 0` on
+     that cell. */
+  --uxm-editable-cell-outdent: 1;
 }
 
-/* Text-like inline controls (EditableCell's display state) carry their own
-   horizontal padding as a hover affordance. Inside a labelled field, outdent
-   the cell by that inset so its TEXT sits on the label's edge — the hover
-   pill bleeds into the gutter instead of pushing the text off the content
-   grid. Scoped to FormField on purpose: standalone/table cells align against
-   the cell's own padding and must NOT be outdented. Boxed inputs (TextInput
-   etc.) are untouched — their visible border makes the inset intentional.
-
-   The distance comes from `--uxm-editable-cell-text-inset`, which the cell
-   PUBLISHES for exactly this (see editable-cell.scss). Deriving it here from
-   the cell's own padding var instead would couple this rule to another atom's
-   private spacing: a rename or a changed default there leaves a CSS var
-   fallback silently standing in, and a wrong outdent never errors. One atom
-   owns the measurement, this rule just negates it. */
-.uxm-form-field__control > .uxm-editable-cell {
-  margin-inline-start: calc(-1 * var(--uxm-editable-cell-text-inset, 9px));
-}
-/* Right-aligned cells anchor their text to the trailing edge, so the outdent
-   has to move with it — otherwise the leading side gets pulled off-grid and
-   the text stays inset. Centered cells anchor to neither edge and get no
-   outdent at all. */
-.uxm-form-field__control > .uxm-editable-cell--align-right {
-  margin-inline-start: 0;
-  margin-inline-end: calc(-1 * var(--uxm-editable-cell-text-inset, 9px));
-}
-.uxm-form-field__control > .uxm-editable-cell--align-center {
-  margin-inline-start: 0;
-}
 
 .uxm-form-field__hint {
   font-size: var(--uxm-form-field-hint-size, 12px);

@@ -708,6 +708,65 @@ skill:
   to a generic string that repeats identically on every row / chip; `Remove ${name}` and
   `Actions for ${row}` are what actually tell a screen-reader user which one they are on.
 
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **`FormField`'s side layout no longer lets a non-wrapping control escape its container.**
+  The input column was a bare `1fr`, i.e. `minmax(auto, 1fr)`, whose automatic minimum is the
+  column's min-content width — and a control that can't wrap contributes its FULL single-line
+  width to that. An `EditableCell` is exactly such a control, so a long value grew the column
+  instead of truncating in it: the field ran clean out of its `Card` and ellipsized against
+  some distant ancestor's overflow. The track is now `minmax(0, 1fr)`, so it shrinks to the
+  space that's there and the control makes its own truncation decision. No API change; nothing
+  relied on the auto minimum (the label column is a fixed width, this one is the remainder).
+- **`EditableCell` now owns its box model instead of inheriting it.** `box-sizing: border-box`
+  is declared on the cell, the editing input, the width-keeper ghosts and the picker trigger —
+  each combines a percentage/capped width with its own padding and border, and the atom had
+  been relying on the consumer's global reset for them to add up. ⚠️ Same caveat as
+  `LifecycleNodeCard`: hosts with a reset (the studio's Tailwind preflight, modo) are
+  unaffected, while a consumer importing `ui.css` with no reset of its own will see cells
+  narrow by their horizontal padding + border (46px at the `medium` defaults) — they were
+  overflowing their container by that much before.
+- **New knob `--uxm-editable-cell-outdent` — a wrapped `EditableCell` now lines up with its
+  neighbours.** `FormField` outdents a cell by its own text inset so the VALUE, not the cell's
+  padded box, sits on the label's content grid. That used to be a `.uxm-form-field__control >
+  .uxm-editable-cell` rule, so it silently skipped any cell inside a wrapper — and pairing the
+  cell with something (a translation count, a unit suffix) is the common composition, which
+  rendered visibly 13px off from every other row. The mechanism moved into the atom: the cell
+  applies the outdent itself (and owns the direction — `align-right` pulls on the trailing side,
+  `align-center` not at all), while the host just raises an inheriting flag,
+  `--uxm-editable-cell-outdent: 1`. It is a FLAG, not a length, on purpose:
+  `--uxm-editable-cell-text-inset` is declared *by* the cell, so a host computing the length
+  itself resolves an undefined var and silently lands on the `9px` fallback — the `small` value,
+  4px short at `medium`. Standalone and DataTable cells are untouched (default `0`); a cell that
+  isn't on its column's leading edge opts out with `0`.
+- **New knob `--uxm-editable-cell-editing-track-floor` — and edit mode no longer overflows a
+  fixed-width panel.** Edit mode sizes its internal grid track from invisible width-keeper ghosts
+  (`minmax(max-content, 1fr)`) so entering edit mode can't shrink an auto-sized table column. But
+  a `max-content` floor means "never narrower than the whole draft on one line", so in a container
+  that is merely *narrower* than the draft — any fixed-width panel — the track, and the input
+  stretched to it, ran past the cell's own box (281px past a 436px field in a Card; `small` did it
+  too wherever the column was narrower than its 320px cap). Capping to the container and preserving
+  a `max-content` contribution are contradictory demands on one track, so the floor became a knob
+  and the *context* picks: `FormField` sets it to `0` on its control wrapper — **not** on the cell
+  via a child selector, so it inherits to an `EditableCell` at any depth, including a wrapped one
+  (a labelled field is laid out at a definite width) — while a DataTable leaves the default and
+  keeps the anti-jump behaviour unchanged at both sizes. A composition knob like
+  `--uxm-editable-cell-text-inset`, not a designer one — deliberately not in the studio registry.
+- **Both new knobs are INHERITED, so a component that composes `EditableCell` must re-assert them.**
+  `FormField` sets them on its control wrapper precisely so they reach a cell at any depth — which
+  means a `DataTable` nested inside that control inherits them too and loses the behaviour it
+  depends on (the `max-content` floor is what stops an auto-sized column jumping on edit; the
+  outdent would pull the first column off the header grid). `DataTable` now resets both on its own
+  root. If you build anything else that renders `EditableCell`s, do the same:
+  `--uxm-editable-cell-editing-track-floor: max-content; --uxm-editable-cell-outdent: 0;`.
+
 ## Workflow
 
 ### Before writing any code

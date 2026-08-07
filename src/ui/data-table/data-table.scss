@@ -8,6 +8,18 @@
    intentionally override cell padding directly. */
 .uxm-data-table {
   container-type: inline-size;
+  /* Re-assert the EditableCell composition knobs this table's own cells need.
+     Both are inherited custom properties, so a host that sets them on a
+     wrapper reaches every cell below it at any depth — `FormField` sets both
+     on its control to lay a SINGLE cell out against the label grid. A table
+     dropped inside such a control would inherit them too and lose exactly the
+     behaviour it depends on: the `max-content` floor is what stops an
+     auto-sized column jumping when editing starts, and the outdent would pull
+     the first column's text off the header grid. The reset is unconditional
+     because it costs nothing outside that composition — these are the
+     defaults everywhere else. */
+  --uxm-editable-cell-editing-track-floor: max-content;
+  --uxm-editable-cell-outdent: 0;
   border: 1px solid var(--uxm-data-table-border-color, var(--color-border));
   border-radius: var(--uxm-data-table-border-radius, 8px);
   overflow: hidden;
