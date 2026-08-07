@@ -1,3 +1,10 @@
+# [4.11.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.10.0...v4.11.0) (2026-08-07)
+
+
+### Features
+
+* **icons:** add upload (arrow-up-tray) glyph ([f3e4bff](https://gitlab.viax.tech/services-viax/uxm/commit/f3e4bff5458267591e51cac720d79b81a8f1816e))
+
 # [4.10.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.9.0...v4.10.0) (2026-08-06)
 
 
