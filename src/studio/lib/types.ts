@@ -123,6 +123,15 @@ export interface ComponentDef {
   styleProperties: StyleProperty[];
   layoutVariants: LayoutVariant[];
   canvasBackground?: boolean;
+  /**
+   * Fill the canvas width and top-align instead of the default center-both-
+   * axes layout. For previews that are galleries / long lists (e.g. the Icon
+   * set grid) where centering wastes horizontal space and — worse — re-centres
+   * vertically as content height changes (a filter shrinking results makes the
+   * whole block jump); top-aligning keeps it anchored so filtering stays in
+   * place.
+   */
+  canvasFill?: boolean;
   /** Optional event-API documentation, surfaced in the Events tab. */
   events?: EventSpec[];
   /** Optional dev-facing API documentation, surfaced in the Dev tab. */
