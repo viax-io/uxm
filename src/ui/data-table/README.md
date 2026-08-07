@@ -88,6 +88,8 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 
 > **Density override:** the `--compact` and `--relaxed` density modifiers override `padding` directly with fixed values (`6px 12px` and `16px 12px` respectively); the `--uxm-data-table-cell-padding-*` vars only take effect in the `default` density.
 
+> **The root re-asserts two [`EditableCell`](../editable-cell/README.md) composition knobs** — `--uxm-editable-cell-editing-track-floor: max-content` and `--uxm-editable-cell-outdent: 0`. Both are inherited custom properties that a host may set on a wrapper to lay out a *single* cell ([`FormField`](../form-field/README.md) does), and a table dropped inside such a wrapper would inherit them and lose what its own cells depend on: the `max-content` floor is what stops an auto-sized column jumping when editing starts, and the outdent would pull the leading column's text off the header grid. These are the defaults everywhere else, so the reset is a no-op outside that composition. Setting either on a `DataTable` instance still works — the reset is on the root, so an inline style or a more specific rule wins.
+
 ## Design tokens (MODO-configurable)
 
 When the component-scoped variables above are not overridden, DataTable resolves colour through the global design-token layer exported by `@viax/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor: changes saved there flow into `:root` as `--color-*` declarations and re-tint every table instantly.
