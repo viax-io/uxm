@@ -1,3 +1,10 @@
+## [4.13.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.13.0...v4.13.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* **icons:** balance the upload arrow and repair the refresh top arrowhead ([b5eb2f2](https://gitlab.viax.tech/services-viax/uxm/commit/b5eb2f295a4cbecc466473ee1a6de675ce7c370e))
+
 # [4.13.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.12.0...v4.13.0) (2026-08-07)
 
 
