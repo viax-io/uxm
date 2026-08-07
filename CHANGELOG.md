@@ -1,3 +1,16 @@
+# [4.13.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.12.0...v4.13.0) (2026-08-07)
+
+
+### Bug Fixes
+
+* **data-table:** re-assert the EditableCell knobs FormField hands down ([29419cf](https://gitlab.viax.tech/services-viax/uxm/commit/29419cf2db3168ede608b27e811a603f42d89205))
+* **form-field:** stop a non-wrapping control escaping the side layout ([649700f](https://gitlab.viax.tech/services-viax/uxm/commit/649700ffbe1f4511d79c93f0592ffee25f20da71))
+
+
+### Features
+
+* **editable-cell:** own the box model, and publish outdent + editing-track knobs ([5a73d11](https://gitlab.viax.tech/services-viax/uxm/commit/5a73d11de125e05ea982d70a032e3f683c0442b2))
+
 # [4.12.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.11.0...v4.12.0) (2026-08-07)
 
 
