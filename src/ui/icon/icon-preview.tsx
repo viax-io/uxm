@@ -49,7 +49,15 @@ export function IconPreview({ styles }: PreviewProps) {
           onChange={(e) => setQuery(e.target.value)}
           onClear={() => setQuery('')}
         />
-        <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
+        {/* Live region: filtering is a purely visual change to the grid below,
+            so without this a screen-reader user typing in the search gets no
+            feedback that anything happened. `polite` waits for a pause rather
+            than interrupting each keystroke. */}
+        <div
+          role="status"
+          aria-live="polite"
+          style={{ fontSize: 12, color: 'var(--color-text-muted)' }}
+        >
           {matches.length === ICONS.length
             ? `${ICONS.length} icons`
             : `${matches.length} of ${ICONS.length} icons`}
