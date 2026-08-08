@@ -126,7 +126,7 @@ Import path for all: `import { … } from '@viax/uxm/ui';`
 | **TimelineEntry** | `TimelineEntry`, `TimelineDotState`, `TimelineEntryProps` | Single rail + dot + card row; `lineBefore` / `lineAfter` toggles. |
 | **TypeOverviewCard** | `TypeOverviewCard`, `TypeOverviewCardProps` | Icon tile + label + value + hover-revealed trailing + accent stripe. |
 
-## Icon glyph registry (all 64 ids)
+## Icon glyph registry (all 65 ids)
 
 `<Icon glyph="…">` returns **`null`** for anything not in this list — no error, no warning, just a
 missing icon. There is deliberately no `dashboard`, `folder`, `package`, `external`, `chart`,
@@ -141,7 +141,7 @@ cursor-arrow-rays  dock-bottom  dock-right  document  drag-handle  exclamation-c
 exclamation-triangle  eye  eye-slash  eyedropper  filter  globe  grid  history  image  info
 kebab  list  list-lines  menu  minus  model-business-interaction  model-configuration
 model-determination  model-revenue-motion  moon  organization  paint-brush  pencil  plus
-product  question-mark-circle  refresh  save  search  settings  sparkle  square  sun  trash  user
+product  question-mark-circle  refresh  save  search  settings  sparkle  square  sun  trash  upload  user
 ```
 
 Substitutions for the ids people reach for but that don't exist:
