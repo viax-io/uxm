@@ -68,6 +68,26 @@ const THEME_STORAGE_KEY = 'uxm:theme';
 const defaultPersistence = createReadOnlyPersistence();
 
 /**
+ * Variant keys a def no longer DECLARES but that legacy saves may still carry,
+ * because the variant was retired after it had already been persisted.
+ *
+ * Matching only against the live registry would let these through: the key is
+ * absent from `layoutVariants`, so the filter below treats it as a style edit.
+ * It then counts towards the panel's "has overrides" check (a phantom Reset
+ * button on an untouched install) and, because it matches no entry in
+ * `PER_COMPONENT_MAPPING` and no real CSS property, `generateOverridesCss`
+ * emits it as a dead `--uxm-{id}-{key}` declaration on every save.
+ *
+ * Same bookkeeping as the RETIRED-knob mappings in `generate-css.ts`: a key is
+ * only ever added here, never removed, because old saves never stop existing.
+ */
+const RETIRED_VARIANT_KEYS: Record<string, readonly string[]> = {
+  // Retired when the Icon preview became a whole-set grid — there is no single
+  // glyph to pick any more, so the def declares no variants at all.
+  icon: ['glyph'],
+};
+
+/**
  * Strip layoutVariant keys from a loaded overrides bag. Legacy saves
  * (from before variants were ephemeral) wrote variant values into the
  * same `overrides` dict as style edits — historical artifacts now,
@@ -85,7 +105,10 @@ function stripVariantKeysFromOverrides(
       cleaned[compId] = compOverrides;
       continue;
     }
-    const variantKeys = new Set(def.layoutVariants.map((v) => v.key));
+    const variantKeys = new Set([
+      ...def.layoutVariants.map((v) => v.key),
+      ...(RETIRED_VARIANT_KEYS[compId] ?? []),
+    ]);
     const filtered: StyleOverrides = {};
     for (const [k, v] of Object.entries(compOverrides)) {
       if (!variantKeys.has(k)) filtered[k] = v;
