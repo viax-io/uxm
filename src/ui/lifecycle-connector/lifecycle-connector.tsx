@@ -4,7 +4,7 @@ import { cn } from '@/helpers';
 
 import type { CSSProperties, RefObject, SVGAttributes } from 'react';
 
-export type LifecycleConnectorState = 'idle' | 'active' | 'dashed';
+export type LifecycleConnectorState = 'idle' | 'active' | 'dashed' | 'dashed-active';
 
 export type LifecycleConnectorRouting = 'auto' | 'straight' | 'bezier' | 'orthogonal';
 
@@ -22,8 +22,14 @@ export interface LifecycleConnectorProps extends Omit<SVGAttributes<SVGGElement>
   /** Destination point. The arrowhead is placed here. */
   to: ConnectorPoint;
   /**
-   * Visual state. `idle` = thin grey, `active` = bolder accent + midpoint dot,
-   * `dashed` = dashed (often used for "after deploy" / future branches).
+   * Visual state — this modifier drives the stroke colour + width of all three
+   * sub-elements (start dot, path, arrowhead) in lockstep; it does not add or
+   * move the start dot, which is the separate `startDot` prop. `idle` = thin
+   * grey, `active` = bolder accent + heavier stroke,
+   * `dashed` = dashed (often used for "after deploy" / future branches), and
+   * `dashed-active` = a dashed edge shown in its active/selected emphasis
+   * (accent colour + heavier stroke, still dashed) — for when a future/
+   * conditional branch is the selected or hovered one.
    */
   state?: LifecycleConnectorState;
   /**

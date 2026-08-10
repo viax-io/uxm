@@ -15,7 +15,11 @@
     var(--uxm-lifecycle-connector-connector-idle-stroke-width, 1.5)
   );
 
-  &--active {
+  /* `dashed-active` shares the active emphasis (colour + width) so "active"
+     stays defined once here; it adds the dashed dasharray via the path rule
+     below. */
+  &--active,
+  &--dashed-active {
     --uxm-lifecycle-connector-color: var(
       --uxm-lifecycle-connector-active-color,
       var(--uxm-lifecycle-connector-connector-active-color, var(--color-accent))
@@ -39,7 +43,8 @@
     stroke-width: var(--uxm-lifecycle-connector-width);
   }
 
-  &--dashed &__path {
+  &--dashed &__path,
+  &--dashed-active &__path {
     stroke-dasharray: var(
       --uxm-lifecycle-connector-dash-pattern,
       var(--uxm-lifecycle-connector-connector-dash-pattern, 6 4)

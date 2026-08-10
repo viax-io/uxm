@@ -60,7 +60,7 @@ Extends `Omit<SVGAttributes<SVGGElement>, 'from' | 'to'>` — `from` and `to` ar
 |------|------|---------|-------------|
 | `from` | `{ x: number; y: number }` | – | **Required.** Source point in the parent SVG's coordinate system. |
 | `to` | `{ x: number; y: number }` | – | **Required.** Destination point — the arrowhead is placed here. |
-| `state` | `'idle' \| 'active' \| 'dashed'` | `'idle'` | Visual state. See [States](#states--variants). |
+| `state` | `'idle' \| 'active' \| 'dashed' \| 'dashed-active'` | `'idle'` | Visual state. See [States](#states--variants). |
 | `routing` | `'auto' \| 'straight' \| 'bezier' \| 'orthogonal'` | `'auto'` | Route shape. `auto` = straight when `from.x === to.x`, Bezier otherwise. See [Routing](#states--variants). |
 | `crossAt` | `number` | `0.5` | Where the elbow's cross segment sits along the vertical span, `0` (level with `from`) → `1` (level with `to`). Read only when the resolved routing is `orthogonal`. |
 | `cornerRadius` | `number` | `4` | Corner rounding in px for the elbow's turns; `0` for square corners. Clamped per corner to half the shorter adjoining run. Read only when the resolved routing is `orthogonal`. |
@@ -71,7 +71,7 @@ Extends `Omit<SVGAttributes<SVGGElement>, 'from' | 'to'>` — `from` and `to` ar
 | _(any native SVG group attribute)_ | – | – | Spread onto the root `<g>`. |
 
 ```ts
-type LifecycleConnectorState = 'idle' | 'active' | 'dashed';
+type LifecycleConnectorState = 'idle' | 'active' | 'dashed' | 'dashed-active';
 type LifecycleConnectorRouting = 'auto' | 'straight' | 'bezier' | 'orthogonal';
 ```
 
@@ -127,6 +127,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | `idle` | default | Thin subtle-grey path (`1.5px`), matching dot + arrow. |
 | `active` | `state="active"` | Bolder accent-coloured path (`2px`), accent dot + arrow. |
 | `dashed` | `state="dashed"` | Muted dashed path; pattern from `dashPattern` or `--uxm-lifecycle-connector-dash-pattern` (default `6 4`). Often used for "after deploy" / future branches. |
+| `dashed-active` | `state="dashed-active"` | A dashed edge in the **active** emphasis — accent colour + `active` stroke width (shares the `--uxm-lifecycle-connector-active-*` vars, so "active" stays defined once), still dashed via the same `dash-pattern`. For a future/conditional branch that is the selected or hovered one. |
 | Auto routing | `routing="auto"` (default) | Straight when `from.x === to.x`, Bezier otherwise — the historical behaviour. |
 | Straight routing | `routing="straight"` | `M from L lineEnd` — pulled back by `arrowSize` so the tip sits on the node edge. |
 | Curved routing | `routing="bezier"` | Cubic Bezier with control points at the vertical midpoint — smooth S-curve to a sibling column. |
