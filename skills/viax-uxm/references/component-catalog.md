@@ -204,9 +204,9 @@ positioning and a11y.
 | Component | Key exports | What it is |
 |-----------|-------------|------------|
 | **LifecycleConnector** | `LifecycleConnector`, `LifecycleConnectorProps`, `LifecycleConnectorState`, `LifecycleConnectorRouting` | SVG edge; idle / active / dashed; `routing` auto / straight / bezier / orthogonal elbow. |
-| **LifecycleDropSlot** (unreleased) | `LifecycleDropSlot`, `LifecycleDropSlotProps`, `LifecycleDropSlotShape` | Dashed drag slot, `card` / `pill`. One appearance — it exists only while it's the target. `interactive` defaults to false. Width is the consumer's. |
+| **LifecycleDropSlot** | `LifecycleDropSlot`, `LifecycleDropSlotProps`, `LifecycleDropSlotShape` | Dashed drag slot, `card` / `pill`. One appearance — it exists only while it's the target. `interactive` defaults to false. Width is the consumer's. |
 | **LifecycleEdgeLabel** | `LifecycleEdgeLabel`, `LifecycleEdgeLabelProps`, `LifecycleEdgeLabelVariant` | Midpoint pill: `true` / `false` / `neutral`. |
-| **LifecycleGroupBox** (unreleased) | `LifecycleGroupBox`, `LifecycleGroupBoxProps` | Frosted frame around one group's sibling nodes; `interactive` + `target` make it a drop zone. Members are siblings, not children. |
+| **LifecycleGroupBox** | `LifecycleGroupBox`, `LifecycleGroupBoxProps` | Frosted frame around one group's sibling nodes; `interactive` + `target` make it a drop zone. Members are siblings, not children. |
 | **LifecycleMinimap** | `LifecycleMinimap`, `LifecycleMinimapProps`, `LifecycleMinimapNode`, `LifecycleMinimapViewport` | Birds-eye 0–1 canvas overview + optional viewport overlay. |
 | **LifecycleNodeCard** | `LifecycleNodeCard`, `LifecycleNodeCardProps`, `LifecycleNodeKind` | Kind-aware pill (`state` / `condition` / `task` / `interaction` — the last unreleased; steps vs the BI object). `--uxm-lifecycle-node-card-min-height` knob (default `0` = content-driven) sets an opt-in uniform-height floor for canvas layouts; the card sets `box-sizing: border-box` itself, so the value **is** the rendered height and connector geometry can key off it. Same box model applies to `--uxm-lifecycle-node-card-width` (default `280px` total, padding and border included). |
 | **LifecycleTerminal** | `LifecycleTerminal`, `LifecycleTerminalProps` | Start/End marker pill. |
@@ -252,5 +252,5 @@ positioning and a11y.
 | Progress with a known % (upload, batch, steps) | `ProgressBar` (`variant: 'linear' \| 'ring'`, `value` 0–100) |
 | Confirm-on-hover affordance | `Tooltip` (text) or `ContentTooltip` (rich card) |
 | Reveal a truncated/clamped value on hover | `HoverTooltip` (`truncatedOnly` — only shows when overflowing) |
-| Frame a group of sibling lifecycle nodes (and accept drops into it) | `LifecycleGroupBox` (unreleased) |
-| Show where a dragged lifecycle node can land | `LifecycleDropSlot` (unreleased) |
+| Frame a group of sibling lifecycle nodes (and accept drops into it) | `LifecycleGroupBox` |
+| Show where a dragged lifecycle node can land | `LifecycleDropSlot` |

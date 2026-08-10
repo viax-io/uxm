@@ -797,6 +797,15 @@ skill:
   (`icon: ['glyph']` is the first entry). Add to that map whenever you delete a `layoutVariant`
   that users could already have selected.
 
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
 ## Workflow
 
 ### Before writing any code

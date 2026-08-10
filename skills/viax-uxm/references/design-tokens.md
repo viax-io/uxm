@@ -160,6 +160,26 @@ array or the studio's Color editor) but they are part of the same theming contra
 - Sanitise before interpolating a font name into CSS/URLs yourself? Don't — reuse the exported
   `safeFontFamily` / `fontFileUrl` helpers from `@viax/uxm/studio/generate-css`.
 
+### Semantic aliases (declared in `tokens.css`, not in `themeTokens`)
+
+Vars that `tokens.css` declares as a reference to another token rather than as a literal. They
+are deliberately absent from the `themeTokens` array — an entry there carries a light/dark hex
+pair, and pinning one would freeze the alias away from the token it is meant to track — so they
+never appear in the studio's Color editor and must be set as raw CSS.
+
+| Var | Resolves to | Used for |
+|-----|-------------|----------|
+| `--color-drop-target` | `var(--color-accent)` | The "you can drop here" highlight, shared by every canvas atom that can receive a drag (`LifecycleGroupBox` today). Follows the brand accent through both themes, which is why there is no dark override. |
+
+**Consumer rules:**
+
+- Re-colour every drop target at once by setting the alias itself — `:root { --color-drop-target: … }`.
+  A per-component knob (`--uxm-lifecycle-group-box-target-color`) still wins locally, because the
+  chain is knob → alias → accent.
+- The default resolves to `--color-accent`, which measures **1.93:1** against `--color-surface` in
+  the light theme — under the 3:1 WCAG floor for a non-text indicator. A consumer that needs AA
+  sets `--color-drop-target: var(--color-accent-bold)` (5.56:1) once, and every drop target follows.
+
 ## Theme variants (`data-theme`)
 
 `@viax/uxm/tokens.css` declares the light palette on `:root` and a full dark override set under
