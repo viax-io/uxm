@@ -1,3 +1,16 @@
+# [4.14.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.13.1...v4.14.0) (2026-08-10)
+
+
+### Bug Fixes
+
+* **studio:** announce the icon grid's result count to screen readers ([0c11292](https://gitlab.viax.tech/services-viax/uxm/commit/0c1129251b30cd75c7ff31e19aaa3e6631cb20fd))
+* **studio:** keep stripping variant keys after a variant is retired ([b0c2a18](https://gitlab.viax.tech/services-viax/uxm/commit/b0c2a18f9800f677db437326bf1ee644114b108a))
+
+
+### Features
+
+* **studio:** searchable, flexible icon-set grid preview ([203c7fa](https://gitlab.viax.tech/services-viax/uxm/commit/203c7fa49d964d46d5af0d8e88c3bea423d34091))
+
 ## [4.13.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.13.0...v4.13.1) (2026-08-07)
 
 
