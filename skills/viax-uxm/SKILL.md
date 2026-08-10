@@ -767,6 +767,36 @@ skill:
   root. If you build anything else that renders `EditableCell`s, do the same:
   `--uxm-editable-cell-editing-track-floor: max-content; --uxm-editable-cell-outdent: 0;`.
 
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. The release pipeline renames
+     this heading to "New in X.Y.Z" and stamps the version/count markers
+     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
+     "### Unreleased" heading behind for the next MR: the stamper only matches that
+     exact string, so appending notes under an already-stamped "New in X.Y.Z"
+     heading silently mislabels them and they never get re-stamped. -->
+
+- **New `ComponentDef.canvasFill` — a studio-canvas layout flag.** Exported from
+  `@viax/uxm/studio`. The canvas centres a preview on both axes by default; set `canvasFill: true`
+  on a def and it fills the width and top-aligns instead. For gallery/list previews, where
+  centring wastes horizontal space and — worse — re-centres vertically as content height changes,
+  so filtering a list makes the whole block jump. Optional and additive: every def that omits it
+  keeps the exact previous layout.
+- **The studio's Icon preview is now the whole set, not one glyph.** It renders every entry in
+  `ICONS` as a searchable, labelled grid — each cell shows the real `<Icon>` above its `id`, the
+  exact string you pass to `glyph=`, with the human label on `title` and a polite live region
+  announcing the filtered count. The `size` / `strokeWidth` / `color` knobs now tune every cell at
+  once. Consequently the `glyph` layoutVariant is **gone** from that def: there is no single glyph
+  to pick. Nothing about the `Icon` component's own API changed — `glyph`, `size`, `strokeWidth`
+  are untouched.
+- **Retiring a layoutVariant no longer leaks the old value into saved overrides.**
+  `stripVariantKeysFromOverrides` matched loaded keys against the *live* registry, so it stopped
+  stripping a key the moment the variant was removed — the persisted value then read as a style
+  edit, kept the panel's "has overrides" check true forever, and got emitted as a dead
+  `--uxm-{id}-{key}` on every save. It now also matches an append-only `RETIRED_VARIANT_KEYS` map
+  (`icon: ['glyph']` is the first entry). Add to that map whenever you delete a `layoutVariant`
+  that users could already have selected.
+
 ## Workflow
 
 ### Before writing any code

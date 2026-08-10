@@ -85,7 +85,7 @@ Import path for all: `import { … } from '@viax/uxm/ui';`
 | **Chip** | `Chip`, `ChipMode`, `ChipProps` | Mode-driven (`assist` / `filter` / `input` / `suggestion`). Renders `<button>` or `<span>` depending on interactivity. |
 | **EmptyState** | `EmptyState`, `EmptyStateProps` | Icon + title + `description` for empty lists / no-results. Props: `icon`, `title` (required), `description`, `action`. ⚠️ It is `description` — **not** `body`. |
 | **ErrorPage** | `ErrorPage`, `ErrorPageProps` | Full-page error layout (zero `--uxm-*` knobs; tokens only). Props: `code`, `icon`, `title` (required), `message`, `primaryAction`, `secondaryAction`. ⚠️ Not `description` / `action` — those are `EmptyState`'s names. |
-| **Loader** | `Loader`, `LoaderVariant`, `LoaderLayout`, `LoaderProps` | Spinner / dots / bar, optional `|`-separated cycling messages. ⚠ Does not honour `prefers-reduced-motion`. |
+| **Loader** | `Loader`, `LoaderVariant`, `LoaderLayout`, `LoaderProps` | Spinner / dots / bar, optional `\|`-separated cycling messages. ⚠ Does not honour `prefers-reduced-motion`. |
 | **ProgressBar** | `ProgressBar`, `ProgressBarVariant`, `ProgressBarProps` | Determinate progress (0–100%) — companion to `Loader` when the fraction done is known (uploads, batch ops). `value` (clamped 0–100), `variant: 'linear' \| 'ring'` (linear track+fill or CSS conic-gradient ring, no SVG), `label` (caption + accessible name), `valueText` (override `${round}%`). `role="progressbar"` + aria-valuenow/min/max. Theming via `--uxm-progress-bar-*`. From `./progress-bar` (2.7.0). |
 | **Tag** | `Tag`, `TagType`, `TagSize`, `TagProps` | Semantic label; 6 types × 2 sizes; presentational. |
 | **Tooltip / ContentTooltip** | `Tooltip`, `ContentTooltip`, `TooltipPlacement`, `TooltipProps`, `ContentTooltipProps` | Dark bubble + arrow / card popover. Render-only, no positioning. |
@@ -126,7 +126,7 @@ Import path for all: `import { … } from '@viax/uxm/ui';`
 | **TimelineEntry** | `TimelineEntry`, `TimelineDotState`, `TimelineEntryProps` | Single rail + dot + card row; `lineBefore` / `lineAfter` toggles. |
 | **TypeOverviewCard** | `TypeOverviewCard`, `TypeOverviewCardProps` | Icon tile + label + value + hover-revealed trailing + accent stripe. |
 
-## Icon glyph registry (all 64 ids)
+## Icon glyph registry (all 65 ids)
 
 `<Icon glyph="…">` returns **`null`** for anything not in this list — no error, no warning, just a
 missing icon. There is deliberately no `dashboard`, `folder`, `package`, `external`, `chart`,
@@ -141,7 +141,7 @@ cursor-arrow-rays  dock-bottom  dock-right  document  drag-handle  exclamation-c
 exclamation-triangle  eye  eye-slash  eyedropper  filter  globe  grid  history  image  info
 kebab  list  list-lines  menu  minus  model-business-interaction  model-configuration
 model-determination  model-revenue-motion  moon  organization  paint-brush  pencil  plus
-product  question-mark-circle  refresh  save  search  settings  sparkle  square  sun  trash  user
+product  question-mark-circle  refresh  save  search  settings  sparkle  square  sun  trash  upload  user
 ```
 
 Substitutions for the ids people reach for but that don't exist:

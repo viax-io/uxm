@@ -352,7 +352,7 @@ export function Canvas({
           backgroundSize: '20px 20px',
         }}
       >
-        <div className="min-h-full flex items-center justify-center">
+        <div className={def.canvasFill ? 'min-h-full' : 'min-h-full flex items-center justify-center'}>
           {Preview ? (
             // Wrap the preview in a capture-phase event listener so any
             // native event the rendered atom fires gets logged to the

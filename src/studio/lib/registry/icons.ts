@@ -8,20 +8,20 @@ export const iconsDefs: ComponentDef[] = [
     id: 'icon',
     name: 'Icon',
     category: 'Icons',
-    description: 'Decorative line icon. Pick a glyph from the modo icon set, then tune size / stroke / colour.',
+    description: 'Decorative line icon. Browse the full modo icon set as a searchable, labelled grid — each cell shows the glyph above the `id` you pass to `glyph=`. The size / stroke / colour knobs tune every icon at once.',
+    // Gallery preview: fill the canvas width (flexible column count) and top-
+    // align so the grid filters in place — nothing re-centres as the result
+    // count changes.
+    canvasFill: true,
     styleProperties: [
       { key: 'color', label: 'Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
       { key: 'size', label: 'Size', control: 'number', defaultValue: 20, min: 10, max: 48, step: 1, unit: 'px' },
       { key: 'strokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 1.5, min: 0.5, max: 3, step: 0.25, unit: 'px' },
     ],
-    layoutVariants: [
-      {
-        key: 'glyph',
-        label: 'Glyph',
-        options: ICON_OPTIONS,
-        defaultValue: 'search',
-      },
-    ],
+    // No glyph picker: the preview renders the entire ICONS set as a grid, so
+    // there's no single glyph to choose. (The icon-button entry below keeps its
+    // glyph variant — it previews one button.)
+    layoutVariants: [],
   },
   {
     id: 'icon-button',
