@@ -1,3 +1,10 @@
+## [4.14.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.14.0...v4.14.1) (2026-08-10)
+
+
+### Bug Fixes
+
+* **scripts:** re-open an empty Unreleased section after stamping a release ([1305c36](https://gitlab.viax.tech/services-viax/uxm/commit/1305c360b36751b92437d82610ee7d05db2cdbdb))
+
 # [4.14.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.13.1...v4.14.0) (2026-08-10)
 
 
