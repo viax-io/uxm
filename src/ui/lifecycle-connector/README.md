@@ -66,6 +66,7 @@ Extends `Omit<SVGAttributes<SVGGElement>, 'from' | 'to'>` — `from` and `to` ar
 | `cornerRadius` | `number` | `4` | Corner rounding in px for the elbow's turns; `0` for square corners. Clamped per corner to half the shorter adjoining run. Read only when the resolved routing is `orthogonal`. |
 | `startDot` | `boolean` | `true` | Render the dot at the source anchor. |
 | `arrowSize` | `number` | `7` | Arrowhead size in px. The line is also pulled back by this amount so the tip lands cleanly on the node edge. |
+| `arrowhead` | `'triangle' \| 'line'` | `'triangle'` | Arrowhead shape. `triangle` = filled triangle; `line` = open two-stroke chevron (`fill: none`, drawn at the connector's stroke width). Same span either way. |
 | `dashPattern` | `string` | – | SVG `stroke-dasharray` pattern used when `state === 'dashed'`. Applied as an inline `--uxm-lifecycle-connector-dash-pattern`; left unset the cascade supplies it (default `6 4`). See [Why `arrow-size` is read](#why-arrow-size-is-read-not-applied) — same **prop → CSS var → default** order. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native SVG group attribute)_ | – | – | Spread onto the root `<g>`. |
@@ -73,6 +74,7 @@ Extends `Omit<SVGAttributes<SVGGElement>, 'from' | 'to'>` — `from` and `to` ar
 ```ts
 type LifecycleConnectorState = 'idle' | 'active' | 'dashed' | 'dashed-active';
 type LifecycleConnectorRouting = 'auto' | 'straight' | 'bezier' | 'orthogonal';
+type LifecycleConnectorArrowhead = 'triangle' | 'line';
 ```
 
 ## CSS variables

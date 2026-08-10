@@ -161,6 +161,15 @@ export const diagramDefs: ComponentDef[] = [
         ],
         defaultValue: 'on',
       },
+      {
+        key: 'arrowhead',
+        label: 'Arrowhead',
+        options: [
+          { value: 'triangle', label: 'Triangle' },
+          { value: 'line', label: 'Line' },
+        ],
+        defaultValue: 'triangle',
+      },
     ],
   },
   {

@@ -58,4 +58,16 @@
   &__arrow {
     fill: var(--uxm-lifecycle-connector-color);
   }
+
+  /* Line (open-chevron) arrowhead — a stroked polyline instead of a filled
+     triangle, so it must clear the base `fill` and paint on `stroke` at the
+     connector's own width. Placed after `&__arrow` so it wins by source order
+     (equal specificity). */
+  &__arrow--line {
+    fill: none;
+    stroke: var(--uxm-lifecycle-connector-color);
+    stroke-width: var(--uxm-lifecycle-connector-width);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
 }
