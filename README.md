@@ -106,7 +106,7 @@ Every component folder ships a `README.md` documenting props, CSS variables, MOD
 [`component-row`](src/ui/component-row/README.md) · [`config-component-row`](src/ui/config-component-row/README.md) · [`config-segment-item`](src/ui/config-segment-item/README.md) · [`explorer-list-item`](src/ui/explorer-list-item/README.md) · [`explorer-section`](src/ui/explorer-section/README.md) · [`segment-card`](src/ui/segment-card/README.md) · [`segment-row`](src/ui/segment-row/README.md)
 
 ### Lifecycle diagrams
-[`lifecycle-connector`](src/ui/lifecycle-connector/README.md) · [`lifecycle-edge-label`](src/ui/lifecycle-edge-label/README.md) · [`lifecycle-minimap`](src/ui/lifecycle-minimap/README.md) · [`lifecycle-node-card`](src/ui/lifecycle-node-card/README.md) · [`lifecycle-terminal`](src/ui/lifecycle-terminal/README.md) · [`lifecycle-zoom-control`](src/ui/lifecycle-zoom-control/README.md)
+[`lifecycle-connector`](src/ui/lifecycle-connector/README.md) · [`lifecycle-drop-slot`](src/ui/lifecycle-drop-slot/README.md) · [`lifecycle-edge-label`](src/ui/lifecycle-edge-label/README.md) · [`lifecycle-group-box`](src/ui/lifecycle-group-box/README.md) · [`lifecycle-minimap`](src/ui/lifecycle-minimap/README.md) · [`lifecycle-node-card`](src/ui/lifecycle-node-card/README.md) · [`lifecycle-terminal`](src/ui/lifecycle-terminal/README.md) · [`lifecycle-zoom-control`](src/ui/lifecycle-zoom-control/README.md)
 
 ## Design tokens & MODO theming
 
