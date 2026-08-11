@@ -18,33 +18,29 @@ const SAMPLE_SECTIONS = [
   {
     heading: 'Model Types',
     items: [
+      // No per-item colours here — the "Auto Icon Colors" variant fills them
+      // from the palette when on, matching how a modo sidebar (which passes no
+      // per-item colour) behaves. A real consumer can still pin `iconColor` /
+      // `iconBg` on a specific item to override the auto assignment.
       {
         href: '#rm',
         label: 'Revenue Motions',
         icon: <Icon glyph="model-revenue-motion" />,
-        iconBg: 'var(--color-highlight-warm)',
-        iconColor: 'var(--color-on-highlight-warm)',
       },
       {
         href: '#bi',
         label: 'Business Interactions',
         icon: <Icon glyph="model-business-interaction" />,
-        iconBg: 'var(--color-highlight-cool)',
-        iconColor: 'var(--color-on-highlight-cool)',
       },
       {
         href: '#dm',
         label: 'Determination',
         icon: <Icon glyph="model-determination" />,
-        iconBg: 'var(--color-category-composite)',
-        iconColor: 'var(--color-text-inverse)',
       },
       {
         href: '#cm',
         label: 'Configuration',
         icon: <Icon glyph="model-configuration" />,
-        iconBg: 'var(--color-category-diagram)',
-        iconColor: 'var(--color-text-inverse)',
       },
     ],
   },
@@ -64,6 +60,7 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
   const brand = shell?.brand ?? {};
   const theme = shell?.theme ?? 'light';
   const collapsed = variants.state === 'collapsed';
+  const autoIconColors = variants.autoIconColors === 'on';
 
   // Pick the right brand asset for the active theme. Dark variants are
   // optional in BrandConfig — fall back through (dark → light → bundled
@@ -90,6 +87,7 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
     <AppSidebar
       brand={{ logoUrl, iconUrl, alt: 'Brand' }}
       sections={SAMPLE_SECTIONS}
+      autoIconColors={autoIconColors}
       collapsed={collapsed}
       onCollapseToggle={() => {}}
       footer={<span>viax Modo v0.1.0</span>}
