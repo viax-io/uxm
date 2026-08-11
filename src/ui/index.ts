@@ -79,6 +79,7 @@ export { IconTile } from './icon-tile';
 export type { IconTileProps } from './icon-tile';
 export { LifecycleConnector } from './lifecycle-connector';
 export type {
+  LifecycleConnectorArrowhead,
   LifecycleConnectorProps,
   LifecycleConnectorRouting,
   LifecycleConnectorState,

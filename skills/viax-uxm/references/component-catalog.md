@@ -203,7 +203,7 @@ positioning and a11y.
 
 | Component | Key exports | What it is |
 |-----------|-------------|------------|
-| **LifecycleConnector** | `LifecycleConnector`, `LifecycleConnectorProps`, `LifecycleConnectorState`, `LifecycleConnectorRouting` | SVG edge; idle / active / dashed; `routing` auto / straight / bezier / orthogonal elbow. |
+| **LifecycleConnector** | `LifecycleConnector`, `LifecycleConnectorProps`, `LifecycleConnectorState`, `LifecycleConnectorRouting`, `LifecycleConnectorArrowhead` | SVG edge; idle / active / dashed **(unreleased: `dashed-active`** — a dashed edge in the active emphasis, for a selected/hovered future branch**)**; `routing` auto / straight / bezier / orthogonal elbow; **(unreleased)** `arrowhead` `'triangle' \| 'line'` (filled triangle vs open chevron). |
 | **LifecycleDropSlot** | `LifecycleDropSlot`, `LifecycleDropSlotProps`, `LifecycleDropSlotShape` | Dashed drag slot, `card` / `pill`. One appearance — it exists only while it's the target. `interactive` defaults to false. Width is the consumer's. |
 | **LifecycleEdgeLabel** | `LifecycleEdgeLabel`, `LifecycleEdgeLabelProps`, `LifecycleEdgeLabelVariant` | Midpoint pill: `true` / `false` / `neutral`. |
 | **LifecycleGroupBox** | `LifecycleGroupBox`, `LifecycleGroupBoxProps` | Frosted frame around one group's sibling nodes; `interactive` + `target` make it a drop zone. Members are siblings, not children. |

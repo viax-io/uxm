@@ -805,6 +805,20 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`LifecycleConnector` gained a `dashed-active` state**
+  (`LifecycleConnectorState = 'idle' | 'active' | 'dashed' | 'dashed-active'`). A dashed edge shown
+  in the active/selected emphasis — accent colour + the `active` stroke width, still dashed — for
+  when a future/conditional branch is the selected or hovered one. It reuses the
+  `--uxm-lifecycle-connector-active-*` vars (so "active" stays defined once) plus the shared
+  `dash-pattern`; additive, the existing `idle`/`active`/`dashed` states are unchanged. The studio
+  State picker adds a "Dashed · Active" option. From `./lifecycle-connector`.
+- **`LifecycleConnector` gained a choosable `arrowhead`**
+  (`LifecycleConnectorArrowhead = 'triangle' | 'line'`, default `'triangle'`). `triangle` = the
+  existing filled triangle; `line` = an open two-stroke chevron (`fill: none`, drawn at the
+  connector's stroke width), same span and direction. Additive — omitting the prop keeps the
+  filled triangle. The studio adds an "Arrowhead" variant (Triangle / Line). From
+  `./lifecycle-connector`.
+
 ## Workflow
 
 ### Before writing any code

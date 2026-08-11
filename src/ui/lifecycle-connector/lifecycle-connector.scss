@@ -15,7 +15,11 @@
     var(--uxm-lifecycle-connector-connector-idle-stroke-width, 1.5)
   );
 
-  &--active {
+  /* `dashed-active` shares the active emphasis (colour + width) so "active"
+     stays defined once here; it adds the dashed dasharray via the path rule
+     below. */
+  &--active,
+  &--dashed-active {
     --uxm-lifecycle-connector-color: var(
       --uxm-lifecycle-connector-active-color,
       var(--uxm-lifecycle-connector-connector-active-color, var(--color-accent))
@@ -39,7 +43,8 @@
     stroke-width: var(--uxm-lifecycle-connector-width);
   }
 
-  &--dashed &__path {
+  &--dashed &__path,
+  &--dashed-active &__path {
     stroke-dasharray: var(
       --uxm-lifecycle-connector-dash-pattern,
       var(--uxm-lifecycle-connector-connector-dash-pattern, 6 4)
@@ -52,5 +57,17 @@
 
   &__arrow {
     fill: var(--uxm-lifecycle-connector-color);
+  }
+
+  /* Line (open-chevron) arrowhead — a stroked polyline instead of a filled
+     triangle, so it must clear the base `fill` and paint on `stroke` at the
+     connector's own width. Placed after `&__arrow` so it wins by source order
+     (equal specificity). */
+  &__arrow--line {
+    fill: none;
+    stroke: var(--uxm-lifecycle-connector-color);
+    stroke-width: var(--uxm-lifecycle-connector-width);
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 }

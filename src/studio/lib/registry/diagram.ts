@@ -115,13 +115,14 @@ export const diagramDefs: ComponentDef[] = [
       // so themes saved before this regrouping still resolve.
       { key: 'connectorIdleColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'states', showWhen: { state: 'idle' } },
       { key: 'connectorIdleStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 1.5, min: 0.5, max: 4, step: 0.5, unit: 'px', section: 'states', showWhen: { state: 'idle' } },
-      { key: 'connectorActiveColor', label: 'Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: 'active' } },
-      { key: 'connectorActiveStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 2, min: 0.5, max: 5, step: 0.5, unit: 'px', section: 'states', showWhen: { state: 'active' } },
+      // Active colour/width also drive `dashed-active` — it shares the active
+      // emphasis, so its knobs surface for both states.
+      { key: 'connectorActiveColor', label: 'Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: ['active', 'dashed-active'] } },
+      { key: 'connectorActiveStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 2, min: 0.5, max: 5, step: 0.5, unit: 'px', section: 'states', showWhen: { state: ['active', 'dashed-active'] } },
       { key: 'connectorDashedColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'states', showWhen: { state: 'dashed' } },
       { key: 'connectorDashedStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 1.5, min: 0.5, max: 4, step: 0.5, unit: 'px', section: 'states', showWhen: { state: 'dashed' } },
-      // Only read when the state is dashed, so it belongs with that state's
-      // paint rather than in the shared section.
-      { key: 'connectorDashPattern', label: 'Dash Pattern', control: 'text', defaultValue: '6 4', section: 'states', showWhen: { state: 'dashed' } },
+      // The dash pattern applies to both dashed states.
+      { key: 'connectorDashPattern', label: 'Dash Pattern', control: 'text', defaultValue: '6 4', section: 'states', showWhen: { state: ['dashed', 'dashed-active'] } },
       { key: 'connectorArrowSize', label: 'Arrow Size', control: 'number', defaultValue: 7, min: 3, max: 14, step: 1, unit: 'px' },
       // No knobs for `crossAt` / `cornerRadius` on purpose. Where an elbow's
       // cross bus sits is per-edge geometry — the same kind of value as
@@ -136,6 +137,7 @@ export const diagramDefs: ComponentDef[] = [
           { value: 'idle', label: 'Idle' },
           { value: 'active', label: 'Active' },
           { value: 'dashed', label: 'Dashed (false)' },
+          { value: 'dashed-active', label: 'Dashed · Active' },
         ],
         defaultValue: 'idle',
       },
@@ -158,6 +160,15 @@ export const diagramDefs: ComponentDef[] = [
           { value: 'off', label: 'Off' },
         ],
         defaultValue: 'on',
+      },
+      {
+        key: 'arrowhead',
+        label: 'Arrowhead',
+        options: [
+          { value: 'triangle', label: 'Triangle' },
+          { value: 'line', label: 'Line' },
+        ],
+        defaultValue: 'triangle',
       },
     ],
   },

@@ -4,9 +4,11 @@ import { cn } from '@/helpers';
 
 import type { CSSProperties, RefObject, SVGAttributes } from 'react';
 
-export type LifecycleConnectorState = 'idle' | 'active' | 'dashed';
+export type LifecycleConnectorState = 'idle' | 'active' | 'dashed' | 'dashed-active';
 
 export type LifecycleConnectorRouting = 'auto' | 'straight' | 'bezier' | 'orthogonal';
+
+export type LifecycleConnectorArrowhead = 'triangle' | 'line';
 
 interface ConnectorPoint {
   x: number;
@@ -22,8 +24,14 @@ export interface LifecycleConnectorProps extends Omit<SVGAttributes<SVGGElement>
   /** Destination point. The arrowhead is placed here. */
   to: ConnectorPoint;
   /**
-   * Visual state. `idle` = thin grey, `active` = bolder accent + midpoint dot,
-   * `dashed` = dashed (often used for "after deploy" / future branches).
+   * Visual state — this modifier drives the stroke colour + width of all three
+   * sub-elements (start dot, path, arrowhead) in lockstep; it does not add or
+   * move the start dot, which is the separate `startDot` prop. `idle` = thin
+   * grey, `active` = bolder accent + heavier stroke,
+   * `dashed` = dashed (often used for "after deploy" / future branches), and
+   * `dashed-active` = a dashed edge shown in its active/selected emphasis
+   * (accent colour + heavier stroke, still dashed) — for when a future/
+   * conditional branch is the selected or hovered one.
    */
   state?: LifecycleConnectorState;
   /**
@@ -74,7 +82,14 @@ export interface LifecycleConnectorProps extends Omit<SVGAttributes<SVGGElement>
    */
   arrowSize?: number;
   /**
-   * SVG `stroke-dasharray` pattern used when `state === "dashed"`.
+   * Arrowhead shape. `triangle` (default) = a filled triangle; `line` = an
+   * open two-stroke chevron (same span, `fill: none`, drawn at the connector's
+   * stroke width). Both point along the final run and scale with `arrowSize`.
+   */
+  arrowhead?: LifecycleConnectorArrowhead;
+  /**
+   * SVG `stroke-dasharray` pattern used when `state` is `"dashed"` or
+   * `"dashed-active"` — both dashed states read the same pattern.
    *
    * Applied as an inline `--uxm-lifecycle-connector-dash-pattern`, not as a
    * `stroke-dasharray` attribute: a presentation attribute loses to any author
@@ -270,6 +285,7 @@ export function LifecycleConnector({
   cornerRadius = 4,
   startDot = true,
   arrowSize: arrowSizeProp,
+  arrowhead = 'triangle',
   dashPattern,
   className,
   style,
@@ -288,8 +304,12 @@ export function LifecycleConnector({
   const mode = routing === 'auto' ? (isStraight ? 'straight' : 'bezier') : routing;
 
   // Stop the path/line a bit short of the destination so the arrowhead sits
-  // cleanly on the node edge instead of disappearing behind the polygon.
-  const pullback = arrowSize;
+  // cleanly on the node edge instead of disappearing behind the polygon. The
+  // filled triangle covers that pulled-back seam; the open `line` chevron has
+  // no fill, so it must run all the way to the tip (its point) — a pullback
+  // there leaves the line ending at the chevron's open mouth and reads as a
+  // gap between the line and the head.
+  const pullback = arrowhead === 'line' ? 0 : arrowSize;
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const len = Math.hypot(dx, dy) || 1;
@@ -355,11 +375,9 @@ export function LifecycleConnector({
   const ay = tipY;
   const px = -uy;
   const py = ux;
-  const arrow = [
-    `${ax},${ay}`,
-    `${ax - ux * arrowSize + px * arrowSize * 0.55},${ay - uy * arrowSize + py * arrowSize * 0.55}`,
-    `${ax - ux * arrowSize - px * arrowSize * 0.55},${ay - uy * arrowSize - py * arrowSize * 0.55}`,
-  ].join(' ');
+  const tip = `${ax},${ay}`;
+  const baseL = `${ax - ux * arrowSize + px * arrowSize * 0.55},${ay - uy * arrowSize + py * arrowSize * 0.55}`;
+  const baseR = `${ax - ux * arrowSize - px * arrowSize * 0.55},${ay - uy * arrowSize - py * arrowSize * 0.55}`;
 
   return (
     <g
@@ -395,7 +413,17 @@ export function LifecycleConnector({
         strokeLinecap="round"
         strokeLinejoin={mode === 'orthogonal' ? 'round' : undefined}
       />
-      <polygon className="uxm-lifecycle-connector__arrow" points={arrow} />
+      {arrowhead === 'line' ? (
+        // Open chevron: base → tip → base, stroked (not filled) at the
+        // connector's own width. Points along the final run, same span as the
+        // triangle.
+        <polyline
+          className="uxm-lifecycle-connector__arrow uxm-lifecycle-connector__arrow--line"
+          points={`${baseL} ${tip} ${baseR}`}
+        />
+      ) : (
+        <polygon className="uxm-lifecycle-connector__arrow" points={`${tip} ${baseL} ${baseR}`} />
+      )}
     </g>
   );
 }

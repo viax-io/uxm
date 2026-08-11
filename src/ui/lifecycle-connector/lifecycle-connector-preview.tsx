@@ -1,6 +1,7 @@
 import type { PreviewProps } from '@/previews/types';
 import {
   LifecycleConnector,
+  type LifecycleConnectorArrowhead,
   type LifecycleConnectorRouting,
   type LifecycleConnectorState,
 } from '@/ui';
@@ -11,6 +12,7 @@ export function LifecycleConnectorPreview({ styles, variants }: PreviewProps) {
   const state = (variants.state as LifecycleConnectorState) ?? 'idle';
   const routing = (variants.routing as LifecycleConnectorRouting) ?? 'auto';
   const startDot = (variants.startDot ?? 'on') !== 'off';
+  const arrowhead = (variants.arrowhead as LifecycleConnectorArrowhead) ?? 'triangle';
   const W = 260;
   const H = 120;
 
@@ -51,6 +53,7 @@ export function LifecycleConnectorPreview({ styles, variants }: PreviewProps) {
         routing={routing}
         startDot={startDot}
         arrowSize={styles.connectorArrowSize as number}
+        arrowhead={arrowhead}
       />
     </svg>
   );
