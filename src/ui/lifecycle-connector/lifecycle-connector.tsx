@@ -88,7 +88,8 @@ export interface LifecycleConnectorProps extends Omit<SVGAttributes<SVGGElement>
    */
   arrowhead?: LifecycleConnectorArrowhead;
   /**
-   * SVG `stroke-dasharray` pattern used when `state === "dashed"`.
+   * SVG `stroke-dasharray` pattern used when `state` is `"dashed"` or
+   * `"dashed-active"` — both dashed states read the same pattern.
    *
    * Applied as an inline `--uxm-lifecycle-connector-dash-pattern`, not as a
    * `stroke-dasharray` attribute: a presentation attribute loses to any author
