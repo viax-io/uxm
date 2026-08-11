@@ -825,9 +825,13 @@ skill:
   When on, each nav item's icon tile is auto-assigned a distinct colour from a categorical
   palette, **cycling by position** (unbroken across section boundaries) — a scannable / eye-track
   scheme instead of the monochromatic default. `true` uses the exported
-  `DEFAULT_SIDEBAR_ICON_COLORS` (four contrast-checked DS hue pairs: warm / cool / pink / indigo);
-  pass an array of `{ bg, color }` for your own palette. A per-item `iconColor` / `iconBg` always
-  wins, so an item can pin its colour while the rest auto-fill. New exports:
+  `DEFAULT_SIDEBAR_ICON_COLORS` (four DS hue pairs — warm / cool / accent / indigo — each clearing
+  3:1 non-text contrast in BOTH themes); pass an array of `{ bg, color }` for your own palette.
+  Setting **either** `iconColor` or `iconBg` on an item opts it out of auto **entirely** — the
+  half you left unset falls to the component default, NOT to the palette — so a pinned colour is
+  never spliced onto an auto half picked for a different tile. One item can pin its colour while
+  the rest auto-fill. If you supply a custom palette, measure both themes: tile and ink are
+  separate tokens that flip independently. New exports:
   `AppSidebarIconColor`, `DEFAULT_SIDEBAR_ICON_COLORS`. Additive — omitting it keeps today's
   monochromatic icons. From `./app-sidebar`.
 
