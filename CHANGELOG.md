@@ -1,3 +1,15 @@
+# [4.17.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.16.0...v4.17.0) (2026-08-11)
+
+
+### Bug Fixes
+
+* **app-sidebar:** replace the palette pair that fails contrast in light ([ff248e4](https://gitlab.viax.tech/services-viax/uxm/commit/ff248e47f80e8b9357b356c8bbf3eb0e783eb60f)), closes [#F472B6](https://gitlab.viax.tech/services-viax/uxm/issues/F472B6) [#FFFFFF](https://gitlab.viax.tech/services-viax/uxm/issues/FFFFFF)
+
+
+### Features
+
+* **app-sidebar:** add autoIconColors opt-in ([9183d75](https://gitlab.viax.tech/services-viax/uxm/commit/9183d758424b1748386bb9fa5b7a86edc4863b97))
+
 # [4.16.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.15.0...v4.16.0) (2026-08-11)
 
 
