@@ -1,6 +1,7 @@
-export { AppSidebar } from './app-sidebar';
+export { AppSidebar, DEFAULT_SIDEBAR_ICON_COLORS } from './app-sidebar';
 export type {
   AppSidebarBrand,
+  AppSidebarIconColor,
   AppSidebarNavItem,
   AppSidebarProps,
   AppSidebarSection,

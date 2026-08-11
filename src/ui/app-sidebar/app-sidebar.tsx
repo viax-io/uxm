@@ -35,6 +35,27 @@ export interface AppSidebarSection {
   items: AppSidebarNavItem[];
 }
 
+/** One icon-tile colour pair for the `autoIconColors` palette. */
+export interface AppSidebarIconColor {
+  /** Icon-tile background. */
+  bg: string;
+  /** Icon (foreground) colour — must read on `bg`. */
+  color: string;
+}
+
+/**
+ * Default palette for `autoIconColors` — four contrast-checked design-system
+ * hue pairs (tile bg + readable foreground: warm / cool / pink / indigo).
+ * `autoIconColors` cycles this by item position. Exported so a consumer can
+ * extend, reorder, or replace it.
+ */
+export const DEFAULT_SIDEBAR_ICON_COLORS: AppSidebarIconColor[] = [
+  { bg: 'var(--color-highlight-warm)', color: 'var(--color-on-highlight-warm)' },
+  { bg: 'var(--color-highlight-cool)', color: 'var(--color-on-highlight-cool)' },
+  { bg: 'var(--color-category-composite)', color: 'var(--color-text-inverse)' },
+  { bg: 'var(--color-category-diagram)', color: 'var(--color-text-inverse)' },
+];
+
 export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
   brand: AppSidebarBrand;
   sections: AppSidebarSection[];
@@ -52,6 +73,18 @@ export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
    * framework-neutral. The consumer plugs in the routing primitive.
    */
   linkAs?: ElementType;
+  /**
+   * Auto-assign a distinct icon colour to each nav item from a palette,
+   * cycling by position — a categorical scheme that makes the sidebar
+   * scannable instead of a wall of same-coloured icons. `true` uses the
+   * built-in {@link DEFAULT_SIDEBAR_ICON_COLORS} (four design-system hues);
+   * pass an array of `{ bg, color }` to supply your own. Off by default. An
+   * item that sets either `iconColor` or `iconBg` opts out of auto entirely
+   * (the unset half falls to the component default), so a pinned colour is
+   * never mixed with an auto half meant for a different tile — one item can
+   * pin its own colour while the rest auto-fill.
+   */
+  autoIconColors?: boolean | AppSidebarIconColor[];
   /**
    * Whether the mobile drawer is open. Only meaningful below the 768px
    * breakpoint — at desktop widths the sidebar is always in-flow and this
@@ -75,6 +108,7 @@ export function AppSidebar({
   onCollapseToggle,
   footer,
   linkAs,
+  autoIconColors = false,
   mobileOpen = false,
   onMobileClose,
   closeLabel = 'Close navigation',
@@ -83,6 +117,22 @@ export function AppSidebar({
   className,
   ...rest
 }: AppSidebarProps) {
+  // Resolve the auto-colour palette once: `true` → the built-in hues, an array
+  // → the caller's, anything falsy → none (icons stay monochromatic).
+  const iconPalette: AppSidebarIconColor[] =
+    autoIconColors === true
+      ? DEFAULT_SIDEBAR_ICON_COLORS
+      : Array.isArray(autoIconColors)
+        ? autoIconColors
+        : [];
+  // Global item offset per section so the palette cycles unbroken across
+  // section boundaries — adjacent items differ even over a heading.
+  const sectionOffset: number[] = [];
+  sections.reduce((n, section, i) => {
+    sectionOffset[i] = n;
+    return n + section.items.length;
+  }, 0);
+
   return (
     <>
       {/* Mobile-only backdrop: rendered as a sibling so the consumer's
@@ -146,15 +196,26 @@ export function AppSidebar({
             {section.heading && !collapsed && (
               <p className="uxm-app-sidebar__heading">{section.heading}</p>
             )}
-            {section.items.map((item) => (
+            {section.items.map((item, itemIdx) => {
+              // A per-item colour opts the item out of auto entirely: setting
+              // either `iconBg` or `iconColor` suppresses the palette pair, so
+              // the manual half is never spliced onto an auto half chosen for a
+              // different tile (which could pair, e.g., a light bg with a light
+              // foreground). Auto-fill only when the item pins neither.
+              const hasManualColor = item.iconBg != null || item.iconColor != null;
+              const auto =
+                !hasManualColor && iconPalette.length
+                  ? iconPalette[(sectionOffset[idx] + itemIdx) % iconPalette.length]
+                  : undefined;
+              return (
               <SidebarNavItem
                 key={item.href}
                 as={linkAs}
                 href={item.href}
                 icon={item.icon}
                 active={item.active}
-                iconBg={item.iconBg}
-                iconColor={item.iconColor}
+                iconBg={item.iconBg ?? auto?.bg}
+                iconColor={item.iconColor ?? auto?.color}
                 trailing={collapsed ? undefined : item.trailing}
                 title={collapsed ? item.label : undefined}
                 className={cn(
@@ -164,7 +225,8 @@ export function AppSidebar({
               >
                 {collapsed ? '' : item.label}
               </SidebarNavItem>
-            ))}
+              );
+            })}
           </div>
         ))}
       </nav>

@@ -821,6 +821,16 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`AppSidebar` gained `autoIconColors`** (`boolean | AppSidebarIconColor[]`, default `false`).
+  When on, each nav item's icon tile is auto-assigned a distinct colour from a categorical
+  palette, **cycling by position** (unbroken across section boundaries) — a scannable / eye-track
+  scheme instead of the monochromatic default. `true` uses the exported
+  `DEFAULT_SIDEBAR_ICON_COLORS` (four contrast-checked DS hue pairs: warm / cool / pink / indigo);
+  pass an array of `{ bg, color }` for your own palette. A per-item `iconColor` / `iconBg` always
+  wins, so an item can pin its colour while the rest auto-fill. New exports:
+  `AppSidebarIconColor`, `DEFAULT_SIDEBAR_ICON_COLORS`. Additive — omitting it keeps today's
+  monochromatic icons. From `./app-sidebar`.
+
 ## Workflow
 
 ### Before writing any code

@@ -34,6 +34,17 @@ export const appDefs: ComponentDef[] = [
         ],
         defaultValue: 'expanded',
       },
+      {
+        // Auto-assign a distinct icon colour per item from a categorical
+        // palette (cycling) for scannability, vs the monochromatic default.
+        key: 'autoIconColors',
+        label: 'Auto Icon Colors',
+        options: [
+          { value: 'off', label: 'Off' },
+          { value: 'on', label: 'On' },
+        ],
+        defaultValue: 'off',
+      },
     ],
   },
   {
