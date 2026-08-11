@@ -24,6 +24,8 @@ From the client display name, auto-derive:
 - `CLIENT_NAME_LOWER` = display name lowercased
 - `CLIENT_SLUG` = display name lowercased, spaces → hyphens, non-alphanumeric chars stripped
 - `PORTAL_SUBDIR` = `/{CLIENT_SLUG}-portal/`
+- `PORTAL_ID` = `vx-{CLIENT_SLUG}-{8 random hex chars}` — generate the suffix by actually running `openssl rand -hex 4` in Bash (never invent the hex by hand; a made-up suffix defeats the uniqueness guarantee)
+- `GENERATED_AT` = today's date, `YYYY-MM-DD`
 
 ---
 
@@ -35,12 +37,15 @@ Send **one message** asking for the remaining values:
 > 5. **Keycloak base URL** — e.g. `https://auth.palooza.demo.viax.io`
 > 6. **viax GraphQL endpoint** — e.g. `https://api.palooza.demo.viax.io/graphql`
 > 7. **Target GitHub repository** (org/repo) — leave blank if not yet known
-> 8. **Primary accent color** (hex) — press Enter to use default `#4FD0A5`
-> 9. **Accent hover color** (hex) — press Enter to use default `#43B18C`
-> 10. **Embed the UXM Studio editor at `/uxm`?** (yes/no) — press Enter for the default `no`. Either way the portal always loads and applies the env's published UXM Studio config (styles/tokens) via `getUxmConfig`; `yes` additionally mounts the live editor inside this portal.
-> 11. **Show a theme picker in the header?** (yes/no) — press Enter for the default `no`. Only says yes if UXM Studio published *multiple* named themes for this client and end users should be able to select among them; read-only (no create/edit/delete), independent of question 10."
+> 8. **Embed the UXM Studio editor at `/uxm`?** (yes/no) — press Enter for the default `no`. Either way the portal always loads and applies the env's published UXM Studio config (styles/tokens) via `getUxmConfig`; `yes` additionally mounts the live editor inside this portal.
+> 9. **Show a theme picker in the header?** (yes/no) — press Enter for the default `no`. Only say yes if UXM Studio published *multiple* named themes for this client and end users should be able to select among them; read-only (no create/edit/delete), independent of question 8."
 
 Normalize the answers to `yes`/`no` (default `no`) → `EMBED_UXM_STUDIO`, `THEME_PICKER`.
+
+> **Do not ask for brand colours.** The accent ramp — and the logo, favicon and typeface with
+> it — is published from UXM Studio for the environment and arrives with every other token at
+> runtime. Asking here would bake a second source into the generated app, which then keeps
+> painting after a studio "Reset all" while the studio's own inputs show library defaults.
 
 ---
 
@@ -60,8 +65,8 @@ Display a confirmation table with all resolved values and ask: *"Does everything
 | `API_URL` | _(from user)_ |
 | `GITHUB_REPO` | _(from user or blank)_ |
 | `PORTAL_SUBDIR` | _(auto-derived)_ |
-| `ACCENT_COLOR` | _(from user or #4FD0A5)_ |
-| `ACCENT_HOVER_COLOR` | _(from user or #43B18C)_ |
+| `PORTAL_ID` | _(auto-generated — `vx-{CLIENT_SLUG}-{openssl rand -hex 4}`)_ |
+| `GENERATED_AT` | _(auto-derived — today, `YYYY-MM-DD`)_ |
 | `EMBED_UXM_STUDIO` | _(from user or `no`)_ |
 | `THEME_PICKER` | _(from user or `no`)_ |
 
@@ -79,6 +84,7 @@ Replace every `{{PLACEHOLDER}}` in that document with the confirmed values colle
 
 Key reminders:
 - Follow the **Implementation Order** section top-to-bottom — do not reorder or skip steps.
-- **Runtime theming consumes the env's published UXM Studio config; embedding the editor is OPTIONAL (`{{EMBED_UXM_STUDIO}}`, default `no`)** — see *"Runtime Theming — consume the UXM Studio config (optionally embed the editor at `/uxm`)"*. **Always** build the consume side: config store + the **read** `lib/api/config.js` helpers (`fetchUxmConfig`/`fetchStudioConfig`) + app-level applier + the `useHydrateStudioConfig` boot hook (the config is **loaded back on app boot** from the UXM config's `uxmStudio` key). **Only when `EMBED_UXM_STUDIO = yes`** also build the editor: `lib/uxm-persistence.js` + the `saveUxmConfig`/`saveStudioConfig` write helpers + the `<UxmApp embed>` page + the `/uxm` route + the "UXM Studio" Settings item + the `@viax/uxm/studio.css` import. Do **NOT** hand-build a custom admin theme EDITOR (color pickers, brand-token forms, a second save path) in either mode — that duplicates UXM Studio's own editing UI. A separate, OPTIONAL, read-only theme **picker** (`{{THEME_PICKER}}`, default `no`) letting end users select among themes already published in UXM Studio's `themes[]` is supported — see *"Optional: read-only theme picker"* in the MetaPrompt; it never writes to the server so it doesn't conflict with the no-editor rule. Requires `@viax/uxm@^4.15.0` or newer — always `npm i @viax/uxm@latest`. **Theming reads and writes the dedicated `getUxmConfig` / `saveUxmConfig` operations; the older `getMfaConfig` / `saveMfaConfig` route is gone — do not generate it.** Seed the studio brand with the collected accent colors; **do NOT redeclare `--color-accent*` in `globals.css`** — the studio config is the single source of truth for the accent ramp. The same applies to the typeface: Brand Settings → **Typography** (`brand.fontFamily`) in the published config re-fonts the portal via `--brand-font`; the portal's only base-font declaration is the `html, body, #root { font-family: var(--brand-font, var(--font-sans)) }` chain from the `globals.css` baseline (Inter loaded in `index.html`). That chain **requires** the `:root { --font-sans: var(--font-inter, …) }` bridge that the baseline also ships — `@viax/uxm/tokens.css` declares `--font-sans` only inside a Tailwind-only `@theme inline` block that browsers drop, so without the bridge the declaration is invalid at computed-value time and the whole portal falls back to Times New Roman. The baseline also ships `button, input, select, textarea { font: inherit }` — native form controls do NOT inherit the document font, so without it every raw (non-uxm) control renders in Arial. The MetaPrompt's Implementation Order ends with a **mandatory font smoke-check (step 12)** — run it; do not declare the build done while any of its checks fail.
+- **Runtime theming — follow the [`viax-uxm-theming`](../viax-uxm-theming/SKILL.md) skill.** It owns the whole topic: the `getUxmConfig` / `saveUxmConfig` contract, the wire shape, the applier that turns the published config into design tokens, the three modes, the `viax.portalId` identity block, and the theming gotchas (the `--font-sans` bridge, `font: inherit` on native controls, never redeclaring `--color-accent*`). This MetaPrompt only adds the portal-specific glue — mode flags `{{EMBED_UXM_STUDIO}}` / `{{THEME_PICKER}}` (both default `no`), `{{CLIENT_SLUG}}` naming, and the shell wiring — see *"Runtime Theming"* in the MetaPrompt. **Always** build the consume side; **never** hand-build a theme editor.
+- **Portal identity stamp (MANDATORY — never skip).** Every generated portal must be uniquely identifiable. Three pieces, all required, spec'd in *"General Notes → Portal identity stamp"* in the MetaPrompt: (1) the `"viax"` metadata block in `package.json` (`portalId` = `{{PORTAL_ID}}`, `generator`, `client`, `realm`, `env`, `generatedAt` = `{{GENERATED_AT}}`); (2) `vite.config.js` reads that block and exposes it to the bundle as `__PORTAL_META__` via `define`; (3) `main.jsx` calls `stampPortalId()` on boot — appends `<meta name="viax-portal-id">` to `<head>` and logs `[viax] portal …` to the console, so a *deployed* portal is identifiable from the DOM/console without source access (`package.json` itself is not deployed). Before declaring the build done, verify the ID landed in the production bundle: `npm run build && grep -o "{{PORTAL_ID}}" dist/assets/*.js`.
 - The **BEM Discovery** step (step 7 in Implementation Order) requires asking the user for a BEM UID or code — that interactive question is already embedded in the prompt under *"BEM Discovery & Dynamic Route Generation → Step 1"*.
 - All `{{CLIENT_NAME}}`, `{{REALM}}`, `{{ENV}}`, `{{AUTH_URL}}`, `{{API_URL}}`, etc. must be replaced with concrete values before acting on any instruction that references them.
