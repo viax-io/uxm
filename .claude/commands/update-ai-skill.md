@@ -1,7 +1,16 @@
 # /update-ai-skill Command
 
-Maintain the `viax-uxm` Claude skill. **The editing source lives IN THIS REPO:
-`skills/viax-uxm/`** (SKILL.md + `references/`). The shared `viax-ai-skills` GitLab repo
+Maintain the Claude skills this repo owns. **The editing source lives IN THIS REPO under
+`skills/`** — two of them ship:
+
+| Skill | What it is | Versioned with the library? |
+|---|---|---|
+| `skills/viax-uxm/` | The component/token reference consumers read | **Yes** — CI stamps its version marker, component count and `### Unreleased` heading at release |
+| `skills/viax-portal/` | The portal generator (SKILL.md + the BEM MetaPrompt) | **No** — no version marker, no `(unreleased)` qualifiers; it tracks the library's API by hand |
+
+Steps 2 and 3 below (version check, post-release cleanup) apply to **`viax-uxm` only** —
+`viax-portal` has no markers to stamp. Step 1 (drift + hygiene) and step 4 (sync) cover
+**both**. The shared `viax-ai-skills` GitLab repo
 (`ssh://git@ssh.gitlab.viax.tech:2222/ai/viax-ai-skills.git` — port 22 on the bare host
 times out) is a DISTRIBUTION TARGET only — same model as the npm package itself (source
 here → publish to Nexus).
@@ -41,10 +50,17 @@ under the `### Unreleased` heading in SKILL.md; mark catalog rows for unreleased
   markers are not).
 - Recipe code must compile against the current types — verify prop names against `src/ui`
   JSDoc, never from memory.
-- Hygiene: `grep -rniE "pavlo|/Users/|/home/|C:\\\\|localhost" skills/viax-uxm/` → must be
-  empty (keyboard-key names like `Home/End` are false positives). Reference the library ONLY
-  as the GitLab repo (`https://gitlab.viax.tech/services-viax/uxm`), the `@viax/uxm` package
-  on Nexus, or repo-root-relative paths.
+- Hygiene — run over **all** of `skills/`, not just `viax-uxm`:
+  `grep -rniE "pavlo|/Users/|/home/|C:\\\\|localhost" skills/` → must be empty (keyboard-key
+  names like `Home/End` are false positives). Reference the library ONLY as the GitLab repo
+  (`https://gitlab.viax.tech/services-viax/uxm`), the `@viax/uxm` package on Nexus, or
+  repo-root-relative paths. Every skill here ships to consumers, so an absolute local path in
+  any of them leaks a developer's machine — scoping this grep to one folder is how one
+  survived in `viax-portal` undetected.
+- `viax-portal` drift: the MetaPrompt hardcodes the API surface it generates against
+  (GraphQL operations, `@viax/uxm` version floor, helper names). When the portal's config
+  API or the library's public surface changes, verify against a REAL working portal rather
+  than from the schema alone — the generated code is what people run.
 
 ### 2. Version check
 
@@ -71,9 +87,11 @@ Syncing to `viax-ai-skills` is the maintainer's manual step. Claude only reminds
 run, whether a sync is due (distribution repo behind the published version) or appears
 done. Reference checklist for the human (do not execute any of it):
 
-- Copy `skills/viax-uxm/` verbatim into `viax-ai-skills` (same relative path) on a branch
-  `feature/<ticket>-viax-uxm-skill-v<VERSION>` off up-to-date `main` (VX-1736 is the
-  standing ticket used by past syncs).
+- Copy **both** `skills/viax-uxm/` and `skills/viax-portal/` verbatim into `viax-ai-skills`
+  (same relative paths) on a branch `feature/<ticket>-viax-uxm-skill-v<VERSION>` off
+  up-to-date `main` (VX-1736 is the standing ticket used by past syncs). `viax-portal` has
+  no version of its own — it rides the same sync, so a portal-skill change alone is still a
+  reason to sync even when `viax-uxm` is unchanged.
 - Run that repo's `bash scripts/validate-skills.sh` — must pass. Do NOT bump
   `.claude-plugin/plugin.json` or touch `marketplace.json` — plugin releasing is the skills
   repo's own CI-driven flow (see its `CLAUDE.md`).
