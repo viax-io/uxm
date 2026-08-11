@@ -1,3 +1,11 @@
+# [4.15.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.14.1...v4.15.0) (2026-08-11)
+
+
+### Features
+
+* **lifecycle-connector:** add a choosable arrowhead (triangle / line) ([5f747d9](https://gitlab.viax.tech/services-viax/uxm/commit/5f747d9f840ec09b9e6ebd210b177a458012ca98))
+* **lifecycle-connector:** add a dashed-active state ([2275f09](https://gitlab.viax.tech/services-viax/uxm/commit/2275f09a8bfe9622c71d41efaaa4bc0cc6d37d40))
+
 ## [4.14.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.14.0...v4.14.1) (2026-08-10)
 
 
