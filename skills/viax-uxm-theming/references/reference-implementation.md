@@ -21,27 +21,22 @@ Which files you build depends on the mode:
 ## 1. Config store — `src/lib/uxm-studio-config.js`
 
 Single source of truth for the applied `{ overrides, brand }`, cached in `localStorage` with a
-pub/sub so the applier and any brand-reading chrome can subscribe. Seed the defaults with your
-brand so the app paints correctly before the server answers.
+pub/sub so the applier and any brand-reading chrome can subscribe.
+
+**The defaults are deliberately empty.** Do not seed brand colours here. The accent ramp, the
+logo, the favicon and the typeface are all published from UXM Studio and arrive together at
+runtime; a hardcoded copy is a second source that keeps painting after a studio "Reset all"
+while the studio's own inputs fall back to library defaults. Until the first fetch resolves the
+app simply paints `@viax/uxm`'s built-in tokens — which is the correct neutral state, not a
+bug. Returning users skip even that: `localStorage` holds the last applied config.
 
 ```javascript
 const STORAGE_KEY = '<app-slug>-uxm-studio-config'
 
-// Seeds the accent ramp and is the SINGLE source of it — global CSS must NOT
-// redeclare --color-accent*. The applier paints these on mount; localStorage
-// caches the last value; the boot hook reconciles with the server.
-export const DEFAULT_UXM_CONFIG = {
-  overrides: {},
-  brand: {
-    logoUrl: '/logo.svg', logoUrlDark: '/logo.svg',
-    iconUrl: '/icon.svg', iconUrlDark: '/icon.svg',
-    faviconUrl: '/favicon.ico',
-    tokens: {
-      light: { '--color-accent-bold': '#43B18C', '--color-accent': '#4FD0A5' },
-      dark:  { '--color-accent-bold': '#90E9C8', '--color-accent': '#4FD0A5' },
-    },
-  },
-}
+// Empty on purpose — the published config owns brand and overrides. Asset paths
+// belong in the consuming component's fallback (`brand?.logoUrl || '/logo.svg'`),
+// not here, so there is exactly one place a brand value can come from.
+export const DEFAULT_UXM_CONFIG = { overrides: {}, brand: {} }
 
 const listeners = new Set()
 function read() {

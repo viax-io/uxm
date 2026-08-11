@@ -37,12 +37,15 @@ Send **one message** asking for the remaining values:
 > 5. **Keycloak base URL** — e.g. `https://auth.palooza.demo.viax.io`
 > 6. **viax GraphQL endpoint** — e.g. `https://api.palooza.demo.viax.io/graphql`
 > 7. **Target GitHub repository** (org/repo) — leave blank if not yet known
-> 8. **Primary accent color** (hex) — press Enter to use default `#4FD0A5`
-> 9. **Accent hover color** (hex) — press Enter to use default `#43B18C`
-> 10. **Embed the UXM Studio editor at `/uxm`?** (yes/no) — press Enter for the default `no`. Either way the portal always loads and applies the env's published UXM Studio config (styles/tokens) via `getUxmConfig`; `yes` additionally mounts the live editor inside this portal.
-> 11. **Show a theme picker in the header?** (yes/no) — press Enter for the default `no`. Only says yes if UXM Studio published *multiple* named themes for this client and end users should be able to select among them; read-only (no create/edit/delete), independent of question 10."
+> 8. **Embed the UXM Studio editor at `/uxm`?** (yes/no) — press Enter for the default `no`. Either way the portal always loads and applies the env's published UXM Studio config (styles/tokens) via `getUxmConfig`; `yes` additionally mounts the live editor inside this portal.
+> 9. **Show a theme picker in the header?** (yes/no) — press Enter for the default `no`. Only say yes if UXM Studio published *multiple* named themes for this client and end users should be able to select among them; read-only (no create/edit/delete), independent of question 8."
 
 Normalize the answers to `yes`/`no` (default `no`) → `EMBED_UXM_STUDIO`, `THEME_PICKER`.
+
+> **Do not ask for brand colours.** The accent ramp — and the logo, favicon and typeface with
+> it — is published from UXM Studio for the environment and arrives with every other token at
+> runtime. Asking here would bake a second source into the generated app, which then keeps
+> painting after a studio "Reset all" while the studio's own inputs show library defaults.
 
 ---
 
@@ -64,8 +67,6 @@ Display a confirmation table with all resolved values and ask: *"Does everything
 | `PORTAL_SUBDIR` | _(auto-derived)_ |
 | `PORTAL_ID` | _(auto-generated — `vx-{CLIENT_SLUG}-{openssl rand -hex 4}`)_ |
 | `GENERATED_AT` | _(auto-derived — today, `YYYY-MM-DD`)_ |
-| `ACCENT_COLOR` | _(from user or #4FD0A5)_ |
-| `ACCENT_HOVER_COLOR` | _(from user or #43B18C)_ |
 | `EMBED_UXM_STUDIO` | _(from user or `no`)_ |
 | `THEME_PICKER` | _(from user or `no`)_ |
 
@@ -83,7 +84,7 @@ Replace every `{{PLACEHOLDER}}` in that document with the confirmed values colle
 
 Key reminders:
 - Follow the **Implementation Order** section top-to-bottom — do not reorder or skip steps.
-- **Runtime theming — follow the [`viax-uxm-theming`](../viax-uxm-theming/SKILL.md) skill.** It owns the whole topic: the `getUxmConfig` / `saveUxmConfig` contract, the wire shape, the applier that turns the published config into design tokens, the three modes, the `viax.portalId` identity block, and the theming gotchas (the `--font-sans` bridge, `font: inherit` on native controls, never redeclaring `--color-accent*`). This MetaPrompt only adds the portal-specific glue — mode flags `{{EMBED_UXM_STUDIO}}` / `{{THEME_PICKER}}` (both default `no`), `{{CLIENT_SLUG}}` naming, the `{{ACCENT_COLOR}}` brand seed, and the shell wiring — see *"Runtime Theming"* in the MetaPrompt. **Always** build the consume side; **never** hand-build a theme editor.
+- **Runtime theming — follow the [`viax-uxm-theming`](../viax-uxm-theming/SKILL.md) skill.** It owns the whole topic: the `getUxmConfig` / `saveUxmConfig` contract, the wire shape, the applier that turns the published config into design tokens, the three modes, the `viax.portalId` identity block, and the theming gotchas (the `--font-sans` bridge, `font: inherit` on native controls, never redeclaring `--color-accent*`). This MetaPrompt only adds the portal-specific glue — mode flags `{{EMBED_UXM_STUDIO}}` / `{{THEME_PICKER}}` (both default `no`), `{{CLIENT_SLUG}}` naming, and the shell wiring — see *"Runtime Theming"* in the MetaPrompt. **Always** build the consume side; **never** hand-build a theme editor.
 - **Portal identity stamp (MANDATORY — never skip).** Every generated portal must be uniquely identifiable. Three pieces, all required, spec'd in *"General Notes → Portal identity stamp"* in the MetaPrompt: (1) the `"viax"` metadata block in `package.json` (`portalId` = `{{PORTAL_ID}}`, `generator`, `client`, `realm`, `env`, `generatedAt` = `{{GENERATED_AT}}`); (2) `vite.config.js` reads that block and exposes it to the bundle as `__PORTAL_META__` via `define`; (3) `main.jsx` calls `stampPortalId()` on boot — appends `<meta name="viax-portal-id">` to `<head>` and logs `[viax] portal …` to the console, so a *deployed* portal is identifiable from the DOM/console without source access (`package.json` itself is not deployed). Before declaring the build done, verify the ID landed in the production bundle: `npm run build && grep -o "{{PORTAL_ID}}" dist/assets/*.js`.
 - The **BEM Discovery** step (step 7 in Implementation Order) requires asking the user for a BEM UID or code — that interactive question is already embedded in the prompt under *"BEM Discovery & Dynamic Route Generation → Step 1"*.
 - All `{{CLIENT_NAME}}`, `{{REALM}}`, `{{ENV}}`, `{{AUTH_URL}}`, `{{API_URL}}`, etc. must be replaced with concrete values before acting on any instruction that references them.

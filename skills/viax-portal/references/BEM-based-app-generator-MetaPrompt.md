@@ -18,8 +18,6 @@
 | `API_URL` | viax GraphQL endpoint | `https://api.viax.lab.viax.tech/graphql` |
 | `GITHUB_REPO` | Target GitHub repository | _(not set — scaffold locally)_ |
 | `PORTAL_SUBDIR` | Subdirectory within the repo | `/viax-lab-portal/` |
-| `ACCENT_COLOR` | Primary accent color (hex) | `#4FD0A5` |
-| `ACCENT_HOVER_COLOR` | Accent hover state (hex) | `#43B18C` |
 | `EMBED_UXM_STUDIO` | Embed the UXM Studio editor at `/uxm`? (`yes`/`no`) — `no` = consume the env's published config only | `no` |
 | `PORTAL_ID` | Unique portal identifier, `vx-{CLIENT_SLUG}-{8 hex}` — suffix generated at build time via `openssl rand -hex 4`, never hand-invented | _(generated fresh per build)_ |
 | `GENERATED_AT` | Generation date, `YYYY-MM-DD` | _(today at build time)_ |
@@ -364,16 +362,12 @@ See [`viax-uxm/references/design-tokens.md`](viax-uxm/references/design-tokens.m
 | **Accent (brand)** | `--color-accent-bold`, `--color-accent`, `--color-accent-light`, `--color-accent-subtle` | Primary button bg, link, hover backdrop, soft backdrop |
 | **Semantic** | `--color-success-{bg,text,border}`, `--color-warning-*`, `--color-danger-*`, `--color-info-*` | `<Banner>`, `<Tag>`, the input atoms' own `error` prop |
 
-**Apply brand overrides in `src/styles/globals.css`** (loaded AFTER `@viax/uxm/tokens.css` → wins). Example:
-
-```css
-:root {
-  --color-accent-bold: #43B18C;   /* primary CTA (= ACCENT_HOVER_COLOR) */
-  --color-accent:      #4FD0A5;   /* primary accent (= ACCENT_COLOR) */
-  --color-accent-light:#90E9C8;
-  --color-accent-subtle:#E6FBF3;
-}
-```
+> **Do NOT declare `--color-accent*` (or any other `--color-*`) in `globals.css`.** The accent
+> ramp is published from UXM Studio and injected at runtime by the applier — see
+> [`viax-uxm-theming`](../../viax-uxm-theming/SKILL.md). A copy in `globals.css` loads after
+> `tokens.css` and wins, so it becomes a second source that keeps painting after a studio
+> "Reset all" while the studio's own inputs fall back to library defaults — inputs and
+> rendering then disagree, and nothing in the app explains why.
 
 ### Per-instance overrides
 
@@ -763,8 +757,6 @@ The portal-specific decisions this MetaPrompt adds on top:
 - **Naming.** Use `{{CLIENT_SLUG}}` wherever the skill writes `<app-slug>` — the `localStorage`
   keys (`{{CLIENT_SLUG}}-uxm-studio-config`, `{{CLIENT_SLUG}}-selected-theme`) and the BEM
   prefixes (`.{{CLIENT_SLUG}}-uxm-studio`, `.{{CLIENT_SLUG}}-theme-picker__*`).
-- **Brand seed.** Seed `DEFAULT_UXM_CONFIG.brand.tokens` with `{{ACCENT_COLOR}}` /
-  `{{ACCENT_HOVER_COLOR}}` for light **and** dark, plus the portal's logo/icon/favicon paths.
 - **Shell wiring (embed only).** `/uxm` route inside the protected route group; a **"UXM Studio"**
   item (`glyph="paint-brush"`) under the **Settings** sidebar group — this *replaces* the old
   Admin → Theme entry; and zero the content padding on that route

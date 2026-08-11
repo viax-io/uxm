@@ -145,11 +145,15 @@ a deployed app. **Verify it survived the build:** `npm run build && grep -o "<po
 
 ## Gotchas that actually bite
 
-- **Do NOT redeclare `--color-accent*` in your global CSS.** The studio config owns the accent
-  ramp. A hardcoded copy becomes a second source that ghosts through after a studio "Reset
-  all" — the studio's inputs fall back to library defaults while your hardcoded values keep
-  painting buttons, so inputs and rendering disagree. Accept the brief default-flash before
-  the applier runs; the `localStorage` cache covers returning users.
+- **Never hardcode brand values — anywhere.** Not in global CSS (`--color-accent*` and friends),
+  not as a build-time answer to a "what's your accent colour?" prompt, not as defaults in the
+  config store. The published config owns the accent ramp, the logo, the favicon and the
+  typeface; they all arrive together at runtime. A hardcoded copy is a second source that keeps
+  painting after a studio "Reset all" while the studio's own inputs fall back to library
+  defaults — inputs and rendering then disagree, and nothing in the app explains why. Before the
+  first fetch resolves the app paints `@viax/uxm`'s built-in tokens, which is the correct
+  neutral state; `localStorage` covers returning users. Keep asset fallbacks at the point of
+  use (`brand?.logoUrl || '/logo.svg'`), not in the defaults.
 - **Times New Roman everywhere** means the `--font-sans` bridge is missing. `tokens.css`
   declares `--font-sans` only inside a Tailwind-only `@theme inline` block that browsers drop,
   so `font-family: var(--brand-font, var(--font-sans))` is invalid at computed-value time and
