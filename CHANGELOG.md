@@ -1,3 +1,10 @@
+# [4.16.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.15.0...v4.16.0) (2026-08-11)
+
+
+### Features
+
+* **skills:** extract UXM Studio theming into its own skill ([e8b0357](https://gitlab.viax.tech/services-viax/uxm/commit/e8b0357e9291c32e5d65e69a5b2f32f1833c950d))
+
 # [4.15.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.14.1...v4.15.0) (2026-08-11)
 
 
