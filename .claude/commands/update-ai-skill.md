@@ -7,6 +7,7 @@ Maintain the Claude skills this repo owns. **The editing source lives IN THIS RE
 |---|---|---|
 | `skills/viax-uxm/` | The component/token reference consumers read | **Yes** — CI stamps its version marker, component count and `### Unreleased` heading at release |
 | `skills/viax-portal/` | The portal generator (SKILL.md + the BEM MetaPrompt) | **No** — no version marker, no `(unreleased)` qualifiers; it tracks the library's API by hand |
+| `skills/viax-uxm-theming/` | How ANY app consumes the published UXM Studio config — fetch, apply, identity | **No** — same as above. Owns the theming topic; `viax-portal` delegates to it, so a change here must not be duplicated there |
 
 Steps 2 and 3 below (version check, post-release cleanup) apply to **`viax-uxm` only** —
 `viax-portal` has no markers to stamp. Step 1 (drift + hygiene) and step 4 (sync) cover
@@ -57,6 +58,9 @@ under the `### Unreleased` heading in SKILL.md; mark catalog rows for unreleased
   repo-root-relative paths. Every skill here ships to consumers, so an absolute local path in
   any of them leaks a developer's machine — scoping this grep to one folder is how one
   survived in `viax-portal` undetected.
+- `viax-uxm-theming` drift: it documents the GraphQL operations and the apply pipeline. When the
+  config API changes, this skill is the FIRST thing to update — `viax-portal` points at it rather
+  than repeating it, so fixing only the portal skill leaves the real source stale.
 - `viax-portal` drift: the MetaPrompt hardcodes the API surface it generates against
   (GraphQL operations, `@viax/uxm` version floor, helper names). When the portal's config
   API or the library's public surface changes, verify against a REAL working portal rather
@@ -87,7 +91,7 @@ Syncing to `viax-ai-skills` is the maintainer's manual step. Claude only reminds
 run, whether a sync is due (distribution repo behind the published version) or appears
 done. Reference checklist for the human (do not execute any of it):
 
-- Copy **both** `skills/viax-uxm/` and `skills/viax-portal/` verbatim into `viax-ai-skills`
+- Copy **all three** — `skills/viax-uxm/`, `skills/viax-portal/` and `skills/viax-uxm-theming/` — verbatim into `viax-ai-skills`
   (same relative paths) on a branch `feature/<ticket>-viax-uxm-skill-v<VERSION>` off
   up-to-date `main` (VX-1736 is the standing ticket used by past syncs). `viax-portal` has
   no version of its own — it rides the same sync, so a portal-skill change alone is still a
