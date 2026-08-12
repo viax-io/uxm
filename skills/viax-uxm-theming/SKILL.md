@@ -7,10 +7,10 @@ description: >
   when: an app should pick up brand colours / fonts / logos / component overrides published
   from UXM Studio; the user mentions `getUxmConfig`, `saveUxmConfig`, `uxmStudio`,
   `generateOverridesCss`, "design tokens from the studio", "why isn't my app re-theming",
-  runtime theming, or embedding `UxmApp`; a generated app needs the `viax.portalId` identity
+  runtime theming, or embedding `UxmApp`; a generated app needs the `portal.id` identity
   block; or theming looks wrong (Times New Roman body text, accent colour ghosting after a
   studio reset, a stale theme after publish).
-keywords: viax, uxm, uxm-studio, getUxmConfig, saveUxmConfig, design-tokens, runtime-theming, generateOverridesCss, brand, themes, portalId, UxmApp
+keywords: viax, uxm, uxm-studio, getUxmConfig, saveUxmConfig, design-tokens, runtime-theming, generateOverridesCss, brand, themes, portal-id, UxmApp
 ---
 
 # Wiring an app to UXM Studio
@@ -109,14 +109,14 @@ That duplicates UXM Studio's own UI and creates a second place saves diverge. A 
 picker** is different and allowed: it only selects among already-published themes and never
 writes.
 
-## App identity — the `viax` block
+## App identity — the `portal` block
 
 Every generated app carries an identity so deployed instances can be told apart.
 
 ```json
 {
-  "viax": {
-    "portalId": "vx-<app-slug>-<8 hex>",
+  "portal": {
+    "id": "vx-<app-slug>-<8 hex>",
     "generator": "<what generated it>",
     "client": "…", "realm": "…", "env": "…",
     "generatedAt": "<ISO timestamp>"
@@ -126,19 +126,19 @@ Every generated app carries an identity so deployed instances can be told apart.
 
 Three pieces, all required:
 
-1. **`package.json` → the `viax` block.** Top-level custom field; npm ignores it. Source of
+1. **`package.json` → the `portal` block.** Top-level custom field; npm ignores it. Source of
    truth. The hex suffix must come from actually running `openssl rand -hex 4` — inventing it
    by hand defeats uniqueness across regenerations.
 2. **Build-time exposure.** `package.json` is not deployed, so compile the block in. With
-   Vite: read it in `vite.config.js` and `define: { __PORTAL_META__: JSON.stringify(pkg.viax) }`.
+   Vite: read it in `vite.config.js` and `define: { __PORTAL_META__: JSON.stringify(pkg.portal) }`.
 3. **Boot stamp.** Append `<meta name="viax-portal-id">` to `<head>` and log
    `[viax] portal <id>` — so a deployed app is identifiable from the DOM/console without
    source access.
 
-Extraction: `jq -r .viax.portalId package.json` from source; the meta tag or console line from
-a deployed app. **Verify it survived the build:** `npm run build && grep -o "<portalId>" dist/assets/*.js`.
+Extraction: `jq -r .portal.id package.json` from source; the meta tag or console line from
+a deployed app. **Verify it survived the build:** `npm run build && grep -o "$(jq -r .portal.id package.json)" dist/assets/*.js`.
 
-> **Today the config is environment-wide — `portalId` does not scope it.** `getUxmConfig`
+> **Today the config is environment-wide — `portal.id` does not scope it.** `getUxmConfig`
 > takes no arguments, so every app in an env reads the same published config. Scoping *per
 > app* is planned. Keep the identity reachable and the config calls in one module, so adding
 > the argument later is a one-file change rather than a hunt.

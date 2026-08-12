@@ -57,13 +57,13 @@ The design language features a **greyscale/neutral palette**, clean typography, 
 
 4. **Portal identity stamp (MANDATORY)** — Every generated portal carries a unique identity so deployed portals can be told apart. Three pieces, all required:
 
-   **a. `package.json` — the `"viax"` metadata block** (top-level custom field; npm ignores it, nothing breaks). This is the source of truth:
+   **a. `package.json` — the `"portal"` metadata block** (top-level custom field; npm ignores it, nothing breaks). This is the source of truth:
 
    ```json
    {
      "name": "{{CLIENT_SLUG}}-portal",
-     "viax": {
-       "portalId": "{{PORTAL_ID}}",
+     "portal": {
+       "id": "{{PORTAL_ID}}",
        "generator": "viax-build-portal",
        "client": "{{CLIENT_NAME}}",
        "realm": "{{REALM}}",
@@ -73,7 +73,7 @@ The design language features a **greyscale/neutral palette**, clean typography, 
    }
    ```
 
-   `portalId` = `vx-{{CLIENT_SLUG}}-{8 hex}` where the hex suffix comes from actually running `openssl rand -hex 4` — never invent it by hand; a made-up suffix defeats the uniqueness guarantee across regenerations of the same client.
+   `id` = `vx-{{CLIENT_SLUG}}-{8 hex}` where the hex suffix comes from actually running `openssl rand -hex 4` — never invent it by hand; a made-up suffix defeats the uniqueness guarantee across regenerations of the same client.
 
    **b. `vite.config.js` — expose the block to the bundle.** `package.json` is not deployed with the built app, so the metadata must be compiled in via `define`:
 
@@ -88,7 +88,7 @@ The design language features a **greyscale/neutral palette**, clean typography, 
    export default defineConfig({
      plugins: [react()],
      define: {
-       __PORTAL_META__: JSON.stringify(pkg.viax ?? null),
+       __PORTAL_META__: JSON.stringify(pkg.portal ?? null),
      },
      server: { port: 9000 },
      // …aliases etc.
@@ -97,7 +97,7 @@ The design language features a **greyscale/neutral palette**, clean typography, 
 
    **c. `main.jsx` — stamp the running app.** On boot, before auth init, append a `<meta name="viax-portal-id">` tag to `<head>` and log the identity to the console, so any deployed portal is identifiable straight from the DOM/DevTools without source access (the full `stampPortalId()` code is in the App Entry Point block under Authentication).
 
-   Extraction: from source/CI — `jq -r .viax.portalId package.json`; from a deployed portal — read the meta tag or the `[viax] portal …` console line. **Verification is part of the build:** after `npm run build`, `grep -o "{{PORTAL_ID}}" dist/assets/*.js` must match.
+   Extraction: from source/CI — `jq -r .portal.id package.json`; from a deployed portal — read the meta tag or the `[viax] portal …` console line. **Verification is part of the build:** after `npm run build`, `grep -o "{{PORTAL_ID}}" dist/assets/*.js` must match.
 
 ---
 
@@ -203,14 +203,14 @@ import useAuthStore from './stores/auth-store'
 const isMockAuth = import.meta.env.VITE_USE_MOCK_AUTH === 'true'
 
 // Portal identity stamp (General Note #4) — __PORTAL_META__ is compiled in
-// from package.json's "viax" block by the `define` entry in vite.config.js.
+// from package.json's "portal" block by the `define` entry in vite.config.js.
 function stampPortalId() {
   if (!__PORTAL_META__) return
   const meta = document.createElement('meta')
   meta.name = 'viax-portal-id'
-  meta.content = __PORTAL_META__.portalId
+  meta.content = __PORTAL_META__.id
   document.head.appendChild(meta)
-  console.log(`[viax] portal ${__PORTAL_META__.portalId} (${__PORTAL_META__.realm}.${__PORTAL_META__.env}, generated ${__PORTAL_META__.generatedAt})`)
+  console.log(`[viax] portal ${__PORTAL_META__.id} (${__PORTAL_META__.realm}.${__PORTAL_META__.env}, generated ${__PORTAL_META__.generatedAt})`)
 }
 
 async function init() {
@@ -767,7 +767,7 @@ The portal-specific decisions this MetaPrompt adds on top:
 - **Do NOT build a custom admin theme EDITOR** in either mode — there is no Theme row in the Admin
   index. The read-only picker is the only selection UI allowed.
 
-The identity block (`viax.portalId` in `package.json`, the Vite `define`, the boot stamp) is also
+The identity block (`portal.id` in `package.json`, the Vite `define`, the boot stamp) is also
 specified in the theming skill — see *"App identity"* there; `{{PORTAL_ID}}` and
 `{{GENERATED_AT}}` are the values to substitute.
 
@@ -1264,9 +1264,9 @@ viax-lab-portal/
 ├── .env.local
 ├── .env.example
 ├── .npmrc                                   # registry=https://nexus.viax.tech/repository/viax-npm/
-├── vite.config.js                           # port 9000; define __PORTAL_META__ from package.json "viax" block
+├── vite.config.js                           # port 9000; define __PORTAL_META__ from package.json "portal" block
 ├── jsconfig.json
-├── package.json                             # incl. "viax" identity block (portalId, realm, env, generatedAt)
+├── package.json                             # incl. "portal" identity block (id, realm, env, generatedAt)
 ├── src/
 │   ├── main.jsx                             # Entry: import @viax/uxm/tokens.css + ui.css + globals.css; stampPortalId(); init Keycloak; render React
 │   ├── App.jsx                              # Root: QueryProvider + <UxmConfigApplier/> + React Router + Toaster
@@ -1485,7 +1485,7 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 
 Build in this exact sequence:
 
-1. **Project scaffold** — Vite + React 19; create `.npmrc` (private Nexus); install `@viax/uxm` + deps; import `@viax/uxm/tokens.css` and `@viax/uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (Gotcha #6); jsconfig paths. **Portal identity stamp (General Note #4, mandatory):** generate `{{PORTAL_ID}}` via `openssl rand -hex 4`, write the `"viax"` block into `package.json`, add the `__PORTAL_META__` `define` to `vite.config.js`, and the `stampPortalId()` boot call in `main.jsx`.
+1. **Project scaffold** — Vite + React 19; create `.npmrc` (private Nexus); install `@viax/uxm` + deps; import `@viax/uxm/tokens.css` and `@viax/uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (Gotcha #6); jsconfig paths. **Portal identity stamp (General Note #4, mandatory):** generate `{{PORTAL_ID}}` via `openssl rand -hex 4`, write the `"portal"` block into `package.json`, add the `__PORTAL_META__` `define` to `vite.config.js`, and the `stampPortalId()` boot call in `main.jsx`.
 2. **Theme system** — `globals.css` with the **full baseline from "UXM Layout & Styling Gotchas → Required `globals.css`"** (panel-radius unification, DetailSection padding override, InputWithIcon icon clamp, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 10). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchUxmConfig`/`fetchStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveUxmConfig`/`saveStudioConfig` write helpers (deferred to step 10). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 4.
 3. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow, `auth-store`, `ProtectedRoute`, login page (mock + real Keycloak — built with `Card` + `FormField` + `TextInput`/`PasswordInput` + `ButtonPrimary` + `Banner` (NOT `Alert` — it was removed in @viax/uxm 2.0.0))
 4. **Shell layout** — `<PageShell>` + `<AppSidebar linkAs={RouterLink}>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; `useUser()` populates roles for sidebar visibility. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle.
@@ -1513,8 +1513,8 @@ Ensure these are installed (no shadcn/Tailwind):
 ```json
 {
   "engines": { "node": ">=20" },
-  "viax": {
-    "portalId": "{{PORTAL_ID}}",
+  "portal": {
+    "id": "{{PORTAL_ID}}",
     "generator": "viax-build-portal",
     "client": "{{CLIENT_NAME}}",
     "realm": "{{REALM}}",
