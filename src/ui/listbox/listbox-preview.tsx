@@ -89,14 +89,15 @@ function renderCheckmarkIndicator(isSelected: boolean) {
   );
 }
 
-// Demo items — icon-glyph picker shape. Twelve total, split into two
-// groups so the `withGroups` variant has something to demonstrate.
+// Demo items — icon-glyph picker shape. Sixteen total: long enough that the
+// two-column wrap has an obvious payoff (eight rows per column), split into
+// two groups so the `withGroups` variant has something to demonstrate.
 type Item = { id: string; label: string; iconGlyph: string; group: string };
-const DEMO_ITEMS: Item[] = ICONS.slice(0, 12).map((g, i) => ({
+const DEMO_ITEMS: Item[] = ICONS.slice(0, 16).map((g, i) => ({
   id: g.id,
   label: g.label,
   iconGlyph: g.id,
-  group: i < 6 ? 'Common' : 'Other',
+  group: i < 8 ? 'Common' : 'Other',
 }));
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -199,12 +200,14 @@ function OpenPanel({
   withFooter,
   mode,
   showCheckbox,
+  columns,
 }: {
   withSearch: boolean;
   withGroups: boolean;
   withFooter: boolean;
   mode: 'single' | 'multi';
   showCheckbox: boolean;
+  columns: number;
 }) {
   const [search, setSearch] = useState('');
   const [singleValue, setSingleValue] = useState<Item | null>(null);
@@ -275,8 +278,10 @@ function OpenPanel({
         // Same `position: static` / `overflow: visible` override the
         // static showcase uses — the panel CSS is `position: fixed` for
         // the real portaled case; here we're inline so we need to
-        // neutralize that.
-        width: 280,
+        // neutralize that. A two-column list wants more width, so the
+        // panel widens to keep each column comfortable (the same call a
+        // real consumer makes via a wider anchor / minPanelWidth).
+        width: columns > 1 ? 380 : 280,
         position: 'static',
       }}
     >
@@ -298,20 +303,34 @@ function OpenPanel({
           />
         </div>
       )}
-      <div className="uxm-listbox__list">
+      <div
+        className="uxm-listbox__list"
+        style={columns > 1 ? ({ '--uxm-listbox-list-columns': columns } as CSSProperties) : undefined}
+      >
         {filtered.length === 0 ? (
           <div className="uxm-listbox__empty">No matches</div>
+        ) : withGroups ? (
+          // Headers + rows are emitted as a FLAT sibling sequence (no per-group
+          // wrapper), exactly like the real atom's DOM — so a header's
+          // `column-span: all` and the rows' `column-count` balancing behave
+          // here the way they do in production.
+          grouped.flatMap((g) => [
+            g.group ? (
+              <div
+                key={`h_${g.group}`}
+                className="uxm-listbox__group-header"
+                role="presentation"
+              >
+                {g.group}
+              </div>
+            ) : null,
+            ...g.items.map(renderRow),
+          ])
         ) : (
-          grouped.map((g) => (
-            <div key={g.group || '_all'}>
-              {withGroups && g.group && (
-                <div className="uxm-listbox__group-header" role="presentation">
-                  {g.group}
-                </div>
-              )}
-              {g.items.map(renderRow)}
-            </div>
-          ))
+          // Flat list — rows are DIRECT children of `__list` (matching the
+          // real atom's DOM), so `column-count` can balance them into the
+          // multi-column wrap.
+          filtered.map(renderRow)
         )}
       </div>
       {withFooter && (
@@ -358,6 +377,8 @@ export function ListboxPreview({ styles, variants }: PreviewProps & { componentI
   // dropped from the workbench: it's a consumer-level decision (used
   // internally by PillSelect), not a panel-design choice.
   const showCheckbox = (variants.showCheckbox ?? 'on') === 'on';
+  // Multi-column wrap for long flat lists — the variant value is the count.
+  const columns = Number(variants.columns ?? '1');
 
   const cssVars = buildVars(styles);
 
@@ -384,6 +405,7 @@ export function ListboxPreview({ styles, variants }: PreviewProps & { componentI
           withFooter={withFooter}
           mode={mode}
           showCheckbox={showCheckbox}
+          columns={columns}
         />
       </div>
     </div>

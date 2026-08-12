@@ -53,6 +53,21 @@
     overflow-y: auto;
     padding: 4px;
     outline: none;
+    /* Multi-column wrap for long lists. Default var = 1 → normal block flow
+       (no visual change). At 2 the browser balances rows into two equal
+       columns, roughly halving the panel height so a long list needs far less
+       scroll.
+       `column-count` is a MAX, not a fixed count: pairing it with a
+       `column-width` floor means the panel only splits into two columns when
+       it is wide enough to give each column that minimum — a narrow panel
+       gracefully falls back to a single column instead of two cramped ones.
+       So `columns={2}` is self-sufficient: it never produces a squeezed
+       layout, and widening the panel is what actually reveals the 2nd column.
+       At `column-count: 1` the width floor is capped to one column, so the
+       single-column default is unaffected. */
+    column-count: var(--uxm-listbox-list-columns, 1);
+    column-width: var(--uxm-listbox-list-column-min-width, 150px);
+    column-gap: var(--uxm-listbox-list-column-gap, 4px);
   }
   &__empty {
     padding: 12px;
@@ -70,6 +85,14 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--uxm-listbox-group-header-color, var(--color-text-subtle));
+    /* Span every column so a header always sits full-width ABOVE its group's
+       rows, which then wrap into the columns beneath it. `break-inside: avoid`
+       alone couldn't do this — it stops the header box from splitting but does
+       nothing to bind it to the rows that follow, so a header could still be
+       orphaned at the foot of a column. `column-span: all` moves the header out
+       of the column flow entirely, which removes that failure mode and makes
+       grouped + multi-column read cleanly. No-op in single-column mode. */
+    column-span: all;
   }
 
   &__option {
@@ -78,6 +101,9 @@
     align-items: center;
     gap: 8px;
     text-align: left;
+    /* Never split a single row across the column break when `column-count`
+       > 1 — a half-height option straddling two columns is unreadable. */
+    break-inside: avoid;
     padding: var(--uxm-listbox-option-padding-y, 6px) var(--uxm-listbox-option-padding-x, 10px);
     font-size: var(--uxm-listbox-option-font-size, 13px);
     color: var(--uxm-listbox-option-color, var(--color-text));
