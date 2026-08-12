@@ -968,6 +968,12 @@ hardcode a competing family (see `references/design-tokens.md` → "Typography")
 > set `font-family: inherit` themselves, but any raw `<button>`/`<input>`/`<select>` in host code
 > would otherwise render in Arial next to the body font. There is no `--font-mono` token —
 > use `var(--font-mono, monospace)` with the literal fallback.
+>
+> These two lines are the emergency fix. **The complete host baseline — including the
+> `html, body, #root { height: 100% }` that `PageShell` needs in order to bound its own scroll
+> area, and the `DetailSection` / `List` corrections — is
+> [`references/quick-recipes.md` § 0](references/quick-recipes.md).** Apply that once and none of
+> these come up.
 
 **Brand tokens.** Seed the studio's `brand.tokens.light` / `.dark` with the host's brand colours so
 the editor adopts them as its own managed Accent tokens; `BrandTokenStyles` (rendered even in
