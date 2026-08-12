@@ -48,6 +48,34 @@ mutation saveUxmConfig($config: String) {               # only if you embed the 
 `config` is a JSON string. Be defensive and accept an already-parsed object too — see
 `hydrateConfig` in the reference implementation.
 
+**The transport is yours to supply.** This skill assumes one function and nothing else:
+
+```ts
+execute(query: string, variables?: Record<string, unknown>): Promise<TData>
+```
+
+It POSTs `{ query, variables }` to the environment's GraphQL endpoint, attaches whatever auth
+that environment needs, throws on a non-empty `errors` array, and resolves with `data`. The
+reference implementation imports it as `@/lib/graphql-client`; that path is a convention, not a
+package — **nothing ships it, so build it before wiring any of this up.** A minimal version:
+
+```javascript
+export async function execute(query, variables = {}) {
+  const res = await fetch(import.meta.env.VITE_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ query, variables }),
+  })
+  const { data, errors } = await res.json()
+  if (errors?.length) throw new Error(errors.map((e) => e.message).join('; '))
+  return data
+}
+```
+
+Throwing on `errors` matters: GraphQL answers `200 OK` with an `errors` array, so a client that
+only checks the HTTP status treats a failed config read as an empty config and silently themes
+the app with library defaults.
+
 > **These replaced `getMfaConfig` / `saveMfaConfig`.** Older apps read `uxmStudio` out of the
 > ~5 MB MFA config, which meant fetching everything to touch one key and preserving
 > `routes`/`rootStyles`/`dbsSettings`/`importMap` verbatim on every write. The UXM config is

@@ -8,6 +8,52 @@ import '@viax/uxm/tokens.css';
 import '@viax/uxm/ui.css';
 ```
 
+…and that the host stylesheet carries the baseline in recipe 0.
+
+---
+
+## 0. Required host baseline (`globals.css`)
+
+**Do this before anything else.** The library ships deliberate defaults that a host has to
+complete — two of them are load-bearing, and skipping either produces a broken app that looks
+like a library bug. Load this AFTER `tokens.css` and `ui.css`.
+
+```css
+/* Give the document a definite height. PageShell is `height: 100%` and its content
+   area is `overflow: auto` — it is designed to bound itself to the viewport. With no
+   definite height in its ancestors it cannot, so the page grows instead of scrolling
+   internally and centred content ends up below the fold. */
+html, body, #root { height: 100%; }
+
+/* MANDATORY font bridge — without it the ENTIRE app renders in Times New Roman.
+   tokens.css declares --font-sans only inside a Tailwind-only `@theme inline` block
+   that browsers drop, so `var(--brand-font, var(--font-sans))` is invalid at
+   computed-value time, <body> falls back to serif, and every atom inherits it
+   (they all use `font-family: inherit`). --font-inter IS in the real :root. */
+:root { --font-sans: var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif); }
+html, body, #root { font-family: var(--brand-font, var(--font-sans)); }
+
+/* MANDATORY — native form controls do NOT inherit the document font (UA default →
+   Arial). uxm atoms set `font-family: inherit` themselves; raw host controls don't. */
+button, input, select, textarea { font: inherit; }
+
+/* DetailSection hardcodes an asymmetric padding-left reserving space for a
+   now-hidden accent rail. Make it match the other sides. */
+.uxm-detail-section__inner { padding-left: var(--uxm-detail-section-padding, 20px); }
+
+/* Interactive ListItems render as <button>/<a>, which shrink-wrap by default and
+   make a vertical list look staggered. Force full width. */
+.uxm-list { display: flex; flex-direction: column; }
+.uxm-list > .uxm-list-item { width: 100%; text-align: left; }
+```
+
+There is **no `--font-mono` token** — where you need monospace, write
+`var(--font-mono, ui-monospace, monospace)` and rely on the literal fallback.
+
+Symptoms if you skip it: whole app in a serif → the bridge is missing; only raw buttons and
+inputs in Arial → the `font: inherit` rule is missing; the page scrolls as a whole instead of
+the content area → `height: 100%` is missing.
+
 ---
 
 ## 1. App shell (sidebar + topbar + content)
