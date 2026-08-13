@@ -12,6 +12,11 @@
 .uxm-input-text,
 .uxm-textarea,
 .uxm-select-dropdown {
+  /* Own the box model: each atom combines `width: 100%` with its own padding
+     and border, which only adds up under `border-box`. `ui.css` ships no
+     global reset by design — without this, the field overflows its container
+     by padding + border in a reset-less host. */
+  box-sizing: border-box;
   width: 100%;
   font-family: inherit;
   outline: none;

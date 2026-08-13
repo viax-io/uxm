@@ -845,6 +845,14 @@ skill:
   atoms (`IconButton`/`ButtonIcon` require `aria-label` on the control); only a **raw**
   icon-only `<button>` that relied on the inner icon's implicit label must now name itself —
   which it always should have.
+- **The input family owns its box model.** `.uxm-input-text`, `.uxm-textarea`,
+  `.uxm-select-dropdown`, `.uxm-input-with-icon__input`, `.uxm-search-dropdown__trigger`,
+  `.uxm-menu__item` and `.uxm-color-input__channel-field` now declare
+  `box-sizing: border-box` themselves — each pairs `width: 100%` with its own padding/border,
+  which only adds up under border-box. Hosts with a global reset (modo, the studio's Tailwind
+  preflight) see no change; in a reset-less host these fields used to overflow their `Card` /
+  panel by padding + border (same fix `LifecycleNodeCard` got in 4.9.0 and `EditableCell` in
+  4.13.0). A border-box host baseline is still recommended (see quick-recipes §0).
 
 ## Workflow
 

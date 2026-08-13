@@ -9,6 +9,9 @@
    is provided by the Listbox wrapper class — composed via cn() in
    SearchDropdown's JSX, so the wrapper carries both classes. */
 .uxm-search-dropdown__trigger {
+  /* width: 100% + own padding/border → border-box, or the trigger overflows
+     its container in a reset-less host (ui.css ships no reset). */
+  box-sizing: border-box;
   width: 100%;
   display: flex;
   align-items: center;
