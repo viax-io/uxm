@@ -36,6 +36,13 @@ Four steps, in this order. Everything else in this skill is an implementation of
 Requires `@viax/uxm@^4.15.0` — that is the floor for the dedicated config operations. Always
 `npm i @viax/uxm@latest`.
 
+**How the store learns of a publish (step 4's trigger):** there is no push channel today. An
+embedded studio's save updates the store directly (reference implementation, file 5). A
+consume-only app re-syncs by re-running the boot reconcile — cheapest is
+`invalidateUxmConfig()` + refetch on `visibilitychange`/window focus, or on an interval if the
+app is long-lived and rarely refocused. Failures keep the applied theme (the boot hook swallows
+them), so aggressive re-sync is safe.
+
 ### 1. Fetch — the operations
 
 ```graphql
@@ -46,7 +53,9 @@ mutation saveUxmConfig($config: String) {               # only if you embed the 
 ```
 
 `config` is a JSON string. Be defensive and accept an already-parsed object too — see
-`hydrateConfig` in the reference implementation.
+`hydrateConfig` in the reference implementation. `saveUxmConfig`'s result is an implementation
+detail — do not depend on it; after a save, re-read through the memoised fetch (the reference
+implementation re-primes its cache itself).
 
 **The transport is yours to supply.** This skill assumes one function and nothing else:
 

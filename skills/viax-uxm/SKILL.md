@@ -21,16 +21,11 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 > Documents `@viax/uxm` **v4.17.0** (94 components). To refresh after a new library release, run
 > the `viax-uxm-skill-update` skill — it reads this marker to compute the delta.
 >
-> ✅ **3.0.1 is the current Nexus registry latest.** 3.0.0 rolled a clear-button ✕ across the
-> remaining input atoms (`CurrencyInput`, `DateInput`, `PhoneInput`, `TimeInput`) and shipped ONE
-> breaking change — `Select` dropped its `clearable` prop; clearability is now inferred from a
-> placeholder `<option value="" disabled>` (see "New in 3.0.0"). 2.10.0 added the `ColorInput` /
-> `ColorInputPopover` picker + `eyedropper` glyph and made `Popover` tolerate nested floating
-> layers. Everything from 2.9.0 (`NumberInput` clearable + `error`, family-wide `aria-describedby`)
-> and earlier remains published and resolves on a fresh `npm install`.
-> ⚠️ **A consumer may install behind** the published latest — check its `@viax/uxm` pin in that
-> project's `package.json`. The skill documents the *released* 3.0.1 surface regardless of what any
-> consumer currently installs.
+> ⚠️ **A consumer may install behind the published latest** — check the project's `@viax/uxm` pin
+> in its `package.json` before relying on a recent addition (each "New in X.Y.Z" section below
+> names the version that shipped it). The skill documents the released surface named in the
+> heading above regardless of what any consumer currently installs. No other line in this file
+> states a "current" version — the stamped heading is the single source of truth.
 
 This skill turns Claude into a competent consumer of `@viax/uxm`. It does not generate Vue MFA
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
@@ -704,9 +699,12 @@ skill:
   `BulkActionBar`'s `"Bulk actions"` are defaults on the root element with `...rest` spread
   **after** them, so a plain `aria-label` already wins. Worth passing when a page has two trails
   or two toolbars, since a repeated landmark name is ambiguous to a screen-reader user.
-- **`DataTable.rowActionsLabel` and `Chip.removeLabel` deserve per-instance values.** Both default
-  to a generic string that repeats identically on every row / chip; `Remove ${name}` and
-  `Actions for ${row}` are what actually tell a screen-reader user which one they are on.
+- **`Chip.removeLabel` deserves a per-instance value** — it defaults to a generic string that
+  repeats identically on every chip; `Remove ${name}` is what actually tells a screen-reader
+  user which one they are on. **`DataTable.rowActionsLabel` is one `string` for the whole
+  table** (default `"Row actions"`) — there is NO per-row callback: a function value is
+  silently dropped by React and every trigger's accessible name degrades to the inner kebab
+  icon's own label ("Kebab (More)"). Pass a table-level noun like `"Customer actions"`.
 
 ### New in 4.13.0
 
@@ -991,7 +989,8 @@ base; the studio's runtime `<style>` still wins live on the editor route.
 1. **Never guess prop names.** Always read the component's README (or `component-catalog.md` if
    not available) before writing the JSX.
 2. **Never duplicate primitives.** If `@viax/uxm` already ships a `Card`, do not handroll a div
-   with the same intent. The library covers ~76 patterns; check first.
+   with the same intent. The component count in the heading above is the current catalog size —
+   check `references/component-catalog.md` first.
 3. **Never inline literal hex codes** when an existing design token covers the intent. Map to
    `--color-*` via `var()` so MODO brand-settings can re-tint.
 4. **Never import preview components into application code.** Previews live in

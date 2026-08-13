@@ -16,6 +16,10 @@ Which files you build depends on the mode:
 | 5. persistence adapter | — | ✅ | — |
 | 6. theme catalog / store / picker | — | — | ✅ |
 
+Embed and picker **compose** — an app can build both. Files 5 and 6 then interact at exactly
+two points: the save must merge, not replace, the `uxmStudio` key (see `saveStudioConfig` in
+file 2), and the save should refresh the picker's catalog (see the note after file 5).
+
 ---
 
 ## 1. Config store — `src/lib/uxm-studio-config.js`
@@ -59,6 +63,10 @@ export function subscribeUxmConfig(listener) {
   return () => listeners.delete(listener)
 }
 ```
+
+React chrome subscribes with one hook —
+`const config = useSyncExternalStore(subscribeUxmConfig, getUxmConfig)` — e.g. to read
+`config.brand?.logoUrl` for the sidebar logo.
 
 ## 2. Config API — `src/lib/api/config.js`
 
@@ -108,10 +116,18 @@ export async function fetchStudioConfig() {
   return config?.[STUDIO_CONFIG_KEY] ?? null
 }
 
-/** EMBED-ONLY. Read-modify-write so sibling keys survive. Last-write-wins. */
+/** EMBED-ONLY. Read-modify-write at BOTH levels: sibling keys of `uxmStudio`
+    (`portals`, future entities) survive via the outer spread, and keys INSIDE
+    `uxmStudio` that the studio does not own (`themes`, `defaultTheme`,
+    `themesVersion`, …) survive via the inner merge — UxmApp's save state is
+    only `{ overrides, brand }` (StudioState), so a wholesale replace of the
+    key would erase every published theme on the first save. Last-write-wins. */
 export async function saveStudioConfig(studioConfig) {
   const config = await fetchUxmConfig()
-  const next = { ...config, [STUDIO_CONFIG_KEY]: studioConfig }
+  const next = {
+    ...config,
+    [STUDIO_CONFIG_KEY]: { ...(config?.[STUDIO_CONFIG_KEY] ?? {}), ...studioConfig },
+  }
   await execute(SAVE_UXM_CONFIG, { config: JSON.stringify(next) })
   configCache = Promise.resolve(next)
 }
@@ -159,6 +175,10 @@ export default function UxmConfigApplier() {
 
 `generate-css` is plain JS — a consumer-only app does **not** need `@viax/uxm/studio.css`.
 
+The generated CSS also declares `--brand-logo-url` (with a dark-theme override) alongside the
+token blocks. In React, prefer reading `brand.logoUrl` from the store (the hook in file 1) —
+the var exists for pure-CSS consumers. Don't declare a competing var of the same name.
+
 ## 4. Boot hook — `src/hooks/use-hydrate-studio-config.js`
 
 The store seeds from `localStorage` synchronously (instant theme for returning users); this
@@ -199,9 +219,12 @@ export default function App() {
 
 ## 5. Persistence adapter — embed only
 
-`src/lib/uxm-persistence.js`. Backs `UxmApp`. **`load()` returns the LIVE store, not the
-server** — the single server→store seed already happened on boot; re-reading here would
-clobber whatever is currently applied.
+`src/lib/uxm-persistence.js`. Backs `UxmApp`. **`load()` returns the LIVE store, not a fresh
+server read — but it must await the shared boot fetch first.** On a DIRECT `/studio` landing
+the child-mounted studio calls `load()` while the boot seed is still in flight (child effects
+fire before parent effects), so without the await the editor adopts the empty defaults
+("Inter (default)", no logo) while the rest of the app themes correctly. Awaiting the memoised
+request costs zero extra network on the warm path.
 
 ```javascript
 import { fetchStudioConfig, invalidateUxmConfig, saveStudioConfig } from '@/lib/api/config'
@@ -218,7 +241,13 @@ function uploadAsset(file) {
 
 export function createConfigRepoPersistence() {
   return {
-    load: async () => getUxmConfig(),
+    load: async () => {
+      // The boot seed may still be in flight on a direct /studio landing —
+      // share its memoised request instead of racing it; failure falls back
+      // to whatever the live store holds.
+      await fetchStudioConfig().catch(() => null)
+      return getUxmConfig()
+    },
     save: async (state) => {        // fired by both Quick Save and Publish
       invalidateUxmConfig()          // fresh base for the read-modify-write
       await saveStudioConfig(state)
@@ -247,6 +276,11 @@ export default function UxmStudioPage() {
 }
 ```
 
+Running the **picker** in the same app? Refresh its catalog after a save — the theme store's
+normalised `structure` is otherwise stale. Give the store a `reloadThemes()` (a `loadThemes`
+variant that skips the `structure` early-return) and call it from `save` after
+`setUxmConfig(state)`.
+
 Import `@viax/uxm/studio.css` **once** in your entry file, before your global stylesheet, so
 load order is deterministic — not in the page. In `embed` mode the studio drops full-page
 chrome and defers `data-theme` to the host. If your shell adds content padding, zero it on the
@@ -257,6 +291,9 @@ studio route: the workbench is a full-bleed surface.
 ## 6. Theme picker — picker only
 
 Read-only selection among published themes. Never writes.
+
+The store below uses `zustand` (`npm i zustand`) — it is **not** a dependency of `@viax/uxm`;
+any subscribable store works if you'd rather not add one.
 
 **6a. Catalog** — `src/lib/theme-catalog.js`. Normalises v1 or v2 into one shape.
 
