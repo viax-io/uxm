@@ -116,6 +116,34 @@ export async function fetchStudioConfig() {
   return config?.[STUDIO_CONFIG_KEY] ?? null
 }
 
+export const PORTALS_KEY = 'portals'
+
+/** This app's entry in the config's `portals` map, matched by the build-time
+    identity (package.json portal.id → __PORTAL_META__ via the Vite define).
+    { name, themeId? } — null when the map or this app's entry is absent. */
+export async function fetchPortalAssignment() {
+  const portalId = typeof __PORTAL_META__ === 'undefined' ? null : __PORTAL_META__?.id
+  if (!portalId) return null
+  const config = await fetchUxmConfig()
+  return config?.[PORTALS_KEY]?.[portalId] ?? null
+}
+
+/** CONSUME MODE — the studio config to APPLY on boot: the portal-assigned theme
+    (portals[portal.id].themeId resolved in uxmStudio.themes[]) when it exists,
+    else the top-level default. Both reads share the memoised request — one
+    network call. Picker mode resolves in the theme store instead (file 6b). */
+export async function fetchAppliedStudioConfig() {
+  const [studio, assignment] = await Promise.all([fetchStudioConfig(), fetchPortalAssignment()])
+  if (!studio) return null
+  const themeId = assignment?.themeId
+  const theme = themeId && Array.isArray(studio.themes)
+    ? studio.themes.find((t) => t?.id === themeId)
+    : null
+  return theme
+    ? { overrides: theme.config?.overrides ?? {}, brand: theme.config?.brand ?? {} }
+    : studio
+}
+
 /** EMBED-ONLY. Read-modify-write at BOTH levels: sibling keys of `uxmStudio`
     (`portals`, future entities) survive via the outer spread, and keys INSIDE
     `uxmStudio` that the studio does not own (`themes`, `defaultTheme`,
@@ -183,17 +211,19 @@ the var exists for pure-CSS consumers. Don't declare a competing var of the same
 
 The store seeds from `localStorage` synchronously (instant theme for returning users); this
 does the one-shot **server → store** reconcile so a fresh device still gets the published
-theme. Failures are swallowed — the cached/default theme stays.
+theme. `fetchAppliedStudioConfig` already folds in the portal-assigned theme
+(`portals[portal.id].themeId`), so consume-only apps honour the assignment with no extra
+wiring. Failures are swallowed — the cached/default theme stays.
 
 ```javascript
 import { useEffect } from 'react'
-import { fetchStudioConfig } from '@/lib/api/config'
+import { fetchAppliedStudioConfig } from '@/lib/api/config'
 import { setUxmConfig } from '@/lib/uxm-studio-config'
 
 export function useHydrateStudioConfig() {
   useEffect(() => {
     let cancelled = false
-    fetchStudioConfig()
+    fetchAppliedStudioConfig()
       .then((remote) => { if (!cancelled && remote) setUxmConfig(remote) })
       .catch(() => { /* keep cached/default */ })
     return () => { cancelled = true }
@@ -341,26 +371,34 @@ setting this browser's default; do not invent a separate "set as default" action
 
 ```javascript
 import { create } from 'zustand'
-import { fetchStudioConfig } from '@/lib/api/config'
+import { fetchPortalAssignment, fetchStudioConfig } from '@/lib/api/config'
 import { setUxmConfig } from '@/lib/uxm-studio-config'
 import { DEFAULT_THEME_ID, normalizeStudioConfig, resolveThemeConfig } from '@/lib/theme-catalog'
 
 const STORAGE_KEY = '<app-slug>-selected-theme'
-const readId = () => { try { return localStorage.getItem(STORAGE_KEY) || DEFAULT_THEME_ID } catch { return DEFAULT_THEME_ID } }
+// null = the user never picked — that is what lets the portal assignment apply
+const readStoredId = () => { try { return localStorage.getItem(STORAGE_KEY) || null } catch { return null } }
 
 const useThemeStore = create((set, get) => ({
-  structure: null, loading: false, error: null, selectedThemeId: readId(),
+  structure: null, loading: false, error: null, selectedThemeId: readStoredId() ?? DEFAULT_THEME_ID,
 
   async loadThemes() {
     if (get().loading || get().structure) return
     set({ loading: true, error: null })
     let structure
-    try { structure = normalizeStudioConfig(await fetchStudioConfig()) }
-    catch (err) { structure = normalizeStudioConfig(null); set({ error: err }) }
-    // re-validate the remembered id against the FRESH config — a theme deleted
-    // server-side must fall back, not crash or apply nothing
-    const stored = get().selectedThemeId
-    const resolved = resolveThemeConfig(structure, stored) ? stored : DEFAULT_THEME_ID
+    let assignment = null
+    try {
+      // both read the same memoised getUxmConfig request — one network call
+      ;[structure, assignment] = await Promise.all([
+        fetchStudioConfig().then(normalizeStudioConfig),
+        fetchPortalAssignment(),
+      ])
+    } catch (err) { structure = normalizeStudioConfig(null); set({ error: err }) }
+    // Candidate chain, each re-validated against the FRESH config (a theme deleted
+    // server-side falls through, never crashes): the user's explicit pick →
+    // portals[portal.id].themeId → the default theme.
+    const candidates = [readStoredId(), assignment?.themeId]
+    const resolved = candidates.find((id) => id && resolveThemeConfig(structure, id)) ?? DEFAULT_THEME_ID
     set({ structure, loading: false, selectedThemeId: resolved })
     const config = resolveThemeConfig(structure, resolved)
     if (config) setUxmConfig(config)

@@ -682,10 +682,13 @@ generators only: the `{{THEME_PICKER}}` build flag is documented in
 picker"* — not needed to build the picker itself.) This recipe covers just the header UI.
 
 The `rows` are **pure environment data**: they derive from the `uxmStudio` config the connected
-env published (fetched via `getMfaConfig`) — count, ids, names, and descriptions are arbitrary
+env published (fetched via `getUxmConfig`) — count, ids, names, and descriptions are arbitrary
 and can change between sessions. Don't hardcode or special-case any theme name; render strictly
 from the normalized rows, and let the data layer handle a remembered selection whose theme no
-longer exists (fall back to the default theme, never crash).
+longer exists (fall back to the default theme, never crash). The data layer also boots with the
+theme centrally assigned to this portal (the config's `portals[portal.id].themeId` — see the
+`viax-uxm-theming` skill, *"Per-portal theme assignment"*) when the user never picked one; an
+explicit pick in this UI still wins on later visits.
 
 Trigger: an accent `Tag` pill (current theme name + chevron) inside `<AppTopBar actions>`, opening
 a **`Listbox` dropdown** (NOT a `Dialog`/`Modal` — a picker this small should be a lightweight
