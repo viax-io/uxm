@@ -58,7 +58,8 @@ Icon reads no colour tokens directly — every glyph paints with `currentColor`,
 
 ## Accessibility
 
-- The component sets `aria-label` automatically from the registry entry's `label` field. For purely decorative icons (e.g. inside an `IconButton` that already has its own `aria-label`), override with `aria-hidden="true"` and `aria-label={undefined}` via the spread props.
-- No `role` is set explicitly; the SVG inherits the default implicit role (which varies by browser — set `role="img"` explicitly via the spread props if you need consistent screen-reader behaviour).
+- **Decorative by default.** Without an explicit `aria-label` the component renders `aria-hidden="true"`, keeping the glyph out of the accessibility tree — so an icon sitting next to visible text (an icon+text button, a menu row, a banner title) contributes nothing to the parent's accessible name. (Before this, the registry entry's `label` was auto-applied and leaked into parent names — a Publish button announced as "Cursor Arrow Rays (Publish) Publish".)
+- **Pass `aria-label` to make a standalone icon informative** — the component then sets `role="img"` alongside it. An explicit `aria-hidden` in the spread props always wins, both ways.
+- Icon-only interactive elements must carry their own name on the *control* (`IconButton` / `ButtonIcon` require `aria-label` at the type level) — never rely on the inner icon for it.
 - Because content paints with `currentColor`, contrast is entirely the responsibility of the parent. Verify against your surface, especially for muted icons on tinted backgrounds.
 - Raw-body glyphs are injected via `dangerouslySetInnerHTML` from the registry. The registry is a build-time module — it does not accept untrusted input — but be aware of this if you ever expose glyph contributions to end users.

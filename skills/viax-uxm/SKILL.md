@@ -835,6 +835,17 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Icon` is decorative by default.** Without an explicit `aria-label` it now renders
+  `aria-hidden="true"` (no role, no label) instead of auto-applying the registry entry's label —
+  which used to leak into every icon+text control's accessible name (the studio's Publish button
+  announced as "Cursor Arrow Rays (Publish) Publish", and `getByRole('button', { name })`
+  lookups failed on such buttons). Passing `aria-label` switches it to `role="img"` + your
+  label; an explicit `aria-hidden` in the spread props still wins. Migration: none for
+  icon+text controls (their names just get cleaner) and none for the library's icon-only
+  atoms (`IconButton`/`ButtonIcon` require `aria-label` on the control); only a **raw**
+  icon-only `<button>` that relied on the inner icon's implicit label must now name itself —
+  which it always should have.
+
 ## Workflow
 
 ### Before writing any code
