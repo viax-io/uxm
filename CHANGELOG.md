@@ -1,3 +1,11 @@
+## [4.17.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.17.0...v4.17.1) (2026-08-14)
+
+
+### Bug Fixes
+
+* **icon:** decorative by default — stop leaking registry labels into accessible names ([510b79a](https://gitlab.viax.tech/services-viax/uxm/commit/510b79a38a912d82e42a003791014b2f9e42b5e2))
+* **ui:** input family owns its box model (border-box) ([d0c0c04](https://gitlab.viax.tech/services-viax/uxm/commit/d0c0c049efbd584adb8e92f06409e763899aaea7))
+
 # [4.17.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.16.0...v4.17.0) (2026-08-11)
 
 

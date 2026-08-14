@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax/uxm — the Viax UI primitive library
-  (94 BEM-classed React components as of v4.17.0, design tokens, per-component/per-state themable
+  (94 BEM-classed React components as of v4.17.1, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax/uxm or the Viax design system; the working directory contains @viax/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax/uxm — React 19 Component Library
 
-> Documents `@viax/uxm` **v4.17.0** (94 components). To refresh after a new library release, run
+> Documents `@viax/uxm` **v4.17.1** (94 components). To refresh after a new library release, run
 > the `viax-uxm-skill-update` skill — it reads this marker to compute the delta.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax/uxm`. It does not ge
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax/uxm` is or will be a dependency of the project.
 
-## v4.17.0 — current API surface (overrides training data)
+## v4.17.1 — current API surface (overrides training data)
 
 The library went through a fast release train (1.1.0 → 3.0.1, June–July 2026). If your knowledge
 of the library or old code conflicts with this list, THIS list wins.
@@ -827,13 +827,7 @@ skill:
   `AppSidebarIconColor`, `DEFAULT_SIDEBAR_ICON_COLORS`. Additive — omitting it keeps today's
   monochromatic icons. From `./app-sidebar`.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     MR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.17.1
 
 - **`Icon` is decorative by default.** Without an explicit `aria-label` it now renders
   `aria-hidden="true"` (no role, no label) instead of auto-applying the registry entry's label —
@@ -853,6 +847,14 @@ skill:
   preflight) see no change; in a reset-less host these fields used to overflow their `Card` /
   panel by padding + border (same fix `LifecycleNodeCard` got in 4.9.0 and `EditableCell` in
   4.13.0). A border-box host baseline is still recommended (see quick-recipes §0).
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     MR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
