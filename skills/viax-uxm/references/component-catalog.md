@@ -1,6 +1,6 @@
 # @viax/uxm — Component Catalog
 
-All 94 components exported from `@viax/uxm/ui` (as of v4.17.1), grouped by intent. Use this file
+All 94 components exported from `@viax/uxm/ui` (as of v4.18.0), grouped by intent. Use this file
 to pick the right primitive when the `@viax/uxm` repo is not available locally. When it is, read
 the per-component README at `src/ui/{name}/README.md` in the uxm repo
 (`https://gitlab.viax.tech/services-viax/uxm`) for the full API

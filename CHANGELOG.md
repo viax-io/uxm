@@ -1,3 +1,10 @@
+# [4.18.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.17.1...v4.18.0) (2026-08-14)
+
+
+### Features
+
+* **listbox:** add columns prop for multi-column option lists ([97e62b0](https://gitlab.viax.tech/services-viax/uxm/commit/97e62b0cde21535ee923aaae18e76d4ada433dd5))
+
 ## [4.17.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.17.0...v4.17.1) (2026-08-14)
 
 
