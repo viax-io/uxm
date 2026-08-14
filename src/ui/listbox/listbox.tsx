@@ -96,6 +96,25 @@ interface ListboxCommonProps<T> {
   /** Shown in place of the list when the filter returns nothing. */
   emptyState?: ReactNode;
 
+  /**
+   * Lay the option list out in up to this many balanced columns instead of
+   * one. Default `1`. Use `2` to tame a long list — the panel's height is
+   * roughly halved (20 rows become two columns of ~10), so it fits without a
+   * deep scroll. Rows keep their source order top-to-bottom down the first
+   * column, then continue in the next, so `ArrowDown` / `ArrowUp` still read
+   * naturally.
+   *
+   * This is a **maximum**, not a fixed count: each column keeps a minimum
+   * width (`--uxm-listbox-list-column-min-width`, 150px), so a panel too
+   * narrow for two readable columns gracefully falls back to one rather than
+   * cramping. Widen the panel — a wider anchor, or `matchAnchorWidth={false}`
+   * + `minPanelWidth` — to actually reveal the second column.
+   *
+   * Works with `groupBy`: each header spans the full width above its group,
+   * whose rows wrap into the columns beneath it.
+   */
+  columns?: 1 | 2;
+
   /** Optional footer slot below the list (e.g. ColorPicker's "Custom hex" panel). Pass a function to receive `{ close }`. */
   footer?: ReactNode | ((api: { close: () => void }) => ReactNode);
 
@@ -269,6 +288,7 @@ function ListboxCore<T>({
   groupBy,
   renderGroupHeader,
   emptyState,
+  columns = 1,
   footer,
   isItemDisabled,
   indicator,
@@ -547,6 +567,10 @@ function ListboxCore<T>({
         <div
           ref={listRef}
           className="uxm-listbox__list"
+          // Multi-column wrap: drive the count through a CSS var so the
+          // single-column default (var fallback = 1) stays plain block flow
+          // and one property does the whole job. Only set inline when > 1.
+          style={columns > 1 ? ({ '--uxm-listbox-list-columns': columns } as CSSProperties) : undefined}
           // When not searchable, the panel itself is focusable so keyboard
           // nav works without a search input.
           tabIndex={showSearch ? undefined : -1}

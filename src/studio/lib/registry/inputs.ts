@@ -1468,6 +1468,21 @@ export const inputsDefs: ComponentDef[] = [
         defaultValue: 'no',
       },
       {
+        // Wrap a long list into up to two balanced columns to roughly halve
+        // the panel height. Drives `--uxm-listbox-list-columns` on the list
+        // in the preview; a real consumer sets the `columns` prop. The count
+        // is a max (each column keeps a min width, so a narrow panel falls
+        // back to one) — try it with Group Headers on to see headers span.
+        // One vs two — deeper columns get unusable in a dropdown.
+        key: 'columns',
+        label: 'Columns',
+        options: [
+          { value: '1', label: 'One' },
+          { value: '2', label: 'Two' },
+        ],
+        defaultValue: '1',
+      },
+      {
         // Which atom the interactive preview mounts. The indicator
         // pattern is decided by the atom, not by the workbench:
         //   - `Listbox` (single)   → right-edge ✓ on the selected row
@@ -1518,6 +1533,7 @@ export const inputsDefs: ComponentDef[] = [
         { name: 'searchable', type: 'boolean | "auto"', defaultValue: 'true', description: 'Show a search input above the list. `"auto"` reveals it only once the option count exceeds the shared threshold (6) — the one place that rule lives, so every Listbox-backed picker shares it.' },
         { name: 'filterItems', type: '(items: T[], query: string) => T[]', description: 'Override the default case-insensitive substring filter on `getLabel`.' },
         { name: 'groupBy', type: '(item: T) => string', description: 'Group items under section headers in declared order.' },
+        { name: 'columns', type: '1 | 2', defaultValue: '1', description: 'Wrap a long list into up to two balanced columns to roughly halve the panel height. Rows keep source order down column one then continue in column two, so arrow-key nav still reads naturally. A max, not a fixed count — each column keeps a min width (--uxm-listbox-list-column-min-width), so a narrow panel falls back to one column instead of cramping; widen the panel (wider anchor or matchAnchorWidth={false} + minPanelWidth) to reveal the second. Works with groupBy — headers span full width above each group.' },
         { name: 'footer', type: 'ReactNode', description: "Slot below the list (e.g. ColorPicker's custom hex panel)." },
         { name: 'isItemDisabled', type: '(item: T) => boolean', description: 'Mark individual items inert (not selectable, skipped by keyboard nav).' },
         { name: 'placement', type: '"bottom-start" | "bottom-end" | "top-start" | "top-end"', defaultValue: '"bottom-start"', description: 'Preferred placement; flips on overflow.' },

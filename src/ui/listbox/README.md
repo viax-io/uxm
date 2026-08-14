@@ -73,6 +73,7 @@ import { MultiListbox } from '@viax/uxm/ui';
 | `groupBy` | `(item: T) => string` | – | Emit section headers. |
 | `renderGroupHeader` | `(group: string) => ReactNode` | – | Override header rendering. |
 | `emptyState` | `ReactNode` | – | Shown when the filter returns nothing. |
+| `columns` | `1 \| 2` | `1` | Wrap a long list into up to two balanced columns to roughly halve the panel height (20 rows → two columns of ~10). Rows keep source order top-to-bottom down column one, then continue in column two, so `ArrowDown` / `ArrowUp` still read naturally. A **maximum**, not a fixed count: each column keeps a minimum width (`--uxm-listbox-list-column-min-width`), so a too-narrow panel falls back to one column instead of cramping — widen the panel (a wider anchor, or `matchAnchorWidth={false}` + `minPanelWidth`) to reveal the second. Works with `groupBy`: each header spans full width above its group, whose rows wrap into the columns below. |
 | `isItemDisabled` | `(item: T) => boolean` | – | Disabled rows are neither selectable nor arrow-navigable. |
 | `placement` | `PopoverPlacement` | `'bottom-start'` | Forwarded to Popover. |
 | `matchAnchorWidth` | `boolean` | `true` | Panel width follows the anchor. |
@@ -140,6 +141,9 @@ Panel keys are bound to the search input when searchable, and to the panel itsel
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-listbox-panel-max-height` | – | `320px` | Panel height ceiling; the list scrolls inside. |
+| `--uxm-listbox-list-columns` | – | `1` | Maximum column count the list wraps into. The `columns` prop sets this; `1` is plain single-column flow. |
+| `--uxm-listbox-list-column-min-width` | – | `150px` | Minimum width per column. Turns the count into a max — the panel drops to one column rather than splitting below this. |
+| `--uxm-listbox-list-column-gap` | – | `4px` | Gutter between columns when `columns` > 1. |
 | `--uxm-listbox-panel-bg` | `--color-card` | – | Panel surface. |
 | `--uxm-listbox-panel-border` | `--color-border` | – | Panel border. |
 | `--uxm-listbox-panel-radius` | – | `8px` | Panel radius. |
@@ -203,6 +207,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Open | click / Enter / Space / ArrowDown | Panel with optional search, list, optional footer. |
 | Searchable | `searchable` | Search row with leading icon above the list. |
 | Grouped | `groupBy` | Uppercase section headers between rows. |
+| Two-column | `columns={2}` | List balanced into up to two columns (panel height roughly halves); rows keep source order down column one, then column two. Falls back to one column when the panel is too narrow. With `groupBy`, headers span full width above each group. |
 | Row selected | in `value` | Accent-subtle background, accent-bold text, semibold; ✓ at the right edge (single-select, `showCheckmark`). |
 | Row active | arrow keys or hover | Surface-alt background — **never on the selected row**. |
 | Row disabled | `isItemDisabled` | 0.4 opacity, `not-allowed`, unreachable by arrows. |
@@ -218,5 +223,6 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - **Pass `aria-label`** so the listbox itself has a name.
 - Selection indicators are `aria-hidden="true"` — both the ✓ and the checkbox marker. `aria-selected` on the row already conveys state, so announcing the glyph would double it.
 - Arrow navigation wraps at both ends and skips disabled rows, so keyboard users never land on an unselectable row.
+- **`columns` changes visual layout only — keyboard order stays DOM/source order.** In a two-column panel, `ArrowDown` at the bottom of column one continues at the top of column two (source order), not to the visually adjacent row, and there is no `ArrowLeft`/`ArrowRight` column jump. This is deliberate: source order is what the screen reader announces, and a spatial grid would require `role="grid"` semantics this pattern doesn't have. Keep visually-paired options adjacent in source order if that pairing matters.
 - `Escape` closes via Popover; focus returns to whatever was focused when the panel opened.
 - The row is a `<button>`, so it is operable by Enter and Space natively even outside the managed active-descendant flow.

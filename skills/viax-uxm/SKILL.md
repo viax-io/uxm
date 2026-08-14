@@ -856,6 +856,18 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Listbox` / `MultiListbox` — `columns?: 1 | 2`.** Wraps a long option list
+  into up to two balanced columns to roughly halve the panel height (20 rows → two
+  columns of ~10) instead of a deep scroll. Rows keep source order top-to-bottom
+  down column one then continue in column two, so arrow-key nav still reads
+  naturally. A **max**, not a fixed count — each column keeps a min width
+  (`--uxm-listbox-list-column-min-width`, 150px), so a narrow panel falls back to
+  one column instead of cramping; widen the panel (wider anchor, or
+  `matchAnchorWidth={false}` + `minPanelWidth`) to reveal the second. Works with
+  `groupBy` — each header spans full width above its group. Additive, default `1`
+  (single column, unchanged). Drives `--uxm-listbox-list-columns` /
+  `--uxm-listbox-list-column-min-width` / `--uxm-listbox-list-column-gap`. From `./listbox`.
+
 ## Workflow
 
 ### Before writing any code
