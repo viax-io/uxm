@@ -29,6 +29,9 @@
 }
 
 .uxm-menu__item {
+  /* width: 100% + own padding → border-box, or rows overflow the portaled
+     panel in a reset-less host (ui.css ships no reset). */
+  box-sizing: border-box;
   width: 100%;
   display: flex;
   align-items: center;

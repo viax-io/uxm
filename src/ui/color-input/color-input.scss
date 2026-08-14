@@ -226,6 +226,9 @@
   color: var(--color-text-muted);
 }
 .uxm-color-input__channel-field {
+  /* width: 100% + own padding/border → border-box, or the field overflows
+     its grid column in a reset-less host (ui.css ships no reset). */
+  box-sizing: border-box;
   width: 100%;
   min-width: 0;
   font-family: inherit;

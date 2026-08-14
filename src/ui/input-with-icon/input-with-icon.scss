@@ -29,6 +29,9 @@
   }
 
   &__input {
+    /* width: 100% + own padding/border only add up under border-box; ui.css
+       ships no reset (same fix as the input-text/textarea/select trio). */
+    box-sizing: border-box;
     background-color: var(--uxm-input-with-icon-bg, var(--color-surface));
     border: 1px solid var(--uxm-input-with-icon-border-color, var(--color-border));
     border-radius: var(--uxm-input-with-icon-radius, 8px);

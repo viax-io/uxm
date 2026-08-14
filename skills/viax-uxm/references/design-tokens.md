@@ -203,11 +203,12 @@ studio's Color editor / WCAG panel) documents the **light + dark** hex pairs.
 > **not in any published release** — do not target them from consumer code yet.
 
 These CSS-level variants are a **different axis** from the env-published UXM Studio *brand
-themes*: a consumer portal's `uxmStudio` config (fetched via `getMfaConfig`) can carry an
+themes*: a consumer portal's `uxmStudio` config (fetched via `getUxmConfig`) can carry an
 arbitrary, environment-defined set of named themes (`themes[]`), each bundling its own
 `--color-*` token ramps for **both** light and dark. Selecting a brand theme swaps the token
-values; `data-theme` still picks which mode's values paint. See quick-recipes.md §16 for the
-read-only picker that consumes them.
+values; `data-theme` still picks which mode's values paint. Which theme a portal boots with can
+be assigned centrally via the config's `portals[portal.id].themeId` map (see the
+`viax-uxm-theming` skill). See quick-recipes.md §16 for the read-only picker that consumes them.
 
 ## Programmatic access
 

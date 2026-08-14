@@ -256,13 +256,13 @@ function SearchBar({
           {matchCount > 0 ? `${currentMatch + 1}/${matchCount}` : '0/0'}
         </span>
       )}
-      <button onClick={onPrev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
+      <button aria-label="Previous match" onClick={onPrev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
         <Icon glyph="chevron-up" size={14} strokeWidth={2} />
       </button>
-      <button onClick={onNext} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
+      <button aria-label="Next match" onClick={onNext} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
         <Icon glyph="chevron-down" size={14} strokeWidth={2} />
       </button>
-      <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
+      <button aria-label="Close search" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
         <Icon glyph="close" size={14} strokeWidth={2} />
       </button>
     </div>

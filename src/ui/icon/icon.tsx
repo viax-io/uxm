@@ -13,7 +13,7 @@ export function Icon({ glyph, size = 24, strokeWidth = 1.75, className, ...rest 
   const def = getIcon(glyph);
   if (!def) return null;
 
-  const ariaLabel = (rest as { 'aria-label'?: string })['aria-label'] ?? def.label;
+  const ariaLabel = (rest as { 'aria-label'?: string })['aria-label'];
 
   const commonProps = {
     className: cn('uxm-icon', className),
@@ -25,8 +25,14 @@ export function Icon({ glyph, size = 24, strokeWidth = 1.75, className, ...rest 
     strokeWidth,
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
-    'aria-label': ariaLabel,
-    role: ariaLabel ? ('img' as const) : undefined,
+    // Decorative by default: without an explicit `aria-label` the glyph is
+    // hidden from the accessibility tree, so an icon+text control's name is
+    // its text alone (the registry label used to leak in — "Kebab (More)
+    // Publish"-style names). Pass `aria-label` to make a standalone icon
+    // informative; an explicit `aria-hidden` in `...rest` still wins.
+    ...(ariaLabel !== undefined
+      ? { role: 'img' as const }
+      : { 'aria-hidden': true }),
     ...rest,
   };
 

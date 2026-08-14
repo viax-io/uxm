@@ -8,9 +8,10 @@ description: >
   from UXM Studio; the user mentions `getUxmConfig`, `saveUxmConfig`, `uxmStudio`,
   `generateOverridesCss`, "design tokens from the studio", "why isn't my app re-theming",
   runtime theming, or embedding `UxmApp`; a generated app needs the `portal.id` identity
-  block; or theming looks wrong (Times New Roman body text, accent colour ghosting after a
+  block; a portal must pick up the theme centrally assigned to it via the config's `portals`
+  map; or theming looks wrong (Times New Roman body text, accent colour ghosting after a
   studio reset, a stale theme after publish).
-keywords: viax, uxm, uxm-studio, getUxmConfig, saveUxmConfig, design-tokens, runtime-theming, generateOverridesCss, brand, themes, portal-id, UxmApp
+keywords: viax, uxm, uxm-studio, getUxmConfig, saveUxmConfig, design-tokens, runtime-theming, generateOverridesCss, brand, themes, portal-id, portals, theme-assignment, UxmApp
 ---
 
 # Wiring an app to UXM Studio
@@ -36,6 +37,13 @@ Four steps, in this order. Everything else in this skill is an implementation of
 Requires `@viax/uxm@^4.15.0` — that is the floor for the dedicated config operations. Always
 `npm i @viax/uxm@latest`.
 
+**How the store learns of a publish (step 4's trigger):** there is no push channel today. An
+embedded studio's save updates the store directly (reference implementation, file 5). A
+consume-only app re-syncs by re-running the boot reconcile — cheapest is
+`invalidateUxmConfig()` + refetch on `visibilitychange`/window focus, or on an interval if the
+app is long-lived and rarely refocused. Failures keep the applied theme (the boot hook swallows
+them), so aggressive re-sync is safe.
+
 ### 1. Fetch — the operations
 
 ```graphql
@@ -46,7 +54,9 @@ mutation saveUxmConfig($config: String) {               # only if you embed the 
 ```
 
 `config` is a JSON string. Be defensive and accept an already-parsed object too — see
-`hydrateConfig` in the reference implementation.
+`hydrateConfig` in the reference implementation. `saveUxmConfig`'s result is an implementation
+detail — do not depend on it; after a save, re-read through the memoised fetch (the reference
+implementation re-primes its cache itself).
 
 **The transport is yours to supply.** This skill assumes one function and nothing else:
 
@@ -98,6 +108,12 @@ the store getter. Importing the wrong one fails silently.
 // hydrateConfig(data.getUxmConfig.config)
 {
   // future sibling keys may appear — preserve them on write
+  "portals": {                   // OPTIONAL per-app theme assignment, keyed by portal.id —
+    "vx-demopalooza-fbc4d2a1": { //   see "Per-portal theme assignment" below
+      "name": "demopalooza-portal",
+      "themeId": "b78c1445-580f-4971-bba6-cf949ea027c9"   // an id from uxmStudio.themes[]
+    }
+  },
   "uxmStudio": {                 // may be ABSENT or null → fall back to your defaults
     "overrides": {               // Record<componentId, Record<knobKey, string|number|boolean>>
       "button-primary": { "backgroundColor": "#0F6A4F", "borderRadius": 8 }
@@ -166,10 +182,52 @@ Three pieces, all required:
 Extraction: `jq -r .portal.id package.json` from source; the meta tag or console line from
 a deployed app. **Verify it survived the build:** `npm run build && grep -o "$(jq -r .portal.id package.json)" dist/assets/*.js`.
 
-> **Today the config is environment-wide — `portal.id` does not scope it.** `getUxmConfig`
-> takes no arguments, so every app in an env reads the same published config. Scoping *per
-> app* is planned. Keep the identity reachable and the config calls in one module, so adding
-> the argument later is a one-file change rather than a hunt.
+> **The config document is environment-wide — `portal.id` does not scope the *fetch*.**
+> `getUxmConfig` takes no arguments, so every app in an env reads the same published document.
+> What IS per-app is the **theme**: the document's `portals` map (next section) assigns one of
+> its themes to each app by `portal.id`. Keep the identity reachable and the config calls in
+> one module, so any future per-app scoping of the fetch itself is a one-file change.
+
+## Per-portal theme assignment — the `portals` map
+
+The published config can carry a `portals` map — a **sibling of `uxmStudio`**, keyed by each
+app's `portal.id` from the identity block above:
+
+```jsonc
+"portals": {
+  "vx-demopalooza-fbc4d2a1": {
+    "name": "demopalooza-portal",
+    "themeId": "b78c1445-580f-4971-bba6-cf949ea027c9"   // an id from uxmStudio.themes[]
+  }
+}
+```
+
+On boot the app matches its **own** `portal.id` (`__PORTAL_META__.id`, compiled in from
+`package.json`) against this map, takes the entry's `themeId`, finds that theme in
+`uxmStudio.themes[]` by `id`, and applies the theme's `{ overrides, brand }` instead of the
+top-level default.
+
+**Resolution order** — first candidate that resolves against the FRESH config wins:
+
+1. The user's explicit picker choice (`localStorage`) — picker mode only. A user who picked a
+   theme keeps it; the assignment is the *boot default*, not an override.
+2. `portals[<portal.id>].themeId` — the theme centrally assigned to this app.
+3. The default theme (the top-level `overrides`/`brand`).
+
+**Defensive rules** — this is environment data, same as everything else in the document:
+
+- `portals` absent, no entry for this app's id, entry without `themeId` **or with
+  `themeId: ""`** (the studio's Portals manager stores an empty string for "explicitly
+  unassigned — use Default", and deleting a theme resets its assignees to `""`), or a `themeId`
+  that matches nothing in `uxmStudio.themes[]` → fall through to the next candidate. Never
+  crash, never apply nothing. (Map ids are not format-checked either — legacy, hand-rolled ids
+  appear alongside `vx-*` ones.)
+- Works in **all three modes**. Consume-only resolves it inside the boot hydrate
+  (`fetchAppliedStudioConfig` in the reference implementation, file 2 + file 4); picker mode
+  folds it into the theme store's candidate chain (file 6b) — one resolution path per mode,
+  never two competing ones.
+- The save path already preserves it: `portals` is exactly the kind of sibling key the
+  read-modify-write on `saveUxmConfig` exists for. An embedded studio save must never drop it.
 
 ## Gotchas that actually bite
 

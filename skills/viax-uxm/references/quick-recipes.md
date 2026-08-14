@@ -19,6 +19,13 @@ complete — two of them are load-bearing, and skipping either produces a broken
 like a library bug. Load this AFTER `tokens.css` and `ui.css`.
 
 ```css
+/* MANDATORY box-sizing reset — the library ships NO global reset, and several atoms
+   size themselves assuming one (width: 100% plus their own padding/border): without
+   it TextInput/Textarea overflow their Card by padding+border, and LifecycleNodeCard /
+   EditableCell carry the same caveat. Every real host (modo, the studio's Tailwind
+   preflight) has this; ship it. */
+*, *::before, *::after { box-sizing: border-box; }
+
 /* Give the document a definite height. PageShell is `height: 100%` and its content
    area is `overflow: auto` — it is designed to bound itself to the viewport. With no
    definite height in its ancestors it cannot, so the page grows instead of scrolling
@@ -52,7 +59,8 @@ There is **no `--font-mono` token** — where you need monospace, write
 
 Symptoms if you skip it: whole app in a serif → the bridge is missing; only raw buttons and
 inputs in Arial → the `font: inherit` rule is missing; the page scrolls as a whole instead of
-the content area → `height: 100%` is missing.
+the content area → `height: 100%` is missing; inputs poking a few px out of their `Card` →
+the box-sizing reset is missing.
 
 ---
 
@@ -666,16 +674,21 @@ function OrderDetailPage({ order }: { order: Order }) {
 ## 16. Read-only theme picker (select among UXM Studio's published themes)
 
 A header control letting end users pick which of several UXM Studio-published themes is applied —
-**select only**, no create/rename/clone/import/export/delete (those live in UXM Studio itself). See
+**select only**, no create/rename/clone/import/export/delete (those live in UXM Studio itself).
+For the accompanying `theme-catalog.js` / `theme-store.js` data layer, see the
+`viax-uxm-theming` skill → "The three modes" and its reference implementation §6. (Portal
+generators only: the `{{THEME_PICKER}}` build flag is documented in
 `viax-portal/references/BEM-based-app-generator-MetaPrompt.md` → *"Optional: read-only theme
-picker"* for when a portal should build this (`{{THEME_PICKER}}` flag) and the accompanying
-`theme-catalog.js` / `theme-store.js` data layer. This recipe covers just the header UI.
+picker"* — not needed to build the picker itself.) This recipe covers just the header UI.
 
 The `rows` are **pure environment data**: they derive from the `uxmStudio` config the connected
-env published (fetched via `getMfaConfig`) — count, ids, names, and descriptions are arbitrary
+env published (fetched via `getUxmConfig`) — count, ids, names, and descriptions are arbitrary
 and can change between sessions. Don't hardcode or special-case any theme name; render strictly
 from the normalized rows, and let the data layer handle a remembered selection whose theme no
-longer exists (fall back to the default theme, never crash).
+longer exists (fall back to the default theme, never crash). The data layer also boots with the
+theme centrally assigned to this portal (the config's `portals[portal.id].themeId` — see the
+`viax-uxm-theming` skill, *"Per-portal theme assignment"*) when the user never picked one; an
+explicit pick in this UI still wins on later visits.
 
 Trigger: an accent `Tag` pill (current theme name + chevron) inside `<AppTopBar actions>`, opening
 a **`Listbox` dropdown** (NOT a `Dialog`/`Modal` — a picker this small should be a lightweight
