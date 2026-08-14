@@ -223,5 +223,6 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - **Pass `aria-label`** so the listbox itself has a name.
 - Selection indicators are `aria-hidden="true"` — both the ✓ and the checkbox marker. `aria-selected` on the row already conveys state, so announcing the glyph would double it.
 - Arrow navigation wraps at both ends and skips disabled rows, so keyboard users never land on an unselectable row.
+- **`columns` changes visual layout only — keyboard order stays DOM/source order.** In a two-column panel, `ArrowDown` at the bottom of column one continues at the top of column two (source order), not to the visually adjacent row, and there is no `ArrowLeft`/`ArrowRight` column jump. This is deliberate: source order is what the screen reader announces, and a spatial grid would require `role="grid"` semantics this pattern doesn't have. Keep visually-paired options adjacent in source order if that pairing matters.
 - `Escape` closes via Popover; focus returns to whatever was focused when the panel opened.
 - The row is a `<button>`, so it is operable by Enter and Space natively even outside the managed active-descendant flow.
