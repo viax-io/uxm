@@ -20,7 +20,13 @@ export interface IconDef {
    * inside a <g>. Mutually exclusive with `path`.
    */
   body?: string;
-  /** Some icons (e.g. Google, sparkle ribbon) need fill rather than stroke. */
+  /**
+   * Render the glyph filled (`fill="currentColor"`, `stroke="none"`) instead of
+   * the default stroke outline — for shapes that can't be expressed as a stroke
+   * (e.g. a solid brand mark). A filled glyph does NOT respond to `strokeWidth`.
+   * No icon in the set currently uses this: the set is all-outline, so every
+   * glyph tracks the stroke-width knob. Kept as an extension point.
+   */
   filled?: boolean;
 }
 
