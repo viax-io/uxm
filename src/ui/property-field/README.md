@@ -61,6 +61,8 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute is forwa
 
 Label additionally carries a hard-coded `font-weight: 600` (not exposed). The case, tracking, and value font are themeable via the variables above — their defaults reproduce the original uppercase-eyebrow label + monospace value exactly, so an unset instance is unchanged.
 
+> **Studio note.** The workbench "Label Case" / "Value Font" presets are **preview-only** — they demonstrate the two looks but are not persisted to saved overrides (they're layout variants, and only the colour/size style knobs on this atom persist). To ship a sentence-case / proportional PropertyField, set the CSS variables above in your own code (e.g. `--uxm-property-field-value-font: var(--brand-font, var(--font-sans, sans-serif))` on the field or a wrapper); that is the intended persistence path.
+
 ### `PropertyGrid`
 
 | Variable | Fallback token | Default | Affects |
