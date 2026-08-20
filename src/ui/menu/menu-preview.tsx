@@ -287,9 +287,7 @@ export function MenuPreview({ styles, variants }: PreviewProps & { componentId: 
           `--current` × `--active` composition when you hover the current row.
           Rows stay clickable and never dismiss. */}
       <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
-        <div style={sectionLabel}>
-          Live {shape === 'switcher' ? 'switcher' : 'action menu'} — the real atom, held open
-        </div>
+        <div style={sectionLabel}>Live {shape === 'switcher' ? 'switcher' : 'action menu'}</div>
         <Menu
           // Remount on a shape change. The panel is held open, so `open` never
           // flips and the atom's open-transition effect would not re-run —
