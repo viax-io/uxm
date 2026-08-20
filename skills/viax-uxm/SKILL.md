@@ -870,6 +870,65 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Menu` gained a `current` row — context switchers.** Set `current?: boolean` on a
+  `MenuItem` and the row marks where the user already IS (the workspace they're in, the
+  view they're on): `aria-current="true"`, a trailing ✓, and a heavier label. It
+  **composes** rather than excludes — a current row under the keyboard cursor keeps the
+  highlight surface and reads as both (the `--current` CSS rule sits before `--active` so
+  source order gives the highlight the surface). No colour of its own by design: the tone
+  owns colour, `current` owns weight + ✓, so `--uxm-menu-item-color` / the danger tone
+  still reach a current row and the ✓ inherits it. Knobs
+  `--uxm-menu-item-current-{bg,font-weight}` (defaults `transparent` / `600`), workbench
+  Row State gains a **Current** option and a **Shape** picker swaps the live demo between the
+  atom's two shapes (row actions / switcher — same knobs and classes either way, only the
+  entries differ). Deliberately **not** `role="menuitemradio"` +
+  `aria-checked` (a radio set needs `aria-checked` on EVERY sibling, which a flat
+  `MenuEntry[]` can't infer — one forgotten `current: false` leaves a lone radio) and not
+  `aria-selected` (invalid on `menuitem`). Opening still highlights the FIRST row, not the
+  current one — menu semantics, not select semantics. This is why a workspace switcher is a
+  `Menu`: switching is an action with side effects, and the panel usually hosts a command
+  ("New workspace") that `role="listbox"` cannot legally contain.
+- **A `Menu` with a `current` row now opens with NOTHING highlighted.** The `current` row already
+  says where you are, so lighting a second row competes with it — and because hover and keyboard
+  highlight share one `--active` class, that row is indistinguishable from "your pointer is here".
+  Scoped to `current` on purpose: a menu **without** it still lights row one on open exactly as
+  before, so **no existing consumer changes behaviour** (none of them pass `current` yet). A
+  KEYBOARD open (Enter / Space / ArrowDown on the trigger) still lands on row one either way, or
+  ArrowDown-to-open would need a second ArrowDown to enter the list. From "nothing highlighted" the
+  first ArrowDown lands on the FIRST row, and Enter / Space is a no-op. Opening never follows
+  `current` — even a keyboard-opened switcher starts at row one, not at the current row.
+- **`Menu` items gained `iconColor`.** `iconColor?: string` tints ONE row's leading glyph
+  inline — for icons carrying *identity* (a workspace's own colour), not decoration. Prefer
+  a `var(--color-*)` reference so MODO re-tinting still reaches it; a raw hex is only
+  legitimate when the colour is entity DATA from a backend. Being inline it wins over the
+  `color: inherit` that active / danger rows apply to the glyph — deliberate, so an identity
+  colour survives highlighting, but a `danger` row with `iconColor` keeps that colour
+  instead of folding to the danger tone.
+- **`Menu` can tie its panel width to the trigger.** `matchAnchorWidth?: boolean | 'min'`
+  (default `false`, unchanged behaviour) forwards to `Popover`: `true` makes the panel equal
+  to the trigger, `'min'` makes the trigger width a floor it may grow past. Use it for a
+  **field-like trigger that displays a value** (a workspace switcher) — the `<select>`
+  convention, where the panel reads as a continuation of the control; prefer `'min'` since
+  user-authored labels outgrow a fixed width. Never with an icon-only / ⋮ trigger — you'd
+  get a 32px panel, which is why the default is `false` and `placement` is `bottom-end`
+  (content width, aligned to the trailing edge). ⚠️ Setting it also **drops the default
+  160/280 clamp**: `Popover` applies `maxWidth` unconditionally, so keeping 280 would paint
+  a panel NARROWER than a trigger wider than 280. Pass `minWidth`/`maxWidth` explicitly for
+  bounds.
+- **⚠️ `Menu`'s leading-icon default changed colour.** `--uxm-menu-item-icon-color` now
+  falls back to `--color-text-strong` instead of `--color-text-subtle`. Subtle measured
+  **1.48:1** on the panel in the light theme (2.85:1 dark) — below even the 3:1 non-text
+  floor, and in practice fainter than a *disabled* row (`--color-text` × 0.4), so live
+  glyphs read as switched off. Strong is 8.86:1 / 11.76:1 and still a clear step below the
+  label. **Existing menus change appearance**; set the var back to
+  `var(--color-text-subtle)` to keep the old look. The trailing hint moved subtle →
+  `--color-text-muted` (2.54:1) in the same pass — knowingly under the 4.5:1 AA text floor,
+  a narrow exception because a hint is a redundant shortcut echo the label already
+  identifies; the subtitle keeps `--color-text-strong` for exactly the opposite reason.
+  Don't unify the two. Hint knobs `--uxm-menu-item-hint-{font-size,color}` are now exposed
+  in the workbench behind a **Hints** On/Off variant (off by default: with Subtitles also on
+  a row concatenates label + subtitle + hint into one accessible name).
+
 ## Workflow
 
 ### Before writing any code

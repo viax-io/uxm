@@ -4,7 +4,9 @@
    `.uxm-menu__panel` portals to document.body (positioned by Popover), so the
    studio emits saved vars on BOTH selectors (PER_COMPONENT_SELECTOR) and the
    panel carries them no matter where it mounts. Picking a row runs its action
-   and dismisses — no selected-value state (that's Listbox).
+   and dismisses — no selected-value state (that's Listbox). A switcher marks
+   where the user already is with `--current` (weight + a trailing ✓), which
+   reflects state owned elsewhere rather than holding a value here.
    ──────────────────────────────────────────────────────────────────────────── */
 
 .uxm-menu {
@@ -46,6 +48,26 @@
   cursor: pointer;
   transition: background-color 0.1s, color 0.1s;
 }
+/* The row the user is currently on (a switcher's active workspace). Weight
+   + the trailing checkmark ONLY — no colour of its own, so `itemColor` and
+   the danger tone keep reaching this row, and the ✓ inherits whatever the
+   row paints.
+
+   Position matters: this sits BEFORE `--active` deliberately. Both are
+   single-class selectors, so source order decides, and the keyboard/hover
+   highlight must win the surface — a current row under the cursor has to
+   read as BOTH (weight + ✓ from here, background from `--active`). Move this
+   below `--active` and the current row stops highlighting.
+
+   `background-color` defaults to `transparent`: a resting tint was tried and
+   collided with the hover surface, whose own default is the obvious
+   `--color-surface-alt`. The knob stays so MODO can opt into one; the rule
+   order above means hover still covers it. */
+.uxm-menu__item--current {
+  background-color: var(--uxm-menu-item-current-bg, transparent);
+  font-weight: var(--uxm-menu-item-current-font-weight, 600);
+}
+
 /* Active = keyboard-highlighted via arrow nav OR pointer hover. The
    atom's onMouseEnter applies `--active` so keyboard + pointer paint the
    same modifier class; the `:hover` selector is a defensive fallback. */
@@ -70,9 +92,15 @@
   color: var(--uxm-menu-item-danger-color, var(--color-danger-text));
 }
 
+/* `--color-text-strong`, NOT `--color-text-subtle`. Subtle measures 1.48:1
+   on `--color-card` in the light theme and 2.85:1 in dark — below even the
+   3:1 non-text floor, and in practice FAINTER than a disabled row (which
+   multiplies `--color-text` by 0.4), so a live glyph read as switched off.
+   Strong measures 8.86:1 / 11.76:1 and still sits a clear step below the
+   label. Same token the subtitle uses, for the same reason. */
 .uxm-menu__item-icon {
   flex-shrink: 0;
-  color: var(--uxm-menu-item-icon-color, var(--color-text-subtle));
+  color: var(--uxm-menu-item-icon-color, var(--color-text-strong));
 }
 /* Icon tracks the row's text colour while active / danger so it never
    reads as a separate accent against the highlighted row. */
@@ -101,8 +129,8 @@
   flex: 0 0 auto;
 }
 /* `--color-text-strong`, NOT `--color-text-muted`, is the resting subtitle
-   colour. Muted is the obvious pick for a supporting line and it is what
-   icons/hints use — but those are decorative or terse, whereas a subtitle
+   colour. Muted is the obvious pick for a supporting line and it is what the
+   hint uses — but a hint is a terse, redundant echo, whereas a subtitle
    carries real information ("Currently in Inbox", "Remove permanently") at
    11px. Muted measures 2.54:1 on `--color-card` in the light theme, under
    even the 3:1 large-text floor, and Principle IV requires AA for text.
@@ -127,14 +155,39 @@
 .uxm-menu__item--danger .uxm-menu__item-subtitle {
   color: inherit;
 }
+/* `--color-text-muted` — 2.54:1 on `--color-card` in the LIGHT theme, below
+   the 4.5:1 AA floor for text (dark measures 5.70:1 and passes). A
+   deliberate, narrow exception, then, not the oversight it
+   looks like next to the subtitle note above. A hint is a redundant shortcut
+   echo ("⌘C"): the row is fully identified by its label without it, nothing
+   is lost if it goes unread, and it is the one slot here carrying no
+   content. The subtitle is the opposite — it carries information, which is
+   exactly why it refuses muted and takes `--color-text-strong`. Do not
+   "fix" this by unifying the two; they differ on purpose. If a hint ever
+   starts carrying meaning the label lacks, move it to strong. */
 .uxm-menu__item-hint {
   flex-shrink: 0;
   margin-left: auto;
   padding-left: 12px;
   font-size: var(--uxm-menu-item-hint-font-size, 12px);
-  color: var(--uxm-menu-item-hint-color, var(--color-text-subtle));
+  color: var(--uxm-menu-item-hint-color, var(--color-text-muted));
 }
 .uxm-menu__item--active .uxm-menu__item-hint {
+  color: inherit;
+}
+
+/* Trailing ✓ on the current row, after any hint. No `margin-left: auto`
+   here on purpose: the label / text column already carries `flex: 1` and
+   consumes the free space, so the ✓ lands on the trailing edge anyway — and
+   a second auto margin would SPLIT that space with the hint's own, floating
+   the hint mid-row. Colour inherits the row (Listbox's checkmark does the
+   same), so tuning a row's text tunes its ✓. */
+.uxm-menu__item-checkmark {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding-left: 12px;
   color: inherit;
 }
 
