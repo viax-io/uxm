@@ -5,7 +5,7 @@ import {
   type FormFieldLabelTint,
   type FormFieldLabelVariant,
 } from '@/ui';
-import { TextInput } from '@/ui';
+import { RadioGroup, RadioOption, TextInput } from '@/ui';
 
 import type { CSSProperties } from 'react';
 
@@ -39,9 +39,15 @@ export function FormFieldPreview({ styles, variants }: PreviewProps) {
     '--uxm-form-field-hint-gap': `${styles.hintGap}px`,
     '--uxm-form-field-side-label-width': `${styles.sideLabelWidth ?? 120}px`,
     '--uxm-form-field-side-label-align': (styles.sideLabelAlign as string) ?? 'start',
+    '--uxm-form-field-side-label-valign': (styles.sideLabelValign as string) ?? 'center',
     // Overline variant's own typography knob (colour comes from the tint).
     '--uxm-form-field-overline-size': `${styles.overlineSize ?? 11}px`,
   } as CSSProperties;
+  // In side layout, pair the label with a TALL control (a vertical radio
+  // group) so the V-Align knob has something to act against — with a
+  // single-line input the label cell and control cell are the same height,
+  // and centre/start/end look identical.
+  const isSide = labelPosition === 'side';
   return (
     <div style={{ width: 480 }}>
       <FormField
@@ -49,10 +55,22 @@ export function FormFieldPreview({ styles, variants }: PreviewProps) {
         labelVariant={labelVariant}
         labelTint={labelTint}
         style={cssVars}
-        label="Display name"
-        hint="Shown to teammates in the sidebar and recent activity."
+        label={isSide ? 'Visibility' : 'Display name'}
+        hint={
+          isSide
+            ? 'Who can see this record.'
+            : 'Shown to teammates in the sidebar and recent activity.'
+        }
       >
-        <TextInput defaultValue="Lucas Reyes" />
+        {isSide ? (
+          <RadioGroup name="ff-preview-visibility" defaultValue="team">
+            <RadioOption value="private">Private</RadioOption>
+            <RadioOption value="team">Team</RadioOption>
+            <RadioOption value="org">Organization</RadioOption>
+          </RadioGroup>
+        ) : (
+          <TextInput defaultValue="Lucas Reyes" />
+        )}
       </FormField>
     </div>
   );

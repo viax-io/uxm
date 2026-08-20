@@ -71,6 +71,7 @@ Exported as string unions so consumers can build toggle controls without re-decl
 | `--uxm-form-field-side-label-width` | – | `120px` | Width of the label column in `side` layout. |
 | `--uxm-form-field-side-gap` | – | `16px` | Horizontal gap between label and control columns in `side` layout. |
 | `--uxm-form-field-side-label-align` | – | `start` | Label text alignment within the side column (`start` / `end` / `center`). |
+| `--uxm-form-field-side-label-valign` | – | `center` | Label vertical alignment (`align-self`) within its cell in `side` layout — `center` (default) / `start` / `end`. Set `start` to top-align the label next to a tall control (radio group / checkbox list). Only the label cell moves; the control cell follows the grid's `align-items`. |
 | `--uxm-form-field-label-tint-strong` | `--color-text-strong` | – | Colour of the `strong` tint (`labelTint`). |
 | `--uxm-form-field-label-tint-default` | `--color-text` | – | Colour of the `default` tint. |
 | `--uxm-form-field-label-tint-muted` | `--color-text-muted` | – | Colour of the `muted` tint. |

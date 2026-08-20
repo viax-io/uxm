@@ -931,6 +931,12 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`FormField` — `--uxm-form-field-side-label-valign`.** New CSS-var knob controlling the
+  label's vertical alignment (`align-self`) in `labelPosition="side"`. Default `center` (today's
+  look, unchanged); set `start` to top-align the label next to a tall control (radio group /
+  checkbox list). Only the label cell moves — the control cell still follows the grid's
+  `align-items`. Additive, CSS-only. From `./form-field`.
+
 ## Workflow
 
 ### Before writing any code
