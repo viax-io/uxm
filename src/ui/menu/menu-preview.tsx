@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { cn } from '@/helpers';
 import type { PreviewProps } from '@/previews/types';
 import { Icon } from '@/ui';
@@ -254,6 +256,19 @@ export function MenuPreview({ styles, variants }: PreviewProps & { componentId: 
       ? [...WORKSPACE_ROWS.map(toItem), ...separator, toItem(COMMAND_ROW)]
       : [...ACTION_ROWS.map(toItem), ...separator, toItem(DANGER_ROW)];
 
+  // The live panel is portaled and `position: fixed`, and `Popover` only
+  // recomputes on open, on scroll and on window resize — never on the content
+  // ABOVE the anchor changing height. Held open, that makes it go stale: turning
+  // Subtitles on grows the static row above and the panel drifts (measured -5px,
+  // i.e. overlapping upwards) until something scrolls or resizes. Nudge the
+  // listener Popover already has rather than remounting, which would flash the
+  // panel on every knob drag. Keyed on a serialised signature so it fires on
+  // real changes only.
+  const layoutSignature = JSON.stringify([shape, variants, styles]);
+  useEffect(() => {
+    window.dispatchEvent(new Event('resize'));
+  }, [layoutSignature]);
+
   const sectionLabel: CSSProperties = {
     fontSize: 11,
     color: 'var(--color-text-muted)',
@@ -286,7 +301,19 @@ export function MenuPreview({ styles, variants }: PreviewProps & { componentId: 
           navigation, `aria-current`, the separator between rows, and the
           `--current` × `--active` composition when you hover the current row.
           Rows stay clickable and never dismiss. */}
-      <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
+      {/* `display: flex` is load-bearing, not cosmetic. `.uxm-menu` is
+          `inline-flex`, and the anchor inside it is zero-height — so in a block
+          container it still generates a 24px line box and baseline alignment
+          pushes the panel ~18px further down than the label's own margin.
+          Blockifying it as a flex item removes the line box entirely. */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          borderTop: '1px solid var(--color-border)',
+          paddingTop: 16,
+        }}
+      >
         <div style={sectionLabel}>Live {shape === 'switcher' ? 'switcher' : 'action menu'}</div>
         <Menu
           // Remount on a shape change. The panel is held open, so `open` never
