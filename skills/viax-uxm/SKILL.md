@@ -949,6 +949,14 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`PropertyField` — themeable label case + value font.** Three new CSS-var knobs:
+  `--uxm-property-field-label-transform` (default `uppercase`), `--uxm-property-field-label-tracking`
+  (default `0.06em`), `--uxm-property-field-value-font` (default the mono stack). Lets the atom
+  drop its uppercase-eyebrow + monospace look for a sentence-case, proportional prose grid without
+  hand-rolling `BiField`-style markup. Defaults reproduce today exactly (unset = unchanged). Studio
+  exposes two presets — "Label Case" (uppercase → 0.06em tracking / sentence → none+normal) and
+  "Value Font" (monospace / proportional). From `./property-field`.
+
 ## Workflow
 
 ### Before writing any code
