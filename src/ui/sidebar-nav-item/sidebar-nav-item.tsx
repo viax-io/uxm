@@ -14,6 +14,14 @@ export interface SidebarNavItemProps extends AnchorHTMLAttributes<HTMLAnchorElem
   /** Override the icon (foreground) color for this item. */
   iconColor?: string;
   /**
+   * Persistent, always-visible content after the label — for a status marker
+   * (a "configured ✓", a count, a small pill). Unlike `trailing` this never
+   * hides: it does not fade on hover, and (via AppSidebar) it stays visible in
+   * the collapsed rail. Renders before `trailing`, so a row can carry both a
+   * persistent badge and a hover-reveal × without them colliding.
+   */
+  badge?: ReactNode;
+  /**
    * Optional trailing content rendered after the label — used for hover-reveal
    * affordances like a × button on user-generated nav items. Hidden by default,
    * fades in on row hover via CSS.
@@ -39,6 +47,7 @@ export function SidebarNavItem({
   disabled = false,
   iconBg,
   iconColor,
+  badge,
   trailing,
   children,
   className,
@@ -60,6 +69,7 @@ export function SidebarNavItem({
         </span>
       )}
       {children && <span className="uxm-sidebar-nav-item__label">{children}</span>}
+      {badge && <span className="uxm-sidebar-nav-item__badge">{badge}</span>}
       {trailing && <span className="uxm-sidebar-nav-item__trailing">{trailing}</span>}
     </Component>
   );

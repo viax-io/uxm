@@ -81,6 +81,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `active` | `boolean` | no | Marks the item as the current page (forwarded to `SidebarNavItem`). |
 | `iconBg` | `string` | no | Per-item icon-tile background colour (e.g. model-type accent). |
 | `iconColor` | `string` | no | Per-item icon foreground colour. |
+| `badge` | `ReactNode` | no | Persistent after-label marker (a "configured ✓", count, pill). Always visible — **stays shown while collapsed**, unlike `trailing`. Forwarded to `SidebarNavItem`. |
 | `trailing` | `ReactNode` | no | Trailing slot (e.g. hover-revealed remove button). Hidden while collapsed. |
 
 ## CSS variables

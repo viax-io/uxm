@@ -24,8 +24,15 @@ export interface AppSidebarNavItem {
   /** Per-item icon foreground color. */
   iconColor?: string;
   /**
+   * Persistent, always-visible marker after the label (a "configured ✓", a
+   * count, a small pill). Unlike `trailing` it is NOT hidden on hover, and it
+   * stays visible when the sidebar is collapsed. Forwarded to `SidebarNavItem`.
+   */
+  badge?: ReactNode;
+  /**
    * Trailing content rendered after the label (e.g. a hover-revealed × button
-   * on removable nav items). Forwarded to `SidebarNavItem`.
+   * on removable nav items). Forwarded to `SidebarNavItem`. Hidden while the
+   * sidebar is collapsed.
    */
   trailing?: ReactNode;
 }
@@ -224,6 +231,10 @@ export function AppSidebar({
                 active={item.active}
                 iconBg={item.iconBg ?? auto?.bg}
                 iconColor={item.iconColor ?? auto?.color}
+                // Persistent badge stays visible even when collapsed — it's an
+                // at-a-glance status marker, the opposite of the hover-reveal
+                // `trailing` (which is dropped in the narrow rail).
+                badge={item.badge}
                 trailing={collapsed ? undefined : item.trailing}
                 title={collapsed ? item.label : undefined}
                 className={cn(

@@ -86,8 +86,22 @@ function StaticShowcase({ state }: { state: string }) {
 
 export function SidebarNavItemPreview({ styles, variants }: PreviewProps) {
   const state = (variants.state as string) ?? 'default';
+  const badgeVariant = (variants.badge as string) ?? 'off';
   const [activeKey, setActiveKey] = useState(INTERACTIVE_ITEMS[0].key);
   const cssVars = buildVars(styles);
+
+  // Sample content for the persistent `badge` slot, driven by the Badge knob.
+  // A checkmark (status marker) or a small count pill — both render inline via
+  // `currentColor`, so the `--uxm-sidebar-nav-item-badge-color` default shows.
+  const badgeFor = (i: number) => {
+    if (badgeVariant === 'check') return <Icon glyph="check" size={14} />;
+    if (badgeVariant === 'count') {
+      return (
+        <span style={{ fontSize: 11, fontVariantNumeric: 'tabular-nums' }}>{[3, 1, 8][i] ?? 0}</span>
+      );
+    }
+    return undefined;
+  };
 
   const sectionLabel = {
     fontSize: 11,
@@ -126,6 +140,7 @@ export function SidebarNavItemPreview({ styles, variants }: PreviewProps) {
               active={it.key === activeKey}
               disabled={state === 'disabled' && i === 1}
               icon={<Icon glyph={it.glyph} />}
+              badge={badgeFor(i)}
             >
               {it.label}
             </SidebarNavItem>

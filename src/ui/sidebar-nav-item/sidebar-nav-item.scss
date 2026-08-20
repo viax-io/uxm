@@ -64,6 +64,17 @@
     white-space: nowrap;
   }
 
+  /* Persistent status marker after the label. Unlike `__trailing` it has NO
+     opacity gate — always visible, including in the collapsed rail. Colour is
+     token-first so a consumer can retint it (or pass already-coloured content);
+     defaults to the muted text token. */
+  &__badge {
+    align-items: center;
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--uxm-sidebar-nav-item-badge-color, var(--color-text-muted));
+  }
+
   &__trailing {
     align-items: center;
     display: inline-flex;

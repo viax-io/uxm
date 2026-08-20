@@ -1,6 +1,6 @@
 # SidebarNavItem
 
-A nav-row primitive for app sidebars — an icon tile, a label, an optional trailing slot for hover-reveal affordances, and built-in active / hover states.
+A nav-row primitive for app sidebars — an icon tile, a label, an optional persistent `badge` slot (a status marker), an optional `trailing` slot for hover-reveal affordances, and built-in active / hover states.
 
 `SidebarNavItem` renders an `<a>` by default but accepts an `as` override so consumers can drop in a router-aware `Link` (e.g. `next/link`'s `Link`) — keeping the UXM library framework-neutral while still avoiding full-reload navigations. The icon tile supports per-item background and foreground overrides (`iconBg` / `iconColor`) so model-type accents or category colours can travel through to the sidebar without forking the component.
 
@@ -42,8 +42,9 @@ Extends `AnchorHTMLAttributes<HTMLAnchorElement>` — any standard anchor attrib
 | `icon` | `ReactNode` | – | Leading icon node, rendered inside a fixed-size tile. Typically `<Icon glyph="..." />`. |
 | `active` | `boolean` | – | Marks the item as the current route; adds `--active` modifier and `aria-current="page"`. |
 | `disabled` | `boolean` | `false` | Adds `aria-disabled="true"` and `tabIndex={-1}` so the row is announced as unavailable and removed from the tab order. No bundled visual disabled style. |
-| `iconBg` | `string` | – | Inline background colour for the icon tile (overrides `--uxm-snavitem-icon-bg`). |
-| `iconColor` | `string` | – | Inline foreground colour for the icon (overrides `--uxm-snavitem-icon-color`). |
+| `iconBg` | `string` | – | Inline background colour for the icon tile (overrides `--uxm-sidebar-nav-item-icon-bg`). |
+| `iconColor` | `string` | – | Inline foreground colour for the icon (overrides `--uxm-sidebar-nav-item-icon-color`). |
+| `badge` | `ReactNode` | – | **Persistent** after-label marker — a "configured ✓", count, or small pill. Unlike `trailing` it never hides (no hover gate) and stays visible when the sidebar is collapsed. Rendered before `trailing`, so a row can carry both. |
 | `trailing` | `ReactNode` | – | Right-side slot — hidden by default, fades in on row hover / focus-within. Typical use: a remove `×` button on user-generated nav items. |
 | `as` | `ElementType` | `'a'` | Outer element type. Pass a router `Link` to avoid full page reloads. |
 | `className` | `string` | – | Merged with `uxm-sidebar-nav-item` via `cn`. |
@@ -53,11 +54,12 @@ Extends `AnchorHTMLAttributes<HTMLAnchorElement>` — any standard anchor attrib
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
-| `--uxm-snavitem-icon-bg` | `color-mix(--color-text 6%, transparent)` | – | Icon tile background (when `iconBg` prop unset). |
-| `--uxm-snavitem-icon-color` | `--color-text` | – | Icon foreground colour. |
-| `--uxm-snavitem-icon-tile-size` | – | `24px` | Icon tile width + height. |
-| `--uxm-snavitem-icon-tile-radius` | – | `6px` | Icon tile corner radius. |
-| `--uxm-snavitem-icon-size` | – | `14px` | Inner SVG icon size. |
+| `--uxm-sidebar-nav-item-icon-bg` | `color-mix(--color-text 6%, transparent)` | – | Icon tile background (when `iconBg` prop unset). |
+| `--uxm-sidebar-nav-item-icon-color` | `--color-text` | – | Icon foreground colour. |
+| `--uxm-sidebar-nav-item-icon-box-size` | – | `24px` | Icon tile width + height. |
+| `--uxm-sidebar-nav-item-icon-radius` | – | `6px` | Icon tile corner radius. |
+| `--uxm-sidebar-nav-item-icon-size` | – | `14px` | Inner SVG icon size. |
+| `--uxm-sidebar-nav-item-badge-color` | `--color-text-muted` | – | Persistent `badge` slot colour (when the badge content doesn't set its own). |
 
 ## Design tokens (MODO-configurable)
 
@@ -78,7 +80,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Active | `active` prop | Background `--color-surface`, text `--color-text`, `aria-current="page"`. |
 | Disabled | `disabled` prop | `aria-disabled="true"`, removed from tab order. No bundled visual dim — rely on consumer styles or the `pointer-events: none` rule on the `[aria-disabled]` selector if added downstream. |
 | Trailing reveal | `:hover` / `:focus-within` on row | Trailing slot fades from `opacity: 0` to `1` over 0.15s. |
-| With icon overrides | `iconBg` / `iconColor` props | Inline `style` on the icon tile wins over the `--uxm-snavitem-icon-*` vars. |
+| Persistent badge | `badge` prop | Always visible after the label (no opacity gate); stays shown in the collapsed rail. |
+| With icon overrides | `iconBg` / `iconColor` props | Inline `style` on the icon tile wins over the `--uxm-sidebar-nav-item-icon-*` vars. |
 
 ## Accessibility
 
