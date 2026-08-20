@@ -89,7 +89,9 @@ export function SidebarNavItem({
         </span>
       )}
       {children && <span className="uxm-sidebar-nav-item__label">{children}</span>}
-      {badge && <span className="uxm-sidebar-nav-item__badge">{badge}</span>}
+      {/* `!= null` (not a truthy guard): badge may be a numeric count, and a
+          truthy `&&` would render a bare "0" for count 0 instead of nothing. */}
+      {badge != null && <span className="uxm-sidebar-nav-item__badge">{badge}</span>}
       {trailing && <span className="uxm-sidebar-nav-item__trailing">{trailing}</span>}
     </Component>
   );
