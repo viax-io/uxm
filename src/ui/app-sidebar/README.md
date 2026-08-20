@@ -81,7 +81,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `active` | `boolean` | no | Marks the item as the current page (forwarded to `SidebarNavItem`). |
 | `iconBg` | `string` | no | Per-item icon-tile background colour (e.g. model-type accent). |
 | `iconColor` | `string` | no | Per-item icon foreground colour. |
-| `badge` | `ReactNode` | no | Persistent after-label marker (a "configured ✓", count, pill). Always visible — **stays shown while collapsed**, unlike `trailing`. Forwarded to `SidebarNavItem`. |
+| `badge` | `ReactNode` | no | Persistent after-label marker (a "configured ✓", count, pill). Shows at rest (no hover gate), unlike `trailing`. Hidden while collapsed (like `trailing` — an inline marker doesn't fit the 32×32 icon tile). Forwarded to `SidebarNavItem`. |
 | `trailing` | `ReactNode` | no | Trailing slot (e.g. hover-revealed remove button). Hidden while collapsed. |
 
 ## CSS variables
@@ -113,7 +113,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | State / variant | Trigger | Visual |
 |-----------------|---------|--------|
 | Expanded | `collapsed={false}` | Full width (`--expanded-width`), labels + headings + footer visible. |
-| Collapsed | `collapsed={true}` | Narrow width (`--collapsed-width`); brand swaps to icon button, labels & headings hide, footer hides, `trailing` slots hide, item width clamps to 32×32. |
+| Collapsed | `collapsed={true}` | Narrow width (`--collapsed-width`); brand swaps to icon button, labels & headings hide, footer hides, `badge` and `trailing` slots hide, item width clamps to 32×32. |
 | Mobile drawer open | `mobileOpen={true}` | Adds `--mobile-open` modifier and renders the backdrop button as a sibling. |
 | Toggle button | `onCollapseToggle` provided | Chevron-left icon rendered in the header; clickable to flip state. |
 | Heading hidden | `collapsed` truthy or `section.heading` undefined | Section heading paragraph is not rendered. |

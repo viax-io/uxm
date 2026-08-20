@@ -962,8 +962,9 @@ skill:
 - **`SidebarNavItem` / `AppSidebar` — persistent `badge` slot.** New `badge?: ReactNode` on
   `SidebarNavItem` (and forwarded via `AppSidebarNavItem.badge`) for an always-visible after-label
   marker — a "configured ✓", count, or pill. Unlike the hover-reveal `trailing` slot it has no
-  opacity gate and **stays visible when the sidebar is collapsed**; it renders before `trailing`,
-  so a row can carry both. Colour via `--uxm-sidebar-nav-item-badge-color` (default
+  opacity gate (shows at rest when expanded); it renders before `trailing`, so a row can carry
+  both. Like `trailing`, `AppSidebar` hides it when collapsed (an inline marker doesn't fit the
+  32×32 icon tile). Colour via `--uxm-sidebar-nav-item-badge-color` (default
   `--color-text-muted`). Additive; omit it and nothing changes. From `./sidebar-nav-item` /
   `./app-sidebar`. (Also fixed the SidebarNavItem README's stale `--uxm-snavitem-*` icon-var names
   → the real `--uxm-sidebar-nav-item-*`.)

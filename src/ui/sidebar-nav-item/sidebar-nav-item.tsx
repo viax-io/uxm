@@ -14,11 +14,12 @@ export interface SidebarNavItemProps extends AnchorHTMLAttributes<HTMLAnchorElem
   /** Override the icon (foreground) color for this item. */
   iconColor?: string;
   /**
-   * Persistent, always-visible content after the label — for a status marker
-   * (a "configured ✓", a count, a small pill). Unlike `trailing` this never
-   * hides: it does not fade on hover, and (via AppSidebar) it stays visible in
-   * the collapsed rail. Renders before `trailing`, so a row can carry both a
-   * persistent badge and a hover-reveal × without them colliding.
+   * Persistent content after the label — for a status marker (a "configured ✓",
+   * a count, a small pill). Unlike `trailing` it does not fade on hover: it
+   * shows at rest, always. Renders before `trailing`, so a row can carry both a
+   * persistent badge and a hover-reveal × without them colliding. (This atom has
+   * no collapsed mode of its own; `AppSidebar` drops the badge in its collapsed
+   * rail, where an inline marker wouldn't fit the icon tile.)
    */
   badge?: ReactNode;
   /**
