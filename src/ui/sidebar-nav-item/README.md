@@ -44,7 +44,8 @@ Extends `AnchorHTMLAttributes<HTMLAnchorElement>` — any standard anchor attrib
 | `disabled` | `boolean` | `false` | Adds `aria-disabled="true"` and `tabIndex={-1}` so the row is announced as unavailable and removed from the tab order. No bundled visual disabled style. |
 | `iconBg` | `string` | – | Inline background colour for the icon tile (overrides `--uxm-sidebar-nav-item-icon-bg`). |
 | `iconColor` | `string` | – | Inline foreground colour for the icon (overrides `--uxm-sidebar-nav-item-icon-color`). |
-| `badge` | `ReactNode` | – | **Persistent** after-label marker — a "configured ✓", count, or small pill. Unlike `trailing` it shows at rest (no hover gate). Rendered before `trailing`, so a row can carry both. (No collapsed mode here; `AppSidebar` drops the badge in its collapsed rail.) |
+| `badge` | `ReactNode` | – | **Persistent** after-label marker — a "configured ✓", count, or small pill. Unlike `trailing` it shows at rest (no hover gate). Rendered before `trailing`, so a row can carry both. (No collapsed mode here; in `AppSidebar`'s collapsed rail the inline badge is dropped in favour of `statusDot`.) |
+| `statusDot` | `boolean` | `false` | Overlay a small status dot on the icon-tile corner (a `Badge` in `dot` mode, `accent` tone). The compact stand-in for `badge` where there's no room for inline content — `AppSidebar` turns it on in its collapsed rail. Requires `icon` (anchors to the tile). |
 | `trailing` | `ReactNode` | – | Right-side slot — hidden by default, fades in on row hover / focus-within. Typical use: a remove `×` button on user-generated nav items. |
 | `as` | `ElementType` | `'a'` | Outer element type. Pass a router `Link` to avoid full page reloads. |
 | `className` | `string` | – | Merged with `uxm-sidebar-nav-item` via `cn`. |
@@ -80,7 +81,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Active | `active` prop | Background `--color-surface`, text `--color-text`, `aria-current="page"`. |
 | Disabled | `disabled` prop | `aria-disabled="true"`, removed from tab order. No bundled visual dim — rely on consumer styles or the `pointer-events: none` rule on the `[aria-disabled]` selector if added downstream. |
 | Trailing reveal | `:hover` / `:focus-within` on row | Trailing slot fades from `opacity: 0` to `1` over 0.15s. |
-| Persistent badge | `badge` prop | Shows at rest after the label (no opacity gate), unlike the hover-reveal `trailing`. (`AppSidebar` hides it when collapsed.) |
+| Persistent badge | `badge` prop | Shows at rest after the label (no opacity gate), unlike the hover-reveal `trailing`. (In `AppSidebar`'s collapsed rail it's replaced by `statusDot`.) |
+| Status dot | `statusDot` prop | `Badge` dot (accent) overlaid on the icon-tile corner — the collapsed-rail stand-in for `badge`. Sized via `--uxm-badge-dot-size` (8px here). |
 | With icon overrides | `iconBg` / `iconColor` props | Inline `style` on the icon tile wins over the `--uxm-sidebar-nav-item-icon-*` vars. |
 
 ## Accessibility

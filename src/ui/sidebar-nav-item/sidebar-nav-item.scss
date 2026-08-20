@@ -48,12 +48,25 @@
     height: var(--uxm-sidebar-nav-item-icon-box-size, 24px);
     justify-content: center;
     padding: 4px;
+    /* Anchor for the corner status dot below. */
+    position: relative;
     width: var(--uxm-sidebar-nav-item-icon-box-size, 24px);
 
     & > svg {
       height: var(--uxm-sidebar-nav-item-icon-size, 14px);
       width: var(--uxm-sidebar-nav-item-icon-size, 14px);
     }
+  }
+
+  /* Status dot (a `Badge` in dot mode) overlaid on the icon-tile corner — the
+     compact stand-in for `badge` in the collapsed rail. Nudged past the tile
+     edge so it reads as an overlay, not tile content. Size via the Badge atom's
+     own `--uxm-badge-dot-size`. */
+  &__icon-dot {
+    position: absolute;
+    right: -2px;
+    top: -2px;
+    --uxm-badge-dot-size: 8px;
   }
 
   &__label {

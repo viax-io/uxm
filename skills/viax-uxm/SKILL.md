@@ -963,8 +963,9 @@ skill:
   `SidebarNavItem` (and forwarded via `AppSidebarNavItem.badge`) for an always-visible after-label
   marker — a "configured ✓", count, or pill. Unlike the hover-reveal `trailing` slot it has no
   opacity gate (shows at rest when expanded); it renders before `trailing`, so a row can carry
-  both. Like `trailing`, `AppSidebar` hides it when collapsed (an inline marker doesn't fit the
-  32×32 icon tile). Colour via `--uxm-sidebar-nav-item-badge-color` (default
+  both. In `AppSidebar`'s collapsed rail the inline badge is dropped and stands in as a small
+  corner **status dot** on the icon tile (via `SidebarNavItem`'s new `statusDot` prop — a `Badge`
+  in dot mode), so the "has status" signal survives without cramming the 32×32 tile. Colour via `--uxm-sidebar-nav-item-badge-color` (default
   `--color-text-muted`). Additive; omit it and nothing changes. From `./sidebar-nav-item` /
   `./app-sidebar`. (Also fixed the SidebarNavItem README's stale `--uxm-snavitem-*` icon-var names
   → the real `--uxm-sidebar-nav-item-*`.)
