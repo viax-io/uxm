@@ -10,11 +10,12 @@ import {
   type HTMLAttributes,
   type InputHTMLAttributes,
   type ReactNode,
+  type Ref,
   type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeRefs } from '@/helpers';
 
 import { ButtonGhost } from '../button';
 import { FieldError } from '../field-error';
@@ -50,6 +51,14 @@ export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   onClear?: () => void;
   /** Accessible name for the clear button. Default `"Clear"`. */
   clearLabel?: string;
+  /**
+   * Handle to the underlying `<input>` element, merged with the atom's own
+   * internal ref (the self-clear keeps working). Use this to focus, select,
+   * measure, or insert text at the caret from a consumer. A plain React `ref`
+   * on `<TextInput>` does NOT reach the element — it's consumed by `{...rest}`
+   * and overridden by the managed ref — so pass `inputRef` instead.
+   */
+  inputRef?: Ref<HTMLInputElement>;
 }
 
 export function TextInput({
@@ -63,6 +72,7 @@ export function TextInput({
   defaultValue,
   onChange,
   disabled,
+  inputRef,
   ...rest
 }: TextInputProps) {
   const errorId = useId();
@@ -90,14 +100,20 @@ export function TextInput({
     if (!isControlled) setHasTextUncontrolled(false);
   };
 
+  // Merge the consumer's `inputRef` with the atom's `innerRef` (the self-clear
+  // relies on `innerRef`), so both get the element. Memoised on `inputRef` so
+  // the callback identity is stable and React doesn't detach/reattach.
+  const setInputRef = useMemo(() => mergeRefs(innerRef, inputRef), [inputRef]);
+
   const input = (
-    // `{...rest}` is spread FIRST so the managed props below always win — in
-    // particular a consumer-passed `ref` can't clobber `innerRef` (which the
-    // self-clear relies on). `defaultValue` is only forwarded when
-    // uncontrolled, so value+defaultValue are never both set.
+    // `{...rest}` is spread FIRST so the managed props below always win — a raw
+    // consumer `ref` can't clobber the merged ref (which the self-clear relies
+    // on); the sanctioned handle is `inputRef`, merged in via `setInputRef`.
+    // `defaultValue` is only forwarded when uncontrolled, so value+defaultValue
+    // are never both set.
     <input
       {...rest}
-      ref={innerRef}
+      ref={setInputRef}
       type={type}
       value={value}
       defaultValue={isControlled ? undefined : defaultValue}
@@ -156,6 +172,14 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
   onClear?: () => void;
   /** See `TextInputProps.clearLabel`. Default `"Clear"`. */
   clearLabel?: string;
+  /**
+   * Handle to the underlying `<textarea>` element, merged with the atom's own
+   * internal ref (the self-clear keeps working). Use it to focus, select, or
+   * insert text at the caret (e.g. drop-a-variable-into-a-formula). A plain
+   * React `ref` on `<Textarea>` does NOT reach the element — pass
+   * `textareaRef` instead.
+   */
+  textareaRef?: Ref<HTMLTextAreaElement>;
 }
 
 export function Textarea({
@@ -168,6 +192,7 @@ export function Textarea({
   defaultValue,
   onChange,
   disabled,
+  textareaRef,
   ...rest
 }: TextareaProps) {
   const errorId = useId();
@@ -194,12 +219,16 @@ export function Textarea({
     if (!isControlled) setHasTextUncontrolled(false);
   };
 
+  // Merge the consumer's `textareaRef` with the atom's `innerRef` — see TextInput.
+  const setTextareaRef = useMemo(() => mergeRefs(innerRef, textareaRef), [textareaRef]);
+
   const textarea = (
-    // `{...rest}` first so managed props (esp. `ref`) win; `defaultValue` only
-    // when uncontrolled — never both value+defaultValue.
+    // `{...rest}` first so managed props win; the sanctioned element handle is
+    // `textareaRef`, merged in via `setTextareaRef`. `defaultValue` only when
+    // uncontrolled — never both value+defaultValue.
     <textarea
       {...rest}
-      ref={innerRef}
+      ref={setTextareaRef}
       value={value}
       defaultValue={isControlled ? undefined : defaultValue}
       onChange={handleChange}

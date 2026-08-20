@@ -43,6 +43,7 @@ Type alias for `InputHTMLAttributes<HTMLInputElement>`. Every native input attri
 | `type` | `string` | `'text'` | Overridden default — set explicitly for `'email'`, `'password'`, `'number'`, etc. |
 | `className` | `string` | – | Merged with `uxm-input-text` via `cn`. Add `uxm-input-text--error` or `uxm-input-error` for the error state. |
 | `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
+| `inputRef` | `Ref<HTMLInputElement>` | – | Handle to the underlying `<input>`, merged with the atom's internal ref (self-clear keeps working). Use this to focus / select / insert-at-caret — a plain React `ref` on `<TextInput>` does **not** reach the element (it's consumed by `{...rest}` and overridden by the managed ref). |
 | _(any native input attribute)_ | – | – | Spread onto the root `<input>`. |
 
 ### `Textarea` — `TextareaProps`
@@ -54,6 +55,7 @@ Type alias for `TextareaHTMLAttributes<HTMLTextAreaElement>`. Every native texta
 | `className` | `string` | – | Merged with `uxm-textarea` via `cn`. |
 | `rows` | `number` | browser default | Initial row count; height also gated by `min-height: 100px` and `resize: vertical`. |
 | `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
+| `textareaRef` | `Ref<HTMLTextAreaElement>` | – | Handle to the underlying `<textarea>`, merged with the atom's internal ref. Use this to focus / select / insert-at-caret (e.g. drop a variable into a formula) — a plain React `ref` does **not** reach the element. |
 | _(any native textarea attribute)_ | – | – | Spread onto the root `<textarea>`. |
 
 ### `Select` — `SelectProps`
