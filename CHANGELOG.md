@@ -1,3 +1,10 @@
+# [4.21.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.20.0...v4.21.0) (2026-08-21)
+
+
+### Features
+
+* **form-field:** add --uxm-form-field-side-label-valign knob ([0dc1a09](https://gitlab.viax.tech/services-viax/uxm/commit/0dc1a099655b4053147ff271bcd6d9adda5f7c39))
+
 # [4.20.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.19.0...v4.20.0) (2026-08-21)
 
 
