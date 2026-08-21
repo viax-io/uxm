@@ -38,6 +38,8 @@ Extends `Omit<SVGAttributes<SVGSVGElement>, 'children'>` — any standard SVG at
 
 The render mode (stroke vs fill) is decided by the registry entry's `filled` flag, not a prop. Outline glyphs use `stroke="currentColor"` + `fill="none"`; filled glyphs use `fill="currentColor"` + `stroke="none"`. Both modes use `stroke-linecap="round"` and `stroke-linejoin="round"`.
 
+The registry set is **currently all-outline** — no glyph sets `filled: true`, so every icon responds to `strokeWidth`. The `filled` mode and the row below remain as a documented extension point for a future glyph that can't be expressed as a stroke (e.g. a solid brand mark).
+
 ## CSS variables
 
 The component itself defines no custom properties. Sizing flows through the `size` prop (rendered as SVG attributes), and colour inherits via `currentColor`. The only stylesheet rule is `display: inline-block` on `.uxm-icon`.
