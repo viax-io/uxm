@@ -1296,7 +1296,31 @@ export const compositeDefs: ComponentDef[] = [
       { key: 'valueSize', label: 'Value Size', control: 'number', defaultValue: 13, min: 11, max: 18, step: 1, unit: 'px' },
       { key: 'gap', label: 'Label/Value Gap', control: 'number', defaultValue: 4, min: 2, max: 12, step: 1, unit: 'px' },
     ],
-    layoutVariants: [],
+    layoutVariants: [
+      // Label case + value font as guided presets. The preview maps each to the
+      // `--uxm-property-field-label-transform` / `-label-tracking` / `-value-font`
+      // vars: uppercase carries 0.06em tracking (the "eyebrow" look), sentence
+      // drops both to none/normal; monospace is the data look, proportional is
+      // the body typeface (for prose grids). Defaults reproduce today.
+      {
+        key: 'labelCase',
+        label: 'Label Case',
+        options: [
+          { value: 'uppercase', label: 'Uppercase' },
+          { value: 'sentence', label: 'Sentence' },
+        ],
+        defaultValue: 'uppercase',
+      },
+      {
+        key: 'valueFont',
+        label: 'Value Font',
+        options: [
+          { value: 'monospace', label: 'Monospace' },
+          { value: 'proportional', label: 'Proportional' },
+        ],
+        defaultValue: 'monospace',
+      },
+    ],
   },
   {
     id: 'property-grid',

@@ -29,8 +29,8 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute is forwa
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `label` | `ReactNode` | – | **Required.** Rendered into the upper `<span class="uxm-property-field__label">` (uppercase tracking applied via CSS). |
-| `children` | `ReactNode` | – | **Required.** Field value, rendered into the lower `<span class="uxm-property-field__value">` (monospace font). |
+| `label` | `ReactNode` | – | **Required.** Rendered into the upper `<span class="uxm-property-field__label">` (uppercase + tracking by default; themeable via `--uxm-property-field-label-transform` / `-tracking`). |
+| `children` | `ReactNode` | – | **Required.** Field value, rendered into the lower `<span class="uxm-property-field__value">` (monospace by default; themeable via `--uxm-property-field-value-font`). |
 | `className` | `string` | – | Merged with `uxm-property-field`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div>`. |
 
@@ -55,8 +55,13 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute is forwa
 | `--uxm-property-field-label-size` | – | `11px` | Label font size. |
 | `--uxm-property-field-value-color` | `--color-text` | – | Value text colour. |
 | `--uxm-property-field-value-size` | – | `14px` | Value font size. |
+| `--uxm-property-field-label-transform` | – | `uppercase` | Label `text-transform`. Set `none` for a sentence-case label (prose grids). |
+| `--uxm-property-field-label-tracking` | – | `0.06em` | Label `letter-spacing`. Pair `normal` with `label-transform: none` — the tracking suits caps, not sentence case. |
+| `--uxm-property-field-value-font` | – | `ui-monospace, SFMono-Regular, Menlo, monospace` | Value `font-family`. For proportional prose values pass an explicit body stack, e.g. `var(--brand-font, var(--font-sans, sans-serif))`. ⚠️ Do **not** pass the keyword `inherit` — a CSS-wide keyword as a custom-property value makes the property inherit (a no-op) rather than resolving to `font-family: inherit`, so it silently falls back to the mono default. |
 
-Label additionally carries hard-coded `font-weight: 600`, `letter-spacing: 0.06em`, and `text-transform: uppercase`; value uses a monospace stack (`ui-monospace, SFMono-Regular, Menlo, monospace`). These are not exposed as variables.
+Label additionally carries a hard-coded `font-weight: 600` (not exposed). The case, tracking, and value font are themeable via the variables above — their defaults reproduce the original uppercase-eyebrow label + monospace value exactly, so an unset instance is unchanged.
+
+> **Studio note.** The workbench "Label Case" / "Value Font" presets are **preview-only** — they demonstrate the two looks but are not persisted to saved overrides (they're layout variants, and only the colour/size style knobs on this atom persist). To ship a sentence-case / proportional PropertyField, set the CSS variables above in your own code (e.g. `--uxm-property-field-value-font: var(--brand-font, var(--font-sans, sans-serif))` on the field or a wrapper); that is the intended persistence path.
 
 ### `PropertyGrid`
 
@@ -90,5 +95,5 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Both components render `<div>` / `<span>` — no built-in semantics. Screen readers will announce the label and value as consecutive text fragments with the label's source-order priority.
 - For richer association (description lists, key-value semantics), wrap externally with `<dl>` / `<dt>` / `<dd>` or set `role="term"` / `role="definition"` on the spans via spread props.
 - Label uppercase styling is `text-transform: uppercase` — the underlying text is still read in original case by screen readers (not actually rewritten in the DOM), which is the desired behaviour.
-- Monospace value font is intentional for IDs, timestamps, version strings; for prose values supply an override class or instance variable.
+- Monospace value font is the default — intentional for IDs, timestamps, version strings. For prose values set `--uxm-property-field-value-font` to a proportional stack (e.g. `var(--brand-font, var(--font-sans, sans-serif))`), or use the workbench "Value Font: Proportional" preset, rather than overriding by class. (Passing `inherit` does not work — see the CSS-variables note above.)
 - Grid is purely visual — focus / tab order follows source order regardless of visual column position.

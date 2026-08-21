@@ -28,13 +28,17 @@
     color: var(--uxm-property-field-label-color, var(--color-text-muted));
     font-size: var(--uxm-property-field-label-size, 11px);
     font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    /* Case + tracking are knobs so the atom can drop its uppercase "eyebrow"
+       look for sentence-case prose grids. Defaults reproduce today exactly. */
+    letter-spacing: var(--uxm-property-field-label-tracking, 0.06em);
+    text-transform: var(--uxm-property-field-label-transform, uppercase);
   }
 
   &__value {
     color: var(--uxm-property-field-value-color, var(--color-text));
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    /* Value font is a knob so a grid of prose values can drop the monospace
+       (data/technical) look for the body typeface. Default = today's mono. */
+    font-family: var(--uxm-property-field-value-font, ui-monospace, SFMono-Regular, Menlo, monospace);
     font-size: var(--uxm-property-field-value-size, 14px);
   }
 }
