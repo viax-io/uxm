@@ -1,3 +1,10 @@
+# [4.25.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.24.0...v4.25.0) (2026-08-21)
+
+
+### Features
+
+* **sidebar-nav-trigger:** add a rail row that opens rather than navigates ([7ab5035](https://gitlab.viax.tech/services-viax/uxm/commit/7ab5035e52da2bc2208e65ef6c8426cfb2fe9911))
+
 # [4.24.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.23.0...v4.24.0) (2026-08-21)
 
 
