@@ -85,6 +85,7 @@ export { SegmentRowPreview } from '@/ui/segment-row/segment-row-preview';
 export { SelectPreview } from '@/ui/input/select-preview';
 export { SideFlexpanePreview } from '@/ui/side-flexpane/side-flexpane-preview';
 export { SidebarNavItemPreview } from '@/ui/sidebar-nav-item/sidebar-nav-item-preview';
+export { SidebarNavTriggerPreview } from '@/ui/sidebar-nav-trigger/sidebar-nav-trigger-preview';
 export { SliderPreview } from '@/ui/slider/slider-preview';
 export { StackPreview } from '@/ui/stack/stack-preview';
 export { StatCardPreview } from '@/ui/stat-card/stat-card-preview';

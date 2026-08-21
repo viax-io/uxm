@@ -203,6 +203,12 @@ export { OptionList } from './option-list';
 export type { OptionListItem, OptionListProps } from './option-list';
 export { SidebarNavItem } from './sidebar-nav-item';
 export type { SidebarNavItemProps } from './sidebar-nav-item';
+export { SidebarNavTrigger } from './sidebar-nav-trigger';
+export type {
+  SidebarNavTriggerCaptionPlacement,
+  SidebarNavTriggerProps,
+  SidebarNavTriggerVariant,
+} from './sidebar-nav-trigger';
 export { Slider } from './slider';
 export type { SliderProps } from './slider';
 export { Stack } from './stack';

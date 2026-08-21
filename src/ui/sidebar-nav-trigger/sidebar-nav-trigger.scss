@@ -1,0 +1,145 @@
+/* ── sidebar-nav-trigger ──────────────────────────────────────────────────────
+   A rail row that OPENS something rather than navigating to it. Sibling of
+   `sidebar-nav-item`, deliberately not a variant of it: that one is an `<a>`
+   with a painted icon tile and a hover-revealed trailing slot.
+
+   The open state is read from `[aria-expanded="true"]` — the attribute `Menu`
+   and `Listbox` already set on the trigger — so there is no `--open` class and
+   no prop to keep in sync with it.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.uxm-sidebar-nav-trigger {
+  /* width: 100% + own padding → border-box, or the row overflows its rail in a
+     reset-less host (ui.css ships no reset). */
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--uxm-sidebar-nav-trigger-gap, 10px);
+  padding: var(--uxm-sidebar-nav-trigger-padding-y, 8px) var(--uxm-sidebar-nav-trigger-padding-x, 12px);
+  text-align: left;
+  background-color: var(--uxm-sidebar-nav-trigger-bg, transparent);
+  border: 1px solid transparent;
+  /* 8px, matching `sidebar-nav-item` — the two sit in the same rail, and a
+     trigger rounded differently from the rows under it reads as a different
+     family rather than a different job. */
+  border-radius: var(--uxm-sidebar-nav-trigger-border-radius, 8px);
+  color: var(--uxm-sidebar-nav-trigger-value-color, var(--color-text));
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+
+  /* `outlined` keeps its neutral border through every state — only the surface
+     moves. A border that changed on hover would read as a second signal for a
+     fact the surface already carries. */
+  &--outlined {
+    background-color: var(--uxm-sidebar-nav-trigger-outlined-bg, var(--color-card));
+    border-color: var(--uxm-sidebar-nav-trigger-outlined-border, var(--color-border));
+  }
+
+  /* Hover and open paint the SAME surface, in both variants: they mean the same
+     thing to the eye — this row is what you are dealing with. Open is the
+     attribute, not a class, so the two selectors sit together here.
+
+     `--state-hover` / `--state-focus` are the forced-state classes the
+     workbench showcase needs (the pointer cannot be in two places, so the State
+     picker has to win). They are named per the kit's existing `--state-*`
+     convention (color-input, date-input, currency-input) and listed WITH the
+     real selectors rather than duplicated, so a forced state cannot drift from
+     the real one.
+
+     ORDER MATTERS: these sit AFTER `--outlined` on purpose. `:hover` and
+     `[aria-expanded]` out-specify a lone modifier class anyway, but
+     `--state-hover` does not — it ties with `--outlined`, so put it earlier and
+     the forced hover silently stops painting on the outlined variant. */
+  &:hover:not(:disabled):not([aria-disabled="true"]),
+  &[aria-expanded="true"]:not(:disabled):not([aria-disabled="true"]),
+  &--state-hover {
+    background-color: var(--uxm-sidebar-nav-trigger-hover-bg, var(--color-surface));
+  }
+
+  &:focus-visible,
+  &--state-focus {
+    outline: 2px solid var(--uxm-sidebar-nav-trigger-focus-ring, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  /* Dimmed rather than recoloured, so the row keeps its shape and a disabled
+     `outlined` trigger still reads as the same box. Both spellings are covered:
+     the native attribute, which blocks the click itself, and `aria-disabled`,
+     for when the row must stay focusable and announced — there the CONSUMER
+     still owns ignoring the activation, which is the whole difference between
+     the two.
+
+     Deliberately no `pointer-events: none` (which `sidebar-nav-item` needs,
+     being an `<a>` that cannot carry a native `disabled`): it would suppress
+     `cursor: not-allowed` too, throwing away the one affordance that tells
+     the user why nothing happens. The `:hover` rule above opts out instead. */
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: var(--uxm-sidebar-nav-trigger-disabled-opacity, 0.45);
+    cursor: not-allowed;
+  }
+
+  /* The mark. No tile: the slot is sized and centred, and paints nothing.
+     `min-*` rather than fixed width/height so the box reserves and aligns
+     without clipping a child that is larger than the reservation — an `Avatar`
+     brings its own size and must not be squeezed into the icon box. */
+  &__icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--uxm-sidebar-nav-trigger-icon-size, 28px);
+    min-height: var(--uxm-sidebar-nav-trigger-icon-size, 28px);
+    color: var(--uxm-sidebar-nav-trigger-icon-color, var(--color-text-strong));
+  }
+
+  /* Caption over value. The column owns the row growth so the trailing chevron
+     right-aligns; with no caption it holds a single line and `align-items:
+     center` on the row centres it — no separate one-line rule needed. */
+  &__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--uxm-sidebar-nav-trigger-caption-gap, 2px);
+  }
+
+  /* `--color-text-muted` measures 2.54:1 on `--color-card` in the light theme,
+     under the 4.5:1 AA floor — but a caption is not information: it names the
+     control ("WORKSPACE"), and the value beneath it is the content. `-strong`
+     is the safe swap if a consumer ever gives the slot real meaning. */
+  &__caption {
+    overflow: hidden;
+    font-size: var(--uxm-sidebar-nav-trigger-caption-font-size, 10px);
+    font-weight: var(--uxm-sidebar-nav-trigger-caption-font-weight, 500);
+    letter-spacing: var(--uxm-sidebar-nav-trigger-caption-letter-spacing, 0.06em);
+    /* Uppercase by DEFAULT, not by definition — a caption is an eyebrow in most
+       rails, but a sentence-case one ("Tenant owner" under an address) is a
+       legitimate reading of the same slot, and the brand font may not carry
+       caps well. Note the pairing: the 0.06em tracking exists to open up caps,
+       so a designer switching this to `none` usually wants to drop that too. */
+    text-transform: var(--uxm-sidebar-nav-trigger-caption-text-transform, uppercase);
+    color: var(--uxm-sidebar-nav-trigger-caption-color, var(--color-text-muted));
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__value {
+    overflow: hidden;
+    font-size: var(--uxm-sidebar-nav-trigger-font-size, 14px);
+    font-weight: var(--uxm-sidebar-nav-trigger-font-weight, 500);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Visible at rest — unlike `sidebar-nav-item`, whose trailing slot fades in
+     on hover. There the slot holds an optional extra; here it IS the
+     affordance that says this row opens something. */
+  &__trailing {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    color: var(--uxm-sidebar-nav-trigger-trailing-color, var(--color-text-muted));
+  }
+}

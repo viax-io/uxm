@@ -242,6 +242,27 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     borderColor: '--uxm-app-sidebar-border-color',
     backgroundColor: '--uxm-app-sidebar-background-color',
   },
+  // Every key here collides with REAL_CSS_PROPS, where the generic fallback
+  // emits the LITERAL css property on the root selector instead of the var.
+  //
+  // For `fontSize` / `fontWeight` that is a silent no-op rather than a mere
+  // detour: the atom reads those vars on `.uxm-sidebar-nav-trigger__value`, and
+  // a `font-size` landing on the root is beaten by the child's own declaration.
+  // The live workbench hides it — that path projects custom properties through
+  // the preview's `buildVars`, so the knob only dies once a brand is SAVED.
+  //
+  // The rest (padding, gap, radius) do sit on the root and would survive the
+  // literal route on source order alone, but they are mapped too: the sibling
+  // `sidebar-nav-item` maps all six, and leaving half of them to cascade luck
+  // invites exactly the question of which half.
+  'sidebar-nav-trigger': {
+    paddingX: '--uxm-sidebar-nav-trigger-padding-x',
+    paddingY: '--uxm-sidebar-nav-trigger-padding-y',
+    fontSize: '--uxm-sidebar-nav-trigger-font-size',
+    fontWeight: '--uxm-sidebar-nav-trigger-font-weight',
+    gap: '--uxm-sidebar-nav-trigger-gap',
+    borderRadius: '--uxm-sidebar-nav-trigger-border-radius',
+  },
   'sidebar-nav-item': {
     paddingX: '--uxm-sidebar-nav-item-padding-x',
     paddingY: '--uxm-sidebar-nav-item-padding-y',
