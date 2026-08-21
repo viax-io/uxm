@@ -12,6 +12,10 @@ const SAMPLE_SECTIONS = [
         label: 'Dashboard',
         icon: <Icon glyph="grid" />,
         active: true,
+        // Demonstrates the persistent `badge` slot: shows inline (a ✓) when
+        // expanded, and collapses to a corner status dot on the icon tile when
+        // the rail is collapsed.
+        badge: <Icon glyph="check" size={14} />,
       },
     ],
   },

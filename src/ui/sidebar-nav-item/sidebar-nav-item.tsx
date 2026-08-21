@@ -1,5 +1,7 @@
 import { cn } from '@/helpers';
 
+import { Badge } from '../badge';
+
 import type { AnchorHTMLAttributes, CSSProperties, ElementType, ReactNode } from 'react';
 
 export interface SidebarNavItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -13,6 +15,23 @@ export interface SidebarNavItemProps extends AnchorHTMLAttributes<HTMLAnchorElem
   iconBg?: string;
   /** Override the icon (foreground) color for this item. */
   iconColor?: string;
+  /**
+   * Persistent content after the label — for a status marker (a "configured ✓",
+   * a count, a small pill). Unlike `trailing` it does not fade on hover: it
+   * shows at rest, always. Renders before `trailing`, so a row can carry both a
+   * persistent badge and a hover-reveal × without them colliding. (This atom has
+   * no collapsed mode of its own; `AppSidebar` drops the inline badge in its
+   * collapsed rail and shows `statusDot` instead, since an inline marker
+   * wouldn't fit the icon tile.)
+   */
+  badge?: ReactNode;
+  /**
+   * Show a small status dot overlaid on the icon-tile corner (a `Badge` in
+   * `dot` mode). This is the compact stand-in for `badge` when there's no room
+   * for inline content — `AppSidebar` turns it on in its collapsed icon rail,
+   * where the full `badge` is dropped. Requires `icon` (it anchors to the tile).
+   */
+  statusDot?: boolean;
   /**
    * Optional trailing content rendered after the label — used for hover-reveal
    * affordances like a × button on user-generated nav items. Hidden by default,
@@ -39,6 +58,8 @@ export function SidebarNavItem({
   disabled = false,
   iconBg,
   iconColor,
+  badge,
+  statusDot = false,
   trailing,
   children,
   className,
@@ -57,9 +78,20 @@ export function SidebarNavItem({
       {icon && (
         <span className="uxm-sidebar-nav-item__icon" style={tileStyle}>
           {icon}
+          {statusDot && (
+            <Badge
+              mode="dot"
+              type="accent"
+              aria-hidden
+              className="uxm-sidebar-nav-item__icon-dot"
+            />
+          )}
         </span>
       )}
       {children && <span className="uxm-sidebar-nav-item__label">{children}</span>}
+      {/* `!= null` (not a truthy guard): badge may be a numeric count, and a
+          truthy `&&` would render a bare "0" for count 0 instead of nothing. */}
+      {badge != null && <span className="uxm-sidebar-nav-item__badge">{badge}</span>}
       {trailing && <span className="uxm-sidebar-nav-item__trailing">{trailing}</span>}
     </Component>
   );

@@ -24,8 +24,18 @@ export interface AppSidebarNavItem {
   /** Per-item icon foreground color. */
   iconColor?: string;
   /**
+   * Persistent marker after the label (a "configured ✓", a count, a small
+   * pill). Unlike `trailing` it is NOT hidden on hover — it shows at rest while
+   * the row is expanded. When the sidebar is **collapsed** the inline marker is
+   * dropped (it won't fit the 32×32 tile) and stands in as a small status dot
+   * on the icon-tile corner, so the "has status" signal still reads. Forwarded
+   * to `SidebarNavItem` (as `badge` expanded, `statusDot` collapsed).
+   */
+  badge?: ReactNode;
+  /**
    * Trailing content rendered after the label (e.g. a hover-revealed × button
-   * on removable nav items). Forwarded to `SidebarNavItem`.
+   * on removable nav items). Forwarded to `SidebarNavItem`. Hidden while the
+   * sidebar is collapsed.
    */
   trailing?: ReactNode;
 }
@@ -224,6 +234,12 @@ export function AppSidebar({
                 active={item.active}
                 iconBg={item.iconBg ?? auto?.bg}
                 iconColor={item.iconColor ?? auto?.color}
+                // Collapsed rail: the inline `badge` is dropped (it won't fit
+                // the 32×32 tile) and stands in as a corner status dot on the
+                // icon tile — so "this item has status" still reads at a glance
+                // without the clutter. Expanded shows the full badge inline.
+                badge={collapsed ? undefined : item.badge}
+                statusDot={collapsed && item.badge != null}
                 trailing={collapsed ? undefined : item.trailing}
                 title={collapsed ? item.label : undefined}
                 className={cn(

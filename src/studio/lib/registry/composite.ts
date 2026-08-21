@@ -615,6 +615,19 @@ export const compositeDefs: ComponentDef[] = [
         ],
         defaultValue: 'default',
       },
+      {
+        // Persistent badge slot demo — the preview renders a sample marker
+        // (a checkmark or a count pill) in the always-visible `badge` slot so
+        // its look can be verified next to the hover-reveal trailing slot.
+        key: 'badge',
+        label: 'Badge',
+        options: [
+          { value: 'off', label: 'Off' },
+          { value: 'check', label: 'Checkmark' },
+          { value: 'count', label: 'Count' },
+        ],
+        defaultValue: 'off',
+      },
     ],
     events: [
       { name: 'onClick', description: 'Fires when the user clicks the nav item (or activates it via Enter).', payload: 'MouseEvent' },
