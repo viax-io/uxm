@@ -560,6 +560,45 @@ const actions: BulkAction[] = [
 Standalone `Menu` (overflow / command list) owns only the trigger contract — spread `triggerProps`
 onto any element: `<Menu items={...} renderTrigger={({ triggerProps }) => <IconButton {...triggerProps}><Icon glyph="kebab"/></IconButton>} />`.
 
+### The other shape of the same atom: a context switcher (unreleased)
+
+Same DOM, same ARIA, same `--uxm-menu-*` knobs — what changes is the **entries** plus two framing
+props. Still a `Menu` and not a `Select` for two independent reasons: switching context is an action
+with side effects (scope change, data reload), not filling a field; and the panel hosts a command
+("New workspace") that `role="listbox"` has no legal way to contain.
+
+```tsx
+const workspaces: MenuEntry[] = [
+  { key: 'default', label: 'default', icon: 'product', onSelect: () => go('default') },
+  { key: 'pilot', label: 'pilot-2025', icon: 'product', subtitle: 'No access', disabled: true },
+  // `current` marks where the user IS — aria-current + a trailing ✓ + heavier label. It REFLECTS
+  // state owned elsewhere; the menu still holds no value. Exactly one row per panel.
+  { key: 'support', label: 'support-triage', icon: 'product', current: true,
+    // `iconColor` tints ONE row's glyph. Identity colours only — prefer a `var(--color-*)`
+    // reference; a raw hex is legitimate only when the colour is entity DATA from a backend.
+    iconColor: 'var(--color-category-composite)', onSelect: () => go('support') },
+  { separator: true, key: 'sep' },
+  { key: 'new', label: 'New workspace', icon: 'plus', onSelect: createWorkspace },
+];
+
+<Menu
+  items={workspaces}
+  aria-label="Switch workspace"
+  // A field-like trigger, so tie the panel to it — the native <select> convention. `"min"` not
+  // `true`: user-authored names outgrow a fixed width, which `true` would ellipsize. Setting this
+  // also drops the default 160/280 clamp (Popover always applies maxWidth, so 280 would render a
+  // panel NARROWER than a wider trigger).
+  matchAnchorWidth="min"
+  placement="bottom-start"
+  renderTrigger={({ triggerProps }) => <button {...triggerProps}>…</button>}
+/>
+```
+
+Which shape you're in: **action menu** = every row is a command, ⋮ trigger, no `current`, default
+`bottom-end`. **Switcher** = contexts + one command under a separator, field trigger, exactly one
+`current`, `matchAnchorWidth="min"` + `bottom-start`. Wanting a *second* `current`, or wanting the
+panel to HOLD the value rather than reflect it, means you've left `Menu` — use `Listbox`/`Select`.
+
 ---
 
 ## 14. Detail card with labelled editable rows
