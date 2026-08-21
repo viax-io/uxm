@@ -1,3 +1,15 @@
+# [4.22.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.21.0...v4.22.0) (2026-08-21)
+
+
+### Bug Fixes
+
+* **helpers:** mergeRefs forwards React 19 ref-callback cleanups ([34c2511](https://gitlab.viax.tech/services-viax/uxm/commit/34c2511353b2453017bcf22fb2686a5affab1c7d))
+
+
+### Features
+
+* **input:** expose inputRef / textareaRef on TextInput and Textarea ([105d2f5](https://gitlab.viax.tech/services-viax/uxm/commit/105d2f54d0d4da8fe4c82e29c1cc6f0f2e708215))
+
 # [4.21.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.20.0...v4.21.0) (2026-08-21)
 
 
