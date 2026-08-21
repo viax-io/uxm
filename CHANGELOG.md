@@ -1,3 +1,15 @@
+# [4.19.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.18.0...v4.19.0) (2026-08-21)
+
+
+### Bug Fixes
+
+* **menu:** correct the live preview panel's offset under its label ([61a2f0b](https://gitlab.viax.tech/services-viax/uxm/commit/61a2f0b7cbbea0d492b601618840e188c3081402))
+
+
+### Features
+
+* **menu:** add current row, per-row iconColor and trigger-width matching ([25b7288](https://gitlab.viax.tech/services-viax/uxm/commit/25b72886c8605d1d57455b3178d5027d3afbf937))
+
 # [4.18.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.17.1...v4.18.0) (2026-08-14)
 
 
