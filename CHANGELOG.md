@@ -1,3 +1,17 @@
+# [4.24.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.23.0...v4.24.0) (2026-08-21)
+
+
+### Bug Fixes
+
+* **sidebar-nav-item:** guard badge with != null (numeric 0 rendered a stray "0") ([25627a9](https://gitlab.viax.tech/services-viax/uxm/commit/25627a97bd9156bd42d059fa6dd3a727a17bfb0a))
+
+
+### Features
+
+* **sidebar-nav-item:** add persistent badge slot ([62bb3ab](https://gitlab.viax.tech/services-viax/uxm/commit/62bb3aba90578729e449191815c6cf82f4315bbb))
+* **sidebar-nav-item:** collapsed-rail status dot stands in for badge ([a1f07c7](https://gitlab.viax.tech/services-viax/uxm/commit/a1f07c74bd9f82766f9888716bdd203e978596ba))
+* **sidebar-nav-item:** hide badge when the sidebar is collapsed ([8cb1cef](https://gitlab.viax.tech/services-viax/uxm/commit/8cb1cef82026e5370a2dfa2b87fa3d14c9b78167))
+
 # [4.23.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.22.0...v4.23.0) (2026-08-21)
 
 
