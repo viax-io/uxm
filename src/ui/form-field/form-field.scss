@@ -48,6 +48,13 @@
      to "end" via the registry knob if you want labels flush against
      the input column edge. */
   text-align: var(--uxm-form-field-side-label-align, start);
+  /* Vertical alignment of the label within its grid cell. Default
+     "center" preserves today's look (the grid's `align-items: center`
+     centres both cells); set to "start" so a label sits at the top when
+     it's paired with a tall control (a radio group / checkbox list). Only
+     the label cell moves — the control cell is still governed by the
+     grid's `align-items`. */
+  align-self: var(--uxm-form-field-side-label-valign, center);
 }
 
 .uxm-form-field--side .uxm-form-field__hint {

@@ -1238,6 +1238,10 @@ export const compositeDefs: ComponentDef[] = [
       // left-to-right into the input. "end" (right) is the alternative
       // for projects that prefer labels flush against the input.
       { key: 'sideLabelAlign', label: 'Side Label Align', control: 'select', defaultValue: 'start', options: ['start', 'end'], section: 'sideLayout', showWhen: { labelPosition: 'side' } },
+      // Vertical alignment of the label within its grid cell. Default "center"
+      // matches the grid's `align-items: center`; "start" top-aligns the label
+      // next to a tall control (radio group / checkbox list).
+      { key: 'sideLabelValign', label: 'Side Label V-Align', control: 'select', defaultValue: 'center', options: ['center', 'start', 'end'], section: 'sideLayout', showWhen: { labelPosition: 'side' } },
     ],
     layoutVariants: [
       // Local labelPosition variant (top / side). Floating is intentionally
