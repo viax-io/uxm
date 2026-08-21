@@ -939,6 +939,14 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`TextInput` / `Textarea` — `inputRef` / `textareaRef`.** New prop exposing a handle to
+  the underlying `<input>` / `<textarea>`, merged with the atom's internal ref (self-clear still
+  works). Reach for it to focus / select / measure / insert-at-caret from a consumer. A plain
+  React `ref` on the atom does **not** reach the element (it's consumed by `{...rest}` and
+  overridden by the managed ref) — pass `inputRef` / `textareaRef` instead. New `mergeRefs`
+  helper (internal `@/helpers`). `InputWithIcon` is unaffected — its `ref` already reaches its
+  own `<input>`. From `./input`.
+
 ## Workflow
 
 ### Before writing any code
