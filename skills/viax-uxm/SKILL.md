@@ -972,6 +972,40 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **New atom `SidebarNavTrigger` — a rail row that OPENS something rather than navigating to
+  it.** A workspace switcher, an account menu, an environment picker. A `<button type="button">`
+  extending `ButtonHTMLAttributes`, so a `Menu`'s or `Listbox`'s `triggerProps` spread straight
+  onto it (ref + ARIA included). Four optional slots, each a node: `icon` (a bare `Icon` in a
+  switcher, an `Avatar` in the account row), `caption` (the small line beside the value —
+  `captionPlacement: 'above' | 'below'`, default `above`; above it LABELS the level this control
+  changes ("Workspace"), below it QUALIFIES the value ("Tenant owner" under an address). Swapped in
+  the MARKUP, not with `column-reverse`, so reading order keeps matching visual order (WCAG 1.3.2)
+  and the accessible name follows the row. Uppercase is the default, not the definition —
+  `--uxm-sidebar-nav-trigger-caption-text-transform` also takes `none`/`capitalize`/`lowercase`),
+  `children` (the value), `trailing` (the chevron — shown as soon as it is passed; no hover-reveal, unlike `SidebarNavItem`'s
+  trailing slot). `variant`: `plain` (nothing at rest — the account row) or `outlined` (hairline
+  + card surface — the switcher, which stands in a box because it names the level everything below
+  it belongs to).
+  It draws **no tile** behind the icon: the slot is reserved, sized (a `min`, so an `Avatar` is not
+  squeezed) and aligned, and paints nothing. And it reserves nothing it was not given — no icon and
+  the text starts at the padding edge, no caption and the value centres, no trailing and there is
+  no gap where a chevron would have been.
+  Hover and open paint the SAME surface in both variants; `outlined` keeps its neutral border
+  throughout. **Open has no prop** — it is read from `[aria-expanded="true"]`, which `Menu` already
+  sets. `disabled` dims the row (`--uxm-sidebar-nav-trigger-disabled-opacity`, default 0.45) plus
+  `cursor: not-allowed` — dimmed, not recoloured, so a disabled `outlined` trigger stays the same
+  box; both the native attribute and `aria-disabled="true"` paint, hover opts out of both, and
+  there is no `pointer-events: none` (it would suppress the not-allowed cursor).
+  **No `iconColor` prop, on purpose** — the mark is a NODE, so colour it yourself
+  (`icon={<Icon glyph="product" style={{ color: workspace.color }} />}`); the wrapper's
+  `--uxm-sidebar-nav-trigger-icon-color` default holds until you do. A prop would be a second way
+  to do the same thing and would not work for an `Avatar`, which paints itself. This is
+  deliberately unlike `MenuItem.iconColor`: there a row is DATA and cannot be handed a
+  pre-coloured node.
+  Its own atom rather than knobs on `SidebarNavItem`: that one renders an `<a>`, hides `trailing`
+  until hover, paints an icon tile and has a single-line label. Vars
+  `--uxm-sidebar-nav-trigger-*`. From `./sidebar-nav-trigger`.
+
 ## Workflow
 
 ### Before writing any code
