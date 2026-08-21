@@ -1,3 +1,10 @@
+# [4.23.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.22.0...v4.23.0) (2026-08-21)
+
+
+### Features
+
+* **property-field:** themeable label case + value font ([5c994e4](https://gitlab.viax.tech/services-viax/uxm/commit/5c994e4f17ad7d463c14f670755d53ccb14a586c))
+
 # [4.22.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.21.0...v4.22.0) (2026-08-21)
 
 
