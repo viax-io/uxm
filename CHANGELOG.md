@@ -1,3 +1,10 @@
+# [4.20.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.19.0...v4.20.0) (2026-08-21)
+
+
+### Features
+
+* **icon:** add play/pause/calculator/paper-clip/json/bot/money; fix eyedropper stroke-width ([aac4735](https://gitlab.viax.tech/services-viax/uxm/commit/aac47350cbb4ceeb5be6a7b4ece47cf5a01ffa5d))
+
 # [4.19.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.18.0...v4.19.0) (2026-08-21)
 
 
