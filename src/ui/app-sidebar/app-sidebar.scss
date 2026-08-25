@@ -81,6 +81,37 @@
     }
   }
 
+  /* The head slot — under the brand row, above the nav. Named `__lead` because
+     `__header` is already the brand row (see the `header` prop's note).
+
+     Padding matches `__nav`'s 8px and NOT `__footer`'s 24px, so a control here
+     lines up with the rows beneath it: 8 + a child's own 12 = 20px, exactly
+     where a `sidebar-nav-item` label starts. The footer's 24px puts a control
+     at 36px — that 16px step is the misalignment you see whenever a switcher is
+     parked at the foot instead.
+
+     Deliberately imposes no `font-size` or `color`. The footer sets both, being
+     built for an 11px caption; a slot meant to hold a real control leaves type
+     to whatever it holds. */
+  &__lead {
+    border-bottom: 1px solid var(--uxm-app-sidebar-border-color, var(--color-border));
+    /* A column, so a slot handed more than one control stacks them with air
+       between instead of leaving the consumer to wrap them in a spacing div.
+       A head slot commonly holds two — a tenant switcher over a workspace one —
+       and two bordered cards butted together read as one control with a line
+       through it.
+
+       8px, matching this slot's own padding and the trigger's vertical padding,
+       so the rhythm is uniform rather than a third spacing value. It is a var
+       but deliberately NOT a workbench knob: one more slider for a value that
+       should follow the padding is a way for the two to drift apart. */
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: var(--uxm-app-sidebar-lead-gap, 8px);
+    padding: var(--uxm-app-sidebar-lead-padding, 8px);
+  }
+
   &__nav {
     display: flex;
     flex: 1;
@@ -123,8 +154,30 @@
   &__footer {
     border-top: 1px solid var(--uxm-app-sidebar-border-color, var(--color-border));
     color: var(--uxm-app-sidebar-footer-color, var(--color-text-muted));
+    /* Same column treatment as `__lead` — an account row above a version
+       caption is the obvious pair here. Note this makes a bare `<span>` caption
+       a flex item, so it stretches to the slot width instead of sitting inline;
+       for plain text that looks identical, but a caption carrying its own
+       background or border will now fill the row. */
+    display: flex;
+    flex-direction: column;
     flex-shrink: 0;
+    gap: var(--uxm-app-sidebar-footer-gap, 8px);
     font-size: 11px;
-    padding: 12px 24px;
+    /* 8px, the same as `__nav` and `__lead` — NOT the 24px caption inset this
+       used to carry. That inset was fine while the slot only ever held an 11px
+       caption, but it put a CONTROL 16px further in than every nav row (24 + the
+       child's own 12 = 36px against the nav label's 20px) and cost it 32px of
+       width, which is what pushed a signed-in address into an ellipsis. A
+       caption shifts 16px left and now lines up with the nav labels too; the var
+       is here for anyone who wants the deeper inset back. */
+    padding: var(--uxm-app-sidebar-footer-padding, 8px);
+
+    /* Collapsed rail: stop imposing type. The 11px above is caption chrome, and
+       what survives into a 64px rail is a control. Padding needs no override —
+       it is already the nav's 8px. */
+    &--collapsed {
+      font-size: inherit;
+    }
   }
 }
