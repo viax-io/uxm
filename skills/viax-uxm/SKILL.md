@@ -1098,9 +1098,14 @@ skill:
   shared. The `RadioGroup` README claimed the modifier had no bundled dim at all; it has
   shipped one since the shared rule was written. ⚠️ Still drifting
   elsewhere and NOT touched here: most `Button` variants (registry `0.4`, CSS `1`), `Tabs`,
-  `Link`, `List`, `Slider`, `PillSelect` and others ship `1`. `RadioGroup`'s hover trio is also
-  still written the dead way (`--color-border` / `--color-accent` where the registry says
-  `--color-text-muted` / `--color-accent-bold`).
+  `Link`, `List`, `Slider`, `PillSelect` and others ship `1`. 
+- **`RadioGroup` hover — the last of the three small controls.** `hover-unselected-border` fell
+  back to `--color-border` and `hover-selected-border` / `hover-dot-color` to `--color-accent`,
+  i.e. the resting colours, so hover never painted outside the studio. Now `--color-text-muted`
+  for the unselected border and `--color-accent-bold` for the selected border + dot, per the
+  registry; the unselected circle still doesn't fill (the border is the signal). Hover is gated
+  on `:not(.uxm-radio--disabled)`. `Checkbox`, `ToggleSwitch` and `RadioGroup` now agree:
+  muted border / bold accent on hover, 0.4 disabled dim, no hover while disabled.
 
 ## Workflow
 

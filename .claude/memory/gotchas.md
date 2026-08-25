@@ -163,6 +163,8 @@ an override hook for a property the state deliberately leaves alone
 (`--uxm-checkbox-hover-unchecked-bg`, the hover thumb colours). It's a bug only
 when the registry says something else. Verify hover/focus in the portal (or any
 consumer) with **no** overrides saved, never by reading the studio preview.
-`Checkbox` had the same three dead fallbacks and was fixed alongside — check
-`Radio`/`RadioGroup` and any new per-state block against the registry before
-assuming it's clean.
+`Checkbox` and `RadioGroup` had the same dead fallbacks and were fixed
+alongside, as was `disabledOpacity` on all three (registry 0.4 vs 0.6/1/0.6 in
+CSS). Most `Button` variants, `Tabs`, `Link`, `List`, `Slider` and `PillSelect`
+still ship `disabled-opacity: 1` against a registry default of 0.4 — check any
+per-state block against the registry before assuming it's clean.

@@ -73,6 +73,14 @@ Exported as a string union so consumers can build orientation toggles without re
 | `--uxm-radio-group-size` | – | `20px` | Outer circle diameter; the inner dot is `size / 2`. |
 | `--uxm-radio-group-border-color` | `--color-border` | – | Idle circle border. |
 | `--uxm-radio-group-active-color` | `--color-accent` | – | Checked circle border + inner dot fill. |
+| `--uxm-radio-group-hover-unselected-bg` | `transparent` | – | Circle background on hover while unselected (unfilled by default — the border carries the hover). |
+| `--uxm-radio-group-hover-unselected-border` | `--color-text-muted` | – | Circle border on hover while unselected. |
+| `--uxm-radio-group-hover-selected-border` | `--color-accent-bold` | – | Circle border on hover while selected. |
+| `--uxm-radio-group-hover-dot-color` | `--color-accent-bold` | – | Inner dot on hover while selected. |
+| `--uxm-radio-group-focus-ring` | `--color-accent` | – | `:focus-visible` outline colour on the circle (2px, 2px offset). |
+| `--uxm-radio-group-disabled-opacity` | – | `0.4` | Opacity when disabled (`.uxm-radio--disabled`). |
+
+Hover is scoped with `:not(.uxm-radio--disabled)`, so a disabled option does not react to the pointer.
 
 ## Design tokens (MODO-configurable)
 
@@ -93,7 +101,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Idle | `input` not checked | Circle border `--color-border`; dot at `opacity: 0`. |
 | Checked | `input:checked` | Border + dot fill switch to `--color-accent`; dot at `opacity: 1`. |
 | Disabled | `disabled` prop | Native `disabled` on the input + `--disabled` modifier on the label: `cursor: not-allowed` and `opacity: 0.4` (`--uxm-radio-group-disabled-opacity`). |
-| Hover | `:hover` on label | Cursor switches to pointer; no colour shift bundled. |
+| Hover (unselected) | `:hover` on the label, input unselected | Circle border moves to `--color-text-muted`; the circle stays unfilled. |
+| Hover (selected) | `:hover` on the label, input selected | Circle border and inner dot deepen to `--color-accent-bold`. |
 
 ## Accessibility
 

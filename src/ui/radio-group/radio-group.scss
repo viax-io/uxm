@@ -23,7 +23,8 @@
    the same `--uxm-radio-group-*` vars via custom-property inheritance.
    The dot sizes itself off the circle (size / 2) so a single `size`
    knob keeps the proportions. Per-state hover/focus read
-   `--uxm-radio-group-{state}-*` vars with the resting value as fallback. */
+   `--uxm-radio-group-{state}-*` vars, each falling back to the REGISTRY's
+   default for that state (registry/inputs.ts) — not to the resting value. */
 
 .uxm-radio-group {
   display: flex;
@@ -60,17 +61,27 @@
     width: calc(var(--uxm-radio-group-size, 20px) / 2);
   }
 
-  &:hover &__input:not(:checked) + &__circle {
+  &:not(#{&}--disabled):hover &__input:not(:checked) + &__circle {
+    /* Hover — fallbacks are the registry's hover defaults: the unselected
+       circle signals through its BORDER (`--color-text-muted`) and stays
+       unfilled, the selected circle and its dot deepen to
+       `--color-accent-bold`. They used to repeat the resting colours, which
+       compiles to a live `:hover` rule that paints nothing — invisible in any
+       consumer, while the studio looked right because it projects its knob
+       defaults as inline vars. The unselected background is the one fallback
+       that matches its resting value on purpose (the registry says so too):
+       that rule is an override hook, not a look. Gated on `:not(--disabled)`
+       so a disabled option stays visually inert. */
     background-color: var(--uxm-radio-group-hover-unselected-bg, transparent);
-    border-color: var(--uxm-radio-group-hover-unselected-border, var(--color-border));
+    border-color: var(--uxm-radio-group-hover-unselected-border, var(--color-text-muted));
   }
 
-  &:hover &__input:checked + &__circle {
-    border-color: var(--uxm-radio-group-hover-selected-border, var(--color-accent));
+  &:not(#{&}--disabled):hover &__input:checked + &__circle {
+    border-color: var(--uxm-radio-group-hover-selected-border, var(--color-accent-bold));
   }
 
-  &:hover &__input:checked + &__circle > &__dot {
-    background-color: var(--uxm-radio-group-hover-dot-color, var(--color-accent));
+  &:not(#{&}--disabled):hover &__input:checked + &__circle > &__dot {
+    background-color: var(--uxm-radio-group-hover-dot-color, var(--color-accent-bold));
   }
 
   &__input:focus-visible + &__circle {
