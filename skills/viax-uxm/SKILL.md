@@ -1008,6 +1008,19 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Avatar` gets a `size` preset.** `size?: 'small' | 'medium'` (default `'medium'`) — 32px / 40px,
+  as `.uxm-avatar.uxm-avatar--{size}` double-class rules, same shape as `Tag`. A preset rather than
+  "just set the var", because the diameter and the initials are **two independent variables**
+  (`--uxm-avatar-size`, `--uxm-avatar-font-size`) that do not scale together: shrink the circle
+  alone and the 16px initials stay put. Measured, a two-character run is 22.1px wide at 16px —
+  0.55 of a 40px circle, 0.69 of a 32px one, 0.92 of a 24px one (text against the rim). `small`
+  pairs 32px with 13px, holding the ratio at 0.57. New vars
+  `--uxm-avatar-small-{size,font-size}`; `medium` still reads the original
+  `--uxm-avatar-{size,font-size}`, so a consumer or saved brand already setting those is
+  untouched. Both presets sit at the same (0,2,0) specificity **including `medium`**, whose
+  declarations look like a redundant restatement of the base block — leave medium to the base rule
+  and a consumer's `.uxm-avatar { width }` would beat medium while still losing to `--small`.
+
 ## Workflow
 
 ### Before writing any code

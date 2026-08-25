@@ -321,7 +321,14 @@ export const displayDefs: ComponentDef[] = [
       // rather than mixing shared knobs into a "Per Type" section by accident.
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-highlight-cool)', section: 'colors' },
       { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
-      { key: 'size', label: 'Size', control: 'number', defaultValue: 40, min: 24, max: 80, step: 4, unit: 'px' },
+      // Per-preset diameter. The keys are deliberately NOT renamed to
+      // `mediumSize`: `size` already emits `--uxm-avatar-size`, and retargeting
+      // it would leave any brand that already saved that var rendering one value
+      // while the panel showed the new key's default — a workbench disagreeing
+      // with its own canvas. `smallSize` is additive and rides the kebab
+      // fallback (`--uxm-avatar-small-size`), so no mapping entry is needed.
+      { key: 'size', label: 'Size', control: 'number', defaultValue: 40, min: 24, max: 80, step: 4, unit: 'px', showWhen: { sizePreset: 'medium' } },
+      { key: 'smallSize', label: 'Size', control: 'number', defaultValue: 32, min: 20, max: 48, step: 2, unit: 'px', showWhen: { sizePreset: 'small' } },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 99, min: 0, max: 99, step: 1, unit: 'px' },
       // Default 0 = no visible border. Consumers turn it on per-instance
       // for status rings, photo frames, or to separate from busy backgrounds.
@@ -331,7 +338,11 @@ export const displayDefs: ComponentDef[] = [
       // image mode and its "Per Type · Text" subtitle isn't mixed with shared
       // knobs above. They still apply when image mode falls back to initials.
       { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'text', showWhen: { type: 'text' } },
-      { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 16, min: 10, max: 32, step: 1, unit: 'px', section: 'text', showWhen: { type: 'text' } },
+      // Gated per preset for the same reason the diameter is: the two do not
+      // scale together, and a font knob that silently belongs to the other
+      // preset is how the initials end up against the rim.
+      { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 16, min: 10, max: 32, step: 1, unit: 'px', section: 'text', showWhen: { type: 'text', sizePreset: 'medium' } },
+      { key: 'smallFontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 8, max: 24, step: 1, unit: 'px', section: 'text', showWhen: { type: 'text', sizePreset: 'small' } },
       { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '600', options: ['400', '500', '600', '700'], section: 'text', showWhen: { type: 'text' } },
     ],
     layoutVariants: [
@@ -343,6 +354,20 @@ export const displayDefs: ComponentDef[] = [
           { value: 'image', label: 'Image' },
         ],
         defaultValue: 'text',
+      },
+      {
+        // Keyed `sizePreset`, NOT `size`, even though the label reads "Size":
+        // there is already a style knob called `size`, and both `resolve` and
+        // `handleChange` in the properties panel test `layoutVariants` FIRST —
+        // a variant sharing that key would shadow the knob and its edits would
+        // stop persisting, silently.
+        key: 'sizePreset',
+        label: 'Size',
+        options: [
+          { value: 'medium', label: 'Medium' },
+          { value: 'small', label: 'Small' },
+        ],
+        defaultValue: 'medium',
       },
     ],
     api: {
