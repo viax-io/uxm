@@ -54,6 +54,42 @@ export interface SidebarNavTriggerProps extends ButtonHTMLAttributes<HTMLButtonE
    * in a box because it names the level everything below it belongs to.
    */
   variant?: SidebarNavTriggerVariant;
+  /**
+   * Render for a COLLAPSED rail — the 64px icon column. The row becomes a 46px
+   * tile, `trailing` is dropped (a chevron does not fit), and `caption` +
+   * `children` stay in the DOM but are visually hidden — so the button keeps
+   * the SAME accessible name it had expanded. Dropping the text outright is the
+   * trap here: a row whose mark is a decorative `Icon` would become a nameless
+   * button.
+   *
+   * 46px is deliberately NOT the 32px `AppSidebar` gives its collapsed nav
+   * items. A trigger is not a nav row — it opens something — and at rail width
+   * it has lost both its chevron and its text, so footprint is the only signal
+   * of that difference left.
+   *
+   * It is a composition choice too: the tile is a surface AROUND the mark, not
+   * a frame hugging it. A 32px mark (`Avatar size="small"`) leaves ~7px on every
+   * side — the same relationship `SidebarNavItem` has between its 32px tile and
+   * the smaller icon inside. Size the mark for the tile, not the tile for the
+   * mark; `--uxm-sidebar-nav-trigger-collapsed-size` is there if you want the
+   * switcher flush with the nav tiles instead.
+   *
+   * The tile is a MINIMUM, not a clamp — the row never squeezes or clips a mark
+   * that brings its own size, the same guarantee the `icon` slot makes. A
+   * larger mark grows the row rather than being cut off.
+   *
+   * A prop, and not an ancestor selector on `.uxm-app-sidebar--collapsed`: a
+   * trigger is placed by the CONSUMER in a slot, so the shell never owns its
+   * node — and no atom in this kit reaches into another's internals from its
+   * own stylesheet. (`SidebarNavItem` has no collapsed mode for the opposite
+   * reason: `AppSidebar` composes it directly and can drive it with props.)
+   *
+   * The affordance cost is real and CSS cannot pay it: with the chevron gone,
+   * only position and the mark still say this row opens something. Pass
+   * `title` — it lands on the button through `...rest` — so hover carries the
+   * value, the way `AppSidebar` does for its own collapsed items.
+   */
+  collapsed?: boolean;
 }
 
 /**
@@ -97,6 +133,7 @@ export function SidebarNavTrigger({
   children,
   trailing,
   variant = 'plain',
+  collapsed = false,
   className,
   type = 'button',
   ...rest
@@ -107,13 +144,19 @@ export function SidebarNavTrigger({
       className={cn(
         'uxm-sidebar-nav-trigger',
         `uxm-sidebar-nav-trigger--${variant}`,
+        collapsed && 'uxm-sidebar-nav-trigger--collapsed',
         className,
       )}
       {...rest}
     >
       {icon && <span className="uxm-sidebar-nav-trigger__icon">{icon}</span>}
       {(caption != null || children != null) && (
-        <span className="uxm-sidebar-nav-trigger__text">
+        <span
+          className={cn(
+            'uxm-sidebar-nav-trigger__text',
+            collapsed && 'uxm-sidebar-nav-trigger__text--collapsed',
+          )}
+        >
           {caption != null && captionPlacement === 'above' && (
             <span className="uxm-sidebar-nav-trigger__caption">{caption}</span>
           )}
@@ -125,7 +168,13 @@ export function SidebarNavTrigger({
           )}
         </span>
       )}
-      {trailing && <span className="uxm-sidebar-nav-trigger__trailing">{trailing}</span>}
+      {/* Dropped, not hidden: the 32x32 collapsed row has no room for a
+          chevron, and leaving the node in place would only reserve a gap the
+          atom's own rule ("reserves nothing it was not given") says it must
+          not. */}
+      {trailing && !collapsed && (
+        <span className="uxm-sidebar-nav-trigger__trailing">{trailing}</span>
+      )}
     </button>
   );
 }

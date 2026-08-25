@@ -1008,6 +1008,25 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`SidebarNavTrigger` gets a collapsed rail mode.** `collapsed?: boolean` (default `false`)
+  renders the row for `AppSidebar`'s 64px icon column: a **46px tile**
+  (`--uxm-sidebar-nav-trigger-collapsed-size`), `trailing` **dropped** (a chevron does not fit,
+  and keeping the node would reserve a gap), and `caption` + `children` kept in the DOM but
+  visually clipped — so the button announces **identically** collapsed and expanded. That last
+  part is the point: `display: none` on the text would leave a nameless button wherever the mark
+  is a decorative `Icon` or an alt-less `Avatar`. Pass `title` too — with the chevron gone, only
+  position and the mark still advertise that the row opens something.
+  46 deliberately is **not** the 32px the collapsed nav items get: a trigger is not a nav row, and
+  at rail width it has lost both chevron and text, so footprint is the only signal of that
+  difference left. It is a composition choice too — the tile is a surface **around** the mark, not
+  a frame hugging it, so pair it with a 32px mark (`Avatar size="small"`) for ~7px on every side,
+  mirroring `SidebarNavItem`'s 32px tile around a smaller icon. **Size the mark for the tile, not
+  the tile for the mark.** The tile itself is a **minimum, not a clamp**: a larger mark grows the
+  row instead of being clipped. `outlined` keeps its border at this size, since the box is
+  then the only thing distinguishing a switcher from a plain account row. It is a **prop, not an
+  ancestor selector** on the collapsed sidebar: a trigger sits in a consumer-owned slot, so the
+  shell never has its node to rewrite. (Contrast `SidebarNavItem`, which still has no collapsed
+  mode of its own — `AppSidebar` composes it directly and drives it with props.)
 - **`Avatar` gets a `size` preset.** `size?: 'small' | 'medium'` (default `'medium'`) — 32px / 40px,
   as `.uxm-avatar.uxm-avatar--{size}` double-class rules, same shape as `Tag`. A preset rather than
   "just set the var", because the diameter and the initials are **two independent variables**

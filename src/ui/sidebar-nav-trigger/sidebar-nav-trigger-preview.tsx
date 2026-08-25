@@ -37,6 +37,8 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-sidebar-nav-trigger-caption-color': styles.captionColor as string,
     '--uxm-sidebar-nav-trigger-caption-gap': `${styles.captionGap}px`,
 
+    '--uxm-sidebar-nav-trigger-collapsed-size': `${styles.collapsedSize}px`,
+
     '--uxm-sidebar-nav-trigger-icon-size': `${styles.iconSize}px`,
     '--uxm-sidebar-nav-trigger-icon-color': styles.iconColor as string,
     '--uxm-sidebar-nav-trigger-trailing-color': styles.trailingColor as string,
@@ -73,10 +75,14 @@ export function SidebarNavTriggerPreview({ styles, variants }: PreviewProps & { 
   const withCaption = (variants.withCaption ?? 'yes') === 'yes';
   const captionPlacement = ((variants.captionPlacement as string) ?? 'above') as 'above' | 'below';
   const withTrailing = (variants.withTrailing ?? 'yes') === 'yes';
+  const collapsed = (variants.collapsed ?? 'no') === 'yes';
 
   const isAccount = mark === 'avatar';
   const markNode = isAccount
-    ? <Avatar initials="DR" />
+    // `small` (32px) in the collapsed rail, inside the 46px tile — the tile is
+    // a surface AROUND the mark, not a frame hugging it. Sizing the mark is the
+    // consumer's call; the atom will not shrink one for them.
+    ? <Avatar initials="DR" size={collapsed ? 'small' : 'medium'} />
     : mark === 'icon'
       ? <Icon glyph="product" size={18} />
       : undefined;
@@ -94,13 +100,19 @@ export function SidebarNavTriggerPreview({ styles, variants }: PreviewProps & { 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32, ...cssVars } as CSSProperties}>
       <div>
-        <div style={sectionLabel}>{state} state · {variant}</div>
+        <div style={sectionLabel}>
+          {state} state · {variant}{collapsed ? ' · collapsed' : ''}
+        </div>
         {/* A rail-width column: these rows are always full-bleed inside a
             sidebar, and reviewing one at page width would hide every
-            truncation decision the atom makes. */}
-        <div style={{ width: 260 }}>
+            truncation decision the atom makes. Collapsed drops to the 64px
+            rail `app-sidebar` actually uses — reviewing that mode at 260px
+            would hide the only thing it changes. */}
+        <div style={{ width: collapsed ? 64 : 260 }}>
           <SidebarNavTrigger
             variant={variant}
+            collapsed={collapsed}
+            title={collapsed ? (isAccount ? 'dan@acme.com' : 'order-processing') : undefined}
             aria-expanded={state === 'open' ? true : undefined}
             disabled={state === 'disabled' || undefined}
             className={cn(
