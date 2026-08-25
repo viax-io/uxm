@@ -85,7 +85,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | Inactive | `value !== option.value` | Muted text, transparent background. |
 | Active | `value === option.value` | Card-coloured background, accent text, `--shadow-xs` lift, `font-weight: 600`. |
 | Disabled | `option.disabled` | Native `disabled` styling; click no-ops, removed from tab order. |
-| Hover | `:hover` | Background/colour transition (0.15s). |
+| Hover | `:hover`, tab not active or disabled | `--color-surface-alt` background, text to `--color-text` (0.15s transition). |
 
 ## Accessibility
 

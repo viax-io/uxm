@@ -1116,6 +1116,15 @@ skill:
   `generate-css.ts` emits the vars on `.uxm-{id}`, but every atom renders its message as a
   SIBLING of that element, and custom properties only cascade down. The studio preview hides
   this because it puts the vars on an ancestor wrapper.
+- **`Tabs` hover paints outside the studio now.** `--uxm-tabs-hover-bg` fell back to
+  `transparent` (the tab's own resting background) and `--uxm-tabs-hover-text` to
+  `--color-text-muted` (its resting `inactive-text`), so hovering an inactive tab changed
+  nothing in a consumer app — the same dead-fallback shape as the small controls, and invisible
+  in the workbench because previews project the knob defaults as inline vars. Now
+  `--color-surface-alt` and `--color-text`, matching the registry. Visual change for consumers
+  who never set the vars; a saved override still wins. ⚠️ The same pattern is still live
+  elsewhere — `FilterTabs`, `ViewSwitcher`, `ButtonGroup`, `Disclosure`, `List` and `Button`'s
+  pressed states, plus `disabled-opacity: 1` on ~20 atoms where the registry says 0.4/0.5.
 
 ## Workflow
 

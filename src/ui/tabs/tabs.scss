@@ -27,8 +27,15 @@
     transition: background-color 0.15s, color 0.15s;
 
     &:hover:not(.uxm-tabs__tab--active):not(:disabled) {
-      background-color: var(--uxm-tabs-hover-bg, transparent);
-      color: var(--uxm-tabs-hover-text, var(--color-text-muted));
+      /* Hover — fallbacks are the registry's hover defaults, not a repeat of
+         the resting look. They used to be `transparent` (the tab's own resting
+         background) and `--color-text-muted` (its resting `inactive-text`), so
+         the rule matched and painted nothing: hover was invisible in any app
+         that just imports the CSS. The studio looked right because its
+         previews project each knob default as an inline `--uxm-tabs-hover-*`
+         var, never exercising the fallback a consumer runs. */
+      background-color: var(--uxm-tabs-hover-bg, var(--color-surface-alt));
+      color: var(--uxm-tabs-hover-text, var(--color-text));
     }
 
     &:focus-visible {
