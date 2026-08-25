@@ -1,3 +1,12 @@
+# [4.26.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.25.0...v4.26.0) (2026-08-25)
+
+
+### Features
+
+* **app-sidebar:** add a header slot and keep the footer through collapse ([051d622](https://gitlab.viax.tech/services-viax/uxm/commit/051d622e80a7737879bb7da4c40278c51a5db441))
+* **avatar:** add small/medium size preset ([450ec9c](https://gitlab.viax.tech/services-viax/uxm/commit/450ec9cd671a47d02f203a1f7f14144087090e50))
+* **sidebar-nav-trigger:** add a collapsed rail mode ([95fc17c](https://gitlab.viax.tech/services-viax/uxm/commit/95fc17c06f4965bfc4fcb3752331bd4ed2a7ba0b))
+
 # [4.25.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.24.0...v4.25.0) (2026-08-21)
 
 
