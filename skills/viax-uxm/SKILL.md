@@ -923,6 +923,18 @@ skill:
   in the workbench behind a **Hints** On/Off variant (off by default: with Subtitles also on
   a row concatenates label + subtitle + hint into one accessible name).
 
+### New in 4.20.0
+
+- **Seven new icons** in the shared glyph set: `play`, `pause`, `calculator`, `paper-clip`,
+  `json`, `bot`, `money` — Heroicons-style outlines (Lucide-style `bot`/`json` to match the
+  set). They auto-surface in `ICONS` / `ICON_OPTIONS` / `getIcon` and the studio icon grid.
+- **`eyedropper` redrawn as an outline — it now responds to `strokeWidth`.** It had shipped as
+  a `filled` body glyph, which paints `fill` rather than `stroke`, so the stroke-width knob was
+  ignored. Visual weight now tracks the rest of the set.
+- **The registry set is currently all-outline** — no glyph sets `filled: true`, so every icon
+  responds to `strokeWidth`. The `filled` mode stays as a documented extension point for a
+  future glyph that can't be expressed as a stroke (e.g. a solid brand mark).
+
 ### New in 4.21.0
 
 - **`FormField` — `--uxm-form-field-side-label-valign`.** New CSS-var knob controlling the
