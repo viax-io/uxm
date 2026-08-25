@@ -157,8 +157,12 @@ in baseline styles"). Reported from a consumer project, not caught here.
 
 **How to apply:** the fallback of a per-state var is that STATE's default, and
 the registry's `defaultValue` for the matching knob is the source of truth —
-diff the two whenever you touch either. If a state genuinely has no distinct
-look, don't emit the rule at all. Verify hover/focus in the portal (or any
+diff the two whenever you touch either. A fallback that *equals* the resting
+value is fine when the registry declares it that way — the rule then exists as
+an override hook for a property the state deliberately leaves alone
+(`--uxm-checkbox-hover-unchecked-bg`, the hover thumb colours). It's a bug only
+when the registry says something else. Verify hover/focus in the portal (or any
 consumer) with **no** overrides saved, never by reading the studio preview.
-`Checkbox`'s `hover-unchecked-*` / `hover-checked-*` pairs are still written the
-dead way (`transparent` / `--color-accent`) — same fix pending.
+`Checkbox` had the same three dead fallbacks and was fixed alongside — check
+`Radio`/`RadioGroup` and any new per-state block against the registry before
+assuming it's clean.

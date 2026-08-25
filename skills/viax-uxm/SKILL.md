@@ -1077,7 +1077,15 @@ skill:
   `--color-card`). Hover is also gated on `:not(.uxm-toggle-switch--disabled)` so a disabled
   switch stays inert. Visual change for consumers who never set the vars — that was the bug; a
   saved override still wins. Same trap to watch for elsewhere: a per-state var whose fallback is
-  the resting value ships a dead rule (`Checkbox`'s hover pair is still written that way).
+  the resting value ships a dead rule.
+- **`Checkbox` hover — same fix, same reason.** `hover-unchecked-border` fell back to
+  `--color-border` and `hover-checked-bg` / `-border` to `--color-accent`, i.e. the resting
+  colours, so hover was invisible in consumer apps. Now `--color-text-muted` for the unchecked
+  border and `--color-accent-bold` for the checked fill + border, matching the registry; the
+  unchecked box still doesn't fill (the border is the signal) and the glyph still holds
+  `--color-text-inverse`, both of which the registry declares that way on purpose. Hover is
+  gated on `:not(.uxm-checkbox--disabled)`. The atom's README also claimed there was no visible
+  focus ring — there has been one (`--uxm-checkbox-focus-ring`, 2px) for a while.
 
 ## Workflow
 

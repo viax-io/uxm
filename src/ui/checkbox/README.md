@@ -42,8 +42,15 @@ The component does not spread arbitrary HTML attributes onto the input; only the
 | `--uxm-checkbox-border-radius` | – | `4px` | Box corner radius. |
 | `--uxm-checkbox-size` | – | `20px` | Box width and height. |
 | `--uxm-checkbox-check-color` | `--color-accent` | – | Checked-state background AND border (single knob — they always move together). |
+| `--uxm-checkbox-hover-unchecked-bg` | `transparent` | – | Box background on hover while unchecked (unfilled by default — the border carries the hover). |
+| `--uxm-checkbox-hover-unchecked-border` | `--color-text-muted` | – | Box border on hover while unchecked. |
+| `--uxm-checkbox-hover-checked-bg` | `--color-accent-bold` | – | Box background on hover while checked. |
+| `--uxm-checkbox-hover-checked-border` | `--color-accent-bold` | – | Box border on hover while checked. |
+| `--uxm-checkbox-hover-check-glyph-color` | `--color-text-inverse` | – | Check glyph on hover (unchanged by default — it still has to read on the deeper fill). |
+| `--uxm-checkbox-focus-ring` | `--color-accent` | – | `:focus-visible` outline colour on the box (2px, 2px offset). |
+| `--uxm-checkbox-disabled-opacity` | – | `0.6` | Opacity when disabled (`.uxm-checkbox--disabled`). |
 
-The check glyph colour is hardcoded to `--color-text-inverse` so the SVG always reads on the checked background.
+Hover is scoped with `:not(.uxm-checkbox--disabled)`, so a disabled checkbox does not react to the pointer. The **resting** check glyph is hardcoded to `--color-text-inverse`; only its hover value is a variable.
 
 ## Design tokens (MODO-configurable)
 
@@ -52,7 +59,9 @@ The check glyph colour is hardcoded to `--color-text-inverse` so the SVG always 
 | `--color-text` | Text / Text | Label text colour. |
 | `--color-border` | Borders / Border | Unchecked box border (via `--uxm-checkbox-border-color` fallback). |
 | `--color-accent` | Accent / Accent | Checked-state background + border (via `--uxm-checkbox-check-color` fallback). |
-| `--color-text-inverse` | Text / Text Inverse | Check glyph colour (hardcoded — not consumer-configurable). |
+| `--color-accent-bold` | Accent / Accent Bold | Checked box background + border on hover. |
+| `--color-text-muted` | Text / Text Muted | Unchecked box border on hover. |
+| `--color-text-inverse` | Text / Text Inverse | Check glyph colour (resting value is hardcoded; the hover value goes through `--uxm-checkbox-hover-check-glyph-color`). |
 
 The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI.
 
@@ -63,7 +72,9 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Default (unchecked) | – | Transparent box with `--color-border` outline; check SVG present but `opacity: 0`. |
 | Checked | `:checked` on the native input | Box fills with `--uxm-checkbox-check-color`; check SVG fades to `opacity: 1`. |
 | Disabled | `disabled` prop | `--disabled` modifier: `cursor: not-allowed`, `opacity: 0.6`; native input also disabled. |
-| Focus | `:focus` on the native input | Inherits browser default focus ring on the (visually hidden) input — the visible box has no custom focus treatment. |
+| Hover (unchecked) | `:hover` on the root, input unchecked | Border moves to `--color-text-muted`; the box stays unfilled. |
+| Hover (checked) | `:hover` on the root, input checked | Box (fill + border) deepens to `--color-accent-bold`; glyph holds `--color-text-inverse`. |
+| Focus | `:focus-visible` on the native input | The visible box gets a `2px` outline in `--uxm-checkbox-focus-ring` (`--color-accent`) at `2px` offset. |
 
 ## Accessibility
 
@@ -71,5 +82,5 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Uses a real `<input type="checkbox">` — screen readers announce role, name (via the label text), and checked state natively; keyboard activation via `Space` works without extra wiring.
 - The hidden-but-not-display:none technique (`opacity: 0` + `width/height: 1px`) keeps the input in the focus order and accessibility tree.
 - Aria caveat: the custom box has `aria-hidden="true"`, which is correct — the native input owns the semantics.
-- Focus indication is delegated to the browser's default ring on the hidden input, which most browsers do NOT render visibly. Consumers needing a visible focus ring should add a `:focus-visible + .uxm-checkbox__box` rule downstream.
+- Keyboard focus is visible: `:focus-visible` on the hidden input draws the outline on the custom box, so the ring is not left to the browser's default on an `opacity: 0` element.
 - For icon-only checkboxes (no `children`), supply an external `aria-label` via the consumer-rendered label — this component does not accept arbitrary input attributes.
