@@ -168,3 +168,18 @@ alongside, as was `disabledOpacity` on all three (registry 0.4 vs 0.6/1/0.6 in
 CSS). Most `Button` variants, `Tabs`, `Link`, `List`, `Slider` and `PillSelect`
 still ship `disabled-opacity: 1` against a registry default of 0.4 — check any
 per-state block against the registry before assuming it's clean.
+
+## A styled class nobody renders is invisible in review
+
+`.uxm--message` sat in `toggle-switch.scss` and `radio-group.scss` for months.
+It reads as a plausible BEM-ish block, the properties inside it were correct,
+and the comment above it named the right variables — but no component renders
+that class (the atoms pass `uxm-{id}__error-message` to `FieldError`), so the
+error message shipped unstyled: inherited colour, inherited size, no margin.
+`checkbox.scss`, the file they were copied from, has the right selector.
+
+**How to apply:** a selector is only real if something renders it. When adding
+or reviewing a rule for a class that isn't built from `&`-nesting inside its
+block, grep the class name in `src/ui/**/*.tsx` before trusting it. It's the
+same failure as a dead fallback — CSS that exists, parses, and paints nothing —
+and neither lint, typecheck, build nor the studio will say a word.

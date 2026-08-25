@@ -79,6 +79,8 @@ Exported as a string union so consumers can build orientation toggles without re
 | `--uxm-radio-group-hover-dot-color` | `--color-accent-bold` | – | Inner dot on hover while selected. |
 | `--uxm-radio-group-focus-ring` | `--color-accent` | – | `:focus-visible` outline colour on the circle (2px, 2px offset). |
 | `--uxm-radio-group-disabled-opacity` | – | `0.4` | Opacity when disabled (`.uxm-radio--disabled`). |
+| `--uxm-radio-group-error-color` | `--color-danger-text` | – | Colour of the `error` message below the group (icon included — it uses `currentColor`). |
+| `--uxm-radio-group-error-message-size` | – | `12px` | Font size of the `error` message. |
 
 Hover is scoped with `:not(.uxm-radio--disabled)`, so a disabled option does not react to the pointer.
 

@@ -1106,6 +1106,16 @@ skill:
   registry; the unselected circle still doesn't fill (the border is the signal). Hover is gated
   on `:not(.uxm-radio--disabled)`. `Checkbox`, `ToggleSwitch` and `RadioGroup` now agree:
   muted border / bold accent on hover, 0.4 disabled dim, no hover while disabled.
+- **`ToggleSwitch` / `RadioGroup` error messages are styled at all now.** Both `.scss` files
+  styled `.uxm--message`, a class nothing in the library renders — the atoms render
+  `uxm-{id}__error-message` (FieldError takes it via `className`), like every other input. So
+  their message shipped with no colour, no `12px` and no `margin-top`: it inherited the
+  surrounding text and sat flush against the control, while the studio's Message / Message Size
+  knobs looked live. `Checkbox` had the right selector all along. ⚠️ Separate, still open: a
+  SAVED `errorColor` / `errorMessageSize` override still won't reach the message on any atom —
+  `generate-css.ts` emits the vars on `.uxm-{id}`, but every atom renders its message as a
+  SIBLING of that element, and custom properties only cascade down. The studio preview hides
+  this because it puts the vars on an ancestor wrapper.
 
 ## Workflow
 

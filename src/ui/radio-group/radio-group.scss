@@ -103,8 +103,12 @@
    signal, reading the errorColor / errorMessageSize knobs the registry exposes
    (kebab → `--uxm-radio-group-error-color` / `-error-message-size`). The
    `.uxm-radio-group--error` class rides the root as a state hook + aria-invalid
-   companion, even though it paints nothing itself. */
-.uxm--message {
+   companion, even though it paints nothing itself.
+   The selector has to be the class the atom actually renders (FieldError gets
+   it via its `className` prop) — this used to read `.uxm--message`, which
+   nothing renders, so the message shipped with no colour, no size and no
+   margin while the studio's knobs looked live. */
+.uxm-radio-group__error-message {
   display: block;
   margin-top: 4px;
   font-size: var(--uxm-radio-group-error-message-size, 12px);

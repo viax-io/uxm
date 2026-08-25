@@ -52,6 +52,8 @@ function Example() {
 | `--uxm-toggle-switch-hover-on-thumb` | `--color-card` | – | Thumb background on hover while on (`:checked`). |
 | `--uxm-toggle-switch-focus-ring` | `--color-accent` | – | `:focus-visible` outline colour on the track. |
 | `--uxm-toggle-switch-disabled-opacity` | – | `0.4` | Opacity when disabled (`.uxm-toggle-switch--disabled`). |
+| `--uxm-toggle-switch-error-color` | `--color-danger-text` | – | Colour of the `error` message below the control (icon included — it uses `currentColor`). |
+| `--uxm-toggle-switch-error-message-size` | – | `12px` | Font size of the `error` message. |
 
 > The `--shadow-sm` token applies a small drop-shadow under the thumb. The "on" thumb position is computed via `calc()` from `width` / `height`, so the math survives custom dimensions.
 
