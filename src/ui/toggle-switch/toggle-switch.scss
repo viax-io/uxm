@@ -39,15 +39,15 @@
     width: calc(var(--uxm-toggle-switch-height, 24px) - 4px);
   }
 
-  /* Hover — the fallbacks are the registry's hover defaults (`--color-text-muted`
-     off / `--color-accent-bold` on), NOT a repeat of the resting colour. Echoing
-     the resting value here shipped a `:hover` rule with no visible effect: the
-     studio projects its knob defaults as inline `--uxm-toggle-switch-hover-*`
-     vars so hover read fine in the workbench, while a consumer that only imports
-     the compiled CSS sets no vars and got the resting colour back. Gated on
-     `:not(--disabled)` so a disabled switch stays visually inert. */
-
   &:not(#{&}--disabled):hover &__input:not(:checked) + &__track {
+    /* Hover — the fallbacks are the registry's hover defaults
+       (`--color-text-muted` off / `--color-accent-bold` on), NOT a repeat of the
+       resting colour. Echoing the resting value here shipped a `:hover` rule with
+       no visible effect: the studio projects its knob defaults as inline
+       `--uxm-toggle-switch-hover-*` vars so hover read fine in the workbench,
+       while a consumer that only imports the compiled CSS sets no vars and got
+       the resting colour back. Gated on `:not(--disabled)` so a disabled switch
+       stays visually inert. */
     background-color: var(--uxm-toggle-switch-hover-off-track, var(--color-text-muted));
   }
 
@@ -77,11 +77,14 @@
     left: calc(var(--uxm-toggle-switch-width, 44px) - var(--uxm-toggle-switch-height, 24px) + 2px);
   }
 
-  /* Disabled — dims via the registry's disabledOpacity knob. Fallback 1 keeps
-     the shipped default undimmed (unchanged); a saved/previewed override dims. */
   &--disabled {
+    /* Disabled — dims via the registry's disabledOpacity knob, whose default is
+       0.4; the fallback used to be 1, i.e. the shipped switch never dimmed
+       unless a saved override said so. This rule (not the copy that used to sit
+       in checkbox.scss) is the one that lands, since toggle-switch.css is
+       imported later in styles.css. */
     cursor: not-allowed;
-    opacity: var(--uxm-toggle-switch-disabled-opacity, 1);
+    opacity: var(--uxm-toggle-switch-disabled-opacity, 0.4);
   }
 }
 

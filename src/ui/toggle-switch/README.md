@@ -51,7 +51,7 @@ function Example() {
 | `--uxm-toggle-switch-hover-off-thumb` | `--color-card` | – | Thumb background on hover while off. |
 | `--uxm-toggle-switch-hover-on-thumb` | `--color-card` | – | Thumb background on hover while on (`:checked`). |
 | `--uxm-toggle-switch-focus-ring` | `--color-accent` | – | `:focus-visible` outline colour on the track. |
-| `--uxm-toggle-switch-disabled-opacity` | `1` | – | Opacity when disabled (`.uxm-toggle-switch--disabled`). |
+| `--uxm-toggle-switch-disabled-opacity` | – | `0.4` | Opacity when disabled (`.uxm-toggle-switch--disabled`). |
 
 > The `--shadow-sm` token applies a small drop-shadow under the thumb. The "on" thumb position is computed via `calc()` from `width` / `height`, so the math survives custom dimensions.
 
@@ -72,7 +72,7 @@ function Example() {
 |-----------------|---------|--------|
 | Off | `checked` is falsy | Track painted `--color-border`; thumb sits at `left: 2px`. |
 | On | `checked` is truthy | Track painted `--color-accent`; thumb slides to `calc(width − height + 2px)` (0.2s transition). |
-| Disabled | `disabled` prop | `uxm-toggle-switch--disabled` modifier added; native disabled blocks interaction. |
+| Disabled | `disabled` prop | `uxm-toggle-switch--disabled` modifier added: `cursor: not-allowed`, `opacity: 0.4`, no hover. Native disabled blocks interaction. |
 | Hover (off) | `:hover` on the root, input unchecked | Track darkens to `--color-text-muted`; cursor `pointer`. |
 | Hover (on) | `:hover` on the root, input checked | Track deepens to `--color-accent-bold`; cursor `pointer`. |
 
@@ -85,4 +85,4 @@ function Example() {
 - The track and thumb spans are `aria-hidden="true"`; the input carries all assistive-tech state.
 - Keyboard: `Space` toggles when the input has focus (native checkbox behaviour). `Enter` does **not** toggle — this is native checkbox semantics, not a missing feature.
 - Disabled state uses the native `disabled` attribute (removes from tab order, announces "unavailable").
-- The `uxm-toggle-switch--disabled` modifier is added but the baseline SCSS does not visually dim the track — consumers wanting a dim disabled treatment should add an `opacity` rule scoped to that modifier.
+- The `uxm-toggle-switch--disabled` modifier dims the whole control to `0.4` (`--uxm-toggle-switch-disabled-opacity`) and switches the cursor to `not-allowed`; hover is skipped while it is present.

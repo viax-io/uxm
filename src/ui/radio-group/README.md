@@ -50,7 +50,7 @@ function PlanPicker() {
 | `value` | `string` | – | **Required.** Value submitted / reported when this option is selected. |
 | `checked` | `boolean` | – | Controlled checked state. |
 | `defaultChecked` | `boolean` | – | Initial checked state for uncontrolled usage. |
-| `disabled` | `boolean` | `false` | Disables the input and adds the `--disabled` modifier (no current visual rule — opacity is consumer-managed). |
+| `disabled` | `boolean` | `false` | Disables the input and adds the `--disabled` modifier (`cursor: not-allowed` + `0.4` opacity via `--uxm-radio-group-disabled-opacity`). |
 | `onChange` | `(value: string, e: ChangeEvent<HTMLInputElement>) => void` | – | Fires with the option's value when selected. |
 | `children` | `ReactNode` | – | Label content next to the circle. When omitted, only the circle renders. |
 | `className` | `string` | – | Merged with `uxm-radio` via `cn`. |
@@ -92,7 +92,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Direction: `horizontal` | `direction="horizontal"` | Row layout, same gap. |
 | Idle | `input` not checked | Circle border `--color-border`; dot at `opacity: 0`. |
 | Checked | `input:checked` | Border + dot fill switch to `--color-accent`; dot at `opacity: 1`. |
-| Disabled | `disabled` prop | Native `disabled` on the input + `--disabled` modifier on the label. No bundled dim style — consumer adds opacity if desired. |
+| Disabled | `disabled` prop | Native `disabled` on the input + `--disabled` modifier on the label: `cursor: not-allowed` and `opacity: 0.4` (`--uxm-radio-group-disabled-opacity`). |
 | Hover | `:hover` on label | Cursor switches to pointer; no colour shift bundled. |
 
 ## Accessibility
@@ -100,5 +100,5 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Wrapper carries `role="radiogroup"`; each option renders a real `<label>` wrapping a native `<input type="radio">` — keyboard activation (Arrow keys to step, Space to select), tab semantics, and screen-reader group announcements all come from the native primitive.
 - The decorative circle + dot carry `aria-hidden="true"` so assistive tech sees only the input + label text.
 - `disabled` uses the native attribute — the input is removed from the tab order and announced as unavailable.
-- The current `--disabled` modifier class has no bundled visual style — consumers should add an opacity rule if a dimmed look is desired, or rely on the native disabled appearance.
+- The `--disabled` modifier dims the option to `0.4` (`--uxm-radio-group-disabled-opacity`) and sets `cursor: not-allowed`.
 - No group-level `aria-labelledby` is wired automatically; if the group needs a visible label, pair it with an external heading and set `aria-labelledby` on the `RadioGroup` via the spread `...rest` (note: `RadioGroup` does not currently spread arbitrary HTML attributes — add one via the `className` + a wrapping element if needed).

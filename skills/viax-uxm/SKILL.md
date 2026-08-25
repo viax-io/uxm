@@ -1086,6 +1086,21 @@ skill:
   `--color-text-inverse`, both of which the registry declares that way on purpose. Hover is
   gated on `:not(.uxm-checkbox--disabled)`. The atom's README also claimed there was no visible
   focus ring — there has been one (`--uxm-checkbox-focus-ring`, 2px) for a while.
+- **Disabled now actually dims on `Checkbox` / `ToggleSwitch` / `RadioGroup`.** Third instance of
+  the same registry-vs-CSS drift: the registry declares `0.4` for all three, while the shipped
+  fallbacks were `0.6` (checkbox), `1` (toggle switch — i.e. no dim at all) and `0.6` (radio).
+  All three are now `0.4` via `--uxm-{checkbox|toggle-switch|radio-group}-disabled-opacity`.
+  `checkbox.scss` used to declare the `--disabled` rule for all three, which the cascade
+  defeated: `styles.css` imports it FIRST, so the toggle's own rule won on opacity and
+  `.uxm-radio { cursor: pointer }` (radio-group.css, equal specificity, later) won over its
+  `not-allowed` — a disabled radio showed a pointer cursor. Each control now owns its
+  `--disabled` rule in its own file; only the label row and the visually-hidden `__input` stay
+  shared. The `RadioGroup` README claimed the modifier had no bundled dim at all; it has
+  shipped one since the shared rule was written. ⚠️ Still drifting
+  elsewhere and NOT touched here: most `Button` variants (registry `0.4`, CSS `1`), `Tabs`,
+  `Link`, `List`, `Slider`, `PillSelect` and others ship `1`. `RadioGroup`'s hover trio is also
+  still written the dead way (`--color-border` / `--color-accent` where the registry says
+  `--color-text-muted` / `--color-accent-bold`).
 
 ## Workflow
 

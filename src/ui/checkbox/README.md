@@ -24,7 +24,7 @@ function Example() {
 |------|------|---------|-------------|
 | `checked` | `boolean` | – | Controlled checked state. Pair with `onChange`. |
 | `defaultChecked` | `boolean` | – | Initial checked state for uncontrolled usage. |
-| `disabled` | `boolean` | `false` | Disables the input and adds the `--disabled` modifier (cursor + 0.6 opacity). |
+| `disabled` | `boolean` | `false` | Disables the input and adds the `--disabled` modifier (cursor + 0.4 opacity). |
 | `onChange` | `(checked: boolean, e: ChangeEvent<HTMLInputElement>) => void` | – | Fires with the next boolean and the raw event. |
 | `children` | `ReactNode` | – | Optional label rendered as `<span class="uxm-checkbox__label">`. Omit for an unlabeled checkbox (icon-only). |
 | `className` | `string` | – | Merged onto the `<label>` root via `cn`. |
@@ -48,7 +48,7 @@ The component does not spread arbitrary HTML attributes onto the input; only the
 | `--uxm-checkbox-hover-checked-border` | `--color-accent-bold` | – | Box border on hover while checked. |
 | `--uxm-checkbox-hover-check-glyph-color` | `--color-text-inverse` | – | Check glyph on hover (unchanged by default — it still has to read on the deeper fill). |
 | `--uxm-checkbox-focus-ring` | `--color-accent` | – | `:focus-visible` outline colour on the box (2px, 2px offset). |
-| `--uxm-checkbox-disabled-opacity` | – | `0.6` | Opacity when disabled (`.uxm-checkbox--disabled`). |
+| `--uxm-checkbox-disabled-opacity` | – | `0.4` | Opacity when disabled (`.uxm-checkbox--disabled`). |
 
 Hover is scoped with `:not(.uxm-checkbox--disabled)`, so a disabled checkbox does not react to the pointer. The **resting** check glyph is hardcoded to `--color-text-inverse`; only its hover value is a variable.
 
@@ -71,7 +71,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 |-----------------|---------|--------|
 | Default (unchecked) | – | Transparent box with `--color-border` outline; check SVG present but `opacity: 0`. |
 | Checked | `:checked` on the native input | Box fills with `--uxm-checkbox-check-color`; check SVG fades to `opacity: 1`. |
-| Disabled | `disabled` prop | `--disabled` modifier: `cursor: not-allowed`, `opacity: 0.6`; native input also disabled. |
+| Disabled | `disabled` prop | `--disabled` modifier: `cursor: not-allowed`, `opacity: 0.4`; native input also disabled. Hover is skipped. |
 | Hover (unchecked) | `:hover` on the root, input unchecked | Border moves to `--color-text-muted`; the box stays unfilled. |
 | Hover (checked) | `:hover` on the root, input checked | Box (fill + border) deepens to `--color-accent-bold`; glyph holds `--color-text-inverse`. |
 | Focus | `:focus-visible` on the native input | The visible box gets a `2px` outline in `--uxm-checkbox-focus-ring` (`--color-accent`) at `2px` offset. |

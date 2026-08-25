@@ -9,6 +9,15 @@
   gap: 8px;
 }
 
+/* Disabled — lives here rather than with the other bits shared from
+   checkbox.scss: radio-group.css is imported after checkbox.css, so
+   `.uxm-radio`'s `cursor: pointer` above wins over a `not-allowed` declared
+   there at equal specificity. 0.4 is the registry default. */
+.uxm-radio--disabled {
+  cursor: not-allowed;
+  opacity: var(--uxm-radio-group-disabled-opacity, 0.4);
+}
+
 /* RadioGroup — saves write to `.uxm-radio-group` (the wrapper).
    Inner `.uxm-radio__circle` and `__dot` are descendants that read
    the same `--uxm-radio-group-*` vars via custom-property inheritance.
