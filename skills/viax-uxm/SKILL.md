@@ -1069,6 +1069,16 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`ToggleSwitch` hover finally paints outside the studio.** The `:hover` rules shipped, but
+  every fallback repeated the resting colour, so the compiled CSS changed nothing on hover — the
+  workbench only *looked* right because it projects its knob defaults as inline
+  `--uxm-toggle-switch-hover-*` vars. The fallbacks now match those registry defaults:
+  `--color-text-muted` for the off track, `--color-accent-bold` for the on track (thumbs stay
+  `--color-card`). Hover is also gated on `:not(.uxm-toggle-switch--disabled)` so a disabled
+  switch stays inert. Visual change for consumers who never set the vars — that was the bug; a
+  saved override still wins. Same trap to watch for elsewhere: a per-state var whose fallback is
+  the resting value ships a dead rule (`Checkbox`'s hover pair is still written that way).
+
 ## Workflow
 
 ### Before writing any code

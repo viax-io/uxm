@@ -138,3 +138,27 @@ by hand afterwards in `fix/skill-version-heading-order`. Both the code review
 of that MR and the MR itself missed it — the heading rename looks correct in
 isolation, and only the surrounding order reveals the problem, so check the
 neighbouring headings, not just your own.
+## A per-state var whose fallback is the resting value ships a dead rule
+
+`var(--uxm-<comp>-hover-<prop>, <resting value>)` looks like a correct two-layer
+declaration and compiles to a real `:hover` rule — but with no var set it paints
+exactly what the resting rule already painted, so the state is invisible. It
+passes review easily because the *studio looks right*: the preview and
+`preview-modal` project every registry knob's `defaultValue` as an inline
+`--uxm-*` var, so the workbench is never running the fallback path a consumer
+runs. Only an app that imports the compiled CSS and sets no vars sees the bug.
+
+**This actually happened — `ToggleSwitch` hover.** All four
+`--uxm-toggle-switch-hover-*` fallbacks echoed the resting colour
+(`--color-border` / `--color-accent`) while `registry/inputs.ts` declared
+`--color-text-muted` / `--color-accent-bold` as the hover defaults. The atom's
+own README even documented the symptom as intended ("no additional colour change
+in baseline styles"). Reported from a consumer project, not caught here.
+
+**How to apply:** the fallback of a per-state var is that STATE's default, and
+the registry's `defaultValue` for the matching knob is the source of truth —
+diff the two whenever you touch either. If a state genuinely has no distinct
+look, don't emit the rule at all. Verify hover/focus in the portal (or any
+consumer) with **no** overrides saved, never by reading the studio preview.
+`Checkbox`'s `hover-unchecked-*` / `hover-checked-*` pairs are still written the
+dead way (`transparent` / `--color-accent`) — same fix pending.
