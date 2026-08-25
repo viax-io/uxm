@@ -51,6 +51,7 @@ The account row at the foot of the rail is the same component with different slo
 | `children` | `ReactNode` | — | The value — the workspace name, the signed-in address. |
 | `trailing` | `ReactNode` | — | The chevron. Shown as soon as it is passed — no hover-reveal. |
 | `variant` | `"plain" \| "outlined"` | `"plain"` | See below. |
+| `collapsed` | `boolean` | `false` | Render for a 64px rail. See [Collapsed rail](#collapsed-rail). |
 
 Everything else lands on the `<button>`: `onClick`, `disabled`, `aria-*`, `ref`.
 
@@ -110,9 +111,51 @@ Both spellings paint: the native `disabled` attribute, which blocks activation i
 
 There is deliberately no `pointer-events: none` (which `SidebarNavItem` needs, being an `<a>` that cannot carry a native `disabled`): it would suppress `cursor: not-allowed` too, throwing away the one affordance that tells the user why nothing happens.
 
+## Collapsed rail
+
+`collapsed` renders the row for `AppSidebar`'s 64px icon column. Three things change, and each one is a decision:
+
+- **The row becomes a 46px tile** (`--uxm-sidebar-nav-trigger-collapsed-size`).
+- **`trailing` is dropped** — not hidden. A chevron does not fit, and leaving the node in place would reserve a gap the atom's own rule ("reserves nothing it was not given") says it must not.
+- **`caption` and `children` stay in the DOM, visually clipped.** They are *not* `display: none` — that would take them out of the accessible tree, and the row would announce as a nameless button whenever its mark is a decorative `Icon` or an `Avatar` with no alt. Clipped, the row announces **identically** collapsed and expanded.
+
+```tsx
+<SidebarNavTrigger collapsed variant="outlined" title="order-processing"
+  icon={<Icon glyph="product" size={18} />} caption="Workspace">
+  order-processing
+</SidebarNavTrigger>
+```
+
+**Pass `title`.** With the chevron gone, only position and the mark still say the row opens something — the tooltip is what carries the value on hover, the same way `AppSidebar` handles its own collapsed items. It lands on the button through `...rest`.
+
+### Why 46 and not 32
+
+`AppSidebar` gives its collapsed nav items 32x32, and the tile deliberately does **not** match that. A trigger is not a nav row — it opens something — and at rail width it has lost both its chevron and its text, so footprint is the only signal of that difference still available.
+
+It is a composition choice as much as a size. The tile is a surface **around** the mark, not a frame hugging it: a 32px mark leaves ~7px on every side, the same relationship `SidebarNavItem` has between its 32px tile and the smaller icon inside it. A tile sized to hug its mark reads as a border on the avatar rather than a control containing one. In a 64px rail it leaves 9px each side.
+
+So **size the mark for the tile**, not the tile for the mark — `Avatar` at `size="small"` (32px, see the Avatar README) rather than its 40px default:
+
+```tsx
+<SidebarNavTrigger collapsed variant="plain" title="dan@acme.com"
+  icon={<Avatar initials="DR" size="small" />} caption="Tenant owner" captionPlacement="below">
+  dan@acme.com
+</SidebarNavTrigger>
+```
+
+`--uxm-sidebar-nav-trigger-collapsed-size` is the lever if you want the switcher flush with the nav tiles instead.
+
+**The tile size is a minimum, not a clamp.** The row never squeezes or clips a mark that brings its own size — the same guarantee the `icon` slot makes. A mark larger than the tile grows the row rather than being cut off. Note the border sits outside the mark, so the outer measurement is the mark plus 2px whenever the mark is the larger of the two.
+
+`outlined` deliberately keeps its border and surface at this size: the box is then the only thing left telling a switcher apart from a plain account row.
+
+**Why a prop and not an ancestor selector** on `.uxm-app-sidebar--collapsed`: a trigger sits in a slot the *consumer* owns, so the shell never has its node to rewrite — and no atom in this kit styles another atom's internals from its own sheet. (`SidebarNavItem` has no collapsed mode for the opposite reason: `AppSidebar` composes it directly, so it can drive it with props.)
+
 ## CSS variables
 
 Row: `--uxm-sidebar-nav-trigger-{padding-x,padding-y,gap,border-radius,bg,hover-bg,focus-ring,disabled-opacity}`.
+
+Collapsed: `--uxm-sidebar-nav-trigger-collapsed-size` (default `46px`, a minimum — see [Collapsed rail](#collapsed-rail)). `padding-*` and `gap` stop applying there: the tile sets `padding: 0` and has one in-flow child left.
 
 Outlined: `--uxm-sidebar-nav-trigger-outlined-{bg,border}`.
 
@@ -128,6 +171,7 @@ The caption defaults to `--color-text-muted`, which measures 2.54:1 on `--color-
 
 - A real `<button type="button">`, so Enter/Space and focus come for free.
 - `aria-haspopup` / `aria-expanded` / `aria-controls` come from the popup's `triggerProps` — do not add your own, they would override the wiring.
+- **Collapsed keeps the accessible name.** The caption and value are clipped, not removed, so the row announces the same collapsed as expanded — see [Collapsed rail](#collapsed-rail). Pair it with `title` for the sighted hover case; note that `title` is not a substitute for the name, it is the tooltip.
 - The caption lives **inside** the button, so it joins the accessible name: "Workspace order-processing" — or "dan@acme.com Tenant owner" with `captionPlacement="below"`, since the markup order follows the visual one. That usually reads well. Pass an explicit `aria-label` when a particular pairing does not.
 
 ## Why its own atom, not knobs on `SidebarNavItem`

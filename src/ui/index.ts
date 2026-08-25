@@ -9,7 +9,7 @@ export type {
 export { AppTopBar } from './app-top-bar';
 export type { AppTopBarProps } from './app-top-bar';
 export { Avatar } from './avatar';
-export type { AvatarProps, AvatarType } from './avatar';
+export type { AvatarProps, AvatarSize, AvatarType } from './avatar';
 export { BackLink } from './back-link';
 export type { BackLinkProps } from './back-link';
 export { Badge } from './badge';

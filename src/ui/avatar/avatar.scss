@@ -31,3 +31,36 @@
     width: 100%;
   }
 }
+
+/* Size presets. Same shape as `tag`: a DOUBLE-class selector, so per-size
+   declarations land at (0,2,0) and beat any single-class override on
+   `.uxm-avatar` regardless of source order.
+
+   `--medium` restates what the base block already declares, which looks
+   redundant and is not. Both presets must sit at the SAME specificity: leave
+   medium to the base rule and a consumer's own `.uxm-avatar { width }` would
+   beat medium while still losing to `--small`, so one preset would honour the
+   override and the other would ignore it.
+
+   `--medium` reads the ORIGINAL generic vars rather than introducing
+   `--uxm-avatar-medium-*`. It is the default, so anything already setting
+   `--uxm-avatar-size` / `--uxm-avatar-font-size` — a consumer, or a saved brand
+   — keeps working untouched, and the workbench keeps editing the same knob.
+
+   `--small` exists because those two vars do NOT scale together: the diameter
+   is one and the initials another. Measured, a two-character run is 22.1px wide
+   at 16px — 0.55 of a 40px circle but 0.69 of a 32px one and 0.92 of a 24px
+   one, text against the rim. 13px holds small at 0.57, matching medium's
+   comfort. */
+
+.uxm-avatar.uxm-avatar--medium {
+  font-size: var(--uxm-avatar-font-size, 16px);
+  height: var(--uxm-avatar-size, 40px);
+  width: var(--uxm-avatar-size, 40px);
+}
+
+.uxm-avatar.uxm-avatar--small {
+  font-size: var(--uxm-avatar-small-font-size, 13px);
+  height: var(--uxm-avatar-small-size, 32px);
+  width: var(--uxm-avatar-small-size, 32px);
+}

@@ -79,6 +79,27 @@ export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
   sections: AppSidebarSection[];
   collapsed?: boolean;
   onCollapseToggle?: () => void;
+  /**
+   * Slot at the HEAD of the rail — under the brand row, above the nav. Where a
+   * tenant or workspace switcher belongs: a control that names the level
+   * everything below it belongs to has to sit above that everything, and the
+   * `footer` was the only slot on offer before this, which inverted the
+   * hierarchy.
+   *
+   * Rendered in BOTH rail states. Collapsed the slot only stops squeezing its
+   * child — a `SidebarNavTrigger collapsed` centres its own tile.
+   *
+   * The DOM node is `uxm-app-sidebar__lead`, NOT `__header`: that class is
+   * already the brand row. Renaming it to free the nicer name would be a silent
+   * break for any consumer who wrote a selector against it, and a published
+   * library does not get to do that for tidiness.
+   */
+  header?: ReactNode;
+  /**
+   * Slot at the FOOT of the rail — the signed-in account row, a version
+   * caption. Now rendered in both rail states; see the note on `collapsed`
+   * below and the README, because that changed.
+   */
   footer?: ReactNode;
   /**
    * Element type used for each nav item's outer link. Defaults to plain
@@ -124,6 +145,7 @@ export function AppSidebar({
   sections,
   collapsed = false,
   onCollapseToggle,
+  header,
   footer,
   linkAs,
   autoIconColors = false,
@@ -208,6 +230,8 @@ export function AppSidebar({
         )}
       </div>
 
+      {header && <div className="uxm-app-sidebar__lead">{header}</div>}
+
       <nav className="uxm-app-sidebar__nav">
         {sections.map((section, idx) => (
           <div key={idx} className="uxm-app-sidebar__section">
@@ -255,8 +279,22 @@ export function AppSidebar({
         ))}
       </nav>
 
-      {footer && !collapsed && (
-        <div className="uxm-app-sidebar__footer">{footer}</div>
+      {/* Renders in BOTH states now. It used to be dropped when collapsed,
+          which quietly took the account row and every switcher parked here out
+          of the rail — you could not see which tenant you were in, let alone
+          change it, without expanding first. The slot holds an opaque node, so
+          this component cannot shrink it the way it turns an item's `badge`
+          into a status dot; swapping rail-appropriate content is the
+          consumer's job, and they already hold `collapsed`. */}
+      {footer && (
+        <div
+          className={cn(
+            'uxm-app-sidebar__footer',
+            collapsed && 'uxm-app-sidebar__footer--collapsed',
+          )}
+        >
+          {footer}
+        </div>
       )}
     </aside>
     </>

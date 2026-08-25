@@ -164,6 +164,8 @@ export function PropertiesPanel({
     fileList: 'File List',
     fileListProgress: 'File List Progress',
     fileListStatus: 'File List Status',
+    headerSlot: 'Header Slot',
+    footerSlot: 'Footer Slot',
   };
   const allShowWhenKeys = Array.from(
     new Set(def.styleProperties.flatMap((p) => p.showWhen ? Object.keys(p.showWhen) : [])),

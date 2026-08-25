@@ -80,6 +80,45 @@
     cursor: not-allowed;
   }
 
+  /* The collapsed rail — the 64px icon column.
+
+     46px, which is DELIBERATELY not the 32px `app-sidebar` gives its collapsed
+     nav items (`__item--collapsed`). A trigger is not a nav row: it opens
+     something, and at rail width it has lost both its chevron and its text, so
+     footprint is the only signal of that difference left.
+
+     The size is also a composition choice, not just a bigger number. The tile
+     is a surface AROUND the mark rather than a frame hugging it: a 32px mark
+     (`Avatar size="small"`) leaves ~7px on every side, the same relationship
+     `sidebar-nav-item` has between its 32px tile and the smaller icon inside
+     it. A tile sized to hug its mark reads as a border on the avatar instead of
+     a control containing one. It leaves 9px each side in a 64px rail.
+
+     `min-*` and NOT fixed `width`/`height`, for the same reason `__icon` is:
+     the row must never squeeze or clip a mark that brings its own size. A mark
+     larger than the tile grows the row rather than being cut off.
+
+     `padding: 0` — the tile IS the padding box, and the row centres its one
+     remaining in-flow child. `--outlined` deliberately keeps its border and
+     surface: at this size the box is the ONLY thing still telling a switcher
+     apart from a plain account row.
+
+     `position: relative` anchors the visually-hidden text (see `__text`) inside
+     this button rather than at the initial containing block.
+
+     Nothing here is placed by an ancestor selector on `.uxm-app-sidebar--collapsed`:
+     a trigger sits in a consumer-owned slot, and no atom in this kit styles
+     another atom's internals from its own sheet. */
+  &--collapsed {
+    position: relative;
+    min-width: var(--uxm-sidebar-nav-trigger-collapsed-size, 46px);
+    min-height: var(--uxm-sidebar-nav-trigger-collapsed-size, 46px);
+    width: auto;
+    margin: 0 auto;
+    padding: 0;
+    justify-content: center;
+  }
+
   /* The mark. No tile: the slot is sized and centred, and paints nothing.
      `min-*` rather than fixed width/height so the box reserves and aligns
      without clipping a child that is larger than the reservation — an `Avatar`
@@ -103,6 +142,25 @@
     display: flex;
     flex-direction: column;
     gap: var(--uxm-sidebar-nav-trigger-caption-gap, 2px);
+
+    /* Collapsed: visually hidden, NOT removed. `display: none` and
+       `visibility: hidden` would both take the caption and value out of the
+       accessible tree — and that name is the one thing the collapsed row cannot
+       lose, since its mark may be a decorative `Icon` or an `Avatar` carrying no
+       alt, which would leave a nameless button. Clipping keeps the text in the
+       tree, so the row announces IDENTICALLY collapsed and expanded.
+
+       `position: absolute` also lifts the column out of flow, so its `flex: 1`
+       stops stretching the 32px box from the inside. */
+    &--collapsed {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
   }
 
   /* `--color-text-muted` measures 2.54:1 on `--color-card` in the light theme,

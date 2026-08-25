@@ -694,7 +694,7 @@ export const compositeDefs: ComponentDef[] = [
     name: 'Sidebar Nav Trigger',
     category: 'Composite',
     description:
-      "A rail row that OPENS something rather than navigating to it — a workspace switcher, an account menu, an environment picker. A <button> extending ButtonHTMLAttributes, so a Menu's or Listbox's `triggerProps` spread straight onto it, ref and ARIA included. Four optional slots: icon (a bare Icon in a switcher, an Avatar in the account row), caption (the small line beside the value; captionPlacement 'above' | 'below', default above — above LABELS the level this control changes, below QUALIFIES the value), children (the value) and trailing (the chevron — shown as soon as it is passed; no hover-reveal, unlike Sidebar Nav Item's trailing slot. The Trailing picker here decides whether the showcase PASSES the slot at all, exactly like Mark and Caption — it is not a visibility gate in the component). The atom draws NO tile behind the icon: it reserves the slot, sizes it, aligns it, and paints nothing. And it reserves nothing it was not given — no icon and the text starts at the padding edge, no caption and the value centres, no trailing and there is no gap where a chevron would have been. Sibling of Sidebar Nav Item rather than a variant of it: that one renders an <a>, hides trailing until hover, paints an icon tile and has a single-line label.",
+      "A rail row that OPENS something rather than navigating to it — a workspace switcher, an account menu, an environment picker. A <button> extending ButtonHTMLAttributes, so a Menu's or Listbox's `triggerProps` spread straight onto it, ref and ARIA included. Four optional slots: icon (a bare Icon in a switcher, an Avatar in the account row), caption (the small line beside the value; captionPlacement 'above' | 'below', default above — above LABELS the level this control changes, below QUALIFIES the value), children (the value) and trailing (the chevron — shown as soon as it is passed; no hover-reveal, unlike Sidebar Nav Item's trailing slot. The Trailing picker here decides whether the showcase PASSES the slot at all, exactly like Mark and Caption — it is not a visibility gate in the component). The atom draws NO tile behind the icon: it reserves the slot, sizes it, aligns it, and paints nothing. And it reserves nothing it was not given — no icon and the text starts at the padding edge, no caption and the value centres, no trailing and there is no gap where a chevron would have been. Sibling of Sidebar Nav Item rather than a variant of it: that one renders an <a>, hides trailing until hover, paints an icon tile and has a single-line label. `collapsed` renders it for a 64px rail: a 46px tile, the chevron dropped, and caption + value clipped but kept in the DOM so the accessible name survives. Pair it with a 32px mark. See the collapsed prop below for the reasoning.",
     styleProperties: [
       // ── Per-state surface. Hover and open paint the SAME thing in both
       // variants, so they share one knob — a second one would only let a
@@ -716,45 +716,66 @@ export const compositeDefs: ComponentDef[] = [
       { key: 'outlinedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'outlined', showWhen: { variant: 'outlined' } },
 
       // ── The value.
-      { key: 'valueColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text)', section: 'value' },
-      { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px', section: 'value' },
-      { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600', '700'], section: 'value' },
+      // Gated on `collapsed: no` — the collapsed row clips its text away, so
+      // every type knob below is a slider with no visible effect there. Same
+      // reasoning for the caption group, the trailing colour, and padding/gap.
+      { key: 'valueColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text)', section: 'value', showWhen: { collapsed: 'no' } },
+      { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px', section: 'value', showWhen: { collapsed: 'no' } },
+      { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600', '700'], section: 'value', showWhen: { collapsed: 'no' } },
 
       // ── The caption. Muted is under the AA text floor on the card surface
       // (2.54:1), which is acceptable here ONLY because a caption names the
       // control rather than carrying content — the value beneath it is the
       // content. Swap to --color-text-strong if that ever stops being true.
-      { key: 'captionColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'caption', showWhen: { withCaption: 'yes' } },
-      { key: 'captionFontSize', label: 'Font Size', control: 'number', defaultValue: 10, min: 8, max: 14, step: 1, unit: 'px', section: 'caption', showWhen: { withCaption: 'yes' } },
-      { key: 'captionFontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600', '700'], section: 'caption', showWhen: { withCaption: 'yes' } },
+      { key: 'captionColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'caption', showWhen: { withCaption: 'yes', collapsed: 'no' } },
+      { key: 'captionFontSize', label: 'Font Size', control: 'number', defaultValue: 10, min: 8, max: 14, step: 1, unit: 'px', section: 'caption', showWhen: { withCaption: 'yes', collapsed: 'no' } },
+      { key: 'captionFontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600', '700'], section: 'caption', showWhen: { withCaption: 'yes', collapsed: 'no' } },
       // Uppercase is the DEFAULT, not the definition — an eyebrow in most rails,
       // but a sentence-case caption under an address is the same slot read
       // differently, and a brand font may not carry caps well. Paired knob: the
       // tracking below exists to open up caps, so turning this off usually means
       // turning that down too.
-      { key: 'captionTextTransform', label: 'Text Transform', control: 'select', defaultValue: 'uppercase', options: ['uppercase', 'none', 'capitalize', 'lowercase'], section: 'caption', showWhen: { withCaption: 'yes' } },
+      { key: 'captionTextTransform', label: 'Text Transform', control: 'select', defaultValue: 'uppercase', options: ['uppercase', 'none', 'capitalize', 'lowercase'], section: 'caption', showWhen: { withCaption: 'yes', collapsed: 'no' } },
       // A number in `em`, not a free-text CSS length: the unit is fixed, so the
       // only thing a text field adds is the chance to type `6px` (catastrophic
       // tracking at a 10px caption) or a bare `0.06`, which is invalid CSS the
       // browser drops in silence. `em` and not `px` so the tracking scales with
       // the caption's own size — and with the brand font, which Brand Settings
       // can change under it.
-      { key: 'captionLetterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0.06, min: 0, max: 0.2, step: 0.01, unit: 'em', section: 'caption', showWhen: { withCaption: 'yes' } },
-      { key: 'captionGap', label: 'Row Gap', control: 'number', defaultValue: 2, min: 0, max: 8, step: 1, unit: 'px', section: 'caption', showWhen: { withCaption: 'yes' } },
+      { key: 'captionLetterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0.06, min: 0, max: 0.2, step: 0.01, unit: 'em', section: 'caption', showWhen: { withCaption: 'yes', collapsed: 'no' } },
+      { key: 'captionGap', label: 'Row Gap', control: 'number', defaultValue: 2, min: 0, max: 8, step: 1, unit: 'px', section: 'caption', showWhen: { withCaption: 'yes', collapsed: 'no' } },
 
       // ── The mark. `iconSize` is a MIN box, not a fixed one: it reserves and
       // aligns without squeezing a child that brings its own size (an Avatar).
-      { key: 'iconSize', label: 'Slot Size', control: 'number', defaultValue: 28, min: 16, max: 44, step: 2, unit: 'px', section: 'icon', showWhen: { mark: ['icon', 'avatar'] } },
+      // Gated to the Icon mark alone. Being a FLOOR, it does nothing while it
+      // sits below the mark's own size — measured, a 32px `Avatar size='small'`
+      // in a 28px slot yields a 32px slot, and Avatar's 40px default is further
+      // out still. Exposed for Avatar it was a knob a designer drags through its
+      // whole default range for no visible effect, waking up only past 32. The
+      // lever that actually sizes an avatar is Avatar's own `size` preset; two
+      // knobs competing to answer "how big is the mark" is worse than one.
+      { key: 'iconSize', label: 'Slot Size', control: 'number', defaultValue: 28, min: 16, max: 44, step: 2, unit: 'px', section: 'icon', showWhen: { mark: 'icon' } },
       // Only the Icon mark inherits this colour — an Avatar paints itself.
       { key: 'iconColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'icon', showWhen: { mark: 'icon' } },
 
-      { key: 'trailingColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'trailing', showWhen: { withTrailing: 'yes' } },
+      { key: 'trailingColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'trailing', showWhen: { withTrailing: 'yes', collapsed: 'no' } },
 
-      // ── Shared sizing, every state and variant.
-      { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 24, step: 1, unit: 'px' },
-      { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 8, min: 4, max: 16, step: 1, unit: 'px' },
-      { key: 'gap', label: 'Gap', control: 'number', defaultValue: 10, min: 2, max: 20, step: 1, unit: 'px' },
+      // ── Shared sizing. Padding and gap are the two that STOP applying when
+      // collapsed (the tile sets `padding: 0` and has one in-flow child left),
+      // so they are gated; radius still paints the 32x32 box and stays.
+      { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 24, step: 1, unit: 'px', showWhen: { collapsed: 'no' } },
+      { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 8, min: 4, max: 16, step: 1, unit: 'px', showWhen: { collapsed: 'no' } },
+      { key: 'gap', label: 'Gap', control: 'number', defaultValue: 10, min: 2, max: 20, step: 1, unit: 'px', showWhen: { collapsed: 'no' } },
       { key: 'borderRadius', label: 'Radius', control: 'slider', defaultValue: 8, min: 0, max: 20, step: 1, unit: 'px' },
+      // The collapsed tile's own footprint — a MINIMUM, so a mark larger than it
+      // (an `Avatar`) grows the row rather than being clipped. 46px deliberately
+      // differs from the 32px `app-sidebar` gives its collapsed nav items: a
+      // trigger has lost its chevron and its text at rail width, so footprint is
+      // the only thing left saying it opens something rather than navigating.
+      // It is also a composition choice: the tile is a surface AROUND the mark,
+      // so a 32px mark (`Avatar size="small"`) sits with ~7px on every side,
+      // mirroring `sidebar-nav-item`'s 32px tile around a smaller icon.
+      { key: 'collapsedSize', label: 'Tile Size', control: 'number', defaultValue: 46, min: 24, max: 64, step: 2, unit: 'px', showWhen: { collapsed: 'yes' } },
     ],
     layoutVariants: [
       {
@@ -803,6 +824,19 @@ export const compositeDefs: ComponentDef[] = [
         defaultValue: 'icon',
       },
       {
+        // The 64px rail. Its own picker rather than a value on `state`, because
+        // it is orthogonal to every state — a collapsed row still hovers, opens
+        // and disables, and folding the two would make five of those
+        // combinations unreachable.
+        key: 'collapsed',
+        label: 'Rail',
+        options: [
+          { value: 'no', label: 'Expanded' },
+          { value: 'yes', label: 'Collapsed' },
+        ],
+        defaultValue: 'no',
+      },
+      {
         key: 'withCaption',
         label: 'Caption',
         options: [
@@ -810,6 +844,10 @@ export const compositeDefs: ComponentDef[] = [
           { value: 'no', label: 'Off' },
         ],
         defaultValue: 'yes',
+        // Collapsed clips the caption and drops the chevron, so both slot
+        // toggles (and the placement picker) would be no-ops there — they
+        // disappear rather than sit dead, per the list-item precedent.
+        showWhen: { collapsed: 'no' },
       },
       {
         // Above the value the caption LABELS the level ("Workspace"); below it,
@@ -824,7 +862,7 @@ export const compositeDefs: ComponentDef[] = [
           { value: 'below', label: 'Below' },
         ],
         defaultValue: 'above',
-        showWhen: { withCaption: 'yes' },
+        showWhen: { withCaption: 'yes', collapsed: 'no' },
       },
       {
         key: 'withTrailing',
@@ -834,6 +872,7 @@ export const compositeDefs: ComponentDef[] = [
           { value: 'no', label: 'Off' },
         ],
         defaultValue: 'yes',
+        showWhen: { collapsed: 'no' },
       },
     ],
     events: [
@@ -849,6 +888,7 @@ export const compositeDefs: ComponentDef[] = [
         { name: 'children', type: 'ReactNode', description: 'The value — the workspace name, the signed-in address.' },
         { name: 'trailing', type: 'ReactNode', description: 'The chevron. Visible at rest, with no reveal-on-hover behaviour: a control that opens something has to advertise it before you point at it.' },
         { name: 'variant', type: '"plain" | "outlined"', defaultValue: '"plain"', description: 'plain — nothing at rest, for the account row at the foot of the rail. outlined — a hairline plus the card surface, for the switcher, which stands in a box because it names the level everything below it belongs to.' },
+        { name: 'collapsed', type: 'boolean', defaultValue: 'false', description: 'Render for a 64px rail: a 46px tile (--uxm-sidebar-nav-trigger-collapsed-size, a MINIMUM rather than a clamp — a mark larger than it grows the row instead of being clipped), the trailing chevron dropped, and caption + value kept in the DOM but visually hidden — so the button announces identically collapsed and expanded rather than becoming a nameless icon. 46 deliberately differs from the 32px AppSidebar gives its collapsed nav items: a trigger has lost both chevron and text at this width, so footprint is the only signal left that it opens something. The tile is a surface AROUND the mark rather than a frame hugging it — pair it with Avatar size="small" (32px) for ~7px on every side. outlined keeps its border at this size, since the box is then the only thing distinguishing a switcher from a plain account row. Pass title as well: with the chevron gone, only position and the mark still say the row opens something.' },
       ],
     },
   },

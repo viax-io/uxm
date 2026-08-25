@@ -1008,6 +1008,65 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`SidebarNavTrigger` gets a collapsed rail mode.** `collapsed?: boolean` (default `false`)
+  renders the row for `AppSidebar`'s 64px icon column: a **46px tile**
+  (`--uxm-sidebar-nav-trigger-collapsed-size`), `trailing` **dropped** (a chevron does not fit,
+  and keeping the node would reserve a gap), and `caption` + `children` kept in the DOM but
+  visually clipped — so the button announces **identically** collapsed and expanded. That last
+  part is the point: `display: none` on the text would leave a nameless button wherever the mark
+  is a decorative `Icon` or an alt-less `Avatar`. Pass `title` too — with the chevron gone, only
+  position and the mark still advertise that the row opens something.
+  46 deliberately is **not** the 32px the collapsed nav items get: a trigger is not a nav row, and
+  at rail width it has lost both chevron and text, so footprint is the only signal of that
+  difference left. It is a composition choice too — the tile is a surface **around** the mark, not
+  a frame hugging it, so pair it with a 32px mark (`Avatar size="small"`) for ~7px on every side,
+  mirroring `SidebarNavItem`'s 32px tile around a smaller icon. **Size the mark for the tile, not
+  the tile for the mark.** The tile itself is a **minimum, not a clamp**: a larger mark grows the
+  row instead of being clipped. `outlined` keeps its border at this size, since the box is
+  then the only thing distinguishing a switcher from a plain account row. It is a **prop, not an
+  ancestor selector** on the collapsed sidebar: a trigger sits in a consumer-owned slot, so the
+  shell never has its node to rewrite. (Contrast `SidebarNavItem`, which still has no collapsed
+  mode of its own — `AppSidebar` composes it directly and drives it with props.)
+- **`AppSidebar` gets a `header` slot, and its `footer` survives collapse.** `header?: ReactNode`
+  renders at the **head** of the rail — under the brand row, above the nav — into
+  `uxm-app-sidebar__lead`. (Not `__header`: that class is already the brand row, and renaming a
+  published class for tidiness is a silent break.) This is where a tenant / workspace switcher
+  belongs: a control naming the level everything below it sits in has to be above that everything,
+  and the footer was previously the only slot, which inverted the hierarchy.
+  **Behaviour change, no prop change:** `footer` now renders when `collapsed` is true. It used to
+  be dropped, which took the account row and any switcher parked there out of the collapsed rail
+  entirely — you could not see which tenant you were in, let alone switch. A footer used for a
+  version caption will now show that caption in the 64px rail; swap it on `collapsed`.
+  **Both slots hold an opaque node, so the sidebar cannot adapt what is inside** — it can turn an
+  item's `badge` into a status dot because it owns the item shape, but it has no handle on a slot.
+  The consumer passes `collapsed` into the child and sizes the marks (`Avatar size="small"`, since
+  a 40px avatar leaves only 3px of ring in the trigger's 46px collapsed tile). A slot that ignores
+  the rail looks right expanded and breaks at 64px.
+  Both slots are **flex columns with an 8px gap**, so a slot handed more than one control (a tenant
+  switcher over a workspace one) spaces them itself — you pass controls, not a layout. 8px matches
+  each slot's padding and the trigger's vertical padding; `--uxm-app-sidebar-{lead,footer}-gap`,
+  deliberately not a workbench knob. Side effect in the footer: a bare `<span>` caption becomes a
+  flex item and stretches to the slot width (identical for plain text).
+  Alignment: **both** slots take the nav's **8px** padding
+  (`--uxm-app-sidebar-{lead,footer}-padding`), putting a control's text at 8 + its own 12 = 20px,
+  exactly where a `SidebarNavItem` label starts. The footer's old 24px caption inset is gone: it
+  put a control at 36px — a visible step against every nav row — and cost it 32px of width, which
+  ellipsised a signed-in address for no reason. A caption there shifts 16px left and now aligns
+  with the nav labels too. `__lead` imposes no `font-size`/`color`; the footer sets both and drops
+  the `font-size` when collapsed.
+- **`Avatar` gets a `size` preset.** `size?: 'small' | 'medium'` (default `'medium'`) — 32px / 40px,
+  as `.uxm-avatar.uxm-avatar--{size}` double-class rules, same shape as `Tag`. A preset rather than
+  "just set the var", because the diameter and the initials are **two independent variables**
+  (`--uxm-avatar-size`, `--uxm-avatar-font-size`) that do not scale together: shrink the circle
+  alone and the 16px initials stay put. Measured, a two-character run is 22.1px wide at 16px —
+  0.55 of a 40px circle, 0.69 of a 32px one, 0.92 of a 24px one (text against the rim). `small`
+  pairs 32px with 13px, holding the ratio at 0.57. New vars
+  `--uxm-avatar-small-{size,font-size}`; `medium` still reads the original
+  `--uxm-avatar-{size,font-size}`, so a consumer or saved brand already setting those is
+  untouched. Both presets sit at the same (0,2,0) specificity **including `medium`**, whose
+  declarations look like a redundant restatement of the base block — leave medium to the base rule
+  and a consumer's `.uxm-avatar { width }` would beat medium while still losing to `--small`.
+
 ## Workflow
 
 ### Before writing any code

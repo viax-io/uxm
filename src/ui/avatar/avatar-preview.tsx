@@ -1,5 +1,5 @@
 import type { PreviewProps } from '@/previews/types';
-import { Avatar, type AvatarType } from '@/ui';
+import { Avatar, type AvatarSize, type AvatarType } from '@/ui';
 
 import type { CSSProperties } from 'react';
 
@@ -22,7 +22,12 @@ const SAMPLE_LOGO = 'data:image/svg+xml;utf8,' + encodeURIComponent(
 
 export function AvatarPreview({ styles, variants }: PreviewProps) {
   const type = ((variants.type as string) ?? 'text') as AvatarType;
-  const size = (styles.size as number) ?? 40;
+  const sizePreset = ((variants.sizePreset as string) ?? 'medium') as AvatarSize;
+  // The inline `width`/`height` below deliberately out-specifies the preset's
+  // class (see avatar.scss), so it has to READ the active preset's knobs —
+  // otherwise switching to Small would change the class and nothing visible.
+  const size = (sizePreset === 'small' ? (styles.smallSize as number) : (styles.size as number)) ?? 40;
+  const fontSize = (sizePreset === 'small' ? (styles.smallFontSize as number) : (styles.fontSize as number)) ?? 16;
 
   const sharedStyle = {
     width: size,
@@ -32,14 +37,22 @@ export function AvatarPreview({ styles, variants }: PreviewProps) {
     '--uxm-avatar-border-color': styles.borderColor as string,
     '--uxm-avatar-border-width': `${styles.borderWidth as number}px`,
     '--uxm-avatar-color': styles.color as string,
-    '--uxm-avatar-font-size': `${styles.fontSize as number}px`,
+    // Keyed per preset. `--small` reads `--uxm-avatar-small-font-size`, so
+    // writing the generic var while Small is active left the knob inert — the
+    // avatar just kept whatever that other var resolved to. Branching here also
+    // matches what a SAVED brand emits (generate-css maps `fontSize` to the
+    // generic var and kebab-falls `smallFontSize` to the small one), so the
+    // preview exercises the production path instead of a parallel one.
+    [(sizePreset === 'small'
+      ? '--uxm-avatar-small-font-size'
+      : '--uxm-avatar-font-size') as string]: `${fontSize}px`,
     '--uxm-avatar-font-weight': styles.fontWeight as string,
   } as CSSProperties;
 
   if (type === 'image') {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-        <Avatar type="image" src={SAMPLE_LOGO} alt="MedTech" initials="MT" style={sharedStyle} />
+        <Avatar type="image" size={sizePreset} src={SAMPLE_LOGO} alt="MedTech" initials="MT" style={sharedStyle} />
         <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>MedTech</span>
       </div>
     );
@@ -52,7 +65,7 @@ export function AvatarPreview({ styles, variants }: PreviewProps) {
           key={a.initials}
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}
         >
-          <Avatar initials={a.initials} style={sharedStyle} />
+          <Avatar initials={a.initials} size={sizePreset} style={sharedStyle} />
           <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>{a.name}</span>
         </div>
       ))}
