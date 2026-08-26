@@ -175,10 +175,15 @@ registry-vs-SCSS diff (every `disabledOpacity` `defaultValue` against every
 `fix/small-control-hover-defaults` MR — the target differs per component
 (0.4 / 0.5 / 0.55 / 0.6), so always diff against the registry entry, never
 assume one number. `PillSelect` stays `1` by design (registry says so).
-Hover/pressed dead fallbacks remain on `FilterTabs`, `ViewSwitcher`,
-`ButtonGroup`, `Disclosure`, `List` and `Button`'s pressed states — same
-sweep, still to do. Re-run the scripted diff whenever you touch a per-state
-knob; eyeballing found 5 of the 19. `PillSelect` is NOT on this list: its
+The hover/pressed half is closed too (same MR): the scripted diff over the
+state knobs of `FilterTabs`, `ViewSwitcher`, `ButtonGroup`, `Disclosure`,
+`List` and the `Button` family found 16 more dead fallbacks, all brought to
+their registry values. Re-run the scripted diff whenever you touch a
+per-state knob; eyeballing found 5 of the first 19. One script caveat that
+produced a false positive twice: a `var()` whose fallback spans multiple
+lines (`ButtonPrimary`'s `color-mix` hover) defeats single-line regexes —
+normalise whitespace before matching, and treat a "NOT READ / STILL BAD" hit
+as "go look", not "go fix". `PillSelect` is NOT on this list: its
 registry default is `1` **by design** (`composite.ts` — dimming would
 double-dim already-muted chips), so its flat disabled look is correct. Check
 any per-state block against the registry before assuming it's clean.

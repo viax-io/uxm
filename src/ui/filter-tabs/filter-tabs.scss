@@ -25,8 +25,8 @@
     transition: background-color 0.15s, color 0.15s;
 
     &:hover:not(.uxm-filter-tabs__tab--active):not(:disabled) {
-      background-color: var(--uxm-filter-tabs-hover-bg, transparent);
-      color: var(--uxm-filter-tabs-hover-text, var(--color-text-muted));
+      background-color: var(--uxm-filter-tabs-hover-bg, var(--color-surface-alt));
+      color: var(--uxm-filter-tabs-hover-text, var(--color-text));
     }
 
     &:focus-visible {

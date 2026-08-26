@@ -27,7 +27,7 @@
   width: 100%;
 
   &:hover {
-    background-color: var(--uxm-disclosure-hover-bg, transparent);
+    background-color: var(--uxm-disclosure-hover-bg, var(--color-surface-alt));
   }
 
   &:focus-visible {

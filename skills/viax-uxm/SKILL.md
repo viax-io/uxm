@@ -1148,10 +1148,19 @@ skill:
   nothing in a consumer app — the same dead-fallback shape as the small controls, and invisible
   in the workbench because previews project the knob defaults as inline vars. Now
   `--color-surface-alt` and `--color-text`, matching the registry. Visual change for consumers
-  who never set the vars; a saved override still wins. ⚠️ The HOVER/pressed half of the pattern
-  is still live elsewhere — `FilterTabs`, `ViewSwitcher`, `ButtonGroup`, `Disclosure`, `List`
-  and `Button`'s pressed states; the `disabled-opacity` half is closed (see the sweep bullet
-  below).
+  who never set the vars; a saved override still wins. The hover/pressed half of the pattern is
+  closed too (see the sweep bullets below); the `disabled-opacity` half likewise.
+- **Hover/pressed now paint on `FilterTabs`, `ViewSwitcher`, `ButtonGroup`, `Disclosure`,
+  `List` and `Button`'s pressed states.** The same registry-vs-CSS diff, run over the state
+  knobs of those six, found 16 dead fallbacks (CSS repeating the resting look where the
+  registry declares a distinct state value) — hover fills to `--color-surface-alt` with
+  full-strength text/icon on the three tab-like atoms and `Disclosure`/`List`; `List`'s
+  active row gets the accent-subtle fill + accent-bold text; `ButtonSecondary` pressed
+  deepens to a solid accent fill + inverse text, `ButtonTertiary`/`ButtonGhost` pressed get
+  their registry surfaces and tones. All fallbacks now equal the registry defaults the studio
+  has always previewed. Visual change for consumers that never set the vars; saved overrides
+  still win. (`ButtonPrimary`'s hover was already correct — its `color-mix` fallback matches
+  the registry.)
 - **Disabled dim now actually paints on 17 more atoms.** A scripted registry-vs-CSS diff of
   every `disabledOpacity` default found 19 drifting `--uxm-*-disabled-opacity` fallbacks
   (`1` in CSS vs `0.4`/`0.5` in the registry) — the whole `Button` family, `Slider`,

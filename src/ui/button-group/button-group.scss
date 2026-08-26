@@ -27,8 +27,8 @@
     }
 
     &:hover:not(.uxm-button-group__item--active):not(:disabled) {
-      background-color: var(--uxm-button-group-hover-bg, var(--color-card));
-      color: var(--uxm-button-group-hover-text, var(--color-text-muted));
+      background-color: var(--uxm-button-group-hover-bg, var(--color-surface-alt));
+      color: var(--uxm-button-group-hover-text, var(--color-text));
     }
 
     &:focus-visible {
