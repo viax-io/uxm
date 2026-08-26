@@ -28,7 +28,12 @@ export function PageHeaderPreview({ styles }: PreviewProps) {
       <div style={{ minWidth: 0, flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <h1 style={{
-            fontSize: styles.titleSize as number, fontWeight: 600,
+            // Mirrors the atom's own chain (page-header.scss) so the canvas
+            // reflects a brand heading face/weight the way the shipped
+            // component does — this preview hand-rolls its markup.
+            fontFamily: 'var(--uxm-page-header-title-font, var(--brand-heading-font, inherit))',
+            fontSize: styles.titleSize as number,
+            fontWeight: 'var(--uxm-page-header-title-weight, var(--brand-heading-weight, 600))',
             color: styles.titleColor as string,
             margin: 0,
           }}>Billing Automation</h1>

@@ -56,10 +56,13 @@ export function ErrorPagePreview({ styles, variants }: PreviewProps) {
       }}>
         <Icon glyph="question-mark-circle" size={iconSize * 0.5} strokeWidth={1.5} />
       </div>
+      {/* Heading chains below mirror error-page.scss so the canvas reflects
+          the brand heading knobs — this preview hand-rolls its markup. */}
       {cfg.code && (
         <p style={{
+          fontFamily: 'var(--uxm-error-page-code-font, var(--brand-heading-font, inherit))',
           fontSize: codeSize,
-          fontWeight: 700,
+          fontWeight: 'var(--uxm-error-page-code-weight, var(--brand-heading-weight, 700))',
           lineHeight: 1,
           letterSpacing: '-0.02em',
           color: styles.codeColor as string,
@@ -67,8 +70,9 @@ export function ErrorPagePreview({ styles, variants }: PreviewProps) {
         }}>{cfg.code}</p>
       )}
       <h1 style={{
+        fontFamily: 'var(--uxm-error-page-title-font, var(--brand-heading-font, inherit))',
         fontSize: titleSize,
-        fontWeight: 600,
+        fontWeight: 'var(--uxm-error-page-title-weight, var(--brand-heading-weight, 600))',
         color: styles.titleColor as string,
         marginTop: 16,
         marginBottom: 0,

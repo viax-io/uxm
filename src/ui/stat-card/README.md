@@ -40,6 +40,8 @@ The `StatCardTrend` union (`'up' \| 'down' \| 'neutral'`) is exported for consum
 |----------|----------------|---------|---------|
 | `--uxm-stat-card-label-size` | – | `13px` | Label font size. |
 | `--uxm-stat-card-value-size` | – | `28px` | Value font size. |
+| `--uxm-stat-card-value-font` | `--brand-heading-font` | `inherit` | Value typeface. Unset brand = inherits the body face. |
+| `--uxm-stat-card-value-weight` | `--brand-heading-weight` | `700` | Value weight. |
 | `--uxm-stat-card-trend-up-color` | `--color-success-text` | – | `up` trend chip text/icon colour. |
 | `--uxm-stat-card-trend-down-color` | `--color-danger-text` | – | `down` trend chip text/icon colour. |
 

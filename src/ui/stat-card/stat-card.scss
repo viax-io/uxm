@@ -28,8 +28,9 @@
 
   &__value {
     color: var(--color-text);
+    font-family: var(--uxm-stat-card-value-font, var(--brand-heading-font, inherit));
     font-size: var(--uxm-stat-card-value-size, 28px);
-    font-weight: 700;
+    font-weight: var(--uxm-stat-card-value-weight, var(--brand-heading-weight, 700));
   }
 
   &__trend {

@@ -78,8 +78,9 @@
   &__title {
     color: var(--uxm-segment-row-title-color, var(--color-text));
     flex: 1;
+    font-family: var(--uxm-segment-row-title-font, var(--brand-heading-font, inherit));
     font-size: var(--uxm-segment-row-title-size, 16px);
-    font-weight: var(--uxm-segment-row-title-weight, 600);
+    font-weight: var(--uxm-segment-row-title-weight, var(--brand-heading-weight, 600));
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;

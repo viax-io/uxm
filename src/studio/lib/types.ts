@@ -13,6 +13,11 @@ export interface BrandConfig {
   iconUrlDark?: string;
   faviconUrlDark?: string;
   fontFamily?: string;
+  /** Typeface for heading surfaces. Unset = headings inherit the body face. */
+  headingFontFamily?: string;
+  /** Weight for heading surfaces ('500' | '600' | '700'). Unset = each
+   *  component keeps its own default (600, or 700 for the display sizes). */
+  headingFontWeight?: string;
   tokens?: BrandTokens;
 }
 
