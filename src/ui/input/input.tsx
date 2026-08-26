@@ -61,6 +61,20 @@ export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   inputRef?: Ref<HTMLInputElement>;
 }
 
+/**
+ * Join the consumer's `aria-describedby` with the atom's own error id instead
+ * of replacing it. These atoms spread `{...rest}` first and set managed props
+ * after, so a bare `aria-describedby={error ? errorId : undefined}` silently
+ * wipes a describedby the consumer passed — which is how `FormField`'s hint
+ * ends up unread. Order puts the consumer's ids first, error last.
+ */
+function mergeDescribedBy(
+  consumer: string | undefined,
+  errorId: string | undefined,
+): string | undefined {
+  return [consumer, errorId].filter(Boolean).join(' ') || undefined;
+}
+
 export function TextInput({
   className,
   type = 'text',
@@ -126,7 +140,7 @@ export function TextInput({
         className,
       )}
       aria-invalid={error ? true : undefined}
-      aria-describedby={error ? errorId : undefined}
+      aria-describedby={mergeDescribedBy(rest['aria-describedby'], error ? errorId : undefined)}
     />
   );
 
@@ -240,7 +254,7 @@ export function Textarea({
         className,
       )}
       aria-invalid={error ? true : undefined}
-      aria-describedby={error ? errorId : undefined}
+      aria-describedby={mergeDescribedBy(rest['aria-describedby'], error ? errorId : undefined)}
     />
   );
 
@@ -534,7 +548,7 @@ function SelectSingle({
           aria-disabled={disabled || undefined}
           aria-required={required || undefined}
           aria-invalid={shownError ? true : undefined}
-          aria-describedby={shownError ? errorId : undefined}
+          aria-describedby={mergeDescribedBy(rest['aria-describedby'], shownError ? errorId : undefined)}
           id={id}
           style={style}
           className={cn(
@@ -684,7 +698,7 @@ function SelectMulti({
             aria-disabled={disabled || undefined}
             aria-required={required || undefined}
             aria-invalid={shownError ? true : undefined}
-            aria-describedby={shownError ? errorId : undefined}
+            aria-describedby={mergeDescribedBy(rest['aria-describedby'], shownError ? errorId : undefined)}
             id={id}
             style={style}
             className={cn(

@@ -4,7 +4,7 @@ import { hexToHsl, retintHue } from '@/lib/contrast';
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
 import {
-  Badge, ButtonGroup, ButtonPrimary, ButtonTertiary, Card, Cluster, ColorInputPopover,
+  Badge, ButtonGroup, ButtonPrimary, ButtonTertiary, Card, ColorInputPopover,
   Dialog, Disclosure, FormField, Modal, ResponsiveGrid, Select, Stack, Tabs,
 } from '@/ui';
 
@@ -372,17 +372,18 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                 labelPosition="side"
                 hint="Applies to multi-line body copy, not compact chrome."
               >
-                {/* Cluster keeps the track at its content width: FormField's
-                    control column is a flex COLUMN, so its default stretch would
-                    blow an inline-flex segmented track out to full width. */}
-                <Cluster gap={0}>
-                  <ButtonGroup
-                    value={brand.bodyLineHeight ?? ''}
-                    onChange={(v) => setBrand({ bodyLineHeight: v || undefined })}
-                    aria-label="Body line height"
-                    options={LINE_HEIGHT_OPTIONS}
-                  />
-                </Cluster>
+                {/* `alignSelf` rather than a wrapper: FormField's control column
+                    is a flex COLUMN whose default stretch would blow this
+                    inline-flex track out to full width — but a wrapper would
+                    also take FormField's injected `aria-describedby` instead of
+                    the control, leaving the hint unannounced. */}
+                <ButtonGroup
+                  style={{ alignSelf: 'start' }}
+                  value={brand.bodyLineHeight ?? ''}
+                  onChange={(v) => setBrand({ bodyLineHeight: v || undefined })}
+                  aria-label="Body line height"
+                  options={LINE_HEIGHT_OPTIONS}
+                />
               </FormField>
             </Stack>
           ) : (
@@ -411,14 +412,13 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                 labelPosition="side"
                 hint="Default keeps each component's own weight."
               >
-                <Cluster gap={0}>
-                  <ButtonGroup
-                    value={headingFontWeight}
-                    onChange={(v) => setBrand({ headingFontWeight: v || undefined })}
-                    aria-label="Heading weight"
-                    options={WEIGHT_OPTIONS}
-                  />
-                </Cluster>
+                <ButtonGroup
+                  style={{ alignSelf: 'start' }}
+                  value={headingFontWeight}
+                  onChange={(v) => setBrand({ headingFontWeight: v || undefined })}
+                  aria-label="Heading weight"
+                  options={WEIGHT_OPTIONS}
+                />
               </FormField>
 
               <Disclosure

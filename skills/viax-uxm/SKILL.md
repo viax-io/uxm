@@ -1322,8 +1322,9 @@ skill:
   `inline-flex` (content-width by design), but `.uxm-form-field__control` is a flex COLUMN whose
   default `align-items: stretch` blows the track out to the full column — leaving a long empty
   run after the last segment. FormField does that deliberately for inputs, which should fill
-  their column; a segmented track should not. Wrap it in a `Cluster` (flex row, children keep
-  content width).
+  their column; a segmented track should not. Fix it with `style={{ alignSelf: 'start' }}` on the
+  ButtonGroup — **not** a wrapper element, which would swallow FormField's injected
+  `aria-describedby` and silence the hint.
 
 ### Unreleased
 
@@ -1332,6 +1333,18 @@ skill:
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
+
+- **`FormField`'s `hint` is now announced.** It rendered as a bare `<span>` with no association,
+  so assistive tech never read it — every hint in every consuming app was decorative. The hint
+  now gets an id and the control gets `aria-describedby`. Fixing that alone was not enough: the
+  input family (`TextInput`, `Textarea`, `Select`, and the multi variants) spread `{...rest}`
+  first and then set `aria-describedby={error ? errorId : undefined}`, which silently **wiped**
+  any value the consumer passed. Those five sites now merge instead of replace, consumer ids
+  first and the error id last, so a hint and an error are both announced.
+  ⚠️ **Keep the control as `FormField`'s DIRECT child.** It injects the id and `aria-describedby`
+  via `cloneElement`, so a layout wrapper takes them instead and the hint goes unannounced. This
+  supersedes the earlier "wrap a `ButtonGroup` in a `Cluster` to stop it stretching" note — use
+  `style={{ alignSelf: 'start' }}` on the control itself instead.
 
 ## Workflow
 
