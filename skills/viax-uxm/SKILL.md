@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax/uxm — the Viax UI primitive library
-  (95 BEM-classed React components as of v4.26.0, design tokens, per-component/per-state themable
+  (95 BEM-classed React components as of v4.26.1, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax/uxm or the Viax design system; the working directory contains @viax/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax/uxm — React 19 Component Library
 
-> Documents `@viax/uxm` **v4.26.0** (95 components). To refresh after a new library release, run
+> Documents `@viax/uxm` **v4.26.1** (95 components). To refresh after a new library release, run
 > the `viax-uxm-skill-update` skill — it reads this marker to compute the delta.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax/uxm`. It does not ge
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax/uxm` is or will be a dependency of the project.
 
-## v4.26.0 — current API surface (overrides training data)
+## v4.26.1 — current API surface (overrides training data)
 
 The library went through a fast release train (1.1.0 → 3.0.1, June–July 2026). If your knowledge
 of the library or old code conflicts with this list, THIS list wins.
@@ -923,6 +923,18 @@ skill:
   in the workbench behind a **Hints** On/Off variant (off by default: with Subtitles also on
   a row concatenates label + subtitle + hint into one accessible name).
 
+### New in 4.20.0
+
+- **Seven new icons** in the shared glyph set: `play`, `pause`, `calculator`, `paper-clip`,
+  `json`, `bot`, `money` — Heroicons-style outlines (Lucide-style `bot`/`json` to match the
+  set). They auto-surface in `ICONS` / `ICON_OPTIONS` / `getIcon` and the studio icon grid.
+- **`eyedropper` redrawn as an outline — it now responds to `strokeWidth`.** It had shipped as
+  a `filled` body glyph, which paints `fill` rather than `stroke`, so the stroke-width knob was
+  ignored. Visual weight now tracks the rest of the set.
+- **The registry set is currently all-outline** — no glyph sets `filled: true`, so every icon
+  responds to `strokeWidth`. The `filled` mode stays as a documented extension point for a
+  future glyph that can't be expressed as a stroke (e.g. a solid brand mark).
+
 ### New in 4.21.0
 
 - **`FormField` — `--uxm-form-field-side-label-valign`.** New CSS-var knob controlling the
@@ -1060,6 +1072,16 @@ skill:
   untouched. Both presets sit at the same (0,2,0) specificity **including `medium`**, whose
   declarations look like a redundant restatement of the base block — leave medium to the base rule
   and a consumer's `.uxm-avatar { width }` would beat medium while still losing to `--small`.
+
+### New in 4.26.1
+
+- **`AppSidebar`'s collapsed rail now announces status.** The label and the inline `badge` are
+  kept in the accessibility tree when collapsed (visually clipped — the SidebarNavTrigger
+  recipe) instead of dropped, so a row reads identically in both states ("Inbox 3"); the corner
+  status dot stays `aria-hidden`, a sighted-only stand-in backed by the clipped badge text.
+  Previously the collapsed row's name was only the `title` attribute and the status was
+  invisible to assistive tech. `trailing` is still dropped when collapsed (it's interactive —
+  a clipped focusable control would be an invisible tab stop). No API change.
 
 ### Unreleased
 

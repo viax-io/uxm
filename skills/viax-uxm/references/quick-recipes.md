@@ -560,7 +560,7 @@ const actions: BulkAction[] = [
 Standalone `Menu` (overflow / command list) owns only the trigger contract — spread `triggerProps`
 onto any element: `<Menu items={...} renderTrigger={({ triggerProps }) => <IconButton {...triggerProps}><Icon glyph="kebab"/></IconButton>} />`.
 
-### The other shape of the same atom: a context switcher (unreleased)
+### The other shape of the same atom: a context switcher
 
 Same DOM, same ARIA, same `--uxm-menu-*` knobs — what changes is the **entries** plus two framing
 props. Still a `Menu` and not a `Select` for two independent reasons: switching context is an action
