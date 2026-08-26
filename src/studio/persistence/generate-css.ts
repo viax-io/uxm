@@ -84,6 +84,12 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     paddingY: '--uxm-number-input-padding-y',
     fontSize: '--uxm-number-input-font-size',
   },
+  // Without this entry `fontSize` falls through REAL_CSS_PROPS and emits a
+  // literal `font-size` on `.uxm-color-input`, which the atom's own children
+  // (`__value-field`, `__format`) always beat — so the knob did nothing at all.
+  'color-input': {
+    fontSize: '--uxm-color-input-font-size',
+  },
   'currency-input': {
     backgroundColor: '--uxm-currency-input-background-color',
     borderColor: '--uxm-currency-input-border-color',
@@ -829,7 +835,9 @@ function toCSS(key: string, componentId: string): string {
 function formatValue(value: string | number | boolean, key: string): string {
   if (typeof value === 'boolean') return value ? '1' : '0';
   if (typeof value === 'number') {
-    const unitless = ['fontWeight', 'titleWeight', 'nameWeight', 'typeLabelWeight', 'shadow', 'disabledOpacity'];
+    // `lineHeight` is a ratio, not a length — without it here a knob saved as
+    // 1.5 emits `line-height: 1.5px`, which collapses every line box.
+    const unitless = ['fontWeight', 'titleWeight', 'nameWeight', 'typeLabelWeight', 'lineHeight', 'shadow', 'disabledOpacity'];
     // `opacity` is always unitless — match every *Opacity knob (e.g. the
     // per-element `itemDisabledOpacity` / `optionDisabledOpacity` variants)
     // so a saved value never gets a spurious `px` suffix.

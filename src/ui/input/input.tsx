@@ -524,6 +524,13 @@ function SelectSingle({
           {...(rest as HTMLAttributes<HTMLDivElement>)}
           {...triggerProps}
           tabIndex={disabled ? -1 : 0}
+          // The trigger is what lands in the tab order, so it needs the name.
+          // `aria-label` is destructured out of `rest` above and forwarded to
+          // the Listbox, which puts it on the popup panel — naming the popup,
+          // not the control. A `<div role="combobox">` also can't be named by a
+          // wrapping `<label>` (a div isn't labelable), so without this the
+          // control announces as an unnamed combobox.
+          aria-label={ariaLabel}
           aria-disabled={disabled || undefined}
           aria-required={required || undefined}
           aria-invalid={shownError ? true : undefined}
@@ -672,6 +679,8 @@ function SelectMulti({
             {...(rest as HTMLAttributes<HTMLDivElement>)}
             {...triggerProps}
             tabIndex={disabled ? -1 : 0}
+            // Names the control itself, not just the popup — see SelectSingle.
+            aria-label={ariaLabel}
             aria-disabled={disabled || undefined}
             aria-required={required || undefined}
             aria-invalid={shownError ? true : undefined}
