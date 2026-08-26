@@ -44,9 +44,9 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — `title` is shadowed 
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
-| `--uxm-error-page-icon-bg` | `--color-surface-alt` | – | Icon tile background. |
-| `--uxm-error-page-icon-color` | `--color-text-muted` | – | Icon tile foreground. |
-| `--uxm-error-page-icon-size` | – | `64px` | Icon tile size. |
+| `--uxm-error-page-icon-bg` | `--color-accent-subtle` | – | Icon tile background. |
+| `--uxm-error-page-icon-color` | `--color-accent-bold` | – | Icon tile foreground. |
+| `--uxm-error-page-icon-size` | – | `56px` | Icon tile size. |
 | `--uxm-error-page-code-color` | `--color-text-subtle` | – | Status-code colour. |
 | `--uxm-error-page-code-size` | – | `88px` | Status-code font size. |
 | `--uxm-error-page-code-font` | `--brand-heading-font` | `inherit` | Status-code typeface. Unset brand = inherits the body face. |
@@ -57,7 +57,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — `title` is shadowed 
 | `--uxm-error-page-title-weight` | `--brand-heading-weight` | `600` | Title weight. |
 | `--uxm-error-page-message-color` | `--color-text-muted` | – | Message colour. |
 | `--uxm-error-page-message-size` | – | `14px` | Message font size. |
-| `--uxm-error-page-message-max-width` | – | `420px` | Message wrap width. |
+| `--uxm-error-page-message-max-width` | – | `28rem` | Message wrap width. |
 
 ## Design tokens (MODO-configurable)
 
