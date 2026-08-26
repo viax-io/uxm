@@ -226,13 +226,17 @@ their registry values. **The script is now checked in:
 per-state knob or registry default (eyeballing found 5 of the first 19). It
 normalises whitespace (a multiline `var()` like `ButtonPrimary`'s `color-mix`
 hover defeats single-line regexes) and accepts `px`-suffixed CSS fallbacks
-for bare numeric registry defaults. Treat a hit as "go look", not "go fix" —
-and expect it to exit 1 today: its full-repo sweep shows **19 known
-remaining drifts** on knobs outside the fixed sets (`hoverText` /
-`disabledText` / `activeText` on breadcrumb, explorer-*, link, list-item,
-disclosure, sidebar-nav-item, button-tertiary; `tabs-underline.barColor`;
-icon-button active pair; `input-with-icon.hoverBg`;
-`slider.hoverThumbColor`) — an inventoried follow-up, not a regression. `PillSelect` is NOT on this list: its
+for bare numeric registry defaults. Treat a hit as "go look", not "go fix":
+of the 19 hits its first full-repo run produced, **7 were legacy-alias
+chains** — `var(--uxm-x-new, var(--uxm-x-old, <token>))` where the innermost
+token already matched the registry (the script now resolves those) — and 11
+were real and are fixed, so the script runs green (exit 0) and can gate CI.
+Three of the 11 changed a *visible aesthetic*, not just a dead state, and
+are flagged for design review in the MR: `tabs-underline.barColor`
+(accent-bold → accent — the underline bar lightens), icon-button pressed
+fill (surface-alt → surface), and `slider.hoverThumbColor` (the alias to the
+resting thumb var was replaced by the registry's accent-bold — a themed
+resting thumb no longer drags the hover tone with it). `PillSelect` is NOT on this list: its
 registry default is `1` **by design** (`composite.ts` — dimming would
 double-dim already-muted chips), so its flat disabled look is correct. Check
 any per-state block against the registry before assuming it's clean.

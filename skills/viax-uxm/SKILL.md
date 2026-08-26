@@ -1161,6 +1161,16 @@ skill:
   has always previewed. Visual change for consumers that never set the vars; saved overrides
   still win. (`ButtonPrimary`'s hover was already correct — its `color-mix` fallback matches
   the registry.)
+- **The dead-fallback class is now closed repo-wide, and a checked-in script guards it.**
+  `node scripts/check-state-var-drift.mjs` diffs every registry state knob
+  (hover/active/pressed/disabled) against the shipped SCSS fallback, resolving legacy-alias
+  chains and `px`-suffixed numerics; it runs green as of this MR. The final sweep closed 11
+  more declarations (`disabledText`/`disabledColor` on button-tertiary, sidebar-nav-item,
+  explorer-list-item, explorer-section, list-item, disclosure; `list-item.disabledBg`;
+  `input-with-icon.hoverBg`; and three that change a **visible aesthetic, flagged for design
+  review**: `tabs-underline.barColor` accent-bold → accent, icon-button pressed fill
+  surface-alt → surface, `slider.hoverThumbColor` now the registry's accent-bold instead of
+  aliasing the resting thumb).
 - **Disabled dim now actually paints on 17 more atoms.** A scripted registry-vs-CSS diff of
   every `disabledOpacity` default found 19 drifting `--uxm-*-disabled-opacity` fallbacks
   (`1` in CSS vs `0.4`/`0.5` in the registry) — the whole `Button` family, `Slider`,

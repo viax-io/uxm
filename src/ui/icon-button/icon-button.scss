@@ -39,7 +39,7 @@
 .uxm-icon-button:active {
   background-color: var(
     --uxm-icon-button-active-bg,
-    var(--uxm-icon-button-hover-bg, var(--color-surface-alt))
+    var(--uxm-icon-button-hover-bg, var(--color-surface))
   );
   color: var(--uxm-icon-button-active-color, var(--uxm-icon-button-hover-color, var(--color-text)));
 }

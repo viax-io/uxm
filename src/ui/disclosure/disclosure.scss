@@ -70,7 +70,7 @@
 
   &:disabled &__label,
   &[aria-disabled="true"] &__label {
-    color: var(--uxm-disclosure-disabled-text, var(--color-text));
+    color: var(--uxm-disclosure-disabled-text, var(--color-text-muted));
   }
 
   &__value {

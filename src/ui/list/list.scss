@@ -44,8 +44,8 @@
 
   &:disabled,
   &[aria-disabled="true"] {
-    background-color: var(--uxm-list-item-disabled-bg, transparent);
-    color: var(--uxm-list-item-disabled-text, var(--color-text));
+    background-color: var(--uxm-list-item-disabled-bg, var(--color-card));
+    color: var(--uxm-list-item-disabled-text, var(--color-text-muted));
     opacity: var(--uxm-list-item-disabled-opacity, 0.5);
     pointer-events: none;
   }

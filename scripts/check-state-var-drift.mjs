@@ -53,11 +53,18 @@ for (const { cid, key, def } of knobs) {
   if (reads.length === 0) continue; // knob has no CSS read — a different defect class (dead emitted var)
   // Numeric knobs are emitted with a px suffix by generate-css, so a CSS
   // fallback of `2px` against a registry default of `2` is agreement, not drift.
-  const candidates = [`var(${cssVar}, ${squash(def)})`];
-  if (/^[\d.]+$/.test(def)) candidates.push(`var(${cssVar}, ${def}px)`);
-  if (!reads.some(({ text }) => candidates.some((c) => text.includes(c)))) {
+  // Legacy-alias chains — var(--uxm-x-new, var(--uxm-x-old, <token>)) — are
+  // agreement too when the INNERMOST token matches the registry default: the
+  // middle var is an unset alias hook, so the final token is what paints.
+  const defs = [squash(def)];
+  if (/^[\d.]+$/.test(def)) defs.push(`${def}px`);
+  const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(
+    `var\\(${escape(cssVar)}, (?:var\\(--uxm-[\\w-]+, )*(?:${defs.map(escape).join('|')})\\)+`,
+  );
+  if (!reads.some(({ text }) => pattern.test(text))) {
     drift += 1;
-    console.log(`DRIFT ${cid}.${key}: registry says ${def}; no SCSS reads ${candidates[0]} (${reads.map((r) => r.f).join(', ')})`);
+    console.log(`DRIFT ${cid}.${key}: registry says ${def}; no SCSS reads var(${cssVar}, ${defs[0]}) (${reads.map((r) => r.f).join(', ')})`);
   }
 }
 console.log(drift === 0 ? 'OK — zero state-knob drift' : `${drift} drifting declaration(s)`);

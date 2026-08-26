@@ -45,7 +45,7 @@
       font-weight: 600;
 
       &::after {
-        background-color: var(--uxm-tabs-underline-bar-color, var(--color-accent-bold));
+        background-color: var(--uxm-tabs-underline-bar-color, var(--color-accent));
         border-radius: var(--uxm-tabs-underline-bar-radius, 2px);
         bottom: -1px;
         content: "";

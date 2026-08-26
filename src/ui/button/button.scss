@@ -126,7 +126,7 @@
   }
 
   &:disabled {
-    color: var(--uxm-button-tertiary-disabled-color, var(--color-text));
+    color: var(--uxm-button-tertiary-disabled-color, var(--color-text-muted));
     opacity: var(--uxm-button-tertiary-disabled-opacity, 0.4);
   }
 }
