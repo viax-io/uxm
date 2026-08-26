@@ -122,6 +122,8 @@ the store getter. Importing the wrong one fails silently.
       "logoUrl": "…", "iconUrl": "…", "faviconUrl": "…",
       "logoUrlDark": "…", "iconUrlDark": "…", "faviconUrlDark": "…",
       "fontFamily": "Manrope",   // drives --brand-font via generateOverridesCss
+      "headingFontFamily": "Space Grotesk",  // → --brand-heading-font; optional, additive
+      "headingFontWeight": "600",            // → --brand-heading-weight ('500'|'600'|'700')
       "tokens": { "light": { "--color-accent": "#15895F" }, "dark": { … } }
     },
     // v2 multi-theme. The top-level overrides/brand REMAIN the default theme —
@@ -231,6 +233,14 @@ top-level default.
 
 ## Gotchas that actually bite
 
+- **Heading typography is opt-in, and a stale `@viax/uxm` silently swallows it.** `brand.headingFontFamily`
+  / `headingFontWeight` publish as `--brand-heading-font` / `--brand-heading-weight`, which only the
+  heading surfaces read (`PageHeader` / `DetailSection` / `SegmentRow` titles, `ErrorPage` code + title,
+  `StatCard` value). Unset is *not* a bug — every surface keeps its own literal fallback, so nothing
+  changes until a heading font is chosen. Two consequences: a host whose server regenerates the CSS with
+  an older `@viax/uxm` persists the JSON but emits no heading vars (bump the package, not the config),
+  and an old published sheet predates the vars entirely — the studio's live mirror re-declares them as
+  `initial` when unset precisely so reverting repaints immediately instead of waiting for the next Publish.
 - **Never hardcode brand values — anywhere.** Not in global CSS (`--color-accent*` and friends),
   not as a build-time answer to a "what's your accent colour?" prompt, not as defaults in the
   config store. The published config owns the accent ramp, the logo, the favicon and the

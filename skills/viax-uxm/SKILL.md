@@ -1189,6 +1189,19 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Brand Settings — heading typeface + weight.** Typography now has three controls:
+  the existing body typeface plus an optional **heading typeface** ("Same as body" by
+  default) and **heading weight** (Default / 500 / 600 / 700). They persist as
+  `brand.headingFontFamily` / `brand.headingFontWeight` and publish as the global
+  `--brand-heading-font` / `--brand-heading-weight`. Six title surfaces consume them
+  through the usual two-layer chain — `PageHeader` title, `DetailSection` title,
+  `SegmentRow` title, `ErrorPage` code + title, `StatCard` value — each keeping its own
+  literal as the last fallback, so **unset is pixel-identical to before** (weight stays
+  600, or 700 for `ErrorPage` code and `StatCard` value). The 11px uppercase eyebrows
+  (`SectionHeader`, `ExplorerSection`) are deliberately **not** included — a display face
+  at that size reads wrong. Each surface also gained a per-instance escape hatch
+  (`--uxm-page-header-title-font` / `-title-weight`, etc.) that wins over the brand token.
+
 ## Workflow
 
 ### Before writing any code

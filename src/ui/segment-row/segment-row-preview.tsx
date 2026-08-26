@@ -25,7 +25,17 @@ export function SegmentRowPreview({ styles, variants }: PreviewProps) {
     '--uxm-segment-row-accent-radius': `${styles.accentRadius}px`,
     '--uxm-segment-row-title-color': styles.titleColor,
     '--uxm-segment-row-title-size': `${styles.titleSize}px`,
-    '--uxm-segment-row-title-weight': styles.titleWeight,
+    // Left UNSET while the knob sits at its registry default (600), so the
+    // atom's own `var(--uxm-…, var(--brand-heading-weight, 600))` chain can
+    // reach the brand token — projecting the default would pin the first
+    // fallback slot and make the brand heading weight look inert here while
+    // every other heading surface responds. An explicit override is projected
+    // and wins, exactly as the published CSS behaves (the properties panel
+    // drops an override the moment it equals the default, so "value ===
+    // default" is a sound "untouched" signal).
+    // `Number(...)` so a persisted string "600" counts as untouched too.
+    '--uxm-segment-row-title-weight':
+      Number(styles.titleWeight) === 600 ? undefined : styles.titleWeight,
     '--uxm-segment-row-count-bg': styles.countBg,
     '--uxm-segment-row-count-color': styles.countColor,
     '--uxm-segment-row-count-size': `${styles.countSize}px`,

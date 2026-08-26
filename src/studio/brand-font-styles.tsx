@@ -1,5 +1,5 @@
 import { useUxm } from './lib/context';
-import { fontFileUrl, safeFontFamily } from './persistence/generate-css';
+import { fontFileUrl, safeFontFamily, safeFontWeight } from './persistence/generate-css';
 
 /**
  * Live mirror of the brand-font output that `generateOverridesCss` emits
@@ -25,17 +25,32 @@ import { fontFileUrl, safeFontFamily } from './persistence/generate-css';
  * `!important`), and reverting to the default live only works by
  * re-declaring `--brand-font` with the default stack — returning null
  * would leave the published font in charge until the next Publish.
+ *
+ * The heading vars follow the same always-declare rule, but their "unset"
+ * state has no default stack to re-declare (an unset `--brand-heading-font`
+ * means "let each component's own fallback paint"). `--x: initial` is the
+ * spec's way to make a custom property guaranteed-invalid, i.e. genuinely
+ * unset at use time — so this live block cancels a previously published
+ * heading font and the components' `var(…, inherit)` / literal-weight
+ * fallbacks take back over without waiting for the next Publish.
  */
 export function BrandFontStyles() {
   const { brand } = useUxm();
   const fontFamily = safeFontFamily(brand.fontFamily);
+  const headingFontFamily = safeFontFamily(brand.headingFontFamily);
+  const headingFontWeight = safeFontWeight(brand.headingFontWeight);
 
   return (
     <>
       {fontFamily && (
         <link rel="stylesheet" precedence="default" href={fontFileUrl(fontFamily)} />
       )}
-      <style>{`:root { --brand-font: ${fontFamily ? `"${fontFamily}", ` : ''}var(--font-inter), system-ui, sans-serif; }
+      {headingFontFamily && headingFontFamily !== fontFamily && (
+        <link rel="stylesheet" precedence="default" href={fontFileUrl(headingFontFamily)} />
+      )}
+      <style>{`:root { --brand-font: ${fontFamily ? `"${fontFamily}", ` : ''}var(--font-inter), system-ui, sans-serif;
+  --brand-heading-font: ${headingFontFamily ? `"${headingFontFamily}", var(--font-inter), system-ui, sans-serif` : 'initial'};
+  --brand-heading-weight: ${headingFontWeight ?? 'initial'}; }
 body { font-family: var(--brand-font); }`}</style>
     </>
   );

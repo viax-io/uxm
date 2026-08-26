@@ -42,8 +42,9 @@
 
   &__title {
     color: var(--color-text);
+    font-family: var(--uxm-detail-section-title-font, var(--brand-heading-font, inherit));
     font-size: var(--uxm-detail-section-title-size, 15px);
-    font-weight: 600;
+    font-weight: var(--uxm-detail-section-title-weight, var(--brand-heading-weight, 600));
     margin: 0;
   }
 

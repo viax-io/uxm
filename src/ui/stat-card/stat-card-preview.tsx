@@ -31,7 +31,13 @@ export function StatCardPreview({ styles }: PreviewProps) {
             {stat.label}
           </p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>
-            <span style={{ fontSize: styles.valueSize as number, fontWeight: 700, color: 'var(--color-text)' }}>
+            {/* Mirrors stat-card.scss so the canvas reflects the brand heading knobs. */}
+            <span style={{
+              fontFamily: 'var(--uxm-stat-card-value-font, var(--brand-heading-font, inherit))',
+              fontSize: styles.valueSize as number,
+              fontWeight: 'var(--uxm-stat-card-value-weight, var(--brand-heading-weight, 700))',
+              color: 'var(--color-text)',
+            }}>
               {stat.value}
             </span>
             <span style={{

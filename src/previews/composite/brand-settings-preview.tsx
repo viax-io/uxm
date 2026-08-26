@@ -105,6 +105,12 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
     return base;
   };
   const fontFamily = brand.fontFamily ?? '';
+  const headingFontFamily = brand.headingFontFamily ?? '';
+  const headingFontWeight = brand.headingFontWeight ?? '';
+  // The specimen mirrors the real cascade: an unset heading face falls through
+  // to the body face (which itself falls through to the inherited default).
+  const headingSpecimenStack =
+    FONT_OPTIONS.find((f) => f.value === (headingFontFamily || fontFamily))?.stack ?? 'inherit';
 
   return (
     <div style={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -242,32 +248,83 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
 
       <Group
         title="Typography"
-        description="Primary typeface applied to Modo body text. Changes apply live and persist on Publish."
+        description="Typefaces applied across Modo. Headings are optional — they inherit the body face unless you set one. Changes apply live and persist on Publish."
       >
-        <section>
-          <Select
-            value={fontFamily}
-            onChange={(e) => setBrand({ fontFamily: e.target.value || undefined })}
-            aria-label="Primary typeface"
-            style={{ width: '100%' }}
-          >
-            <option value="">Inter (default)</option>
-            {FONT_OPTIONS.slice(1).map((f) => (
-              <option key={f.value} value={f.value}>{f.label}</option>
-            ))}
-          </Select>
-          <p
+        <section style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <Field label="Body typeface">
+            <Select
+              value={fontFamily}
+              onChange={(e) => setBrand({ fontFamily: e.target.value || undefined })}
+              aria-label="Body typeface"
+              style={{ width: '100%' }}
+            >
+              <option value="">Inter (default)</option>
+              {FONT_OPTIONS.slice(1).map((f) => (
+                <option key={f.value} value={f.value}>{f.label}</option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field label="Heading typeface">
+            <Select
+              value={headingFontFamily}
+              onChange={(e) => setBrand({ headingFontFamily: e.target.value || undefined })}
+              aria-label="Heading typeface"
+              style={{ width: '100%' }}
+            >
+              <option value="">Same as body</option>
+              {/* All ten, including Inter — heading-Inter over a different body
+                  face is a real choice, so it isn't labelled "(default)" here. */}
+              {FONT_OPTIONS.map((f) => (
+                <option key={f.value} value={f.value}>
+                  {f.value === 'Inter' ? 'Inter' : f.label}
+                </option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field label="Heading weight" hint="Default keeps each component's own weight.">
+            <Select
+              value={headingFontWeight}
+              onChange={(e) => setBrand({ headingFontWeight: e.target.value || undefined })}
+              aria-label="Heading weight"
+              style={{ width: '100%' }}
+            >
+              <option value="">Default</option>
+              <option value="500">500 — medium</option>
+              <option value="600">600 — semibold</option>
+              <option value="700">700 — bold</option>
+            </Select>
+          </Field>
+
+          <div
             style={{
-              marginTop: 12, padding: 16,
+              marginTop: 4, padding: 16,
               border: '1px solid var(--color-border)', borderRadius: 6,
               backgroundColor: 'var(--color-surface)',
-              fontFamily: FONT_OPTIONS.find((f) => f.value === fontFamily)?.stack ?? 'inherit',
-              fontSize: 18,
               color: 'var(--color-text)',
             }}
           >
-            The quick brown fox jumps over the lazy dog.
-          </p>
+            <p
+              style={{
+                margin: 0,
+                fontFamily: headingSpecimenStack,
+                fontSize: 22,
+                fontWeight: headingFontWeight ? Number(headingFontWeight) : 600,
+              }}
+            >
+              Quarterly performance review
+            </p>
+            <p
+              style={{
+                margin: '8px 0 0',
+                fontFamily: FONT_OPTIONS.find((f) => f.value === fontFamily)?.stack ?? 'inherit',
+                fontSize: 18,
+              }}
+            >
+              The quick brown fox jumps over the lazy dog.
+            </p>
+          </div>
         </section>
       </Group>
 
@@ -312,6 +369,34 @@ function Group({
         {children}
       </div>
     </section>
+  );
+}
+
+/** Labelled wrapper for a single control. Sentence case, not the uppercase
+ *  eyebrow the Group header uses — these sit close together and read as prose. */
+function Field({
+  label, hint, children,
+}: {
+  label: string; hint?: string; children: React.ReactNode;
+}) {
+  return (
+    <label style={{ display: 'block' }}>
+      <span style={{
+        display: 'block', marginBottom: 6,
+        fontSize: 12, fontWeight: 500, color: 'var(--color-text)',
+      }}>
+        {label}
+      </span>
+      {children}
+      {hint && (
+        <span style={{
+          display: 'block', marginTop: 4,
+          fontSize: 12, color: 'var(--color-text-muted)',
+        }}>
+          {hint}
+        </span>
+      )}
+    </label>
   );
 }
 

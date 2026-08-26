@@ -23,8 +23,9 @@
 
   &__code {
     color: var(--uxm-error-page-code-color, var(--color-text-subtle));
+    font-family: var(--uxm-error-page-code-font, var(--brand-heading-font, inherit));
     font-size: var(--uxm-error-page-code-size, 88px);
-    font-weight: 700;
+    font-weight: var(--uxm-error-page-code-weight, var(--brand-heading-weight, 700));
     letter-spacing: -0.02em;
     line-height: 1;
     margin: 0;
@@ -32,8 +33,9 @@
 
   &__title {
     color: var(--uxm-error-page-title-color, var(--color-text));
+    font-family: var(--uxm-error-page-title-font, var(--brand-heading-font, inherit));
     font-size: var(--uxm-error-page-title-size, 24px);
-    font-weight: 600;
+    font-weight: var(--uxm-error-page-title-weight, var(--brand-heading-weight, 600));
     margin: 16px 0 0;
   }
 
