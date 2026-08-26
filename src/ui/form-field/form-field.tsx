@@ -87,11 +87,27 @@ export function FormField({
   // child is a single element, reuse its own `id` if it already declares
   // one, or generate one and inject it via `cloneElement`.
   const generatedId = useId();
-  const childElement = isValidElement<{ id?: string }>(children) ? children : null;
+  const childElement = isValidElement<{ id?: string; 'aria-describedby'?: string }>(children)
+    ? children
+    : null;
   const childId = childElement?.props.id;
   const controlId = htmlFor ?? childId ?? generatedId;
-  const control =
-    childElement && !childId ? cloneElement(childElement, { id: controlId }) : children;
+  // The hint explains the control, so point the control at it — a bare <span>
+  // next to an input is invisible to assistive tech, which is how a hint like
+  // "Default keeps each component's own weight" goes unread.
+  const hintId = hint ? `${controlId}-hint` : undefined;
+  // MERGE, never overwrite: a control may already describe itself (Select and
+  // the input family wire their error message this way), and replacing that
+  // would silence the error.
+  const describedBy = [childElement?.props['aria-describedby'], hintId]
+    .filter(Boolean)
+    .join(' ') || undefined;
+  const control = childElement
+    ? cloneElement(childElement, {
+        ...(childId ? {} : { id: controlId }),
+        ...(describedBy ? { 'aria-describedby': describedBy } : {}),
+      })
+    : children;
 
   return (
     <div
@@ -108,7 +124,7 @@ export function FormField({
         {label}
       </label>
       <div className="uxm-form-field__control">{control}</div>
-      {hint && <span className="uxm-form-field__hint">{hint}</span>}
+      {hint && <span id={hintId} className="uxm-form-field__hint">{hint}</span>}
     </div>
   );
 }
