@@ -1261,15 +1261,6 @@ skill:
   calcs (`DateInput`, `TextInput`/`Textarea`, `EditableCell`) hold room for fixed-size icons and
   clear buttons, which correctly do not scale.
 
-- **AA-floored small text under the type scale.** `Menu`'s subtitle (11px) and hint (12px) —
-  the two sizes with documented AA reasoning — now floor themselves against a sub-100%
-  `--type-scale`: `font-size: max(<floor>, calc(<knob> * var(--type-scale, 1)))`. A compact
-  base size shrinks everything else in the menu but not these two; scaling up passes through,
-  and the sweep's checker classifies the `max()` shape as already-wrapped (no script change).
-  Also: the sweep-exception doc now names the real constant (`SKIP_FORWARDED_PROPS` — the
-  previously referenced `SKIP_EXACT` never existed), and both type-scale scripts follow the
-  repo's `no-console` disable-with-reason convention (lint is warning-free again).
-
 - **Every `font-size` now responds to `--type-scale`.** A scripted sweep wrapped the remaining
   160 declarations as `calc(<existing> * var(--type-scale, 1))` — the multiplication OUTSIDE the
   `var()`, so a projected knob default or a saved per-component override still scales. Unset is
@@ -1287,6 +1278,17 @@ skill:
   (`--uxm-select-dropdown-font-size`), so wrapping it too would scale twice — the line-start anchor
   plus a `SKIP_FORWARDED_PROPS` entry keyed by the **property name** keep it out; `em`/`inherit`
   already scale. `time-input.scss` keeps the only hand-written `calc()`.
+
+### New in 4.28.3
+
+- **AA-floored small text under the type scale.** `Menu`'s subtitle (11px) and hint (12px) —
+  the two sizes with documented AA reasoning — now floor themselves against a sub-100%
+  `--type-scale`: `font-size: max(<floor>, calc(<knob> * var(--type-scale, 1)))`. A compact
+  base size shrinks everything else in the menu but not these two; scaling up passes through,
+  and the sweep's checker classifies the `max()` shape as already-wrapped (no script change).
+  Also: the sweep-exception doc now names the real constant (`SKIP_FORWARDED_PROPS` — the
+  previously referenced `SKIP_EXACT` never existed), and both type-scale scripts follow the
+  repo's `no-console` disable-with-reason convention (lint is warning-free again).
 
 ### Unreleased
 
