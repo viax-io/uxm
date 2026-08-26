@@ -129,6 +129,27 @@ X.Y.Z`, not above it. The stamper renames in place and never reorders, so a
 section parked in the wrong slot is frozen there by the next release and the
 history reads scrambled from then on.
 
+**Third variant of the same trap: an MR that outlives a release gets its
+bullets silently folded under the freshly stamped heading at merge.** You
+write your notes under `### Unreleased`; while your MR is open, another MR
+releases and the stamper renames that heading on master; when your MR then
+merges, git reconciles your addition INTO the renamed (`### New in X.Y.Z`)
+section — your change ships in the NEXT release but its notes sit under the
+previous one, and that next release finds `### Unreleased` bare so it stamps
+no heading at all. Nothing in the diff looks wrong at merge time.
+
+**This actually happened — 26-08-2026, the AA-floor bullet.** Written under
+`### Unreleased` on `fix/type-scale-followups`; 4.28.2 released mid-flight
+and stamped that heading; the merge folded the bullet under `### New in
+4.28.2` although the change shipped in 4.28.3 — which then stamped markers
+but no heading (bare Unreleased is legitimately skipped). Fixed by
+hand-relabelling in `docs/skill-relabel-4.28.3`. **How to apply:** after any
+merge that crossed a release boundary (yours or master's), check WHERE your
+bullets ended up — the heading above them must name the release your change
+actually shipped in. When splicing headings by script, anchor on
+`^### Unreleased$` (line-anchored, last occurrence) — the guidance comment
+QUOTES the heading mid-line and a bare substring search hits the quote first.
+
 **This actually happened — 4.5.0 landed before 4.4.0.** The
 `fix/editable-cell-picker-open-chrome` MR opened its `### Unreleased` above the
 then-current `### New in 4.4.0`; the 4.5.0 release stamped it where it sat,
