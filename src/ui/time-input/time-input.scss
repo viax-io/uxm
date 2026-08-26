@@ -71,11 +71,15 @@ span.uxm-time-input__icon {
   box-sizing: border-box;
 }
 .uxm-time-input[data-format="12h"] .uxm-time-input__input {
-  /* 12h: reserve right padding for the clock icon + AM/PM suffix + gaps. */
+  /* 12h: reserve right padding for the clock icon + AM/PM suffix + gaps.
+     The meridiem term scales with the type scale because the suffix it reserves
+     room for is TEXT: at 150% "PM" renders ~30px, so a fixed 24px reserve would
+     leave it overlapping the typed value. The icon terms stay fixed — the icon
+     is sized by its own var, not by the type scale. */
   padding-right: calc(
     var(--uxm-time-input-icon-offset, 12px)
     + var(--uxm-time-input-icon-size, 16px)
-    + var(--uxm-time-input-meridiem-width, 24px)
+    + var(--uxm-time-input-meridiem-width, 24px) * var(--type-scale, 1)
     + 16px
   );
 }
@@ -96,7 +100,11 @@ span.uxm-time-input__icon {
   transform: translateY(-50%);
   color: var(--uxm-time-input-meridiem-color, var(--color-text-muted));
   font-family: inherit;
-  font-size: calc(var(--uxm-time-input-font-size, 14px) - 2px);
+  /* The whole expression scales, not just the field size: multiplying after the
+     subtraction keeps the meridiem proportionally 2px smaller at 100% and keeps
+     that ratio as the scale grows (at 150% it is 18px against the field's 21px).
+     Scaling only the field size would shrink the gap away as text got larger. */
+  font-size: calc((var(--uxm-time-input-font-size, 14px) - 2px) * var(--type-scale, 1));
   font-weight: 500;
   line-height: 1;
   letter-spacing: 0.06em;

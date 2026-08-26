@@ -1256,6 +1256,17 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`TimeInput`'s meridiem now scales too.** It was the one font-size the sweep left alone,
+  because it is derived (`field size - 2px`) rather than a plain value. The subtraction is now
+  parenthesised so the whole expression scales — at 150% the meridiem is 18px against the field's
+  21px, keeping the 2px offset proportional instead of letting it shrink away as text grows.
+  100% is unchanged at 12px. Every `font-size` in `src/ui` now responds to `--type-scale`.
+  The input's right padding reserves room for that suffix, so its meridiem term scales too —
+  otherwise "PM" (~30px at 150%) would overlap the typed value inside a fixed 24px reserve. This
+  is the one place in the library where spacing reserves room for **text**; the other reserve
+  calcs (`DateInput`, `TextInput`/`Textarea`, `EditableCell`) hold room for fixed-size icons and
+  clear buttons, which correctly do not scale.
+
 - **Every `font-size` now responds to `--type-scale`.** A scripted sweep wrapped the remaining
   160 declarations as `calc(<existing> * var(--type-scale, 1))` — the multiplication OUTSIDE the
   `var()`, so a projected knob default or a saved per-component override still scales. Unset is
