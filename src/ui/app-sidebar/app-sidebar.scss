@@ -145,6 +145,11 @@
       justify-content: center;
       margin: 0 auto;
       padding: 0;
+      /* Anchor the clipped label/badge spans below inside THIS row (the
+         SidebarNavTrigger recipe does the same) — without it they resolve
+         against some positioned ancestor up the tree and their geometry
+         doesn't travel with the scrolled nav. */
+      position: relative;
       /* Match the brand button's 32x32 footprint at the top of the
          collapsed sidebar so the chrome reads as a single column of tiles. */
       width: 32px;

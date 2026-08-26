@@ -13,6 +13,10 @@
    ──────────────────────────────────────────────────────────────────────── */
 
 .uxm-modal {
+  /* width: 100% + own border only add up under border-box — without it the
+     border alone pushes ~2px past the size-preset container in a reset-less
+     host (ui.css ships no reset). */
+  box-sizing: border-box;
   background-color: var(--uxm-modal-background-color, var(--color-card));
   border: 1px solid var(--uxm-modal-border-color, var(--color-border));
   border-radius: var(--uxm-modal-border-radius, 12px);
