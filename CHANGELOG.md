@@ -1,3 +1,10 @@
+## [4.29.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.29.0...v4.29.1) (2026-08-26)
+
+
+### Bug Fixes
+
+* **form-field:** announce the hint, and stop inputs wiping describedby ([ea6c3b3](https://gitlab.viax.tech/services-viax/uxm/commit/ea6c3b3728d1c275cd45c66c484b66f1f473c788))
+
 # [4.29.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.4...v4.29.0) (2026-08-26)
 
 
