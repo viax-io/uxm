@@ -1,3 +1,20 @@
+## [4.26.2](https://gitlab.viax.tech/services-viax/uxm/compare/v4.26.1...v4.26.2) (2026-08-26)
+
+
+### Bug Fixes
+
+* **checkbox,toggle-switch,radio-group:** dim disabled to the registry default ([8a2be0c](https://gitlab.viax.tech/services-viax/uxm/commit/8a2be0c358e338c3297e8a5fa3ef1afd055b747b))
+* **checkbox,toggle-switch,radio-group:** make the hover tone pass AA; correct the drift notes ([6ac2ee5](https://gitlab.viax.tech/services-viax/uxm/commit/6ac2ee5e7b9ac01020bc3f4f0f057a8637283e8c)), closes [1-#2](https://gitlab.viax.tech/1-/issues/2)
+* **checkbox:** make hover paint outside the studio ([4f2d24f](https://gitlab.viax.tech/services-viax/uxm/commit/4f2d24ff18164e2852355aeb2a0363b7819d3d7e))
+* **radio-group:** make hover paint outside the studio ([3ae3ba9](https://gitlab.viax.tech/services-viax/uxm/commit/3ae3ba9d4d522164565eb52d38e989104370559c))
+* **tabs:** dim disabled to the registry 0.5; wire the forced-state selectors ([0ce600b](https://gitlab.viax.tech/services-viax/uxm/commit/0ce600b041fcaa65c1f8aae369c04c878db72ace)), closes [3-#6](https://gitlab.viax.tech/3-/issues/6)
+* **tabs:** make hover paint outside the studio ([5212820](https://gitlab.viax.tech/services-viax/uxm/commit/52128203613d85c378a157badea25251a75660d9))
+* **toggle-switch,radio-group:** style the error message the atom renders ([f85d0be](https://gitlab.viax.tech/services-viax/uxm/commit/f85d0bedb55ea19f0eaff35ce91d23b5598fe812))
+* **toggle-switch:** make hover paint outside the studio ([e9c060c](https://gitlab.viax.tech/services-viax/uxm/commit/e9c060ca1edfde383371b2e79cc52b46c92a73cf))
+* **ui:** close the last 11 state-var drifts; teach the checker alias chains ([46a8c88](https://gitlab.viax.tech/services-viax/uxm/commit/46a8c8835fe9863322355aeb42d3ea022ae525c4))
+* **ui:** dim disabled to the registry default across 17 atoms ([06779a6](https://gitlab.viax.tech/services-viax/uxm/commit/06779a6f92760b090b757cf6619976ffdba91803))
+* **ui:** hover and pressed states paint on the six remaining dead-fallback atoms ([03533fc](https://gitlab.viax.tech/services-viax/uxm/commit/03533fc73723282b64d52d4309226dda3a123e71))
+
 ## [4.26.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.26.0...v4.26.1) (2026-08-26)
 
 
