@@ -45,7 +45,7 @@
 
   &:disabled {
     color: var(--uxm-button-primary-disabled-color, var(--color-text-inverse));
-    opacity: var(--uxm-button-primary-disabled-opacity, 1);
+    opacity: var(--uxm-button-primary-disabled-opacity, 0.4);
   }
 }
 
@@ -73,9 +73,9 @@
   }
 
   &:active {
-    background-color: var(--uxm-button-secondary-active-background-color, var(--color-card));
+    background-color: var(--uxm-button-secondary-active-background-color, var(--color-accent-bold));
     border-color: var(--uxm-button-secondary-active-border-color, var(--color-accent-bold));
-    color: var(--uxm-button-secondary-active-color, var(--color-accent-bold));
+    color: var(--uxm-button-secondary-active-color, var(--color-text-inverse));
   }
 
   &:focus-visible {
@@ -86,7 +86,7 @@
 
   &:disabled {
     color: var(--uxm-button-secondary-disabled-color, var(--color-accent-bold));
-    opacity: var(--uxm-button-secondary-disabled-opacity, 1);
+    opacity: var(--uxm-button-secondary-disabled-opacity, 0.4);
   }
 }
 
@@ -114,8 +114,8 @@
   }
 
   &:active {
-    background-color: var(--uxm-button-tertiary-active-background-color, transparent);
-    border-color: var(--uxm-button-tertiary-active-border-color, var(--color-border));
+    background-color: var(--uxm-button-tertiary-active-background-color, var(--color-surface));
+    border-color: var(--uxm-button-tertiary-active-border-color, var(--color-text-muted));
     color: var(--uxm-button-tertiary-active-color, var(--color-text));
   }
 
@@ -126,8 +126,8 @@
   }
 
   &:disabled {
-    color: var(--uxm-button-tertiary-disabled-color, var(--color-text));
-    opacity: var(--uxm-button-tertiary-disabled-opacity, 1);
+    color: var(--uxm-button-tertiary-disabled-color, var(--color-text-muted));
+    opacity: var(--uxm-button-tertiary-disabled-opacity, 0.4);
   }
 }
 
@@ -152,8 +152,8 @@
   }
 
   &:active {
-    background: var(--uxm-button-ghost-active-background-color, var(--color-surface-alt));
-    color: var(--uxm-button-ghost-active-color, var(--color-accent-bold));
+    background: var(--uxm-button-ghost-active-background-color, var(--color-surface));
+    color: var(--uxm-button-ghost-active-color, var(--color-accent));
   }
 
   &:focus-visible {
@@ -164,7 +164,7 @@
 
   &:disabled {
     color: var(--uxm-button-ghost-disabled-color, var(--color-accent-bold));
-    opacity: var(--uxm-button-ghost-disabled-opacity, 1);
+    opacity: var(--uxm-button-ghost-disabled-opacity, 0.4);
   }
 }
 

@@ -38,8 +38,8 @@
   &:disabled,
   &[aria-disabled="true"] {
     background-color: var(--uxm-explorer-list-item-disabled-bg, transparent);
-    color: var(--uxm-explorer-list-item-disabled-text, var(--color-text-strong));
-    opacity: var(--uxm-explorer-list-item-disabled-opacity, 1);
+    color: var(--uxm-explorer-list-item-disabled-text, var(--color-text-muted));
+    opacity: var(--uxm-explorer-list-item-disabled-opacity, 0.5);
   }
 
   &--active {

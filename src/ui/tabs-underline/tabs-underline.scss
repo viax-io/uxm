@@ -37,7 +37,7 @@
 
     &:disabled {
       color: var(--uxm-tabs-underline-disabled-text, var(--color-text-muted));
-      opacity: var(--uxm-tabs-underline-disabled-opacity, 1);
+      opacity: var(--uxm-tabs-underline-disabled-opacity, 0.5);
     }
 
     &--active {
@@ -45,7 +45,7 @@
       font-weight: 600;
 
       &::after {
-        background-color: var(--uxm-tabs-underline-bar-color, var(--color-accent-bold));
+        background-color: var(--uxm-tabs-underline-bar-color, var(--color-accent));
         border-radius: var(--uxm-tabs-underline-bar-radius, 2px);
         bottom: -1px;
         content: "";

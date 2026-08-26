@@ -28,8 +28,8 @@
   &:disabled,
   &[aria-disabled="true"] {
     background-color: var(--uxm-sidebar-nav-item-disabled-bg, transparent);
-    color: var(--uxm-sidebar-nav-item-disabled-text, var(--color-text-strong));
-    opacity: var(--uxm-sidebar-nav-item-disabled-opacity, 1);
+    color: var(--uxm-sidebar-nav-item-disabled-text, var(--color-text-muted));
+    opacity: var(--uxm-sidebar-nav-item-disabled-opacity, 0.5);
     pointer-events: none;
   }
 

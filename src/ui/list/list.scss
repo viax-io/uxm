@@ -32,7 +32,7 @@
   /* Interactive list items (rendered as <button>/<a>) read their state vars;
      fallbacks equal the resting look, so a static row is visually unchanged. */
   &:hover {
-    background-color: var(--uxm-list-item-hover-bg, transparent);
+    background-color: var(--uxm-list-item-hover-bg, var(--color-surface-alt));
     color: var(--uxm-list-item-hover-text, var(--color-text));
   }
 
@@ -44,15 +44,15 @@
 
   &:disabled,
   &[aria-disabled="true"] {
-    background-color: var(--uxm-list-item-disabled-bg, transparent);
-    color: var(--uxm-list-item-disabled-text, var(--color-text));
-    opacity: var(--uxm-list-item-disabled-opacity, 1);
+    background-color: var(--uxm-list-item-disabled-bg, var(--color-card));
+    color: var(--uxm-list-item-disabled-text, var(--color-text-muted));
+    opacity: var(--uxm-list-item-disabled-opacity, 0.5);
     pointer-events: none;
   }
 
   &--active {
-    background-color: var(--uxm-list-item-active-bg, transparent);
-    color: var(--uxm-list-item-active-text, var(--color-text));
+    background-color: var(--uxm-list-item-active-bg, var(--color-accent-subtle));
+    color: var(--uxm-list-item-active-text, var(--color-accent-bold));
   }
 
   /* Icon slot renders as the shared `IconTile` atom (composed in list.tsx),

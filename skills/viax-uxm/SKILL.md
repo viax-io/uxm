@@ -1091,6 +1091,102 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`ToggleSwitch` hover finally paints outside the studio.** The `:hover` rules shipped, but
+  every fallback repeated the resting colour, so the compiled CSS changed nothing on hover — the
+  workbench only *looked* right because it projects its knob defaults as inline
+  `--uxm-toggle-switch-hover-*` vars. The fallbacks now match those registry defaults:
+  `--color-text-strong` for the off track (muted measured 2.54:1 on card in light — under the 3:1 UI floor), `--color-accent-bold` for the on track (thumbs stay
+  `--color-card`). Hover is also gated on `:not(.uxm-toggle-switch--disabled)` so a disabled
+  switch stays inert. Visual change for consumers who never set the vars — that was the bug; a
+  saved override still wins. Same trap to watch for elsewhere: a per-state var whose fallback is
+  the resting value ships a dead rule.
+- **`Checkbox` hover — same fix, same reason.** `hover-unchecked-border` fell back to
+  `--color-border` and `hover-checked-bg` / `-border` to `--color-accent`, i.e. the resting
+  colours, so hover was invisible in consumer apps. Now `--color-text-strong` for the unchecked
+  border and `--color-accent-bold` for the checked fill + border, matching the registry; the
+  unchecked box still doesn't fill (the border is the signal) and the glyph still holds
+  `--color-text-inverse`, both of which the registry declares that way on purpose. Hover is
+  gated on `:not(.uxm-checkbox--disabled)`. The atom's README also claimed there was no visible
+  focus ring — there has been one (`--uxm-checkbox-focus-ring`, 2px) for a while.
+- **Disabled now actually dims on `Checkbox` / `ToggleSwitch` / `RadioGroup`.** Third instance of
+  the same registry-vs-CSS drift: the registry declares `0.4` for all three, while the shipped
+  fallbacks were `0.6` (checkbox), `1` (toggle switch — i.e. no dim at all) and `0.6` (radio).
+  All three are now `0.4` via `--uxm-{checkbox|toggle-switch|radio-group}-disabled-opacity`.
+  `checkbox.scss` used to declare the `--disabled` rule for all three, which the cascade
+  defeated: `styles.css` imports it FIRST, so the toggle's own rule won on opacity and
+  `.uxm-radio { cursor: pointer }` (radio-group.css, equal specificity, later) won over its
+  `not-allowed` — a disabled radio showed a pointer cursor. Each control now owns its
+  `--disabled` rule in its own file; only the label row and the visually-hidden `__input` stay
+  shared. The `RadioGroup` README claimed the modifier had no bundled dim at all; it has
+  shipped one since the shared rule was written. ⚠️ Still drifting
+  elsewhere — now CLOSED in this same MR: a scripted registry-vs-CSS diff found 19 drifting
+  `disabled-opacity` declarations across 17 atoms (`Button` variants, `Slider`, `BackLink`,
+  `InlineAction`, `ButtonWithIcon` at `0.4`; `Link`, `list-item`, `Breadcrumb`, `ButtonGroup`,
+  `Disclosure`, `ExplorerListItem`, `ExplorerSection`, `FilterTabs`, `SidebarNavItem`,
+  `TabsUnderline`, `ViewSwitcher` at `0.5`), all brought to their registry values.
+  `PillSelect` is correct as-is: its registry default is `1` by design. 
+- **`RadioGroup` hover — the last of the three small controls.** `hover-unselected-border` fell
+  back to `--color-border` and `hover-selected-border` / `hover-dot-color` to `--color-accent`,
+  i.e. the resting colours, so hover never painted outside the studio. Now `--color-text-strong`
+  for the unselected border and `--color-accent-bold` for the selected border + dot, per the
+  registry; the unselected circle still doesn't fill (the border is the signal). Hover is gated
+  on `:not(.uxm-radio--disabled)`. `Checkbox`, `ToggleSwitch` and `RadioGroup` now agree:
+  strong border / bold accent on hover, 0.4 disabled dim, no hover while disabled.
+- **`ToggleSwitch` / `RadioGroup` error messages are styled at all now.** Both `.scss` files
+  styled `.uxm--message`, a class nothing in the library renders — the atoms render
+  `uxm-{id}__error-message` (FieldError takes it via `className`), like every other input. So
+  their message shipped with no colour, no `12px` and no `margin-top`: it inherited the
+  surrounding text and sat flush against the control, while the studio's Message / Message Size
+  knobs looked live. `Checkbox` had the right selector all along. ⚠️ Separate, still open: a
+  SAVED `errorColor` / `errorMessageSize` override still won't reach the message on any atom —
+  `generate-css.ts` emits the vars on `.uxm-{id}`, but every atom renders its message as a
+  SIBLING of that element, and custom properties only cascade down. The studio preview hides
+  this because it puts the vars on an ancestor wrapper.
+- **`Tabs` hover paints outside the studio now.** `--uxm-tabs-hover-bg` fell back to
+  `transparent` (the tab's own resting background) and `--uxm-tabs-hover-text` to
+  `--color-text-muted` (its resting `inactive-text`), so hovering an inactive tab changed
+  nothing in a consumer app — the same dead-fallback shape as the small controls, and invisible
+  in the workbench because previews project the knob defaults as inline vars. Now
+  `--color-surface-alt` and `--color-text`, matching the registry. Visual change for consumers
+  who never set the vars; a saved override still wins. The hover/pressed half of the pattern is
+  closed too (see the sweep bullets below); the `disabled-opacity` half likewise.
+- **Hover/pressed now paint on `FilterTabs`, `ViewSwitcher`, `ButtonGroup`, `Disclosure`,
+  `List` and `Button`'s pressed states.** The same registry-vs-CSS diff, run over the state
+  knobs of those six, found 16 dead fallbacks (CSS repeating the resting look where the
+  registry declares a distinct state value) — hover fills to `--color-surface-alt` with
+  full-strength text/icon on the three tab-like atoms and `Disclosure`/`List`; `List`'s
+  active row gets the accent-subtle fill + accent-bold text; `ButtonSecondary` pressed
+  deepens to a solid accent fill + inverse text, `ButtonTertiary`/`ButtonGhost` pressed get
+  their registry surfaces and tones. All fallbacks now equal the registry defaults the studio
+  has always previewed. Visual change for consumers that never set the vars; saved overrides
+  still win. (`ButtonPrimary`'s hover was already correct — its `color-mix` fallback matches
+  the registry.)
+- **The dead-fallback class is now closed repo-wide, and a checked-in script guards it.**
+  `node scripts/check-state-var-drift.mjs` diffs every registry state knob
+  (hover/active/pressed/disabled) against the shipped SCSS fallback, resolving legacy-alias
+  chains and `px`-suffixed numerics; it runs green as of this MR. The final sweep closed 11
+  more declarations (`disabledText`/`disabledColor` on button-tertiary, sidebar-nav-item,
+  explorer-list-item, explorer-section, list-item, disclosure; `list-item.disabledBg`;
+  `input-with-icon.hoverBg`; and three that change a **visible aesthetic, flagged for design
+  review**: `tabs-underline.barColor` accent-bold → accent, icon-button pressed fill
+  surface-alt → surface, `slider.hoverThumbColor` now the registry's accent-bold instead of
+  aliasing the resting thumb).
+- **Disabled dim now actually paints on 17 more atoms.** A scripted registry-vs-CSS diff of
+  every `disabledOpacity` default found 19 drifting `--uxm-*-disabled-opacity` fallbacks
+  (`1` in CSS vs `0.4`/`0.5` in the registry) — the whole `Button` family, `Slider`,
+  `BackLink`, `InlineAction`, `ButtonWithIcon`, `Link`, `list-item`, `Breadcrumb`,
+  `ButtonGroup`, `Disclosure`, `ExplorerListItem`, `ExplorerSection`, `FilterTabs`,
+  `SidebarNavItem`, `TabsUnderline`, `ViewSwitcher`. All now match their registry value, so a
+  disabled control dims in a bare consumer exactly as the studio always previewed. Visual
+  change for consumers that never set the vars; a saved override still wins. `PillSelect`
+  deliberately stays flat (`1` — dimming would double-dim its already-muted chips).
+- **`Tabs` disabled now dims, and the studio's static Hover/Focus tiles for Tabs paint.** Two
+  follow-ups of the same sweep: `--uxm-tabs-disabled-opacity` fell back to `1` against the
+  registry's `0.5` (a disabled tab looked enabled in a bare consumer — only the muted text
+  hinted), now `0.5`; and `tabs.scss` gained the `--state-hover` / `--state-focus` forced-state
+  selectors the preview has always applied (the convention ~15 atoms use), so the workbench's
+  static state panel for Tabs shows the real hover/focus look instead of nothing.
+
 ## Workflow
 
 ### Before writing any code

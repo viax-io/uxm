@@ -5,8 +5,11 @@
    The checked-state styles read `--uxm-{id}-check-color` (checkbox)
    and `--uxm-radio-group-active-color` (radio) so saves propagate
    from the editor's knobs into the inner __box / __circle / __dot.
-   Per-state hover/focus/disabled read `--uxm-checkbox-{state}-*` vars
-   with the resting value as fallback (default look unchanged). */
+   Per-state hover/focus/disabled read `--uxm-checkbox-{state}-*` vars, each
+   falling back to the REGISTRY's default for that state (registry/inputs.ts),
+   not to the resting value — see the hover block below. Only the label-row
+   layout and the visually-hidden `__input` are shared across the three; each
+   owns its `--disabled` rule in its own file. */
 
 .uxm-checkbox {
   align-items: center;
@@ -17,19 +20,17 @@
   gap: var(--uxm-checkbox-gap, 10px);
 }
 
-.uxm-checkbox--disabled,
-.uxm-toggle-switch--disabled,
-.uxm-radio--disabled {
-  cursor: not-allowed;
-}
+/* Disabled — checkbox only. This file used to declare the `--disabled` rule for
+   all three controls, which doesn't survive the cascade: `styles.css` imports
+   checkbox.css FIRST, so `.uxm-radio { cursor: pointer }` in radio-group.css
+   (equal specificity, later) beat the `not-allowed` declared here, and the
+   toggle's own rule beat the opacity declared here. Each control now owns its
+   `--disabled` rule in its own file; only the order-independent bits (the
+   label row, the visually-hidden `__input`) stay shared. 0.4 is the registry
+   default for all three (registry/inputs.ts). */
 .uxm-checkbox--disabled {
-  opacity: var(--uxm-checkbox-disabled-opacity, 0.6);
-}
-.uxm-toggle-switch--disabled {
-  opacity: var(--uxm-toggle-switch-disabled-opacity, 0.6);
-}
-.uxm-radio--disabled {
-  opacity: var(--uxm-radio-group-disabled-opacity, 0.6);
+  cursor: not-allowed;
+  opacity: var(--uxm-checkbox-disabled-opacity, 0.4);
 }
 
 .uxm-checkbox__input,
@@ -63,17 +64,28 @@
     }
   }
 
-  &:hover &__input:not(:checked) + &__box {
+  &:not(#{&}--disabled):hover &__input:not(:checked) + &__box {
+    /* Hover — each fallback is the registry's hover default: the unchecked box
+       signals through its BORDER (`--color-text-strong`) and stays unfilled, the
+       checked box deepens to `--color-accent-bold`, and the glyph holds
+       `--color-text-inverse` so it keeps reading on the darker fill. The two
+       fallbacks that do equal their resting value (unchecked bg, glyph colour)
+       match the registry on purpose — those rules exist as override hooks, not
+       as a look. Repeating a resting colour where the registry declares a
+       DIFFERENT hover default is the bug: it compiles to a live `:hover` rule
+       that paints nothing, and the studio can't reveal it because it projects
+       its knob defaults as inline vars. Gated on `:not(--disabled)` so a
+       disabled checkbox stays visually inert. */
     background-color: var(--uxm-checkbox-hover-unchecked-bg, transparent);
-    border-color: var(--uxm-checkbox-hover-unchecked-border, var(--color-border));
+    border-color: var(--uxm-checkbox-hover-unchecked-border, var(--color-text-strong));
   }
 
-  &:hover &__input:checked + &__box {
-    background-color: var(--uxm-checkbox-hover-checked-bg, var(--color-accent));
-    border-color: var(--uxm-checkbox-hover-checked-border, var(--color-accent));
+  &:not(#{&}--disabled):hover &__input:checked + &__box {
+    background-color: var(--uxm-checkbox-hover-checked-bg, var(--color-accent-bold));
+    border-color: var(--uxm-checkbox-hover-checked-border, var(--color-accent-bold));
   }
 
-  &:hover &__input:checked + &__box > svg {
+  &:not(#{&}--disabled):hover &__input:checked + &__box > svg {
     color: var(--uxm-checkbox-hover-check-glyph-color, var(--color-text-inverse));
   }
 

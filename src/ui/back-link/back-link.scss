@@ -27,6 +27,6 @@
   &[aria-disabled="true"],
   &:disabled {
     color: var(--uxm-back-link-disabled-color, var(--color-text-muted));
-    opacity: var(--uxm-back-link-disabled-opacity, 1);
+    opacity: var(--uxm-back-link-disabled-opacity, 0.4);
   }
 }

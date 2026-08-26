@@ -61,6 +61,7 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p portal/tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "check:drift": "node scripts/check-state-var-drift.mjs",
     "test:ci": "echo 'no tests yet' && exit 0",
     "test:coverage": "echo 'no coverage yet' && exit 0",
     "commit": "cz",

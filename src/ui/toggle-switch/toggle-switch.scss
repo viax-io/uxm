@@ -13,8 +13,9 @@
      "on" thumb position derives from width minus thumb-size minus 2px,
      so the math survives any width/height change. Was previously hardcoded
      `left: calc(100% - 22px)` which broke on width changes.
-     Per-state hover/focus read `--uxm-toggle-switch-{state}-*` vars with the
-     resting value as fallback (default look unchanged). */
+     Per-state hover/focus read `--uxm-toggle-switch-{state}-*` vars, each
+     falling back to the registry's default for THAT state (see the hover block
+     below) — never to the resting colour, or the state would paint nothing. */
 
   &__track {
     background-color: var(--uxm-toggle-switch-off-track, var(--color-border));
@@ -38,19 +39,27 @@
     width: calc(var(--uxm-toggle-switch-height, 24px) - 4px);
   }
 
-  &:hover &__input:not(:checked) + &__track {
-    background-color: var(--uxm-toggle-switch-hover-off-track, var(--color-border));
+  &:not(#{&}--disabled):hover &__input:not(:checked) + &__track {
+    /* Hover — the fallbacks are the registry's hover defaults
+       (`--color-text-strong` off / `--color-accent-bold` on), NOT a repeat of the
+       resting colour. Echoing the resting value here shipped a `:hover` rule with
+       no visible effect: the studio projects its knob defaults as inline
+       `--uxm-toggle-switch-hover-*` vars so hover read fine in the workbench,
+       while a consumer that only imports the compiled CSS sets no vars and got
+       the resting colour back. Gated on `:not(--disabled)` so a disabled switch
+       stays visually inert. */
+    background-color: var(--uxm-toggle-switch-hover-off-track, var(--color-text-strong));
   }
 
-  &:hover &__input:not(:checked) + &__track > &__thumb {
+  &:not(#{&}--disabled):hover &__input:not(:checked) + &__track > &__thumb {
     background-color: var(--uxm-toggle-switch-hover-off-thumb, var(--color-card));
   }
 
-  &:hover &__input:checked + &__track {
-    background-color: var(--uxm-toggle-switch-hover-on-track, var(--color-accent));
+  &:not(#{&}--disabled):hover &__input:checked + &__track {
+    background-color: var(--uxm-toggle-switch-hover-on-track, var(--color-accent-bold));
   }
 
-  &:hover &__input:checked + &__track > &__thumb {
+  &:not(#{&}--disabled):hover &__input:checked + &__track > &__thumb {
     background-color: var(--uxm-toggle-switch-hover-on-thumb, var(--color-card));
   }
 
@@ -68,11 +77,14 @@
     left: calc(var(--uxm-toggle-switch-width, 44px) - var(--uxm-toggle-switch-height, 24px) + 2px);
   }
 
-  /* Disabled — dims via the registry's disabledOpacity knob. Fallback 1 keeps
-     the shipped default undimmed (unchanged); a saved/previewed override dims. */
   &--disabled {
+    /* Disabled — dims via the registry's disabledOpacity knob, whose default is
+       0.4; the fallback used to be 1, i.e. the shipped switch never dimmed
+       unless a saved override said so. This rule (not the copy that used to sit
+       in checkbox.scss) is the one that lands, since toggle-switch.css is
+       imported later in styles.css. */
     cursor: not-allowed;
-    opacity: var(--uxm-toggle-switch-disabled-opacity, 1);
+    opacity: var(--uxm-toggle-switch-disabled-opacity, 0.4);
   }
 }
 
@@ -81,8 +93,12 @@
    signal, reading the errorColor / errorMessageSize knobs the registry exposes
    (kebab → `--uxm-toggle-switch-error-color` / `-error-message-size`). The
    `.uxm-toggle-switch--error` class rides the root as a state hook + aria-invalid
-   companion, even though it paints nothing itself. */
-.uxm--message {
+   companion, even though it paints nothing itself.
+   The selector has to be the class the atom actually renders (FieldError gets
+   it via its `className` prop) — this used to read `.uxm--message`, which
+   nothing renders, so the message shipped with no colour, no size and no
+   margin while the studio's knobs looked live. */
+.uxm-toggle-switch__error-message {
   display: block;
   margin-top: 4px;
   font-size: var(--uxm-toggle-switch-error-message-size, 12px);

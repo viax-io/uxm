@@ -1752,7 +1752,8 @@ export const inputsDefs: ComponentDef[] = [
       { key: 'checkGlyphColor', label: 'Check Glyph', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'checkedColors', showWhen: { state: 'default' } },
       // Hover — unchecked
       { key: 'hoverUncheckedBg', label: 'Background', control: 'color', defaultValue: 'transparent', section: 'uncheckedColors', showWhen: { state: 'hover' } },
-      { key: 'hoverUncheckedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'uncheckedColors', showWhen: { state: 'hover' } },
+      // text-strong, not text-muted: muted is 2.54:1 on card in light — under the 3:1 UI floor (Principle IV)
+      { key: 'hoverUncheckedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'uncheckedColors', showWhen: { state: 'hover' } },
       // Hover — checked
       { key: 'hoverCheckedBg', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'checkedColors', showWhen: { state: 'hover' } },
       { key: 'hoverCheckedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'checkedColors', showWhen: { state: 'hover' } },
@@ -1805,7 +1806,8 @@ export const inputsDefs: ComponentDef[] = [
       { key: 'onTrack', label: 'Track', control: 'color', defaultValue: 'var(--color-accent)', section: 'onColors', showWhen: { state: 'default' } },
       { key: 'onThumb', label: 'Thumb', control: 'color', defaultValue: 'var(--color-card)', section: 'onColors', showWhen: { state: 'default' } },
       // Hover — off
-      { key: 'hoverOffTrack', label: 'Track', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'offColors', showWhen: { state: 'hover' } },
+      // text-strong, not text-muted: muted is 2.54:1 on card in light — under the 3:1 UI floor (Principle IV)
+      { key: 'hoverOffTrack', label: 'Track', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'offColors', showWhen: { state: 'hover' } },
       { key: 'hoverOffThumb', label: 'Thumb', control: 'color', defaultValue: 'var(--color-card)', section: 'offColors', showWhen: { state: 'hover' } },
       // Hover — on
       { key: 'hoverOnTrack', label: 'Track', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'onColors', showWhen: { state: 'hover' } },
@@ -1857,7 +1859,8 @@ export const inputsDefs: ComponentDef[] = [
       { key: 'dotColor', label: 'Dot', control: 'color', defaultValue: 'var(--color-accent)', section: 'selectedColors', showWhen: { state: 'default' } },
       // Hover — unselected
       { key: 'hoverUnselectedBg', label: 'Background', control: 'color', defaultValue: 'transparent', section: 'unselectedColors', showWhen: { state: 'hover' } },
-      { key: 'hoverUnselectedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'unselectedColors', showWhen: { state: 'hover' } },
+      // text-strong, not text-muted: muted is 2.54:1 on card in light — under the 3:1 UI floor (Principle IV)
+      { key: 'hoverUnselectedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'unselectedColors', showWhen: { state: 'hover' } },
       // Hover — selected
       { key: 'hoverSelectedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'selectedColors', showWhen: { state: 'hover' } },
       { key: 'hoverDotColor', label: 'Dot', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'selectedColors', showWhen: { state: 'hover' } },

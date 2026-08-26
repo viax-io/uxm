@@ -181,3 +181,82 @@ the AppSidebar + SidebarNavItem rows) both touched the sidebar rows; the sync
 branch merged first and the fix MR conflicted exactly as predicted at handoff.
 The take-master-then-re-apply script resolved it in one pass; the naive
 hand-merge would have had to reconcile a five-row block by eye.
+
+---
+
+## A per-state var whose fallback is the resting value ships a dead rule
+
+`var(--uxm-<comp>-hover-<prop>, <resting value>)` looks like a correct two-layer
+declaration and compiles to a real `:hover` rule — but with no var set it paints
+exactly what the resting rule already painted, so the state is invisible. It
+passes review easily because the *studio looks right*: the preview and
+`preview-modal` project every registry knob's `defaultValue` as an inline
+`--uxm-*` var, so the workbench is never running the fallback path a consumer
+runs. Only an app that imports the compiled CSS and sets no vars sees the bug.
+
+**This actually happened — `ToggleSwitch` hover.** All four
+`--uxm-toggle-switch-hover-*` fallbacks echoed the resting colour
+(`--color-border` / `--color-accent`) while `registry/inputs.ts` declared
+`--color-text-muted` / `--color-accent-bold` as the hover defaults. The atom's
+own README even documented the symptom as intended ("no additional colour change
+in baseline styles"). Reported from a consumer project, not caught here.
+
+**How to apply:** the fallback of a per-state var is that STATE's default, and
+the registry's `defaultValue` for the matching knob is the source of truth —
+diff the two whenever you touch either. A fallback that *equals* the resting
+value is fine when the registry declares it that way — the rule then exists as
+an override hook for a property the state deliberately leaves alone
+(`--uxm-checkbox-hover-unchecked-bg`, the hover thumb colours). It's a bug only
+when the registry says something else. Verify hover/focus in the portal (or any
+consumer) with **no** overrides saved, never by reading the studio preview.
+`Checkbox` and `RadioGroup` had the same dead fallbacks and were fixed
+alongside, as was `disabledOpacity` on all three (registry 0.4 vs 0.6/1/0.6 in
+CSS). The `disabled-opacity` half of this class is now CLOSED: a scripted
+registry-vs-SCSS diff (every `disabledOpacity` `defaultValue` against every
+`--uxm-<id>-disabled-opacity` fallback) found 19 drifting declarations across
+17 components, all brought to their registry values in the
+`fix/small-control-hover-defaults` MR — the target differs per component
+(0.4 / 0.5 / 0.55 / 0.6), so always diff against the registry entry, never
+assume one number. `PillSelect` stays `1` by design (registry says so).
+The hover/pressed half is closed too (same MR): the scripted diff over the
+state knobs of `FilterTabs`, `ViewSwitcher`, `ButtonGroup`, `Disclosure`,
+`List` and the `Button` family found 16 more dead fallbacks, all brought to
+their registry values. **The script is now checked in:
+`node scripts/check-state-var-drift.mjs`** — run it whenever you touch a
+per-state knob or registry default (eyeballing found 5 of the first 19). It
+normalises whitespace (a multiline `var()` like `ButtonPrimary`'s `color-mix`
+hover defeats single-line regexes) and accepts `px`-suffixed CSS fallbacks
+for bare numeric registry defaults. Treat a hit as "go look", not "go fix":
+of the 19 hits its first full-repo run produced, **7 were legacy-alias
+chains** — `var(--uxm-x-new, var(--uxm-x-old, <token>))` where the innermost
+token already matched the registry (the script now resolves those) — and 11
+were real and are fixed, so the script runs green (exit 0) — and now GATES
+CI: the `.gitlab-ci.yml` `test` job runs `npm run check:drift`, so a knob
+default and its SCSS fallback can no longer disagree without failing the
+pipeline.
+Three of the 11 changed a *visible aesthetic*, not just a dead state, and
+are flagged for design review in the MR: `tabs-underline.barColor`
+(accent-bold → accent — the underline bar lightens), icon-button pressed
+fill (surface-alt → surface), and `slider.hoverThumbColor` (the alias to the
+resting thumb var was replaced by the registry's accent-bold — a themed
+resting thumb no longer drags the hover tone with it). `PillSelect` is NOT on this list: its
+registry default is `1` **by design** (`composite.ts` — dimming would
+double-dim already-muted chips), so its flat disabled look is correct. Check
+any per-state block against the registry before assuming it's clean.
+
+---
+
+## A styled class nobody renders is invisible in review
+
+`.uxm--message` sat in `toggle-switch.scss` and `radio-group.scss` for months.
+It reads as a plausible BEM-ish block, the properties inside it were correct,
+and the comment above it named the right variables — but no component renders
+that class (the atoms pass `uxm-{id}__error-message` to `FieldError`), so the
+error message shipped unstyled: inherited colour, inherited size, no margin.
+`checkbox.scss`, the file they were copied from, has the right selector.
+
+**How to apply:** a selector is only real if something renders it. When adding
+or reviewing a rule for a class that isn't built from `&`-nesting inside its
+block, grep the class name in `src/ui/**/*.tsx` before trusting it. It's the
+same failure as a dead fallback — CSS that exists, parses, and paints nothing —
+and neither lint, typecheck, build nor the studio will say a word.

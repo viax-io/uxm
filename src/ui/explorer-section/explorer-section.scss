@@ -35,8 +35,8 @@
   &:disabled,
   &[aria-disabled="true"] {
     background-color: var(--uxm-explorer-section-disabled-bg, transparent);
-    color: var(--uxm-explorer-section-disabled-text, var(--color-text-muted));
-    opacity: var(--uxm-explorer-section-disabled-opacity, 1);
+    color: var(--uxm-explorer-section-disabled-text, var(--color-text-subtle));
+    opacity: var(--uxm-explorer-section-disabled-opacity, 0.5);
   }
 
   &__chevron {

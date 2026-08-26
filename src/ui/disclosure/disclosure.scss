@@ -27,7 +27,7 @@
   width: 100%;
 
   &:hover {
-    background-color: var(--uxm-disclosure-hover-bg, transparent);
+    background-color: var(--uxm-disclosure-hover-bg, var(--color-surface-alt));
   }
 
   &:focus-visible {
@@ -38,7 +38,7 @@
   &:disabled,
   &[aria-disabled="true"] {
     background-color: var(--uxm-disclosure-disabled-bg, transparent);
-    opacity: var(--uxm-disclosure-disabled-opacity, 1);
+    opacity: var(--uxm-disclosure-disabled-opacity, 0.5);
   }
 
   &__icon {
@@ -70,7 +70,7 @@
 
   &:disabled &__label,
   &[aria-disabled="true"] &__label {
-    color: var(--uxm-disclosure-disabled-text, var(--color-text));
+    color: var(--uxm-disclosure-disabled-text, var(--color-text-muted));
   }
 
   &__value {

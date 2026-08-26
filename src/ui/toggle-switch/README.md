@@ -46,7 +46,16 @@ function Example() {
 | `--uxm-toggle-switch-on-track` | `--color-accent` | – | Track background when on (`:checked`). |
 | `--uxm-toggle-switch-off-thumb` | `--color-card` | – | Thumb background when off. |
 | `--uxm-toggle-switch-on-thumb` | `--color-card` | – | Thumb background when on (`:checked`). |
-| `--uxm-toggle-switch-disabled-opacity` | `1` | – | Opacity when disabled (`.uxm-toggle-switch--disabled`). |
+| `--uxm-toggle-switch-hover-off-track` | `--color-text-strong` | – | Track background on hover while off. |
+| `--uxm-toggle-switch-hover-on-track` | `--color-accent-bold` | – | Track background on hover while on (`:checked`). |
+| `--uxm-toggle-switch-hover-off-thumb` | `--color-card` | – | Thumb background on hover while off. |
+| `--uxm-toggle-switch-hover-on-thumb` | `--color-card` | – | Thumb background on hover while on (`:checked`). |
+| `--uxm-toggle-switch-focus-ring` | `--color-accent` | – | `:focus-visible` outline colour on the track. |
+| `--uxm-toggle-switch-disabled-opacity` | – | `0.4` | Opacity when disabled (`.uxm-toggle-switch--disabled`). |
+| `--uxm-toggle-switch-error-color` | `--color-danger-text` | – | Colour of the `error` message below the control (icon included — it uses `currentColor`). |
+| `--uxm-toggle-switch-error-message-size` | – | `12px` | Font size of the `error` message. |
+
+> ⚠️ A studio-saved override for the two `error` vars does not currently reach the message: `generateOverridesCss` emits per-component vars on `.uxm-toggle-switch`, the message renders as that element's *sibling*, and custom properties only cascade downwards. Tracked separately — set the vars on a shared ancestor if you need to re-tone messages today.
 
 > The `--shadow-sm` token applies a small drop-shadow under the thumb. The "on" thumb position is computed via `calc()` from `width` / `height`, so the math survives custom dimensions.
 
@@ -56,7 +65,9 @@ function Example() {
 |-------|--------------|----------|
 | `--color-text` | Text / Text | Label text. |
 | `--color-border` | Borders / Border | Off-state track background. |
-| `--color-accent` | Accent / Accent | On-state track background. |
+| `--color-accent` | Accent / Accent | On-state track background; `:focus-visible` ring. |
+| `--color-accent-bold` | Accent / Accent Bold | On-state track background on hover. |
+| `--color-text-strong` | Text / Text Strong | Off-state track background on hover. |
 | `--color-card` | Surfaces / Card | Thumb background. |
 
 ## States & variants
@@ -65,8 +76,11 @@ function Example() {
 |-----------------|---------|--------|
 | Off | `checked` is falsy | Track painted `--color-border`; thumb sits at `left: 2px`. |
 | On | `checked` is truthy | Track painted `--color-accent`; thumb slides to `calc(width − height + 2px)` (0.2s transition). |
-| Disabled | `disabled` prop | `uxm-toggle-switch--disabled` modifier added; native disabled blocks interaction. |
-| Hover | `:hover` | Cursor switches to `pointer` (no additional colour change in baseline styles). |
+| Disabled | `disabled` prop | `uxm-toggle-switch--disabled` modifier added: `cursor: not-allowed`, `opacity: 0.4`, no hover. Native disabled blocks interaction. |
+| Hover (off) | `:hover` on the root, input unchecked | Track darkens to `--color-text-strong`; cursor `pointer`. |
+| Hover (on) | `:hover` on the root, input checked | Track deepens to `--color-accent-bold`; cursor `pointer`. |
+
+> Hover is scoped with `:not(.uxm-toggle-switch--disabled)`, so a disabled switch does not react to the pointer.
 
 ## Accessibility
 
@@ -75,4 +89,4 @@ function Example() {
 - The track and thumb spans are `aria-hidden="true"`; the input carries all assistive-tech state.
 - Keyboard: `Space` toggles when the input has focus (native checkbox behaviour). `Enter` does **not** toggle — this is native checkbox semantics, not a missing feature.
 - Disabled state uses the native `disabled` attribute (removes from tab order, announces "unavailable").
-- The `uxm-toggle-switch--disabled` modifier is added but the baseline SCSS does not visually dim the track — consumers wanting a dim disabled treatment should add an `opacity` rule scoped to that modifier.
+- The `uxm-toggle-switch--disabled` modifier dims the whole control to `0.4` (`--uxm-toggle-switch-disabled-opacity`) and switches the cursor to `not-allowed`; hover is skipped while it is present.
