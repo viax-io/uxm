@@ -148,6 +148,24 @@
       /* Match the brand button's 32x32 footprint at the top of the
          collapsed sidebar so the chrome reads as a single column of tiles. */
       width: 32px;
+
+      /* The label and badge are CLIPPED, not dropped (same recipe as
+         SidebarNavTrigger's collapsed text): they stay in the accessibility
+         tree so the row announces identically collapsed and expanded, and
+         the aria-hidden corner dot stays a purely sighted stand-in.
+         `position: absolute` lifts them out of flow so the 32px tile
+         keeps its geometry. */
+      .uxm-sidebar-nav-item__label,
+      .uxm-sidebar-nav-item__badge {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
     }
   }
 

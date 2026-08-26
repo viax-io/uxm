@@ -1081,6 +1081,14 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`AppSidebar`'s collapsed rail now announces status.** The label and the inline `badge` are
+  kept in the accessibility tree when collapsed (visually clipped — the SidebarNavTrigger
+  recipe) instead of dropped, so a row reads identically in both states ("Inbox 3"); the corner
+  status dot stays `aria-hidden`, a sighted-only stand-in backed by the clipped badge text.
+  Previously the collapsed row's name was only the `title` attribute and the status was
+  invisible to assistive tech. `trailing` is still dropped when collapsed (it's interactive —
+  a clipped focusable control would be an invisible tab stop). No API change.
+
 ## Workflow
 
 ### Before writing any code

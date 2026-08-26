@@ -258,11 +258,14 @@ export function AppSidebar({
                 active={item.active}
                 iconBg={item.iconBg ?? auto?.bg}
                 iconColor={item.iconColor ?? auto?.color}
-                // Collapsed rail: the inline `badge` is dropped (it won't fit
-                // the 32×32 tile) and stands in as a corner status dot on the
-                // icon tile — so "this item has status" still reads at a glance
-                // without the clutter. Expanded shows the full badge inline.
-                badge={collapsed ? undefined : item.badge}
+                // Collapsed rail: the label and the inline `badge` are kept in
+                // the DOM and visually CLIPPED (see `__item--collapsed` in the
+                // SCSS) rather than dropped — the row announces identically
+                // collapsed and expanded ("Inbox 3"), while the corner status
+                // dot (aria-hidden) is only the sighted stand-in for the badge.
+                // `trailing` IS dropped: it's an interactive hover-reveal slot,
+                // and a clipped focusable control would be an invisible tab stop.
+                badge={item.badge}
                 statusDot={collapsed && item.badge != null}
                 trailing={collapsed ? undefined : item.trailing}
                 title={collapsed ? item.label : undefined}
@@ -271,7 +274,7 @@ export function AppSidebar({
                   collapsed && 'uxm-app-sidebar__item--collapsed',
                 )}
               >
-                {collapsed ? '' : item.label}
+                {item.label}
               </SidebarNavItem>
               );
             })}
