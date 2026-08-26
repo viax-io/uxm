@@ -1,3 +1,10 @@
+## [4.28.3](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.2...v4.28.3) (2026-08-26)
+
+
+### Bug Fixes
+
+* **menu:** floor the AA-reasoned subtitle/hint sizes against the type scale ([7ee1f2b](https://gitlab.viax.tech/services-viax/uxm/commit/7ee1f2b96149aa4a10858385a7cb5a5da44c7b3e)), closes [#1](https://gitlab.viax.tech/services-viax/uxm/issues/1) [#3](https://gitlab.viax.tech/services-viax/uxm/issues/3) [#5](https://gitlab.viax.tech/services-viax/uxm/issues/5)
+
 ## [4.28.2](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.1...v4.28.2) (2026-08-26)
 
 
