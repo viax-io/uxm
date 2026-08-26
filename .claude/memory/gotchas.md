@@ -221,12 +221,18 @@ assume one number. `PillSelect` stays `1` by design (registry says so).
 The hover/pressed half is closed too (same MR): the scripted diff over the
 state knobs of `FilterTabs`, `ViewSwitcher`, `ButtonGroup`, `Disclosure`,
 `List` and the `Button` family found 16 more dead fallbacks, all brought to
-their registry values. Re-run the scripted diff whenever you touch a
-per-state knob; eyeballing found 5 of the first 19. One script caveat that
-produced a false positive twice: a `var()` whose fallback spans multiple
-lines (`ButtonPrimary`'s `color-mix` hover) defeats single-line regexes —
-normalise whitespace before matching, and treat a "NOT READ / STILL BAD" hit
-as "go look", not "go fix". `PillSelect` is NOT on this list: its
+their registry values. **The script is now checked in:
+`node scripts/check-state-var-drift.mjs`** — run it whenever you touch a
+per-state knob or registry default (eyeballing found 5 of the first 19). It
+normalises whitespace (a multiline `var()` like `ButtonPrimary`'s `color-mix`
+hover defeats single-line regexes) and accepts `px`-suffixed CSS fallbacks
+for bare numeric registry defaults. Treat a hit as "go look", not "go fix" —
+and expect it to exit 1 today: its full-repo sweep shows **19 known
+remaining drifts** on knobs outside the fixed sets (`hoverText` /
+`disabledText` / `activeText` on breadcrumb, explorer-*, link, list-item,
+disclosure, sidebar-nav-item, button-tertiary; `tabs-underline.barColor`;
+icon-button active pair; `input-with-icon.hoverBg`;
+`slider.hoverThumbColor`) — an inventoried follow-up, not a regression. `PillSelect` is NOT on this list: its
 registry default is `1` **by design** (`composite.ts` — dimming would
 double-dim already-muted chips), so its flat disabled look is correct. Check
 any per-state block against the registry before assuming it's clean.
