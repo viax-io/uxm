@@ -587,7 +587,7 @@
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale, 1));
   border-radius: 6px;
   max-width: 320px;
 }
@@ -627,5 +627,5 @@
   --_uxm-editable-cell-max-width: var(--uxm-editable-cell-medium-max-width, none);
   --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-medium-padding-x, 12px);
   --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-medium-padding-y, 6px);
-  font-size: var(--uxm-editable-cell-medium-font-size, 14px);
+  font-size: calc(var(--uxm-editable-cell-medium-font-size, 14px) * var(--type-scale, 1));
 }

@@ -11,7 +11,7 @@
   color: var(--uxm-avatar-color, var(--color-text));
   display: inline-flex;
   flex-shrink: 0;
-  font-size: var(--uxm-avatar-font-size, 16px);
+  font-size: calc(var(--uxm-avatar-font-size, 16px) * var(--type-scale, 1));
   font-weight: var(--uxm-avatar-font-weight, 600);
   height: var(--uxm-avatar-size, 40px);
   justify-content: center;
@@ -54,13 +54,13 @@
    comfort. */
 
 .uxm-avatar.uxm-avatar--medium {
-  font-size: var(--uxm-avatar-font-size, 16px);
+  font-size: calc(var(--uxm-avatar-font-size, 16px) * var(--type-scale, 1));
   height: var(--uxm-avatar-size, 40px);
   width: var(--uxm-avatar-size, 40px);
 }
 
 .uxm-avatar.uxm-avatar--small {
-  font-size: var(--uxm-avatar-small-font-size, 13px);
+  font-size: calc(var(--uxm-avatar-small-font-size, 13px) * var(--type-scale, 1));
   height: var(--uxm-avatar-small-size, 32px);
   width: var(--uxm-avatar-small-size, 32px);
 }

@@ -169,7 +169,7 @@
      is the safe swap if a consumer ever gives the slot real meaning. */
   &__caption {
     overflow: hidden;
-    font-size: var(--uxm-sidebar-nav-trigger-caption-font-size, 10px);
+    font-size: calc(var(--uxm-sidebar-nav-trigger-caption-font-size, 10px) * var(--type-scale, 1));
     font-weight: var(--uxm-sidebar-nav-trigger-caption-font-weight, 500);
     letter-spacing: var(--uxm-sidebar-nav-trigger-caption-letter-spacing, 0.06em);
     /* Uppercase by DEFAULT, not by definition — a caption is an eyebrow in most
@@ -185,7 +185,7 @@
 
   &__value {
     overflow: hidden;
-    font-size: var(--uxm-sidebar-nav-trigger-font-size, 14px);
+    font-size: calc(var(--uxm-sidebar-nav-trigger-font-size, 14px) * var(--type-scale, 1));
     font-weight: var(--uxm-sidebar-nav-trigger-font-weight, 500);
     text-overflow: ellipsis;
     white-space: nowrap;

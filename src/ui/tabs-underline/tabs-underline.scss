@@ -16,7 +16,7 @@
     color: var(--uxm-tabs-underline-inactive-text, var(--color-text-muted));
     cursor: pointer;
     display: inline-flex;
-    font-size: var(--uxm-tabs-underline-font-size, 13px);
+    font-size: calc(var(--uxm-tabs-underline-font-size, 13px) * var(--type-scale, 1));
     font-weight: var(--uxm-tabs-underline-font-weight, 500);
     gap: var(--uxm-tabs-underline-icon-gap, 6px);
     justify-content: center;

@@ -7,7 +7,7 @@
   color: var(--uxm-sidebar-nav-item-inactive-text, var(--color-text-strong));
   cursor: pointer;
   display: flex;
-  font-size: var(--uxm-sidebar-nav-item-font-size, 13px);
+  font-size: calc(var(--uxm-sidebar-nav-item-font-size, 13px) * var(--type-scale, 1));
   font-weight: var(--uxm-sidebar-nav-item-font-weight, 500);
   gap: var(--uxm-sidebar-nav-item-gap, 10px);
   padding: var(--uxm-sidebar-nav-item-padding-y, 10px) var(--uxm-sidebar-nav-item-padding-x, 12px);

@@ -33,7 +33,7 @@
 
   &__meta {
     color: var(--uxm-page-header-meta-color, var(--color-text-muted));
-    font-size: var(--uxm-page-header-meta-size, 13px);
+    font-size: calc(var(--uxm-page-header-meta-size, 13px) * var(--type-scale, 1));
     margin: 2px 0 0;
   }
 

@@ -14,7 +14,7 @@
   box-sizing: border-box;
   color: var(--uxm-list-item-inactive-text, var(--color-text));
   display: flex;
-  font-size: var(--uxm-list-item-font-size, 14px);
+  font-size: calc(var(--uxm-list-item-font-size, 14px) * var(--type-scale, 1));
   gap: var(--uxm-list-item-gap, 12px);
   padding: var(--uxm-list-item-padding-y, 12px) var(--uxm-list-item-padding-x, 16px);
   /* Fill the List container. Static <div> rows stretch on their own, but
@@ -73,11 +73,11 @@
 
   &__value {
     color: var(--uxm-list-item-value-color, var(--color-text-muted));
-    font-size: var(--uxm-list-item-value-size, 12px);
+    font-size: calc(var(--uxm-list-item-value-size, 12px) * var(--type-scale, 1));
   }
 
   &__trailing {
     color: var(--uxm-list-item-chevron-color, var(--color-text-muted));
-    font-size: 12px;
+    font-size: calc(12px * var(--type-scale, 1));
   }
 }

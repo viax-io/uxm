@@ -42,7 +42,7 @@
   border: 1px solid var(--uxm-input-text-border-color, var(--color-border));
   border-radius: var(--uxm-input-text-border-radius, 8px);
   padding: var(--uxm-input-text-padding-y, 10px) var(--uxm-input-text-padding-x, 12px);
-  font-size: var(--uxm-input-text-font-size, 14px);
+  font-size: calc(var(--uxm-input-text-font-size, 14px) * var(--type-scale, 1));
 }
 .uxm-input-text--state-hover,
 .uxm-input-text:hover:not(:disabled):not(.uxm-input-text--error) {
@@ -75,7 +75,7 @@
 .uxm-input-text__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-input-text-error-message-size, 12px);
+  font-size: calc(var(--uxm-input-text-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-input-text-error-color, var(--color-danger-text));
 }
 
@@ -86,7 +86,7 @@
   border: 1px solid var(--uxm-textarea-border-color, var(--color-border));
   border-radius: var(--uxm-textarea-border-radius, 8px);
   padding: var(--uxm-textarea-padding-y, 10px) var(--uxm-textarea-padding-x, 12px);
-  font-size: var(--uxm-textarea-font-size, 14px);
+  font-size: calc(var(--uxm-textarea-font-size, 14px) * var(--type-scale, 1));
   min-height: var(--uxm-textarea-min-height, 100px);
   resize: vertical;
 }
@@ -116,7 +116,7 @@
 .uxm-textarea__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-textarea-error-message-size, 12px);
+  font-size: calc(var(--uxm-textarea-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-textarea-error-color, var(--color-danger-text));
 }
 
@@ -136,7 +136,7 @@
   border: 1px solid var(--uxm-select-dropdown-border-color, var(--color-border));
   border-radius: var(--uxm-select-dropdown-border-radius, 8px);
   padding: var(--uxm-select-dropdown-padding-y, 10px) var(--uxm-select-dropdown-padding-x, 12px);
-  font-size: var(--uxm-select-dropdown-font-size, 14px);
+  font-size: calc(var(--uxm-select-dropdown-font-size, 14px) * var(--type-scale, 1));
   cursor: pointer;
   outline: none;
   text-align: left;
@@ -190,7 +190,7 @@
 .uxm-select-dropdown__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-select-dropdown-error-message-size, 12px);
+  font-size: calc(var(--uxm-select-dropdown-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-select-dropdown-error-color, var(--color-danger-text));
 }
 

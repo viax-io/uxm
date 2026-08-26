@@ -36,7 +36,7 @@
     border-right: 1px solid var(--uxm-lifecycle-zoom-border-color, var(--color-border));
     color: inherit;
     display: inline-flex;
-    font-size: var(--uxm-lifecycle-zoom-font-size, 13px);
+    font-size: calc(var(--uxm-lifecycle-zoom-font-size, 13px) * var(--type-scale, 1));
     height: var(--uxm-lifecycle-zoom-button-size, 32px);
     padding: 0 10px;
   }

@@ -15,7 +15,7 @@
   color: var(--uxm-explorer-list-item-inactive-text, var(--uxm-explorer-list-item-inactive-color, var(--color-text-strong)));
   cursor: pointer;
   display: flex;
-  font-size: var(--uxm-explorer-list-item-font-size, 13px);
+  font-size: calc(var(--uxm-explorer-list-item-font-size, 13px) * var(--type-scale, 1));
   font-weight: var(--uxm-explorer-list-item-font-weight, 500);
   gap: var(--uxm-explorer-list-item-gap, 8px);
   padding-block: var(--uxm-explorer-list-item-padding-y, 8px);
@@ -67,6 +67,6 @@
   &__trailing {
     color: var(--uxm-explorer-list-item-trailing-color, var(--color-text-subtle));
     flex-shrink: 0;
-    font-size: var(--uxm-explorer-list-item-trailing-size, 10px);
+    font-size: calc(var(--uxm-explorer-list-item-trailing-size, 10px) * var(--type-scale, 1));
   }
 }

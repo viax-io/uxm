@@ -8,7 +8,7 @@
   color: var(--uxm-button-with-icon-color, var(--color-text-muted));
   cursor: pointer;
   display: inline-flex;
-  font-size: 13px;
+  font-size: calc(13px * var(--type-scale, 1));
   font-weight: 500;
   gap: var(--uxm-button-with-icon-gap, 8px);
   padding: 8px 12px;

@@ -64,7 +64,7 @@ span.uxm-time-input__icon {
     )
     var(--uxm-time-input-padding-y, 10px)
     var(--uxm-time-input-padding-x, 12px);
-  font-size: var(--uxm-time-input-font-size, 14px);
+  font-size: calc(var(--uxm-time-input-font-size, 14px) * var(--type-scale, 1));
   font-family: inherit;
   outline: none;
   transition: border-color 0.15s, background-color 0.15s, color 0.15s;
@@ -137,7 +137,7 @@ span.uxm-time-input__icon {
 .uxm-time-input__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-time-input-error-message-size, 12px);
+  font-size: calc(var(--uxm-time-input-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-time-input-error-color, var(--color-danger-text));
 }
 
@@ -214,7 +214,7 @@ span.uxm-time-input__icon {
 .uxm-time-input__column-head {
   padding: 6px 8px;
   text-align: center;
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale, 1));
   font-weight: 600;
   color: var(--uxm-time-input-color, var(--color-text));
   background-color: var(--uxm-time-input-popover-head-bg, var(--color-surface-alt));
@@ -237,7 +237,7 @@ span.uxm-time-input__icon {
   border: none;
   padding: 6px 8px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: calc(13px * var(--type-scale, 1));
   color: var(--uxm-time-input-color, var(--color-text));
   text-align: center;
   cursor: pointer;

@@ -7,7 +7,7 @@
   border-width: var(--uxm-lifecycle-edge-label-border-width, 1px);
   /* Defaults mirror the `lifecycle-edge-label` registry entry. */
   display: inline-flex;
-  font-size: var(--uxm-lifecycle-edge-label-font-size, 12px);
+  font-size: calc(var(--uxm-lifecycle-edge-label-font-size, 12px) * var(--type-scale, 1));
   font-weight: var(--uxm-lifecycle-edge-label-font-weight, 500);
   padding: var(--uxm-lifecycle-edge-label-padding-y, 3px)
     var(--uxm-lifecycle-edge-label-padding-x, 12px);

@@ -7,7 +7,7 @@
   padding: var(--uxm-banner-padding-y, 12px) var(--uxm-banner-padding-x, 16px);
   border: 1px solid;
   border-radius: var(--uxm-banner-border-radius, 8px);
-  font-size: var(--uxm-banner-font-size, 14px);
+  font-size: calc(var(--uxm-banner-font-size, 14px) * var(--type-scale, 1));
 }
 /* Each variant reads its own `--uxm-banner-{variant}-*` vars so UXM saves
    target just that variant — editing the Info colors no longer cascades

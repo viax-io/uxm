@@ -12,7 +12,7 @@
   color: var(--uxm-inline-action-color, var(--color-text-muted));
   cursor: pointer;
   display: inline-flex;
-  font-size: var(--uxm-inline-action-font-size, 10px);
+  font-size: calc(var(--uxm-inline-action-font-size, 10px) * var(--type-scale, 1));
   font-weight: var(--uxm-inline-action-font-weight, 500);
   gap: var(--uxm-inline-action-gap, 4px);
   padding: 0;

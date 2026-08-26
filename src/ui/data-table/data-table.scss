@@ -67,7 +67,7 @@
        empty string and the pseudo-element collapses. */
     content: attr(data-label);
     display: block;
-    font-size: 11px;
+    font-size: calc(11px * var(--type-scale, 1));
     font-weight: 600;
     color: var(--uxm-data-table-header-text, var(--color-text-muted));
     text-transform: uppercase;
@@ -83,7 +83,7 @@
 .uxm-data-table__table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--uxm-data-table-font-size, 13px);
+  font-size: calc(var(--uxm-data-table-font-size, 13px) * var(--type-scale, 1));
 }
 .uxm-data-table__head tr {
   background-color: var(--uxm-data-table-header-bg, var(--color-surface-alt));
@@ -94,7 +94,7 @@
   font-weight: 600;
   color: var(--uxm-data-table-header-text, var(--color-text-muted));
   border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
-  font-size: 12px;
+  font-size: calc(12px * var(--type-scale, 1));
 }
 .uxm-data-table__th--right { text-align: right; }
 .uxm-data-table__th--center { text-align: center; }

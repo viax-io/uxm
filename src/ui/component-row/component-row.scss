@@ -64,7 +64,7 @@
   &__name {
     color: var(--uxm-component-row-name-color, var(--color-text));
     flex: 1;
-    font-size: var(--uxm-component-row-name-size, 15px);
+    font-size: calc(var(--uxm-component-row-name-size, 15px) * var(--type-scale, 1));
     font-weight: var(--uxm-component-row-name-weight, 500);
     min-width: 0;
     overflow: hidden;
@@ -75,7 +75,7 @@
   &__type {
     color: var(--uxm-component-row-type-label-color, var(--color-text-muted));
     flex-shrink: 0;
-    font-size: var(--uxm-component-row-type-label-size, 12px);
+    font-size: calc(var(--uxm-component-row-type-label-size, 12px) * var(--type-scale, 1));
     font-weight: var(--uxm-component-row-type-label-weight, 400);
     white-space: nowrap;
   }

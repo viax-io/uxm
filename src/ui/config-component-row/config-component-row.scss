@@ -61,13 +61,13 @@
 
   &__name {
     color: var(--color-text);
-    font-size: var(--uxm-config-component-row-name-size, 14px);
+    font-size: calc(var(--uxm-config-component-row-name-size, 14px) * var(--type-scale, 1));
     font-weight: 500;
   }
 
   &__type {
     color: var(--color-text-muted);
-    font-size: var(--uxm-config-component-row-type-size, 12px);
+    font-size: calc(var(--uxm-config-component-row-type-size, 12px) * var(--type-scale, 1));
   }
 
   &__trailing {

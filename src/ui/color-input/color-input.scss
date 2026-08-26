@@ -178,7 +178,7 @@
   flex: 1;
   min-width: 0;
   font-family: inherit;
-  font-size: var(--uxm-color-input-font-size, 14px);
+  font-size: calc(var(--uxm-color-input-font-size, 14px) * var(--type-scale, 1));
   color: var(--uxm-color-input-color, var(--color-text));
   background-color: var(--uxm-color-input-bg, var(--color-card));
   border: 1px solid var(--uxm-color-input-border-color, var(--color-border));
@@ -220,7 +220,7 @@
   min-width: 0;
 }
 .uxm-color-input__channel-label {
-  font-size: 10px;
+  font-size: calc(10px * var(--type-scale, 1));
   font-weight: 500;
   text-align: center;
   color: var(--color-text-muted);
@@ -232,7 +232,7 @@
   width: 100%;
   min-width: 0;
   font-family: inherit;
-  font-size: var(--uxm-color-input-font-size, 14px);
+  font-size: calc(var(--uxm-color-input-font-size, 14px) * var(--type-scale, 1));
   text-align: center;
   color: var(--uxm-color-input-color, var(--color-text));
   background-color: var(--uxm-color-input-bg, var(--color-card));
@@ -254,7 +254,7 @@
 .uxm-color-input__error-message {
   display: block;
   margin-top: 2px;
-  font-size: var(--uxm-color-input-error-message-size, 12px);
+  font-size: calc(var(--uxm-color-input-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-color-input-error-color, var(--color-danger-text));
 }
 

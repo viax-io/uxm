@@ -57,12 +57,12 @@
 .uxm-pill-select__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-pill-select-error-message-size, 12px);
+  font-size: calc(var(--uxm-pill-select-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-pill-select-error-color, var(--color-danger-text));
 }
 .uxm-pill-select__placeholder {
   color: var(--uxm-pill-select-placeholder-color, var(--color-text-muted));
-  font-size: 13px;
+  font-size: calc(13px * var(--type-scale, 1));
 }
 /* Chevron — visual affordance that the field opens a dropdown. Inline
    flex item; `margin-left: auto` pushes it to the right edge regardless

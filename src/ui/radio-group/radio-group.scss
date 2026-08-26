@@ -5,7 +5,7 @@
   color: var(--color-text);
   cursor: pointer;
   display: inline-flex;
-  font-size: 14px;
+  font-size: calc(14px * var(--type-scale, 1));
   gap: 8px;
 }
 
@@ -111,6 +111,6 @@
 .uxm-radio-group__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-radio-group-error-message-size, 12px);
+  font-size: calc(var(--uxm-radio-group-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-radio-group-error-color, var(--color-danger-text));
 }

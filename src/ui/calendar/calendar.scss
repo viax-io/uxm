@@ -44,7 +44,7 @@
     color: var(--uxm-calendar-title-color, var(--color-text));
     cursor: pointer;
     font-family: inherit;
-    font-size: var(--uxm-calendar-title-size, 14px);
+    font-size: calc(var(--uxm-calendar-title-size, 14px) * var(--type-scale, 1));
     font-weight: 600;
     padding: 4px 8px;
     transition: background-color 0.12s;
@@ -85,7 +85,7 @@
 
   &__weekday {
     color: var(--uxm-calendar-weekday-color, var(--color-text-muted));
-    font-size: var(--uxm-calendar-weekday-size, 11px);
+    font-size: calc(var(--uxm-calendar-weekday-size, 11px) * var(--type-scale, 1));
     font-weight: 500;
     letter-spacing: 0.04em;
     text-align: center;
@@ -118,7 +118,7 @@
     cursor: pointer;
     display: inline-flex;
     font-family: inherit;
-    font-size: var(--uxm-calendar-cell-font-size, 13px);
+    font-size: calc(var(--uxm-calendar-cell-font-size, 13px) * var(--type-scale, 1));
     font-weight: 500;
     height: var(--uxm-calendar-cell-size, 36px);
     justify-content: center;
@@ -186,7 +186,7 @@
     cursor: pointer;
     display: inline-flex;
     font-family: inherit;
-    font-size: var(--uxm-calendar-month-cell-font-size, 13px);
+    font-size: calc(var(--uxm-calendar-month-cell-font-size, 13px) * var(--type-scale, 1));
     font-weight: 500;
     height: var(--uxm-calendar-month-cell-size, 64px);
     justify-content: center;
@@ -230,7 +230,7 @@
     background: transparent;
     color: var(--uxm-calendar-today-button-color, var(--color-accent));
     font: inherit;
-    font-size: var(--uxm-calendar-today-button-size, 13px);
+    font-size: calc(var(--uxm-calendar-today-button-size, 13px) * var(--type-scale, 1));
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.12s, color 0.12s;

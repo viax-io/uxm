@@ -92,7 +92,7 @@
     border-radius: var(--uxm-segment-row-count-radius, 999px);
     color: var(--uxm-segment-row-count-color, var(--color-text-muted));
     flex-shrink: 0;
-    font-size: var(--uxm-segment-row-count-size, 12px);
+    font-size: calc(var(--uxm-segment-row-count-size, 12px) * var(--type-scale, 1));
     font-variant-numeric: tabular-nums;
     padding: var(--uxm-segment-row-count-padding-y, 2px) var(--uxm-segment-row-count-padding-x, 10px);
   }

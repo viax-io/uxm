@@ -5,7 +5,7 @@
   color: var(--uxm-back-link-color, var(--color-text-muted));
   cursor: pointer;
   display: inline-flex;
-  font-size: var(--uxm-back-link-font-size, 13px);
+  font-size: calc(var(--uxm-back-link-font-size, 13px) * var(--type-scale, 1));
   font-weight: var(--uxm-back-link-font-weight, 500);
   gap: var(--uxm-back-link-gap, 6px);
   text-decoration: none;

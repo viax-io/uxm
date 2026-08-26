@@ -71,13 +71,13 @@
 }
 
 .uxm-file-upload__title {
-  font-size: var(--uxm-file-upload-title-size, 15px);
+  font-size: calc(var(--uxm-file-upload-title-size, 15px) * var(--type-scale, 1));
   font-weight: 600;
   color: var(--uxm-file-upload-color, var(--color-text-strong));
 }
 
 .uxm-file-upload__help {
-  font-size: var(--uxm-file-upload-help-size, 13px);
+  font-size: calc(var(--uxm-file-upload-help-size, 13px) * var(--type-scale, 1));
   color: var(--uxm-file-upload-help-color, var(--color-text-muted));
 }
 
@@ -85,7 +85,7 @@
    DOCX · up to 10 MB"). Renders only when the caller passes a value;
    visually subordinate to help text (smaller, muted). */
 .uxm-file-upload__allowed-types {
-  font-size: var(--uxm-file-upload-allowed-types-size, 11px);
+  font-size: calc(var(--uxm-file-upload-allowed-types-size, 11px) * var(--type-scale, 1));
   color: var(--uxm-file-upload-allowed-types-color, var(--color-text-subtle, var(--color-text-muted)));
   letter-spacing: 0.01em;
 }
@@ -135,7 +135,7 @@
   border-color: var(--uxm-file-upload-error-border, var(--color-danger-text));
 }
 .uxm-file-upload__error {
-  font-size: var(--uxm-file-upload-error-message-size, 12px);
+  font-size: calc(var(--uxm-file-upload-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-file-upload-error-color, var(--color-danger-text));
 }
 
@@ -189,7 +189,7 @@
   gap: 2px;
 }
 .uxm-file-upload__row-name {
-  font-size: 13px;
+  font-size: calc(13px * var(--type-scale, 1));
   font-weight: 500;
   color: var(--uxm-file-upload-row-name-color, var(--color-text-strong));
   white-space: nowrap;
@@ -197,7 +197,7 @@
   text-overflow: ellipsis;
 }
 .uxm-file-upload__row-meta {
-  font-size: 11px;
+  font-size: calc(11px * var(--type-scale, 1));
   color: var(--uxm-file-upload-row-meta-color, var(--color-text-muted));
 }
 .uxm-file-upload__row-remove {

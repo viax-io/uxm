@@ -10,7 +10,7 @@
   color: var(--uxm-link-inactive-text, var(--uxm-link-color, var(--color-accent)));
   cursor: pointer;
   display: inline-flex;
-  font-size: var(--uxm-link-font-size, 14px);
+  font-size: calc(var(--uxm-link-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-link-font-weight, 500);
   gap: var(--uxm-link-external-icon-gap, 4px);
   text-decoration-color: currentColor;

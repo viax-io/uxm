@@ -26,7 +26,7 @@
 
   &__label {
     color: var(--uxm-property-field-label-color, var(--color-text-muted));
-    font-size: var(--uxm-property-field-label-size, 11px);
+    font-size: calc(var(--uxm-property-field-label-size, 11px) * var(--type-scale, 1));
     font-weight: 600;
     /* Case + tracking are knobs so the atom can drop its uppercase "eyebrow"
        look for sentence-case prose grids. Defaults reproduce today exactly. */
@@ -39,6 +39,6 @@
     /* Value font is a knob so a grid of prose values can drop the monospace
        (data/technical) look for the body typeface. Default = today's mono. */
     font-family: var(--uxm-property-field-value-font, ui-monospace, SFMono-Regular, Menlo, monospace);
-    font-size: var(--uxm-property-field-value-size, 14px);
+    font-size: calc(var(--uxm-property-field-value-size, 14px) * var(--type-scale, 1));
   }
 }

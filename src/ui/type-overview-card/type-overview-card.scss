@@ -42,14 +42,14 @@
 
   &__label {
     color: var(--uxm-typeoverview-label-color, var(--color-text-strong));
-    font-size: var(--uxm-typeoverview-label-size, 14px);
+    font-size: calc(var(--uxm-typeoverview-label-size, 14px) * var(--type-scale, 1));
     font-weight: 500;
     margin: 0;
   }
 
   &__value {
     color: var(--uxm-typeoverview-value-color, var(--color-text));
-    font-size: var(--uxm-typeoverview-value-size, 30px);
+    font-size: calc(var(--uxm-typeoverview-value-size, 30px) * var(--type-scale, 1));
     font-weight: 600;
     line-height: 1.1;
     margin: 0;
@@ -59,7 +59,7 @@
     align-items: center;
     color: var(--color-accent-bold);
     display: inline-flex;
-    font-size: 12px;
+    font-size: calc(12px * var(--type-scale, 1));
     font-weight: 500;
     gap: 4px;
     margin-top: auto;

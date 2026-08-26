@@ -56,7 +56,7 @@
 
   &__label {
     color: var(--uxm-disclosure-inactive-text, var(--uxm-disclosure-color, var(--color-text)));
-    font-size: var(--uxm-disclosure-font-size, 14px);
+    font-size: calc(var(--uxm-disclosure-font-size, 14px) * var(--type-scale, 1));
     font-weight: 500;
   }
 
@@ -75,7 +75,7 @@
 
   &__value {
     color: var(--uxm-disclosure-value-color, var(--color-text-muted));
-    font-size: var(--uxm-disclosure-value-size, 12px);
+    font-size: calc(var(--uxm-disclosure-value-size, 12px) * var(--type-scale, 1));
   }
 
   &__chevron {

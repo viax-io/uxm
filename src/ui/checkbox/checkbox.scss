@@ -16,7 +16,7 @@
   color: var(--color-text);
   cursor: pointer;
   display: inline-flex;
-  font-size: 14px;
+  font-size: calc(14px * var(--type-scale, 1));
   gap: var(--uxm-checkbox-gap, 10px);
 }
 
@@ -113,6 +113,6 @@
 .uxm-checkbox__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-checkbox-error-message-size, 12px);
+  font-size: calc(var(--uxm-checkbox-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-checkbox-error-color, var(--color-danger-text));
 }
