@@ -1204,6 +1204,19 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Select` now names its own trigger.** `aria-label` reached only the popup panel, so the
+  `<div role="combobox">` that actually sits in the tab order announced as an unnamed combobox
+  (and being a `div`, it can't be named by a wrapping `<label>` either). Both single and multi
+  mode now put it on the trigger. If you relied on the label appearing only on the panel,
+  nothing breaks — the panel keeps its name too.
+- **`ColorInput`'s Font Size knob works.** It had no `PER_COMPONENT_MAPPING` entry, so a saved
+  override emitted a literal `font-size` on the root that the atom's own children always beat —
+  the knob was a silent no-op. It now emits `--uxm-color-input-font-size`. A host keeps the
+  stale literal until its next Publish (harmless; it never did anything).
+- **A numeric `lineHeight` override no longer emits `1.5px`.** `lineHeight` was missing from
+  `formatValue`'s unitless list, so any line-height knob would have collapsed every line box.
+  Dormant until now — no registry knob used it yet.
+
 ## Workflow
 
 ### Before writing any code
