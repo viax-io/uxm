@@ -1,9 +1,12 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type CSSProperties } from 'react';
 
 import { hexToHsl, retintHue } from '@/lib/contrast';
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
-import { ButtonPrimary, ButtonTertiary, ColorInputPopover, Dialog, Disclosure, Modal, Select, Tabs } from '@/ui';
+import {
+  Badge, ButtonGroup, ButtonPrimary, ButtonTertiary, Card, Cluster, ColorInputPopover,
+  Dialog, Disclosure, FormField, Modal, ResponsiveGrid, Select, Stack, Tabs,
+} from '@/ui';
 
 export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
   { label: 'Inter (default)', value: 'Inter', stack: "'Inter', var(--font-inter), system-ui, sans-serif" },
@@ -29,6 +32,32 @@ const SCALE_OPTIONS = [
   { value: '1.25', label: '125% — larger' },
   { value: '1.5', label: '150% — largest' },
 ];
+
+/** Closed sets small enough to show as segments — every option visible, one
+ *  click instead of open-then-pick. Labels stay short so the track fits. */
+const WEIGHT_OPTIONS = [
+  { value: '', label: 'Default' },
+  { value: '500', label: '500' },
+  { value: '600', label: '600' },
+  { value: '700', label: '700' },
+];
+const LINE_HEIGHT_OPTIONS = [
+  { value: '', label: 'Default' },
+  { value: '1.4', label: 'Tight' },
+  { value: '1.5', label: 'Normal' },
+  { value: '1.7', label: 'Relaxed' },
+  { value: '2', label: 'Loose' },
+];
+
+type TypeTab = 'body' | 'headings';
+
+/** Dot marking a tab whose group holds a non-default value — a setting made on
+ *  the hidden tab would otherwise leave no trace on this screen. Rides in
+ *  `TabsOption.icon`, which Tabs renders as its own sibling span: a wrapper
+ *  here would put a block box inside the label span, and `<button>`/`<span>`
+ *  both take phrasing content only. */
+const dirtyDot = (dirty: boolean) =>
+  (dirty ? <Badge mode="dot" type="accent" aria-hidden /> : undefined);
 
 /**
  * The three heading roles, in visual order. `basePx` / `baseWeight` are the
@@ -85,6 +114,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
   const faviconInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState<UploadKind | null>(null);
   const [levelsOpen, setLevelsOpen] = useState(false);
+  const [typeTab, setTypeTab] = useState<TypeTab>('body');
   const [error, setError] = useState<string | null>(null);
   const [identityTab, setIdentityTab] = useState<IdentityTab>('light');
 
@@ -142,6 +172,13 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
       ?? 'inherit';
   const specimenSize = (basePx: number, roleScale?: string, baseScale?: string) =>
     Math.round(basePx * Number(roleScale || 1) * Number(baseScale || 1) * 10) / 10;
+
+  // Which tab carries a non-default value, for the dot on the tab label.
+  const bodyDirty = Boolean(brand.fontFamily || brand.typeScale || brand.bodyLineHeight);
+  const headingsDirty = Boolean(
+    brand.headingFontFamily || brand.headingFontWeight
+    || ROLES.some((r) => brand[r.familyKey] || brand[r.weightKey] || brand[r.scaleKey]),
+  );
 
   return (
     <div style={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -281,183 +318,209 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
         title="Typography"
         description="Typefaces applied across Modo. Headings are optional — they inherit the body face unless you set one. Changes apply live and persist on Publish."
       >
-        <section style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <Field label="Body typeface">
-            <Select
-              value={fontFamily}
-              onChange={(e) => setBrand({ fontFamily: e.target.value || undefined })}
-              aria-label="Body typeface"
-              style={{ width: '100%' }}
-            >
-              <option value="">Inter (default)</option>
-              {FONT_OPTIONS.slice(1).map((f) => (
-                <option key={f.value} value={f.value}>{f.label}</option>
-              ))}
-            </Select>
-          </Field>
-
-          <Field label="Heading typeface">
-            <Select
-              value={headingFontFamily}
-              onChange={(e) => setBrand({ headingFontFamily: e.target.value || undefined })}
-              aria-label="Heading typeface"
-              style={{ width: '100%' }}
-            >
-              <option value="">Same as body</option>
-              {/* All ten, including Inter — heading-Inter over a different body
-                  face is a real choice, so it isn't labelled "(default)" here. */}
-              {FONT_OPTIONS.map((f) => (
-                <option key={f.value} value={f.value}>
-                  {f.value === 'Inter' ? 'Inter' : f.label}
-                </option>
-              ))}
-            </Select>
-          </Field>
-
-          <Field label="Heading weight" hint="Default keeps each component's own weight.">
-            <Select
-              value={headingFontWeight}
-              onChange={(e) => setBrand({ headingFontWeight: e.target.value || undefined })}
-              aria-label="Heading weight"
-              style={{ width: '100%' }}
-            >
-              <option value="">Default</option>
-              <option value="500">500 — medium</option>
-              <option value="600">600 — semibold</option>
-              <option value="700">700 — bold</option>
-            </Select>
-          </Field>
-
-          <Field label="Base text size" hint="Scales every text size in the library — body, controls and headings alike.">
-            <Select
-              value={brand.typeScale ?? ''}
-              onChange={(e) => setBrand({ typeScale: e.target.value || undefined })}
-              aria-label="Base text size"
-              style={{ width: '100%' }}
-            >
-              {SCALE_OPTIONS.map((s) => (
-                <option key={s.value} value={s.value}>{s.label}</option>
-              ))}
-            </Select>
-          </Field>
-
-          <Field label="Body line height" hint="Applies to multi-line body copy, not compact chrome.">
-            <Select
-              value={brand.bodyLineHeight ?? ''}
-              onChange={(e) => setBrand({ bodyLineHeight: e.target.value || undefined })}
-              aria-label="Body line height"
-              style={{ width: '100%' }}
-            >
-              <option value="">Default</option>
-              <option value="1.4">Tight (1.4)</option>
-              <option value="1.5">Normal (1.5)</option>
-              <option value="1.7">Relaxed (1.7)</option>
-              <option value="2">Loose (2.0)</option>
-            </Select>
-          </Field>
-
-          <Disclosure
-            id="uxm-typography-levels"
-            open={levelsOpen}
-            onOpenChange={setLevelsOpen}
-            label="Fine-tune levels"
+        <Stack gap={12}>
+          {/* Body and Headings are independent decisions, so they get their own
+              tabs rather than one long column. The dot marks a tab whose group
+              differs from default — otherwise a setting made on the hidden tab
+              is invisible from here. */}
+          <Tabs
+            value={typeTab}
+            onChange={(v) => setTypeTab(v as TypeTab)}
+            options={[
+              { value: 'body', label: 'Body', icon: dirtyDot(bodyDirty) },
+              { value: 'headings', label: 'Headings', icon: dirtyDot(headingsDirty) },
+            ]}
           />
-          {levelsOpen && (
-            <div
-              id="uxm-typography-levels-panel"
-              style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingTop: 4 }}
-            >
-              <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
-                Each level inherits the heading settings above until you change it here.
-                Display covers metric values and error codes.
-              </p>
-              {ROLES.map((r) => (
-                <div key={r.key} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text)' }}>
-                    {r.label}
-                  </span>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <Select
-                      value={(brand[r.familyKey] as string | undefined) ?? ''}
-                      onChange={(e) => setBrand({ [r.familyKey]: e.target.value || undefined })}
-                      aria-label={`${r.short} typeface`}
-                      style={{ flex: 2, minWidth: 0 }}
-                    >
-                      <option value="">Inherit typeface</option>
-                      {FONT_OPTIONS.map((f) => (
-                        <option key={f.value} value={f.value}>
-                          {f.value === 'Inter' ? 'Inter' : f.label}
-                        </option>
-                      ))}
-                    </Select>
-                    <Select
-                      value={(brand[r.weightKey] as string | undefined) ?? ''}
-                      onChange={(e) => setBrand({ [r.weightKey]: e.target.value || undefined })}
-                      aria-label={`${r.short} weight`}
-                      style={{ flex: 1, minWidth: 0 }}
-                    >
-                      <option value="">Inherit weight</option>
-                      <option value="500">500</option>
-                      <option value="600">600</option>
-                      <option value="700">700</option>
-                    </Select>
-                    <Select
-                      value={(brand[r.scaleKey] as string | undefined) ?? ''}
-                      onChange={(e) => setBrand({ [r.scaleKey]: e.target.value || undefined })}
-                      aria-label={`${r.short} size`}
-                      style={{ flex: 1, minWidth: 0 }}
-                    >
-                      {SCALE_OPTIONS.map((s) => (
-                        <option key={s.value} value={s.value}>
-                          {s.value === '' ? 'Size 100%' : s.label}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                </div>
-              ))}
-            </div>
+
+          {typeTab === 'body' ? (
+            <Stack gap={10}>
+              <FormField label="Typeface" labelPosition="side">
+                <Select
+                  value={fontFamily}
+                  onChange={(e) => setBrand({ fontFamily: e.target.value || undefined })}
+                  aria-label="Body typeface"
+                  style={{ width: '100%' }}
+                >
+                  <option value="">Inter (default)</option>
+                  {FONT_OPTIONS.slice(1).map((f) => (
+                    <option key={f.value} value={f.value}>{f.label}</option>
+                  ))}
+                </Select>
+              </FormField>
+
+              <FormField
+                label="Text size"
+                labelPosition="side"
+                hint="Scales every text size in the library, headings included."
+              >
+                <Select
+                  value={brand.typeScale ?? ''}
+                  onChange={(e) => setBrand({ typeScale: e.target.value || undefined })}
+                  aria-label="Base text size"
+                  style={{ width: '100%' }}
+                >
+                  {SCALE_OPTIONS.map((s) => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
+                  ))}
+                </Select>
+              </FormField>
+
+              {/* A closed set of five reads better as segments than as a popup:
+                  every option is visible and costs one click, not two. */}
+              <FormField
+                label="Line height"
+                labelPosition="side"
+                hint="Applies to multi-line body copy, not compact chrome."
+              >
+                {/* Cluster keeps the track at its content width: FormField's
+                    control column is a flex COLUMN, so its default stretch would
+                    blow an inline-flex segmented track out to full width. */}
+                <Cluster gap={0}>
+                  <ButtonGroup
+                    value={brand.bodyLineHeight ?? ''}
+                    onChange={(v) => setBrand({ bodyLineHeight: v || undefined })}
+                    aria-label="Body line height"
+                    options={LINE_HEIGHT_OPTIONS}
+                  />
+                </Cluster>
+              </FormField>
+            </Stack>
+          ) : (
+            <Stack gap={10}>
+              <FormField label="Typeface" labelPosition="side">
+                <Select
+                  value={headingFontFamily}
+                  onChange={(e) => setBrand({ headingFontFamily: e.target.value || undefined })}
+                  aria-label="Heading typeface"
+                  style={{ width: '100%' }}
+                >
+                  <option value="">Same as body</option>
+                  {/* All ten, including Inter — heading-Inter over a different
+                      body face is a real choice, so it isn't labelled
+                      "(default)" the way the body Select's first option is. */}
+                  {FONT_OPTIONS.map((f) => (
+                    <option key={f.value} value={f.value}>
+                      {f.value === 'Inter' ? 'Inter' : f.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormField>
+
+              <FormField
+                label="Weight"
+                labelPosition="side"
+                hint="Default keeps each component's own weight."
+              >
+                <Cluster gap={0}>
+                  <ButtonGroup
+                    value={headingFontWeight}
+                    onChange={(v) => setBrand({ headingFontWeight: v || undefined })}
+                    aria-label="Heading weight"
+                    options={WEIGHT_OPTIONS}
+                  />
+                </Cluster>
+              </FormField>
+
+              <Disclosure
+                id="uxm-typography-levels"
+                open={levelsOpen}
+                onOpenChange={setLevelsOpen}
+                label="Fine-tune levels"
+              />
+              {levelsOpen && (
+                <Stack id="uxm-typography-levels-panel" gap={10}>
+                  <p style={{ margin: 0, fontSize: 'calc(12px * var(--type-scale, 1))', color: 'var(--color-text-muted)', lineHeight: 'var(--type-body-line-height, 1.5)' }}>
+                    Each level inherits the settings above until you change it here.
+                    Display covers metric values and error codes.
+                  </p>
+                  {/* Selects (not segments) in here: three controls share one
+                      row, so the compact form is the one that fits. */}
+                  {ROLES.map((r) => (
+                    <FormField key={r.key} label={r.label} labelPosition="side">
+                      {/* Grid, not Cluster: `Select` forwards `style` to its inner
+                          combobox, not to the `.uxm-listbox` wrapper a flex row
+                          would lay out — so flex sizing never reaches the flex
+                          child and the controls stack. Grid sizes the wrappers. */}
+                      <ResponsiveGrid min="112px" gap={6}>
+                        <Select
+                          value={(brand[r.familyKey] as string | undefined) ?? ''}
+                          onChange={(e) => setBrand({ [r.familyKey]: e.target.value || undefined })}
+                          aria-label={`${r.short} typeface`}
+                          style={{ width: '100%' }}
+                        >
+                          <option value="">Inherit typeface</option>
+                          {FONT_OPTIONS.map((f) => (
+                            <option key={f.value} value={f.value}>
+                              {f.value === 'Inter' ? 'Inter' : f.label}
+                            </option>
+                          ))}
+                        </Select>
+                        <Select
+                          value={(brand[r.weightKey] as string | undefined) ?? ''}
+                          onChange={(e) => setBrand({ [r.weightKey]: e.target.value || undefined })}
+                          aria-label={`${r.short} weight`}
+                          style={{ width: '100%' }}
+                        >
+                          <option value="">Weight</option>
+                          <option value="500">500</option>
+                          <option value="600">600</option>
+                          <option value="700">700</option>
+                        </Select>
+                        <Select
+                          value={(brand[r.scaleKey] as string | undefined) ?? ''}
+                          onChange={(e) => setBrand({ [r.scaleKey]: e.target.value || undefined })}
+                          aria-label={`${r.short} size`}
+                          style={{ width: '100%' }}
+                        >
+                          {SCALE_OPTIONS.map((s) => (
+                            <option key={s.value} value={s.value}>
+                              {s.value === '' ? 'Size' : s.label.replace(/ —.*$/, '')}
+                            </option>
+                          ))}
+                        </Select>
+                      </ResponsiveGrid>
+                    </FormField>
+                  ))}
+                </Stack>
+              )}
+            </Stack>
           )}
 
           {/* Specimen mirrors the real cascade: each line resolves its own role
-              first, then the heading umbrella, then the body face. Sizes carry
-              both the role factor and the base scale, exactly like the atoms. */}
-          <div
-            style={{
-              marginTop: 4, padding: 16,
-              border: '1px solid var(--color-border)', borderRadius: 6,
-              backgroundColor: 'var(--color-surface)',
-              color: 'var(--color-text)',
-            }}
-          >
-            {ROLES.map((r) => (
+              first, then the heading umbrella, then the body face. */}
+          {/* Surface, not the default card white: the specimen is a sample of
+              the app's own body text, so it should sit on the app's surface. */}
+          <Card padding={16} style={{ '--uxm-card-bg': 'var(--color-surface)' } as CSSProperties}>
+            <Stack gap={0}>
+              {ROLES.map((r) => (
+                <p
+                  key={r.key}
+                  style={{
+                    margin: r.key === 'display' ? 0 : '10px 0 0',
+                    fontFamily: specimenStack(brand[r.familyKey] as string | undefined),
+                    fontSize: specimenSize(r.basePx, brand[r.scaleKey] as string | undefined, brand.typeScale),
+                    fontWeight: Number(
+                      (brand[r.weightKey] as string | undefined) || headingFontWeight || r.baseWeight,
+                    ),
+                  }}
+                >
+                  {r.sample}
+                </p>
+              ))}
               <p
-                key={r.key}
                 style={{
-                  margin: r.key === 'display' ? 0 : '10px 0 0',
-                  fontFamily: specimenStack(brand[r.familyKey] as string | undefined),
-                  fontSize: specimenSize(r.basePx, brand[r.scaleKey] as string | undefined, brand.typeScale),
-                  fontWeight: Number(
-                    (brand[r.weightKey] as string | undefined) || headingFontWeight || r.baseWeight,
-                  ),
+                  margin: '12px 0 0',
+                  fontFamily: FONT_OPTIONS.find((f) => f.value === fontFamily)?.stack ?? 'inherit',
+                  fontSize: specimenSize(14, undefined, brand.typeScale),
+                  lineHeight: brand.bodyLineHeight ? Number(brand.bodyLineHeight) : 1.5,
                 }}
               >
-                {r.sample}
+                Body copy sets the baseline everything else is measured against. The quick brown
+                fox jumps over the lazy dog.
               </p>
-            ))}
-            <p
-              style={{
-                margin: '12px 0 0',
-                fontFamily: FONT_OPTIONS.find((f) => f.value === fontFamily)?.stack ?? 'inherit',
-                fontSize: specimenSize(14, undefined, brand.typeScale),
-                lineHeight: brand.bodyLineHeight ? Number(brand.bodyLineHeight) : 1.5,
-              }}
-            >
-              Body copy sets the baseline everything else is measured against. The quick brown
-              fox jumps over the lazy dog.
-            </p>
-          </div>
-        </section>
+            </Stack>
+          </Card>
+        </Stack>
       </Group>
 
       <Group
@@ -501,34 +564,6 @@ function Group({
         {children}
       </div>
     </section>
-  );
-}
-
-/** Labelled wrapper for a single control. Sentence case, not the uppercase
- *  eyebrow the Group header uses — these sit close together and read as prose. */
-function Field({
-  label, hint, children,
-}: {
-  label: string; hint?: string; children: React.ReactNode;
-}) {
-  return (
-    <label style={{ display: 'block' }}>
-      <span style={{
-        display: 'block', marginBottom: 6,
-        fontSize: 12, fontWeight: 500, color: 'var(--color-text)',
-      }}>
-        {label}
-      </span>
-      {children}
-      {hint && (
-        <span style={{
-          display: 'block', marginTop: 4,
-          fontSize: 12, color: 'var(--color-text-muted)',
-        }}>
-          {hint}
-        </span>
-      )}
-    </label>
   );
 }
 
