@@ -141,6 +141,49 @@ neighbouring headings, not just your own.
 
 ---
 
+## Skill-file branches: catalog rows are one physical line — parallel branches conflict wholesale; resolve by re-applying, not hand-merging
+
+`component-catalog.md` keeps each component's entire description on ONE physical
+line (a markdown table row), and SKILL.md bullets are near-neighbours. Two
+consequences that are not obvious until they bite:
+
+1. **Any two branches that touch the same component's row conflict on the whole
+   row** — even when the edits are semantically disjoint (one strips an
+   `(unreleased)` qualifier, the other appends a sentence). Git cannot merge
+   within a line.
+2. **The conflict block engulfs neighbouring rows.** A same-region edit makes
+   the `<<<<<<<` block span every row between the two changes (five components'
+   rows for a two-row overlap, in practice), which looks much scarier than it
+   is.
+
+**How to resolve (the process that works):**
+
+1. `git rebase origin/master` on the skill/fix branch.
+2. In the conflict block, **take the master side wholesale as the base** —
+   never try to hand-merge two 1,000-character lines; you will drop a clause
+   and nobody will notice in review.
+3. **Re-apply your branch's semantic edits onto that base with a script** —
+   exact-string replacements with an assert that each anchor matches exactly
+   once (`assert t.count(old) == 1`). A failed assert means master's text
+   drifted under you — stop and look, don't force.
+4. Verify beyond the markers: `grep -c '(unreleased)'` (or whatever the other
+   branch's edit was) must show master's state preserved, and the version-run
+   headings must still be ordered. Then `git push --force-with-lease`.
+
+**Prevention:** when two of your own branches must edit the same catalog rows,
+either stack them (base the second on the first) or say the conflict out loud
+in the handoff — a predicted two-line conflict costs a minute; a surprise one
+costs a review round-trip.
+
+**This actually happened — 26-08-2026.** `docs/skill-drift-sync-4.26` (dropped
+15 stale `(unreleased)` qualifiers) and `fix/sidebar-status-dot-a11y` (amended
+the AppSidebar + SidebarNavItem rows) both touched the sidebar rows; the sync
+branch merged first and the fix MR conflicted exactly as predicted at handoff.
+The take-master-then-re-apply script resolved it in one pass; the naive
+hand-merge would have had to reconcile a five-row block by eye.
+
+---
+
 ## A per-state var whose fallback is the resting value ships a dead rule
 
 `var(--uxm-<comp>-hover-<prop>, <resting value>)` looks like a correct two-layer
