@@ -40,7 +40,7 @@
     &:disabled {
       background-color: var(--uxm-button-group-disabled-bg, var(--color-card));
       color: var(--uxm-button-group-disabled-text, var(--color-text-muted));
-      opacity: var(--uxm-button-group-disabled-opacity, 1);
+      opacity: var(--uxm-button-group-disabled-opacity, 0.5);
     }
 
     &--active {

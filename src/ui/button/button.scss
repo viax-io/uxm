@@ -45,7 +45,7 @@
 
   &:disabled {
     color: var(--uxm-button-primary-disabled-color, var(--color-text-inverse));
-    opacity: var(--uxm-button-primary-disabled-opacity, 1);
+    opacity: var(--uxm-button-primary-disabled-opacity, 0.4);
   }
 }
 
@@ -86,7 +86,7 @@
 
   &:disabled {
     color: var(--uxm-button-secondary-disabled-color, var(--color-accent-bold));
-    opacity: var(--uxm-button-secondary-disabled-opacity, 1);
+    opacity: var(--uxm-button-secondary-disabled-opacity, 0.4);
   }
 }
 
@@ -127,7 +127,7 @@
 
   &:disabled {
     color: var(--uxm-button-tertiary-disabled-color, var(--color-text));
-    opacity: var(--uxm-button-tertiary-disabled-opacity, 1);
+    opacity: var(--uxm-button-tertiary-disabled-opacity, 0.4);
   }
 }
 
@@ -164,7 +164,7 @@
 
   &:disabled {
     color: var(--uxm-button-ghost-disabled-color, var(--color-accent-bold));
-    opacity: var(--uxm-button-ghost-disabled-opacity, 1);
+    opacity: var(--uxm-button-ghost-disabled-opacity, 0.4);
   }
 }
 

@@ -38,7 +38,7 @@
   &:disabled,
   &[aria-disabled="true"] {
     background-color: var(--uxm-disclosure-disabled-bg, transparent);
-    opacity: var(--uxm-disclosure-disabled-opacity, 1);
+    opacity: var(--uxm-disclosure-disabled-opacity, 0.5);
   }
 
   &__icon {

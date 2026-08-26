@@ -41,7 +41,7 @@
 
   &:disabled {
     cursor: not-allowed;
-    opacity: var(--uxm-slider-disabled-opacity, 1);
+    opacity: var(--uxm-slider-disabled-opacity, 0.4);
   }
 
   &::-webkit-slider-thumb {

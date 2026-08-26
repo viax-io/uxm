@@ -1119,11 +1119,12 @@ skill:
   `--disabled` rule in its own file; only the label row and the visually-hidden `__input` stay
   shared. The `RadioGroup` README claimed the modifier had no bundled dim at all; it has
   shipped one since the shared rule was written. ⚠️ Still drifting
-  elsewhere and NOT touched here: the `Button` primary/secondary/tertiary/ghost variants and
-  `Slider` ship CSS `1` against registry `0.4`; `Link` and `list-item` ship `1` against
-  registry `0.5` (the target differs per component — diff against the registry entry; `Tabs`
-  was fixed in this same MR). `PillSelect` is correct as-is: its registry default is `1` by
-  design. 
+  elsewhere — now CLOSED in this same MR: a scripted registry-vs-CSS diff found 19 drifting
+  `disabled-opacity` declarations across 17 atoms (`Button` variants, `Slider`, `BackLink`,
+  `InlineAction`, `ButtonWithIcon` at `0.4`; `Link`, `list-item`, `Breadcrumb`, `ButtonGroup`,
+  `Disclosure`, `ExplorerListItem`, `ExplorerSection`, `FilterTabs`, `SidebarNavItem`,
+  `TabsUnderline`, `ViewSwitcher` at `0.5`), all brought to their registry values.
+  `PillSelect` is correct as-is: its registry default is `1` by design. 
 - **`RadioGroup` hover — the last of the three small controls.** `hover-unselected-border` fell
   back to `--color-border` and `hover-selected-border` / `hover-dot-color` to `--color-accent`,
   i.e. the resting colours, so hover never painted outside the studio. Now `--color-text-strong`
@@ -1147,9 +1148,19 @@ skill:
   nothing in a consumer app — the same dead-fallback shape as the small controls, and invisible
   in the workbench because previews project the knob defaults as inline vars. Now
   `--color-surface-alt` and `--color-text`, matching the registry. Visual change for consumers
-  who never set the vars; a saved override still wins. ⚠️ The same pattern is still live
-  elsewhere — `FilterTabs`, `ViewSwitcher`, `ButtonGroup`, `Disclosure`, `List` and `Button`'s
-  pressed states, plus `disabled-opacity: 1` on ~20 atoms where the registry says 0.4/0.5.
+  who never set the vars; a saved override still wins. ⚠️ The HOVER/pressed half of the pattern
+  is still live elsewhere — `FilterTabs`, `ViewSwitcher`, `ButtonGroup`, `Disclosure`, `List`
+  and `Button`'s pressed states; the `disabled-opacity` half is closed (see the sweep bullet
+  below).
+- **Disabled dim now actually paints on 17 more atoms.** A scripted registry-vs-CSS diff of
+  every `disabledOpacity` default found 19 drifting `--uxm-*-disabled-opacity` fallbacks
+  (`1` in CSS vs `0.4`/`0.5` in the registry) — the whole `Button` family, `Slider`,
+  `BackLink`, `InlineAction`, `ButtonWithIcon`, `Link`, `list-item`, `Breadcrumb`,
+  `ButtonGroup`, `Disclosure`, `ExplorerListItem`, `ExplorerSection`, `FilterTabs`,
+  `SidebarNavItem`, `TabsUnderline`, `ViewSwitcher`. All now match their registry value, so a
+  disabled control dims in a bare consumer exactly as the studio always previewed. Visual
+  change for consumers that never set the vars; a saved override still wins. `PillSelect`
+  deliberately stays flat (`1` — dimming would double-dim its already-muted chips).
 - **`Tabs` disabled now dims, and the studio's static Hover/Focus tiles for Tabs paint.** Two
   follow-ups of the same sweep: `--uxm-tabs-disabled-opacity` fell back to `1` against the
   registry's `0.5` (a disabled tab looked enabled in a bare consumer — only the muted text

@@ -37,7 +37,7 @@
 
     &:disabled {
       color: var(--uxm-filter-tabs-disabled-text, var(--color-text-muted));
-      opacity: var(--uxm-filter-tabs-disabled-opacity, 1);
+      opacity: var(--uxm-filter-tabs-disabled-opacity, 0.5);
     }
 
     &--active {

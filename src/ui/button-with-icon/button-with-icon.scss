@@ -37,7 +37,7 @@
 
   &:disabled {
     color: var(--uxm-button-with-icon-disabled-color, var(--color-text-muted));
-    opacity: var(--uxm-button-with-icon-disabled-opacity, 1);
+    opacity: var(--uxm-button-with-icon-disabled-opacity, 0.4);
   }
 
   &__icon {

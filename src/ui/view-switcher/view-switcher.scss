@@ -37,7 +37,7 @@
 
     &:disabled {
       color: var(--uxm-view-switcher-disabled-icon, var(--color-text-muted));
-      opacity: var(--uxm-view-switcher-disabled-opacity, 1);
+      opacity: var(--uxm-view-switcher-disabled-opacity, 0.5);
     }
 
     &--active {

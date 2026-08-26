@@ -46,7 +46,7 @@
   &[aria-disabled="true"] {
     background-color: var(--uxm-list-item-disabled-bg, transparent);
     color: var(--uxm-list-item-disabled-text, var(--color-text));
-    opacity: var(--uxm-list-item-disabled-opacity, 1);
+    opacity: var(--uxm-list-item-disabled-opacity, 0.5);
     pointer-events: none;
   }
 

@@ -34,7 +34,7 @@
 
   & .uxm-link[aria-disabled="true"] {
     color: var(--uxm-breadcrumb-disabled-text, var(--color-text-subtle));
-    opacity: var(--uxm-breadcrumb-disabled-opacity, 1);
+    opacity: var(--uxm-breadcrumb-disabled-opacity, 0.5);
   }
 
   &__list {

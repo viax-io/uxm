@@ -29,7 +29,7 @@
   &[aria-disabled="true"] {
     background-color: var(--uxm-sidebar-nav-item-disabled-bg, transparent);
     color: var(--uxm-sidebar-nav-item-disabled-text, var(--color-text-strong));
-    opacity: var(--uxm-sidebar-nav-item-disabled-opacity, 1);
+    opacity: var(--uxm-sidebar-nav-item-disabled-opacity, 0.5);
     pointer-events: none;
   }
 

@@ -47,7 +47,7 @@
   &[aria-disabled="true"],
   &:disabled {
     color: var(--uxm-link-disabled-text, var(--color-text-muted));
-    opacity: var(--uxm-link-disabled-opacity, 1);
+    opacity: var(--uxm-link-disabled-opacity, 0.5);
     pointer-events: none;
   }
 
