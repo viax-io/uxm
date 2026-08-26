@@ -45,8 +45,9 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any standard HTML at
 | `--uxm-detail-section-border-color` | `--color-border` | – | Section border. |
 | `--uxm-detail-section-radius` | – | `4px` | Section corner radius. |
 | `--uxm-detail-section-padding` | – | `20px` | Inner padding (left is `padding + accent-width + 4px`). |
-| `--uxm-detail-section-title-font` | `--brand-heading-font` | `inherit` | Title typeface. Unset brand = inherits the body face. |
-| `--uxm-detail-section-title-weight` | `--brand-heading-weight` | `600` | Title weight. |
+| `--uxm-detail-section-title-font` | `--type-section-title-font` → `--brand-heading-font` | `inherit` | Title typeface (**h2** role). |
+| `--uxm-detail-section-title-weight` | `--type-section-title-weight` → `--brand-heading-weight` | `600` | Title weight (**h2** role). |
+| `--type-body-line-height` | – | `1.5` | Line height of the body copy (global typography token). |
 | `--uxm-detail-section-accent-color` | `--color-accent` | – | Left rail fill. |
 | `--uxm-detail-section-accent-width` | – | `3px` | Left rail width. |
 | `--uxm-detail-section-icon-bg` | `--color-surface-alt` | – | Icon tile background (bridged into `--uxm-icon-tile-bg`). |

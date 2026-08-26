@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { hexToHsl, retintHue } from '@/lib/contrast';
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
-import { ButtonPrimary, ButtonTertiary, ColorInputPopover, Dialog, Modal, Select, Tabs } from '@/ui';
+import { ButtonPrimary, ButtonTertiary, ColorInputPopover, Dialog, Disclosure, Modal, Select, Tabs } from '@/ui';
 
 export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
   { label: 'Inter (default)', value: 'Inter', stack: "'Inter', var(--font-inter), system-ui, sans-serif" },
@@ -17,6 +17,29 @@ export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
   { label: 'IBM Plex Sans', value: 'IBM Plex Sans', stack: "'IBM Plex Sans', system-ui, sans-serif" },
   { label: 'JetBrains Mono', value: 'JetBrains Mono', stack: "'JetBrains Mono', ui-monospace, monospace" },
 ];
+
+/** Shared by the base-size knob and each role's size knob. */
+const SCALE_OPTIONS = [
+  { value: '', label: 'Default (100%)' },
+  { value: '0.875', label: '87.5% — compact' },
+  { value: '1.125', label: '112.5% — large' },
+  { value: '1.25', label: '125% — larger' },
+  { value: '1.5', label: '150% — largest' },
+];
+
+/**
+ * The three heading roles, in visual order. `basePx` / `baseWeight` are the
+ * representative surface's own values, used only to render the specimen at a
+ * believable size — the atoms keep their individual literals.
+ */
+const ROLES = [
+  { key: 'display', label: 'Display', short: 'Display', sample: '$48.2K', basePx: 28, baseWeight: 700,
+    familyKey: 'displayFontFamily', weightKey: 'displayFontWeight', scaleKey: 'displayScale' },
+  { key: 'pageTitle', label: 'Page titles', short: 'Page title', sample: 'Quarterly performance review', basePx: 22, baseWeight: 600,
+    familyKey: 'pageTitleFontFamily', weightKey: 'pageTitleFontWeight', scaleKey: 'pageTitleScale' },
+  { key: 'sectionTitle', label: 'Section titles', short: 'Section title', sample: 'Revenue motions', basePx: 16, baseWeight: 600,
+    familyKey: 'sectionTitleFontFamily', weightKey: 'sectionTitleFontWeight', scaleKey: 'sectionTitleScale' },
+] as const;
 
 type UploadKind = 'logo' | 'icon' | 'favicon';
 type IdentityTab = 'light' | 'dark';
@@ -58,6 +81,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
   const iconInputRef = useRef<HTMLInputElement>(null);
   const faviconInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState<UploadKind | null>(null);
+  const [levelsOpen, setLevelsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [identityTab, setIdentityTab] = useState<IdentityTab>('light');
 
@@ -107,10 +131,14 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
   const fontFamily = brand.fontFamily ?? '';
   const headingFontFamily = brand.headingFontFamily ?? '';
   const headingFontWeight = brand.headingFontWeight ?? '';
-  // The specimen mirrors the real cascade: an unset heading face falls through
-  // to the body face (which itself falls through to the inherited default).
-  const headingSpecimenStack =
-    FONT_OPTIONS.find((f) => f.value === (headingFontFamily || fontFamily))?.stack ?? 'inherit';
+  // Specimen helpers mirroring the real cascade: an unset role falls through to
+  // the heading umbrella, which falls through to the body face; sizes multiply
+  // the role factor and the base scale exactly as the atoms' calc() does.
+  const specimenStack = (roleFamily: string | undefined) =>
+    FONT_OPTIONS.find((f) => f.value === (roleFamily || headingFontFamily || fontFamily))?.stack
+      ?? 'inherit';
+  const specimenSize = (basePx: number, roleScale?: string, baseScale?: string) =>
+    Math.round(basePx * Number(roleScale || 1) * Number(baseScale || 1) * 10) / 10;
 
   return (
     <div style={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -297,6 +325,100 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
             </Select>
           </Field>
 
+          <Field label="Base text size" hint="Currently scales the heading levels below. Body and control text follow in a later release.">
+            <Select
+              value={brand.typeScale ?? ''}
+              onChange={(e) => setBrand({ typeScale: e.target.value || undefined })}
+              aria-label="Base text size"
+              style={{ width: '100%' }}
+            >
+              {SCALE_OPTIONS.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field label="Body line height" hint="Applies to multi-line body copy, not compact chrome.">
+            <Select
+              value={brand.bodyLineHeight ?? ''}
+              onChange={(e) => setBrand({ bodyLineHeight: e.target.value || undefined })}
+              aria-label="Body line height"
+              style={{ width: '100%' }}
+            >
+              <option value="">Default</option>
+              <option value="1.4">Tight (1.4)</option>
+              <option value="1.5">Normal (1.5)</option>
+              <option value="1.7">Relaxed (1.7)</option>
+              <option value="2">Loose (2.0)</option>
+            </Select>
+          </Field>
+
+          <Disclosure
+            id="uxm-typography-levels"
+            open={levelsOpen}
+            onOpenChange={setLevelsOpen}
+            label="Fine-tune levels"
+          />
+          {levelsOpen && (
+            <div
+              id="uxm-typography-levels-panel"
+              style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingTop: 4 }}
+            >
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                Each level inherits the heading settings above until you change it here.
+                Display covers metric values and error codes.
+              </p>
+              {ROLES.map((r) => (
+                <div key={r.key} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text)' }}>
+                    {r.label}
+                  </span>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <Select
+                      value={(brand[r.familyKey] as string | undefined) ?? ''}
+                      onChange={(e) => setBrand({ [r.familyKey]: e.target.value || undefined })}
+                      aria-label={`${r.short} typeface`}
+                      style={{ flex: 2, minWidth: 0 }}
+                    >
+                      <option value="">Inherit typeface</option>
+                      {FONT_OPTIONS.map((f) => (
+                        <option key={f.value} value={f.value}>
+                          {f.value === 'Inter' ? 'Inter' : f.label}
+                        </option>
+                      ))}
+                    </Select>
+                    <Select
+                      value={(brand[r.weightKey] as string | undefined) ?? ''}
+                      onChange={(e) => setBrand({ [r.weightKey]: e.target.value || undefined })}
+                      aria-label={`${r.short} weight`}
+                      style={{ flex: 1, minWidth: 0 }}
+                    >
+                      <option value="">Inherit weight</option>
+                      <option value="500">500</option>
+                      <option value="600">600</option>
+                      <option value="700">700</option>
+                    </Select>
+                    <Select
+                      value={(brand[r.scaleKey] as string | undefined) ?? ''}
+                      onChange={(e) => setBrand({ [r.scaleKey]: e.target.value || undefined })}
+                      aria-label={`${r.short} size`}
+                      style={{ flex: 1, minWidth: 0 }}
+                    >
+                      {SCALE_OPTIONS.map((s) => (
+                        <option key={s.value} value={s.value}>
+                          {s.value === '' ? 'Size 100%' : s.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Specimen mirrors the real cascade: each line resolves its own role
+              first, then the heading umbrella, then the body face. Sizes carry
+              both the role factor and the base scale, exactly like the atoms. */}
           <div
             style={{
               marginTop: 4, padding: 16,
@@ -305,24 +427,34 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
               color: 'var(--color-text)',
             }}
           >
+            {ROLES.map((r) => (
+              <p
+                key={r.key}
+                style={{
+                  margin: r.key === 'display' ? 0 : '10px 0 0',
+                  fontFamily: specimenStack(brand[r.familyKey] as string | undefined),
+                  fontSize: specimenSize(r.basePx, brand[r.scaleKey] as string | undefined, brand.typeScale),
+                  fontWeight: Number(
+                    (brand[r.weightKey] as string | undefined) || headingFontWeight || r.baseWeight,
+                  ),
+                }}
+              >
+                {r.sample}
+              </p>
+            ))}
             <p
               style={{
-                margin: 0,
-                fontFamily: headingSpecimenStack,
-                fontSize: 22,
-                fontWeight: headingFontWeight ? Number(headingFontWeight) : 600,
-              }}
-            >
-              Quarterly performance review
-            </p>
-            <p
-              style={{
-                margin: '8px 0 0',
+                margin: '12px 0 0',
                 fontFamily: FONT_OPTIONS.find((f) => f.value === fontFamily)?.stack ?? 'inherit',
-                fontSize: 18,
+                // Deliberately unscaled: --type-scale reaches only the six
+                // heading surfaces today, so scaling this line would promise
+                // a library-wide change the sweep hasn't delivered yet.
+                fontSize: 14,
+                lineHeight: brand.bodyLineHeight ? Number(brand.bodyLineHeight) : 1.5,
               }}
             >
-              The quick brown fox jumps over the lazy dog.
+              Body copy sets the baseline everything else is measured against. The quick brown
+              fox jumps over the lazy dog.
             </p>
           </div>
         </section>

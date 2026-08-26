@@ -23,9 +23,9 @@
 
   &__code {
     color: var(--uxm-error-page-code-color, var(--color-text-subtle));
-    font-family: var(--uxm-error-page-code-font, var(--brand-heading-font, inherit));
-    font-size: var(--uxm-error-page-code-size, 88px);
-    font-weight: var(--uxm-error-page-code-weight, var(--brand-heading-weight, 700));
+    font-family: var(--uxm-error-page-code-font, var(--type-display-font, var(--brand-heading-font, inherit)));
+    font-size: calc(var(--uxm-error-page-code-size, 88px) * var(--type-display-scale, 1) * var(--type-scale, 1));
+    font-weight: var(--uxm-error-page-code-weight, var(--type-display-weight, var(--brand-heading-weight, 700)));
     letter-spacing: -0.02em;
     line-height: 1;
     margin: 0;
@@ -33,16 +33,16 @@
 
   &__title {
     color: var(--uxm-error-page-title-color, var(--color-text));
-    font-family: var(--uxm-error-page-title-font, var(--brand-heading-font, inherit));
-    font-size: var(--uxm-error-page-title-size, 24px);
-    font-weight: var(--uxm-error-page-title-weight, var(--brand-heading-weight, 600));
+    font-family: var(--uxm-error-page-title-font, var(--type-page-title-font, var(--brand-heading-font, inherit)));
+    font-size: calc(var(--uxm-error-page-title-size, 24px) * var(--type-page-title-scale, 1) * var(--type-scale, 1));
+    font-weight: var(--uxm-error-page-title-weight, var(--type-page-title-weight, var(--brand-heading-weight, 600)));
     margin: 16px 0 0;
   }
 
   &__message {
     color: var(--uxm-error-page-message-color, var(--color-text-muted));
     font-size: var(--uxm-error-page-message-size, 14px);
-    line-height: 1.5;
+    line-height: var(--type-body-line-height, 1.5);
     margin: 8px 0 0;
     max-width: var(--uxm-error-page-message-max-width, 28rem);
   }

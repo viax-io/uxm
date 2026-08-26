@@ -60,9 +60,9 @@ export function ErrorPagePreview({ styles, variants }: PreviewProps) {
           the brand heading knobs — this preview hand-rolls its markup. */}
       {cfg.code && (
         <p style={{
-          fontFamily: 'var(--uxm-error-page-code-font, var(--brand-heading-font, inherit))',
-          fontSize: codeSize,
-          fontWeight: 'var(--uxm-error-page-code-weight, var(--brand-heading-weight, 700))',
+          fontFamily: 'var(--uxm-error-page-code-font, var(--type-display-font, var(--brand-heading-font, inherit)))',
+          fontSize: `calc(${codeSize}px * var(--type-display-scale, 1) * var(--type-scale, 1))`,
+          fontWeight: 'var(--uxm-error-page-code-weight, var(--type-display-weight, var(--brand-heading-weight, 700)))',
           lineHeight: 1,
           letterSpacing: '-0.02em',
           color: styles.codeColor as string,
@@ -70,9 +70,9 @@ export function ErrorPagePreview({ styles, variants }: PreviewProps) {
         }}>{cfg.code}</p>
       )}
       <h1 style={{
-        fontFamily: 'var(--uxm-error-page-title-font, var(--brand-heading-font, inherit))',
-        fontSize: titleSize,
-        fontWeight: 'var(--uxm-error-page-title-weight, var(--brand-heading-weight, 600))',
+        fontFamily: 'var(--uxm-error-page-title-font, var(--type-page-title-font, var(--brand-heading-font, inherit)))',
+        fontSize: `calc(${titleSize}px * var(--type-page-title-scale, 1) * var(--type-scale, 1))`,
+        fontWeight: 'var(--uxm-error-page-title-weight, var(--type-page-title-weight, var(--brand-heading-weight, 600)))',
         color: styles.titleColor as string,
         marginTop: 16,
         marginBottom: 0,

@@ -45,7 +45,7 @@
 }
 .uxm-banner__content {
   opacity: 0.9;
-  line-height: 1.5;
+  line-height: var(--type-body-line-height, 1.5);
 }
 /* Close affordance — rendered only when `onDismiss` is passed.
    `margin-left: auto` parks it at the right edge regardless of body

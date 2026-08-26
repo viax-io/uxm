@@ -875,12 +875,59 @@ export function safeFontWeight(v: unknown): string | undefined {
   const s = typeof v === 'number' ? String(v) : typeof v === 'string' ? v.trim() : undefined;
   return s !== undefined && /^(500|600|700)$/.test(s) ? s : undefined;
 }
+// Scales multiply a length inside calc(), which makes a bad value far worse
+// than a dropped declaration: `abc` or `1.2px` (length × length) is invalid at
+// computed-value time, so `font-size` resolves to `unset` and INHERITS — one
+// poisoned value on :root collapses the whole app to the parent's size. A
+// plain-number whitelist plus a sane range is the only safe gate; note
+// `safeTokenValue` is NOT sufficient (it passes `abc`, `-1` and unbalanced
+// parens). Range mirrors the editor's slider bounds.
+export function safeTypeScale(v: unknown): string | undefined {
+  const s = typeof v === 'number' ? String(v) : typeof v === 'string' ? v.trim() : undefined;
+  if (s === undefined || !/^(?:0|[1-9]\d?)(?:\.\d{1,3})?$/.test(s)) return undefined;
+  const n = Number(s);
+  return n >= 0.5 && n <= 2 ? s : undefined;
+}
+// Line height is a unitless ratio; same invalid-at-computed-value-time risk as
+// the scales, but it only affects the declarations that read it.
+export function safeLineHeight(v: unknown): string | undefined {
+  const s = typeof v === 'number' ? String(v) : typeof v === 'string' ? v.trim() : undefined;
+  if (s === undefined || !/^[1-9](?:\.\d{1,2})?$/.test(s)) return undefined;
+  const n = Number(s);
+  return n >= 1 && n <= 2.5 ? s : undefined;
+}
 export function safeTokenKey(v: string): boolean {
   return /^--[A-Za-z0-9-]+$/.test(v);
 }
 export function safeTokenValue(v: unknown): string | undefined {
   if (typeof v !== 'string') return undefined;
   return /[{};\n\r]/.test(v) ? undefined : v;
+}
+
+// The three heading roles, in one place. Both the publish path below and the
+// live mirror (`brand-font-styles.tsx`) derive their emitted var names from
+// `role` by interpolation, so a rename here reaches both — keeping these in two
+// hand-maintained lists is how `--type-${role}-font` silently drifts away from
+// the names the stylesheets actually read.
+export const TYPE_ROLES = [
+  { role: 'display', family: 'displayFontFamily', weight: 'displayFontWeight', scale: 'displayScale' },
+  { role: 'page-title', family: 'pageTitleFontFamily', weight: 'pageTitleFontWeight', scale: 'pageTitleScale' },
+  { role: 'section-title', family: 'sectionTitleFontFamily', weight: 'sectionTitleFontWeight', scale: 'sectionTitleScale' },
+] as const satisfies ReadonlyArray<{
+  role: string;
+  family: keyof BrandConfig;
+  weight: keyof BrandConfig;
+  scale: keyof BrandConfig;
+}>;
+
+/** Sanitised per-role typography, shared by the generator and the live mirror. */
+export function resolveTypeRoles(brand: BrandConfig) {
+  return TYPE_ROLES.map((r) => ({
+    role: r.role,
+    family: safeFontFamily(brand[r.family]),
+    weight: safeFontWeight(brand[r.weight]),
+    scale: safeTypeScale(brand[r.scale]),
+  }));
 }
 
 /** Generate the overrides stylesheet from style overrides + brand config. */
@@ -890,6 +937,10 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   const fontFamily = safeFontFamily(brand.fontFamily);
   const headingFontFamily = safeFontFamily(brand.headingFontFamily);
   const headingFontWeight = safeFontWeight(brand.headingFontWeight);
+  // Per-role refinements, layered under the umbrella heading vars above.
+  const roles = resolveTypeRoles(brand);
+  const typeScale = safeTypeScale(brand.typeScale);
+  const bodyLineHeight = safeLineHeight(brand.bodyLineHeight);
   const logoUrl = safeUrl(brand.logoUrl);
   const iconUrl = safeUrl(brand.iconUrl);
   const logoUrlDark = safeUrl(brand.logoUrlDark);
@@ -905,6 +956,16 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
     lines.push(`@import url("${fontFileUrl(headingFontFamily)}");`);
     lines.push('');
   }
+  // A role may pick a face neither the body nor the umbrella uses — fetch each
+  // distinct one exactly once (@import must stay above the rules below).
+  const imported = new Set([fontFamily, headingFontFamily].filter(Boolean));
+  for (const { family } of roles) {
+    if (family && !imported.has(family)) {
+      imported.add(family);
+      lines.push(`@import url("${fontFileUrl(family)}");`);
+      lines.push('');
+    }
+  }
 
   const brandRules: string[] = [];
   if (fontFamily) {
@@ -919,6 +980,17 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   if (headingFontWeight) {
     brandRules.push(`  --brand-heading-weight: ${headingFontWeight};`);
   }
+  // Role vars sit between the component var and the umbrella in each atom's
+  // chain, so an unset role simply falls through to the umbrella.
+  for (const { role, family, weight, scale } of roles) {
+    if (family) {
+      brandRules.push(`  --type-${role}-font: "${family}", var(--font-inter), system-ui, sans-serif;`);
+    }
+    if (weight) brandRules.push(`  --type-${role}-weight: ${weight};`);
+    if (scale) brandRules.push(`  --type-${role}-scale: ${scale};`);
+  }
+  if (typeScale) brandRules.push(`  --type-scale: ${typeScale};`);
+  if (bodyLineHeight) brandRules.push(`  --type-body-line-height: ${bodyLineHeight};`);
   if (logoUrl) brandRules.push(`  --brand-logo-url: url("${logoUrl}");`);
   if (iconUrl) brandRules.push(`  --brand-icon-url: url("${iconUrl}");`);
 
@@ -929,6 +1001,18 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
     lines.push('');
     if (fontFamily) {
       lines.push('body { font-family: var(--brand-font) !important; }');
+      lines.push('');
+    }
+    // Emitted ONLY when set. The library ships no element-level rules at all,
+    // so an unconditional `body { line-height }` would reflow the host's own
+    // content — same reasoning as the font-family rule above.
+    if (bodyLineHeight) {
+      // Explicit fallback: if the var is later cancelled (the studio mirror
+      // re-declares it as `initial` on revert) a bare `var()` would be invalid
+      // at computed-value time and `line-height` — being inherited — would
+      // resolve to the parent's value, silently replacing whatever the host
+      // had set on `body`. `normal` makes the wind-down state deliberate.
+      lines.push(`body { line-height: var(--type-body-line-height, normal); }`);
       lines.push('');
     }
   }

@@ -25,9 +25,9 @@
     color: var(--uxm-page-header-title-color, var(--color-text));
     /* Heading face/weight: per-instance var, then the brand heading token,
        then today's value — unset brand = inherits the body face, weight 600. */
-    font-family: var(--uxm-page-header-title-font, var(--brand-heading-font, inherit));
-    font-size: var(--uxm-page-header-title-size, 22px);
-    font-weight: var(--uxm-page-header-title-weight, var(--brand-heading-weight, 600));
+    font-family: var(--uxm-page-header-title-font, var(--type-page-title-font, var(--brand-heading-font, inherit)));
+    font-size: calc(var(--uxm-page-header-title-size, 22px) * var(--type-page-title-scale, 1) * var(--type-scale, 1));
+    font-weight: var(--uxm-page-header-title-weight, var(--type-page-title-weight, var(--brand-heading-weight, 600)));
     margin: 0;
   }
 

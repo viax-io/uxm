@@ -18,6 +18,23 @@ export interface BrandConfig {
   /** Weight for heading surfaces ('500' | '600' | '700'). Unset = each
    *  component keeps its own default (600, or 700 for the display sizes). */
   headingFontWeight?: string;
+  /** Per-role heading refinements, layered UNDER the umbrella above: unset =
+   *  the role follows `headingFontFamily` / `headingFontWeight`. Roles are
+   *  display (StatCard value, ErrorPage code), h1 (PageHeader / ErrorPage
+   *  title) and h2 (DetailSection / SegmentRow title). */
+  displayFontFamily?: string;
+  displayFontWeight?: string;
+  displayScale?: string;
+  pageTitleFontFamily?: string;
+  pageTitleFontWeight?: string;
+  pageTitleScale?: string;
+  sectionTitleFontFamily?: string;
+  sectionTitleFontWeight?: string;
+  sectionTitleScale?: string;
+  /** Base text size multiplier applied to every font-size in the library. */
+  typeScale?: string;
+  /** Line height for multi-line body copy. Unset = each surface's own value. */
+  bodyLineHeight?: string;
   tokens?: BrandTokens;
 }
 

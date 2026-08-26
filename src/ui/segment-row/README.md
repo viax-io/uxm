@@ -45,7 +45,7 @@ Set on the root (or an ancestor scope); each falls back to a design token.
 | `--uxm-segment-row-chevron-color` / `-chevron-size` | `text-muted` / `16px` | Expand chevron |
 | `--uxm-segment-row-accent-color` / `-accent-width` / `-accent-radius` | `accent-bold` / `4px` / `2px` | Accent line |
 | `--uxm-segment-row-title-color` / `-title-size` / `-title-weight` | `text` / `16px` / `600` | Title (weight falls back through `--brand-heading-weight`) |
-| `--uxm-segment-row-title-font` | `--brand-heading-font` → `inherit` | Title typeface; unset brand = inherits the body face |
+| `--uxm-segment-row-title-font` | `--type-section-title-font` → `--brand-heading-font` → `inherit` | Title typeface (**h2** role) |
 | `--uxm-segment-row-count-bg` / `-count-color` / `-count-size` | `surface-alt` / `text-muted` / `12px` | Count badge |
 | `--uxm-segment-row-count-padding-x` / `-y` / `-count-radius` | `10px` / `2px` / `999px` | Count badge shape |
 | `--uxm-segment-row-row-hover-bg` / `-row-hover-radius` | `color-mix(text 4%)` / `12px` | Row hover highlight |

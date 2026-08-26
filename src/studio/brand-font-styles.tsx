@@ -1,5 +1,5 @@
 import { useUxm } from './lib/context';
-import { fontFileUrl, safeFontFamily, safeFontWeight } from './persistence/generate-css';
+import { fontFileUrl, resolveTypeRoles, safeFontFamily, safeFontWeight, safeLineHeight, safeTypeScale } from './persistence/generate-css';
 
 /**
  * Live mirror of the brand-font output that `generateOverridesCss` emits
@@ -39,19 +39,38 @@ export function BrandFontStyles() {
   const fontFamily = safeFontFamily(brand.fontFamily);
   const headingFontFamily = safeFontFamily(brand.headingFontFamily);
   const headingFontWeight = safeFontWeight(brand.headingFontWeight);
+  const roles = resolveTypeRoles(brand);
+  const typeScale = safeTypeScale(brand.typeScale);
+  const bodyLineHeight = safeLineHeight(brand.bodyLineHeight);
+
+  // One <link> per distinct family; React 19 also dedupes by href.
+  const families = [...new Set(
+    [fontFamily, headingFontFamily, ...roles.map((r) => r.family)].filter((f): f is string => !!f),
+  )];
+  const stack = (f: string) => `"${f}", var(--font-inter), system-ui, sans-serif`;
+  // `initial` = guaranteed-invalid = genuinely unset, so each line cancels a
+  // previously PUBLISHED value and the atoms' own fallbacks repaint live.
+  const roleVars = roles
+    .flatMap(({ role, family, weight, scale }) => [
+      `  --type-${role}-font: ${family ? stack(family) : 'initial'};`,
+      `  --type-${role}-weight: ${weight ?? 'initial'};`,
+      `  --type-${role}-scale: ${scale ?? 'initial'};`,
+    ])
+    .join('\n');
 
   return (
     <>
-      {fontFamily && (
-        <link rel="stylesheet" precedence="default" href={fontFileUrl(fontFamily)} />
-      )}
-      {headingFontFamily && headingFontFamily !== fontFamily && (
-        <link rel="stylesheet" precedence="default" href={fontFileUrl(headingFontFamily)} />
-      )}
+      {families.map((f) => (
+        <link key={f} rel="stylesheet" precedence="default" href={fontFileUrl(f)} />
+      ))}
       <style>{`:root { --brand-font: ${fontFamily ? `"${fontFamily}", ` : ''}var(--font-inter), system-ui, sans-serif;
-  --brand-heading-font: ${headingFontFamily ? `"${headingFontFamily}", var(--font-inter), system-ui, sans-serif` : 'initial'};
-  --brand-heading-weight: ${headingFontWeight ?? 'initial'}; }
-body { font-family: var(--brand-font); }`}</style>
+  --brand-heading-font: ${headingFontFamily ? stack(headingFontFamily) : 'initial'};
+  --brand-heading-weight: ${headingFontWeight ?? 'initial'};
+${roleVars}
+  --type-scale: ${typeScale ?? 'initial'};
+  --type-body-line-height: ${bodyLineHeight ?? 'initial'}; }
+body { font-family: var(--brand-font); }${bodyLineHeight ? `
+body { line-height: var(--type-body-line-height, normal); }` : ''}`}</style>
     </>
   );
 }
