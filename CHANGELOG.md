@@ -1,3 +1,10 @@
+# [4.29.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.4...v4.29.0) (2026-08-26)
+
+
+### Features
+
+* **brand-settings:** rebuild the Typography panel on shipped atoms ([ecde940](https://gitlab.viax.tech/services-viax/uxm/commit/ecde940ae759b99a25440b2abf7e0d52a9da6365))
+
 ## [4.28.4](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.3...v4.28.4) (2026-08-26)
 
 
