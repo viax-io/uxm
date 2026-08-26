@@ -18,7 +18,10 @@ export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
   { label: 'JetBrains Mono', value: 'JetBrains Mono', stack: "'JetBrains Mono', ui-monospace, monospace" },
 ];
 
-/** Shared by the base-size knob and each role's size knob. */
+/** Shared by the base-size knob and each role's size knob.
+ * Sub-100% values do NOT shrink AA-floor-reasoned small text: surfaces with a
+ * documented minimum (Menu's 11px subtitle / 12px hint) floor themselves via
+ * `max()` in their own SCSS, so "compact" compacts everything else. */
 const SCALE_OPTIONS = [
   { value: '', label: 'Default (100%)' },
   { value: '0.875', label: '87.5% — compact' },

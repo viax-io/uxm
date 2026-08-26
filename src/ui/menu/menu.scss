@@ -139,7 +139,10 @@
    failure. Recheck with `contrastRatio()` if this default ever moves. */
 .uxm-menu__item-subtitle {
   overflow: hidden;
-  font-size: calc(var(--uxm-menu-item-subtitle-font-size, 11px) * var(--type-scale, 1));
+  /* AA floor: 11px is the documented minimum at which this subtitle keeps 4.5:1
+     as body text — a global --type-scale below 1 must not shrink it further.
+     max() floors the SCALE only; growth (scale > 1) passes through. */
+  font-size: max(11px, calc(var(--uxm-menu-item-subtitle-font-size, 11px) * var(--type-scale, 1)));
   color: var(--uxm-menu-item-subtitle-color, var(--color-text-strong));
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -169,7 +172,8 @@
   flex-shrink: 0;
   margin-left: auto;
   padding-left: 12px;
-  font-size: calc(var(--uxm-menu-item-hint-font-size, 12px) * var(--type-scale, 1));
+  /* AA floor — same reasoning as the subtitle's 11px, at this hint's 12px. */
+  font-size: max(12px, calc(var(--uxm-menu-item-hint-font-size, 12px) * var(--type-scale, 1)));
   color: var(--uxm-menu-item-hint-color, var(--color-text-muted));
 }
 .uxm-menu__item--active .uxm-menu__item-hint {

@@ -110,9 +110,11 @@ for (const k of bKeys) {
   else problems.push(`NOT A PURE WRAP: ${k}\n    before: ${b}\n    after:  ${a}`);
 }
 
+// eslint-disable-next-line no-console -- CLI tool; stdout IS the interface
 console.log(`identical: ${identical}   purely wrapped: ${wrapped}   declarations compared: ${bKeys.length}`);
 if (problems.length) {
   console.error(`\n${problems.length} PROBLEM(S):\n  ${problems.slice(0, 20).join('\n  ')}`);
   process.exit(1);
 }
+// eslint-disable-next-line no-console -- CLI tool; stdout IS the interface
 console.log(`\nPASS — every declaration is unchanged or a pure calc() wrap (vs ${ref}).`);
