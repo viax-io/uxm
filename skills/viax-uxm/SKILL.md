@@ -1229,7 +1229,7 @@ skill:
   `--type-scale` is the global base-size knob and now reaches **every** font-size in `src/ui`
   (160 wrapped by the sweep + the six heading surfaces). `npm run check:drift` fails if a new
   font-size lands unwrapped — run `node scripts/sweep-type-scale.mjs --write`, or add a
-  documented exception to its `SKIP_EXACT`.
+  documented exception to its `SKIP_FORWARDED_PROPS`.
   `--type-body-line-height` drives the three multi-line prose surfaces (`DetailSection` body,
   `ErrorPage` message, `Banner` content) plus a `body` rule emitted **only when the knob is set**
   — the library ships no element-level rules, so an unconditional one would reflow host content.
@@ -1255,6 +1255,15 @@ skill:
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
+
+- **AA-floored small text under the type scale.** `Menu`'s subtitle (11px) and hint (12px) —
+  the two sizes with documented AA reasoning — now floor themselves against a sub-100%
+  `--type-scale`: `font-size: max(<floor>, calc(<knob> * var(--type-scale, 1)))`. A compact
+  base size shrinks everything else in the menu but not these two; scaling up passes through,
+  and the sweep's checker classifies the `max()` shape as already-wrapped (no script change).
+  Also: the sweep-exception doc now names the real constant (`SKIP_FORWARDED_PROPS` — the
+  previously referenced `SKIP_EXACT` never existed), and both type-scale scripts follow the
+  repo's `no-console` disable-with-reason convention (lint is warning-free again).
 
 - **Every `font-size` now responds to `--type-scale`.** A scripted sweep wrapped the remaining
   160 declarations as `calc(<existing> * var(--type-scale, 1))` — the multiplication OUTSIDE the

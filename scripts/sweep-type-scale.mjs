@@ -150,9 +150,13 @@ if (missedRoles.length) {
   );
 }
 
+// eslint-disable-next-line no-console -- CLI tool; stdout IS the interface
 for (const c of changes) console.log(`${c.where}\n  - ${c.from}\n  + ${c.to}`);
+// eslint-disable-next-line no-console -- CLI tool; stdout IS the interface
 if (manual.length) console.log(`\nMANUAL (skipped, hand-edit separately):\n  ${manual.join('\n  ')}`);
+// eslint-disable-next-line no-console -- CLI tool; stdout IS the interface
 console.log(`\n${JSON.stringify(stats, null, 2)}`);
+// eslint-disable-next-line no-console -- CLI tool; stdout IS the interface
 console.log(`rewritten: ${changes.length}   declarations classified: ${classified}/${seen}`);
 if (CHECK) {
   if (changes.length) {
@@ -163,7 +167,9 @@ if (CHECK) {
     );
     process.exit(1);
   }
+  // eslint-disable-next-line no-console -- CLI tool; stdout IS the interface
   console.log('\nOK — every font-size responds to --type-scale.');
 } else {
+  // eslint-disable-next-line no-console -- CLI tool; stdout IS the interface
   console.log(WRITE ? '\nWROTE changes.' : '\nDRY RUN — pass --write to apply.');
 }
