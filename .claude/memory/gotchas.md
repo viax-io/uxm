@@ -138,6 +138,9 @@ by hand afterwards in `fix/skill-version-heading-order`. Both the code review
 of that MR and the MR itself missed it — the heading rename looks correct in
 isolation, and only the surrounding order reveals the problem, so check the
 neighbouring headings, not just your own.
+
+---
+
 ## A per-state var whose fallback is the resting value ships a dead rule
 
 `var(--uxm-<comp>-hover-<prop>, <resting value>)` looks like a correct two-layer
@@ -168,6 +171,8 @@ alongside, as was `disabledOpacity` on all three (registry 0.4 vs 0.6/1/0.6 in
 CSS). Most `Button` variants, `Tabs`, `Link`, `List`, `Slider` and `PillSelect`
 still ship `disabled-opacity: 1` against a registry default of 0.4 — check any
 per-state block against the registry before assuming it's clean.
+
+---
 
 ## A styled class nobody renders is invisible in review
 
