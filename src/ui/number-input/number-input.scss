@@ -16,7 +16,7 @@
   border: 1px solid var(--uxm-number-input-border-color, var(--color-border));
   border-radius: var(--uxm-number-input-border-radius, 8px);
   padding: var(--uxm-number-input-padding-y, 10px) var(--uxm-number-input-padding-x, 12px);
-  font-size: var(--uxm-number-input-font-size, 14px);
+  font-size: calc(var(--uxm-number-input-font-size, 14px) * var(--type-scale, 1));
   text-align: var(--uxm-number-input-text-align, left);
   box-sizing: border-box;
 }
@@ -48,7 +48,7 @@
 .uxm-number-input__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-number-input-error-message-size, 12px);
+  font-size: calc(var(--uxm-number-input-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-number-input-error-color, var(--color-danger-text));
 }
 /* Clearable — layout-only wrapper; visible chrome stays on the input. */

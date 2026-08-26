@@ -25,7 +25,7 @@
     align-items: baseline;
     color: var(--uxm-slider-value-color, var(--color-text-muted));
     display: flex;
-    font-size: var(--uxm-slider-value-size, 11px);
+    font-size: calc(var(--uxm-slider-value-size, 11px) * var(--type-scale, 1));
     font-variant-numeric: tabular-nums;
   }
 

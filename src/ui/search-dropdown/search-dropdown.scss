@@ -20,7 +20,7 @@
   border: 1px solid var(--uxm-search-dropdown-trigger-border, var(--color-border));
   border-radius: var(--uxm-search-dropdown-trigger-radius, 6px);
   padding: var(--uxm-search-dropdown-trigger-padding-y, 10px) var(--uxm-search-dropdown-trigger-padding-x, 12px);
-  font-size: var(--uxm-search-dropdown-trigger-font-size, 14px);
+  font-size: calc(var(--uxm-search-dropdown-trigger-font-size, 14px) * var(--type-scale, 1));
   color: var(--uxm-search-dropdown-trigger-color, var(--color-text));
   cursor: pointer;
   outline: none;
@@ -64,7 +64,7 @@
 .uxm-search-dropdown__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-search-dropdown-trigger-error-message-size, 12px);
+  font-size: calc(var(--uxm-search-dropdown-trigger-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-search-dropdown-trigger-error-color, var(--color-danger-text));
 }
 .uxm-search-dropdown__trigger--empty {
@@ -114,6 +114,6 @@
 }
 .uxm-search-dropdown__option-meta {
   flex-shrink: 0;
-  font-size: var(--uxm-search-dropdown-option-meta-size, 10px);
+  font-size: calc(var(--uxm-search-dropdown-option-meta-size, 10px) * var(--type-scale, 1));
   color: var(--color-text-subtle);
 }

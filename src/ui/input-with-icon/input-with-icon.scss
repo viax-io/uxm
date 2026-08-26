@@ -36,7 +36,7 @@
     border: 1px solid var(--uxm-input-with-icon-border-color, var(--color-border));
     border-radius: var(--uxm-input-with-icon-radius, 8px);
     color: var(--uxm-input-with-icon-color, var(--color-text));
-    font-size: var(--uxm-input-with-icon-font-size, 14px);
+    font-size: calc(var(--uxm-input-with-icon-font-size, 14px) * var(--type-scale, 1));
     outline: none;
     padding: var(--uxm-input-with-icon-padding-y, 8px)
       var(--uxm-input-with-icon-padding-x, 12px)
@@ -107,6 +107,6 @@
 .uxm-input-with-icon__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-input-with-icon-error-message-size, 12px);
+  font-size: calc(var(--uxm-input-with-icon-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-input-with-icon-error-color, var(--color-danger-text));
 }

@@ -62,7 +62,7 @@
   padding-inline: var(--uxm-toast-padding-x, 16px);
   padding-block: var(--uxm-toast-padding-y, 12px);
   border-radius: var(--uxm-toast-border-radius, 10px);
-  font-size: var(--uxm-toast-font-size, 14px);
+  font-size: calc(var(--uxm-toast-font-size, 14px) * var(--type-scale, 1));
   font-weight: 500;
   background-color: var(--uxm-toast-background-color, var(--color-card));
   color: var(--uxm-toast-color, var(--color-text));

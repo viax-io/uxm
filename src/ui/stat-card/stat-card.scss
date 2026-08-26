@@ -14,7 +14,7 @@
 
   &__label {
     color: var(--color-text-muted);
-    font-size: var(--uxm-stat-card-label-size, 13px);
+    font-size: calc(var(--uxm-stat-card-label-size, 13px) * var(--type-scale, 1));
     font-weight: 500;
     margin: 0;
   }
@@ -36,7 +36,7 @@
   &__trend {
     align-items: center;
     display: inline-flex;
-    font-size: 12px;
+    font-size: calc(12px * var(--type-scale, 1));
     font-weight: 600;
     gap: 2px;
 

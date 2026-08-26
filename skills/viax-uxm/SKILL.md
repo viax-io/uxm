@@ -1226,10 +1226,10 @@ skill:
   multiplication OUTSIDE the `var()`** — a scale placed inside the fallback is shadowed the
   moment anything sets the component var (studio previews project knob defaults), and this form
   also lets a per-component size override still respect global density.
-  `--type-scale` is the global base-size knob, but it currently reaches **only the six heading
-  surfaces** — the remaining ~166 font-sizes are still bare px until the follow-up sweep wraps
-  them. The editor hint and the specimen say so rather than implying library-wide scaling; widen
-  both when the sweep lands.
+  `--type-scale` is the global base-size knob and now reaches **every** font-size in `src/ui`
+  (160 wrapped by the sweep + the six heading surfaces). `npm run check:drift` fails if a new
+  font-size lands unwrapped — run `node scripts/sweep-type-scale.mjs --write`, or add a
+  documented exception to its `SKIP_EXACT`.
   `--type-body-line-height` drives the three multi-line prose surfaces (`DetailSection` body,
   `ErrorPage` message, `Banner` content) plus a `body` rule emitted **only when the knob is set**
   — the library ships no element-level rules, so an unconditional one would reflow host content.
@@ -1245,6 +1245,24 @@ skill:
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
+
+- **Every `font-size` now responds to `--type-scale`.** A scripted sweep wrapped the remaining
+  160 declarations as `calc(<existing> * var(--type-scale, 1))` — the multiplication OUTSIDE the
+  `var()`, so a projected knob default or a saved per-component override still scales. Unset is
+  byte-identical: proved by `scripts/verify-type-scale.mjs`, which compiles every stylesheet
+  before and after and asserts each declaration is unchanged or a pure wrap (it also compares its
+  own parse count against an independent one and refuses to report on a coverage gap). It reads
+  the "before" side from a git ref rather than a stash — `npm run verify:type-scale`, or
+  `node scripts/verify-type-scale.mjs v4.28.0` — so it stays reproducible after merge.
+  `npm run check:drift` now fails on any unwrapped font-size.
+  The sweep reconciles what it classified against an independent count of every `font-size:` in
+  the source and aborts on a mismatch, so a declaration it fails to parse can't slip through as
+  silently unwrapped. `rem` is a hard error, not a skip — it is root-relative and would ignore the
+  knob; use px (which gets wrapped) or `em` (which already scales via the parent).
+  Deliberate exclusions: `color-input.scss` forwards a font-size into **another** atom's var
+  (`--uxm-select-dropdown-font-size`), so wrapping it too would scale twice — the line-start anchor
+  plus a `SKIP_FORWARDED_PROPS` entry keyed by the **property name** keep it out; `em`/`inherit`
+  already scale. `time-input.scss` keeps the only hand-written `calc()`.
 
 ## Workflow
 

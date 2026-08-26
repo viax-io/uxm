@@ -72,7 +72,7 @@
     border-color: var(--uxm-chip-assist-default-border, var(--color-border));
     border-radius: var(--uxm-chip-assist-border-radius, 999px);
     color: var(--uxm-chip-assist-default-text, var(--color-text));
-    font-size: var(--uxm-chip-assist-font-size, 13px);
+    font-size: calc(var(--uxm-chip-assist-font-size, 13px) * var(--type-scale, 1));
     font-weight: var(--uxm-chip-assist-font-weight, 500);
     gap: var(--uxm-chip-assist-gap, 8px);
     padding: var(--uxm-chip-assist-padding-y, 4px) var(--uxm-chip-assist-padding-x, 12px);
@@ -108,7 +108,7 @@
     border-color: var(--uxm-chip-filter-default-border, var(--color-border));
     border-radius: var(--uxm-chip-filter-border-radius, 999px);
     color: var(--uxm-chip-filter-default-text, var(--color-text));
-    font-size: var(--uxm-chip-filter-font-size, 13px);
+    font-size: calc(var(--uxm-chip-filter-font-size, 13px) * var(--type-scale, 1));
     font-weight: var(--uxm-chip-filter-font-weight, 500);
     gap: var(--uxm-chip-filter-gap, 8px);
     padding: var(--uxm-chip-filter-padding-y, 4px) var(--uxm-chip-filter-padding-x, 12px);
@@ -144,7 +144,7 @@
     border-color: var(--uxm-chip-input-default-border, var(--color-accent-subtle));
     border-radius: var(--uxm-chip-input-border-radius, 999px);
     color: var(--uxm-chip-input-default-text, var(--color-accent-bold));
-    font-size: var(--uxm-chip-input-font-size, 13px);
+    font-size: calc(var(--uxm-chip-input-font-size, 13px) * var(--type-scale, 1));
     font-weight: var(--uxm-chip-input-font-weight, 500);
     gap: var(--uxm-chip-input-gap, 8px);
     padding: var(--uxm-chip-input-padding-y, 4px) var(--uxm-chip-input-padding-x, 12px);
@@ -180,7 +180,7 @@
     border-color: var(--uxm-chip-suggestion-default-border, var(--color-surface));
     border-radius: var(--uxm-chip-suggestion-border-radius, 999px);
     color: var(--uxm-chip-suggestion-default-text, var(--color-text-strong));
-    font-size: var(--uxm-chip-suggestion-font-size, 13px);
+    font-size: calc(var(--uxm-chip-suggestion-font-size, 13px) * var(--type-scale, 1));
     font-weight: var(--uxm-chip-suggestion-font-weight, 500);
     gap: var(--uxm-chip-suggestion-gap, 8px);
     padding: var(--uxm-chip-suggestion-padding-y, 4px) var(--uxm-chip-suggestion-padding-x, 12px);

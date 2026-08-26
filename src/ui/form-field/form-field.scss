@@ -62,7 +62,7 @@
 }
 
 .uxm-form-field__label {
-  font-size: var(--uxm-form-field-label-size, 13px);
+  font-size: calc(var(--uxm-form-field-label-size, 13px) * var(--type-scale, 1));
   font-weight: var(--uxm-form-field-label-weight, 500);
   color: var(--uxm-form-field-label-color, var(--color-text-strong));
   /* Owns label ↔ control distance in top layout. Side layout overrides
@@ -97,7 +97,7 @@
    look but nothing shared) — colour comes from the label tint above, so
    the same tint system drives both variants. */
 .uxm-form-field--label-overline .uxm-form-field__label {
-  font-size: var(--uxm-form-field-overline-size, 11px);
+  font-size: calc(var(--uxm-form-field-overline-size, 11px) * var(--type-scale, 1));
   font-weight: var(--uxm-form-field-overline-weight, 600);
   letter-spacing: var(--uxm-form-field-overline-letter-spacing, 0.06em);
   text-transform: uppercase;
@@ -154,7 +154,7 @@
 
 
 .uxm-form-field__hint {
-  font-size: var(--uxm-form-field-hint-size, 12px);
+  font-size: calc(var(--uxm-form-field-hint-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-form-field-hint-color, var(--color-text-muted));
   margin-top: var(--uxm-form-field-hint-gap, 2px);
 }

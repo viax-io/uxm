@@ -21,7 +21,7 @@
 
   &--with-label &__label {
     color: var(--uxm-divider-label-color, var(--color-text-muted));
-    font-size: var(--uxm-divider-label-size, 11px);
+    font-size: calc(var(--uxm-divider-label-size, 11px) * var(--type-scale, 1));
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;

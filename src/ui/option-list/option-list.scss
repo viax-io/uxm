@@ -59,7 +59,7 @@
   &__name {
     color: var(--uxm-option-list-name-color, var(--color-text));
     flex: 1;
-    font-size: var(--uxm-option-list-name-size, 14px);
+    font-size: calc(var(--uxm-option-list-name-size, 14px) * var(--type-scale, 1));
     font-weight: var(--uxm-option-list-name-weight, 400);
     min-width: 0;
     overflow: hidden;

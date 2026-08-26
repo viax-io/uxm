@@ -14,7 +14,7 @@
   color: var(--uxm-button-primary-color, var(--color-text-inverse));
   cursor: pointer;
   display: inline-flex;
-  font-size: var(--uxm-button-primary-font-size, 14px);
+  font-size: calc(var(--uxm-button-primary-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-primary-font-weight, 600);
   gap: var(--uxm-button-primary-gap, 8px);
   justify-content: center;
@@ -57,7 +57,7 @@
   color: var(--uxm-button-secondary-color, var(--color-accent-bold));
   cursor: pointer;
   display: inline-flex;
-  font-size: var(--uxm-button-secondary-font-size, 14px);
+  font-size: calc(var(--uxm-button-secondary-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-secondary-font-weight, 600);
   gap: var(--uxm-button-secondary-gap, 8px);
   justify-content: center;
@@ -98,7 +98,7 @@
   color: var(--uxm-button-tertiary-color, var(--color-text));
   cursor: pointer;
   display: inline-flex;
-  font-size: var(--uxm-button-tertiary-font-size, 14px);
+  font-size: calc(var(--uxm-button-tertiary-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-tertiary-font-weight, 600);
   gap: var(--uxm-button-tertiary-gap, 8px);
   justify-content: center;
@@ -139,7 +139,7 @@
   color: var(--uxm-button-ghost-color, var(--color-accent-bold));
   cursor: pointer;
   display: inline-flex;
-  font-size: var(--uxm-button-ghost-font-size, 14px);
+  font-size: calc(var(--uxm-button-ghost-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-ghost-font-weight, 500);
   gap: var(--uxm-button-ghost-gap, 8px);
   justify-content: center;
@@ -182,7 +182,7 @@
   border: 1px solid var(--uxm-button-danger-border-color, var(--color-danger-border));
   border-radius: var(--uxm-button-danger-border-radius, 8px);
   padding: var(--uxm-button-danger-padding-y, 10px) var(--uxm-button-danger-padding-x, 20px);
-  font-size: var(--uxm-button-danger-font-size, 14px);
+  font-size: calc(var(--uxm-button-danger-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-danger-font-weight, 600);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;

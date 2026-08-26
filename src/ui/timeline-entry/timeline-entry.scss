@@ -60,26 +60,26 @@
 
   &__title {
     color: var(--uxm-timeline-entry-title-color, var(--color-text));
-    font-size: var(--uxm-timeline-entry-title-size, 13px);
+    font-size: calc(var(--uxm-timeline-entry-title-size, 13px) * var(--type-scale, 1));
     font-weight: 600;
   }
 
   &__trailing {
     color: var(--color-text-subtle);
     flex-shrink: 0;
-    font-size: 11px;
+    font-size: calc(11px * var(--type-scale, 1));
     margin-left: auto;
   }
 
   &__meta {
     color: var(--uxm-timeline-entry-meta-color, var(--color-text-muted));
-    font-size: var(--uxm-timeline-entry-meta-size, 11px);
+    font-size: calc(var(--uxm-timeline-entry-meta-size, 11px) * var(--type-scale, 1));
     margin: 2px 0 0;
   }
 
   &__body {
     color: var(--color-text-muted);
-    font-size: 13px;
+    font-size: calc(13px * var(--type-scale, 1));
     margin-top: 6px;
   }
 }

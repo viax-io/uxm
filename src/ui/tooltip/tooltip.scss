@@ -8,7 +8,7 @@
     background-color: var(--uxm-tooltip-background-color, var(--color-text));
     border-radius: var(--uxm-tooltip-border-radius, 6px);
     color: var(--uxm-tooltip-color, var(--color-text-inverse));
-    font-size: var(--uxm-tooltip-font-size, 12px);
+    font-size: calc(var(--uxm-tooltip-font-size, 12px) * var(--type-scale, 1));
     padding: var(--uxm-tooltip-padding-y, 6px) var(--uxm-tooltip-padding-x, 10px);
     white-space: nowrap;
   }

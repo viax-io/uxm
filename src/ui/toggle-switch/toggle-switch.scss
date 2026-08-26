@@ -5,7 +5,7 @@
   color: var(--color-text);
   cursor: pointer;
   display: inline-flex;
-  font-size: 14px;
+  font-size: calc(14px * var(--type-scale, 1));
   gap: 8px;
 
   /* ToggleSwitch — registry knobs: trackColorOn / Off, thumbColor, width,
@@ -101,6 +101,6 @@
 .uxm-toggle-switch__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-toggle-switch-error-message-size, 12px);
+  font-size: calc(var(--uxm-toggle-switch-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-toggle-switch-error-color, var(--color-danger-text));
 }

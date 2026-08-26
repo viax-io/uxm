@@ -58,7 +58,7 @@
 .uxm-phone-input__error-message {
   display: block;
   margin-top: 4px;
-  font-size: var(--uxm-phone-input-error-message-size, 12px);
+  font-size: calc(var(--uxm-phone-input-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-phone-input-error-color, var(--color-danger-text));
 }
 
@@ -84,7 +84,7 @@
   border-bottom-left-radius: calc(var(--uxm-phone-input-border-radius, 8px) - 1px);
   color: var(--uxm-phone-input-color, var(--color-text));
   font-family: inherit;
-  font-size: var(--uxm-phone-input-font-size, 14px);
+  font-size: calc(var(--uxm-phone-input-font-size, 14px) * var(--type-scale, 1));
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
@@ -122,7 +122,7 @@
   padding: var(--uxm-phone-input-padding-y, 10px) var(--uxm-phone-input-padding-x, 12px);
   color: var(--uxm-phone-input-color, var(--color-text));
   font-family: inherit;
-  font-size: var(--uxm-phone-input-font-size, 14px);
+  font-size: calc(var(--uxm-phone-input-font-size, 14px) * var(--type-scale, 1));
 }
 .uxm-phone-input__input::placeholder {
   color: var(--color-text-muted);

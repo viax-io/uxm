@@ -19,7 +19,7 @@
     cursor: pointer;
     display: inline-flex;
     flex: 1;
-    font-size: var(--uxm-tabs-font-size, 12px);
+    font-size: calc(var(--uxm-tabs-font-size, 12px) * var(--type-scale, 1));
     font-weight: var(--uxm-tabs-font-weight, 500);
     gap: var(--uxm-tabs-icon-gap, 6px);
     justify-content: center;

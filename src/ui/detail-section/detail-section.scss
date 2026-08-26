@@ -50,13 +50,13 @@
 
   &__subtitle {
     color: var(--uxm-detail-section-subtitle-color, var(--color-text-muted));
-    font-size: 12px;
+    font-size: calc(12px * var(--type-scale, 1));
     margin: 2px 0 0;
   }
 
   &__body {
     color: var(--color-text-muted);
-    font-size: 13px;
+    font-size: calc(13px * var(--type-scale, 1));
     line-height: var(--type-body-line-height, 1.5);
     margin-top: 12px;
   }

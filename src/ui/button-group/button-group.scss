@@ -17,7 +17,7 @@
     border-right: 1px solid var(--uxm-button-group-border-color, var(--color-border));
     color: var(--uxm-button-group-inactive-text, var(--color-text-muted));
     cursor: pointer;
-    font-size: var(--uxm-button-group-font-size, 13px);
+    font-size: calc(var(--uxm-button-group-font-size, 13px) * var(--type-scale, 1));
     font-weight: 500;
     padding: var(--uxm-button-group-padding-y, 8px) var(--uxm-button-group-padding-x, 16px);
     transition: background-color 0.15s, color 0.15s;

@@ -325,7 +325,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
             </Select>
           </Field>
 
-          <Field label="Base text size" hint="Currently scales the heading levels below. Body and control text follow in a later release.">
+          <Field label="Base text size" hint="Scales every text size in the library — body, controls and headings alike.">
             <Select
               value={brand.typeScale ?? ''}
               onChange={(e) => setBrand({ typeScale: e.target.value || undefined })}
@@ -446,10 +446,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
               style={{
                 margin: '12px 0 0',
                 fontFamily: FONT_OPTIONS.find((f) => f.value === fontFamily)?.stack ?? 'inherit',
-                // Deliberately unscaled: --type-scale reaches only the six
-                // heading surfaces today, so scaling this line would promise
-                // a library-wide change the sweep hasn't delivered yet.
-                fontSize: 14,
+                fontSize: specimenSize(14, undefined, brand.typeScale),
                 lineHeight: brand.bodyLineHeight ? Number(brand.bodyLineHeight) : 1.5,
               }}
             >

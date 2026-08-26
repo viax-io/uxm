@@ -39,7 +39,7 @@
     border: none;
     outline: none;
     background-color: transparent;
-    font-size: var(--uxm-listbox-search-font-size, 12px);
+    font-size: calc(var(--uxm-listbox-search-font-size, 12px) * var(--type-scale, 1));
     color: var(--uxm-listbox-search-color, var(--color-text));
     padding: 4px 8px 4px 28px;
     box-sizing: border-box;
@@ -71,7 +71,7 @@
   }
   &__empty {
     padding: 12px;
-    font-size: 12px;
+    font-size: calc(12px * var(--type-scale, 1));
     color: var(--uxm-listbox-empty-color, var(--color-text-muted));
     text-align: center;
   }
@@ -80,7 +80,7 @@
      in JSX keeps screen readers from announcing it as a list item. */
   &__group-header {
     padding: 8px 10px 4px 10px;
-    font-size: var(--uxm-listbox-group-header-font-size, 10px);
+    font-size: calc(var(--uxm-listbox-group-header-font-size, 10px) * var(--type-scale, 1));
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -105,7 +105,7 @@
        > 1 — a half-height option straddling two columns is unreadable. */
     break-inside: avoid;
     padding: var(--uxm-listbox-option-padding-y, 6px) var(--uxm-listbox-option-padding-x, 10px);
-    font-size: var(--uxm-listbox-option-font-size, 13px);
+    font-size: calc(var(--uxm-listbox-option-font-size, 13px) * var(--type-scale, 1));
     color: var(--uxm-listbox-option-color, var(--color-text));
     background-color: var(--uxm-listbox-option-default-bg, transparent);
     border: none;
@@ -156,7 +156,7 @@
     justify-content: flex-start;
     gap: var(--uxm-listbox-footer-clear-gap, 6px);
     padding: var(--uxm-listbox-footer-clear-padding, 6px 8px);
-    font-size: var(--uxm-listbox-footer-clear-font-size, 13px);
+    font-size: calc(var(--uxm-listbox-footer-clear-font-size, 13px) * var(--type-scale, 1));
     border-radius: var(--uxm-listbox-footer-clear-radius, 6px);
   }
 

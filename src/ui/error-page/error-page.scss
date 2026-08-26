@@ -41,7 +41,7 @@
 
   &__message {
     color: var(--uxm-error-page-message-color, var(--color-text-muted));
-    font-size: var(--uxm-error-page-message-size, 14px);
+    font-size: calc(var(--uxm-error-page-message-size, 14px) * var(--type-scale, 1));
     line-height: var(--type-body-line-height, 1.5);
     margin: 8px 0 0;
     max-width: var(--uxm-error-page-message-max-width, 28rem);
