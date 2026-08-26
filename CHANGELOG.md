@@ -1,3 +1,10 @@
+## [4.28.2](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.1...v4.28.2) (2026-08-26)
+
+
+### Bug Fixes
+
+* **time-input:** scale the meridiem with the type scale ([648eb0c](https://gitlab.viax.tech/services-viax/uxm/commit/648eb0cc8443d9857db83bf45bacb2fafb150eb8))
+
 ## [4.28.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.0...v4.28.1) (2026-08-26)
 
 
