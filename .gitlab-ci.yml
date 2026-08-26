@@ -18,6 +18,10 @@ test:
     - npm config set //nexus.viax.tech/repository/viax-npm/:_auth $NEXUS_NPM_TOKEN
     - npm config set registry https://nexus.viax.tech/repository/viax-npm/
     - npm install
+    # Registry-vs-CSS state-var drift gate — fails the pipeline if any studio
+    # knob default and its shipped SCSS fallback disagree (the dead-fallback
+    # class; see .claude/memory/gotchas.md and scripts/check-state-var-drift.mjs).
+    - npm run check:drift
     - npm run test:ci
     - npm run test:coverage
   coverage: '/All files\s+\|\s+\d+\.\d+\s+\|\s+\d+\.\d+\s+\|\s+\d+\.\d+\s+\|\s+(\d+\.\d+)\s+.*/'

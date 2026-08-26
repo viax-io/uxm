@@ -230,7 +230,10 @@ for bare numeric registry defaults. Treat a hit as "go look", not "go fix":
 of the 19 hits its first full-repo run produced, **7 were legacy-alias
 chains** — `var(--uxm-x-new, var(--uxm-x-old, <token>))` where the innermost
 token already matched the registry (the script now resolves those) — and 11
-were real and are fixed, so the script runs green (exit 0) and can gate CI.
+were real and are fixed, so the script runs green (exit 0) — and now GATES
+CI: the `.gitlab-ci.yml` `test` job runs `npm run check:drift`, so a knob
+default and its SCSS fallback can no longer disagree without failing the
+pipeline.
 Three of the 11 changed a *visible aesthetic*, not just a dead state, and
 are flagged for design review in the MR: `tabs-underline.barColor`
 (accent-bold → accent — the underline bar lightens), icon-button pressed

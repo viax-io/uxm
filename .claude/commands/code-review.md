@@ -90,7 +90,7 @@ Parse `$ARGUMENTS` as follows:
 
 | Category | Checks |
 |----------|--------|
-| **Lint + typecheck** | Must pass `npm run lint` and `npm run typecheck` with zero errors |
+| **Lint + typecheck + drift** | Must pass `npm run lint`, `npm run typecheck`, and `npm run check:drift` (registry-vs-CSS state-var gate) with zero errors |
 | **React style guide** | See `.claude/handbooks/react-style-guide.md` |
 | **Project conventions** | Named exports, kebab-case files, `export interface ${Name}Props`, `className`+`cn`, `...rest` spread, no `"use client"` |
 | **UI library specifics** | `uxm-` prefix, canonical BEM, two-layer theming (`var(--uxm-*, var(--color-*))`), no Tailwind outside `src/studio`, barrel re-exports, `styles.css` `@import`, AI-skill update (`skills/viax-uxm/`) |
