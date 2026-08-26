@@ -1256,6 +1256,16 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **The Preview & Publish mock now reflects the typography settings.** It hand-rolls its markup,
+  so it inherited only the body typeface and was otherwise frozen: per-level roles reached
+  nothing, and exactly one of eight measured elements responded to Base text size (a real `Tag`
+  atom). Its sizes now carry the same chains the atoms use — role font/weight on the surfaces
+  that map to a role (dashboard title → page-title, card headings → section-title, metric values
+  → display), `calc(… * var(--type-scale, 1))` everywhere else, and `--type-body-line-height` on
+  the one prose block. Derived sizes (`fontSize - 1`) are parenthesised before scaling so the
+  offset stays proportional. **If you add markup to this modal, thread the chains** — it is the
+  last screen before Publish, so anything hardcoded here quietly misrepresents the brand.
+
 - **`TimeInput`'s meridiem now scales too.** It was the one font-size the sweep left alone,
   because it is derived (`field size - 2px`) rather than a plain value. The subtraction is now
   parenthesised so the whole expression scales — at 150% the meridiem is 18px against the field's

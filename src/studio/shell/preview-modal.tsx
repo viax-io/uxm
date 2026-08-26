@@ -15,6 +15,28 @@ import { useUxm } from '../lib/context';
 import { getComponentDef, registry } from '../lib/registry';
 import { useGlobalTheme } from '../lib/use-global-theme';
 
+/**
+ * This mock is the last thing a user sees before Publish, so it has to reflect
+ * the brand the way the shipped atoms do. It hand-rolls its markup, which means
+ * it does not inherit the stylesheets' chains — these mirror them by hand.
+ *
+ * `scaled()` multiplies OUTSIDE any var(), the same rule the stylesheets follow,
+ * and parenthesises derived sizes so an offset stays proportional instead of
+ * shrinking away as text grows (a `-1px` at 150% should be `-1.5px`, not `-1px`).
+ */
+type TypeRole = 'display' | 'page-title' | 'section-title';
+
+const scaled = (px: number | string, role?: TypeRole) => {
+  const base = typeof px === 'number' ? `${px}px` : px;
+  return `calc(${base}${role ? ` * var(--type-${role}-scale, 1)` : ''} * var(--type-scale, 1))`;
+};
+/** `<knob>px - offset`, scaled as one expression. */
+const derived = (px: number, offset: number) => scaled(`(${px}px - ${offset}px)`);
+const roleFont = (role: TypeRole) =>
+  `var(--type-${role}-font, var(--brand-heading-font, inherit))`;
+const roleWeight = (role: TypeRole, fallback: number) =>
+  `var(--type-${role}-weight, var(--brand-heading-weight, ${fallback}))`;
+
 function useResolved(componentId: string) {
   const { getOverrides } = useUxm();
   const def = getComponentDef(componentId);
@@ -81,7 +103,7 @@ function MiniButton({
     border,
     borderRadius: s.borderRadius as number,
     padding: `${s.paddingY}px ${s.paddingX}px`,
-    fontSize: s.fontSize as number,
+    fontSize: scaled(`${s.fontSize}px`),
     fontWeight: s.fontWeight as string,
     cursor: 'pointer',
     display: 'inline-flex',
@@ -123,11 +145,16 @@ function MiniStatCard({ label, value, trend, up }: { label: string; value: strin
         cursor: 'default',
       }}
     >
-      <p style={{ fontSize: s.labelSize as number, color: 'var(--color-text-muted)', fontWeight: 500, margin: 0 }}>{label}</p>
+      <p style={{ fontSize: scaled(`${s.labelSize}px`), color: 'var(--color-text-muted)', fontWeight: 500, margin: 0 }}>{label}</p>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 6 }}>
-        <span style={{ fontSize: (s.valueSize as number) * 0.8, fontWeight: 700, color: 'var(--color-text)' }}>{value}</span>
         <span style={{
-          fontSize: 11, fontWeight: 600,
+          fontFamily: roleFont('display'),
+          fontSize: scaled(`${(s.valueSize as number) * 0.8}px`, 'display'),
+          fontWeight: roleWeight('display', 700),
+          color: 'var(--color-text)',
+        }}>{value}</span>
+        <span style={{
+          fontSize: scaled(11), fontWeight: 600,
           color: up ? (s.trendUpColor as string) : (s.trendDownColor as string),
           display: 'inline-flex', alignItems: 'center', gap: 2,
         }}>
@@ -164,11 +191,16 @@ function MiniCard() {
           <Icon glyph="bolt" size={16} />
         </div>
         <div>
-          <h4 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text)', margin: 0 }}>Quick Analytics</h4>
-          <p style={{ fontSize: 11, color: 'var(--color-text-muted)', margin: 0 }}>Updated 2h ago</p>
+          <h4 style={{
+            fontFamily: roleFont('section-title'),
+            fontSize: scaled(13, 'section-title'),
+            fontWeight: roleWeight('section-title', 600),
+            color: 'var(--color-text)', margin: 0,
+          }}>Quick Analytics</h4>
+          <p style={{ fontSize: scaled(11), color: 'var(--color-text-muted)', margin: 0 }}>Updated 2h ago</p>
         </div>
       </div>
-      <p style={{ fontSize: 12, color: 'var(--color-text-muted)', lineHeight: 1.5, margin: 0 }}>
+      <p style={{ fontSize: scaled(12), color: 'var(--color-text-muted)', lineHeight: 'var(--type-body-line-height, 1.5)', margin: 0 }}>
         Track key metrics and performance across active motions.
       </p>
     </div>
@@ -225,7 +257,7 @@ function MiniInput({ label, placeholder, icon }: { label: string; placeholder: s
       }) as unknown as CSSProperties;
   return (
     <div style={cssVars}>
-      <label style={{ fontSize: 12, fontWeight: 500, color: (s.labelColor as string) ?? 'var(--color-text)', display: 'block', marginBottom: 5 }}>{label}</label>
+      <label style={{ fontSize: scaled(12), fontWeight: 500, color: (s.labelColor as string) ?? 'var(--color-text)', display: 'block', marginBottom: 5 }}>{label}</label>
       {icon ? (
         <InputWithIcon placeholder={placeholder} icon={icon} />
       ) : (
@@ -265,7 +297,7 @@ function MiniSelect({ label, options, initial }: { label: string; options: strin
   } as unknown as CSSProperties;
   return (
     <div style={cssVars}>
-      <label style={{ fontSize: 12, fontWeight: 500, color: (s.labelColor as string) ?? 'var(--color-text)', display: 'block', marginBottom: 5 }}>{label}</label>
+      <label style={{ fontSize: scaled(12), fontWeight: 500, color: (s.labelColor as string) ?? 'var(--color-text)', display: 'block', marginBottom: 5 }}>{label}</label>
       <Select value={value} onChange={(e) => setValue(e.target.value)}>
         {options.map((o) => (
           <option key={o} value={o}>{o}</option>
@@ -300,7 +332,7 @@ function MiniCheckbox({ label, initial = false }: { label: string; initial?: boo
     '--uxm-checkbox-focus-ring': s.focusRing as string | undefined,
     '--uxm-checkbox-disabled-opacity':
       s.disabledOpacity != null ? String(s.disabledOpacity) : undefined,
-    fontSize: 12,
+    fontSize: scaled(12),
   } as unknown as CSSProperties;
   return (
     <span style={cssVars}>
@@ -334,7 +366,7 @@ function MiniToggle({ label = 'Notifications', initial = true }: { label?: strin
     display: 'inline-flex',
     alignItems: 'center',
     gap: 8,
-    fontSize: 12,
+    fontSize: scaled(12),
     color: 'var(--color-text)',
   } as unknown as CSSProperties;
   return (
@@ -359,7 +391,7 @@ function MiniButtonGroup() {
             backgroundColor: i === active ? (s.activeBg as string) : (s.inactiveBg as string),
             color: i === active ? (s.activeText as string) : (s.inactiveText as string),
             padding: `${(s.paddingY as number) * 0.75}px ${(s.paddingX as number) * 0.85}px`,
-            fontSize: (s.fontSize as number) - 1, fontWeight: i === active ? 600 : 500,
+            fontSize: derived(s.fontSize as number, 1), fontWeight: i === active ? 600 : 500,
             border: 'none', borderRight: i < 2 ? `1px solid ${s.borderColor}` : 'none', cursor: 'pointer',
             transition: 'background-color 0.15s, color 0.15s',
           }}
@@ -422,7 +454,7 @@ function MiniTabs() {
             border: 'none',
             borderRadius: s.tabRadius as number,
             padding: `${s.paddingY}px ${s.paddingX}px`,
-            fontSize: (s.fontSize as number) - 1, fontWeight: i === active ? 600 : 500, cursor: 'pointer',
+            fontSize: derived(s.fontSize as number, 1), fontWeight: i === active ? 600 : 500, cursor: 'pointer',
             boxShadow: i === active ? 'var(--shadow-xs)' : 'none',
             transition: 'background-color 0.15s, color 0.15s',
           }}
@@ -447,7 +479,7 @@ function MiniAvatar({ initials = 'LR' }: { initials?: string }) {
         backgroundColor: s.backgroundColor as string,
         color: s.color as string,
         border: hover ? `2px solid var(--color-accent)` : '2px solid transparent',
-        fontSize: (s.fontSize as number) - 2,
+        fontSize: derived(s.fontSize as number, 2),
         fontWeight: s.fontWeight as string,
         cursor: 'pointer',
         transition: 'border-color 0.15s',
@@ -473,13 +505,13 @@ function MiniTable() {
   };
   return (
     <div style={{ border: `1px solid ${s.borderColor}`, borderRadius: s.borderRadius as number, overflow: 'hidden' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: (s.fontSize as number) - 1 }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: derived(s.fontSize as number, 1) }}>
         <thead>
           <tr style={{ backgroundColor: s.headerBg as string }}>
             {['Name', 'Status', 'Amount'].map((h) => (
               <th key={h} style={{
                 textAlign: 'left', padding: `${(s.cellPaddingY as number) * 0.75}px ${s.cellPaddingX}px`,
-                fontWeight: 600, color: s.headerText as string, borderBottom: `1px solid ${s.borderColor}`, fontSize: (s.fontSize as number) - 2,
+                fontWeight: 600, color: s.headerText as string, borderBottom: `1px solid ${s.borderColor}`, fontSize: derived(s.fontSize as number, 2),
               }}>{h}</th>
             ))}
           </tr>
@@ -537,8 +569,13 @@ function BuildSuccess({ onClose }: { onClose: () => void }) {
         </svg>
       </div>
       <div>
-        <h2 id="uxm-preview-modal-title" style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-text)', margin: '0 0 6px' }}>Design system ready</h2>
-        <p style={{ fontSize: 14, color: 'var(--color-text-muted)', margin: 0 }}>{registry.length} components configured</p>
+        <h2 id="uxm-preview-modal-title" style={{
+          fontFamily: roleFont('page-title'),
+          fontSize: scaled(22, 'page-title'),
+          fontWeight: roleWeight('page-title', 700),
+          color: 'var(--color-text)', margin: '0 0 6px',
+        }}>Design system ready</h2>
+        <p style={{ fontSize: scaled(14), color: 'var(--color-text-muted)', margin: 0 }}>{registry.length} components configured</p>
       </div>
       <ButtonPrimary onClick={onClose} style={{ marginTop: 8 }}>
         Close
@@ -667,7 +704,7 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }}
                 />
                 <span style={{
-                  fontSize: 12, color: 'var(--color-text)', fontWeight: 500,
+                  fontSize: scaled(12), color: 'var(--color-text)', fontWeight: 500,
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                 }}>
                   Modo — Dashboard
@@ -695,8 +732,13 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                   />
                   <div style={{ height: 22, width: 1, backgroundColor: 'var(--color-border)', flexShrink: 0 }} />
                   <div style={{ minWidth: 0 }}>
-                    <h3 id="uxm-preview-modal-title" style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>Dashboard</h3>
-                    <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: '2px 0 0' }}>Revenue overview for Q1 2026</p>
+                    <h3 id="uxm-preview-modal-title" style={{
+                      fontFamily: roleFont('page-title'),
+                      fontSize: scaled(18, 'page-title'),
+                      fontWeight: roleWeight('page-title', 700),
+                      color: 'var(--color-text)', margin: 0,
+                    }}>Dashboard</h3>
+                    <p style={{ fontSize: scaled(12), color: 'var(--color-text-muted)', margin: '2px 0 0' }}>Revenue overview for Q1 2026</p>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -744,7 +786,12 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                   <div style={{
                     backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)', borderRadius: 10, padding: 16,
                   }}>
-                    <h4 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text)', margin: '0 0 12px' }}>Quick Add</h4>
+                    <h4 style={{
+                      fontFamily: roleFont('section-title'),
+                      fontSize: scaled(13, 'section-title'),
+                      fontWeight: roleWeight('section-title', 600),
+                      color: 'var(--color-text)', margin: '0 0 12px',
+                    }}>Quick Add</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                       <MiniInput
                         label="Name"
@@ -765,7 +812,7 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
 
               {/* Footer tags */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 12, color: 'var(--color-text-muted)', marginRight: 4 }}>Tags:</span>
+                <span style={{ fontSize: scaled(12), color: 'var(--color-text-muted)', marginRight: 4 }}>Tags:</span>
                 <Tag type="success">Active</Tag>
                 <Tag type="warning">Draft</Tag>
                 <Tag type="info">Q1 2026</Tag>
@@ -779,7 +826,7 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                 padding: '16px 24px', borderTop: '1px solid var(--color-border)', backgroundColor: 'var(--color-card)',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
-                <p style={{ fontSize: 13, color: buildError ? 'var(--color-danger-text)' : 'var(--color-text-muted)', margin: 0 }}>
+                <p style={{ fontSize: scaled(13), color: buildError ? 'var(--color-danger-text)' : 'var(--color-text-muted)', margin: 0 }}>
                   {buildError ?? 'Publish saves your changes to the environment'}
                 </p>
                 <ButtonPrimary
