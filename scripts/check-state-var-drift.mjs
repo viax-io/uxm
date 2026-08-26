@@ -64,8 +64,9 @@ for (const { cid, key, def } of knobs) {
   );
   if (!reads.some(({ text }) => pattern.test(text))) {
     drift += 1;
-    console.log(`DRIFT ${cid}.${key}: registry says ${def}; no SCSS reads var(${cssVar}, ${defs[0]}) (${reads.map((r) => r.f).join(', ')})`);
+    console.error(`DRIFT ${cid}.${key}: registry says ${def}; no SCSS reads var(${cssVar}, ${defs[0]}) (${reads.map((r) => r.f).join(', ')})`);
   }
 }
+// eslint-disable-next-line no-console -- CLI summary line; this IS the program's output
 console.log(drift === 0 ? 'OK — zero state-knob drift' : `${drift} drifting declaration(s)`);
 process.exit(drift === 0 ? 0 : 1);

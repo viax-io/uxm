@@ -63,7 +63,7 @@
 
   &:not(#{&}--disabled):hover &__input:not(:checked) + &__circle {
     /* Hover — fallbacks are the registry's hover defaults: the unselected
-       circle signals through its BORDER (`--color-text-muted`) and stays
+       circle signals through its BORDER (`--color-text-strong`) and stays
        unfilled, the selected circle and its dot deepen to
        `--color-accent-bold`. They used to repeat the resting colours, which
        compiles to a live `:hover` rule that paints nothing — invisible in any

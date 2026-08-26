@@ -66,7 +66,7 @@
 
   &:not(#{&}--disabled):hover &__input:not(:checked) + &__box {
     /* Hover — each fallback is the registry's hover default: the unchecked box
-       signals through its BORDER (`--color-text-muted`) and stays unfilled, the
+       signals through its BORDER (`--color-text-strong`) and stays unfilled, the
        checked box deepens to `--color-accent-bold`, and the glyph holds
        `--color-text-inverse` so it keeps reading on the darker fill. The two
        fallbacks that do equal their resting value (unchecked bg, glyph colour)
