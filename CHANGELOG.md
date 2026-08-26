@@ -1,3 +1,10 @@
+## [4.27.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.27.0...v4.27.1) (2026-08-26)
+
+
+### Bug Fixes
+
+* **select:** name the combobox trigger, not just the popup ([aaa51b2](https://gitlab.viax.tech/services-viax/uxm/commit/aaa51b24738aa4f269431033eacd27be9a876ebe))
+
 # [4.27.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.26.2...v4.27.0) (2026-08-26)
 
 
