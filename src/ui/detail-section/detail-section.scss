@@ -42,9 +42,9 @@
 
   &__title {
     color: var(--color-text);
-    font-family: var(--uxm-detail-section-title-font, var(--brand-heading-font, inherit));
-    font-size: var(--uxm-detail-section-title-size, 15px);
-    font-weight: var(--uxm-detail-section-title-weight, var(--brand-heading-weight, 600));
+    font-family: var(--uxm-detail-section-title-font, var(--type-section-title-font, var(--brand-heading-font, inherit)));
+    font-size: calc(var(--uxm-detail-section-title-size, 15px) * var(--type-section-title-scale, 1) * var(--type-scale, 1));
+    font-weight: var(--uxm-detail-section-title-weight, var(--type-section-title-weight, var(--brand-heading-weight, 600)));
     margin: 0;
   }
 
@@ -57,7 +57,7 @@
   &__body {
     color: var(--color-text-muted);
     font-size: 13px;
-    line-height: 1.5;
+    line-height: var(--type-body-line-height, 1.5);
     margin-top: 12px;
   }
 }

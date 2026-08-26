@@ -43,8 +43,9 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any standard div att
 | `--uxm-page-header-padding-x` | – | `0px` | Horizontal padding on the row. |
 | `--uxm-page-header-title-color` | `--color-text` | – | Title colour. |
 | `--uxm-page-header-title-size` | – | `22px` | Title font size. |
-| `--uxm-page-header-title-font` | `--brand-heading-font` | `inherit` | Title typeface. Unset brand = inherits the body face. |
-| `--uxm-page-header-title-weight` | `--brand-heading-weight` | `600` | Title weight. |
+| `--uxm-page-header-title-font` | `--type-page-title-font` → `--brand-heading-font` | `inherit` | Title typeface (**h1** role). Unset = inherits the body face. |
+| `--uxm-page-header-title-weight` | `--type-page-title-weight` → `--brand-heading-weight` | `600` | Title weight (**h1** role). |
+| `--uxm-page-header-title-size` | – | `22px` | Title size; multiplied by `--type-page-title-scale` and `--type-scale`. |
 | `--uxm-page-header-meta-color` | `--color-text-muted` | – | Meta text colour. |
 | `--uxm-page-header-meta-size` | – | `13px` | Meta font size. |
 | `--uxm-page-header-icon-bg` | `--color-accent-subtle` | – | Icon tile background (bridged to `--uxm-icon-tile-bg`). |

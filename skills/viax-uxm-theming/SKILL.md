@@ -124,6 +124,12 @@ the store getter. Importing the wrong one fails silently.
       "fontFamily": "Manrope",   // drives --brand-font via generateOverridesCss
       "headingFontFamily": "Space Grotesk",  // → --brand-heading-font; optional, additive
       "headingFontWeight": "600",            // → --brand-heading-weight ('500'|'600'|'700')
+      // Per-role refinements, layered UNDER the umbrella above. Roles: display
+      // (StatCard value, ErrorPage code), h1 (page titles), h2 (section titles).
+      "pageTitleFontFamily": "Figtree", "pageTitleFontWeight": "700", "pageTitleScale": "1.25",
+      "displayScale": "1.5", "sectionTitleFontWeight": "500",
+      "typeScale": "1.125",                  // → --type-scale, multiplies every size
+      "bodyLineHeight": "1.7",               // → --type-body-line-height + a body rule
       "tokens": { "light": { "--color-accent": "#15895F" }, "dark": { … } }
     },
     // v2 multi-theme. The top-level overrides/brand REMAIN the default theme —
@@ -233,6 +239,14 @@ top-level default.
 
 ## Gotchas that actually bite
 
+- **A bad type scale collapses the whole app, it does not just get ignored.** `typeScale` /
+  `pageTitleScale` / `displayScale` / `sectionTitleScale` multiply a length inside `calc()`. A non-numeric or
+  dimensioned value (`abc`, `1.2px`) makes the declaration invalid at computed-value time, so
+  `font-size` resolves to `unset` and **inherits** — one poisoned value on `:root` renders every
+  atom at the parent's size. `generateOverridesCss` drops anything outside a plain number in
+  0.5–2, but only for values that flow through `brand.*`; a scale smuggled in via
+  `brand.tokens.light` bypasses that check (`safeTokenValue` allows `abc` and unbalanced parens).
+  Never route typography through the token bag.
 - **Heading typography is opt-in, and a stale `@viax/uxm` silently swallows it.** `brand.headingFontFamily`
   / `headingFontWeight` publish as `--brand-heading-font` / `--brand-heading-weight`, which only the
   heading surfaces read (`PageHeader` / `DetailSection` / `SegmentRow` titles, `ErrorPage` code + title,

@@ -1219,6 +1219,31 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Typography roles — per-level headings, base text size, body line height.** Brand Settings
+  now edits typography as *roles* rather than one umbrella. The six heading surfaces group into
+  **display** (`StatCard` value, `ErrorPage` code), **h1** (`PageHeader` / `ErrorPage` title) and
+  **h2** (`DetailSection` / `SegmentRow` title), each with an optional typeface, weight and size
+  scale behind a "Fine-tune levels" disclosure. The chain is
+  `var(--uxm-<comp>-<prop>, var(--type-<role>-<prop>, var(--brand-heading-<prop>, <literal>)))`,
+  so an unset role falls through to the umbrella that shipped in 4.27.0 and the simple case is
+  still two dropdowns.
+  Sizes multiply instead of substituting:
+  `calc(var(--uxm-…-size, 22px) * var(--type-page-title-scale, 1) * var(--type-scale, 1))`. **Keep the
+  multiplication OUTSIDE the `var()`** — a scale placed inside the fallback is shadowed the
+  moment anything sets the component var (studio previews project knob defaults), and this form
+  also lets a per-component size override still respect global density.
+  `--type-scale` is the global base-size knob, but it currently reaches **only the six heading
+  surfaces** — the remaining ~166 font-sizes are still bare px until the follow-up sweep wraps
+  them. The editor hint and the specimen say so rather than implying library-wide scaling; widen
+  both when the sweep lands.
+  `--type-body-line-height` drives the three multi-line prose surfaces (`DetailSection` body,
+  `ErrorPage` message, `Banner` content) plus a `body` rule emitted **only when the knob is set**
+  — the library ships no element-level rules, so an unconditional one would reflow host content.
+  Every surface keeps its own literal last, so unset output is pixel-identical (verified).
+  ⚠️ Scales are sanitised to plain numbers in range (`safeTypeScale`, 0.5–2): a bad value like
+  `abc` or `1.2px` makes the `calc()` invalid at computed-value time, and `font-size` then
+  **inherits**, which on `:root` collapses the whole app to the parent size.
+
 ## Workflow
 
 ### Before writing any code

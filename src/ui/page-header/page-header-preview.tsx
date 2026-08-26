@@ -31,9 +31,9 @@ export function PageHeaderPreview({ styles }: PreviewProps) {
             // Mirrors the atom's own chain (page-header.scss) so the canvas
             // reflects a brand heading face/weight the way the shipped
             // component does — this preview hand-rolls its markup.
-            fontFamily: 'var(--uxm-page-header-title-font, var(--brand-heading-font, inherit))',
-            fontSize: styles.titleSize as number,
-            fontWeight: 'var(--uxm-page-header-title-weight, var(--brand-heading-weight, 600))',
+            fontFamily: 'var(--uxm-page-header-title-font, var(--type-page-title-font, var(--brand-heading-font, inherit)))',
+            fontSize: `calc(${styles.titleSize}px * var(--type-page-title-scale, 1) * var(--type-scale, 1))`,
+            fontWeight: 'var(--uxm-page-header-title-weight, var(--type-page-title-weight, var(--brand-heading-weight, 600)))',
             color: styles.titleColor as string,
             margin: 0,
           }}>Billing Automation</h1>

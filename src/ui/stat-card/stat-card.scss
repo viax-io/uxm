@@ -28,9 +28,9 @@
 
   &__value {
     color: var(--color-text);
-    font-family: var(--uxm-stat-card-value-font, var(--brand-heading-font, inherit));
-    font-size: var(--uxm-stat-card-value-size, 28px);
-    font-weight: var(--uxm-stat-card-value-weight, var(--brand-heading-weight, 700));
+    font-family: var(--uxm-stat-card-value-font, var(--type-display-font, var(--brand-heading-font, inherit)));
+    font-size: calc(var(--uxm-stat-card-value-size, 28px) * var(--type-display-scale, 1) * var(--type-scale, 1));
+    font-weight: var(--uxm-stat-card-value-weight, var(--type-display-weight, var(--brand-heading-weight, 700)));
   }
 
   &__trend {
