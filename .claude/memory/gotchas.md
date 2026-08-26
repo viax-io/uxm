@@ -170,9 +170,10 @@ consumer) with **no** overrides saved, never by reading the studio preview.
 alongside, as was `disabledOpacity` on all three (registry 0.4 vs 0.6/1/0.6 in
 CSS). Known still-drifting cases: the `Button` primary/secondary/tertiary/ghost
 variants and `Slider` ship `disabled-opacity: 1` against a registry default of
-**0.4**; `Tabs`, `Link` and `list-item` ship `1` against a registry default of
+**0.4**; `Link` and `list-item` ship `1` against a registry default of
 **0.5** — the number differs per component, so diff against the registry
-entry, don't assume one target value. `PillSelect` is NOT on this list: its
+entry, don't assume one target value. (`Tabs` drifted the same way and was
+fixed in the `fix/small-control-hover-defaults` MR.) `PillSelect` is NOT on this list: its
 registry default is `1` **by design** (`composite.ts` — dimming would
 double-dim already-muted chips), so its flat disabled look is correct. Check
 any per-state block against the registry before assuming it's clean.

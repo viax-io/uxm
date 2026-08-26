@@ -26,6 +26,11 @@
     padding: var(--uxm-tabs-padding-y, 6px) var(--uxm-tabs-padding-x, 12px);
     transition: background-color 0.15s, color 0.15s;
 
+    /* The `--state-*` modifier classes mirror the real pseudos by sharing
+       their selector group — the studio's static state panel applies them
+       (tabs-preview) and previously had nothing to match, so its Hover /
+       Focus tiles for Tabs painted no change at all. */
+    &--state-hover:not(.uxm-tabs__tab--active),
     &:hover:not(.uxm-tabs__tab--active):not(:disabled) {
       /* Hover — fallbacks are the registry's hover defaults, not a repeat of
          the resting look. They used to be `transparent` (the tab's own resting
@@ -38,6 +43,7 @@
       color: var(--uxm-tabs-hover-text, var(--color-text));
     }
 
+    &--state-focus,
     &:focus-visible {
       color: var(--uxm-tabs-focus-text, var(--color-text));
       outline: 2px solid var(--uxm-tabs-focus-ring, var(--color-accent));
@@ -46,7 +52,10 @@
 
     &:disabled {
       color: var(--uxm-tabs-disabled-text, var(--color-text-muted));
-      opacity: var(--uxm-tabs-disabled-opacity, 1);
+      /* 0.5 is the registry's disabledOpacity default — the old `1` fallback
+         was the same dead-fallback class fixed for the small controls: the
+         studio projected 0.5 inline while a bare consumer saw no dim. */
+      opacity: var(--uxm-tabs-disabled-opacity, 0.5);
     }
 
     &--active {

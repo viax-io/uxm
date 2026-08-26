@@ -82,6 +82,8 @@ Exported as a string union so consumers can build orientation toggles without re
 | `--uxm-radio-group-error-color` | `--color-danger-text` | – | Colour of the `error` message below the group (icon included — it uses `currentColor`). |
 | `--uxm-radio-group-error-message-size` | – | `12px` | Font size of the `error` message. |
 
+> ⚠️ A studio-saved override for the two `error` vars does not currently reach the message: `generateOverridesCss` emits per-component vars on `.uxm-radio-group`, the message renders as that element's *sibling*, and custom properties only cascade downwards. Tracked separately — set the vars on a shared ancestor if you need to re-tone messages today.
+
 Hover is scoped with `:not(.uxm-radio--disabled)`, so a disabled option does not react to the pointer.
 
 ## Design tokens (MODO-configurable)

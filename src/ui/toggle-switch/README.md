@@ -55,6 +55,8 @@ function Example() {
 | `--uxm-toggle-switch-error-color` | `--color-danger-text` | – | Colour of the `error` message below the control (icon included — it uses `currentColor`). |
 | `--uxm-toggle-switch-error-message-size` | – | `12px` | Font size of the `error` message. |
 
+> ⚠️ A studio-saved override for the two `error` vars does not currently reach the message: `generateOverridesCss` emits per-component vars on `.uxm-toggle-switch`, the message renders as that element's *sibling*, and custom properties only cascade downwards. Tracked separately — set the vars on a shared ancestor if you need to re-tone messages today.
+
 > The `--shadow-sm` token applies a small drop-shadow under the thumb. The "on" thumb position is computed via `calc()` from `width` / `height`, so the math survives custom dimensions.
 
 ## Design tokens (MODO-configurable)
