@@ -1,3 +1,10 @@
+## [4.26.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.26.0...v4.26.1) (2026-08-26)
+
+
+### Bug Fixes
+
+* **app-sidebar:** collapsed rail keeps label + badge in the accessibility tree ([1a0faff](https://gitlab.viax.tech/services-viax/uxm/commit/1a0faff68201d28223a3f36eb3e74647eff974fe)), closes [1-#2](https://gitlab.viax.tech/1-/issues/2) [#2](https://gitlab.viax.tech/services-viax/uxm/issues/2)
+
 # [4.26.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.25.0...v4.26.0) (2026-08-25)
 
 
