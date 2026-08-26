@@ -1308,6 +1308,29 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Brand Settings' Typography panel rebuilt on shipped atoms.** It had grown to 14 dropdowns in
+  one column (1168px tall) with no hierarchy — and a dropdown is the wrong control for a closed
+  set of three or four, costing two interactions to pick from options you cannot see. Now:
+  `Tabs` splits Body from Headings (3–5 controls visible instead of 14), `FormField
+  labelPosition="side"` puts each label beside its control, and `ButtonGroup` replaces the
+  small closed sets so every option is visible in one click. Worst case is 770px, 34% shorter.
+  The hand-rolled `Field` wrapper is gone in favour of `FormField`, and the layout uses `Stack` /
+  `Cluster` / `ResponsiveGrid` / `Card` rather than raw flex divs.
+  ⚠️ **`Select` forwards `style` to its inner combobox, not to the `.uxm-listbox` wrapper.** A
+  flex row therefore cannot size Selects — the wrapper stays full-width and they stack. Use
+  `ResponsiveGrid` (grid items size the wrappers) for any row of Selects; this is why the
+  per-level matrix is a grid.
+  ⚠️ **Put a `Tabs` adornment in `TabsOption.icon`, not inside `label`.** Tabs renders the label
+  inside `<span class="uxm-tabs__label">` within the `<button>`, and both take phrasing content
+  only — a layout wrapper (`Cluster` renders a `<div>`) there is invalid HTML and puts a block
+  box inside an inline one. `icon` is rendered as its own sibling span for exactly this.
+  ⚠️ **A `ButtonGroup` inside a `FormField` stretches unless you stop it.** The atom is
+  `inline-flex` (content-width by design), but `.uxm-form-field__control` is a flex COLUMN whose
+  default `align-items: stretch` blows the track out to the full column — leaving a long empty
+  run after the last segment. FormField does that deliberately for inputs, which should fill
+  their column; a segmented track should not. Wrap it in a `Cluster` (flex row, children keep
+  content width).
+
 ## Workflow
 
 ### Before writing any code
