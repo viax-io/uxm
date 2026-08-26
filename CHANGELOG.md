@@ -1,3 +1,10 @@
+# [4.28.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.27.1...v4.28.0) (2026-08-26)
+
+
+### Features
+
+* **brand-settings:** typography roles, base text size, body line height ([e937623](https://gitlab.viax.tech/services-viax/uxm/commit/e937623183f40f1a370f791df922f7bcad6d7ed8))
+
 ## [4.27.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.27.0...v4.27.1) (2026-08-26)
 
 
