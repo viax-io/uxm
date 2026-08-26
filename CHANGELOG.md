@@ -1,3 +1,10 @@
+## [4.28.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.0...v4.28.1) (2026-08-26)
+
+
+### Bug Fixes
+
+* **ui:** retro-review follow-ups - box-sizing stragglers, icon empty label, clip anchor ([207298e](https://gitlab.viax.tech/services-viax/uxm/commit/207298e879408cccbfe9fa87c0ef99dce83f31a5))
+
 # [4.28.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.27.1...v4.28.0) (2026-08-26)
 
 
