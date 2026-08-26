@@ -152,6 +152,9 @@
      ghost button rendered through the footer slot by every picker (Listbox,
      MultiListbox → EditableCell, PillSelect, Select). All knobs are themable. */
   &__footer-clear-option {
+    /* width: 100% + own padding only add up under border-box; ui.css ships
+       no reset (same fix as the input family got in 4.17.1). */
+    box-sizing: border-box;
     width: 100%;
     justify-content: flex-start;
     gap: var(--uxm-listbox-footer-clear-gap, 6px);

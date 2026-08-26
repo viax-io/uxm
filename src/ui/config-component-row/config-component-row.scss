@@ -1,6 +1,9 @@
 /* ── config-component-row ── */
 
 .uxm-config-component-row {
+  /* width: 100% + own border/padding only add up under border-box; ui.css
+     ships no reset (same fix as the input family got in 4.17.1). */
+  box-sizing: border-box;
   align-items: center;
   background-color: var(--color-card);
   border: 1px solid var(--color-border);

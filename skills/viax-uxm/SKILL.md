@@ -1246,6 +1246,14 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Retro-review follow-ups (small, no API change).** Three more `box-sizing: border-box`
+  stragglers of the 4.17.1 class: the shared picker "Clear / Clear all" footer option
+  (`.uxm-listbox__footer-clear-option` — every picker inherits it), `ConfigComponentRow`, and
+  `Modal` (whose border alone pushed ~2px past its size preset in a reset-less host).
+  `Icon` treats `aria-label=""` as no name again (stays decorative instead of an unnamed
+  `role="img"`). The collapsed sidebar item anchors its clipped label/badge spans with its own
+  `position: relative`, completing the SidebarNavTrigger recipe it borrows.
+
 ## Workflow
 
 ### Before writing any code

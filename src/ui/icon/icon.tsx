@@ -30,7 +30,9 @@ export function Icon({ glyph, size = 24, strokeWidth = 1.75, className, ...rest 
     // its text alone (the registry label used to leak in — "Kebab (More)
     // Publish"-style names). Pass `aria-label` to make a standalone icon
     // informative; an explicit `aria-hidden` in `...rest` still wins.
-    ...(ariaLabel !== undefined
+    // Truthy check on purpose: `aria-label=""` is not a name — it stays
+    // decorative rather than becoming an UNNAMED `role="img"`.
+    ...(ariaLabel
       ? { role: 'img' as const }
       : { 'aria-hidden': true }),
     ...rest,
