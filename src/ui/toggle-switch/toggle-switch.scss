@@ -48,7 +48,7 @@
        while a consumer that only imports the compiled CSS sets no vars and got
        the resting colour back. Gated on `:not(--disabled)` so a disabled switch
        stays visually inert. */
-    background-color: var(--uxm-toggle-switch-hover-off-track, var(--color-text-muted));
+    background-color: var(--uxm-toggle-switch-hover-off-track, var(--color-text-strong));
   }
 
   &:not(#{&}--disabled):hover &__input:not(:checked) + &__track > &__thumb {

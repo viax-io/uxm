@@ -46,7 +46,7 @@ function Example() {
 | `--uxm-toggle-switch-on-track` | `--color-accent` | – | Track background when on (`:checked`). |
 | `--uxm-toggle-switch-off-thumb` | `--color-card` | – | Thumb background when off. |
 | `--uxm-toggle-switch-on-thumb` | `--color-card` | – | Thumb background when on (`:checked`). |
-| `--uxm-toggle-switch-hover-off-track` | `--color-text-muted` | – | Track background on hover while off. |
+| `--uxm-toggle-switch-hover-off-track` | `--color-text-strong` | – | Track background on hover while off. |
 | `--uxm-toggle-switch-hover-on-track` | `--color-accent-bold` | – | Track background on hover while on (`:checked`). |
 | `--uxm-toggle-switch-hover-off-thumb` | `--color-card` | – | Thumb background on hover while off. |
 | `--uxm-toggle-switch-hover-on-thumb` | `--color-card` | – | Thumb background on hover while on (`:checked`). |
@@ -65,7 +65,7 @@ function Example() {
 | `--color-border` | Borders / Border | Off-state track background. |
 | `--color-accent` | Accent / Accent | On-state track background; `:focus-visible` ring. |
 | `--color-accent-bold` | Accent / Accent Bold | On-state track background on hover. |
-| `--color-text-muted` | Text / Text Muted | Off-state track background on hover. |
+| `--color-text-strong` | Text / Text Strong | Off-state track background on hover. |
 | `--color-card` | Surfaces / Card | Thumb background. |
 
 ## States & variants
@@ -75,7 +75,7 @@ function Example() {
 | Off | `checked` is falsy | Track painted `--color-border`; thumb sits at `left: 2px`. |
 | On | `checked` is truthy | Track painted `--color-accent`; thumb slides to `calc(width − height + 2px)` (0.2s transition). |
 | Disabled | `disabled` prop | `uxm-toggle-switch--disabled` modifier added: `cursor: not-allowed`, `opacity: 0.4`, no hover. Native disabled blocks interaction. |
-| Hover (off) | `:hover` on the root, input unchecked | Track darkens to `--color-text-muted`; cursor `pointer`. |
+| Hover (off) | `:hover` on the root, input unchecked | Track darkens to `--color-text-strong`; cursor `pointer`. |
 | Hover (on) | `:hover` on the root, input checked | Track deepens to `--color-accent-bold`; cursor `pointer`. |
 
 > Hover is scoped with `:not(.uxm-toggle-switch--disabled)`, so a disabled switch does not react to the pointer.

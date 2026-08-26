@@ -1095,14 +1095,14 @@ skill:
   every fallback repeated the resting colour, so the compiled CSS changed nothing on hover — the
   workbench only *looked* right because it projects its knob defaults as inline
   `--uxm-toggle-switch-hover-*` vars. The fallbacks now match those registry defaults:
-  `--color-text-muted` for the off track, `--color-accent-bold` for the on track (thumbs stay
+  `--color-text-strong` for the off track (muted measured 2.54:1 on card in light — under the 3:1 UI floor), `--color-accent-bold` for the on track (thumbs stay
   `--color-card`). Hover is also gated on `:not(.uxm-toggle-switch--disabled)` so a disabled
   switch stays inert. Visual change for consumers who never set the vars — that was the bug; a
   saved override still wins. Same trap to watch for elsewhere: a per-state var whose fallback is
   the resting value ships a dead rule.
 - **`Checkbox` hover — same fix, same reason.** `hover-unchecked-border` fell back to
   `--color-border` and `hover-checked-bg` / `-border` to `--color-accent`, i.e. the resting
-  colours, so hover was invisible in consumer apps. Now `--color-text-muted` for the unchecked
+  colours, so hover was invisible in consumer apps. Now `--color-text-strong` for the unchecked
   border and `--color-accent-bold` for the checked fill + border, matching the registry; the
   unchecked box still doesn't fill (the border is the signal) and the glyph still holds
   `--color-text-inverse`, both of which the registry declares that way on purpose. Hover is
@@ -1119,15 +1119,17 @@ skill:
   `--disabled` rule in its own file; only the label row and the visually-hidden `__input` stay
   shared. The `RadioGroup` README claimed the modifier had no bundled dim at all; it has
   shipped one since the shared rule was written. ⚠️ Still drifting
-  elsewhere and NOT touched here: most `Button` variants (registry `0.4`, CSS `1`), `Tabs`,
-  `Link`, `List`, `Slider`, `PillSelect` and others ship `1`. 
+  elsewhere and NOT touched here: the `Button` primary/secondary/tertiary/ghost variants and
+  `Slider` ship CSS `1` against registry `0.4`; `Tabs`, `Link` and `list-item` ship `1` against
+  registry `0.5` (the target differs per component — diff against the registry entry).
+  `PillSelect` is correct as-is: its registry default is `1` by design. 
 - **`RadioGroup` hover — the last of the three small controls.** `hover-unselected-border` fell
   back to `--color-border` and `hover-selected-border` / `hover-dot-color` to `--color-accent`,
-  i.e. the resting colours, so hover never painted outside the studio. Now `--color-text-muted`
+  i.e. the resting colours, so hover never painted outside the studio. Now `--color-text-strong`
   for the unselected border and `--color-accent-bold` for the selected border + dot, per the
   registry; the unselected circle still doesn't fill (the border is the signal). Hover is gated
   on `:not(.uxm-radio--disabled)`. `Checkbox`, `ToggleSwitch` and `RadioGroup` now agree:
-  muted border / bold accent on hover, 0.4 disabled dim, no hover while disabled.
+  strong border / bold accent on hover, 0.4 disabled dim, no hover while disabled.
 - **`ToggleSwitch` / `RadioGroup` error messages are styled at all now.** Both `.scss` files
   styled `.uxm--message`, a class nothing in the library renders — the atoms render
   `uxm-{id}__error-message` (FieldError takes it via `className`), like every other input. So

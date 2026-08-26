@@ -73,7 +73,7 @@
        that rule is an override hook, not a look. Gated on `:not(--disabled)`
        so a disabled option stays visually inert. */
     background-color: var(--uxm-radio-group-hover-unselected-bg, transparent);
-    border-color: var(--uxm-radio-group-hover-unselected-border, var(--color-text-muted));
+    border-color: var(--uxm-radio-group-hover-unselected-border, var(--color-text-strong));
   }
 
   &:not(#{&}--disabled):hover &__input:checked + &__circle {

@@ -77,7 +77,7 @@
        its knob defaults as inline vars. Gated on `:not(--disabled)` so a
        disabled checkbox stays visually inert. */
     background-color: var(--uxm-checkbox-hover-unchecked-bg, transparent);
-    border-color: var(--uxm-checkbox-hover-unchecked-border, var(--color-text-muted));
+    border-color: var(--uxm-checkbox-hover-unchecked-border, var(--color-text-strong));
   }
 
   &:not(#{&}--disabled):hover &__input:checked + &__box {

@@ -43,7 +43,7 @@ The component does not spread arbitrary HTML attributes onto the input; only the
 | `--uxm-checkbox-size` | – | `20px` | Box width and height. |
 | `--uxm-checkbox-check-color` | `--color-accent` | – | Checked-state background AND border (single knob — they always move together). |
 | `--uxm-checkbox-hover-unchecked-bg` | `transparent` | – | Box background on hover while unchecked (unfilled by default — the border carries the hover). |
-| `--uxm-checkbox-hover-unchecked-border` | `--color-text-muted` | – | Box border on hover while unchecked. |
+| `--uxm-checkbox-hover-unchecked-border` | `--color-text-strong` | – | Box border on hover while unchecked. |
 | `--uxm-checkbox-hover-checked-bg` | `--color-accent-bold` | – | Box background on hover while checked. |
 | `--uxm-checkbox-hover-checked-border` | `--color-accent-bold` | – | Box border on hover while checked. |
 | `--uxm-checkbox-hover-check-glyph-color` | `--color-text-inverse` | – | Check glyph on hover (unchanged by default — it still has to read on the deeper fill). |
@@ -60,7 +60,7 @@ Hover is scoped with `:not(.uxm-checkbox--disabled)`, so a disabled checkbox doe
 | `--color-border` | Borders / Border | Unchecked box border (via `--uxm-checkbox-border-color` fallback). |
 | `--color-accent` | Accent / Accent | Checked-state background + border (via `--uxm-checkbox-check-color` fallback). |
 | `--color-accent-bold` | Accent / Accent Bold | Checked box background + border on hover. |
-| `--color-text-muted` | Text / Text Muted | Unchecked box border on hover. |
+| `--color-text-strong` | Text / Text Strong | Unchecked box border on hover. |
 | `--color-text-inverse` | Text / Text Inverse | Check glyph colour (resting value is hardcoded; the hover value goes through `--uxm-checkbox-hover-check-glyph-color`). |
 
 The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI.
@@ -72,7 +72,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Default (unchecked) | – | Transparent box with `--color-border` outline; check SVG present but `opacity: 0`. |
 | Checked | `:checked` on the native input | Box fills with `--uxm-checkbox-check-color`; check SVG fades to `opacity: 1`. |
 | Disabled | `disabled` prop | `--disabled` modifier: `cursor: not-allowed`, `opacity: 0.4`; native input also disabled. Hover is skipped. |
-| Hover (unchecked) | `:hover` on the root, input unchecked | Border moves to `--color-text-muted`; the box stays unfilled. |
+| Hover (unchecked) | `:hover` on the root, input unchecked | Border moves to `--color-text-strong`; the box stays unfilled. |
 | Hover (checked) | `:hover` on the root, input checked | Box (fill + border) deepens to `--color-accent-bold`; glyph holds `--color-text-inverse`. |
 | Focus | `:focus-visible` on the native input | The visible box gets a `2px` outline in `--uxm-checkbox-focus-ring` (`--color-accent`) at `2px` offset. |
 
