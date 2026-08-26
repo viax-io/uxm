@@ -1,3 +1,15 @@
+# [4.27.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.26.2...v4.27.0) (2026-08-26)
+
+
+### Bug Fixes
+
+* **brand-settings:** let the brand heading weight reach SegmentRow ([3dee31f](https://gitlab.viax.tech/services-viax/uxm/commit/3dee31fdb96f5db32b04f9287b53e243be73777d))
+
+
+### Features
+
+* **brand-settings:** heading typeface and weight ([5e9b720](https://gitlab.viax.tech/services-viax/uxm/commit/5e9b7205695b8926b7ee6038d450966f4c043424))
+
 ## [4.26.2](https://gitlab.viax.tech/services-viax/uxm/compare/v4.26.1...v4.26.2) (2026-08-26)
 
 
