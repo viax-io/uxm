@@ -1,3 +1,10 @@
+## [4.28.4](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.3...v4.28.4) (2026-08-26)
+
+
+### Bug Fixes
+
+* **studio:** make the Preview & Publish mock reflect typography settings ([34e9e54](https://gitlab.viax.tech/services-viax/uxm/commit/34e9e541aaf0d0f8b7d0a70ae397f3b05227fe60))
+
 ## [4.28.3](https://gitlab.viax.tech/services-viax/uxm/compare/v4.28.2...v4.28.3) (2026-08-26)
 
 
