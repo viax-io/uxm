@@ -1378,6 +1378,27 @@ skill:
   it — so a header under an `<h2>` skipped a level and there was nothing to do about it short of
   abandoning the atom. Styling is identical at every level; the prop only moves the header in the
   document outline. Default is unchanged, so nothing shifts unless you pass it.
+- **Brand Settings' Color section now uses the shipped atoms too.** The hex field was a raw
+  `<input>` and the reset a raw `<button>` rendering a literal `↺`; they are now `TextInput`
+  (`clearable={false}`) and `IconButton` + `Icon glyph="refresh"`. Both are sized down through
+  their own component-scoped vars rather than restyled by hand — the row repeats 31 times, so the
+  default 14px/10px field would have added ~400px to the list. Measured unchanged at 33px per
+  row / 1023px total. `Group` is now `Card` + `SectionHeader` + `Stack`, which completes the
+  panel, along with the palette reset becoming the `InlineAction` its own docs cite ("Reset
+  section") as the example use. That reset clears only the theme being edited, so it now sits
+  beside the "Editing <theme> values" sentence that names its scope rather than beside the
+  Light/Dark switcher, and its label says which theme — "Reset all" read as clearing both. Every container in the panel is now `Card` / `Stack` /
+  `Cluster`; the only raw primitives left are the hidden `<input type="file">` behind each Upload
+  — a mechanism, not a control — and the centering inside `Preview`'s own frame. What stays local
+  is `AssetRow` / `TokenRow` (compositions, not replicas) and `Preview` / `PreviewImg` (kept
+  deliberately — see above).
+  The groups pass `level={3}` so they sit under the shell's `<h2>` without skipping a level.
+  ⚠️ `SectionHeader` is tuned for **dense properties panels**, so both its text roles run light
+  for a top-level heading: the title falls back to `--color-text-subtle` (#CBD5E1) and the
+  subtitle to 10px `--color-text-muted`, sized for terse metadata like "Active value: 600". Used
+  as a section heading over prose, set `--uxm-section-header-title-color` and
+  `--uxm-section-header-subtitle-size` / `-color` — otherwise the heading nearly disappears and
+  readable prose drops to 10px grey.
 
 ## Workflow
 
