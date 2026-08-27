@@ -1,3 +1,11 @@
+# [4.31.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.30.0...v4.31.0) (2026-08-27)
+
+
+### Features
+
+* **brand-settings:** rebuild Color on the shipped atoms ([9806e69](https://gitlab.viax.tech/services-viax/uxm/commit/9806e695cad8514467b02ca4510cd383658bd3ea))
+* **section-header:** add a level prop for the heading tag ([abbe220](https://gitlab.viax.tech/services-viax/uxm/commit/abbe2207828e4e1aea31f0dd5c36c9c5577a356a))
+
 # [4.30.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.29.1...v4.30.0) (2026-08-27)
 
 
