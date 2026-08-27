@@ -5,8 +5,8 @@ import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
 import {
   Badge, ButtonGroup, ButtonPrimary, ButtonSecondary, ButtonTertiary, Card, Cluster,
-  ColorInputPopover, Dialog, Disclosure, FormField, Modal, ResponsiveGrid, Select,
-  Stack, Tabs, TextInput,
+  ColorInputPopover, Dialog, Disclosure, FormField, Icon, IconButton, InlineAction, Modal,
+  ResponsiveGrid, SectionHeader, Select, Stack, Tabs, TextInput,
 } from '@/ui';
 
 export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
@@ -243,17 +243,17 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
   );
 
   return (
-    <div style={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <Stack gap={16} style={{ width: '100%', maxWidth: 640 }}>
       <Group
         title="Identity"
         description="Logos and marks shown throughout Modo. Dark values fall back to the light ones when empty."
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+        <Cluster justify="between" align="center" gap={8}>
           <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
             Editing <strong style={{ color: 'var(--color-text)' }}>{identityTab}</strong> assets
           </span>
           <LightDarkTabs value={identityTab} onChange={setIdentityTab} />
-        </div>
+        </Cluster>
 
         {ASSETS.map((a) => (
           <AssetRow
@@ -493,7 +493,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
       >
         <ThemeTokensEditor shell={shell} />
       </Group>
-    </div>
+    </Stack>
   );
 }
 
@@ -503,31 +503,31 @@ function Group({
   title: string; description?: string; children: React.ReactNode;
 }) {
   return (
-    <section
+    <Card
+      padding={20}
       style={{
-        border: '1px solid var(--color-border)',
-        borderRadius: 10,
-        padding: 20,
-        backgroundColor: 'var(--color-card)',
-      }}
+        // The panel's own card is a touch rounder than the atom's 4px default.
+        '--uxm-card-radius': '10px',
+        // SectionHeader's subtitle defaults to 10px muted — right for the terse
+        // metadata it was built for ("Active value: 600"), too small for the
+        // full sentences these groups carry. Tuned through the atom's own vars
+        // rather than by hand-rolling the header again.
+        '--uxm-section-header-subtitle-size': '13px',
+        '--uxm-section-header-subtitle-color': 'var(--color-text)',
+        // These are the panel's top-level section headings, not incidental
+        // labels in a dense properties list — the atom's `--color-text-subtle`
+        // default reads as too faint at that job.
+        '--uxm-section-header-title-color': 'var(--color-text-muted)',
+      } as CSSProperties}
     >
-      <header style={{ marginBottom: 16 }}>
-        <h2 style={{
-          fontSize: 10, fontWeight: 700, color: 'var(--color-text-muted)',
-          margin: 0, letterSpacing: 0.8, textTransform: 'uppercase',
-        }}>
-          {title}
-        </h2>
-        {description && (
-          <p style={{ fontSize: 13, color: 'var(--color-text)', margin: '4px 0 0', lineHeight: 1.5 }}>
-            {description}
-          </p>
-        )}
-      </header>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <Stack gap={20}>
+        {/* level=3: these sit under the shell's "Brand Settings" <h2>, and the
+            atom's default <h4> would skip a level — leaving a screen-reader
+            user unable to tell how the sections nest. */}
+        <SectionHeader level={3} subtitle={description}>{title}</SectionHeader>
         {children}
-      </div>
-    </section>
+      </Stack>
+    </Card>
   );
 }
 
@@ -612,38 +612,35 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
 
   return (
     <section>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 14 }}>
-        <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-          Editing <strong style={{ color: 'var(--color-text)' }}>{theme}</strong> values
-        </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <LightDarkTabs value={theme} onChange={setTheme} />
-          <button
-            type="button"
+      {/* The reset sits beside the sentence naming its scope, not beside the
+          theme switcher. It clears only the theme being edited (`[theme]:
+          undefined`), so pairing it with the Light/Dark control implied it
+          acted on the switch — and put a destructive action inside what reads
+          as one segmented group. The label says which theme for the same
+          reason: "Reset all" suggested it cleared both. */}
+      <Cluster justify="between" align="center" gap={8} style={{ marginBottom: 14 }}>
+        <Cluster gap={10} align="center">
+          <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
+            Editing <strong style={{ color: 'var(--color-text)' }}>{theme}</strong> values
+          </span>
+          <InlineAction
             onClick={resetAll}
             disabled={!hasOverrides}
-            style={{
-              padding: '3px 8px',
-              fontSize: 11,
-              color: hasOverrides ? 'var(--color-text)' : 'var(--color-text-muted)',
-              backgroundColor: 'transparent',
-              border: '1px solid var(--color-border)',
-              borderRadius: 4,
-              cursor: hasOverrides ? 'pointer' : 'not-allowed',
-            }}
+            icon={<Icon glyph="refresh" size={11} />}
           >
-            Reset all
-          </button>
-        </div>
-      </div>
+            Reset {theme} values
+          </InlineAction>
+        </Cluster>
+        <LightDarkTabs value={theme} onChange={setTheme} />
+      </Cluster>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <Stack gap={14}>
         {grouped.map((g) => (
           <div key={g.group}>
             <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.6, textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: 6 }}>
               {g.label}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <Stack gap={4}>
               {g.tokens.map((t) => (
                 <TokenRow
                   key={t.cssVar}
@@ -661,10 +658,10 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
                   }
                 />
               ))}
-            </div>
+            </Stack>
           </div>
         ))}
-      </div>
+      </Stack>
 
       <Dialog
         open={pendingAccent !== null}
@@ -770,26 +767,12 @@ function TokenRow({
           {token.cssVar}
         </span>
       </span>
-      <input
-        type="text"
-        value={shown}
-        onChange={(e) => setDraft(e.target.value)}
-        onBlur={(e) => commit(e.target.value)}
-        onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
-        spellCheck={false}
-        style={{
-          width: 84,
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-          fontSize: 11,
-          padding: '3px 6px',
-          border: '1px solid var(--color-border)',
-          borderRadius: 4,
-          backgroundColor: 'var(--color-surface)',
-          color: 'var(--color-text)',
-          outline: 'none',
-          textTransform: 'uppercase',
-        }}
-      />
+      {/* Sits BEFORE the field, not after: it is `visibility: hidden` when the
+          token is at its default, and hidden still reserves its column — after
+          the field that put 72px of dead space between the value and the reset.
+          It cannot simply collapse: every row is its own grid, so an overridden
+          row would size the column differently and the reset icons would go
+          ragged down the list. Reading default-then-current is natural anyway. */}
       <span
         style={{
           fontSize: 10,
@@ -803,26 +786,42 @@ function TokenRow({
       >
         {defaultHex.toUpperCase()}
       </span>
-      <button
-        type="button"
+      {/* Sized down through the atom's own vars rather than restyled: this row
+          repeats 31 times, so the default 14px/10px field would add ~400px to
+          the list. `clearable={false}` because a ✕ inside an 84px hex field is
+          noise — resetting is the ↺ at the end of the row. */}
+      <TextInput
+        value={shown}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={(e) => commit(e.target.value)}
+        onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+        spellCheck={false}
+        clearable={false}
+        aria-label={`${token.name} hex value`}
+        style={{
+          width: 84,
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          textTransform: 'uppercase',
+          '--uxm-input-text-font-size': '11px',
+          '--uxm-input-text-padding-x': '6px',
+          '--uxm-input-text-padding-y': '3px',
+          '--uxm-input-text-border-radius': '4px',
+          '--uxm-input-text-bg': 'var(--color-surface)',
+        } as CSSProperties}
+      />
+      <IconButton
         onClick={() => onChange(undefined)}
         disabled={!isOverridden}
         title="Reset to default"
         aria-label={`Reset ${token.name}`}
         style={{
-          width: 18, height: 18,
-          padding: 0,
-          border: 'none',
-          background: 'transparent',
-          color: 'var(--color-text-muted)',
-          cursor: isOverridden ? 'pointer' : 'default',
+          '--uxm-icon-button-size': '18px',
+          '--uxm-icon-button-radius': '4px',
           opacity: isOverridden ? 1 : 0.25,
-          fontSize: 14,
-          lineHeight: 1,
-        }}
+        } as CSSProperties}
       >
-        ↺
-      </button>
+        <Icon glyph="refresh" size={12} />
+      </IconButton>
     </div>
   );
 }
