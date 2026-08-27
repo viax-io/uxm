@@ -1373,6 +1373,12 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`SectionHeader` takes a `level` prop (2–6, default 4).** It hardcoded `<h4>`, and its own docs
+  asked consumers to "verify it lands at the right depth" without giving them any way to change
+  it — so a header under an `<h2>` skipped a level and there was nothing to do about it short of
+  abandoning the atom. Styling is identical at every level; the prop only moves the header in the
+  document outline. Default is unchanged, so nothing shifts unless you pass it.
+
 ## Workflow
 
 ### Before writing any code

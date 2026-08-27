@@ -15,6 +15,17 @@ export interface SectionHeaderProps extends HTMLAttributes<HTMLDivElement> {
    * "Per Mode · Active value: 600." Shown only when provided.
    */
   subtitle?: ReactNode;
+  /**
+   * Heading level, 2–6. Defaults to `4` — unchanged from before this prop
+   * existed. Only the consumer knows how deep this header sits, and an
+   * `<h4>` under an `<h2>` skips a level, which leaves screen-reader users
+   * navigating by heading unable to tell how the sections nest. Set it to
+   * whatever follows the nearest heading above this one.
+   *
+   * Styling is identical at every level — the class does the visual work, so
+   * changing this only moves the header in the document outline.
+   */
+  level?: 2 | 3 | 4 | 5 | 6;
 }
 
 /**
@@ -24,7 +35,8 @@ export interface SectionHeaderProps extends HTMLAttributes<HTMLDivElement> {
  * larger heading + meta) and `DetailSection` (bordered card with
  * an icon and accent rail).
  *
- * The heading itself renders as `<h4>` for semantic grouping. An
+ * The heading renders as `<h4>` by default and contributes to the document
+ * outline — pass `level` when that is the wrong depth for the page. An
  * optional trailing slot is inline with the heading; an optional
  * subtitle drops below.
  */
@@ -32,13 +44,15 @@ export function SectionHeader({
   children,
   trailing,
   subtitle,
+  level = 4,
   className,
   ...rest
 }: SectionHeaderProps) {
+  const Heading = `h${level}` as const;
   return (
     <div className={cn('uxm-section-header', className)} {...rest}>
       <div className="uxm-section-header__row">
-        <h4 className="uxm-section-header__title">{children}</h4>
+        <Heading className="uxm-section-header__title">{children}</Heading>
         {trailing && (
           <span className="uxm-section-header__trailing">{trailing}</span>
         )}
