@@ -1335,6 +1335,11 @@ skill:
   first and then set `aria-describedby={error ? errorId : undefined}`, which silently **wiped**
   any value the consumer passed. Those five sites now merge instead of replace, consumer ids
   first and the error id last, so a hint and an error are both announced.
+  ⚠️ **If you pass `htmlFor`, give the direct child its own `id` too.** FormField injects
+  `id={controlId}` into its direct child only when that child declares none — so `htmlFor={x}`
+  plus `id={x}` on a control nested deeper puts `x` on two elements. `getElementById` then
+  returns the wrapper, `<label for>` resolves to it, and clicking the label stops focusing the
+  field (measured). Give the wrapper a distinct id; `htmlFor` still wins for the label.
   ⚠️ **Keep the control as `FormField`'s DIRECT child.** It injects the id and `aria-describedby`
   via `cloneElement`, so a layout wrapper takes them instead and the hint goes unannounced. This
   supersedes the earlier "wrap a `ButtonGroup` in a `Cluster` to stop it stretching" note — use
@@ -1347,6 +1352,24 @@ skill:
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
+
+- **Brand Settings' Identity section now uses the shipped atoms.** Its URL fields were raw
+  `<input>`s styled by a local `inputStyle()` that hardcoded `borderRadius: 6` / `fontSize: 13`
+  and read none of the 26 `--uxm-input-text-*` vars — so the panel that edits the brand did not
+  respond to it (measured: frozen at 13px while a real `TextInput` went 14px → 21px under the
+  Base text size knob sitting inches away). Now `TextInput` + `ButtonSecondary` + `FormField` +
+  `Cluster`, and the three near-identical ~35-line blocks collapse into one `ASSETS`-driven row.
+  ⚠️ **`aspect-ratio` cannot derive a flex item's width from a stretched height.** Flex resolves
+  main size from content *before* cross-size stretch, so a square box set to `align-self:
+  stretch` + `aspect-ratio: 1` collapses (measured 26px wide against a 44px height). Wrapping it
+  does **not** help either — the wrapper is then the flex item and its width collapses instead,
+  and the child overflows it, silently eating the row's gap (12px → 3px). Give such a box an
+  explicit width and let only the height stretch.
+  ⚠️ **`Preview` / `PreviewImg` stay hand-rolled on purpose — do not "fix" them to `Thumbnail`.**
+  Thumbnail is square-only (`--uxm-thumbnail-size` drives both axes) while the logo frame is
+  deliberately 110×32, and it paints `--color-border` rather than the `--color-preview-bg-light`
+  / `-dark` backdrop that shows an asset against the *target* theme regardless of the current
+  one. They are purpose-built, not replicas.
 
 ## Workflow
 
