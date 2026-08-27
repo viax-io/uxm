@@ -1,3 +1,10 @@
+# [4.30.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.29.1...v4.30.0) (2026-08-27)
+
+
+### Features
+
+* **brand-settings:** rebuild Identity on the shipped atoms ([7f3986c](https://gitlab.viax.tech/services-viax/uxm/commit/7f3986c11e89d047c2d7ff84f5e21ccd4933f659))
+
 ## [4.29.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.29.0...v4.29.1) (2026-08-26)
 
 
