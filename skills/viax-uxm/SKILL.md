@@ -1402,6 +1402,14 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **The `aria-describedby` merge now covers the whole input family.** 4.29.1's fix landed in
+  four atoms; `Checkbox`, `NumberInput`, `PillSelect` and `InputWithIcon` still wiped a
+  consumer-passed `aria-describedby` with their own error id (a `FormField hint` around them
+  was silently unannounced), and `TimeInput` had the REVERSE order — its managed error id was
+  set before `...rest`, so an injected hint id clobbered the error link. All five now merge via
+  the shared `mergeDescribedBy` helper (moved from `input.tsx` into `@/helpers`, exported for
+  atom authors): consumer ids first, the atom's error id last. No API change.
+
 ## Workflow
 
 ### Before writing any code

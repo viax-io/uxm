@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeDescribedBy } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 import { Icon } from '@/ui/icon';
 
@@ -61,7 +61,7 @@ export function Checkbox({
           name={name}
           value={value}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
+          aria-describedby={mergeDescribedBy(rest['aria-describedby'], error ? errorId : undefined)}
           onChange={(e) => onChange?.(e.target.checked, e)}
         />
         <span className="uxm-checkbox__box" aria-hidden="true">

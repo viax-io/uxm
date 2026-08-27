@@ -1,6 +1,6 @@
 import { useCallback, useId, useState } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeDescribedBy } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 import { Icon } from '@/ui/icon';
 import { IconButton } from '@/ui/icon-button';
@@ -195,7 +195,7 @@ export function NumberInput({
         className,
       )}
       aria-invalid={error ? true : undefined}
-      aria-describedby={error ? errorId : undefined}
+      aria-describedby={mergeDescribedBy(rest['aria-describedby'], error ? errorId : undefined)}
       value={current}
       onChange={handleChange}
       onBlur={handleBlur}

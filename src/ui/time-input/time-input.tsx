@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeDescribedBy } from '@/helpers';
 
 import { useRovingTabIndex } from '../../hooks/use-roving-tab-index';
 import { FieldError } from '../field-error';
@@ -344,13 +344,13 @@ export function TimeInput({
         value={time}
         onChange={handleInputChange}
         disabled={disabled}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
         onFocus={(e) => {
           if (triggerEnabled) setIsOpen(true);
           onFocus?.(e);
         }}
         {...rest}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={mergeDescribedBy(rest['aria-describedby'], error ? errorId : undefined)}
       />
       {/* DOM order matches the visual left-to-right layout (value → clear →
           clock icon) so the tab order reads naturally (WCAG 2.4.3). */}
