@@ -1,11 +1,12 @@
-import { useRef, useState, type CSSProperties } from 'react';
+import { useId, useRef, useState, type CSSProperties } from 'react';
 
 import { hexToHsl, retintHue } from '@/lib/contrast';
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
 import {
-  Badge, ButtonGroup, ButtonPrimary, ButtonTertiary, Card, ColorInputPopover,
-  Dialog, Disclosure, FormField, Modal, ResponsiveGrid, Select, Stack, Tabs,
+  Badge, ButtonGroup, ButtonPrimary, ButtonSecondary, ButtonTertiary, Card, Cluster,
+  ColorInputPopover, Dialog, Disclosure, FormField, Modal, ResponsiveGrid, Select,
+  Stack, Tabs, TextInput,
 } from '@/ui';
 
 export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
@@ -87,31 +88,98 @@ const BRAND_FIELD = (k: UploadKind, tab: IdentityTab) =>
 const REMOTE_KIND = (k: UploadKind, tab: IdentityTab) =>
   `${k}${tab === 'dark' ? 'Dark' : ''}`;
 
-function inputStyle(): React.CSSProperties {
-  return {
-    flex: 1, minWidth: 0,
-    border: '1px solid var(--color-border)', borderRadius: 6,
-    padding: '8px 10px', fontSize: 13,
-    backgroundColor: 'var(--color-surface)', color: 'var(--color-text)',
-    outline: 'none',
-  };
-}
+/**
+ * The three brand assets, in render order. `box` sets only the frame's WIDTH —
+ * the height stretches to the row, so a frame always matches the field beside
+ * it even when the Base text size knob grows it. Width stays explicit because
+ * `aspect-ratio` cannot derive it from a stretched height (flex resolves main
+ * size from content first), so the square marks are square at the default
+ * scale and grow a little taller than wide beyond it.
+ * These keep the local `Preview` frame rather than the square `Thumbnail`
+ * atom (see `Preview` below for why).
+ */
+const ASSETS = [
+  { kind: 'logo' as const, title: 'Logo', defaultSrc: '/viax-logo.svg',
+    box: { width: 110 }, imgStyle: { maxWidth: '90%', maxHeight: '70%' },
+    hint: 'Shown in the expanded sidebar. Upload a file or paste a URL.' },
+  { kind: 'icon' as const, title: 'Sidebar Icon', defaultSrc: '/viax-icon.svg',
+    box: { width: 44 }, imgStyle: { maxWidth: '70%', maxHeight: '70%' },
+    hint: 'Shown in the collapsed sidebar.' },
+  { kind: 'favicon' as const, title: 'Favicon', defaultSrc: undefined,
+    box: { width: 44 }, imgStyle: { maxWidth: '60%', maxHeight: '60%' },
+    hint: 'Browser tab icon. Accepts .ico, .png, .svg.' },
+];
 
-function buttonStyle(): React.CSSProperties {
-  return {
-    flexShrink: 0,
-    padding: '8px 12px', fontSize: 12, fontWeight: 500,
-    color: 'var(--color-text)',
-    backgroundColor: 'var(--color-surface-alt)',
-    border: '1px solid var(--color-border)', borderRadius: 6,
-    cursor: 'pointer',
-  };
+type Asset = (typeof ASSETS)[number];
+
+/**
+ * One asset row: preview frame, URL field, upload button. Three near-identical
+ * blocks before this — the only differences are in ASSETS above.
+ *
+ * FormField's direct child is the `Cluster`, not the field, so its usual
+ * `cloneElement` wiring can't reach the control — the id and the hint are
+ * associated by hand below. The Cluster carries its OWN id so FormField skips
+ * the injection (`childId ? {} : { id: controlId }`) and the field keeps sole
+ * ownership of `fieldId`; two elements sharing it made `<label for>` resolve to
+ * the Cluster and stopped the label focusing the field.
+ */
+function AssetRow({
+  asset, tab, value, fallbackSrc, hint, uploading, onUrlChange, onPick,
+}: {
+  asset: Asset;
+  tab: IdentityTab;
+  value: string;
+  fallbackSrc?: string;
+  hint: string;
+  uploading: boolean;
+  onUrlChange: (v: string) => void;
+  onPick: (file: File) => void;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  // Explicit id so the label and hint can be wired by hand: the control sits
+  // inside a Cluster (preview + field + button share one row), and FormField's
+  // cloneElement only reaches its DIRECT child. `fieldId` belongs to the input
+  // alone — the Cluster takes `-row` so FormField does not inject a duplicate.
+  const fieldId = useId();
+  const src = value || fallbackSrc;
+  return (
+    <FormField label={asset.title} hint={hint} htmlFor={fieldId}>
+      <Cluster id={`${fieldId}-row`} gap={12} align="center">
+        <Preview box={asset.box} dim={tab === 'dark'}>
+          {src && (
+            <PreviewImg key={src} src={src} alt={`${asset.title} preview`} style={asset.imgStyle} />
+          )}
+        </Preview>
+        {/* Stack, not `style` on TextInput: a clearable TextInput wraps itself
+            in a `display:block` div, and TextInput forwards `style` to the
+            inner <input> — so the flex has to go on something that IS the flex
+            item. Stack stretches its child, which the input fills at 100%. */}
+        <Stack gap={0} style={{ flex: 1, minWidth: 0 }}>
+          <TextInput
+            id={fieldId}
+            aria-describedby={`${fieldId}-hint`}
+            value={value}
+            placeholder={fallbackSrc}
+            onChange={(e) => onUrlChange(e.target.value)}
+          />
+        </Stack>
+        {/* Not a UI control — the visible affordance is the button beside it. */}
+        <input
+          ref={fileRef}
+          type="file"
+          accept={ACCEPT_MAP[asset.kind]}
+          hidden
+          onChange={(e) => e.target.files?.[0] && onPick(e.target.files[0])}
+        />
+        <ButtonSecondary onClick={() => fileRef.current?.click()} disabled={uploading}>
+          {uploading ? 'Uploading…' : 'Upload'}
+        </ButtonSecondary>
+      </Cluster>
+    </FormField>
+  );
 }
 
 export function BrandSettingsPreview({ shell }: PreviewProps) {
-  const logoInputRef = useRef<HTMLInputElement>(null);
-  const iconInputRef = useRef<HTMLInputElement>(null);
-  const faviconInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState<UploadKind | null>(null);
   const [levelsOpen, setLevelsOpen] = useState(false);
   const [typeTab, setTypeTab] = useState<TypeTab>('body');
@@ -149,12 +217,6 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
     }
   };
 
-  const logoUrl = (brand[BRAND_FIELD('logo', identityTab)] as string | undefined) ?? '';
-  const iconUrl = (brand[BRAND_FIELD('icon', identityTab)] as string | undefined) ?? '';
-  const faviconUrl = (brand[BRAND_FIELD('favicon', identityTab)] as string | undefined) ?? '';
-  const logoFallback = identityTab === 'dark' ? (brand.logoUrl || '/viax-logo.svg') : '/viax-logo.svg';
-  const iconFallback = identityTab === 'dark' ? (brand.iconUrl || '/viax-icon.svg') : '/viax-icon.svg';
-  const faviconFallback = identityTab === 'dark' ? brand.faviconUrl : undefined;
   const inheritsHint = (kind: UploadKind, value: string, base: string) => {
     if (identityTab === 'dark' && !value) {
       return `${base} Inherits the Light ${kind} when empty.`;
@@ -193,121 +255,23 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
           <LightDarkTabs value={identityTab} onChange={setIdentityTab} />
         </div>
 
-        <Section
-          title="Logo"
-          hint={inheritsHint('logo', logoUrl, 'Shown in the expanded sidebar. Upload a file or paste a URL.')}
-          previewBox={
-            <Preview box={{ width: 110, height: 32 }} dim={identityTab === 'dark'}>
-              <PreviewImg
-                key={logoUrl || logoFallback}
-                src={logoUrl || logoFallback}
-                alt="Logo preview"
-                style={{ maxWidth: '90%', maxHeight: '70%' }}
-              />
-            </Preview>
-          }
-        >
-          <input
-            type="text"
-            value={logoUrl}
-            placeholder={identityTab === 'dark' ? (brand.logoUrl || '/viax-logo.svg') : '/viax-logo.svg'}
-            onChange={(e) => setBrand({ [BRAND_FIELD('logo', identityTab)]: e.target.value || undefined })}
-            style={inputStyle()}
+        {ASSETS.map((a) => (
+          <AssetRow
+            key={a.kind}
+            asset={a}
+            tab={identityTab}
+            value={(brand[BRAND_FIELD(a.kind, identityTab)] as string | undefined) ?? ''}
+            fallbackSrc={
+              identityTab === 'dark'
+                ? ((brand[`${a.kind}Url`] as string | undefined) || a.defaultSrc)
+                : a.defaultSrc
+            }
+            hint={inheritsHint(a.kind, (brand[BRAND_FIELD(a.kind, identityTab)] as string | undefined) ?? '', a.hint)}
+            uploading={uploading === a.kind}
+            onUrlChange={(v) => setBrand({ [BRAND_FIELD(a.kind, identityTab)]: v || undefined })}
+            onPick={(file) => upload(file, a.kind, identityTab)}
           />
-          <input
-            ref={logoInputRef}
-            type="file"
-            accept={ACCEPT_MAP.logo}
-            hidden
-            onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], 'logo', identityTab)}
-          />
-          <button
-            type="button"
-            onClick={() => logoInputRef.current?.click()}
-            disabled={uploading === 'logo'}
-            style={buttonStyle()}
-          >
-            {uploading === 'logo' ? 'Uploading…' : 'Upload'}
-          </button>
-        </Section>
-
-        <Section
-          title="Sidebar Icon"
-          hint={inheritsHint('icon', iconUrl, 'Shown in the collapsed sidebar.')}
-          previewBox={
-            <Preview box={{ width: 32, height: 32 }} dim={identityTab === 'dark'}>
-              <PreviewImg
-                key={iconUrl || iconFallback}
-                src={iconUrl || iconFallback}
-                alt="Icon preview"
-                style={{ maxWidth: '70%', maxHeight: '70%' }}
-              />
-            </Preview>
-          }
-        >
-          <input
-            type="text"
-            value={iconUrl}
-            placeholder={identityTab === 'dark' ? (brand.iconUrl || '/viax-icon.svg') : '/viax-icon.svg'}
-            onChange={(e) => setBrand({ [BRAND_FIELD('icon', identityTab)]: e.target.value || undefined })}
-            style={inputStyle()}
-          />
-          <input
-            ref={iconInputRef}
-            type="file"
-            accept={ACCEPT_MAP.icon}
-            hidden
-            onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], 'icon', identityTab)}
-          />
-          <button
-            type="button"
-            onClick={() => iconInputRef.current?.click()}
-            disabled={uploading === 'icon'}
-            style={buttonStyle()}
-          >
-            {uploading === 'icon' ? 'Uploading…' : 'Upload'}
-          </button>
-        </Section>
-
-        <Section
-          title="Favicon"
-          hint={inheritsHint('favicon', faviconUrl, 'Browser tab icon. Accepts .ico, .png, .svg.')}
-          previewBox={
-            <Preview box={{ width: 32, height: 32 }} dim={identityTab === 'dark'}>
-              {(faviconUrl || faviconFallback) && (
-                <PreviewImg
-                  key={faviconUrl || faviconFallback!}
-                  src={faviconUrl || faviconFallback!}
-                  alt="Favicon preview"
-                  style={{ maxWidth: '80%', maxHeight: '80%' }}
-                />
-              )}
-            </Preview>
-          }
-        >
-          <input
-            type="text"
-            value={faviconUrl}
-            placeholder={identityTab === 'dark' ? (brand.faviconUrl ?? '/uxm-assets/favicon-…') : '/uxm-assets/favicon-…'}
-            onChange={(e) => setBrand({ [BRAND_FIELD('favicon', identityTab)]: e.target.value || undefined })}
-            style={inputStyle()}
-          />
-          <input
-            ref={faviconInputRef}
-            type="file"
-            accept={ACCEPT_MAP.favicon}
-            hidden
-            onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], 'favicon', identityTab)}
-          />
-          <button
-            type="button"
-            onClick={() => faviconInputRef.current?.click()}
-            disabled={uploading === 'favicon'}
-            style={buttonStyle()}
-          >
-            {uploading === 'favicon' ? 'Uploading…' : 'Upload'}
-          </button>
-        </Section>
+        ))}
 
         {error && (
           <p style={{ fontSize: 12, color: 'var(--color-danger-text)', margin: 0 }}>{error}</p>
@@ -863,28 +827,12 @@ function TokenRow({
   );
 }
 
-function Section({
-  title, hint, previewBox, children,
-}: {
-  title: string; hint: string;
-  previewBox: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <section>
-      <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text)', margin: 0, marginBottom: 2 }}>{title}</h3>
-      <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: 0, marginBottom: 10, lineHeight: 1.5 }}>{hint}</p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        {previewBox}
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function Preview({ box, children, dim }: { box: { width: number; height: number }; children?: React.ReactNode; dim?: boolean }) {
+function Preview({ box, children, dim }: { box: CSSProperties; children?: React.ReactNode; dim?: boolean }) {
   return (
     <div style={{
+      // Stretch, not a fixed height: the frame matches whatever the field
+      // beside it measures, at any type scale.
+      alignSelf: 'stretch',
       ...box,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       border: `1px solid var(--color-preview-border-${dim ? 'dark' : 'light'})`,
