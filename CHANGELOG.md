@@ -1,3 +1,10 @@
+# [4.32.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.31.1...v4.32.0) (2026-08-28)
+
+
+### Features
+
+* **ui:** id and aria-describedby passthrough on the group-style atoms ([882a417](https://gitlab.viax.tech/services-viax/uxm/commit/882a41756a1b410a2749c143a6d37383de473cbd)), closes [#3](https://gitlab.viax.tech/services-viax/uxm/issues/3)
+
 ## [4.31.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.31.0...v4.31.1) (2026-08-28)
 
 
