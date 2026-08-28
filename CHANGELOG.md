@@ -1,3 +1,10 @@
+# [4.33.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.32.0...v4.33.0) (2026-08-28)
+
+
+### Features
+
+* **brand-settings:** promote a Brand color knob into Identity ([14ce199](https://gitlab.viax.tech/services-viax/uxm/commit/14ce199c0aa649000ae6a0f3a2ad89244a94dd7f)), closes [#4466EE](https://gitlab.viax.tech/services-viax/uxm/issues/4466EE) [90A2E9/#1E2F71](https://gitlab.viax.tech/services-viax/uxm/issues/1E2F71) [#4F6BD9](https://gitlab.viax.tech/services-viax/uxm/issues/4F6BD9) [#1E7150](https://gitlab.viax.tech/services-viax/uxm/issues/1E7150)
+
 # [4.32.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.31.1...v4.32.0) (2026-08-28)
 
 
