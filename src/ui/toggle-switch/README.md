@@ -35,6 +35,7 @@ function Example() {
 | `name` | `string` | – | Forwarded to the native input — required when used inside an HTML form. |
 | `className` | `string` | – | Merged with the root `<label>` class via `cn`. |
 | `style` | `CSSProperties` | – | Inline style on the wrapping `<label>`. Use to project per-instance `--uxm-toggle-switch-*` overrides. |
+| `id` / `aria-describedby` | `string` | – | Forwarded to the native `<input role="switch">`. `FormField` injects both (label association + hint), so the atom is hint-associable; describedby merges with the atom's own error-message id, consumer ids first. |
 
 ## CSS variables
 

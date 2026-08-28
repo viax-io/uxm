@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeDescribedBy } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 
 import type { ChangeEvent, CSSProperties, ReactNode } from 'react';
@@ -26,6 +26,14 @@ export interface ToggleSwitchProps {
    * hook. Omit (or pass an empty string) for normal.
    */
   error?: string;
+  /**
+   * Forwarded to the native `<input role="switch">`. `FormField` injects both — `id` for its
+   * label association, `aria-describedby` for the hint — so wiring these
+   * makes the atom hint-associable; the describedby is merged with the
+   * atom's own error-message id, consumer ids first.
+   */
+  id?: string;
+  'aria-describedby'?: string;
 }
 
 export function ToggleSwitch({
@@ -39,6 +47,8 @@ export function ToggleSwitch({
   style,
   error,
   'aria-label': ariaLabel,
+  id,
+  'aria-describedby': describedBy,
 }: ToggleSwitchProps) {
   const errorId = useId();
   return (
@@ -61,8 +71,9 @@ export function ToggleSwitch({
           disabled={disabled}
           name={name}
           aria-label={ariaLabel}
+          id={id}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
+          aria-describedby={mergeDescribedBy(describedBy, error ? errorId : undefined)}
           onChange={(e) => onChange?.(e.target.checked, e)}
         />
         <span className="uxm-toggle-switch__track" aria-hidden="true">

@@ -59,6 +59,7 @@ Does **not** extend a native attribute interface — the prop list is closed, an
 | `aria-label` | `string` | – | Accessible name for the `<input>`. See Accessibility. |
 | `decrementLabel` | `string` | `'Decrement'` | Accessible name for the − button. |
 | `incrementLabel` | `string` | `'Increment'` | Accessible name for the + button. |
+| `id` / `aria-describedby` | `string` | – | Forwarded to the field wrapper. `FormField` injects both (label association + hint), so the atom is hint-associable; describedby merges with the atom's own error-message id, consumer ids first. |
 
 The component carries a static `NumberStepper.hasError = true` flag, which the studio reads to know the atom has an error state.
 

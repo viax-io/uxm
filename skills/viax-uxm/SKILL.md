@@ -1415,6 +1415,14 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **The group-style atoms are hint-associable now.** `RadioGroup`, `ToggleSwitch`,
+  `SearchDropdown` and `NumberStepper` gained `id` + `aria-describedby` passthrough — forwarded
+  to the atom's focusable/semantic element (the `radiogroup` root, the `<input role="switch">`,
+  the combobox trigger, the field wrapper) and merged with the atom's own error-message id via
+  the shared `mergeDescribedBy` (consumer ids first). This closes the FormField `hint` gap: the
+  injected association no longer gets silently dropped, so a hint around any of the four is
+  announced. Additive — both props optional, nothing changes unless passed.
+
 ## Workflow
 
 ### Before writing any code

@@ -1,6 +1,6 @@
 import { useId, useMemo, type CSSProperties, type ReactNode } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeDescribedBy } from '@/helpers';
 
 import { FieldError } from '../field-error';
 import { Icon } from '../icon';
@@ -36,6 +36,15 @@ export interface SearchDropdownProps {
   className?: string;
   style?: CSSProperties;
   'aria-label'?: string;
+  /**
+   * Forwarded to the `role="combobox"` trigger. `FormField` injects both — `id` for its
+   * label association, `aria-describedby` for the hint — so wiring these
+   * makes the atom hint-associable; the describedby is merged with the
+   * atom's own error-message id, consumer ids first.
+   */
+  id?: string;
+  'aria-describedby'?: string;
+
   /** Accessible name for the clear button. Default `"Clear selection"`. */
   clearLabel?: string;
 }
@@ -73,6 +82,8 @@ export function SearchDropdown({
   className,
   style,
   'aria-label': ariaLabel,
+  id,
+  'aria-describedby': describedBy,
   clearLabel = 'Clear selection',
 }: SearchDropdownProps) {
   const errorId = useId();
@@ -111,8 +122,9 @@ export function SearchDropdown({
           {...triggerProps}
           tabIndex={disabled ? -1 : 0}
           aria-disabled={disabled || undefined}
+          id={id}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
+          aria-describedby={mergeDescribedBy(describedBy, error ? errorId : undefined)}
           className={cn(
             'uxm-search-dropdown__trigger',
             open && 'uxm-search-dropdown__trigger--open',

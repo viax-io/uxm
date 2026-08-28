@@ -41,6 +41,7 @@ function PlanPicker() {
 | `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | Lays children out as a column or row. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | `children` | `ReactNode` | – | One or more `RadioOption` elements. |
+| `id` / `aria-describedby` | `string` | – | Forwarded to the `role="radiogroup"` root. `FormField` injects both (label association + hint), so the atom is hint-associable; describedby merges with the atom's own error-message id, consumer ids first. |
 
 ### `RadioOption`
 

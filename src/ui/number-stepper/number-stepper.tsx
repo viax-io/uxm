@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeDescribedBy } from '@/helpers';
 
 import { FieldError } from '../field-error';
 import { Icon } from '../icon';
@@ -36,6 +36,15 @@ export interface NumberStepperProps {
   className?: string;
   style?: CSSProperties;
   'aria-label'?: string;
+  /**
+   * Forwarded to the field wrapper (the inner `<input>` keeps the accessible name). `FormField` injects both — `id` for its
+   * label association, `aria-describedby` for the hint — so wiring these
+   * makes the atom hint-associable; the describedby is merged with the
+   * atom's own error-message id, consumer ids first.
+   */
+  id?: string;
+  'aria-describedby'?: string;
+
   /**
    * Accessible name for the − button. Default `"Decrement"`. The buttons
    * carry no visible text, so this label is the ONLY thing assistive tech
@@ -84,6 +93,8 @@ export function NumberStepper({
   className,
   style,
   'aria-label': ariaLabel,
+  id,
+  'aria-describedby': describedBy,
   decrementLabel = 'Decrement',
   incrementLabel = 'Increment',
 }: NumberStepperProps) {
@@ -104,8 +115,10 @@ export function NumberStepper({
           className,
         )}
         style={style}
+        id={id}
         {...(disabled ? { 'aria-disabled': true as const } : {})}
-        {...(error ? { 'aria-invalid': true as const, 'aria-describedby': errorId } : {})}
+        {...(error ? { 'aria-invalid': true as const } : {})}
+        aria-describedby={mergeDescribedBy(describedBy, error ? errorId : undefined)}
       >
         <IconButton
           onClick={() => adjust(-step)}

@@ -47,6 +47,7 @@ function CountryPicker() {
 | `style` | `CSSProperties` | – | Inline style on the wrapper. |
 | `aria-label` | `string` | – | Forwarded to the trigger button. |
 | `clearLabel` | `string` | `'Clear selection'` | Accessible name for the clear button. |
+| `id` / `aria-describedby` | `string` | – | Forwarded to the `role="combobox"` trigger. `FormField` injects both (label association + hint), so the atom is hint-associable; describedby merges with the atom's own error-message id, consumer ids first. |
 
 ### `SearchDropdownOption`
 
