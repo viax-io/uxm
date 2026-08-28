@@ -1,6 +1,6 @@
 import { createContext, useContext, useId, useState } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeDescribedBy } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 
 import type { ChangeEvent, ReactNode } from 'react';
@@ -24,6 +24,14 @@ export interface RadioGroupProps {
    * Omit (or pass an empty string) for normal.
    */
   error?: string;
+  /**
+   * Forwarded to the `role="radiogroup"` root. `FormField` injects both — `id` for its
+   * label association, `aria-describedby` for the hint — so wiring these
+   * makes the atom hint-associable; the describedby is merged with the
+   * atom's own error-message id, consumer ids first.
+   */
+  id?: string;
+  'aria-describedby'?: string;
 }
 
 // Carries the group-level `name` / selected `value` / change handler down to
@@ -56,6 +64,8 @@ export function RadioGroup({
   className,
   children,
   error,
+  id,
+  'aria-describedby': describedBy,
 }: RadioGroupProps) {
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const isControlled = controlledValue !== undefined;
@@ -78,8 +88,9 @@ export function RadioGroup({
           error && 'uxm-radio-group--error',
           className,
         )}
+        id={id}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
+        aria-describedby={mergeDescribedBy(describedBy, error ? errorId : undefined)}
       >
         <RadioGroupContext.Provider value={{ name, value, hasValue, onChange: handleChange }}>
           {children}
