@@ -1,3 +1,11 @@
+## [4.31.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.31.0...v4.31.1) (2026-08-28)
+
+
+### Bug Fixes
+
+* **brand-settings:** working placeholders in the Typography panel; scope the hint contract ([4d637e8](https://gitlab.viax.tech/services-viax/uxm/commit/4d637e8e7c4d093389f8f0b92276a32ec6600951)), closes [4-#8](https://gitlab.viax.tech/4-/issues/8) [#11](https://gitlab.viax.tech/services-viax/uxm/issues/11)
+* **ui:** finish the aria-describedby merge across the input family ([9077f8b](https://gitlab.viax.tech/services-viax/uxm/commit/9077f8b8cf340a2e346e06678bd875d837f4b97e)), closes [1-#2](https://gitlab.viax.tech/1-/issues/2)
+
 # [4.31.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.30.0...v4.31.0) (2026-08-27)
 
 
