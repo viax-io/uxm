@@ -1,6 +1,6 @@
 import { useId, useMemo, useState } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeDescribedBy } from '@/helpers';
 
 import { ButtonGhost } from '../button';
 import { Chip } from '../chip';
@@ -173,7 +173,7 @@ export function PillSelect({
             aria-disabled={disabled || undefined}
             aria-required={required || undefined}
             aria-invalid={shownError ? true : undefined}
-            aria-describedby={shownError ? errorId : undefined}
+            aria-describedby={mergeDescribedBy(rest['aria-describedby'], shownError ? errorId : undefined)}
             className={cn(
               'uxm-pill-select__field',
               shownError && 'uxm-pill-select__field--error',

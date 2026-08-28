@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-import { cn } from '@/helpers';
+import { cn, mergeDescribedBy } from '@/helpers';
 import { FieldError } from '@/ui/field-error';
 import { Icon } from '@/ui/icon';
 import { IconButton } from '@/ui/icon-button';
@@ -72,7 +72,7 @@ export function InputWithIcon({
           className="uxm-input-with-icon__input"
           value={value}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
+          aria-describedby={mergeDescribedBy(rest['aria-describedby'], error ? errorId : undefined)}
         />
         {showClear && (
           <IconButton

@@ -15,7 +15,7 @@ import {
   type TextareaHTMLAttributes,
 } from 'react';
 
-import { cn, mergeRefs } from '@/helpers';
+import { cn, mergeDescribedBy, mergeRefs } from '@/helpers';
 
 import { ButtonGhost } from '../button';
 import { FieldError } from '../field-error';
@@ -61,19 +61,6 @@ export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   inputRef?: Ref<HTMLInputElement>;
 }
 
-/**
- * Join the consumer's `aria-describedby` with the atom's own error id instead
- * of replacing it. These atoms spread `{...rest}` first and set managed props
- * after, so a bare `aria-describedby={error ? errorId : undefined}` silently
- * wipes a describedby the consumer passed — which is how `FormField`'s hint
- * ends up unread. Order puts the consumer's ids first, error last.
- */
-function mergeDescribedBy(
-  consumer: string | undefined,
-  errorId: string | undefined,
-): string | undefined {
-  return [consumer, errorId].filter(Boolean).join(' ') || undefined;
-}
 
 export function TextInput({
   className,

@@ -305,7 +305,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                   aria-label="Body typeface"
                   style={{ width: '100%' }}
                 >
-                  <option value="">Inter (default)</option>
+                  <option value="" disabled>Inter (default)</option>
                   {FONT_OPTIONS.slice(1).map((f) => (
                     <option key={f.value} value={f.value}>{f.label}</option>
                   ))}
@@ -324,7 +324,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                   style={{ width: '100%' }}
                 >
                   {SCALE_OPTIONS.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
+                    <option key={s.value} value={s.value} disabled={s.value === ''}>{s.label}</option>
                   ))}
                 </Select>
               </FormField>
@@ -359,7 +359,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                   aria-label="Heading typeface"
                   style={{ width: '100%' }}
                 >
-                  <option value="">Same as body</option>
+                  <option value="" disabled>Same as body</option>
                   {/* All ten, including Inter — heading-Inter over a different
                       body face is a real choice, so it isn't labelled
                       "(default)" the way the body Select's first option is. */}
@@ -404,15 +404,21 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                       {/* Grid, not Cluster: `Select` forwards `style` to its inner
                           combobox, not to the `.uxm-listbox` wrapper a flex row
                           would lay out — so flex sizing never reaches the flex
-                          child and the controls stack. Grid sizes the wrappers. */}
-                      <ResponsiveGrid min="112px" gap={6}>
+                          child and the controls stack. Grid sizes the wrappers.
+                          The grid is FormField's single child, so the injected id
+                          lands here, not on a focusable control — role="group" +
+                          aria-label make that a real labelled group instead of a
+                          dangling association (each Select keeps its own name;
+                          this FormField deliberately has no `hint`, which would
+                          be unannounced on a composite — see FormField's README). */}
+                      <ResponsiveGrid min="112px" gap={6} role="group" aria-label={r.label}>
                         <Select
                           value={(brand[r.familyKey] as string | undefined) ?? ''}
                           onChange={(e) => setBrand({ [r.familyKey]: e.target.value || undefined })}
                           aria-label={`${r.short} typeface`}
                           style={{ width: '100%' }}
                         >
-                          <option value="">Inherit typeface</option>
+                          <option value="" disabled>Inherit typeface</option>
                           {FONT_OPTIONS.map((f) => (
                             <option key={f.value} value={f.value}>
                               {f.value === 'Inter' ? 'Inter' : f.label}
@@ -425,7 +431,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                           aria-label={`${r.short} weight`}
                           style={{ width: '100%' }}
                         >
-                          <option value="">Weight</option>
+                          <option value="" disabled>Weight</option>
                           <option value="500">500</option>
                           <option value="600">600</option>
                           <option value="700">700</option>
@@ -437,7 +443,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                           style={{ width: '100%' }}
                         >
                           {SCALE_OPTIONS.map((s) => (
-                            <option key={s.value} value={s.value}>
+                            <option key={s.value} value={s.value} disabled={s.value === ''}>
                               {s.value === '' ? 'Size' : s.label.replace(/ —.*$/, '')}
                             </option>
                           ))}

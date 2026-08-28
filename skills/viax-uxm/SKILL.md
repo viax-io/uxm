@@ -1250,15 +1250,6 @@ skill:
 
 ### New in 4.28.2
 
-- **The Preview & Publish mock now reflects the typography settings.** It hand-rolls its markup,
-  so it inherited only the body typeface and was otherwise frozen: per-level roles reached
-  nothing, and exactly one of eight measured elements responded to Base text size (a real `Tag`
-  atom). Its sizes now carry the same chains the atoms use — role font/weight on the surfaces
-  that map to a role (dashboard title → page-title, card headings → section-title, metric values
-  → display), `calc(… * var(--type-scale, 1))` everywhere else, and `--type-body-line-height` on
-  the one prose block. Derived sizes (`fontSize - 1`) are parenthesised before scaling so the
-  offset stays proportional. **If you add markup to this modal, thread the chains** — it is the
-  last screen before Publish, so anything hardcoded here quietly misrepresents the brand.
 
 - **`TimeInput`'s meridiem now scales too.** It was the one font-size the sweep left alone,
   because it is derived (`field size - 2px`) rather than a plain value. The subtraction is now
@@ -1300,6 +1291,18 @@ skill:
   previously referenced `SKIP_EXACT` never existed), and both type-scale scripts follow the
   repo's `no-console` disable-with-reason convention (lint is warning-free again).
 
+### New in 4.28.4
+
+- **The Preview & Publish mock now reflects the typography settings.** It hand-rolls its markup,
+  so it inherited only the body typeface and was otherwise frozen: per-level roles reached
+  nothing, and exactly one of eight measured elements responded to Base text size (a real `Tag`
+  atom). Its sizes now carry the same chains the atoms use — role font/weight on the surfaces
+  that map to a role (dashboard title → page-title, card headings → section-title, metric values
+  → display), `calc(… * var(--type-scale, 1))` everywhere else, and `--type-body-line-height` on
+  the one prose block. Derived sizes (`fontSize - 1`) are parenthesised before scaling so the
+  offset stays proportional. **If you add markup to this modal, thread the chains** — it is the
+  last screen before Publish, so anything hardcoded here quietly misrepresents the brand.
+
 ### New in 4.29.0
 
 - **Brand Settings' Typography panel rebuilt on shipped atoms.** It had grown to 14 dropdowns in
@@ -1333,7 +1336,7 @@ skill:
   now gets an id and the control gets `aria-describedby`. Fixing that alone was not enough: the
   input family (`TextInput`, `Textarea`, `Select`, and the multi variants) spread `{...rest}`
   first and then set `aria-describedby={error ? errorId : undefined}`, which silently **wiped**
-  any value the consumer passed. Those five sites now merge instead of replace, consumer ids
+  any value the consumer passed. Those four sites now merge instead of replace, consumer ids
   first and the error id last, so a hint and an error are both announced.
   ⚠️ **If you pass `htmlFor`, give the direct child its own `id` too.** FormField injects
   `id={controlId}` into its direct child only when that child declares none — so `htmlFor={x}`
@@ -1401,6 +1404,14 @@ skill:
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
+
+- **The `aria-describedby` merge now covers the whole input family.** 4.29.1's fix landed in
+  four atoms; `Checkbox`, `NumberInput`, `PillSelect` and `InputWithIcon` still wiped a
+  consumer-passed `aria-describedby` with their own error id (a `FormField hint` around them
+  was silently unannounced), and `TimeInput` had the REVERSE order — its managed error id was
+  set before `...rest`, so an injected hint id clobbered the error link. All five now merge via
+  the shared `mergeDescribedBy` helper (moved from `input.tsx` into `@/helpers`, exported for
+  atom authors): consumer ids first, the atom's error id last. No API change.
 
 ## Workflow
 
