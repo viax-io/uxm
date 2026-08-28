@@ -73,6 +73,11 @@ designed to derive from its hue (each keeps its own saturation + lightness step)
 > shade from its designed default (saturation + lightness step) re-tinted to the new hue. The shade
 > you just edited is left untouched; everything else is recomputed into a clean light→dark ramp,
 > regardless of any prior overrides. The maths is the exported `retintHue` helper (below).
+>
+> The same derivation also powers Identity's **"Brand color"** row (the token carries
+> `identity: true` in `themeTokens`). There a pick or typed hex STAGES a draft and an explicit
+> **Apply** runs the re-tint — no modal, the button is the confirmation — and "Reset palette" is
+> the undo. The base is defined against light; dark derives by hue re-tint.
 
 ### Highlights (4 tokens)
 

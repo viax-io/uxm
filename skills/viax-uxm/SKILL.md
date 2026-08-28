@@ -1402,6 +1402,19 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Brand Settings' Identity section gains a "Brand color" knob.** The 90% rebrand is logo +
+  icon + one colour + typeface, but that colour lived behind the 31-row expert token list. The
+  promoted control follows the asset-row grammar (swatch, hex field, action button) and commits
+  EXPLICITLY: a pick or typed hex stages a draft — the swatch previews it — and Apply re-tints the
+  whole accent ramp in **both themes**. No confirm modal (the button is the confirmation), where
+  the expert list keeps its modal. Undo is "Reset palette", which clears every
+  accent-group override in both themes. State is single-source: the expert list shows the same
+  overrides with its per-row resets. The base is defined against LIGHT; dark derives by hue
+  re-tint (`retintAccentTokens`, shared by both surfaces).
+  **Curation lives in the catalog, not the editor:** `ThemeToken` gains `identity?: boolean`,
+  set on `Accent`. Promote sparingly — only tokens that FAN OUT (the accent base drives a ramp)
+  earn a place; promoting a plain token just relocates a row.
+
 ## Workflow
 
 ### Before writing any code
