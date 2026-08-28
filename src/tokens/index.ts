@@ -5,6 +5,15 @@ export interface ThemeToken {
   hex: string;
   darkHex: string;
   group: 'surfaces' | 'text' | 'borders' | 'accent' | 'highlights' | 'categories' | 'semantic';
+  /**
+   * Promoted into Brand Settings' Identity section as a top-level brand knob
+   * (the full token list stays the expert layer). Curated HERE, in the
+   * canonical catalog, so the promotion survives token reshuffles — a
+   * hardcoded list in the editor would silently drift. Keep this rare: it
+   * only earns its place on tokens that FAN OUT (the accent base drives the
+   * whole ramp), not ones that merely relocate a row.
+   */
+  identity?: boolean;
 }
 
 export const themeTokens: ThemeToken[] = [
@@ -24,7 +33,7 @@ export const themeTokens: ThemeToken[] = [
   { name: 'Border', variable: 'var(--color-border)', cssVar: '--color-border', hex: '#EBEBEA', darkHex: '#2A2A2A', group: 'borders' },
 
   // ── Accent ── (brand colour first; the others derive from its hue)
-  { name: 'Accent', variable: 'var(--color-accent)', cssVar: '--color-accent', hex: '#3ECC87', darkHex: '#4FD99A', group: 'accent' },
+  { name: 'Accent', variable: 'var(--color-accent)', cssVar: '--color-accent', hex: '#3ECC87', darkHex: '#4FD99A', group: 'accent', identity: true },
   { name: 'Accent Subtle', variable: 'var(--color-accent-subtle)', cssVar: '--color-accent-subtle', hex: '#E6FFD1', darkHex: '#0F3A1F', group: 'accent' },
   { name: 'Accent Light', variable: 'var(--color-accent-light)', cssVar: '--color-accent-light', hex: '#90E9B8', darkHex: '#2E8B57', group: 'accent' },
   { name: 'Accent Bold', variable: 'var(--color-accent-bold)', cssVar: '--color-accent-bold', hex: '#1E7150', darkHex: '#8AE6B4', group: 'accent' },

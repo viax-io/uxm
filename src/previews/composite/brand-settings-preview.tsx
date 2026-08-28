@@ -1,6 +1,7 @@
 import { useId, useRef, useState, type CSSProperties } from 'react';
 
 import { hexToHsl, retintHue } from '@/lib/contrast';
+import type { BrandConfig } from '@/lib/types';
 import type { PreviewProps, PreviewShellContext } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
 import {
@@ -179,6 +180,159 @@ function AssetRow({
   );
 }
 
+/** The colour-format contract shared by the Identity brand-colour row and the
+ *  expert token list — one definition so the two can never disagree about what
+ *  a valid hex is. (`parseColor` also accepts 4/8-digit alpha forms; widen HERE
+ *  if the editors ever should.) */
+const isValidHex = (v: string) => /^#[0-9A-Fa-f]{6}$/.test(v) || /^#[0-9A-Fa-f]{3}$/.test(v);
+
+/**
+ * Identity-level brand colour — the one token promoted out of the expert list
+ * (curated by the `identity` flag on the catalog, not a list here). Follows the
+ * asset-row grammar: frame-sized swatch, field, action button on the right.
+ *
+ * Explicit commit: a popover pick or typed hex STAGES a draft, and only Apply
+ * re-tints the accent ramp — in BOTH themes, without the expert list's confirm
+ * modal, because here the button already is the confirmation. Undo is "Reset
+ * palette", which clears every accent-group override in both themes.
+ * The base is defined against LIGHT; dark derives via the hue re-tint.
+ */
+function BrandColorRow({ shell }: { shell: PreviewShellContext }) {
+  const { brand, setBrand } = shell;
+  // Any `identity`-flagged token renders; only the accent one carries the ramp
+  // retint. Silently requiring `group === 'accent'` here would make the catalog
+  // flag a no-op with no signal for every other group.
+  const token = themeTokens.find((t) => t.identity);
+  const fansOut = token?.group === 'accent';
+  const fieldId = useId();
+  const [draft, setDraft] = useState<string | null>(null);
+  if (!token) return null;
+
+  const effective = (brand.tokens?.light?.[token.cssVar] ?? token.hex).toUpperCase();
+  // The draft stays RAW: uppercasing the controlled value on each keystroke
+  // makes React reset the caret to the end whenever `a` becomes `A` (measured),
+  // garbling mid-string edits. The CSS `textTransform` handles display and
+  // `apply` uppercases once at commit — same split TokenRow uses.
+  const shown = draft ?? effective;
+  const validHex = isValidHex(shown);
+  const staged = validHex && shown.toUpperCase() !== effective;
+  const overridden = (['light', 'dark'] as const).some((t) =>
+    Object.keys(brand.tokens?.[t] ?? {}).some(
+      (k) => themeTokens.find((tk) => tk.cssVar === k)?.group === token.group,
+    ),
+  );
+
+  const apply = () => {
+    if (!staged) return;
+    const hex = shown.toUpperCase();
+    setBrand({
+      tokens: fansOut
+        ? retintAccentTokens(brand.tokens, token.cssVar, hex, 'light')
+        : { ...brand.tokens, light: { ...brand.tokens?.light, [token.cssVar]: hex } },
+    });
+    setDraft(null);
+  };
+
+  const reset = () => {
+    const next = { ...brand.tokens };
+    for (const t of ['light', 'dark'] as const) {
+      const map = { ...(brand.tokens?.[t] ?? {}) };
+      for (const tk of themeTokens) if (tk.group === token.group) delete map[tk.cssVar];
+      next[t] = Object.keys(map).length ? map : undefined;
+    }
+    setBrand({ tokens: next });
+    setDraft(null);
+  };
+
+  return (
+    <FormField
+      label="Brand color"
+      hint={fansOut
+        ? 'Apply rebuilds the whole accent palette for light and dark — including any shades fine-tuned in Color below.'
+        : `Applies to ${token.name}. Fine-tune related tokens in Color below.`}
+      htmlFor={fieldId}
+    >
+      <Cluster id={`${fieldId}-row`} gap={12} align="center">
+        {/* Sized to sit in the same visual column as the asset frames. Shows
+            the DRAFT, so a pick is visible before it is applied. */}
+        <ColorInputPopover
+          value={validHex ? shown.toUpperCase() : effective}
+          onChange={(c) => setDraft(c.toUpperCase())}
+          outputFormat="hex"
+          alpha={false}
+          // ColorInputPopover appends the current value to this itself.
+          triggerLabel="Pick brand color"
+          title="Pick a color"
+          style={{
+            '--uxm-color-input-trigger-size': '44px',
+            '--uxm-color-input-border-radius': '6px',
+          } as CSSProperties}
+        />
+        {/* Stack, not `style` on TextInput — same reason as AssetRow: a
+            clearable TextInput forwards `style` to the inner <input>, so the
+            flex must live on the element that IS the flex item. */}
+        <Stack gap={0} style={{ flex: 1, minWidth: 0 }}>
+          <TextInput
+            id={fieldId}
+            aria-describedby={`${fieldId}-hint`}
+            value={shown}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') apply(); }}
+            spellCheck={false}
+            clearable={false}
+            style={{
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+              textTransform: 'uppercase',
+            }}
+          />
+        </Stack>
+        <ButtonSecondary onClick={apply} disabled={!staged}>
+          Apply
+        </ButtonSecondary>
+        {overridden && (
+          <InlineAction onClick={reset} icon={<Icon glyph="refresh" size={11} />}>
+            {fansOut ? 'Reset palette' : `Reset ${token.name.toLowerCase()}`}
+          </InlineAction>
+        )}
+      </Cluster>
+    </FormField>
+  );
+}
+
+/**
+ * Set the accent BASE to `baseHex` in `editedTheme` and re-tint every other
+ * accent token — in BOTH themes — from its designed default to the new hue.
+ * Rebuilding from defaults (not current values) keeps the result a clean
+ * light→dark ramp regardless of prior overrides. Pure: returns the next
+ * `tokens` value, callers `setBrand` it. Shared by the Identity brand-colour
+ * knob (staged behind its Apply button) and the expert token list (behind its
+ * confirm modal).
+ */
+function retintAccentTokens(
+  tokens: BrandConfig['tokens'],
+  baseVar: string,
+  baseHex: string,
+  editedTheme: 'light' | 'dark',
+): BrandConfig['tokens'] {
+  const hsl = hexToHsl(baseHex);
+  if (!hsl) return tokens;
+  const next = { ...tokens };
+  for (const t of ['light', 'dark'] as const) {
+    const map = { ...(tokens?.[t] ?? {}) };
+    for (const tk of themeTokens) {
+      if (tk.group !== 'accent') continue;
+      if (t === editedTheme && tk.cssVar === baseVar) {
+        map[tk.cssVar] = baseHex.toUpperCase();
+        continue;
+      }
+      const base = t === 'dark' ? tk.darkHex : tk.hex;
+      map[tk.cssVar] = retintHue(base, hsl.h).toUpperCase();
+    }
+    next[t] = Object.keys(map).length ? map : undefined;
+  }
+  return next;
+}
+
 export function BrandSettingsPreview({ shell }: PreviewProps) {
   const [uploading, setUploading] = useState<UploadKind | null>(null);
   const [levelsOpen, setLevelsOpen] = useState(false);
@@ -246,7 +400,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
     <Stack gap={16} style={{ width: '100%', maxWidth: 640 }}>
       <Group
         title="Identity"
-        description="Logos and marks shown throughout Modo. Dark values fall back to the light ones when empty."
+        description="Logos, marks and the brand color shown throughout Modo. Dark assets fall back to the light ones when empty."
       >
         <Cluster justify="between" align="center" gap={8}>
           <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
@@ -272,6 +426,8 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
             onPick={(file) => upload(file, a.kind, identityTab)}
           />
         ))}
+
+        <BrandColorRow shell={shell} />
 
         {error && (
           <p style={{ fontSize: 12, color: 'var(--color-danger-text)', margin: 0 }}>{error}</p>
@@ -588,21 +744,8 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
   // user just edited (in the active theme) is left untouched; everything else in
   // the group, in both themes, is recomputed in one batched update.
   const recalcAccents = (baseVar: string, baseHex: string) => {
-    const hsl = hexToHsl(baseHex);
     setPendingAccent(null);
-    if (!hsl) return;
-    const nextTokens = { ...brand.tokens };
-    for (const t of ['light', 'dark'] as const) {
-      const map = { ...(brand.tokens?.[t] ?? {}) };
-      for (const tk of themeTokens) {
-        if (tk.group !== 'accent') continue;
-        if (t === theme && tk.cssVar === baseVar) continue; // keep the edit the user just made
-        const base = t === 'dark' ? tk.darkHex : tk.hex; // re-tint from the designed default ramp
-        map[tk.cssVar] = retintHue(base, hsl.h).toUpperCase();
-      }
-      nextTokens[t] = Object.keys(map).length ? map : undefined;
-    }
-    setBrand({ tokens: nextTokens });
+    setBrand({ tokens: retintAccentTokens(brand.tokens, baseVar, baseHex, theme) });
   };
 
   const resetAll = () => {
@@ -723,7 +866,7 @@ function TokenRow({
 
   const commit = (raw: string) => {
     const v = raw.trim();
-    if (/^#[0-9A-Fa-f]{6}$/.test(v) || /^#[0-9A-Fa-f]{3}$/.test(v)) {
+    if (isValidHex(v)) {
       const hex = v.toUpperCase();
       onChange(hex);
       onCommitColor?.(hex);
