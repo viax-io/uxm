@@ -1,0 +1,202 @@
+/* Code Editor / Code Block — the developer-tooling code surface.
+
+   Both atoms are a flex row: an optional line-number gutter, then the code.
+   The chrome (background, border, radius, focus ring) lives on the ROOT, not
+   on the `<textarea>`, so the gutter sits inside the same box and the focus
+   ring wraps both. That is why `:focus-within` drives the focus visual here
+   instead of the `:focus` the rest of the input family uses.
+
+   ALIGNMENT IS LOAD-BEARING. The gutter and the code are separate boxes, so
+   line N only lines up with number N while font-size, line-height and the
+   vertical padding are byte-identical between them. Every one of those three
+   is a shared var read by both — never hardcode one side. */
+
+.uxm-code-editor,
+.uxm-code-block {
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  overflow: hidden; /* clip the children's corners to the root's radius */
+  background-color: var(--uxm-code-editor-bg, var(--color-surface-alt));
+  border: 1px solid var(--uxm-code-editor-border-color, var(--color-border));
+  border-radius: var(--uxm-code-editor-border-radius, 8px);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+/* The shared type surface. Applied to every text-bearing box in both atoms so
+   the editor and its output panel are the same typeface at the same size —
+   the point of having one surface rather than two lookalikes.
+
+   `font-size` follows the house calc-outside-var form so a brand type scale
+   still reaches it; see the theming skill. */
+.uxm-code-editor__input,
+.uxm-code-editor__gutter,
+.uxm-code-editor__gutter-lines,
+.uxm-code-block__content,
+.uxm-code-block__gutter,
+.uxm-code-block__gutter-lines {
+  font-family: var(
+    --uxm-code-editor-font-family,
+    ui-monospace,
+    SFMono-Regular,
+    "SF Mono",
+    Menlo,
+    Consolas,
+    "Liberation Mono",
+    monospace
+  );
+  font-size: calc(var(--uxm-code-editor-font-size, 12.5px) * var(--type-scale, 1));
+  line-height: var(--uxm-code-editor-line-height, 1.6);
+  tab-size: var(--uxm-code-editor-tab-size, 2);
+  margin: 0;
+}
+/* Vertical padding lives on the text-bearing boxes ONLY — the gutter box is
+   a clipping window, and padding on it would offset the window instead of
+   the numbers, desyncing every line by exactly `padding-y`. */
+.uxm-code-editor__input,
+.uxm-code-editor__gutter-lines,
+.uxm-code-block__content,
+.uxm-code-block__gutter-lines {
+  padding-top: var(--uxm-code-editor-padding-y, 12px);
+  padding-bottom: var(--uxm-code-editor-padding-y, 12px);
+}
+
+/* Gutter — a passive ruler, and a clipping window nothing scrolls.
+
+   THE NUMBERS ARE OUT OF FLOW ON PURPOSE. In normal flow, 400 line numbers
+   are 400 line-boxes tall, and as a stretched flex item the gutter would
+   hand that height to the ROOT — the editor would grow to fit every line
+   instead of scrolling, and the sync below would never fire because nothing
+   ever overflowed. Absolutely positioned, the numbers contribute no
+   intrinsic height, so the `<textarea>` alone decides how tall the editor
+   is and the gutter simply stretches to match it.
+
+   The cost is that the column can no longer size itself, which is why the
+   atom sets an explicit `ch` width from the digit count. */
+.uxm-code-editor__gutter,
+.uxm-code-block__gutter {
+  position: relative;
+  flex: 0 0 auto;
+  /* content-box so the inline `ch` width covers the digits only and the
+     padding below adds to it, instead of eating into the number column. */
+  box-sizing: content-box;
+  min-width: var(--uxm-code-editor-gutter-width, 2ch);
+  padding-right: var(--uxm-code-editor-gutter-gap, 12px);
+  padding-left: var(--uxm-code-editor-padding-x, 14px);
+  overflow: hidden;
+  user-select: none;
+  color: var(--uxm-code-editor-gutter-color, var(--color-text-muted));
+  background-color: var(--uxm-code-editor-gutter-bg, transparent);
+  border-right: 1px solid var(--uxm-code-editor-gutter-border, var(--color-border));
+}
+/* The scrolling layer. Offset by `transform` from the atom's scroll handler
+   — composited, so it does not relayout on every scroll frame. */
+.uxm-code-editor__gutter-lines,
+.uxm-code-block__gutter-lines {
+  position: absolute;
+  top: 0;
+  left: var(--uxm-code-editor-padding-x, 14px);
+  right: var(--uxm-code-editor-gutter-gap, 12px);
+  text-align: right;
+}
+.uxm-code-editor__line-number,
+.uxm-code-block__line-number {
+  display: block;
+  /* Numbers must not wrap — a wrapped number would desync every line below
+     it from its code. */
+  white-space: pre;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The editable surface. Transparent and border-less: all chrome is the
+   root's, so the textarea only owns the text. */
+.uxm-code-editor__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: var(--uxm-code-editor-resize, vertical);
+  color: var(--uxm-code-editor-color, var(--color-text));
+  padding-left: var(--uxm-code-editor-padding-x, 14px);
+  padding-right: var(--uxm-code-editor-padding-x, 14px);
+  min-height: var(--uxm-code-editor-min-height, 140px);
+  /* `wrap="off"` gives horizontal scrolling; the white-space rule has to
+     agree with it or long lines silently wrap anyway. */
+  white-space: pre;
+  overflow: auto;
+}
+.uxm-code-editor--wrap .uxm-code-editor__input {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.uxm-code-editor__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* State coverage mirrors the rest of the input family. The `--state-*`
+   modifiers let the studio preview force a visual without real pointer or
+   keyboard interaction, while the real pseudo-classes layer on top via
+   source order (focus after hover). */
+.uxm-code-editor--state-hover,
+.uxm-code-editor:hover:not(.uxm-code-editor--disabled):not(.uxm-code-editor--error) {
+  border-color: var(--uxm-code-editor-hover-border, var(--color-accent));
+}
+.uxm-code-editor--state-focus,
+.uxm-code-editor:focus-within {
+  border-color: var(--uxm-code-editor-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-code-editor-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+.uxm-code-editor--disabled {
+  background-color: var(--uxm-code-editor-disabled-bg, var(--color-surface-alt));
+  border-color: var(--uxm-code-editor-disabled-border, var(--color-border));
+  opacity: var(--uxm-code-editor-disabled-opacity, 0.6);
+}
+.uxm-code-editor__input:disabled {
+  color: var(--uxm-code-editor-disabled-color, var(--color-text-muted));
+  cursor: not-allowed;
+  /* Safari paints its own washed-out text on a disabled textarea and
+     ignores `color`; this is the documented opt-out. */
+  -webkit-text-fill-color: var(--uxm-code-editor-disabled-color, var(--color-text-muted));
+}
+.uxm-code-editor--error {
+  border-color: var(--uxm-code-editor-error-border, var(--color-danger-text));
+}
+.uxm-code-editor__error-message {
+  display: block;
+  margin-top: 4px;
+  font-size: calc(var(--uxm-code-editor-error-message-size, 12px) * var(--type-scale, 1));
+  color: var(--uxm-code-editor-error-color, var(--color-danger-text));
+}
+
+/* Code Block — the same surface, read-only.
+
+   It reads the `--uxm-code-editor-*` vars rather than owning a parallel set,
+   and it has no registry entry of its own. That is deliberate: an output
+   panel that did not match the query typed above it would be a bug, so the
+   two are ONE themeable surface with one set of knobs. `max-height` is the
+   only thing genuinely its own — an editor grows to its content, a result
+   dump has to be capped. */
+.uxm-code-block__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  color: var(--uxm-code-editor-color, var(--color-text));
+  padding-left: var(--uxm-code-editor-padding-x, 14px);
+  padding-right: var(--uxm-code-editor-padding-x, 14px);
+  max-height: var(--uxm-code-block-max-height, 460px);
+  white-space: pre;
+  overflow: auto;
+}
+.uxm-code-block--wrap .uxm-code-block__content {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.uxm-code-block__content code {
+  font: inherit;
+  color: inherit;
+  background: none;
+}

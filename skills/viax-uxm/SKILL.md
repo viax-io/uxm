@@ -1440,6 +1440,21 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **New atoms `CodeEditor` + `CodeBlock` — the developer-tooling code surface.** (unreleased)
+  `CodeEditor` is a real `<textarea>`: monospace, `spellCheck`/`autoCorrect`/`autoCapitalize`
+  off, `Tab`/`Shift+Tab` indent and outdent (selection-aware, keeps the selection), `Enter`
+  auto-indent with an extra level after `{ [ (`, optional `lineNumbers` gutter, `wrap`,
+  `indentSize`, `error`, and a `textareaRef` handle. **Not a keyboard trap** — `Escape` then
+  `Tab` moves focus (CodeMirror's convention), any other key re-arms indenting; `onKeyDown`
+  runs BEFORE the atom's handling so a consumer can claim ⌘Enter with `preventDefault()`.
+  Edits go through `execCommand('insertText')` to keep native undo working.
+  `CodeBlock` is the read-only half — a `<pre><code>` for query output / generated payloads /
+  SDL dumps, with the same gutter and `wrap`. **NO syntax highlighting** and none possible
+  inside a `<textarea>`; that would be a different atom, not a prop.
+  Both read ONE var set (`--uxm-code-editor-*`) and `CodeBlock` has no registry entry of its
+  own — deliberate, so an output panel can never drift from the query above it. Use
+  `<CodeEditor>` instead of `<Textarea className="…mono…">`, which is the hand-roll it replaces.
+
 ## Workflow
 
 ### Before writing any code

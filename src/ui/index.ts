@@ -38,6 +38,8 @@ export { Chip } from './chip';
 export type { ChipMode, ChipProps } from './chip';
 export { Cluster } from './cluster';
 export type { ClusterProps } from './cluster';
+export { CodeBlock, CodeEditor } from './code-editor';
+export type { CodeBlockProps, CodeEditorProps } from './code-editor';
 export { ComponentRow } from './component-row';
 export type { ComponentRowProps } from './component-row';
 export { ConfigComponentRow } from './config-component-row';
