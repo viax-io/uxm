@@ -90,6 +90,26 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   'color-input': {
     fontSize: '--uxm-color-input-font-size',
   },
+  // Every key here collides with REAL_CSS_PROPS, where the generic fallback
+  // emits a REAL property on `.uxm-code-editor` instead of a var. That root is
+  // pure chrome — the text lives in `__input` / `__gutter-lines`, which declare
+  // their own `color` / `font-size` / `line-height` and always beat inherited
+  // values, so Text / Font Size / Line Height would be silent no-ops. Padding is
+  // worse than a no-op: `padding-inline` on the root pads OUTSIDE the code while
+  // `--uxm-code-editor-padding-x` stays unset, so the gutter's absolutely
+  // positioned `left` keeps its 14px default and the numbers leave their column.
+  // Same defect as the `color-input` entry above.
+  'code-editor': {
+    backgroundColor: '--uxm-code-editor-bg',
+    borderColor: '--uxm-code-editor-border-color',
+    color: '--uxm-code-editor-color',
+    borderRadius: '--uxm-code-editor-border-radius',
+    paddingX: '--uxm-code-editor-padding-x',
+    paddingY: '--uxm-code-editor-padding-y',
+    fontSize: '--uxm-code-editor-font-size',
+    lineHeight: '--uxm-code-editor-line-height',
+    minHeight: '--uxm-code-editor-min-height',
+  },
   'currency-input': {
     backgroundColor: '--uxm-currency-input-background-color',
     borderColor: '--uxm-currency-input-border-color',

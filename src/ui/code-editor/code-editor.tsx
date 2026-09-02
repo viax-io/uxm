@@ -1,14 +1,17 @@
 import {
   useCallback,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ChangeEvent,
+  type FocusEvent,
   type HTMLAttributes,
   type KeyboardEvent,
   type ReactNode,
   type Ref,
+  type RefObject,
   type TextareaHTMLAttributes,
   type UIEvent,
 } from 'react';
@@ -78,12 +81,10 @@ function reindent(
   let totalDelta = 0;
 
   const next = lines.map((line, i) => {
-    // A selection ending exactly at a line break splits into a trailing
-    // empty string. Indenting it would push whitespace onto the NEXT line,
-    // which the user did not select.
-    if (!outdent && line.length === 0 && i === lines.length - 1 && lines.length > 1) {
-      return line;
-    }
+    // Never indent a blank line: the result is a whitespace-only line, which
+    // is invisible in the editor but real trailing whitespace that lint rules
+    // reject and diffs show. Editors that implement this skip these lines.
+    if (!outdent && line.length === 0) return line;
     const match = outdent ? outdentRe.exec(line) : null;
     const delta = outdent ? -(match?.[0].length ?? 0) : unit.length;
     if (i === 0) firstDelta = delta;
@@ -150,12 +151,27 @@ function replaceRange(
  * and a transform is composited rather than triggering layout on every
  * scroll frame.
  */
-function useGutterSync() {
+function useGutterSync(scrollerRef: RefObject<HTMLElement | null>) {
   const linesRef = useRef<HTMLDivElement>(null);
   const syncGutter = useCallback((el: HTMLElement) => {
     const lines = linesRef.current;
-    if (lines) lines.style.transform = `translateY(${-el.scrollTop}px)`;
+    if (!lines) return;
+    const next = `translateY(${-el.scrollTop}px)`;
+    // Idempotent: this also runs on every render (below), and a no-op write
+    // would still dirty the compositor.
+    if (lines.style.transform !== next) lines.style.transform = next;
   }, []);
+
+  // The transform lives on the DOM node, not in React's tree, so a freshly
+  // mounted lines element starts at zero — and no scroll event is coming to
+  // correct it, because the scroller's own scrollTop never changed. Toggling
+  // `lineNumbers` on while scrolled to line 200 would otherwise show the
+  // gutter counting from 1. Runs after every render on purpose; the write
+  // above is guarded.
+  useLayoutEffect(() => {
+    if (scrollerRef.current) syncGutter(scrollerRef.current);
+  });
+
   return { linesRef, syncGutter };
 }
 
@@ -218,6 +234,7 @@ export interface CodeEditorProps
 
 export function CodeEditor({
   className,
+  style,
   value,
   defaultValue,
   onChange,
@@ -238,7 +255,7 @@ export function CodeEditor({
 }: CodeEditorProps) {
   const errorId = useId();
   const innerRef = useRef<HTMLTextAreaElement>(null);
-  const { linesRef, syncGutter } = useGutterSync();
+  const { linesRef, syncGutter } = useGutterSync(innerRef);
   // Escape "unlocks" the next Tab so the field can always be left by
   // keyboard. Kept in a ref, not state — it must not cause a render, and
   // every read happens inside the same keydown that writes it.
@@ -247,17 +264,31 @@ export function CodeEditor({
   const isControlled = value !== undefined;
   const unit = ' '.repeat(Math.max(1, indentSize));
 
-  // Only tracked when the gutter needs a line count — otherwise every
-  // keystroke would re-render the atom for a number nothing displays.
+  // A soft-wrapped textarea lays out one row per VISUAL line, but a gutter can
+  // only count LOGICAL ones — so with `wrap` every number past the first
+  // wrapped line points at the wrong row. Showing no ruler beats showing a
+  // wrong one; the warn is diagnostic (same always-on shape as Dialog's).
+  const gutterWouldLie = lineNumbers && wrap;
+  if (gutterWouldLie) {
+    console.warn(
+      '[CodeEditor] `lineNumbers` is ignored while `wrap` is set: wrapped lines occupy several rows each, so the numbers cannot line up with the code. Turn off `wrap` to show the gutter.',
+    );
+  }
+  const showGutter = lineNumbers && !wrap;
+
+  // Mirrored on every edit while uncontrolled, not just while the gutter is
+  // shown: gating it on `lineNumbers` left this stale for anything typed
+  // BEFORE the gutter was switched on, so flipping it mid-session rendered a
+  // count from the original `defaultValue`.
   const [uncontrolledText, setUncontrolledText] = useState(() => defaultValue ?? '');
   const sourceText = isControlled ? (value ?? '') : uncontrolledText;
   const lineCount = useMemo(
-    () => (lineNumbers ? sourceText.split('\n').length : 0),
-    [lineNumbers, sourceText],
+    () => (showGutter ? sourceText.split('\n').length : 0),
+    [showGutter, sourceText],
   );
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!isControlled && lineNumbers) setUncontrolledText(e.target.value);
+    if (!isControlled) setUncontrolledText(e.target.value);
     onChange?.(e);
   };
 
@@ -268,6 +299,12 @@ export function CodeEditor({
 
     const el = e.currentTarget;
     if (readOnly || disabled) return;
+
+    // Mid-composition, Enter COMMITS the IME candidate and Tab often cycles
+    // candidates — both belong to the IME, not to us. Claiming them would
+    // insert a newline instead of the composed text. `keyCode === 229` is the
+    // legacy signal some engines still send instead of `isComposing`.
+    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
 
     if (e.key === 'Escape') {
       // Not prevented: Escape must still reach an enclosing Modal/Popover.
@@ -295,7 +332,11 @@ export function CodeEditor({
       }
 
       const from = lineStart(text, start);
-      const to = lineEnd(text, end);
+      // A selection that ENDS at column 0 has not touched that line — the
+      // caret merely sits in front of it. Without stepping back, selecting
+      // "alpha\n" in "alpha\nbeta" would indent `beta` too.
+      const lastTouched = end > start && end === lineStart(text, end) ? end - 1 : end;
+      const to = lineEnd(text, lastTouched);
       const { text: block, firstDelta, totalDelta } = reindent(
         text.slice(from, to),
         unit,
@@ -345,7 +386,7 @@ export function CodeEditor({
   const setTextareaRef = useMemo(() => mergeRefs(innerRef, textareaRef), [textareaRef]);
 
   const handleBlur = useCallback(
-    (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    (e: FocusEvent<HTMLTextAreaElement>) => {
       tabEscapedRef.current = false;
       onBlur?.(e);
     },
@@ -354,7 +395,12 @@ export function CodeEditor({
 
   return (
     <>
+      {/* `className` AND `style` both land here. `style` is the documented way
+          to set a `--uxm-code-editor-*` var per instance, and those vars are
+          read by this root (background, border, radius) as well as by the
+          gutter — on the inner textarea they would cascade to neither. */}
       <div
+        style={style}
         className={cn(
           'uxm-code-editor',
           error && 'uxm-code-editor--error',
@@ -363,7 +409,7 @@ export function CodeEditor({
           className,
         )}
       >
-        {lineNumbers && (
+        {showGutter && (
           // aria-hidden: the numbers are a visual ruler. A screen reader
           // reading "1 2 3 4" before the code would be noise, and the
           // textarea already exposes the text itself.
@@ -419,9 +465,15 @@ export function CodeEditor({
 }
 CodeEditor.hasError = true;
 
-export interface CodeBlockProps extends HTMLAttributes<HTMLDivElement> {
+export interface CodeBlockProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onScroll'> {
   /** Source text. Rendered verbatim — whitespace and line breaks preserved. */
   children?: ReactNode;
+  /**
+   * Fires on the inner `<pre>` — the element that actually scrolls, since it
+   * carries `max-height`. Re-typed from the root's `HTMLDivElement` for that
+   * reason: the root never scrolls, so a handler bound there never fires.
+   */
+  onScroll?: (event: UIEvent<HTMLPreElement>) => void;
   /** Line-number gutter down the left edge. Default `false`. */
   lineNumbers?: boolean;
   /** Soft-wrap long lines. Default `false` (horizontal scroll). */
@@ -444,22 +496,28 @@ export function CodeBlock({
   children,
   lineNumbers = false,
   wrap = false,
+  onScroll,
   ...rest
 }: CodeBlockProps) {
-  const { linesRef, syncGutter } = useGutterSync();
+  const preRef = useRef<HTMLPreElement>(null);
+  const { linesRef, syncGutter } = useGutterSync(preRef);
 
   // Counting needs the raw text; anything non-string (an element, a
   // fragment) can't be counted, so the gutter degrades to off rather than
   // rendering a wrong count.
   const text = typeof children === 'string' ? children : null;
-  const lineCount = lineNumbers && text ? text.replace(/\n$/, '').split('\n').length : 0;
+  // `wrap` makes a logical line span several rows, which no per-line gutter
+  // can track — same reason as CodeEditor, so the ruler is dropped rather
+  // than shown wrong.
+  const lineCount = lineNumbers && !wrap && text ? text.replace(/\n$/, '').split('\n').length : 0;
+  const showGutter = lineCount > 0;
 
   return (
     <div
       {...rest}
       className={cn('uxm-code-block', wrap && 'uxm-code-block--wrap', className)}
     >
-      {lineCount > 0 && (
+      {showGutter && (
         <div
           className="uxm-code-block__gutter"
           aria-hidden="true"
@@ -474,10 +532,17 @@ export function CodeBlock({
           </div>
         </div>
       )}
-      {/* `max-height` makes this a scroll container, so it needs the same
-          gutter sync the editor has — a capped result dump that scrolled
-          away from its own line numbers would be worse than none. */}
-      <pre className="uxm-code-block__content" onScroll={(e) => syncGutter(e.currentTarget)}>
+      {/* `max-height` makes THIS the scroll container, not the root — so it
+          carries both the gutter sync and the consumer's `onScroll`, which on
+          the (never-scrolling) root would simply never fire. */}
+      <pre
+        ref={preRef}
+        className="uxm-code-block__content"
+        onScroll={(e) => {
+          syncGutter(e.currentTarget);
+          onScroll?.(e);
+        }}
+      >
         <code>{children}</code>
       </pre>
     </div>

@@ -162,7 +162,12 @@
      ignores `color`; this is the documented opt-out. */
   -webkit-text-fill-color: var(--uxm-code-editor-disabled-color, var(--color-text-muted));
 }
-.uxm-code-editor--error {
+/* Doubled class on purpose. `:focus-within` scores (0,1,1) and would beat a
+   single (0,1,0) `--error`, so clicking into an invalid field to fix it would
+   swap the danger border for the accent one. (0,2,0) wins outright, and the
+   focus RING still layers on top because that rule sets `outline`, not
+   `border-color`. Same trick as `.uxm-input-text.uxm-input-text--error`. */
+.uxm-code-editor.uxm-code-editor--error {
   border-color: var(--uxm-code-editor-error-border, var(--color-danger-text));
 }
 .uxm-code-editor__error-message {

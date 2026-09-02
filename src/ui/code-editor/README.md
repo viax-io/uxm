@@ -52,6 +52,9 @@ function QueryConsole() {
 | `Escape` then `Tab` | Moves focus out of the field. Escape still bubbles, so an enclosing `Modal` or `Popover` also closes. |
 | `Enter` | Carries the current line's leading whitespace onto the new line, plus one extra level after an opening `{`, `[` or `(`. |
 | ⌘/Ctrl/Alt + `Tab` | Never intercepted — browser and OS shortcuts pass through. |
+| Any key mid-composition | Never intercepted. While an IME is composing, `Enter` commits the candidate and `Tab` cycles candidates — both belong to the IME. |
+
+A selection that **ends at column 0** does not drag that line into an indent: selecting `alpha\n` in `alpha\nbeta` indents only `alpha`. Blank lines inside a selection are skipped too, so indenting a block never leaves whitespace-only lines.
 
 **The field is never a keyboard trap.** `Escape` releases the next `Tab`; any other keystroke re-arms indenting. That is CodeMirror's convention, and it is the reason `indentWithTab` can default to `true` without failing WCAG 2.1.1. Set `indentWithTab={false}` when the editor sits in a form whose primary interaction is tabbing between fields.
 
@@ -71,21 +74,23 @@ Extends `TextareaHTMLAttributes<HTMLTextAreaElement>` (minus `wrap`, which is re
 | `indentWithTab` | `boolean` | `true` | Tab / Shift+Tab indent instead of moving focus. See Keyboard above. |
 | `autoIndent` | `boolean` | `true` | Enter carries the previous line's indent. |
 | `lineNumbers` | `boolean` | `false` | Line-number gutter down the left edge. |
-| `wrap` | `boolean` | `false` | Soft-wrap long lines. Off means horizontal scroll, which keeps the gutter's count truthful. |
+| `wrap` | `boolean` | `false` | Soft-wrap long lines. **Mutually exclusive with `lineNumbers`** — a wrapped line occupies several rows, which no per-line gutter can track, so setting both drops the gutter and warns. |
 | `error` | `string` | – | Validation message below the field; also sets `aria-invalid` and the `--error` visual. |
 | `textareaRef` | `Ref<HTMLTextAreaElement>` | – | Handle to the underlying element, merged with the atom's own ref. A plain React `ref` on `<CodeEditor>` does **not** reach it. |
 | `spellCheck` | `boolean` | `false` | Off by default — code is not prose. `autoCorrect`, `autoCapitalize` and `autoComplete` are forced off and not configurable. |
 | `className` | `string` | – | Merged onto the root wrapper, not the `<textarea>`. |
+| `style` | `CSSProperties` | – | Also the root wrapper, so a per-instance `--uxm-code-editor-*` override reaches the chrome and the gutter. Every other prop is forwarded to the `<textarea>`. |
 
 ## `CodeBlock` props
 
-Extends `HTMLAttributes<HTMLDivElement>`.
+Extends `HTMLAttributes<HTMLDivElement>` (minus `onScroll`, re-typed below).
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | – | Source text, rendered verbatim. |
-| `lineNumbers` | `boolean` | `false` | Gutter. Requires a **string** child — a non-string child cannot be counted, so the gutter silently stays off rather than showing a wrong count. |
-| `wrap` | `boolean` | `false` | Soft-wrap long lines. |
+| `lineNumbers` | `boolean` | `false` | Gutter. Requires a **string** child and `wrap` off — a non-string child cannot be counted and a wrapped line cannot be tracked, so the gutter stays off rather than showing a wrong count. |
+| `wrap` | `boolean` | `false` | Soft-wrap long lines. Turns the gutter off, as above. |
+| `onScroll` | `(e: UIEvent<HTMLPreElement>) => void` | – | Fires on the inner `<pre>` — the element that actually scrolls. Re-typed from the root's `HTMLDivElement` for that reason. |
 
 `CodeBlock` is a `<pre><code>` rather than `<CodeEditor readOnly>` on purpose: it sizes to its content, stays out of the tab order, and assistive tech announces it as code instead of as an editable field the user cannot edit.
 

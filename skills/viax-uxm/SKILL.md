@@ -1443,7 +1443,9 @@ skill:
 - **New atoms `CodeEditor` + `CodeBlock` — the developer-tooling code surface.** (unreleased)
   `CodeEditor` is a real `<textarea>`: monospace, `spellCheck`/`autoCorrect`/`autoCapitalize`
   off, `Tab`/`Shift+Tab` indent and outdent (selection-aware, keeps the selection), `Enter`
-  auto-indent with an extra level after `{ [ (`, optional `lineNumbers` gutter, `wrap`,
+  auto-indent with an extra level after `{ [ (`, optional `lineNumbers` gutter, `wrap`
+  (**mutually exclusive with `lineNumbers`** — a wrapped line spans several rows, so the
+  gutter is dropped and a warning logged rather than showing numbers that don't line up),
   `indentSize`, `error`, and a `textareaRef` handle. **Not a keyboard trap** — `Escape` then
   `Tab` moves focus (CodeMirror's convention), any other key re-arms indenting; `onKeyDown`
   runs BEFORE the atom's handling so a consumer can claim ⌘Enter with `preventDefault()`.
