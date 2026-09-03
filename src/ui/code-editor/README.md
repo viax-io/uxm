@@ -112,7 +112,7 @@ Extends `HTMLAttributes<HTMLDivElement>` (minus `onScroll`, re-typed below).
 | `--uxm-code-editor-padding-y` | – | `12px` | Vertical padding, shared by code and gutter. |
 | `--uxm-code-editor-min-height` | – | `140px` | Editor only. |
 | `--uxm-code-editor-resize` | – | `vertical` | Textarea resize handle. |
-| `--uxm-code-editor-gutter-width` | – | `3ch` | Minimum gutter width. |
+| `--uxm-code-editor-gutter-width` | – | `2ch` | Minimum gutter width. |
 | `--uxm-code-editor-gutter-gap` | – | `12px` | Space between numbers and the divider. |
 | `--uxm-code-editor-gutter-color` | `--color-text-muted` | – | Line numbers. |
 | `--uxm-code-editor-gutter-bg` | – | `transparent` | Gutter background. |
