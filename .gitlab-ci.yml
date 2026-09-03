@@ -11,7 +11,7 @@ include:
     file: "/ci/pipelines/npm-package.yml"
 
 test:
-  image: "registry.gitlab.viax.tech/docker/nodejs:24.16"
+  image: "registry.gitlab.viax.tech/docker/node:24.16"
   script:
     - "NODE_VERSION=$(node -v) echo \"Node version: $NODE_VERSION\""
     - "NPM_VERSION=$(npm -v) && echo \"NPM version: $NPM_VERSION\""
@@ -37,7 +37,7 @@ test:
 
 
 publish:
-  image: "registry.gitlab.viax.tech/docker/nodejs:24.16"
+  image: "registry.gitlab.viax.tech/docker/node:24.16"
   script:
     - "NODE_VERSION=$(node -v) echo \"Node version: $NODE_VERSION\""
     - "NPM_VERSION=$(npm -v) && echo \"NPM version: $NPM_VERSION\""
