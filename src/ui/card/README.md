@@ -87,5 +87,5 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 ## Accessibility
 
 - Renders a plain `<div>` with no implicit role; if the card represents an interactive entity (link, button), wrap children in the appropriate semantic element or use a dedicated interactive component instead.
-- Card text colour is inherited from the parent; ensure sufficient contrast against `--color-card` (`#FFFFFF` light / `#0B0B0B` dark) for content that overrides text colour locally.
+- Card text colour is inherited from the parent; ensure sufficient contrast against `--color-card` (`#FFFFFF` light / `#1B1A18` dark) for content that overrides text colour locally.
 - The `shadow` modifier is decorative only — do not rely on it to convey hierarchy without an accompanying semantic structure.

@@ -18,23 +18,23 @@ export interface ThemeToken {
 
 export const themeTokens: ThemeToken[] = [
   // ── Surfaces ──
-  { name: 'Surface', variable: 'var(--color-surface)', cssVar: '--color-surface', hex: '#F8F7F6', darkHex: '#141414', group: 'surfaces' },
-  { name: 'Surface Alt', variable: 'var(--color-surface-alt)', cssVar: '--color-surface-alt', hex: '#F2F1F0', darkHex: '#1C1C1C', group: 'surfaces' },
-  { name: 'Card', variable: 'var(--color-card)', cssVar: '--color-card', hex: '#FFFFFF', darkHex: '#0B0B0B', group: 'surfaces' },
+  { name: 'Surface', variable: 'var(--color-surface)', cssVar: '--color-surface', hex: '#F8F7F6', darkHex: '#232220', group: 'surfaces' },
+  { name: 'Surface Alt', variable: 'var(--color-surface-alt)', cssVar: '--color-surface-alt', hex: '#F2F1F0', darkHex: '#2A2927', group: 'surfaces' },
+  { name: 'Card', variable: 'var(--color-card)', cssVar: '--color-card', hex: '#FFFFFF', darkHex: '#1B1A18', group: 'surfaces' },
 
   // ── Text ──
   { name: 'Text', variable: 'var(--color-text)', cssVar: '--color-text', hex: '#1E1E1E', darkHex: '#F5F5F5', group: 'text' },
   { name: 'Text Strong', variable: 'var(--color-text-strong)', cssVar: '--color-text-strong', hex: '#4A4A4A', darkHex: '#C8C8C8', group: 'text' },
-  { name: 'Text Muted', variable: 'var(--color-text-muted)', cssVar: '--color-text-muted', hex: '#9CA3AF', darkHex: '#8A8A8A', group: 'text' },
-  { name: 'Text Subtle', variable: 'var(--color-text-subtle)', cssVar: '--color-text-subtle', hex: '#CBD5E1', darkHex: '#5A5A5A', group: 'text' },
-  { name: 'Text Inverse', variable: 'var(--color-text-inverse)', cssVar: '--color-text-inverse', hex: '#FFFFFF', darkHex: '#0B0B0B', group: 'text' },
+  { name: 'Text Muted', variable: 'var(--color-text-muted)', cssVar: '--color-text-muted', hex: '#9CA3AF', darkHex: '#A3A3A3', group: 'text' },
+  { name: 'Text Subtle', variable: 'var(--color-text-subtle)', cssVar: '--color-text-subtle', hex: '#CBD5E1', darkHex: '#6E6E6E', group: 'text' },
+  { name: 'Text Inverse', variable: 'var(--color-text-inverse)', cssVar: '--color-text-inverse', hex: '#FFFFFF', darkHex: '#1B1A18', group: 'text' },
 
   // ── Borders ──
-  { name: 'Border', variable: 'var(--color-border)', cssVar: '--color-border', hex: '#EBEBEA', darkHex: '#2A2A2A', group: 'borders' },
+  { name: 'Border', variable: 'var(--color-border)', cssVar: '--color-border', hex: '#EBEBEA', darkHex: '#444240', group: 'borders' },
 
   // ── Accent ── (brand colour first; the others derive from its hue)
   { name: 'Accent', variable: 'var(--color-accent)', cssVar: '--color-accent', hex: '#3ECC87', darkHex: '#4FD99A', group: 'accent', identity: true },
-  { name: 'Accent Subtle', variable: 'var(--color-accent-subtle)', cssVar: '--color-accent-subtle', hex: '#E6FFD1', darkHex: '#0F3A1F', group: 'accent' },
+  { name: 'Accent Subtle', variable: 'var(--color-accent-subtle)', cssVar: '--color-accent-subtle', hex: '#E6FFD1', darkHex: '#164026', group: 'accent' },
   { name: 'Accent Light', variable: 'var(--color-accent-light)', cssVar: '--color-accent-light', hex: '#90E9B8', darkHex: '#2E8B57', group: 'accent' },
   { name: 'Accent Bold', variable: 'var(--color-accent-bold)', cssVar: '--color-accent-bold', hex: '#1E7150', darkHex: '#8AE6B4', group: 'accent' },
 
@@ -49,18 +49,18 @@ export const themeTokens: ThemeToken[] = [
   { name: 'Diagram', variable: 'var(--color-category-diagram)', cssVar: '--color-category-diagram', hex: '#6366F1', darkHex: '#818CF8', group: 'categories' },
 
   // ── Semantic ──
-  { name: 'Success Bg', variable: 'var(--color-success-bg)', cssVar: '--color-success-bg', hex: '#F0FDF4', darkHex: '#0F2A18', group: 'semantic' },
+  { name: 'Success Bg', variable: 'var(--color-success-bg)', cssVar: '--color-success-bg', hex: '#F0FDF4', darkHex: '#16301E', group: 'semantic' },
   { name: 'Success Text', variable: 'var(--color-success-text)', cssVar: '--color-success-text', hex: '#166534', darkHex: '#86EFAC', group: 'semantic' },
-  { name: 'Success Border', variable: 'var(--color-success-border)', cssVar: '--color-success-border', hex: '#BBF7D0', darkHex: '#1E4A2C', group: 'semantic' },
-  { name: 'Warning Bg', variable: 'var(--color-warning-bg)', cssVar: '--color-warning-bg', hex: '#FFFBEB', darkHex: '#2B1F0F', group: 'semantic' },
+  { name: 'Success Border', variable: 'var(--color-success-border)', cssVar: '--color-success-border', hex: '#BBF7D0', darkHex: '#275538', group: 'semantic' },
+  { name: 'Warning Bg', variable: 'var(--color-warning-bg)', cssVar: '--color-warning-bg', hex: '#FFFBEB', darkHex: '#322616', group: 'semantic' },
   { name: 'Warning Text', variable: 'var(--color-warning-text)', cssVar: '--color-warning-text', hex: '#92400E', darkHex: '#FCD34D', group: 'semantic' },
-  { name: 'Warning Border', variable: 'var(--color-warning-border)', cssVar: '--color-warning-border', hex: '#FDE68A', darkHex: '#4A3A1F', group: 'semantic' },
-  { name: 'Danger Bg', variable: 'var(--color-danger-bg)', cssVar: '--color-danger-bg', hex: '#FEF2F2', darkHex: '#2B1214', group: 'semantic' },
+  { name: 'Warning Border', variable: 'var(--color-warning-border)', cssVar: '--color-warning-border', hex: '#FDE68A', darkHex: '#55452A', group: 'semantic' },
+  { name: 'Danger Bg', variable: 'var(--color-danger-bg)', cssVar: '--color-danger-bg', hex: '#FEF2F2', darkHex: '#321A1C', group: 'semantic' },
   { name: 'Danger Text', variable: 'var(--color-danger-text)', cssVar: '--color-danger-text', hex: '#991B1B', darkHex: '#FCA5A5', group: 'semantic' },
-  { name: 'Danger Border', variable: 'var(--color-danger-border)', cssVar: '--color-danger-border', hex: '#FECACA', darkHex: '#4A1F22', group: 'semantic' },
-  { name: 'Info Bg', variable: 'var(--color-info-bg)', cssVar: '--color-info-bg', hex: '#EFF6FF', darkHex: '#0F1F3A', group: 'semantic' },
+  { name: 'Danger Border', variable: 'var(--color-danger-border)', cssVar: '--color-danger-border', hex: '#FECACA', darkHex: '#55292D', group: 'semantic' },
+  { name: 'Info Bg', variable: 'var(--color-info-bg)', cssVar: '--color-info-bg', hex: '#EFF6FF', darkHex: '#16263F', group: 'semantic' },
   { name: 'Info Text', variable: 'var(--color-info-text)', cssVar: '--color-info-text', hex: '#1E40AF', darkHex: '#93C5FD', group: 'semantic' },
-  { name: 'Info Border', variable: 'var(--color-info-border)', cssVar: '--color-info-border', hex: '#BFDBFE', darkHex: '#1E3A6A', group: 'semantic' },
+  { name: 'Info Border', variable: 'var(--color-info-border)', cssVar: '--color-info-border', hex: '#BFDBFE', darkHex: '#274674', group: 'semantic' },
 ];
 
 /** Look up a token by its CSS variable string */
