@@ -68,6 +68,23 @@ export interface FileUploadFileMeta {
    * Replaces the size meta on the row in danger styling.
    */
   errorMessage?: string;
+  /**
+   * Direct URL for a stored file. On a `done` row this renders a trailing
+   * control as a real `<a href download>` — which is why it exists alongside
+   * `onOpenFile` rather than being replaced by it: only an anchor gives the
+   * browser's own affordances (⌘/middle-click to a new tab, right-click →
+   * "Save link as", the native download UI).
+   *
+   * ⚠️ Use this ONLY when the browser can fetch the URL unauthenticated. A
+   * plain navigation carries no `Authorization` header, so a token-protected
+   * URL returns 401 — reach for `onOpenFile` there.
+   *
+   * ⚠️ The `download` attribute is ignored CROSS-ORIGIN: if the file is
+   * served from another origin the browser navigates to it instead of saving
+   * it. Pass `downloadGlyph="arrow-up-right"` so the control does not promise
+   * a save it cannot perform, or route through `onOpenFile` and a blob.
+   */
+  href?: string;
 }
 
 export interface FileUploadProps
@@ -142,6 +159,34 @@ export interface FileUploadProps
    * the button during `uploading` so the user always has an escape hatch.
    */
   onRemove?: (id: string) => void;
+  /**
+   * Fires when a row's download control is activated. Set this when the
+   * stored file needs an auth header or a signed-URL round trip: the consumer
+   * fetches the bytes itself and saves them (typically `fetch` with the
+   * bearer, then `URL.createObjectURL` — remember to `revokeObjectURL`, and
+   * to pass the filename through, or the file lands named `blob`).
+   *
+   * Takes PRECEDENCE over `FileUploadFileMeta.href`: a consumer that supplied
+   * a handler wants control of what opening means. Set neither and no
+   * download control renders, which is how every existing consumer behaves.
+   */
+  onOpenFile?: (id: string) => void;
+  /**
+   * Glyph for the download control. Defaults to `"arrow-down"`. Override to
+   * `"arrow-up-right"` when the file opens in a tab rather than saving —
+   * cross-origin `href`, or an `onOpenFile` that previews in-app.
+   */
+  downloadGlyph?: string;
+  /**
+   * Verb in the download control's accessible name, rendered as
+   * `` `${downloadLabel} ${file.name}` ``. Defaults to `"Download"`.
+   *
+   * Change it together with `downloadGlyph` whenever the control opens rather
+   * than saves: the glyph alone corrects the promise for sighted users and
+   * leaves screen-reader users being told "Download" for a control that
+   * navigates. `downloadLabel="Open"` keeps the two in step.
+   */
+  downloadLabel?: string;
   /** Fires when a drag enters the drop area. */
   onDragEnter?: (e: DragEvent<HTMLLabelElement>) => void;
   /** Fires when a drag leaves the drop area. */
@@ -167,6 +212,9 @@ export function FileUpload({
   files = [],
   onFiles,
   onRemove,
+  onOpenFile,
+  downloadGlyph = 'arrow-down',
+  downloadLabel = 'Download',
   onDragEnter,
   onDragLeave,
   onError: _onError,
@@ -178,6 +226,16 @@ export function FileUpload({
 }: FileUploadProps) {
   const inputId = useId();
   const helpId = useId();
+
+  // Whether the list has a download COLUMN at all — a whole-list property, so
+  // it is computed once here rather than per row (inside the map it re-scanned
+  // `files` for every row, which is O(n²) on exactly the renders a list does
+  // most: one per progress tick during an upload).
+  //
+  // The column exists so the control can be `done`-only without the name column
+  // gaining 24px the moment an upload settles — a reflow of the row the user is
+  // watching. Rows with nothing to fetch render an inert placeholder instead.
+  const listHasDownloads = !!onOpenFile || files.some((f) => !!f.href);
   const [internalDrag, setInternalDrag] = useState(false);
 
   // The drop area is intentionally independent of per-file statuses. It
@@ -356,6 +414,57 @@ export function FileUpload({
                   <span className="uxm-file-upload__row-name">{file.name}</span>
                   <span className="uxm-file-upload__row-meta">{metaText}</span>
                 </span>
+                {/* Download / open. `done` only — there is nothing stored to
+                    fetch until the upload settles. `onOpenFile` wins over
+                    `href` so a consumer that needs an auth header or a signed
+                    URL is never silently downgraded to a bare navigation. */}
+                {listHasDownloads &&
+                  (isDone && (onOpenFile || file.href) ? (
+                    onOpenFile ? (
+                      <button
+                        type="button"
+                        className="uxm-file-upload__row-download"
+                        aria-label={`${downloadLabel} ${file.name}`}
+                        disabled={disabled}
+                        onClick={() => onOpenFile(file.id)}
+                      >
+                        <Icon glyph={downloadGlyph} size={16} />
+                      </button>
+                    ) : (
+                      // eslint-disable-next-line jsx-a11y/anchor-is-valid -- `href` is dropped ONLY while `disabled`, which is the point: an anchor that keeps its href stays focusable and Enter still follows it, so a disabled control would remain usable from the keyboard. The rule cannot model a conditionally-inert anchor; when enabled this always has a valid href.
+                      <a
+                        className="uxm-file-upload__row-download"
+                        // DROPPED while disabled, not merely styled out. An
+                        // anchor keeps `href` in the tab order and Enter still
+                        // follows it, so `pointer-events: none` disables only
+                        // the mouse — a keyboard user could still download from
+                        // a form the consumer switched off. Without `href` the
+                        // element is neither focusable nor a link.
+                        href={disabled ? undefined : file.href}
+                        // Names the saved file: without this the browser uses
+                        // the URL's last segment, so a storage key lands on
+                        // disk as a UUID. Ignored cross-origin, along with the
+                        // download behaviour itself — see `href`'s docs.
+                        download={file.name}
+                        // Cross-origin, `download` is ignored and this becomes a
+                        // real navigation — into a NEW tab, so the user does not
+                        // lose the app and whatever is unsaved beside the list.
+                        // Same-origin the `download` attribute wins and no tab
+                        // opens, so this costs nothing there. It is also what
+                        // makes `rel="noopener"` mean anything.
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${downloadLabel} ${file.name}`}
+                        aria-disabled={disabled || undefined}
+                      >
+                        <Icon glyph={downloadGlyph} size={16} />
+                      </a>
+                    )
+                  ) : (
+                    // Inert placeholder keeping the column width stable across
+                    // the uploading → done transition.
+                    <span className="uxm-file-upload__row-download-slot" aria-hidden="true" />
+                  ))}
                 <button
                   type="button"
                   className="uxm-file-upload__row-remove"
