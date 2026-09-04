@@ -1,3 +1,15 @@
+# [4.35.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.34.1...v4.35.0) (2026-09-04)
+
+
+### Bug Fixes
+
+* **tokens:** apply dark-palette code-review findings ([1317417](https://gitlab.viax.tech/services-viax/uxm/commit/1317417ad44d55c7585ea085fda989710bf2e2b2)), closes [#2E8B57](https://gitlab.viax.tech/services-viax/uxm/issues/2E8B57) [#141414](https://gitlab.viax.tech/services-viax/uxm/issues/141414)
+
+
+### Features
+
+* **tokens:** lift the dark theme out of near-black ([a8f5100](https://gitlab.viax.tech/services-viax/uxm/commit/a8f5100e09c8c59c47a338d46642a7eaae3009bb)), closes [#0B0B0B](https://gitlab.viax.tech/services-viax/uxm/issues/0B0B0B) [#1B1A18](https://gitlab.viax.tech/services-viax/uxm/issues/1B1A18) [#232220](https://gitlab.viax.tech/services-viax/uxm/issues/232220) [#2A2927](https://gitlab.viax.tech/services-viax/uxm/issues/2A2927) [#2A2A2A](https://gitlab.viax.tech/services-viax/uxm/issues/2A2A2A) [#444240](https://gitlab.viax.tech/services-viax/uxm/issues/444240)
+
 ## [4.34.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.34.0...v4.34.1) (2026-09-04)
 
 
