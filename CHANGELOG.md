@@ -1,3 +1,15 @@
+# [4.36.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.35.0...v4.36.0) (2026-09-04)
+
+
+### Bug Fixes
+
+* **file-upload:** apply download-affordance code-review findings ([9e1f535](https://gitlab.viax.tech/services-viax/uxm/commit/9e1f535a8c0e120470c1b20dab91ac539cfcabac))
+
+
+### Features
+
+* **file-upload:** let a done row hand the file back ([834f68d](https://gitlab.viax.tech/services-viax/uxm/commit/834f68deba2b8926365920b853f9441a15d7518a))
+
 # [4.35.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.34.1...v4.35.0) (2026-09-04)
 
 
