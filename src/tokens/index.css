@@ -102,8 +102,27 @@
       greys read brown; drop it to zero and dark mode stops matching light.
 
    Tinted panels (accent-subtle, the semantic bgs and borders) were lifted with
-   the surfaces. They have to move together — a panel tuned against near-black
-   reads as a hole punched in a lighter page. */
+   the surfaces, by enough to KEEP their old separation from the page rather
+   than merely move — lift them less than the page and a banner ends up closer
+   to its background than it started, which is the opposite of the intent.
+
+   TWO EXCEPTIONS, both deliberate. `--color-highlight-warm` / `-cool` did NOT
+   move. They are mid-tones squeezed from both sides: lifting warm far enough
+   to clear 3:1 against the page (#96632F) drops `--color-on-highlight-warm`
+   text sitting on it from 4.10 to 3.56, and cool cannot reach 3:1 at any value
+   that keeps its own text above 3.1. Text contrast outranks a decorative fill
+   boundary, so both stay put and the chips separate from the page at 2.71 and
+   1.97 — Avatar is the only atom painting one raw (avatar.scss), and its
+   initials sit at 7.40 on the chip, so content legibility never depended on
+   the fill edge. Revisit only together with the `on-highlight-*` pair.
+
+   ⚠️ UPGRADING AN EXISTING DEPLOYMENT. Brand Settings saves ONE override per
+   token with a per-token reset, so partial customisation is normal — and a
+   tenant who pinned some dark tokens keeps them while the rest move here. A
+   saved `--color-card: #000000` against the new #232220 page is a far harder
+   step than either palette intends. Nothing in the library can detect this;
+   whoever owns a themed deployment should re-check its saved dark overrides
+   against this ramp, or clear them to adopt it wholesale. */
 [data-theme="dark"] {
   /* ── Surfaces ── */
   --color-surface: #232220;
@@ -121,8 +140,8 @@
   --color-border: #444240;
 
   /* ── Accent ── */
-  --color-accent-subtle: #164026;
-  --color-accent-light: #2E8B57;
+  --color-accent-subtle: #1A4A2C;
+  --color-accent-light: #3AA36A;
   --color-accent: #4FD99A;
   --color-accent-bold: #8AE6B4;
 
@@ -137,18 +156,18 @@
   --color-category-diagram: #818CF8;
 
   /* ── Semantic ── */
-  --color-success-bg: #16301E;
+  --color-success-bg: #1A3924;
   --color-success-text: #86EFAC;
-  --color-success-border: #275538;
-  --color-info-bg: #16263F;
+  --color-success-border: #2F6040;
+  --color-info-bg: #1A2E4C;
   --color-info-text: #93C5FD;
-  --color-info-border: #274674;
-  --color-warning-bg: #322616;
+  --color-info-border: #31507F;
+  --color-warning-bg: #3A2D1B;
   --color-warning-text: #FCD34D;
-  --color-warning-border: #55452A;
-  --color-danger-bg: #321A1C;
+  --color-warning-border: #5E4D30;
+  --color-danger-bg: #3A2022;
   --color-danger-text: #FCA5A5;
-  --color-danger-border: #55292D;
+  --color-danger-border: #5E3034;
 
   /* Canvas dot-grid colour */
   --color-canvas-dot: #383634;

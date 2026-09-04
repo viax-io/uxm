@@ -374,7 +374,7 @@ The active theme is set via `data-theme="light"` or `data-theme="dark"` on
 
 ```css
 :root { --color-surface: #F8F7F6; }
-[data-theme="dark"] { --color-surface: #141414; }
+[data-theme="dark"] { --color-surface: #232220; }
 ```
 
 Components MUST NOT branch on `data-theme` themselves — they consume the tokens

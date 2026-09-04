@@ -31,9 +31,9 @@ Backgrounds, in increasing prominence: page → alt panel → card.
 
 | Token | cssVar | Light | Dark | Use for |
 |-------|--------|-------|------|---------|
-| `Surface` | `--color-surface` | `#F8F7F6` | `#141414` | Page / app background. |
-| `Surface Alt` | `--color-surface-alt` | `#F2F1F0` | `#1C1C1C` | Sectioned panels, table headers, hover backgrounds. |
-| `Card` | `--color-card` | `#FFFFFF` | `#0B0B0B` | Card / row / dropdown backgrounds (most prominent). |
+| `Surface` | `--color-surface` | `#F8F7F6` | `#232220` | Page / app background. |
+| `Surface Alt` | `--color-surface-alt` | `#F2F1F0` | `#2A2927` | Sectioned panels, table headers, hover backgrounds. |
+| `Card` | `--color-card` | `#FFFFFF` | `#1B1A18` | Card / row / dropdown backgrounds (most prominent). |
 
 ### Text (5 tokens)
 
@@ -44,15 +44,15 @@ bgs.
 |-------|--------|-------|------|---------|
 | `Text Strong` | `--color-text-strong` | `#4A4A4A` | `#C8C8C8` | Headings; emphasized labels. |
 | `Text` | `--color-text` | `#1E1E1E` | `#F5F5F5` | Body text (default). |
-| `Text Muted` | `--color-text-muted` | `#9CA3AF` | `#8A8A8A` | Secondary text, labels, table header text. |
-| `Text Subtle` | `--color-text-subtle` | `#CBD5E1` | `#5A5A5A` | Tertiary, disabled, placeholder. |
-| `Text Inverse` | `--color-text-inverse` | `#FFFFFF` | `#0B0B0B` | Text on accent backgrounds (e.g. Primary button). |
+| `Text Muted` | `--color-text-muted` | `#9CA3AF` | `#A3A3A3` | Secondary text, labels, table header text. |
+| `Text Subtle` | `--color-text-subtle` | `#CBD5E1` | `#6E6E6E` | Tertiary, disabled, placeholder. |
+| `Text Inverse` | `--color-text-inverse` | `#FFFFFF` | `#1B1A18` | Text on accent backgrounds (e.g. Primary button). |
 
 ### Borders (1 token)
 
 | Token | cssVar | Light | Dark | Use for |
 |-------|--------|-------|------|---------|
-| `Border` | `--color-border` | `#EBEBEA` | `#2A2A2A` | All component borders / dividers (default). |
+| `Border` | `--color-border` | `#EBEBEA` | `#444240` | All component borders / dividers (default). |
 
 ### Accent (4 tokens)
 
@@ -63,8 +63,8 @@ designed to derive from its hue (each keeps its own saturation + lightness step)
 | Token | cssVar | Light | Dark | Use for |
 |-------|--------|-------|------|---------|
 | `Accent` | `--color-accent` | `#3ECC87` | `#4FD99A` | Lead brand colour; indicators, active borders. |
-| `Accent Subtle` | `--color-accent-subtle` | `#E6FFD1` | `#0F3A1F` | Selected-state background, soft accent backdrops. |
-| `Accent Light` | `--color-accent-light` | `#90E9B8` | `#2E8B57` | Hover backdrop, illustrative. |
+| `Accent Subtle` | `--color-accent-subtle` | `#E6FFD1` | `#1A4A2C` | Selected-state background, soft accent backdrops. |
+| `Accent Light` | `--color-accent-light` | `#90E9B8` | `#3AA36A` | Hover backdrop, illustrative. |
 | `Accent Bold` | `--color-accent-bold` | `#1E7150` | `#8AE6B4` | Primary button bg; link text; primary CTA. |
 
 > **Studio behaviour:** in the embedded style editor's Brand Settings → Colors → Accent, editing
@@ -106,18 +106,18 @@ Status colour triplets: bg / text / border. Used by `Banner`, `Toast`, `Tag`, er
 
 | Token | cssVar | Light | Dark | Use for |
 |-------|--------|-------|------|---------|
-| `Success Bg` | `--color-success-bg` | `#F0FDF4` | `#0F2A18` | `Banner variant="success"` background. |
+| `Success Bg` | `--color-success-bg` | `#F0FDF4` | `#1A3924` | `Banner variant="success"` background. |
 | `Success Text` | `--color-success-text` | `#166534` | `#86EFAC` | Success body text / icon. |
-| `Success Border` | `--color-success-border` | `#BBF7D0` | `#1E4A2C` | Success border / divider. |
-| `Warning Bg` | `--color-warning-bg` | `#FFFBEB` | `#2B1F0F` | `Banner variant="warning"` background. |
+| `Success Border` | `--color-success-border` | `#BBF7D0` | `#2F6040` | Success border / divider. |
+| `Warning Bg` | `--color-warning-bg` | `#FFFBEB` | `#3A2D1B` | `Banner variant="warning"` background. |
 | `Warning Text` | `--color-warning-text` | `#92400E` | `#FCD34D` | Warning body text / icon. |
-| `Warning Border` | `--color-warning-border` | `#FDE68A` | `#4A3A1F` | Warning border. |
-| `Danger Bg` | `--color-danger-bg` | `#FEF2F2` | `#2B1214` | `Banner variant="error"` background. |
+| `Warning Border` | `--color-warning-border` | `#FDE68A` | `#5E4D30` | Warning border. |
+| `Danger Bg` | `--color-danger-bg` | `#FEF2F2` | `#3A2022` | `Banner variant="error"` background. |
 | `Danger Text` | `--color-danger-text` | `#991B1B` | `#FCA5A5` | Error body text / icon. |
-| `Danger Border` | `--color-danger-border` | `#FECACA` | `#4A1F22` | Error border. |
-| `Info Bg` | `--color-info-bg` | `#EFF6FF` | `#0F1F3A` | `Banner variant="info"` background. |
+| `Danger Border` | `--color-danger-border` | `#FECACA` | `#5E3034` | Error border. |
+| `Info Bg` | `--color-info-bg` | `#EFF6FF` | `#1A2E4C` | `Banner variant="info"` background. |
 | `Info Text` | `--color-info-text` | `#1E40AF` | `#93C5FD` | Info body text / icon. |
-| `Info Border` | `--color-info-border` | `#BFDBFE` | `#1E3A6A` | Info border. |
+| `Info Border` | `--color-info-border` | `#BFDBFE` | `#31507F` | Info border. |
 
 ### Typography (font vars — not in `themeTokens`)
 
