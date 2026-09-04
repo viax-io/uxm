@@ -1,3 +1,10 @@
+## [4.34.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.34.0...v4.34.1) (2026-09-04)
+
+
+### Bug Fixes
+
+* **ci:** change node docker image from custom one to public at ECR ([1b75a74](https://gitlab.viax.tech/services-viax/uxm/commit/1b75a747d0d51c6987b6c9e1701341336d5c59cf))
+
 # [4.34.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.33.0...v4.34.0) (2026-09-04)
 
 
