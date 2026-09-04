@@ -1209,6 +1209,11 @@ export const inputsDefs: ComponentDef[] = [
       { key: 'rowMetaColor', label: 'Meta Text', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'fileList' },
       { key: 'rowIconColor', label: 'File Icon', control: 'color', defaultValue: 'var(--color-accent)', section: 'fileList' },
       { key: 'removeIconColor', label: 'Remove Icon', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'fileList' },
+      // Download control. Neither key collides with REAL_CSS_PROPS, so the
+      // generic `--uxm-file-upload-{kebab}` fallback already lands on the names
+      // the stylesheet reads — no PER_COMPONENT_MAPPING entry needed.
+      { key: 'downloadIconColor', label: 'Download Icon', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'fileList' },
+      { key: 'downloadIconHoverColor', label: 'Download Icon (hover)', control: 'color', defaultValue: 'var(--color-accent)', section: 'fileList' },
       // ── File List · Progress ──
       // Per-row progress strip (applied during status="uploading"). It's a
       // single thin colored bar painted directly on the row's bottom edge —

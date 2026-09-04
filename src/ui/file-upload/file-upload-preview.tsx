@@ -67,6 +67,8 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-file-upload-row-meta-color': styles.rowMetaColor as string,
     '--uxm-file-upload-row-icon-color': styles.rowIconColor as string,
     '--uxm-file-upload-remove-icon-color': styles.removeIconColor as string,
+    '--uxm-file-upload-download-icon-color': styles.downloadIconColor as string,
+    '--uxm-file-upload-download-icon-hover-color': styles.downloadIconHoverColor as string,
     // File list — progress strip (per-row, status="uploading")
     '--uxm-file-upload-progress-fill': styles.progressFill as string,
     '--uxm-file-upload-progress-height': `${styles.progressHeight}px`,
@@ -93,7 +95,10 @@ function buildVars(styles: Styles): CSSProperties {
 const DEMO_FILES: FileUploadFileMeta[] = [
   { id: 'demo-q', name: 'Q4-roadmap.pdf', size: 482_310, status: 'queued' },
   { id: 'demo-u', name: 'design-tokens.json', size: 12_480, status: 'uploading', progress: 0.6 },
-  { id: 'demo-d', name: 'brand-guidelines.pdf', size: 2_415_628, status: 'done' },
+  // `href` on the settled row: without it the download control never renders,
+  // so the knobs below would preview nothing. The three other rows exercise the
+  // reserved slot that keeps the column from jumping when an upload settles.
+  { id: 'demo-d', name: 'brand-guidelines.pdf', size: 2_415_628, status: 'done', href: '#demo-download' },
   { id: 'demo-e', name: 'annual-report.docx', size: 853_104, status: 'error', errorMessage: 'File exceeds 10 MB limit' },
 ];
 

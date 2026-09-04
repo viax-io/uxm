@@ -1478,6 +1478,20 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`FileUpload` rows can hand the file back.** A `done` row now renders a trailing
+  download control, via either `FileUploadFileMeta.href` (renders `<a href download>`) or
+  the new `onOpenFile?(id)` prop (renders a `<button>`). **Pick by whether a browser can
+  fetch the URL unauthenticated:** `href` is better where it works — only a real anchor
+  gives ⌘/middle-click-to-new-tab, right-click "Save link as" and the native download UI
+  — but an anchor navigation carries no `Authorization` header, so token-protected
+  storage needs `onOpenFile` plus a `fetch` + blob (revoke the object URL, and pass the
+  filename or the file saves as a UUID). Setting both is allowed; `onOpenFile` wins.
+  Setting neither renders nothing, so existing consumers are untouched.
+  ⚠️ `download` is **ignored cross-origin** — the browser navigates to the file instead
+  of saving it, taking the tab with it; pass `downloadGlyph="arrow-up-right"` so the
+  control doesn't promise a save it can't do, or use the blob route. New knobs:
+  `--uxm-file-upload-download-icon-color` / `-hover-color`.
+
 ## Workflow
 
 ### Before writing any code

@@ -222,6 +222,51 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* Download / open control. Same 24px box as the remove button so the two sit
+   as one control cluster, but it tints toward the accent on hover rather than
+   danger — one takes the file away, the other hands it over.
+
+   `.uxm-file-upload__row-download` is BOTH a <button> and an <a> depending on
+   whether the consumer passed `onOpenFile` or `href`, so everything here has
+   to hold for an anchor too: `text-decoration: none` (an anchor is underlined
+   by default) and an explicit `color` (an anchor would otherwise paint itself
+   the UA's link blue, ignoring the token). */
+.uxm-file-upload__row-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--uxm-file-upload-download-icon-color, var(--color-text-muted));
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.uxm-file-upload__row-download:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: color-mix(in srgb, var(--color-text) 8%, transparent);
+  color: var(--uxm-file-upload-download-icon-hover-color, var(--color-accent));
+}
+/* The anchor form cannot carry `disabled`, so the disabled visual keys off
+   `aria-disabled` — which is also what tells assistive tech. Pointer events
+   are dropped so a disabled anchor cannot still be activated by click. */
+.uxm-file-upload__row-download:disabled,
+.uxm-file-upload__row-download[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+/* Reserves the column on rows that have no file to fetch yet, so the name
+   column does not jump 24px wide when an upload settles. */
+.uxm-file-upload__row-download-slot {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
 .uxm-file-upload__row-progress {
   position: absolute;
   bottom: 0;

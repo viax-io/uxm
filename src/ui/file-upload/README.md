@@ -43,6 +43,8 @@ function Example() {
 | `files` | `FileUploadFileMeta[]` | `[]` | Files to render inline. When non-empty, the `<ul>` renders below the drop area. |
 | `onFiles` | `(files: File[]) => void` | – | Fires on dialog pick **or** drop. |
 | `onRemove` | `(id: string) => void` | – | Fires when a row's trash button is clicked. Caller decides cancel vs delete semantics by status. |
+| `onOpenFile` | `(id: string) => void` | – | Fires when a row's download control is activated. Renders the control as a `<button>`. **Takes precedence over `href`.** |
+| `downloadGlyph` | `string` | `'arrow-down'` | Glyph for the download control. Use `'arrow-up-right'` when the file opens rather than saves. |
 | `onDragEnter` | `(e: DragEvent<HTMLLabelElement>) => void` | – | Forwarded after internal drag-state update. |
 | `onDragLeave` | `(e: DragEvent<HTMLLabelElement>) => void` | – | Forwarded after internal drag-state update. |
 | `onError` | `(reason: string) => void` | – | Documented for caller-driven validation; the atom itself never invokes it. |
@@ -61,6 +63,7 @@ function Example() {
 | `status` | `'queued' \| 'uploading' \| 'done' \| 'error'` | no | Defaults to `'queued'`. Drives the row's icon, meta line, border, and progress strip. |
 | `progress` | `number` | no | 0–1 fraction. Used only when `status === 'uploading'`. Omit for indeterminate ("Uploading…"). |
 | `errorMessage` | `string` | no | Used only when `status === 'error'`. Replaces the size meta on the row in danger styling. |
+| `href` | `string` | no | Direct URL for a stored file. On a `done` row renders the trailing control as `<a href download>`. **Only when the URL is fetchable unauthenticated** — see Downloads below. |
 
 ### `FileUploadState`
 
@@ -73,6 +76,55 @@ type FileUploadState = 'default' | 'drag-over' | 'uploading' | 'error';
 ```ts
 type FileStatus = 'queued' | 'uploading' | 'done' | 'error';
 ```
+
+## Downloads
+
+A `done` row can offer the file back to the user. Two ways in, because they suit
+different storage setups — **pick by whether a browser can fetch the URL on its own:**
+
+| | Use when | Renders |
+|---|---|---|
+| `href` on the row | The URL is public or pre-signed | `<a href download>` |
+| `onOpenFile(id)` | The URL needs an auth header or a signed-URL round trip | `<button>` |
+
+`href` is the better option **when it works**, because only a real anchor gives the
+browser's own affordances: ⌘/middle-click to a new tab, right-click → "Save link as",
+and the native download UI. A button and some JS cannot reproduce any of those.
+
+But an anchor navigation carries no `Authorization` header, so a token-protected URL
+returns 401. That is what `onOpenFile` is for — fetch the bytes yourself and save them:
+
+```tsx
+<FileUpload
+  files={attachments.map((a) => ({ id: a.id, name: a.name, size: a.size, status: 'done' }))}
+  onOpenFile={async (id) => {
+    const a = attachments.find((x) => x.id === id)!;
+    const res = await fetch(a.url, { headers: authHeader() });
+    const url = URL.createObjectURL(await res.blob());
+    const link = Object.assign(document.createElement('a'), { href: url, download: a.name });
+    link.click();
+    URL.revokeObjectURL(url); // or the whole file stays in memory until reload
+  }}
+/>
+```
+
+Two things that bite:
+
+- **`download` is ignored cross-origin.** If the file is served from another origin, the
+  browser navigates to it instead of saving it — the tab leaves the app. Pass
+  `downloadGlyph="arrow-up-right"` so the control does not promise a save it can't do, or
+  route through `onOpenFile` and a blob.
+- **Name the blob.** The `download` attribute sets the saved filename; without it the
+  browser uses the URL's last segment, so a storage key lands on disk as a UUID.
+
+Setting both is allowed and `onOpenFile` wins — a consumer that supplied a handler wants
+control over what opening means, and silently downgrading it to a bare navigation would
+break exactly the auth case it was reached for. Setting neither renders no control at all,
+which is how every consumer written before this existed behaves.
+
+Note the control appears **only on `done` rows** — there is nothing stored to fetch until
+an upload settles. To stop the name column jumping 24px wide at that moment, rows without
+a control render an inert placeholder whenever any row in the list could have one.
 
 ## CSS variables
 
@@ -135,6 +187,8 @@ type FileStatus = 'queued' | 'uploading' | 'done' | 'error';
 | `--uxm-file-upload-row-meta-color` | `--color-text-muted` | – | Row meta line color (idle). |
 | `--uxm-file-upload-remove-icon-color` | `--color-text-muted` | – | Trash button color (idle). |
 | `--uxm-file-upload-remove-icon-hover-color` | `--color-danger-text` | – | Trash button color on hover. |
+| `--uxm-file-upload-download-icon-color` | `--color-text-muted` | – | Download control color (idle). |
+| `--uxm-file-upload-download-icon-hover-color` | `--color-accent` | – | Download control color on hover. |
 | `--uxm-file-upload-progress-height` | – | `2px` | Per-row progress strip height. |
 | `--uxm-file-upload-progress-fill` | `--color-accent` | – | Progress strip color. |
 | `--uxm-file-upload-row-progress` | – | `0%` | Progress strip width (set inline by the component from `file.progress`). |
