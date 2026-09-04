@@ -58,9 +58,9 @@
   /* Theme-agnostic preview swatches — always render their named mode,
      regardless of the active global theme. Not overridden below. */
   --color-preview-bg-light: #FFFFFF;
-  --color-preview-bg-dark: #141414;
+  --color-preview-bg-dark: #232220;
   --color-preview-border-light: #EBEBEA;
-  --color-preview-border-dark: #3A3A3A;
+  --color-preview-border-dark: #444240;
 
   /* Elevation — semantic shadow scales. Theme-aware via the
      overrides in [data-theme="dark"]. Two-layer composites are
@@ -80,25 +80,68 @@
   --font-inter: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Dark theme.
+
+   The neutral ramp deliberately sits ABOVE near-black: card L*9, surface L*13,
+   surface-alt L*17, in the same register as GitHub's dimmed theme and a notch
+   lighter than VS Code's default. The previous ramp (L* 3 / 6 / 10, card at
+   #0B0B0B) read as pure black under the cards and inputs that cover most of a
+   page. Large black fields raise perceived contrast to the point of halation
+   around light text, and they leave no room BELOW the surfaces for a shadow or
+   a well to register.
+
+   Two properties are load-bearing if you retune these:
+
+   1. ORDER. card < surface < surface-alt in lightness — cards and inputs are
+      darker than the page, so they read as wells. That is inverted from light
+      mode (where card is the brightest) and it is the existing convention
+      here, not an accident. Changing it is a redesign, not a retune.
+
+   2. WARMTH. Every neutral carries an R-B delta of 3-4, echoing the light
+      palette's own faint warmth (delta 2 at L*~95). Push it further and the
+      greys read brown; drop it to zero and dark mode stops matching light.
+
+   Tinted panels (accent-subtle, the semantic bgs and borders) were lifted with
+   the surfaces, by enough to KEEP their old separation from the page rather
+   than merely move — lift them less than the page and a banner ends up closer
+   to its background than it started, which is the opposite of the intent.
+
+   TWO EXCEPTIONS, both deliberate. `--color-highlight-warm` / `-cool` did NOT
+   move. They are mid-tones squeezed from both sides: lifting warm far enough
+   to clear 3:1 against the page (#96632F) drops `--color-on-highlight-warm`
+   text sitting on it from 4.10 to 3.56, and cool cannot reach 3:1 at any value
+   that keeps its own text above 3.1. Text contrast outranks a decorative fill
+   boundary, so both stay put and the chips separate from the page at 2.71 and
+   1.97 — Avatar is the only atom painting one raw (avatar.scss), and its
+   initials sit at 7.40 on the chip, so content legibility never depended on
+   the fill edge. Revisit only together with the `on-highlight-*` pair.
+
+   ⚠️ UPGRADING AN EXISTING DEPLOYMENT. Brand Settings saves ONE override per
+   token with a per-token reset, so partial customisation is normal — and a
+   tenant who pinned some dark tokens keeps them while the rest move here. A
+   saved `--color-card: #000000` against the new #232220 page is a far harder
+   step than either palette intends. Nothing in the library can detect this;
+   whoever owns a themed deployment should re-check its saved dark overrides
+   against this ramp, or clear them to adopt it wholesale. */
 [data-theme="dark"] {
   /* ── Surfaces ── */
-  --color-surface: #141414;
-  --color-surface-alt: #1C1C1C;
-  --color-card: #0B0B0B;
+  --color-surface: #232220;
+  --color-surface-alt: #2A2927;
+  --color-card: #1B1A18;
 
   /* ── Text ── */
   --color-text: #F5F5F5;
   --color-text-strong: #C8C8C8;
-  --color-text-muted: #8A8A8A;
-  --color-text-subtle: #5A5A5A;
-  --color-text-inverse: #0B0B0B;
+  --color-text-muted: #A3A3A3;
+  --color-text-subtle: #6E6E6E;
+  --color-text-inverse: #1B1A18;
 
   /* ── Borders ── */
-  --color-border: #2A2A2A;
+  --color-border: #444240;
 
   /* ── Accent ── */
-  --color-accent-subtle: #0F3A1F;
-  --color-accent-light: #2E8B57;
+  --color-accent-subtle: #1A4A2C;
+  --color-accent-light: #3AA36A;
   --color-accent: #4FD99A;
   --color-accent-bold: #8AE6B4;
 
@@ -113,21 +156,21 @@
   --color-category-diagram: #818CF8;
 
   /* ── Semantic ── */
-  --color-success-bg: #0F2A18;
+  --color-success-bg: #1A3924;
   --color-success-text: #86EFAC;
-  --color-success-border: #1E4A2C;
-  --color-info-bg: #0F1F3A;
+  --color-success-border: #2F6040;
+  --color-info-bg: #1A2E4C;
   --color-info-text: #93C5FD;
-  --color-info-border: #1E3A6A;
-  --color-warning-bg: #2B1F0F;
+  --color-info-border: #31507F;
+  --color-warning-bg: #3A2D1B;
   --color-warning-text: #FCD34D;
-  --color-warning-border: #4A3A1F;
-  --color-danger-bg: #2B1214;
+  --color-warning-border: #5E4D30;
+  --color-danger-bg: #3A2022;
   --color-danger-text: #FCA5A5;
-  --color-danger-border: #4A1F22;
+  --color-danger-border: #5E3034;
 
   /* Canvas dot-grid colour */
-  --color-canvas-dot: #2A2A2A;
+  --color-canvas-dot: #383634;
 
   /* Elevation — deeper alpha on dark surfaces so shadows still register. */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.30);

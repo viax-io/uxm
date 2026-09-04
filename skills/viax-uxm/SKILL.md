@@ -1459,6 +1459,23 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **The dark palette is no longer near-black.** Every dark value in
+  `references/design-tokens.md` moved; that table is regenerated from the token
+  catalog, so read values from it rather than from memory. The neutral ramp
+  lifted to card `#1B1A18` / surface `#232220` / surface-alt `#2A2927` (L* 9 /
+  13 / 17, GitHub-dimmed's register) with border `#444240`; `text-muted` and
+  `text-subtle` lifted to match, `accent-light` to `#3AA36A` so it clears AA on
+  every dark surface, and accent-subtle plus all four semantic bg/border pairs
+  lifted enough to KEEP their separation from the now-lighter page. Light mode
+  is untouched. `--color-highlight-warm` / `-cool` deliberately did NOT move —
+  see the comment in `tokens/index.css` for why (their `on-highlight-*` text
+  pairs constrain them from the other side).
+  ⚠️ **Upgrading a themed deployment:** Brand Settings saves one override per
+  token, so a tenant that pinned some dark tokens keeps them while the rest
+  move — a saved near-black card against the new page is a much harder step
+  than either palette intends. Nothing detects this automatically; re-check
+  saved dark overrides against the new ramp, or clear them to adopt it.
+
 ## Workflow
 
 ### Before writing any code
