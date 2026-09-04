@@ -1487,10 +1487,13 @@ skill:
   storage needs `onOpenFile` plus a `fetch` + blob (revoke the object URL, and pass the
   filename or the file saves as a UUID). Setting both is allowed; `onOpenFile` wins.
   Setting neither renders nothing, so existing consumers are untouched.
-  ⚠️ `download` is **ignored cross-origin** — the browser navigates to the file instead
-  of saving it, taking the tab with it; pass `downloadGlyph="arrow-up-right"` so the
-  control doesn't promise a save it can't do, or use the blob route. New knobs:
-  `--uxm-file-upload-download-icon-color` / `-hover-color`.
+  ⚠️ `download` is **ignored cross-origin** — the browser navigates instead of saving.
+  The anchor carries `target="_blank"` so that lands in a new tab rather than taking the
+  app's; still pass `downloadGlyph="arrow-up-right"` AND `downloadLabel="Open"` so
+  neither the icon nor the accessible name promises a save (the glyph alone fixes it for
+  sighted users only), or use the blob route. While `disabled` the anchor drops its
+  `href` — a greyed-out link that keeps one is still tab-reachable and Enter still
+  follows it. New vars: `--uxm-file-upload-download-icon-color` / `-hover-color`.
 
 ## Workflow
 

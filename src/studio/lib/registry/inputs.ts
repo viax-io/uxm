@@ -1209,11 +1209,14 @@ export const inputsDefs: ComponentDef[] = [
       { key: 'rowMetaColor', label: 'Meta Text', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'fileList' },
       { key: 'rowIconColor', label: 'File Icon', control: 'color', defaultValue: 'var(--color-accent)', section: 'fileList' },
       { key: 'removeIconColor', label: 'Remove Icon', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'fileList' },
-      // Download control. Neither key collides with REAL_CSS_PROPS, so the
-      // generic `--uxm-file-upload-{kebab}` fallback already lands on the names
+      // Download control. The key does not collide with REAL_CSS_PROPS, so the
+      // generic `--uxm-file-upload-{kebab}` fallback already lands on the name
       // the stylesheet reads — no PER_COMPONENT_MAPPING entry needed.
+      // No hover knob on purpose: the registry's `state` variants drive the DROP
+      // AREA, not the rows, so a row-hover knob would save a value the canvas
+      // could never show changing. `--uxm-file-upload-download-icon-hover-color`
+      // stays available to consumers, exactly as the remove button's does.
       { key: 'downloadIconColor', label: 'Download Icon', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'fileList' },
-      { key: 'downloadIconHoverColor', label: 'Download Icon (hover)', control: 'color', defaultValue: 'var(--color-accent)', section: 'fileList' },
       // ── File List · Progress ──
       // Per-row progress strip (applied during status="uploading"). It's a
       // single thin colored bar painted directly on the row's bottom edge —

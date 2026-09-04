@@ -177,6 +177,16 @@ export interface FileUploadProps
    * cross-origin `href`, or an `onOpenFile` that previews in-app.
    */
   downloadGlyph?: string;
+  /**
+   * Verb in the download control's accessible name, rendered as
+   * `` `${downloadLabel} ${file.name}` ``. Defaults to `"Download"`.
+   *
+   * Change it together with `downloadGlyph` whenever the control opens rather
+   * than saves: the glyph alone corrects the promise for sighted users and
+   * leaves screen-reader users being told "Download" for a control that
+   * navigates. `downloadLabel="Open"` keeps the two in step.
+   */
+  downloadLabel?: string;
   /** Fires when a drag enters the drop area. */
   onDragEnter?: (e: DragEvent<HTMLLabelElement>) => void;
   /** Fires when a drag leaves the drop area. */
@@ -204,6 +214,7 @@ export function FileUpload({
   onRemove,
   onOpenFile,
   downloadGlyph = 'arrow-down',
+  downloadLabel = 'Download',
   onDragEnter,
   onDragLeave,
   onError: _onError,
@@ -215,6 +226,16 @@ export function FileUpload({
 }: FileUploadProps) {
   const inputId = useId();
   const helpId = useId();
+
+  // Whether the list has a download COLUMN at all — a whole-list property, so
+  // it is computed once here rather than per row (inside the map it re-scanned
+  // `files` for every row, which is O(n²) on exactly the renders a list does
+  // most: one per progress tick during an upload).
+  //
+  // The column exists so the control can be `done`-only without the name column
+  // gaining 24px the moment an upload settles — a reflow of the row the user is
+  // watching. Rows with nothing to fetch render an inert placeholder instead.
+  const listHasDownloads = !!onOpenFile || files.some((f) => !!f.href);
   const [internalDrag, setInternalDrag] = useState(false);
 
   // The drop area is intentionally independent of per-file statuses. It
@@ -344,14 +365,8 @@ export function FileUpload({
       {pageError && <span className="uxm-file-upload__error">{pageError}</span>}
       {children}
       {files.length > 0 && (
-        // Whether the list has a download COLUMN at all. Computed once for the
-        // whole list, not per row: the control only appears on `done` rows, so
-        // without a reserved slot every row would gain 24px the moment its
-        // upload settled — a reflow of the name column at exactly the moment
-        // the user is watching that row.
         <ul className="uxm-file-upload__list">
-          {files.map((file, _i, all) => {
-            const listHasDownloads = !!onOpenFile || all.some((f) => !!f.href);
+          {files.map((file) => {
             const status: FileStatus = file.status ?? 'queued';
             const isUploading = status === 'uploading';
             const isDone = status === 'done';
@@ -409,23 +424,37 @@ export function FileUpload({
                       <button
                         type="button"
                         className="uxm-file-upload__row-download"
-                        aria-label={`Download ${file.name}`}
+                        aria-label={`${downloadLabel} ${file.name}`}
                         disabled={disabled}
                         onClick={() => onOpenFile(file.id)}
                       >
                         <Icon glyph={downloadGlyph} size={16} />
                       </button>
                     ) : (
+                      // eslint-disable-next-line jsx-a11y/anchor-is-valid -- `href` is dropped ONLY while `disabled`, which is the point: an anchor that keeps its href stays focusable and Enter still follows it, so a disabled control would remain usable from the keyboard. The rule cannot model a conditionally-inert anchor; when enabled this always has a valid href.
                       <a
                         className="uxm-file-upload__row-download"
-                        href={file.href}
+                        // DROPPED while disabled, not merely styled out. An
+                        // anchor keeps `href` in the tab order and Enter still
+                        // follows it, so `pointer-events: none` disables only
+                        // the mouse — a keyboard user could still download from
+                        // a form the consumer switched off. Without `href` the
+                        // element is neither focusable nor a link.
+                        href={disabled ? undefined : file.href}
                         // Names the saved file: without this the browser uses
                         // the URL's last segment, so a storage key lands on
                         // disk as a UUID. Ignored cross-origin, along with the
                         // download behaviour itself — see `href`'s docs.
                         download={file.name}
+                        // Cross-origin, `download` is ignored and this becomes a
+                        // real navigation — into a NEW tab, so the user does not
+                        // lose the app and whatever is unsaved beside the list.
+                        // Same-origin the `download` attribute wins and no tab
+                        // opens, so this costs nothing there. It is also what
+                        // makes `rel="noopener"` mean anything.
+                        target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`Download ${file.name}`}
+                        aria-label={`${downloadLabel} ${file.name}`}
                         aria-disabled={disabled || undefined}
                       >
                         <Icon glyph={downloadGlyph} size={16} />

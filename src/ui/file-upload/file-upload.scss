@@ -251,13 +251,16 @@
   color: var(--uxm-file-upload-download-icon-hover-color, var(--color-accent));
 }
 /* The anchor form cannot carry `disabled`, so the disabled visual keys off
-   `aria-disabled` — which is also what tells assistive tech. Pointer events
-   are dropped so a disabled anchor cannot still be activated by click. */
+   `aria-disabled` — which is also what tells assistive tech.
+   Disabling is NOT done here: the atom drops the anchor's `href` instead, which
+   takes it out of the tab order and stops Enter following it. CSS could only
+   ever have blocked the mouse (`pointer-events: none`), which is why that
+   declaration is gone — it also suppressed hit-testing entirely, so the
+   `cursor` below never painted. */
 .uxm-file-upload__row-download:disabled,
 .uxm-file-upload__row-download[aria-disabled='true'] {
   opacity: 0.5;
   cursor: not-allowed;
-  pointer-events: none;
 }
 /* Reserves the column on rows that have no file to fetch yet, so the name
    column does not jump 24px wide when an upload settles. */

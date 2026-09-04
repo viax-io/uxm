@@ -45,6 +45,7 @@ function Example() {
 | `onRemove` | `(id: string) => void` | – | Fires when a row's trash button is clicked. Caller decides cancel vs delete semantics by status. |
 | `onOpenFile` | `(id: string) => void` | – | Fires when a row's download control is activated. Renders the control as a `<button>`. **Takes precedence over `href`.** |
 | `downloadGlyph` | `string` | `'arrow-down'` | Glyph for the download control. Use `'arrow-up-right'` when the file opens rather than saves. |
+| `downloadLabel` | `string` | `'Download'` | Verb in the control's accessible name (`` `${downloadLabel} ${name}` ``). Change it **with** `downloadGlyph` — the glyph corrects the promise for sighted users only. |
 | `onDragEnter` | `(e: DragEvent<HTMLLabelElement>) => void` | – | Forwarded after internal drag-state update. |
 | `onDragLeave` | `(e: DragEvent<HTMLLabelElement>) => void` | – | Forwarded after internal drag-state update. |
 | `onError` | `(reason: string) => void` | – | Documented for caller-driven validation; the atom itself never invokes it. |
@@ -111,9 +112,12 @@ returns 401. That is what `onOpenFile` is for — fetch the bytes yourself and s
 Two things that bite:
 
 - **`download` is ignored cross-origin.** If the file is served from another origin, the
-  browser navigates to it instead of saving it — the tab leaves the app. Pass
-  `downloadGlyph="arrow-up-right"` so the control does not promise a save it can't do, or
-  route through `onOpenFile` and a blob.
+  browser navigates to it instead of saving it. The anchor carries `target="_blank"` so
+  that navigation opens a new tab rather than taking the app's — same-origin the
+  `download` attribute wins and no tab opens, so it costs nothing there. Still pass
+  `downloadGlyph="arrow-up-right"` **and** `downloadLabel="Open"` so neither the icon nor
+  the accessible name promises a save the browser won't perform, or route through
+  `onOpenFile` and a blob.
 - **Name the blob.** The `download` attribute sets the saved filename; without it the
   browser uses the URL's last segment, so a storage key lands on disk as a UUID.
 
@@ -121,6 +125,11 @@ Setting both is allowed and `onOpenFile` wins — a consumer that supplied a han
 control over what opening means, and silently downgrading it to a bare navigation would
 break exactly the auth case it was reached for. Setting neither renders no control at all,
 which is how every consumer written before this existed behaves.
+
+While `disabled`, the anchor form drops its `href` rather than merely greying out. A
+disabled-looking link that keeps its `href` stays in the tab order and still follows on
+Enter — CSS can only ever block the mouse. The control stays visible and greyed, exactly
+like the remove button beside it, but it is genuinely inert.
 
 Note the control appears **only on `done` rows** — there is nothing stored to fetch until
 an upload settles. To stop the name column jumping 24px wide at that moment, rows without
@@ -188,7 +197,7 @@ a control render an inert placeholder whenever any row in the list could have on
 | `--uxm-file-upload-remove-icon-color` | `--color-text-muted` | – | Trash button color (idle). |
 | `--uxm-file-upload-remove-icon-hover-color` | `--color-danger-text` | – | Trash button color on hover. |
 | `--uxm-file-upload-download-icon-color` | `--color-text-muted` | – | Download control color (idle). |
-| `--uxm-file-upload-download-icon-hover-color` | `--color-accent` | – | Download control color on hover. |
+| `--uxm-file-upload-download-icon-hover-color` | `--color-accent` | – | Download control color on hover. No studio knob — the workbench cannot force a row hover, same as the remove button's. |
 | `--uxm-file-upload-progress-height` | – | `2px` | Per-row progress strip height. |
 | `--uxm-file-upload-progress-fill` | `--color-accent` | – | Progress strip color. |
 | `--uxm-file-upload-row-progress` | – | `0%` | Progress strip width (set inline by the component from `file.progress`). |

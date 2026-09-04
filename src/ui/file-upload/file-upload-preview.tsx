@@ -68,7 +68,6 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-file-upload-row-icon-color': styles.rowIconColor as string,
     '--uxm-file-upload-remove-icon-color': styles.removeIconColor as string,
     '--uxm-file-upload-download-icon-color': styles.downloadIconColor as string,
-    '--uxm-file-upload-download-icon-hover-color': styles.downloadIconHoverColor as string,
     // File list — progress strip (per-row, status="uploading")
     '--uxm-file-upload-progress-fill': styles.progressFill as string,
     '--uxm-file-upload-progress-height': `${styles.progressHeight}px`,
@@ -96,9 +95,20 @@ const DEMO_FILES: FileUploadFileMeta[] = [
   { id: 'demo-q', name: 'Q4-roadmap.pdf', size: 482_310, status: 'queued' },
   { id: 'demo-u', name: 'design-tokens.json', size: 12_480, status: 'uploading', progress: 0.6 },
   // `href` on the settled row: without it the download control never renders,
-  // so the knobs below would preview nothing. The three other rows exercise the
+  // so the knob above would preview nothing. The three other rows exercise the
   // reserved slot that keeps the column from jumping when an upload settles.
-  { id: 'demo-d', name: 'brand-guidelines.pdf', size: 2_415_628, status: 'done', href: '#demo-download' },
+  //
+  // A `data:` URL, NOT a `#fragment`: a fragment is same-origin, so `download`
+  // applies to it and clicking the control in the workbench would write the
+  // studio's own HTML to disk under the demo filename. This saves one harmless
+  // line instead, while still exercising the real `<a href download>` path.
+  {
+    id: 'demo-d',
+    name: 'brand-guidelines.pdf',
+    size: 2_415_628,
+    status: 'done',
+    href: 'data:text/plain,UXM%20FileUpload%20preview%20%E2%80%94%20demo%20download',
+  },
   { id: 'demo-e', name: 'annual-report.docx', size: 853_104, status: 'error', errorMessage: 'File exceeds 10 MB limit' },
 ];
 
