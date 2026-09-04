@@ -1,3 +1,22 @@
+# [4.34.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.33.0...v4.34.0) (2026-09-04)
+
+
+### Bug Fixes
+
+* **ci:** correct node docker image name ([24c2d6b](https://gitlab.viax.tech/services-viax/uxm/commit/24c2d6bba99254b650b0a11e24fe1619f58c6b5d))
+* **code-editor:** address remaining code-review findings ([b95e5cf](https://gitlab.viax.tech/services-viax/uxm/commit/b95e5cf9ef2070f17319be8c42f62d364024190c))
+* **code-editor:** apply code-review findings ([e6f5910](https://gitlab.viax.tech/services-viax/uxm/commit/e6f5910d0c2354bfd25265a39a1a8fdbeb1db14e))
+
+
+### Features
+
+* **code-editor:** add CodeEditor + CodeBlock for developer tooling ([245d82d](https://gitlab.viax.tech/services-viax/uxm/commit/245d82d7a09b186f2e810a28221fad3bde9e53a8))
+
+
+### Reverts
+
+* Revert "fix(ci): correct node docker image name" ([631259f](https://gitlab.viax.tech/services-viax/uxm/commit/631259f6df1b3a5df8563dc086fbff60c35a0a90))
+
 # [4.33.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.32.0...v4.33.0) (2026-08-28)
 
 
