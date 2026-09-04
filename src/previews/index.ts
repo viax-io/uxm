@@ -24,6 +24,7 @@ export { CardPreview } from '@/ui/card/card-preview';
 export { CheckboxPreview } from '@/ui/checkbox/checkbox-preview';
 export { ChipPreview } from '@/ui/chip/chip-preview';
 export { ClusterPreview } from '@/ui/cluster/cluster-preview';
+export { CodeEditorPreview } from '@/ui/code-editor/code-editor-preview';
 export { ColorInputPreview } from '@/ui/color-input/color-input-preview';
 export { ComponentRowPreview } from '@/ui/component-row/component-row-preview';
 export { ConfigComponentRowPreview } from '@/ui/config-component-row/config-component-row-preview';
