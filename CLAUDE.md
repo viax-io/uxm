@@ -18,7 +18,7 @@ npm run build:modo  # Vite production build of the portal
 npm run typecheck   # tsc --noEmit for src + portal/tsconfig.json
 npm run lint        # eslint .
 npm run lint:fix    # eslint . --fix
-npm run check:drift # registry-vs-CSS state-var drift gate (also runs in CI's test job)
+npm run check:drift # registry-vs-CSS state-var drift + type-scale + tokens.css↔themeTokens parity gates (also run in CI's test job)
 npm run commit      # commitizen — use this for conventional-commit prompts
 ```
 

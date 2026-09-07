@@ -216,7 +216,12 @@
   --color-danger-border: var(--color-danger-border);
   --font-sans: var(--font-inter);
 
-  /* semantic aliases used by component classes */
+  /* @deprecated — legacy palette names, scheduled for removal in the next major.
+     They exist ONLY here, inside the Tailwind `@theme inline` block: browsers
+     drop unknown at-rules, so a plain-CSS host never had them, and no atom or
+     studio utility reads them (audit 07-09-2026). Use the token each one
+     points at. `scripts/check-token-parity.mjs` lists them as
+     DEPRECATED_ALIASES — remove this block and that list together. */
   --color-cream: var(--color-surface);
   --color-warm-gray: var(--color-surface-alt);
   --color-ink: var(--color-text);
