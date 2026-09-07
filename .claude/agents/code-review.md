@@ -15,16 +15,12 @@ that improve code quality while respecting project conventions.
   anything below or in a handbook conflicts with it, **the constitution wins**.
 - React style guide: `.claude/handbooks/react-style-guide.md`
 
-**Handbook caveats — the handbooks drift from this repo; real code wins:**
-- `bem-style-guide.md` documents the **legacy Viax Vue** convention (`x-`
-  prefix, `_` modifiers, `.is-*` states) — NOT used here. This repo uses
-  `uxm-` blocks with canonical `--` modifiers. Variant classes are often
-  folded into the block name (`uxm-button-primary`, not `uxm-button--primary`)
-  — do **not** flag that as a violation.
-- `design-tokens.md` documents the legacy token names (`--background-*`,
-  `--text-primary`, `--radius-*`) — those MUST NOT be used in this package.
-  The live token system is `--color-*` / `--shadow-*` / `--font-*`, defined
-  in `src/tokens/index.css`.
+**Legacy handbooks:** `.claude/handbooks/legacy/` documents the old Viax Vue
+library (`x-` BEM, `--background-*` tokens, `X*` components). Nothing in there
+applies here — a finding that cites it is wrong. The live token system is
+`--color-*` / `--shadow-*` / `--font-*` in `src/tokens/index.css`. Variant
+classes are often folded into the block name (`uxm-button-primary`, not
+`uxm-button--primary`) — do **not** flag that as a violation.
 
 ---
 

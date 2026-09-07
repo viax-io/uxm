@@ -1,41 +1,32 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.0.0 → 1.1.0
-Bump rationale: MINOR — one new section (AI Skill & Agent Tooling), materially
-expanded guidance in Principles I, II, V and the Development Workflow (lint
-gate, semantic-release flow, skill lifecycle). Principle intents are unchanged;
-specifics were corrected to match the long-standing actual conventions
-(SCSS-per-component, --color-* tokens, BEM state modifiers).
+Version change: 1.1.0 → 1.1.1
+Bump rationale: PATCH — no principle changed. The legacy Viax Vue handbooks
+(bem-style-guide, design-tokens, ui-components) moved to
+`.claude/handbooks/legacy/` (repo audit 2026-09-07); the Principle I reference
+to `design-tokens.md` now points at the archived path. The Vue-era commands
+`/write-tests` and `/figma-audit` were removed and `/end-task` rewritten around
+the gates this document names (lint, typecheck, check:drift, build).
 
-Modified principles:
-  - I. Token-First Styling — token taxonomy corrected to the live system
-    (`--color-*` in src/tokens/index.css); per-component `--uxm-{id}-*`
-    override-var convention codified; documented-exception rule added.
-  - II. BEM Discipline — styles authored as colocated `<name>.scss` (compiled
-    to sibling .css; styles.css is a pure @import aggregator); state is
-    expressed via BEM modifiers (`--disabled`, `--error`) and studio
-    forced-state classes (`--state-*`) — the previous SMACSS `.is-*` bullet
-    never matched practice and is removed.
-  - V. Build Hygiene & Strict Typing — lint added as a release-blocking gate;
-    release-infra devDependencies allowed with justification.
-
-Added sections:
-  - AI Skill & Agent Tooling
-
-Removed sections: none
+Modified principles: none (path-only wording in I).
+Added sections: none. Removed sections: none.
 
 Templates requiring updates:
-  ✅ .claude/templates/plan-template.md (V gate wording + AI-skill check + release rollout)
-  ✅ .claude/templates/tasks-template.md (SCSS/folder paths, lint gate, CI-owned release, skill task)
-  ✅ .claude/templates/spec-template.md (no change needed — verified)
-  ✅ .claude/commands/update-ai-skill.md (already aligned — authored with this amendment)
-  ✅ .claude/commands/start-task.md (realigned 2026-07-23 — src/ paths, root
-    npm-script gates, component-folder scaffold, AI-skill step)
+  ✅ .claude/commands/end-task.md (rewritten — gates + Constitution Check I–V)
+  ✅ .claude/commands/commit-message.md (uxm scopes, semver footer guidance)
+  ✅ .claude/commands/start-task.md, agents/code-review.md, agents/react-frontend.md
+     (legacy-handbook caveats replaced by a pointer to handbooks/legacy/)
+  ✅ .claude/templates/* (no change needed — verified)
+
+Previous report (1.0.0 → 1.1.0, 2026-07-07) — kept for history:
+  MINOR: added "AI Skill & Agent Tooling"; Principles I, II, V and the
+  Development Workflow expanded (lint gate, semantic-release flow, skill
+  lifecycle); token taxonomy corrected to `--color-*`; SCSS-per-component and
+  BEM state modifiers codified; the SMACSS `.is-*` bullet removed.
 
 Follow-up TODOs:
-  - none (start-task.md realignment completed 2026-07-23; code-review command +
-    agent, react-frontend and runtime-debugger agents realigned the same day)
+  - none
 -->
 
 # @viax/uxm Constitution
@@ -68,7 +59,7 @@ typography (`--font-*`) tokens, with dark-theme overrides under
   white→hue→black gradients). Every such exception **MUST** carry a comment in
   the stylesheet justifying it.
 - The legacy viax token names (`--background-*`, `--text-primary`, `--radius-*`
-  from `.claude/handbooks/design-tokens.md`) document a DIFFERENT system and
+  from `.claude/handbooks/legacy/design-tokens.md`) document a DIFFERENT system and
   MUST NOT be used in this package.
 
 *Rationale:* The package's entire value proposition is design-token-driven UI.
@@ -250,4 +241,4 @@ typecheck or build failure ships broken conventions/types/CSS to every consumer.
   document end-to-end and file follow-up issues for drift.
 - **Deferred items.** None.
 
-**Version**: 1.1.0 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-07-07
+**Version**: 1.1.1 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-07

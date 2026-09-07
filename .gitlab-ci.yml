@@ -18,23 +18,18 @@ test:
     - npm config set //nexus.viax.tech/repository/viax-npm/:_auth $NEXUS_NPM_TOKEN
     - npm config set registry https://nexus.viax.tech/repository/viax-npm/
     - npm install
+    # Constitution V gates (.claude/memory/constitution.md): lint, typecheck and a
+    # full build MUST be green before merge — the pre-commit hook only lints
+    # staged files and is bypassable, so this job is the real gate.
+    - npm run lint
+    - npm run typecheck
     # Registry-vs-CSS state-var drift gate — fails the pipeline if any studio
     # knob default and its shipped SCSS fallback disagree (the dead-fallback
     # class; see .claude/memory/gotchas.md and scripts/check-state-var-drift.mjs).
     - npm run check:drift
+    - npm run build
+    # No test framework is configured yet — this is an intentional no-op stub.
     - npm run test:ci
-    - npm run test:coverage
-  coverage: '/All files\s+\|\s+\d+\.\d+\s+\|\s+\d+\.\d+\s+\|\s+\d+\.\d+\s+\|\s+(\d+\.\d+)\s+.*/'
-  artifacts:
-    when: always
-    paths:
-      - junit-report.xml
-    reports:
-      junit: junit-report.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage/cobertura-coverage.xml
-
 
 publish:
   image: "public.ecr.aws/docker/library/node:24.16.0"

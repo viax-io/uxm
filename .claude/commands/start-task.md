@@ -29,10 +29,8 @@ This command implements a mandatory 14-step workflow:
 2. **READ DOCS**: Read `.claude/memory/constitution.md` (the source of truth —
    it wins over any handbook) and the relevant handbooks:
    - `.claude/handbooks/react-style-guide.md` — component conventions
-   - `.claude/handbooks/design-tokens.md` — **legacy token names** (`--background-*`,
-     `--radius-*`) — the live system is `--color-*` in `src/tokens/index.css`
-   - `.claude/handbooks/bem-style-guide.md` — **legacy viax** convention (NOT this repo;
-     see note in `react-style-guide.md`)
+   - `src/tokens/index.css` — the live token system (`--color-*`, `--shadow-*`, `--font-*`)
+   - skip `.claude/handbooks/legacy/` — it documents the old Viax Vue library
 3. **READ CODE**: Search the relevant layer for related components and
    patterns. For new components: look at the closest existing analogue
    (e.g. building `TagInput` → read `src/ui/input/` and `src/ui/chip/`)

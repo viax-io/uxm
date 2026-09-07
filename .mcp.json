@@ -17,8 +17,8 @@
       "url": "https://mcp.figma.com/mcp"
     },
     "chrome-devtools": {
-      "command": "./scripts/chrome-devtools-mcp.sh",
-      "args": []
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
     }
   }
 }
