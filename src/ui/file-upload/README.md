@@ -37,7 +37,7 @@ function Example() {
 | `accept` | `string` | – | Standard `<input type="file" accept>` filter. |
 | `disabled` | `boolean` | `false` | Disables interaction, drop, and all per-row remove buttons. Painted via `data-disabled="true"`. |
 | `titleText` | `string` | `'Upload a file'` | Heading text inside the drop area. |
-| `helpText` | `string` | `multiple`-aware default | Hint line below the title. Replaced with `"Uploading…"` while `state === 'uploading'`. |
+| `helpText` | `string` | `multiple`-aware default | Hint line below the title. Replaced with `labels.uploading` while `state === 'uploading'`. |
 | `allowedTypesText` | `string` | – | Optional constraint copy (e.g. `"PDF, DOCX · up to 10 MB"`). Not enforced — caller-controlled. Hidden during `uploading`. |
 | `errorMessage` | `string` | – | Page-level error rendered below the drop area; also flips the drop area to the `error` state automatically. |
 | `files` | `FileUploadFileMeta[]` | `[]` | Files to render inline. When non-empty, the `<ul>` renders below the drop area. |
@@ -49,6 +49,9 @@ function Example() {
 | `onDragEnter` | `(e: DragEvent<HTMLLabelElement>) => void` | – | Forwarded after internal drag-state update. |
 | `onDragLeave` | `(e: DragEvent<HTMLLabelElement>) => void` | – | Forwarded after internal drag-state update. |
 | `onError` | `(reason: string) => void` | – | Documented for caller-driven validation; the atom itself never invokes it. |
+| `labels` | `FileUploadLabels` | English defaults | Copy the atom generates per row or per state, merged over the defaults. See below. |
+| `locale` | `string` | nearest `UxmLocaleProvider`, else `'en-US'` | BCP-47 tag for the file-size formatter — drives the decimal separator and the localised byte unit. Ignored when `formatSize` is set. |
+| `formatSize` | `(bytes: number) => string` | `Intl` SI units | Replaces the built-in size formatter wholesale. Use it when the default doesn't match house style (e.g. binary `KiB` / `MiB`). |
 | `iconGlyph` | `string` | `'cloud-arrow-up'` | Override the drop-area icon glyph. |
 | `children` | `ReactNode` | – | Optional slot rendered between the drop area / page error and the file list. |
 | `className` | `string` | – | Appended to the outer wrapper. |
@@ -60,11 +63,40 @@ function Example() {
 |-------|------|----------|-------------|
 | `id` | `string` | yes | Stable key for React reconciliation and `onRemove` callbacks. |
 | `name` | `string` | yes | Filename displayed in the row. |
-| `size` | `number` | yes | Bytes. Formatted into a human-readable size by the atom. |
+| `size` | `number` | yes | Bytes. Formatted by the atom through `Intl.NumberFormat` with `style: 'unit'`, so both the unit and the decimal separator follow `locale` (`482.3 kB` under `en-US`, `482,3 кБ` under `uk-UA`, `482,3 ko` under `fr-FR`). Units are **SI**: `Intl`'s `kilobyte` is 1000 B and it offers no binary equivalent, so a 482,304-byte file reads `482.3 kB`, not the 1024-based `471.0 KB` the atom used to print. Sub-1000 sizes render the pluralised long form (`512 bytes`, `512 байтів`) — CLDR's *short* byte form is neither short nor pluralised in English. Pass `formatSize` to take the formatter over (e.g. binary `KiB`). |
 | `status` | `'queued' \| 'uploading' \| 'done' \| 'error'` | no | Defaults to `'queued'`. Drives the row's icon, meta line, border, and progress strip. |
-| `progress` | `number` | no | 0–1 fraction. Used only when `status === 'uploading'`. Omit for indeterminate ("Uploading…"). |
+| `progress` | `number` | no | 0–1 fraction. Used only when `status === 'uploading'`. Omit for indeterminate (`labels.uploading`). |
 | `errorMessage` | `string` | no | Used only when `status === 'error'`. Replaces the size meta on the row in danger styling. |
 | `href` | `string` | no | Direct URL for a stored file. On a `done` row renders the trailing control as `<a href download>`. **Only when the URL is fetchable unauthenticated** — see Downloads below. |
+
+### `FileUploadLabels`
+
+The strings with no dedicated prop, because they are per-row or per-state rather than
+per-instance. Merged over the English defaults — override only what you translate.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `uploading` | `string` | `'Uploading…'` | Busy copy. Replaces the help line while `state="uploading"`, and any row whose `progress` is omitted. |
+| `uploadFailed` | `string` | `'Upload failed'` | Row meta fallback when a failed file carries no `errorMessage` of its own. |
+| `uploadProgress` | `(percent: string, size: string) => string` | `` `Uploading · ${percent} of ${size}` `` | Row meta while uploading with known progress. `percent` arrives pre-formatted (`"61%"`), `size` pre-formatted by `formatSize`. |
+| `removeFile` | `(name: string) => string` | `` `Remove ${name}` `` | Accessible name for a row's trash button on an idle file. |
+| `cancelFile` | `(name: string) => string` | `` `Cancel ${name}` `` | Accessible name for a row's trash button while that file is in flight. |
+
+The last three are **functions, not prefixes** — word order around a filename or a percentage
+differs by language, and a `"Remove" + name` concatenation cannot express that. Never rebuild
+them by string-joining a translated prefix.
+
+```tsx
+<FileUpload
+  files={files}
+  titleText={t('upload.title')}
+  labels={{
+    uploading: t('upload.busy'),
+    uploadProgress: (percent, size) => t('upload.progress', { percent, size }),
+    removeFile: (name) => t('upload.remove', { name }),
+  }}
+/>
+```
 
 ### `FileUploadState`
 
@@ -239,7 +271,7 @@ a control render an inert placeholder whenever any row in the list could have on
 | `hover` | `:hover` or forced `state="hover"` | Border switches to accent. |
 | `drag-over` | Drag enters the label, or forced `state="drag-over"` | Background mixes in accent at 8%, border becomes solid accent, icon re-tints accent. |
 | `focus` | `:focus-within` (input takes keyboard focus) or forced `state="focus"` | Accent border + 2px accent outline (offset 2px). |
-| `uploading` | Forced `state="uploading"` | Cursor switches to `progress`; help text swaps to `"Uploading…"`; allowed-types line hidden; `aria-busy="true"`. |
+| `uploading` | Forced `state="uploading"` | Cursor switches to `progress`; help text swaps to `labels.uploading`; allowed-types line hidden; `aria-busy="true"`. |
 | `error` | `errorMessage` set, or forced `state="error"` | Border switches to danger; page-level error message rendered below in danger styling; `aria-invalid="true"` on the input. |
 | `disabled` | `disabled={true}` (writes `data-disabled="true"`) | Surface-alt background, muted text + icon, dimmed opacity, `not-allowed` cursor. |
 
@@ -248,9 +280,9 @@ a control render an inert placeholder whenever any row in the list could have on
 | Status | Trigger | Visual |
 |--------|---------|--------|
 | `queued` | default / explicit | Document icon, surface background, size meta. |
-| `uploading` | `status: 'uploading'` | Document icon; meta becomes `"Uploading · {pct}% of {size}"` (or `"Uploading…"` if no `progress`); 2px progress strip along the bottom; `role="progressbar"` with `aria-valuenow`. |
+| `uploading` | `status: 'uploading'` | Document icon; meta becomes `labels.uploadProgress(pct, size)` (or `labels.uploading` if no `progress`); 2px progress strip along the bottom; `role="progressbar"` with `aria-valuenow`. |
 | `done` | `status: 'done'` | Check-circle icon in success-text color, success-bg background, success-border border. |
-| `error` | `status: 'error'` | Exclamation-circle icon in danger, danger-bg background, danger-border border, per-file `errorMessage` (or `"Upload failed"`) in danger meta. |
+| `error` | `status: 'error'` | Exclamation-circle icon in danger, danger-bg background, danger-border border, per-file `errorMessage` (or `labels.uploadFailed`) in danger meta. |
 
 ## Accessibility
 

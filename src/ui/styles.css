@@ -48,6 +48,7 @@
 @import "./inline-filter/inline-filter.css";
 @import "./input-with-icon/input-with-icon.css";
 @import "./input/input.css";
+@import "./language-switcher/language-switcher.css";
 @import "./lifecycle-connector/lifecycle-connector.css";
 @import "./lifecycle-drop-slot/lifecycle-drop-slot.css";
 @import "./lifecycle-edge-label/lifecycle-edge-label.css";

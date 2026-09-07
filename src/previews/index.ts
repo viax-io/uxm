@@ -51,6 +51,7 @@ export { InlineActionPreview } from '@/ui/inline-action/inline-action-preview';
 export { InlineFilterPreview } from '@/ui/inline-filter/inline-filter-preview';
 export { InputPreview } from '@/ui/input/input-preview';
 export { InputWithIconPreview } from '@/ui/input-with-icon/input-with-icon-preview';
+export { LanguageSwitcherPreview } from '@/ui/language-switcher/language-switcher-preview';
 export { LifecycleConnectorPreview } from '@/ui/lifecycle-connector/lifecycle-connector-preview';
 export { LifecycleDropSlotPreview } from '@/ui/lifecycle-drop-slot/lifecycle-drop-slot-preview';
 export { LifecycleEdgeLabelPreview } from '@/ui/lifecycle-edge-label/lifecycle-edge-label-preview';

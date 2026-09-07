@@ -105,6 +105,9 @@ Every component folder ships a `README.md` documenting props, CSS variables, MOD
 ### Configuration editor
 [`component-row`](src/ui/component-row/README.md) · [`config-component-row`](src/ui/config-component-row/README.md) · [`config-segment-item`](src/ui/config-segment-item/README.md) · [`explorer-list-item`](src/ui/explorer-list-item/README.md) · [`explorer-section`](src/ui/explorer-section/README.md) · [`segment-card`](src/ui/segment-card/README.md) · [`segment-row`](src/ui/segment-row/README.md)
 
+### Localisation
+[`language-switcher`](src/ui/language-switcher/README.md) · [`locale`](src/ui/locale/README.md) (UxmLocaleProvider + `useUxmLocale`)
+
 ### Lifecycle diagrams
 [`lifecycle-connector`](src/ui/lifecycle-connector/README.md) · [`lifecycle-drop-slot`](src/ui/lifecycle-drop-slot/README.md) · [`lifecycle-edge-label`](src/ui/lifecycle-edge-label/README.md) · [`lifecycle-group-box`](src/ui/lifecycle-group-box/README.md) · [`lifecycle-minimap`](src/ui/lifecycle-minimap/README.md) · [`lifecycle-node-card`](src/ui/lifecycle-node-card/README.md) · [`lifecycle-terminal`](src/ui/lifecycle-terminal/README.md) · [`lifecycle-zoom-control`](src/ui/lifecycle-zoom-control/README.md)
 
@@ -134,6 +137,43 @@ const accent = findToken('--color-accent-bold');
 ```
 
 Each component README's **Design tokens (MODO-configurable)** section names every token the component reads, paired with its `Group / Name` from `themeTokens` — making it straightforward to look up "if I edit X in MODO, what re-tints?"
+
+## Localisation
+
+**The library formats; you translate.** `@viax/uxm` ships no i18n engine — no message catalogue, no translation runtime — because a primitives library that owns translation forces its choice of engine onto every consuming app. Localisation splits in two:
+
+**Copy is yours, and arrives as props.** Every user-visible string a component can render or announce has a prop with an English default — `clearLabel`, `closeLabel`, `emptyState`, `requiredMessage`, `placeholder`, or a grouped `labels={{ … }}` object where a component owns several. Translate in your app and pass the result down. A string you cannot reach from props is a bug — [open an issue](#contributing).
+
+**Formatting is ours, and follows one locale.** Month names, decimal separators, and byte units come from `Intl` and can't be expressed as a prop string, so the components that need them read a locale instead. Mount [`UxmLocaleProvider`](src/ui/locale/README.md) once at the app root:
+
+```tsx
+import { UxmLocaleProvider } from '@viax/uxm';
+
+<UxmLocaleProvider locale="uk-UA">
+  <App />
+</UxmLocaleProvider>;
+```
+
+`Calendar`, `DateInput`, `EditableCell`, `CurrencyInput`, and `FileUpload` pick it up automatically. Each still takes a `locale` prop that wins locally, so one always-USD amount can opt out. Without a provider everything falls back to `en-US`, exactly as before.
+
+To let the user *change* the language, use [`LanguageSwitcher`](src/ui/language-switcher/README.md) — the one control the library owns. It takes the locale list rather than fetching it, and disappears entirely (no wrapper, no disabled control) when only one locale is configured:
+
+```tsx
+<LanguageSwitcher locales={supportedLocales} value={locale} onChange={setLocale} label={t('language')} />
+```
+
+Labels that interpolate a value take a **function**, not a prefix — `removeFile(name)`, `uploadProgress(percent, size)`, `countLabel(count)` — because word order and pluralisation around the value are language-specific:
+
+```tsx
+<FileUpload
+  files={files}
+  titleText={t('upload.title')}
+  labels={{
+    uploading: t('upload.busy'),
+    removeFile: (name) => t('upload.remove', { name }),
+  }}
+/>
+```
 
 ## Previews
 

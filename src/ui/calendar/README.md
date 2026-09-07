@@ -34,7 +34,7 @@ function Example() {
 | `today` | `Date` | `new Date()` | Override for "today" — useful for stories and tests. |
 | `isDisabled` | `(date: Date) => boolean` | – | Predicate for disabled days. Disabled cells ignore clicks. |
 | `weekStartsOn` | `0 \| 1` | `0` | `0` = Sunday (US), `1` = Monday. |
-| `locale` | `string` | `'en-US'` | BCP-47 locale tag — drives month label and weekday names via `Intl.DateTimeFormat`. |
+| `locale` | `string` | nearest `UxmLocaleProvider`, else `'en-US'` | BCP-47 locale tag — drives month label and weekday names via `Intl.DateTimeFormat`. Set it only to pin one calendar to a locale that differs from the rest of the app. Formatting only: the prev / next / drill-up button names stay English until you pass the label props below. |
 | `onChange` | `(value: CalendarValue) => void` | – | Fires after every click. `end` is `null` after the first click of a new range, set after the second. |
 | `onMonthChange` | `(next: Date) => void` | – | Fires on prev/next nav, outside-month-cell click, or drill-down from month/year views. |
 | `className` | `string` | – | Merged onto the root via `cn`. |

@@ -21,7 +21,23 @@ export interface RangeSliderProps {
   unit?: string;
   className?: string;
   style?: CSSProperties;
+  /**
+   * Names the control as a whole. Each thumb derives its own name from this
+   * by appending `" (start)"` / `" (end)"` — English word order baked in, so
+   * translate via `startLabel` / `endLabel` instead of relying on the suffix.
+   */
   'aria-label'?: string;
+  /**
+   * Accessible name for the lower thumb, used verbatim. Defaults to
+   * `` `${aria-label} (start)` `` when `aria-label` is set, else
+   * `"Range start"`.
+   */
+  startLabel?: string;
+  /**
+   * Accessible name for the upper thumb, used verbatim. Defaults to
+   * `` `${aria-label} (end)` `` when `aria-label` is set, else `"Range end"`.
+   */
+  endLabel?: string;
 }
 
 /**
@@ -57,6 +73,8 @@ export function RangeSlider({
   className,
   style,
   'aria-label': ariaLabel,
+  startLabel,
+  endLabel,
 }: RangeSliderProps) {
   const [start, end] = value;
   const range = max - min;
@@ -81,6 +99,13 @@ export function RangeSlider({
   };
 
   const showAnyValues = showStart || showEnd || showRange;
+
+  // Two thumbs on one control need two distinct names, and the composed
+  // default only works in English — "(start)" trailing a noun is not how
+  // every language qualifies it. `startLabel` / `endLabel` therefore replace
+  // the whole name rather than the suffix.
+  const resolvedStartLabel = startLabel ?? (ariaLabel ? `${ariaLabel} (start)` : 'Range start');
+  const resolvedEndLabel = endLabel ?? (ariaLabel ? `${ariaLabel} (end)` : 'Range end');
 
   return (
     <div className={cn('uxm-range-slider', className)} style={mergedStyle}>
@@ -107,7 +132,7 @@ export function RangeSlider({
           step={step}
           disabled={disabled}
           onChange={(e) => handleStart(Number(e.target.value))}
-          aria-label={ariaLabel ? `${ariaLabel} (start)` : 'Range start'}
+          aria-label={resolvedStartLabel}
         />
         <input
           type="range"
@@ -118,7 +143,7 @@ export function RangeSlider({
           step={step}
           disabled={disabled}
           onChange={(e) => handleEnd(Number(e.target.value))}
-          aria-label={ariaLabel ? `${ariaLabel} (end)` : 'Range end'}
+          aria-label={resolvedEndLabel}
         />
       </div>
     </div>

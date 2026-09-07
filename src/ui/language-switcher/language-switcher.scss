@@ -1,0 +1,106 @@
+/* ── language-switcher ── */
+
+/* LanguageSwitcher — globe + current endonym + caret, opening the shared
+   Listbox panel. The panel itself is NOT styled here: it inherits the
+   library-wide `--uxm-listbox-*` surface so every picker in the app agrees,
+   and a studio save on Listbox themes this control's dropdown too. Only the
+   trigger is this atom's own surface. */
+
+/* The atom passes its class into `Listbox`, which merges it onto its OWN root:
+   `cn('uxm-listbox', className)`. That root is `width: 100%` — correct for the
+   field-embedded pickers (CurrencyInput, PhoneInput) but wrong for a standalone
+   trigger, which must size to its content.
+
+   Both selectors are one class, so specificity ties and cascade order decides —
+   and `listbox.css` is imported AFTER `language-switcher.css`, so `width: 100%`
+   would win and stretch the switcher across its flex parent, pushing whatever
+   follows it out of the row. Qualifying with `.uxm-listbox` raises specificity
+   to (0,2,0) so this wins regardless of import order. Do NOT "fix" this by
+   reordering the @imports in styles.css — that ordering is alphabetical and
+   load-bearing elsewhere. */
+.uxm-listbox.uxm-language-switcher {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: auto;
+}
+
+.uxm-language-switcher {
+  display: inline-flex;
+
+  &__trigger {
+    align-items: center;
+    background-color: var(--uxm-language-switcher-bg, transparent);
+    border: 1px solid var(--uxm-language-switcher-border-color, var(--color-border));
+    border-radius: var(--uxm-language-switcher-radius, 8px);
+    color: var(--uxm-language-switcher-color, var(--color-text));
+    cursor: pointer;
+    display: inline-flex;
+    font-size: calc(var(--uxm-language-switcher-font-size, 13px) * var(--type-scale, 1));
+    font-weight: 500;
+    gap: var(--uxm-language-switcher-gap, 6px);
+    line-height: 1.2;
+    padding: var(--uxm-language-switcher-padding-y, 7px)
+      var(--uxm-language-switcher-padding-x, 10px);
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+
+    /* `--state-*` forced modifiers sit beside the real pseudo-classes (the
+       input family's pattern) so the studio can paint a state on an inert
+       preview without synthesising pointer or focus events. */
+    &--state-hover,
+    &:hover:not(:disabled) {
+      background-color: var(--uxm-language-switcher-hover-bg, var(--color-surface));
+      border-color: var(--uxm-language-switcher-hover-border-color, var(--color-border-strong, var(--color-border)));
+    }
+
+    /* AA focus indicator: a 2px ring at >=3:1 against both the trigger fill and
+       the surface behind it. `outline` (not box-shadow) so Windows High
+       Contrast keeps it. */
+    &--state-focus,
+    &:focus-visible {
+      outline: 2px solid var(--uxm-language-switcher-focus-ring, var(--color-accent));
+      outline-offset: 2px;
+    }
+
+    &--state-open,
+    &--open {
+      background-color: var(--uxm-language-switcher-open-bg, var(--color-surface));
+      border-color: var(--uxm-language-switcher-open-border-color, var(--color-accent));
+    }
+
+    /* Icon-only: drop the label but keep the tap target square and >=32px so it
+       still clears the pointer-target guidance in a dense top bar. */
+    &--compact {
+      justify-content: center;
+      min-width: var(--uxm-language-switcher-compact-size, 34px);
+      padding-inline: var(--uxm-language-switcher-compact-padding-x, 8px);
+    }
+
+    &--state-disabled,
+    &:disabled {
+      cursor: not-allowed;
+      opacity: var(--uxm-language-switcher-disabled-opacity, 0.5);
+    }
+  }
+
+  &__current {
+    white-space: nowrap;
+  }
+
+  &__caret {
+    align-items: center;
+    color: var(--uxm-language-switcher-caret-color, var(--color-text-muted));
+    display: inline-flex;
+
+    svg {
+      transition: transform 0.15s;
+    }
+  }
+}
+
+/* Row inside the shared Listbox panel. `lang` is set per row by the component
+   so a screen reader switches voice to the right language when reading an
+   endonym — without it, "Deutsch" is announced with English phonetics. */
+.uxm-language-switcher__row {
+  display: block;
+  white-space: nowrap;
+}

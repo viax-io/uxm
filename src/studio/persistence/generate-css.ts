@@ -84,6 +84,21 @@ const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     paddingY: '--uxm-number-input-padding-y',
     fontSize: '--uxm-number-input-font-size',
   },
+  // Every key below collides with REAL_CSS_PROPS. The atom passes its class to
+  // `Listbox`, so the emitted rule lands on that in-page ROOT while the styled
+  // element is the `__trigger` child, which declares its own `color`,
+  // `border-color`, `font-size` and `gap` from `--uxm-language-switcher-*` and
+  // therefore beats anything inherited — every one of these would be a silent
+  // no-op. Padding is worse: `padding-inline` on the root pads OUTSIDE the
+  // button while the trigger keeps its default 10px/7px.
+  'language-switcher': {
+    color: '--uxm-language-switcher-color',
+    borderColor: '--uxm-language-switcher-border-color',
+    fontSize: '--uxm-language-switcher-font-size',
+    gap: '--uxm-language-switcher-gap',
+    paddingX: '--uxm-language-switcher-padding-x',
+    paddingY: '--uxm-language-switcher-padding-y',
+  },
   // Without this entry `fontSize` falls through REAL_CSS_PROPS and emits a
   // literal `font-size` on `.uxm-color-input`, which the atom's own children
   // (`__value-field`, `__format`) always beat — so the knob did nothing at all.
