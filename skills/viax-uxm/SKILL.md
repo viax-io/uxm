@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax/uxm — the Viax UI primitive library
-  (96 BEM-classed React components as of v4.36.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.37.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax/uxm or the Viax design system; the working directory contains @viax/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax/uxm — React 19 Component Library
 
-> Documents `@viax/uxm` **v4.36.0** (96 components). The version/count markers are stamped by
+> Documents `@viax/uxm` **v4.37.0** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax/uxm`. It does not ge
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax/uxm` is or will be a dependency of the project.
 
-## v4.36.0 — current API surface (overrides training data)
+## v4.37.0 — current API surface (overrides training data)
 
 The library went through a fast release train (1.1.0 → 3.0.1, June–July 2026). If your knowledge
 of the library or old code conflicts with this list, THIS list wins.
@@ -1489,13 +1489,7 @@ skill:
   `href` — a greyed-out link that keeps one is still tab-reachable and Enter still
   follows it. New vars: `--uxm-file-upload-download-icon-color` / `-hover-color`.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     MR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.37.0
 
 - **New `UxmLocaleProvider` — one BCP-47 tag for every `Intl` call in the library.** Mount it
   once at the app root and `Calendar`, `DateInput`, `EditableCell` (via Calendar),
@@ -1543,6 +1537,14 @@ skill:
   `removeFile(name)`, `uploadProgress(percent, size)`, `BulkActionBar`'s `countLabel(count)` —
   the prop is a callback, because word order and pluralisation around the value are
   language-specific. Follow that shape for any new label prop instead of exposing a prefix string.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     MR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 

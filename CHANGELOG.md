@@ -1,3 +1,10 @@
+# [4.37.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.36.0...v4.37.0) (2026-09-07)
+
+
+### Features
+
+* **locale:** add locale sensitivity, resolve static component data from the parent ([eed5b79](https://gitlab.viax.tech/services-viax/uxm/commit/eed5b79c95e98fa230f4e6a12612d7679ab927d0))
+
 # [4.36.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.35.0...v4.36.0) (2026-09-04)
 
 
