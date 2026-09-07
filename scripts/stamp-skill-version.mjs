@@ -12,6 +12,10 @@
  *      → "### New in X.Y.Z", with a fresh empty "### Unreleased" re-opened
  *      below it so the next MR always has somewhere to park its notes
  *   5. component-catalog.md  — "All N components exported ... (as of vX.Y.Z)"
+ *   6. SKILL.md keeps only the KEEP_RELEASE_SECTIONS most recent "### New in"
+ *      sections; older ones are rolled verbatim to the END of
+ *      references/changelog.md (ascending order), so the skill stays short
+ *      without anyone hand-moving text
  *
  * The component count is derived from the src/ui component folders (the same
  * set the barrel exports), so it can never drift from the code. Exits 1 if a
@@ -31,6 +35,10 @@ if (!version || !/^\d+\.\d+\.\d+/.test(version)) {
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const skillPath = join(root, 'skills/viax-uxm/SKILL.md');
 const catalogPath = join(root, 'skills/viax-uxm/references/component-catalog.md');
+const changelogPath = join(root, 'skills/viax-uxm/references/changelog.md');
+
+/** How many "### New in X.Y.Z" sections SKILL.md keeps before rolling to the changelog. */
+const KEEP_RELEASE_SECTIONS = 5;
 
 // Both markers say "BEM-classed React components", so the count is of styled
 // atoms — a folder shipping a `.scss` is exactly that. `src/ui/locale/` is the
@@ -130,6 +138,29 @@ if (unreleasedAt !== -1) {
       promoted +
       UNRELEASED_BLOCK +
       skill.slice(bodyEnd);
+  }
+}
+// Roll surplus release sections into the changelog. The API-surface region
+// runs from the "## vX.Y.Z — current API surface" heading to the next "## ";
+// inside it, every "### New in …" section is a release entry, oldest first.
+// Anything beyond the newest KEEP_RELEASE_SECTIONS moves, verbatim, to the
+// end of references/changelog.md — which is ascending too, so appending keeps
+// the order. "### Unreleased" is never a candidate.
+{
+  const regionStart = skill.search(/^## v\d+\.\d+\.\d+ — current API surface/m);
+  const afterHeading = skill.indexOf('\n', regionStart) + 1;
+  const nextH2 = skill.slice(afterHeading).search(/^## /m);
+  const regionEnd = nextH2 === -1 ? skill.length : afterHeading + nextH2;
+  const region = skill.slice(afterHeading, regionEnd);
+  const starts = [...region.matchAll(/^### New in \d/gm)].map((m) => m.index);
+  if (starts.length > KEEP_RELEASE_SECTIONS) {
+    const cut = starts[starts.length - KEEP_RELEASE_SECTIONS];
+    const moved = region.slice(starts[0], cut).replace(/\n+$/, '\n');
+    skill = skill.slice(0, afterHeading) + region.slice(0, starts[0]) + region.slice(cut) + skill.slice(regionEnd);
+    const changelog = readFileSync(changelogPath, 'utf8').replace(/\n+$/, '\n');
+    writeFileSync(changelogPath, `${changelog}\n${moved}`);
+    // eslint-disable-next-line no-console -- release-log line; the CI job output is the audience
+    console.log(`stamp-skill-version: rolled ${starts.length - KEEP_RELEASE_SECTIONS} release section(s) into references/changelog.md`);
   }
 }
 writeFileSync(skillPath, skill);
