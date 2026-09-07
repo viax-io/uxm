@@ -156,8 +156,7 @@ would be self-defeating, and downstream apps trust its primitives as a floor.
   are `react` / `react-dom` ^19 and that is intentional. Build/release-infra
   devDependencies (e.g. semantic-release plugins) are allowed with a
   justification in the introducing commit.
-- Node engine floor stays at `>=22.14.0` to match `package.json` `engines`
-  (required by `@semantic-release/github` and by npm OIDC trusted publishing).
+- Node engine floor stays at `>=20` to match `package.json` `engines`.
 
 *Rationale:* This is a leaf library — its build output is the product. A lint,
 typecheck or build failure ships broken conventions/types/CSS to every consumer.

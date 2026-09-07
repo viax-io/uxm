@@ -129,6 +129,6 @@
     "url": "https://github.com/viax-io/uxm.git"
   },
   "engines": {
-    "node": ">=22.14.0"
+    "node": ">=20"
   }
 }
