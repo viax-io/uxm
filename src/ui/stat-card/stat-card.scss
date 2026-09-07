@@ -46,6 +46,11 @@
 
     &--down {
       color: var(--uxm-stat-card-trend-down-color, var(--color-danger-text));
+
+      /* One `arrow-up` glyph serves both directions — flip it for `down`. */
+      .uxm-stat-card__trend-icon {
+        transform: rotate(180deg);
+      }
     }
 
     &--neutral {
