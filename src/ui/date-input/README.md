@@ -86,6 +86,7 @@ Set these on the wrapper (via `style` or a higher scope) — because `style` is 
 | `--uxm-date-input-error-bg` | `--color-card` | – | Input background under `--error`. |
 | `--uxm-date-input-error-border` | `--color-danger-text` | – | Input border under `--error`. |
 | `--uxm-date-input-error-color` | `--color-danger-text` | – | Calendar icon under `--error`. |
+| `--uxm-date-input-popover-shadow` | `--shadow-xl` | – | Calendar popover `drop-shadow()` (theme-aware via the global shadow scale). |
 
 ## Design tokens (MODO-configurable)
 

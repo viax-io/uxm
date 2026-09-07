@@ -157,7 +157,12 @@
 
     &:hover {
       opacity: 1;
-      background-color: rgb(0 0 0 / 0.06);
+      /* Tint from the toast's own text colour so the fill reads on every
+         variant and in both themes (a black literal vanished on dark). */
+      background-color: var(
+        --uxm-toast-close-hover-background-color,
+        color-mix(in srgb, currentColor 10%, transparent)
+      );
     }
     &:focus-visible {
       opacity: 1;

@@ -15,6 +15,9 @@
   border-radius: var(--uxm-bulk-action-bar-border-radius, 12px);
   padding: var(--uxm-bulk-action-bar-padding-y, 8px) var(--uxm-bulk-action-bar-padding-x, 12px);
   font-size: calc(var(--uxm-bulk-action-bar-font-size, 14px) * var(--type-scale, 1));
+  /* Composed from the Color / Blur / Offset Y knobs (same pattern as Card,
+     Calendar, Menu, Listbox). The colour fallback is a literal because the
+     knob is a COLOUR and the `--shadow-*` tokens are whole box-shadows. */
   box-shadow: 0 var(--uxm-bulk-action-bar-shadow-offset-y, 10px)
     var(--uxm-bulk-action-bar-shadow-blur, 28px)
     var(--uxm-bulk-action-bar-shadow-color, rgba(0, 0, 0, 0.16));

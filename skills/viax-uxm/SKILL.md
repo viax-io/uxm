@@ -1546,6 +1546,15 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Style-contract sweep (no API change).** `Select`'s open chevron and `StatCard`'s
+  `down` arrow now rotate via BEM modifiers (`uxm-select-dropdown__trigger-chevron--open`,
+  `uxm-stat-card__trend--down .uxm-stat-card__trend-icon`) instead of inline `style`, so a
+  consumer stylesheet can restyle them. Two new override hooks:
+  `--uxm-toast-close-hover-background-color` (default `color-mix(in srgb, currentColor 10%,
+  transparent)` — the old 6 % black wash vanished on dark) and
+  `--uxm-date-input-popover-shadow` (default `--shadow-xl`, so the calendar popover now
+  follows the theme's shadow scale instead of a fixed light-only literal).
+
 ## Workflow
 
 ### Before writing any code
