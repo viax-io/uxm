@@ -1497,6 +1497,53 @@ skill:
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **New `UxmLocaleProvider` — one BCP-47 tag for every `Intl` call in the library.** Mount it
+  once at the app root and `Calendar`, `DateInput`, `EditableCell` (via Calendar),
+  `CurrencyInput`, and `FileUpload` format in that locale. `Calendar` and `CurrencyInput`
+  previously hardcoded `locale = 'en-US'` as a default parameter; they now resolve
+  prop → provider → `DEFAULT_UXM_LOCALE` (still `'en-US'`), so an app that mounts no provider
+  renders exactly as before. Also exports `useUxmLocale(explicit?)` for the same resolution
+  inside a consumer's own component. **It is not an i18n engine** — no catalogue, no runtime;
+  translated copy still arrives through each atom's label props.
+- **Every user-visible string in `/ui` is now reachable from props.** The library's standing rule
+  was already "no user-facing string without an override prop", but ten strings had leaked past
+  it. Closed:
+  - `FileUpload` — new `labels?: FileUploadLabels` (`uploading`, `uploadFailed`, and the composed
+    `uploadProgress(percent, size)` / `removeFile(name)` / `cancelFile(name)`), plus
+    `formatSize?: (bytes) => string`.
+  - `EditableCell` — new `saveErrorMessage`, `invalidNumberMessage`, `invalidDateMessage`,
+    `invalidValueMessage`, joining the existing `requiredMessage`.
+  - `DateInput` — new `invalidMessage`, overriding the mask-naming blur message. The exported
+    `invalidDateMessage(format)` helper stays as the default.
+  - `RangeSlider` — new `startLabel` / `endLabel`, used verbatim for the two thumbs. The old
+    `` `${aria-label} (start)` `` composition remains the default.
+- **File sizes are `Intl`-formatted.** `FileUpload` rows go through
+  `Intl.NumberFormat(locale, { style: 'unit', unit: 'kilobyte', … })` instead of
+  `` `${n.toFixed(1)} KB` ``, so both the decimal separator and the unit follow the locale
+  (`482,3 кБ` under `uk-UA`, `482,3 ko` under `fr-FR`). ⚠️ **Both the unit and the number shift**
+  in the English default: `Intl`'s `kilobyte` is SI (1000 B) while the old formatter divided by
+  1024, so the same 482,304-byte file now reads `482.3 kB` where it read `471.0 KB`. Sub-1000
+  sizes move from `512 B` to the pluralised `512 bytes` (CLDR's *short* byte form is neither
+  short nor pluralised in English, so that tier alone uses `unitDisplay: "long"`). `Intl` has no
+  binary unit to switch to — a product that wants `KiB`/`MiB` owns the formatter via
+  `formatSize`. A runtime without `style: "unit"` support falls back to the English SI form
+  rather than throwing.
+- **New atom `LanguageSwitcher` — the one language control the library owns.** Globe + the
+  current language's endonym + caret, opening the shared Listbox panel. It is deliberately
+  **presentational and data-free**: `locales: string[]`, `value`, `onChange`, and nothing else —
+  no query, no context read, no persistence. Where the list comes from and how the choice is
+  stored stay the consumer's, which is what lets one component serve every viax surface instead
+  of each one forking its own. Two behaviours worth knowing because they are easy to regress:
+  it **renders `null`** (not hidden, not disabled) when `locales.length <= 1`, and its labels are
+  **endonyms from `Intl.DisplayNames`** resolved on the base subtag — `Deutsch`, not
+  `Deutsch (Deutschland)` and not `German` — with the region re-added only where two tags share a
+  base language. Pair it with `UxmLocaleProvider`: the switcher picks the tag, the provider pushes
+  it into every atom's `Intl` formatting.
+- **Composed labels are functions, never prefixes.** Anywhere a name interpolates a value —
+  `removeFile(name)`, `uploadProgress(percent, size)`, `BulkActionBar`'s `countLabel(count)` —
+  the prop is a callback, because word order and pluralisation around the value are
+  language-specific. Follow that shape for any new label prop instead of exposing a prefix string.
+
 ## Workflow
 
 ### Before writing any code

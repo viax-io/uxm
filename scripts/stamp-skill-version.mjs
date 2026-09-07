@@ -32,9 +32,15 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const skillPath = join(root, 'skills/viax-uxm/SKILL.md');
 const catalogPath = join(root, 'skills/viax-uxm/references/component-catalog.md');
 
+// Both markers say "BEM-classed React components", so the count is of styled
+// atoms — a folder shipping a `.scss` is exactly that. `src/ui/locale/` is the
+// first folder here that is NOT one (a context provider + hook, no class, no
+// stylesheet); without this filter it would inflate the published count and
+// describe a provider as a component.
 const componentCount = readdirSync(join(root, 'src/ui')).filter((name) => {
   const dir = join(root, 'src/ui', name);
-  return statSync(dir).isDirectory();
+  if (!statSync(dir).isDirectory()) return false;
+  return readdirSync(dir).some((f) => f.endsWith('.scss'));
 }).length;
 
 /** Replace exactly one occurrence of `pattern` or die — drift must fail the release. */

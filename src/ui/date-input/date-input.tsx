@@ -52,6 +52,12 @@ export interface DateInputProps
   /** Accessible name for the calendar popover dialog. Default `"Choose date"`. */
   calendarDialogLabel?: string;
   /**
+   * Replaces the built-in "unparseable date" message raised on blur. Defaults
+   * to `invalidDateMessage(format)` — `` `Enter a valid date (MM/DD/YYYY)` ``.
+   * Unrelated to `error`, which is the consumer's own message and always wins.
+   */
+  invalidMessage?: string;
+  /**
    * Inline style applied to the WRAPPER (not the inner <input>). CSS custom
    * properties set here cascade to every descendant — the input AND the
    * popover (a sibling of the input) — so theming knobs reach all parts.
@@ -162,6 +168,10 @@ function placeholderFor(format: DateInputFormat, mode: DateInputMode): string {
 /**
  * Inline-validation message for an unparseable date, naming the expected mask.
  * Shared with EditableCell's date field so both surface the identical wording.
+ *
+ * English-only by design: it is the *default*, not the contract. Localise via
+ * `DateInput`'s `invalidMessage` prop (or `EditableCell`'s `invalidDateMessage`),
+ * both of which take precedence over this.
  */
 export function invalidDateMessage(format: DateInputFormat): string {
   return `Enter a valid date (${FORMAT_SPEC[format].placeholder})`;
@@ -180,6 +190,7 @@ export function DateInput({
   clearLabel = 'Clear',
   openCalendarLabel = 'Open calendar',
   calendarDialogLabel = 'Choose date',
+  invalidMessage,
   style,
   onFocus,
   onBlur,
@@ -336,7 +347,8 @@ export function DateInput({
   // A consumer-supplied `error` wins; otherwise surface the internal
   // invalid-date message. Both drive the same visual: red border,
   // `aria-invalid`, and the message below the field.
-  const shownError = error || (invalid ? invalidDateMessage(format) : undefined);
+  const shownError =
+    error || (invalid ? invalidMessage ?? invalidDateMessage(format) : undefined);
 
   return (
     <>

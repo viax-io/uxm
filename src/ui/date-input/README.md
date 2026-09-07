@@ -44,6 +44,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 | `clearLabel` | `string` | `'Clear'` | Accessible name for the clear button. |
 | `openCalendarLabel` | `string` | `'Open calendar'` | Accessible name for the calendar trigger. |
 | `calendarDialogLabel` | `string` | `'Choose date'` | Accessible name for the calendar popover dialog. |
+| `invalidMessage` | `string` | `invalidDateMessage(format)` | Replaces the built-in blur-time "unparseable date" message — `` `Enter a valid date (MM/DD/YYYY)` ``. A translation should keep the mask in it, since that is what tells the user the expected shape. Unrelated to `error`, which is the consumer's own message and wins over both. |
 
 ### `DateInputFormat`
 

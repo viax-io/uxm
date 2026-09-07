@@ -12,6 +12,7 @@ import {
 import { cn } from '@/helpers';
 
 import { Icon } from '../icon';
+import { useUxmLocale } from '../locale';
 
 /**
  * Visual states the FileUpload **drop area** can be forced into via the
@@ -37,7 +38,7 @@ export type FileUploadState = 'default' | 'drag-over' | 'uploading' | 'error';
  *
  * - `queued`: file is added but not yet sent. Neutral row appearance.
  * - `uploading`: file is in flight. Row shows a progress strip and a
- *   verbose meta line ("Uploading · 61% of 471.0 KB"). Caller drives
+ *   verbose meta line (`labels.uploadProgress`). Caller drives
  *   `progress` (0–1).
  * - `done`: file completed. Document icon swaps to a success check.
  * - `error`: file failed. Border + icon + meta switch to danger styling;
@@ -60,7 +61,7 @@ export interface FileUploadFileMeta {
   /**
    * 0–1 progress fraction. Used only when `status === "uploading"`.
    * If omitted during uploading, the row shows an indeterminate state
-   * ("Uploading…") and no fraction.
+   * (`labels.uploading`) and no fraction.
    */
   progress?: number;
   /**
@@ -87,6 +88,37 @@ export interface FileUploadFileMeta {
   href?: string;
 }
 
+/**
+ * Copy the atom generates on its own — the strings that have no dedicated
+ * prop because they are per-row or per-state rather than per-instance.
+ * Merged over the English defaults, so a consumer overrides only what it
+ * needs to translate.
+ *
+ * The two composed names take the filename as an argument rather than a
+ * prefix string: word order around a filename differs by language, and a
+ * `"Remove" + name` concatenation cannot express that.
+ */
+export interface FileUploadLabels {
+  /** Busy copy — replaces the help line and any progressless row. Default `"Uploading…"`. */
+  uploading?: string;
+  /** Row meta fallback when a failed file carries no `errorMessage`. Default `"Upload failed"`. */
+  uploadFailed?: string;
+  /** Row meta while uploading with known progress. Default `` `Uploading · ${percent} of ${size}` ``. */
+  uploadProgress?: (percent: string, size: string) => string;
+  /** Row trash button, idle file. Default `` `Remove ${name}` ``. */
+  removeFile?: (name: string) => string;
+  /** Row trash button, in-flight file. Default `` `Cancel ${name}` ``. */
+  cancelFile?: (name: string) => string;
+}
+
+const DEFAULT_LABELS = {
+  uploading: 'Uploading…',
+  uploadFailed: 'Upload failed',
+  uploadProgress: (percent: string, size: string) => `Uploading · ${percent} of ${size}`,
+  removeFile: (name: string) => `Remove ${name}`,
+  cancelFile: (name: string) => `Cancel ${name}`,
+} satisfies Required<FileUploadLabels>;
+
 export interface FileUploadProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'onError' | 'onDragEnter' | 'onDragLeave'> {
   /**
@@ -111,7 +143,7 @@ export interface FileUploadProps
    * Hint line below the title. Falls back to a `multiple`-aware default
    * ("Drop files here, or click to browse" vs "Drop a file here, or click
    * to browse"). When the caller sets `state="uploading"`, the atom
-   * temporarily replaces this with "Uploading…" — caller's `helpText`
+   * temporarily replaces this with `labels.uploading` — caller's `helpText`
    * value is restored once they flip back to default.
    *
    * Per-file uploading rows do NOT trigger this swap on their own — the
@@ -193,6 +225,26 @@ export interface FileUploadProps
   onDragLeave?: (e: DragEvent<HTMLLabelElement>) => void;
   /** Fires when a drop is rejected (e.g. wrong type — for caller-driven validation). */
   onError?: (reason: string) => void;
+  /**
+   * Accessible names and row copy the atom generates itself. Merged over the
+   * English defaults. `titleText` / `helpText` / `allowedTypesText` stay
+   * separate props — they are per-instance copy, not per-row.
+   */
+  labels?: FileUploadLabels;
+  /**
+   * BCP-47 locale for the file-size formatter. Defaults to the nearest
+   * `UxmLocaleProvider`, then to `"en-US"`. Drives the decimal separator and
+   * the localised byte unit (`"471.0 kB"` vs `"471,0 кБ"`). Ignored when
+   * `formatSize` is supplied.
+   */
+  locale?: string;
+  /**
+   * Replace the built-in file-size formatter wholesale. Receives the raw byte
+   * count from `FileUploadFileMeta.size`. Use this when the default
+   * `Intl`-formatted SI units don't match the product's house style (e.g. an
+   * app that insists on binary `KiB` / `MiB`).
+   */
+  formatSize?: (bytes: number) => string;
   /** Optional override for the drop-area icon glyph. */
   iconGlyph?: string;
   /** Optional slot rendered above the file list (e.g. a summary line). */
@@ -218,12 +270,18 @@ export function FileUpload({
   onDragEnter,
   onDragLeave,
   onError: _onError,
+  labels,
+  locale: localeProp,
+  formatSize,
   className,
   style,
   iconGlyph = 'cloud-arrow-up',
   children,
   ...rest
 }: FileUploadProps) {
+  const l = { ...DEFAULT_LABELS, ...labels };
+  const locale = useUxmLocale(localeProp);
+  const sizeFormatter = formatSize ?? ((bytes: number) => formatBytes(bytes, locale));
   const inputId = useId();
   const helpId = useId();
 
@@ -322,10 +380,10 @@ export function FileUpload({
     (multiple
       ? 'Drop files here, or click to browse'
       : 'Drop a file here, or click to browse');
-  // The uploading state owns the help slot: it swaps to "Uploading…" so
+  // The uploading state owns the help slot: it swaps to `labels.uploading` so
   // the drop area visibly reflects the caller-declared busy phase. Falls
   // back to the normal copy in every other state.
-  const resolvedHelp = isUploading ? 'Uploading…' : baseHelp;
+  const resolvedHelp = isUploading ? l.uploading : baseHelp;
 
   return (
     <div className={cn('uxm-file-upload-wrapper', className)} style={style} {...rest}>
@@ -390,15 +448,15 @@ export function FileUpload({
 
             // Meta line content swaps with status:
             //   queued / done  → file size
-            //   uploading      → "Uploading · 61% of 471.0 KB" (or "Uploading…" if no progress)
+            //   uploading      → labels.uploadProgress (or labels.uploading if no progress)
             //   error          → per-file errorMessage (or generic fallback)
-            const sizeLabel = formatBytes(file.size);
+            const sizeLabel = sizeFormatter(file.size);
             const metaText = isUploading
               ? pctLabel != null
-                ? `Uploading · ${pctLabel} of ${sizeLabel}`
-                : 'Uploading…'
+                ? l.uploadProgress(pctLabel, sizeLabel)
+                : l.uploading
               : isFileError
-                ? file.errorMessage ?? 'Upload failed'
+                ? file.errorMessage ?? l.uploadFailed
                 : sizeLabel;
 
             return (
@@ -469,7 +527,7 @@ export function FileUpload({
                   type="button"
                   className="uxm-file-upload__row-remove"
                   aria-label={
-                    isUploading ? `Cancel ${file.name}` : `Remove ${file.name}`
+                    isUploading ? l.cancelFile(file.name) : l.removeFile(file.name)
                   }
                   disabled={disabled}
                   onClick={() => onRemove?.(file.id)}
@@ -497,9 +555,53 @@ export function FileUpload({
   );
 }
 
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-  return `${(bytes / 1024 / 1024 / 1024).toFixed(1)} GB`;
+// SI, not binary, and deliberately so: the unit names below come from `Intl`
+// (`kilobyte`, `megabyte`, `gigabyte`), and those are defined as powers of
+// 1000. Dividing by 1024 while printing `kB` would misstate the size in every
+// locale, and `Intl` has no binary unit to switch to — the sanctioned list has
+// no `kibibyte`. Consumers who want binary units own the whole formatter via
+// `formatSize` (`KiB` / `MiB`), which is why that prop exists.
+const KB = 1000;
+const MB = KB * 1000;
+const GB = MB * 1000;
+
+/**
+ * Locale-aware size formatter. `Intl`'s `style: "unit"` supplies both the
+ * decimal separator and the translated unit, which a hand-rolled
+ * `` `${n.toFixed(1)} KB` `` cannot: `de-DE` needs a comma, `uk-UA` needs
+ * `кБ`, `fr-FR` counts in octets. Bytes render whole; everything above keeps
+ * one fraction digit, as before.
+ *
+ * The byte tier uses `unitDisplay: "long"` while the rest use `"short"`, and
+ * that asymmetry is deliberate. CLDR's *short* byte form is neither short nor
+ * pluralised in English — `Intl` renders `"512 byte"` — whereas the long form
+ * pluralises correctly in every locale (`512 bytes`, `512 байтів`,
+ * `512 bajtów`). It is also the one tier that can afford the extra characters,
+ * since the number itself is at most three digits.
+ *
+ * Older `Intl` implementations reject `style: "unit"` with a RangeError, so
+ * the English SI form stays as a fallback rather than crashing the row.
+ */
+function formatBytes(bytes: number, locale: string): string {
+  const [value, unit, fallbackUnit] =
+    bytes < KB
+      ? ([bytes, 'byte', 'B'] as const)
+      : bytes < MB
+        ? ([bytes / KB, 'kilobyte', 'kB'] as const)
+        : bytes < GB
+          ? ([bytes / MB, 'megabyte', 'MB'] as const)
+          : ([bytes / GB, 'gigabyte', 'GB'] as const);
+  const isBytes = unit === 'byte';
+  const fractionDigits = isBytes ? 0 : 1;
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: 'unit',
+      unit,
+      unitDisplay: isBytes ? 'long' : 'short',
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    }).format(value);
+  } catch {
+    return `${value.toFixed(fractionDigits)} ${fallbackUnit}`;
+  }
 }

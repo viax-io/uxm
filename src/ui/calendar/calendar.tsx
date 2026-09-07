@@ -4,6 +4,7 @@ import { cn } from '@/helpers';
 
 import { computeMonthGrid, type WeekStart } from '../../lib/calendar-grid';
 import { Icon } from '../icon';
+import { useUxmLocale } from '../locale';
 
 import type { HTMLAttributes, KeyboardEvent } from 'react';
 
@@ -25,7 +26,11 @@ export interface CalendarProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
   isDisabled?: (date: Date) => boolean;
   /** 0 = Sunday (US), 1 = Monday. */
   weekStartsOn?: WeekStart;
-  /** Locale for month label and weekday names. */
+  /**
+   * BCP-47 locale for the month label and weekday names. Defaults to the
+   * nearest `UxmLocaleProvider`, then to `"en-US"`. Set it here only to pin
+   * one calendar to a locale that differs from the rest of the app.
+   */
   locale?: string;
   /** Fires after every click. `end` is null after the first click of a new range, set after the second. */
   onChange?: (value: CalendarValue) => void;
@@ -130,7 +135,7 @@ export function Calendar({
   today,
   isDisabled,
   weekStartsOn = 0,
-  locale = 'en-US',
+  locale: localeProp,
   onChange,
   onMonthChange,
   shadow = true,
@@ -140,6 +145,7 @@ export function Calendar({
   className,
   ...rest
 }: CalendarProps) {
+  const locale = useUxmLocale(localeProp);
   const realToday = useMemo(() => today ?? new Date(), [today]);
 
   // Month state — controlled when `month` prop is provided. When uncontrolled,

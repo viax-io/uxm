@@ -128,6 +128,8 @@ export { InputWithIcon } from './input-with-icon';
 export type { InputWithIconProps } from './input-with-icon';
 export { Select, Textarea, TextInput } from './input';
 export type { SelectProps, SelectSingleProps, SelectMultiProps, TextareaProps, TextInputProps } from './input';
+export { LanguageSwitcher } from './language-switcher';
+export type { LanguageSwitcherProps, LanguageSwitcherVariant } from './language-switcher';
 export { Link } from './link';
 export type { LinkProps, LinkUnderline } from './link';
 export { List, ListItem } from './list';
@@ -140,6 +142,8 @@ export type {
   ListboxTriggerProps,
   MultiListboxProps,
 } from './listbox';
+export { DEFAULT_UXM_LOCALE, UxmLocaleProvider, useUxmLocale } from './locale';
+export type { UxmLocaleProviderProps } from './locale';
 export { Loader } from './loader';
 export type { LoaderLayout, LoaderProps, LoaderVariant } from './loader';
 export { Menu } from './menu';
@@ -162,6 +166,7 @@ export { FileUpload } from './file-upload';
 export type {
   FileStatus,
   FileUploadFileMeta,
+  FileUploadLabels,
   FileUploadProps,
   FileUploadState,
 } from './file-upload';

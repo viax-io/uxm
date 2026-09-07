@@ -33,7 +33,7 @@ function Example() {
 | `defaultValue` | `CurrencyValue` | `{ currency: 'USD', amount: '' }` | Initial value for uncontrolled usage. |
 | `onChange` | `(next: CurrencyValue) => void` | – | Fires on every keystroke and on currency pick with the next value. |
 | `currencies` | `Currency[]` | `CURATED_CURRENCIES` (~20 entries) | Currency list shown in the picker. Pass a single-entry array to effectively lock currency selection. |
-| `locale` | `string` | `'en-US'` | BCP-47 tag — drives the thousands-separator style on blur. Does NOT drive symbol position. |
+| `locale` | `string` | nearest `UxmLocaleProvider`, else `'en-US'` | BCP-47 tag — drives the thousands-separator style on blur. Set it only to pin one amount to a locale that differs from the rest of the app. Does NOT drive symbol position. |
 | `min` | `number` | – | Clamp the committed amount down to this minimum on blur. |
 | `max` | `number` | – | Clamp the committed amount up to this maximum on blur. |
 | `allowNegative` | `boolean` | `false` | Allow a leading `-` sign (refunds / credits). |

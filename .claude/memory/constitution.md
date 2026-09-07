@@ -1,23 +1,32 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.1.0 → 1.1.1
-Bump rationale: PATCH — no principle changed. The legacy Viax Vue handbooks
-(bem-style-guide, design-tokens, ui-components) moved to
-`.claude/handbooks/legacy/` (repo audit 2026-09-07); the Principle I reference
-to `design-tokens.md` now points at the archived path. The Vue-era commands
-`/write-tests` and `/figma-audit` were removed and `/end-task` rewritten around
-the gates this document names (lint, typecheck, check:drift, build).
+Version change: 1.1.1 → 1.2.0
+Bump rationale: MINOR — one new principle (VI. Localisation Boundary),
+codifying the props-in/no-i18n-engine contract that VX-1835 enforced across
+`src/ui`. No existing principle changed meaning.
 
-Modified principles: none (path-only wording in I).
-Added sections: none. Removed sections: none.
+Modified principles: none (VI is additive).
+Added sections:
+  - VI. Localisation Boundary (1.2.0)
+Removed sections: none
 
 Templates requiring updates:
-  ✅ .claude/commands/end-task.md (rewritten — gates + Constitution Check I–V)
-  ✅ .claude/commands/commit-message.md (uxm scopes, semver footer guidance)
-  ✅ .claude/commands/start-task.md, agents/code-review.md, agents/react-frontend.md
-     (legacy-handbook caveats replaced by a pointer to handbooks/legacy/)
-  ✅ .claude/templates/* (no change needed — verified)
+  ✅ .claude/templates/plan-template.md (Constitution Check gained a
+     "VI. Localisation Boundary" row)
+  ✅ .claude/commands/*, .claude/agents/* (no change needed — none of them
+     enumerate the principles; they point at this document)
+
+Previous report (1.1.0 → 1.1.1, 2026-09-07) — kept for history:
+  PATCH: no principle changed. The legacy Viax Vue handbooks (bem-style-guide,
+  design-tokens, ui-components) moved to `.claude/handbooks/legacy/` (repo audit
+  2026-09-07); the Principle I reference to `design-tokens.md` now points at the
+  archived path. The Vue-era commands `/write-tests` and `/figma-audit` were
+  removed and `/end-task` rewritten around the gates this document names (lint,
+  typecheck, check:drift, build). Templates synced then: end-task.md (rewritten),
+  commit-message.md (uxm scopes, semver footer), start-task.md +
+  agents/code-review.md + agents/react-frontend.md (legacy-handbook caveats
+  replaced by a pointer to handbooks/legacy/), .claude/templates/* (verified).
 
 Previous report (1.0.0 → 1.1.0, 2026-07-07) — kept for history:
   MINOR: added "AI Skill & Agent Tooling"; Principles I, II, V and the
@@ -161,6 +170,44 @@ would be self-defeating, and downstream apps trust its primitives as a floor.
 *Rationale:* This is a leaf library — its build output is the product. A lint,
 typecheck or build failure ships broken conventions/types/CSS to every consumer.
 
+### VI. Localisation Boundary
+
+The library formats; the consumer translates. This split is a hard boundary.
+
+- **No i18n engine, ever.** `@viax/uxm` MUST NOT depend on `i18next`,
+  `react-intl`, or any translation runtime, and MUST NOT ship a message
+  catalogue. A primitives library that owns translation forces its choice of
+  engine onto every consuming app.
+- **No user-visible string without an override prop.** Every string an atom can
+  render or announce — visible copy, `aria-label`, `placeholder`, `title`,
+  validation and error messages, empty states — MUST be reachable from props.
+  English defaults are expected and encouraged; an unreachable default is a
+  defect, not a style choice. This covers strings the atom generates
+  *conditionally* (a per-row status, a rejected-commit fallback, a
+  preview-only sample), which is exactly where leaks have happened.
+- **Composed names take a function, not a prefix.** When a label interpolates a
+  value, the prop MUST be a callback — `removeFile(name)`,
+  `uploadProgress(percent, size)`, `countLabel(count)` — never a prefix string
+  the atom concatenates. Word order and pluralisation around an interpolated
+  value are language-specific and a prefix cannot express them.
+- **Locale-sensitive formatting goes through `Intl`, seeded from
+  `useUxmLocale`.** Dates, numbers, currencies, and units MUST NOT be
+  hand-formatted (`toFixed`, manual separators, hardcoded unit suffixes). An
+  atom that formats MUST take `locale?: string` and resolve it as
+  prop → `UxmLocaleProvider` → `DEFAULT_UXM_LOCALE`, so a per-instance pin and
+  an app-wide default both work.
+- **Grouping convention.** One or two strings → discrete props
+  (`clearLabel`, `invalidMessage`). Three or more, or anything per-row →
+  a single `labels?: XLabels` object merged over exported defaults
+  (`{ ...DEFAULT_LABELS, ...labels }`), as `ColorInput` and `FileUpload` do.
+- Adding a string to an atom **MUST** add its prop and document the default in
+  the component README's props table in the same change.
+
+*Rationale:* Consumers ship in multiple markets and cannot patch a hardcoded
+string out of a published `dist`. Keeping copy in props and locale in one
+context makes the whole library localisable without the library knowing what a
+translation is.
+
 ## Distribution & Consumer Contract
 
 - Published name: `@viax/uxm`; registry: Viax Nexus
@@ -241,4 +288,4 @@ typecheck or build failure ships broken conventions/types/CSS to every consumer.
   document end-to-end and file follow-up issues for drift.
 - **Deferred items.** None.
 
-**Version**: 1.1.1 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-07
+**Version**: 1.2.0 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-07

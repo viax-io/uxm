@@ -167,6 +167,29 @@ export interface EditableCellProps {
   required?: boolean;
   /** Override the default required message (per-type: "Select at least one option" / "Select an option" / "Required"). */
   requiredMessage?: string;
+  /**
+   * Shown at `error` severity when `onCommit` rejects without a message of
+   * its own. Default `"Failed to save"`. A rejection that *does* carry an
+   * `Error.message` still wins — that text is the server's, not the atom's.
+   */
+  saveErrorMessage?: string;
+  /**
+   * Shown at `warning` severity when a `type="number"` draft isn't a number.
+   * Default `"Enter a number"`.
+   */
+  invalidNumberMessage?: string;
+  /**
+   * Shown at `warning` severity when a `type="date"` draft doesn't parse.
+   * Defaults to `invalidDateMessage(dateFormat)` — `` `Enter a valid date
+   * (YYYY-MM-DD)` `` — which names the expected mask, so a translation
+   * should keep the mask in it.
+   */
+  invalidDateMessage?: string;
+  /**
+   * Sample warning text for `forceMode="warning"`. Preview-only — production
+   * consumers never see it. Default `"Enter a valid value"`.
+   */
+  invalidValueMessage?: string;
   /** Read-only — clicking does nothing, no edit affordance. */
   disabled?: boolean;
   /** Shown when value is empty/blank. */
@@ -234,6 +257,10 @@ export function EditableCell({
   validate,
   required = false,
   requiredMessage,
+  saveErrorMessage = 'Failed to save',
+  invalidNumberMessage = 'Enter a number',
+  invalidDateMessage: invalidDateMessageProp,
+  invalidValueMessage = 'Enter a valid value',
   disabled,
   placeholder,
   className,
@@ -357,7 +384,7 @@ export function EditableCell({
       } catch (err) {
         // Error severity: the value was acceptable but saving failed.
         setError({
-          message: err instanceof Error ? err.message : 'Failed to save',
+          message: err instanceof Error ? err.message : saveErrorMessage,
           severity: 'error',
         });
         // Refocus the input so the user can retry without re-entering edit mode.
@@ -367,7 +394,7 @@ export function EditableCell({
         setSubmitting(false);
       }
     },
-    [submitting, required, requiredMsg, validate, onCommit],
+    [submitting, required, requiredMsg, saveErrorMessage, validate, onCommit],
   );
 
   // Shared commit path for both the typed input (handleCommit) and the calendar
@@ -418,7 +445,7 @@ export function EditableCell({
         await commitValue('');
         return;
       }
-      setError({ message: 'Enter a number', severity: 'warning' });
+      setError({ message: invalidNumberMessage, severity: 'warning' });
       return;
     }
 
@@ -436,7 +463,7 @@ export function EditableCell({
       const parsed = parseFormattedDate(raw, dateFormat) ?? parseISODate(raw);
       if (!parsed) {
         setError({
-          message: invalidDateMessage(dateFormat),
+          message: invalidDateMessageProp ?? invalidDateMessage(dateFormat),
           severity: 'warning',
         });
         return;
@@ -461,7 +488,17 @@ export function EditableCell({
     }
 
     await commitValue(next);
-  }, [parseDraft, type, draft, dateFormat, value, commitValue, commitDate]);
+  }, [
+    parseDraft,
+    type,
+    draft,
+    dateFormat,
+    value,
+    commitValue,
+    commitDate,
+    invalidNumberMessage,
+    invalidDateMessageProp,
+  ]);
 
   const handlePick = useCallback(
     async (calValue: CalendarValue) => {
@@ -518,9 +555,9 @@ export function EditableCell({
   const editing = forceMode != null || isEditing;
   const shownError: CellError | null =
     forceMode === 'error'
-      ? error ?? { message: 'Failed to save', severity: 'error' }
+      ? error ?? { message: saveErrorMessage, severity: 'error' }
       : forceMode === 'warning'
-        ? error ?? { message: 'Enter a valid value', severity: 'warning' }
+        ? error ?? { message: invalidValueMessage, severity: 'warning' }
         : error;
 
   // Hint shown in the date input — the canonical format pattern for the
