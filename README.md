@@ -1,4 +1,4 @@
-# @viax/uxm
+# @viax.io/uxm
 
 **React 19 UI primitives, design tokens, and theming previews — packaged as a standalone library.**
 
@@ -8,20 +8,20 @@ The package ships **no `"use client"` / `"use server"` directives** by design: c
 
 ## What's in this package
 
-- **UI primitives** (`@viax/uxm/ui`) — BEM-classed React 19 components.
-- **Icon registry** (`@viax/uxm/ui`) — `ICONS`, `ICON_OPTIONS`, `getIcon`, `IconDef` for tooling that enumerates the bundled icon set.
-- **Design tokens** (`@viax/uxm/tokens`) — the canonical `themeTokens` array plus helpers (`findToken`, `resolveHex`, `isTokenValue`) and the `ThemeToken` type.
-- **Themable previews** (`@viax/uxm/previews`) — preview components (one per atom, plus composite previews) used by host shells like MODO's brand-settings editor to render live, knob-driven theme exploration.
-- **WCAG / contrast helpers** (`@viax/uxm`) — `contrastRatio`, `parseColor`, `rgbToHex`, `suggestAccessibleColor`, `suggestAccessibleToken`, `wcagLevel`, plus `RGB` and `TokenCandidate` types.
-- **Default stylesheets** — `@viax/uxm/ui.css` (component primitive defaults) and `@viax/uxm/tokens.css` (token declarations).
+- **UI primitives** (`@viax.io/uxm/ui`) — BEM-classed React 19 components.
+- **Icon registry** (`@viax.io/uxm/ui`) — `ICONS`, `ICON_OPTIONS`, `getIcon`, `IconDef` for tooling that enumerates the bundled icon set.
+- **Design tokens** (`@viax.io/uxm/tokens`) — the canonical `themeTokens` array plus helpers (`findToken`, `resolveHex`, `isTokenValue`) and the `ThemeToken` type.
+- **Themable previews** (`@viax.io/uxm/previews`) — preview components (one per atom, plus composite previews) used by host shells like MODO's brand-settings editor to render live, knob-driven theme exploration.
+- **WCAG / contrast helpers** (`@viax.io/uxm`) — `contrastRatio`, `parseColor`, `rgbToHex`, `suggestAccessibleColor`, `suggestAccessibleToken`, `wcagLevel`, plus `RGB` and `TokenCandidate` types.
+- **Default stylesheets** — `@viax.io/uxm/ui.css` (component primitive defaults) and `@viax.io/uxm/tokens.css` (token declarations).
 
 ## Install
 
 ```bash
-npm install @viax/uxm
+npm install @viax.io/uxm
 ```
 
-Peer deps: `react@^19`, `react-dom@^19`. Node `>=20` for local dev.
+Peer deps: `react@^19`, `react-dom@^19`. Node `>=22.14.0` for local dev.
 
 The package is published to the private Viax Nexus npm registry; see [Configure the registry](#configure-the-registry) below.
 
@@ -31,14 +31,14 @@ Import both stylesheets once, at your application entry point:
 
 ```ts
 // e.g. src/main.tsx
-import '@viax/uxm/tokens.css';
-import '@viax/uxm/ui.css';
+import '@viax.io/uxm/tokens.css';
+import '@viax.io/uxm/ui.css';
 ```
 
 Then use the primitives anywhere:
 
 ```tsx
-import { ButtonPrimary, Icon } from '@viax/uxm/ui';
+import { ButtonPrimary, Icon } from '@viax.io/uxm/ui';
 
 export function Page() {
   return (
@@ -52,7 +52,7 @@ export function Page() {
 Consume tokens programmatically:
 
 ```ts
-import { themeTokens, findToken, resolveHex } from '@viax/uxm/tokens';
+import { themeTokens, findToken, resolveHex } from '@viax.io/uxm/tokens';
 
 const accent = findToken('--color-accent-bold');
 const hex = resolveHex(accent?.cssVar ?? '#000');
@@ -61,19 +61,19 @@ const hex = resolveHex(accent?.cssVar ?? '#000');
 Both primary entry points are also re-exported from the root:
 
 ```ts
-import { ButtonPrimary, themeTokens } from '@viax/uxm';
+import { ButtonPrimary, themeTokens } from '@viax.io/uxm';
 ```
 
 ## Subpath exports
 
 | Entry | Purpose |
 |-------|---------|
-| `@viax/uxm` | Root barrel — re-exports `ui` + `tokens` + WCAG helpers. |
-| `@viax/uxm/ui` | All UI primitives + icon registry. Tree-shake-friendly per-component imports. |
-| `@viax/uxm/ui.css` | Compiled component stylesheet — required for visual output. |
-| `@viax/uxm/tokens` | `themeTokens` array + `findToken` / `resolveHex` / `isTokenValue` + `ThemeToken` type. |
-| `@viax/uxm/tokens.css` | `--color-*` declarations on `:root`. |
-| `@viax/uxm/previews` | Preview components for host shells building theme editors. **No preview symbol leaks into `/ui`** — see the tree-shake guarantee below. |
+| `@viax.io/uxm` | Root barrel — re-exports `ui` + `tokens` + WCAG helpers. |
+| `@viax.io/uxm/ui` | All UI primitives + icon registry. Tree-shake-friendly per-component imports. |
+| `@viax.io/uxm/ui.css` | Compiled component stylesheet — required for visual output. |
+| `@viax.io/uxm/tokens` | `themeTokens` array + `findToken` / `resolveHex` / `isTokenValue` + `ThemeToken` type. |
+| `@viax.io/uxm/tokens.css` | `--color-*` declarations on `:root`. |
+| `@viax.io/uxm/previews` | Preview components for host shells building theme editors. **No preview symbol leaks into `/ui`** — see the tree-shake guarantee below. |
 
 ## Component catalog
 
@@ -123,7 +123,7 @@ The canonical token catalogue lives in `src/tokens/index.ts` as the `themeTokens
 - `group` — one of `surfaces` · `text` · `borders` · `accent` · `highlights` · `categories` · `semantic`
 
 ```ts
-import { themeTokens, findToken } from '@viax/uxm/tokens';
+import { themeTokens, findToken } from '@viax.io/uxm/tokens';
 
 themeTokens.forEach((t) => {
   console.log(`${t.group}/${t.name} → ${t.cssVar} = ${t.hex} (dark: ${t.darkHex})`);
@@ -137,14 +137,14 @@ Each component README's **Design tokens (MODO-configurable)** section names ever
 
 ## Previews
 
-Previews live under `@viax/uxm/previews` and are designed for **host shells building theme editors**. Each preview:
+Previews live under `@viax.io/uxm/previews` and are designed for **host shells building theme editors**. Each preview:
 
 - Accepts a uniform `PreviewProps = { componentId, styles, variants, shell? }` signature.
 - Reads `styles` (slider/colorpicker knob values) and projects them as inline CSS variables on the component instance, exercising the production CSS path so what designers see is what consumers ship.
 - Optionally reads `shell` (host-provided context: brand, theme, `uploadAsset`) to integrate with the editor's broader state — e.g. `LoginPagePreview` and `BrandSettingsPreview` use `shell.uploadAsset` for logo uploads.
 
 ```tsx
-import { ButtonPreview, type PreviewShellContext } from '@viax/uxm/previews';
+import { ButtonPreview, type PreviewShellContext } from '@viax.io/uxm/previews';
 
 <ButtonPreview
   componentId="button-primary"
@@ -154,42 +154,39 @@ import { ButtonPreview, type PreviewShellContext } from '@viax/uxm/previews';
 />;
 ```
 
-**Tree-shake guarantee**: no preview symbols leak into `@viax/uxm/ui`, so consumers that only import primitives never pay for preview code. This is **upheld by convention, not enforced by the build** — nothing fails if a barrel breaks it. When you touch `src/ui/index.ts` or any `src/ui/*/index.ts`, check by hand that no `*-preview` module is re-exported; after a build, `grep "Preview" dist/ui/index.js` should return nothing.
+**Tree-shake guarantee**: no preview symbols leak into `@viax.io/uxm/ui`, so consumers that only import primitives never pay for preview code. This is **upheld by convention, not enforced by the build** — nothing fails if a barrel breaks it. When you touch `src/ui/index.ts` or any `src/ui/*/index.ts`, check by hand that no `*-preview` module is re-exported; after a build, `grep "Preview" dist/ui/index.js` should return nothing.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  @viax/uxm/previews                             │  ← host editors (MODO brand-settings)
+│  @viax.io/uxm/previews                             │  ← host editors (MODO brand-settings)
 │  themable, shell-aware preview components       │
 └────────────────┬────────────────────────────────┘
                  │ consumes
                  ▼
 ┌─────────────────────────────────────────────────┐
-│  @viax/uxm/ui                                   │  ← application code
+│  @viax.io/uxm/ui                                   │  ← application code
 │  BEM-classed React components                   │
 │  + Icon registry (ICONS, getIcon, …)            │
 └────────────────┬────────────────────────────────┘
                  │ reads fallbacks
                  ▼
 ┌─────────────────────────────────────────────────┐
-│  @viax/uxm/tokens (+ tokens.css)                │  ← MODO brand-settings edits this
+│  @viax.io/uxm/tokens (+ tokens.css)                │  ← MODO brand-settings edits this
 │  themeTokens array + --color-* declarations     │
 └─────────────────────────────────────────────────┘
 ```
 
 Every layer is independently importable; every layer has its own type declarations and own CSS bundle.
 
-## Configure the registry
+## Install
 
-This package is private and hosted on the Viax **Nexus** npm registry — not on public npm and not on GitLab Packages. Point npm at it in your project's `.npmrc` or `~/.npmrc`:
+Published publicly on npm — no registry configuration and no VPN required:
 
-```ini
-registry=https://nexus.viax.tech/repository/viax-npm/
-//nexus.viax.tech/repository/viax-npm/:_auth=<BASE64_NEXUS_TOKEN>
+```bash
+npm install @viax.io/uxm
 ```
-
-Two Nexus repositories are involved: CI **publishes** to `npm-private` (see `publishConfig` in `package.json`), while `viax-npm` is the registry both CI and this repo's own `.npmrc` **install** from. Authenticate against whichever you need — CI authenticates against both.
 
 ## Build & develop
 

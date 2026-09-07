@@ -9,7 +9,7 @@ This is the non-modal counterpart to [`Dialog`](../dialog/README.md): shells con
 ## Usage
 
 ```tsx
-import { Popover } from '@viax/uxm/ui';
+import { Popover } from '@viax.io/uxm/ui';
 
 const anchorRef = useRef<HTMLButtonElement>(null);
 const [open, setOpen] = useState(false);

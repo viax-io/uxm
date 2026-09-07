@@ -879,7 +879,7 @@ export const compositeDefs: ComponentDef[] = [
       { name: 'onClick', description: 'Fires when the row is activated. Wired for you when the trigger is spread with a Menu/Listbox `triggerProps` — do not add your own on top, it would override theirs.', payload: 'MouseEvent' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'SidebarNavTrigger',
       props: [
         { name: 'icon', type: 'ReactNode', description: 'The mark on the left — a bare Icon in a switcher, an Avatar in an account row. No tile is drawn behind it: the slot is reserved, sized and aligned, and paints nothing.' },

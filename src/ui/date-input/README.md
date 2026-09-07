@@ -7,7 +7,7 @@ A masked date entry field with an optional calendar popover. Supports single-dat
 ## Usage
 
 ```tsx
-import { DateInput } from '@viax/uxm';
+import { DateInput } from '@viax.io/uxm';
 
 function Example() {
   const [date, setDate] = useState('');

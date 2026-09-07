@@ -15,7 +15,7 @@ Backdrop styling is **global** (`--backdrop-color` / `--backdrop-blur`), not per
 ## Usage
 
 ```tsx
-import { Dialog, Modal, ButtonPrimary, ButtonTertiary } from '@viax/uxm/ui';
+import { Dialog, Modal, ButtonPrimary, ButtonTertiary } from '@viax.io/uxm/ui';
 
 const [open, setOpen] = useState(false);
 

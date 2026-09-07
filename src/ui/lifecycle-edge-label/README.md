@@ -7,7 +7,7 @@ A small inline-flex pill rendered on the midpoint of a `LifecycleConnector` to l
 ## Usage
 
 ```tsx
-import { LifecycleEdgeLabel } from '@viax/uxm';
+import { LifecycleEdgeLabel } from '@viax.io/uxm';
 
 function BranchLabels() {
   return (

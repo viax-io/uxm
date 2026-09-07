@@ -17,7 +17,7 @@ Visually the two are deliberately different: Banner tints its whole background w
 Mount `Toaster` once at the app root:
 
 ```tsx
-import { Toaster } from '@viax/uxm/ui';
+import { Toaster } from '@viax.io/uxm/ui';
 
 <Toaster position="bottom-right" max={3} />
 ```
@@ -25,7 +25,7 @@ import { Toaster } from '@viax/uxm/ui';
 Then fire from anywhere — no React context needed, since the API writes to a module-level store the `Toaster` subscribes to:
 
 ```tsx
-import { toast } from '@viax/uxm/ui';
+import { toast } from '@viax.io/uxm/ui';
 
 toast.success('Saved');
 toast.error('Network error', { duration: 6000 });

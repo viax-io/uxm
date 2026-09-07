@@ -7,7 +7,7 @@ A drop-zone + file-picker atom that supports click-to-browse, drag-and-drop, and
 ## Usage
 
 ```tsx
-import { FileUpload, type FileUploadFileMeta } from '@viax/uxm';
+import { FileUpload, type FileUploadFileMeta } from '@viax.io/uxm';
 
 function Example() {
   const [files, setFiles] = useState<FileUploadFileMeta[]>([]);

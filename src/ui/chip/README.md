@@ -7,7 +7,7 @@ Material Design's interactive label component — four modes (`assist`, `filter`
 ## Usage
 
 ```tsx
-import { Chip, Icon } from '@viax/uxm';
+import { Chip, Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

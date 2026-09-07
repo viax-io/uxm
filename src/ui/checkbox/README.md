@@ -7,7 +7,7 @@ The native input is visually hidden but kept in the accessibility tree (`opacity
 ## Usage
 
 ```tsx
-import { Checkbox } from '@viax/uxm';
+import { Checkbox } from '@viax.io/uxm';
 
 function Example() {
   return (

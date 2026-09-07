@@ -7,7 +7,7 @@ It is a `<button type="button">` extending `ButtonHTMLAttributes`, so the `trigg
 ## Usage
 
 ```tsx
-import { Menu, SidebarNavTrigger, Icon, type MenuEntry } from '@viax/uxm/ui';
+import { Menu, SidebarNavTrigger, Icon, type MenuEntry } from '@viax.io/uxm/ui';
 
 <Menu
   items={workspaces}

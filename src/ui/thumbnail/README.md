@@ -7,7 +7,7 @@ A bounded, square image frame with an automatic icon fallback when no source is 
 ## Usage
 
 ```tsx
-import { Thumbnail } from '@viax/uxm';
+import { Thumbnail } from '@viax.io/uxm';
 
 function Example() {
   return (

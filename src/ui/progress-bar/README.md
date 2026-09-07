@@ -12,7 +12,7 @@ Two variants share one value:
   percentage centered, caption below.
 
 ```tsx
-import { ProgressBar } from '@viax/uxm/ui';
+import { ProgressBar } from '@viax.io/uxm/ui';
 
 <ProgressBar value={62} label="Uploading…" />
 <ProgressBar variant="ring" value={62} />

@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Use this agent for comprehensive code review of changed files in the @viax/uxm UI library. It analyzes code quality, React/TypeScript patterns, ESLint compliance, BEM/token discipline, accessibility, and security. Spawned by the /code-review command for thorough reviews.
+description: Use this agent for comprehensive code review of changed files in the @viax.io/uxm UI library. It analyzes code quality, React/TypeScript patterns, ESLint compliance, BEM/token discipline, accessibility, and security. Spawned by the /code-review command for thorough reviews.
 model: sonnet
 color: green
 ---
@@ -26,7 +26,7 @@ classes are often folded into the block name (`uxm-button-primary`, not
 
 ## Project Context
 
-- **Project:** `@viax/uxm` — a **standalone, published** React 19 UI library
+- **Project:** `@viax.io/uxm` — a **standalone, published** React 19 UI library
   (NOT a monorepo). Published to the private Viax Nexus registry.
 - **Layers** (dependency direction: `studio / previews → ui → tokens`):
   - `src/ui/` — BEM-classed primitives, one folder per component

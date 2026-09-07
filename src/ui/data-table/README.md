@@ -7,7 +7,7 @@ A generic, themeable table primitive for rendering tabular data with typed colum
 ## Usage
 
 ```tsx
-import { DataTable, type DataTableColumn } from '@viax/uxm';
+import { DataTable, type DataTableColumn } from '@viax.io/uxm';
 
 type User = { id: string; name: string; email: string; signups: number };
 
@@ -92,7 +92,7 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 
 ## Design tokens (MODO-configurable)
 
-When the component-scoped variables above are not overridden, DataTable resolves colour through the global design-token layer exported by `@viax/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor: changes saved there flow into `:root` as `--color-*` declarations and re-tint every table instantly.
+When the component-scoped variables above are not overridden, DataTable resolves colour through the global design-token layer exported by `@viax.io/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor: changes saved there flow into `:root` as `--color-*` declarations and re-tint every table instantly.
 
 | Token | Group / name | Used for |
 |-------|--------------|----------|

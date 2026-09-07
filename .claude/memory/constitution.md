@@ -29,10 +29,10 @@ Follow-up TODOs:
   - none
 -->
 
-# @viax/uxm Constitution
+# @viax.io/uxm Constitution
 
 This document is the source of truth for engineering, design and release
-discipline in the `@viax/uxm` React 19 UI primitives + design tokens package.
+discipline in the `@viax.io/uxm` React 19 UI primitives + design tokens package.
 It governs every change merged into `master` and every artifact published to
 the Viax Nexus npm registry. Where any handbook, command, agent prompt, or
 ad-hoc practice conflicts with this constitution, **the constitution wins**.
@@ -156,15 +156,16 @@ would be self-defeating, and downstream apps trust its primitives as a floor.
   are `react` / `react-dom` ^19 and that is intentional. Build/release-infra
   devDependencies (e.g. semantic-release plugins) are allowed with a
   justification in the introducing commit.
-- Node engine floor stays at `>=20` to match `package.json` `engines`.
+- Node engine floor stays at `>=22.14.0` to match `package.json` `engines`
+  (required by `@semantic-release/github` and by npm OIDC trusted publishing).
 
 *Rationale:* This is a leaf library — its build output is the product. A lint,
 typecheck or build failure ships broken conventions/types/CSS to every consumer.
 
 ## Distribution & Consumer Contract
 
-- Published name: `@viax/uxm`; registry: Viax Nexus
-  (`https://nexus.viax.tech/repository/viax-npm/`).
+- Published name: `@viax.io/uxm`; registry: public npm
+  (`https://registry.npmjs.org/`).
 - Exports map in `package.json` is the canonical public surface. Adding a new
   entry is a MINOR; removing or renaming one is a MAJOR.
 - `dist/` is the only directory shipped (plus `README.md`, `CHANGELOG.md`).

@@ -7,8 +7,8 @@ Renders a native `<button>` with two BEM-classed inner spans (`__icon`, `__label
 ## Usage
 
 ```tsx
-import { ButtonWithIcon } from '@viax/uxm';
-import { Icon } from '@viax/uxm';
+import { ButtonWithIcon } from '@viax.io/uxm';
+import { Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

@@ -6,7 +6,7 @@ A monospace code surface for developer tooling — query consoles, payload edito
 
 **There is no syntax highlighting, and there cannot be inside this atom.** A `<textarea>` renders one uniform text run — the browser gives you no way to colour a token inside it. The usual workaround is a `<pre>` overlay behind transparent text plus a tokenizer, which is a different component with a different failure surface; if highlighting becomes a real requirement, build that, don't add a prop here.
 
-**It is not a wrapper over CodeMirror or Monaco.** `@viax/uxm` ships zero runtime dependencies by constitutional rule (`dependencies` is `{}`; peers are `react` / `react-dom` only). The upside of staying native is everything that comes free with a real form control: IME composition, undo/redo, form participation, mobile keyboards, and a screen-reader contract that already works.
+**It is not a wrapper over CodeMirror or Monaco.** `@viax.io/uxm` ships zero runtime dependencies by constitutional rule (`dependencies` is `{}`; peers are `react` / `react-dom` only). The upside of staying native is everything that comes free with a real form control: IME composition, undo/redo, form participation, mobile keyboards, and a screen-reader contract that already works.
 
 ## Why it isn't `<Textarea variant="code">`
 
@@ -17,7 +17,7 @@ A monospace code surface for developer tooling — query consoles, payload edito
 ## Usage
 
 ```tsx
-import { CodeBlock, CodeEditor } from '@viax/uxm';
+import { CodeBlock, CodeEditor } from '@viax.io/uxm';
 
 function QueryConsole() {
   const [query, setQuery] = useState(DEFAULT_QUERY);

@@ -7,7 +7,7 @@ A two-axis application chrome â€” left sidebar + top bar + scrollable content â€
 ## Usage
 
 ```tsx
-import { PageShell, AppSidebar, AppTopBar } from '@viax/uxm';
+import { PageShell, AppSidebar, AppTopBar } from '@viax.io/uxm';
 
 function App({ children }) {
   return (

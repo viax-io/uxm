@@ -17,7 +17,7 @@ The ± buttons **compose the [`IconButton`](../icon-button/README.md) atom** rat
 ## Usage
 
 ```tsx
-import { NumberStepper } from '@viax/uxm/ui';
+import { NumberStepper } from '@viax.io/uxm/ui';
 
 const [size, setSize] = useState(12);
 

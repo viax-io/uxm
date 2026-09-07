@@ -64,7 +64,7 @@ Don't treat it as an error, retry, or re-stage — confirm success via the usual
 
 Releases are cut by `semantic-release` from conventional commits, and a
 `BREAKING CHANGE:` footer (on **any** commit in the release range) forces a
-**major** bump for the whole `@viax/uxm` package — every consumer must then
+**major** bump for the whole `@viax.io/uxm` package — every consumer must then
 migrate. Reserve that for changes that actually break a **known external
 consumer contract**.
 

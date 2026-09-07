@@ -1,12 +1,12 @@
 ---
 name: viax-uxm
 description: >
-  Build React 19 apps and components using @viax/uxm — the Viax UI primitive library
+  Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
   (96 BEM-classed React components as of v4.36.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
-  @viax/uxm or the Viax design system; the working directory contains @viax/uxm in package.json
-  dependencies; user mentions Viax tokens, themeTokens, MODO brand-settings, the @viax/uxm/studio editor (UxmApp), or UXM previews;
+  @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
+  dependencies; user mentions Viax tokens, themeTokens, MODO brand-settings, the @viax.io/uxm/studio editor (UxmApp), or UXM previews;
   user asks which component to use for a UX task (e.g. "button vs link", "banner vs badge",
   "toast vs banner", "how to render a tabular list") within a Viax React context; user pastes a
   Figma design that needs to be implemented with Viax UI primitives in React. Use this skill to
@@ -16,20 +16,20 @@ description: >
 keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-system, modo, brand-settings, primitives, themable, previews, studio, style-editor, UxmApp, generateOverridesCss
 ---
 
-# @viax/uxm — React 19 Component Library
+# @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax/uxm` **v4.36.0** (96 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.36.0** (96 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
-> ⚠️ **A consumer may install behind the published latest** — check the project's `@viax/uxm` pin
+> ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
 > in its `package.json` before relying on a recent addition (each "New in X.Y.Z" section below
 > names the version that shipped it). The skill documents the released surface named in the
 > heading above regardless of what any consumer currently installs. No other line in this file
 > states a "current" version — the stamped heading is the single source of truth.
 
-This skill turns Claude into a competent consumer of `@viax/uxm`. It does not generate Vue MFA
+This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not generate Vue MFA
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
-(Next.js App Router or Vite SPA) and that `@viax/uxm` is or will be a dependency of the project.
+(Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
 ## v4.36.0 — current API surface (overrides training data)
 
@@ -102,7 +102,7 @@ of the library or old code conflicts with this list, THIS list wins.
   globally. The var names match what the studio's `generateOverridesCss` emits
   (`--uxm-{id}-{kebab(prop)}`). This is what makes a host's saved theme repaint real component
   *states* (hover/checked/…), not just the resting look.
-- **`@viax/uxm/studio` ships the live style editor as a mountable component (`UxmApp`)** — the MODO
+- **`@viax.io/uxm/studio` ships the live style editor as a mountable component (`UxmApp`)** — the MODO
   design workbench, embeddable in any host portal. See "Embedding the style editor" below. (Present
   since 2.2.x; matured through 2.3.1–2.4.1 with brand-asset handling, a light/dark toggle, and a
   brand-aware colour picker.)
@@ -112,7 +112,7 @@ of the library or old code conflicts with this list, THIS list wins.
   is now the lead of the Accent token group (first in `themeTokens`); editing any accent shade in
   Brand Settings prompts a "Recalculate accent palette?" modal that re-tints the rest of the group
   to that hue across both light and dark, rebuilding each derived shade from its designed default.
-  The colour-space maths is now **public API on `@viax/uxm`**: `rgbToHsl`, `hslToRgb`, `hexToHsl`,
+  The colour-space maths is now **public API on `@viax.io/uxm`**: `rgbToHsl`, `hslToRgb`, `hexToHsl`,
   `hslToHex`, `retintHue` (+ the `HSL` type). Use `retintHue(color, hue)` to derive a palette from
   one brand hue. See `references/design-tokens.md` → "HEX ↔ HSL / palette maths".
 
@@ -234,10 +234,10 @@ reached the published library; now shipped in 2.8.0.
   props. Also `'use client'` directives were dropped from the touched files (the library never
   needed them — see "Writing the JSX").
 
-The library lives at `https://gitlab.viax.tech/services-viax/uxm` and publishes as `@viax/uxm`
-to the Viax Nexus npm registry (`https://nexus.viax.tech/repository/viax-npm/`). When a checkout
+The library lives at `https://github.com/viax-io/uxm` and publishes as `@viax.io/uxm`
+to the public npm registry (`https://registry.npmjs.org/`). When a checkout
 of that repo is available (search the workspace for a `package.json` with
-`"name": "@viax/uxm"`), **prefer the per-component READMEs there as the authoritative
+`"name": "@viax.io/uxm"`), **prefer the per-component READMEs there as the authoritative
 reference** (paths relative to the repo root):
 
 - Top-level: `README.md` — install, subpath exports, full component catalog, MODO theming flow,
@@ -249,7 +249,7 @@ reference** (paths relative to the repo root):
 - Tokens: `src/tokens/index.ts` — canonical `themeTokens` array.
 
 When no checkout is available (working in a project that only `npm install`s the package), the
-installed package still carries `node_modules/@viax/uxm/README.md`, `CHANGELOG.md`, and full
+installed package still carries `node_modules/@viax.io/uxm/README.md`, `CHANGELOG.md`, and full
 `.d.ts` types with the same JSDoc. Beyond that, fall back to the bundled references in this
 skill:
 
@@ -308,7 +308,7 @@ skill:
     config).
   - **The font picker is the library `Select`** (was a raw native `<select>`, whose OS-level popup
     dropped picks under the canvas event-capture re-renders — selections never landed).
-- **`fontFileUrl` / `safeFontFamily` are now exported from `@viax/uxm/studio/generate-css`** —
+- **`fontFileUrl` / `safeFontFamily` are now exported from `@viax.io/uxm/studio/generate-css`** —
   the Google-Fonts css2 URL builder (weights 400–700) and the font-name sanitiser the Build path
   uses. Reuse these in host appliers instead of hand-rolling font URL/escaping logic.
 
@@ -342,7 +342,7 @@ skill:
 - **`required` + `requiredMessage` across the pickers** — `Select` (both modes), `PillSelect`,
   `EditableCell` and `DataTable` columns (`editorRequired` / `editorRequiredMessage`). The wording
   is shared: `DEFAULT_MULTI_REQUIRED_MESSAGE` (`'Select at least one option'`) is exported from
-  `@viax/uxm/ui` so every picker reports the identical text. Semantics differ by family, on purpose:
+  `@viax.io/uxm/ui` so every picker reports the identical text. Semantics differ by family, on purpose:
   the **live** input-family atoms (`Select`, `PillSelect`) let you empty the field and just flag it
   (`aria-required` + a `FieldError` below), while the **commit-boundary** `EditableCell` refuses the
   commit and shows a warning Banner — checked BEFORE your `validate`, so you never hand-write the
@@ -775,7 +775,7 @@ skill:
      heading silently mislabels them and they never get re-stamped. -->
 
 - **New `ComponentDef.canvasFill` — a studio-canvas layout flag.** Exported from
-  `@viax/uxm/studio`. The canvas centres a preview on both axes by default; set `canvasFill: true`
+  `@viax.io/uxm/studio`. The canvas centres a preview on both axes by default; set `canvasFill: true`
   on a def and it fills the width and top-aligns instead. For gallery/list previews, where
   centring wastes horizontal space and — worse — re-centres vertically as content height changes,
   so filtering a list makes the whole block jump. Optional and additive: every def that omits it
@@ -1501,18 +1501,17 @@ skill:
 
 ### Before writing any code
 
-1. Confirm the project is a React/Next.js consumer of `@viax/uxm`:
-   - Check `package.json` for `@viax/uxm` in `dependencies`.
+1. Confirm the project is a React/Next.js consumer of `@viax.io/uxm`:
+   - Check `package.json` for `@viax.io/uxm` in `dependencies`.
    - Check for `react@^19` peer.
    - If absent and the user wants to add it, refer them to the install section of the
-     `@viax/uxm` README (the package comes from the Viax Nexus registry —
-     `npm config set registry https://nexus.viax.tech/repository/viax-npm/` or a scoped
-     `.npmrc` entry is required).
+     `@viax.io/uxm` README (the package is on public npm — plain
+     `npm install @viax.io/uxm`, no registry configuration required).
 2. Confirm CSS imports are in place. Both stylesheets must be imported once at the app entry:
    ```ts
    // app/layout.tsx (Next.js) or main.tsx (Vite/CRA)
-   import '@viax/uxm/tokens.css';
-   import '@viax/uxm/ui.css';
+   import '@viax.io/uxm/tokens.css';
+   import '@viax.io/uxm/ui.css';
    ```
    If missing, add them before any visual work.
 
@@ -1530,10 +1529,10 @@ guess prop names from training data.
 ### Writing the JSX
 
 - **Import from the narrowest subpath available** for tree-shaking:
-  - `import { ButtonPrimary } from '@viax/uxm/ui'` (preferred) over
-    `import { ButtonPrimary } from '@viax/uxm'`.
-  - `import { themeTokens } from '@viax/uxm/tokens'` for token-aware tooling.
-  - `import { UxmApp } from '@viax/uxm/studio'` + `import '@viax/uxm/studio.css'` to embed the
+  - `import { ButtonPrimary } from '@viax.io/uxm/ui'` (preferred) over
+    `import { ButtonPrimary } from '@viax.io/uxm'`.
+  - `import { themeTokens } from '@viax.io/uxm/tokens'` for token-aware tooling.
+  - `import { UxmApp } from '@viax.io/uxm/studio'` + `import '@viax.io/uxm/studio.css'` to embed the
     live style editor (see "Embedding the style editor").
 - **No `"use client"` directive** unless the file uses client-only React features (hooks, state,
   event handlers). UXM components themselves do not require it.
@@ -1557,8 +1556,8 @@ hex. Use `references/design-tokens.md` to find the right token by intent (e.g. "
 green" → `--color-success-text`, not `#166534`).
 
 If the user is building a host shell that lets designers tune the brand live, prefer the
-**ready-made editor**: mount `UxmApp` from `@viax/uxm/studio` (see "Embedding the style editor").
-Only drop down to raw `@viax/uxm/previews` (the `PreviewProps` preview primitives) when building a
+**ready-made editor**: mount `UxmApp` from `@viax.io/uxm/studio` (see "Embedding the style editor").
+Only drop down to raw `@viax.io/uxm/previews` (the `PreviewProps` preview primitives) when building a
 bespoke editor surface — see `references/quick-recipes.md`.
 
 ### Accessibility
@@ -1574,14 +1573,14 @@ Some honestly-flagged gaps to know about:
 - `app-sidebar` references `--mobile-*` rules that are missing from its SCSS.
 - Several `lifecycle-*` primitives are visual-only and rely on the parent canvas for a11y.
 
-## Embedding the style editor (`@viax/uxm/studio`)
+## Embedding the style editor (`@viax.io/uxm/studio`)
 
 The full MODO design workbench ships as a mountable component, so a host portal can offer a live
 brand/style editor without rebuilding it. Import it from the `studio` subpath + its CSS once:
 
 ```tsx
-import { UxmApp, createClientPersistence } from '@viax/uxm/studio';
-import '@viax/uxm/studio.css'; // Tailwind v4 bundle — see leakage note below
+import { UxmApp, createClientPersistence } from '@viax.io/uxm/studio';
+import '@viax.io/uxm/studio.css'; // Tailwind v4 bundle — see leakage note below
 
 <UxmApp embed persistence={createClientPersistence({ brand: seed })} />
 ```
@@ -1600,7 +1599,7 @@ import '@viax/uxm/studio.css'; // Tailwind v4 bundle — see leakage note below
   `StudioPersistence` interface (`load` / `save` / `uploadAsset` / `capabilities`) over `localStorage`.
 
 **Apply the editor's config to the host globally.** Import `generateOverridesCss` from
-`@viax/uxm/studio/generate-css`, run it over the saved `{ overrides, brand }`, and inject the result
+`@viax.io/uxm/studio/generate-css`, run it over the saved `{ overrides, brand }`, and inject the result
 into a single global `<style>`. It emits the `:root` / `[data-theme="dark"]` brand-token blocks plus
 per-component override rules (which the per-state atom CSS now reads), re-theming the whole host on
 every route — and survives reload if you persist the state. When the brand carries a typeface
@@ -1640,7 +1639,7 @@ the editor adopts them as its own managed Accent tokens; `BrandTokenStyles` (ren
 `embed`) writes them to `:root`, so editing re-tints the host live. The host owns `data-theme`
 (light/dark) in `embed` mode — drive it yourself.
 
-**CSS-leakage caveat for non-Tailwind hosts.** `@viax/uxm/studio.css` is a Tailwind v4 bundle: a
+**CSS-leakage caveat for non-Tailwind hosts.** `@viax.io/uxm/studio.css` is a Tailwind v4 bundle: a
 global preflight reset (`@layer base`, lower priority than your unlayered CSS) plus an UNLAYERED
 `:root { … }` block of the library's *default* tokens. In a non-Tailwind host (e.g. a BEM/SCSS
 portal), import it **before** the host's own global stylesheet so the host's `:root` brand stays the
@@ -1650,13 +1649,13 @@ base; the studio's runtime `<style>` still wins live on the editor route.
 
 1. **Never guess prop names.** Always read the component's README (or `component-catalog.md` if
    not available) before writing the JSX.
-2. **Never duplicate primitives.** If `@viax/uxm` already ships a `Card`, do not handroll a div
+2. **Never duplicate primitives.** If `@viax.io/uxm` already ships a `Card`, do not handroll a div
    with the same intent. The component count in the heading above is the current catalog size —
    check `references/component-catalog.md` first.
 3. **Never inline literal hex codes** when an existing design token covers the intent. Map to
    `--color-*` via `var()` so MODO brand-settings can re-tint.
 4. **Never import preview components into application code.** Previews live in
-   `@viax/uxm/previews` and are for editor/host shells only. Tree-shake guarantees they don't
+   `@viax.io/uxm/previews` and are for editor/host shells only. Tree-shake guarantees they don't
    leak into `/ui` consumers — keep it that way.
 5. **For new components that don't fit any existing primitive**, propose extending the library
    rather than building one-offs. The contribution flow is in the top-level README's
@@ -1677,8 +1676,8 @@ base; the studio's runtime `<style>` still wins live on the editor route.
 ## Out of scope
 
 - **Vue MFA components** — use `viax-mfa-component` skill.
-- **A *bespoke* editor surface hand-rolled from raw previews** — `@viax/uxm/previews` provides the
-  preview primitives for that, but prefer the ready-made `UxmApp` from `@viax/uxm/studio`
+- **A *bespoke* editor surface hand-rolled from raw previews** — `@viax.io/uxm/previews` provides the
+  preview primitives for that, but prefer the ready-made `UxmApp` from `@viax.io/uxm/studio`
   ("Embedding the style editor"). Only the bespoke-from-previews path is out of scope here.
-- **Design token additions** — propose them via PR to the `@viax/uxm` repo, do not invent local
+- **Design token additions** — propose them via PR to the `@viax.io/uxm` repo, do not invent local
   `--color-*` declarations.

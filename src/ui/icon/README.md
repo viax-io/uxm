@@ -7,7 +7,7 @@ A glyph-by-name SVG renderer backed by the central icon registry (`@/lib/icons`)
 ## Usage
 
 ```tsx
-import { Icon } from '@viax/uxm';
+import { Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

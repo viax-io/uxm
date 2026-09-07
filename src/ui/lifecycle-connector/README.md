@@ -7,7 +7,7 @@ An SVG `<g>` fragment that draws one edge between two lifecycle nodes — a stro
 ## Usage
 
 ```tsx
-import { LifecycleConnector } from '@viax/uxm';
+import { LifecycleConnector } from '@viax.io/uxm';
 
 function Canvas() {
   return (

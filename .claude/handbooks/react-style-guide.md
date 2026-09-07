@@ -1,6 +1,6 @@
-# React Style Guide — `@viax/uxm`
+# React Style Guide — `@viax.io/uxm`
 
-Quick reference for writing React 19 components in `@viax/uxm`, a **standalone,
+Quick reference for writing React 19 components in `@viax.io/uxm`, a **standalone,
 published** UI library (not a monorepo). Consumers — `modo` and other Viax
 apps — are **client-side SPAs** (Vite + React). The rules below match the real
 code; where this guide and `.claude/memory/constitution.md` disagree, the
@@ -56,7 +56,7 @@ src/ui/list/list.tsx               → export function List(...), ListItem(...) 
 
 Each component lives in its own folder with its `.scss`, `index.ts` barrel,
 `-preview.tsx` and `README.md`. Consumers import from the package barrels
-(`@viax/uxm` or `@viax/uxm/ui`) — deep imports into individual files are **not**
+(`@viax.io/uxm` or `@viax.io/uxm/ui`) — deep imports into individual files are **not**
 a supported contract (constitution III).
 
 ### A2. No `"use client"` directives
@@ -87,7 +87,7 @@ exported together.
 
 `<name>-preview.tsx` is exported **only** from `src/previews/index.ts`. Neither
 `src/ui/index.ts` nor any `src/ui/<name>/index.ts` may re-export it — this is the
-tree-shake guarantee for consumers that import only `@viax/uxm/ui`. Nothing
+tree-shake guarantee for consumers that import only `@viax.io/uxm/ui`. Nothing
 enforces it at build time; check by hand when touching a barrel.
 
 ---
@@ -348,8 +348,8 @@ uxm-block__element--modifier
   `[data-theme="dark"]`).
 - `src/studio/studio.css` — Tailwind entry for the workbench (studio only).
 
-Consumers import `@viax/uxm/tokens.css` + `@viax/uxm/ui.css` (or
-`@viax/uxm/studio.css`, which bundles both plus the studio utilities). Studio
+Consumers import `@viax.io/uxm/tokens.css` + `@viax.io/uxm/ui.css` (or
+`@viax.io/uxm/studio.css`, which bundles both plus the studio utilities). Studio
 overrides are **not** a file in this repo — `generateOverridesCss()` emits them at
 runtime into a `<style id="uxm-overrides">` tag.
 
@@ -543,12 +543,12 @@ rules). Template literals are always fine.
 
 | Import | Contents |
 |---|---|
-| `@viax/uxm` | ui + tokens + WCAG helpers |
-| `@viax/uxm/ui`, `@viax/uxm/ui.css` | atoms + their CSS |
-| `@viax/uxm/tokens`, `@viax/uxm/tokens.css` | `themeTokens` + `--color-*` vars |
-| `@viax/uxm/previews` | canvas previews |
-| `@viax/uxm/studio`, `@viax/uxm/studio.css` | `UxmApp` + persistence adapters |
-| `@viax/uxm/studio/generate-css` | `generateOverridesCss` (server-safe) |
+| `@viax.io/uxm` | ui + tokens + WCAG helpers |
+| `@viax.io/uxm/ui`, `@viax.io/uxm/ui.css` | atoms + their CSS |
+| `@viax.io/uxm/tokens`, `@viax.io/uxm/tokens.css` | `themeTokens` + `--color-*` vars |
+| `@viax.io/uxm/previews` | canvas previews |
+| `@viax.io/uxm/studio`, `@viax.io/uxm/studio.css` | `UxmApp` + persistence adapters |
+| `@viax.io/uxm/studio/generate-css` | `generateOverridesCss` (server-safe) |
 
 ---
 

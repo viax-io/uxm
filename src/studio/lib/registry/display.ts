@@ -129,7 +129,7 @@ export const displayDefs: ComponentDef[] = [
       { name: 'onRemove', description: 'Fires when the trailing × is clicked. Input mode only.', payload: 'void', showWhen: { mode: 'input' } },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'Chip',
       props: [
         { name: 'children', type: 'ReactNode', description: 'Chip label.' },
@@ -371,7 +371,7 @@ export const displayDefs: ComponentDef[] = [
       },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'Card',
       props: [
         { name: 'children', type: 'ReactNode', description: 'Card content — heading, body, actions, anything.' },

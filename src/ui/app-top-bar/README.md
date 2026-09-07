@@ -7,7 +7,7 @@ The fixed-height header strip for an application shell — exposes a search slot
 ## Usage
 
 ```tsx
-import { AppTopBar, InputWithIcon, ButtonIcon, Icon } from '@viax/uxm';
+import { AppTopBar, InputWithIcon, ButtonIcon, Icon } from '@viax.io/uxm';
 
 function Shell() {
   return (
@@ -47,7 +47,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 
 ## Design tokens (MODO-configurable)
 
-When the component-scoped variables above are not overridden, AppTopBar resolves colour through the global design-token layer exported by `@viax/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor.
+When the component-scoped variables above are not overridden, AppTopBar resolves colour through the global design-token layer exported by `@viax.io/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor.
 
 | Token | Group / name | Used for |
 |-------|--------------|----------|

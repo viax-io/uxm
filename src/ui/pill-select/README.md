@@ -7,7 +7,7 @@ This shell owns the field shape and state visuals (default / hover / focus / dis
 ## Usage
 
 ```tsx
-import { PillSelect } from '@viax/uxm';
+import { PillSelect } from '@viax.io/uxm';
 import { useState } from 'react';
 
 const TAGS = ['Compliance', 'Engineering', 'Design', 'Ops'];

@@ -7,7 +7,7 @@ A bordered card with a left accent rail, an icon tile, a title/subtitle header, 
 ## Usage
 
 ```tsx
-import { DetailSection, Icon } from '@viax/uxm';
+import { DetailSection, Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

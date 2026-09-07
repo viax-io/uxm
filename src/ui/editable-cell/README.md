@@ -13,7 +13,7 @@ Problems never change the row's height: they ride in a `Popover`-anchored compac
 ## Usage
 
 ```tsx
-import { EditableCell } from '@viax/uxm';
+import { EditableCell } from '@viax.io/uxm';
 
 // Text — rename-in-place
 <EditableCell value={name} onCommit={(next) => rename(String(next))} required />

@@ -9,7 +9,7 @@ Its most common job is **showing the full text of something that visually trunca
 ## Usage
 
 ```tsx
-import { HoverTooltip } from '@viax/uxm/ui';
+import { HoverTooltip } from '@viax.io/uxm/ui';
 
 // Only opens when the cell actually overflows.
 <HoverTooltip content={row.description}>

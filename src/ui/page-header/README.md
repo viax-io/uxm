@@ -7,7 +7,7 @@ The icon tile is delegated to the `IconTile` atom — PageHeader's `--uxm-page-h
 ## Usage
 
 ```tsx
-import { PageHeader, ButtonPrimary, Icon } from '@viax/uxm';
+import { PageHeader, ButtonPrimary, Icon } from '@viax.io/uxm';
 
 function UsersPage() {
   return (

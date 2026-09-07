@@ -7,7 +7,7 @@ A single loading indicator with three visual variants (`spinner`, `dots`, `bar`)
 ## Usage
 
 ```tsx
-import { Loader } from '@viax/uxm';
+import { Loader } from '@viax.io/uxm';
 
 function PageLoader() {
   return (

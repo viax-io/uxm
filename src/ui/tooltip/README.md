@@ -7,7 +7,7 @@ Both components are **render-only**: they paint a `role="tooltip"` surface and n
 ## Usage
 
 ```tsx
-import { Tooltip, ContentTooltip } from '@viax/uxm';
+import { Tooltip, ContentTooltip } from '@viax.io/uxm';
 
 // Short hint with arrow
 <Tooltip placement="top">Save changes</Tooltip>

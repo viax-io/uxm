@@ -11,7 +11,7 @@ The slot exists only while it **is** the target: the canvas creates it for the h
 ## Usage
 
 ```tsx
-import { LifecycleDropSlot } from '@viax/uxm/ui';
+import { LifecycleDropSlot } from '@viax.io/uxm/ui';
 
 // A real drop zone — mounted while the drag hovers it, unmounted on leave.
 <LifecycleDropSlot

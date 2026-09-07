@@ -7,7 +7,7 @@ A subdued navigation link prefixed with a left-arrow glyph — typically rendere
 ## Usage
 
 ```tsx
-import { BackLink } from '@viax/uxm';
+import { BackLink } from '@viax.io/uxm';
 
 function DetailHeader() {
   return (

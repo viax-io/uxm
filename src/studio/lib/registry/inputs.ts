@@ -61,7 +61,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onBlur', description: 'Fires when the field loses focus.', payload: 'FocusEvent' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'TextInput',
       props: [
         { name: 'value', type: 'string', description: 'Current value (controlled).' },
@@ -234,7 +234,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onCommit', description: 'Fires when the user confirms a change (Enter, or blur with no validation error; for multiselect, each toggle). Async — the atom shows a submitting state until the returned promise settles.', payload: '(next: string | number | string[]) => void | Promise<void>' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'EditableCell',
       props: [
         { name: 'value', type: 'string | number | string[]', required: true, description: 'Current committed value (a string[] of picked option values for multiselect). The atom keeps a draft internally during edit.' },
@@ -374,7 +374,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onBlur', description: 'Fires when the field loses focus.', payload: 'FocusEvent' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'PasswordInput',
       props: [
         { name: 'value', type: 'string', description: 'Current value (controlled).' },
@@ -446,7 +446,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onOpenChange', description: 'Popover variant only — fires when the panel opens or closes.', payload: '(open: boolean) => void', showWhen: { variant: 'popover' } },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: ['ColorInput', 'ColorInputPopover'],
       props: [
         { name: 'value', type: 'string', description: 'Current color (controlled). Any supported syntax: hex, rgb(a), hsl(a).' },
@@ -633,7 +633,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onBlur', description: 'Fires when the field loses focus.', payload: 'FocusEvent' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'TimeInput',
       props: [
         { name: 'value', type: 'string', description: 'Current value (controlled). 24h: `"HH:MM"`. 12h: `"HH:MM AM"` or `"HH:MM PM"`.' },
@@ -712,7 +712,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onBlur', description: 'Fires when focus leaves the field.', payload: 'FocusEvent' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'PhoneInput',
       props: [
         { name: 'value', type: '{ country: string, number: string }', description: 'Controlled value. `country` is an ISO-3166 alpha-2 code; `number` is raw digits.' },
@@ -785,7 +785,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onChange', description: 'Fires continuously while the user drags either thumb. Payload is the full [start, end] range.', payload: '{ value: [number, number] }', showWhen: { mode: 'range' } },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: ['Slider', 'RangeSlider'],
       props: [
         { name: 'value', type: 'number  // (Slider) | [number, number]  // (RangeSlider)', description: 'Current value. Tuple for RangeSlider.' },
@@ -928,7 +928,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onFocus', description: 'Fires when the field receives focus.', payload: 'FocusEvent' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'NumberInput',
       props: [
         { name: 'value', type: 'string', description: 'Current value as a digit string (controlled).' },
@@ -1012,7 +1012,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onBlur', description: 'Fires when the amount input loses focus. Triggers min/max clamping AND switches display back to locale-formatted.', payload: 'FocusEvent' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'CurrencyInput',
       props: [
         { name: 'value', type: '{ currency: string, amount: string }', description: 'Controlled value. `currency` is an ISO 4217 code; `amount` is the raw digit string.' },
@@ -1260,7 +1260,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onError', description: 'Fires when the caller rejects a drop (e.g. wrong MIME). The atom never fires this on its own — drive it from your validation in `onFiles`.', payload: '{ reason: string }' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'FileUpload',
       props: [
         { name: 'onFiles', type: '(files: File[]) => void', description: 'Receives picked or dropped files.' },
@@ -1590,7 +1590,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onOpenChange', description: 'Fires when the panel opens or closes.', payload: 'boolean' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: ['Listbox', 'MultiListbox'],
       props: [
         { name: 'items', type: 'T[]', required: true, description: "Source data — the listbox is generic over T and has no knowledge of what's inside." },
@@ -1793,7 +1793,7 @@ export const inputsDefs: ComponentDef[] = [
       { name: 'onOpenChange', description: 'Fires when the menu opens or closes.', payload: 'boolean' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'Menu',
       props: [
         { name: 'items', type: 'MenuEntry[]', required: true, description: 'Menu entries — actionable items ({ key, label, subtitle?, icon?, iconColor?, hint?, onSelect?, disabled?, danger?, current? }) and separators ({ separator: true }), in display order. Pass `subtitle` to render a two-line row (label = headline), `iconColor` to tint ONE row\'s glyph (prefer a `var(--color-*)` reference; raw hex only for entity-identity colours), and `current` to mark the row the user is already on (aria-current + trailing checkmark + heavier label).' },

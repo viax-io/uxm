@@ -1,7 +1,7 @@
 # Legacy handbooks — NOT for this repo
 
 These three files document the **Viax Vue component library** (`@viax/ui-components`
-+ `@viax/ui-components-default-theme`), not `@viax/uxm`:
++ `@viax/ui-components-default-theme`), not `@viax.io/uxm`:
 
 | File | What it describes | Why it does not apply here |
 |---|---|---|

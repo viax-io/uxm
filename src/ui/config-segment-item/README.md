@@ -7,7 +7,7 @@ A segment groups a set of components (e.g. Account Profile → Account Name, Acc
 ## Usage
 
 ```tsx
-import { ConfigSegmentItem } from '@viax/uxm';
+import { ConfigSegmentItem } from '@viax.io/uxm';
 
 function SegmentList({ segments, activeId, onSelect }: Props) {
   return (

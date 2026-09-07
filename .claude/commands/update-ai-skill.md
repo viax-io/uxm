@@ -45,7 +45,7 @@ under the `### Unreleased` heading in SKILL.md; mark catalog rows for unreleased
 
 ### 1. Drift check (in this repo)
 
-- Every `@viax/uxm/ui` export (from `src/ui/index.ts`) appears in
+- Every `@viax.io/uxm/ui` export (from `src/ui/index.ts`) appears in
   `skills/viax-uxm/references/component-catalog.md` exactly once; removed atoms appear ONLY
   inside breaking-change notes. Report and fix any gap (content edits are fair game here —
   markers are not).
@@ -53,8 +53,8 @@ under the `### Unreleased` heading in SKILL.md; mark catalog rows for unreleased
   JSDoc, never from memory.
 - Hygiene — run over **all** of `skills/`, not just `viax-uxm`:
   `grep -rniE "pavlo|/Users/|/home/|C:\\\\|localhost" skills/` → must be empty (keyboard-key
-  names like `Home/End` are false positives). Reference the library ONLY as the GitLab repo
-  (`https://gitlab.viax.tech/services-viax/uxm`), the `@viax/uxm` package on Nexus, or
+  names like `Home/End` are false positives). Reference the library ONLY as the GitHub repo
+  (`https://github.com/viax-io/uxm`), the `@viax.io/uxm` package on npm, or
   repo-root-relative paths. Every skill here ships to consumers, so an absolute local path in
   any of them leaks a developer's machine — scoping this grep to one folder is how one
   survived in `viax-portal` undetected.
@@ -62,14 +62,14 @@ under the `### Unreleased` heading in SKILL.md; mark catalog rows for unreleased
   config API changes, this skill is the FIRST thing to update — `viax-portal` points at it rather
   than repeating it, so fixing only the portal skill leaves the real source stale.
 - `viax-portal` drift: the MetaPrompt hardcodes the API surface it generates against
-  (GraphQL operations, `@viax/uxm` version floor, helper names). When the portal's config
+  (GraphQL operations, `@viax.io/uxm` version floor, helper names). When the portal's config
   API or the library's public surface changes, verify against a REAL working portal rather
   than from the schema alone — the generated code is what people run.
 
 ### 2. Version check
 
-- Published: `npm view @viax/uxm version`. Documented: the marker in
-  `skills/viax-uxm/SKILL.md` (`Documents \`@viax/uxm\` **vX.Y.Z**`).
+- Published: `npm view @viax.io/uxm version`. Documented: the marker in
+  `skills/viax-uxm/SKILL.md` (`Documents \`@viax.io/uxm\` **vX.Y.Z**`).
 - Marker behind the published version → the release pipeline didn't stamp (investigate
   `.releaserc` / CI) — you may run `node scripts/stamp-skill-version.mjs <version>` manually
   on a fix branch.

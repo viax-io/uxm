@@ -1,4 +1,4 @@
-// ESLint 9 flat config for @viax/uxm (React 19 + TypeScript).
+// ESLint 9 flat config for @viax.io/uxm (React 19 + TypeScript).
 // Modern, lint-fast setup — no Airbnb dependency (incompatible peer deps).
 // See plan: todo/25-05-2026-17-25-eslint-setup.md
 import js from '@eslint/js';

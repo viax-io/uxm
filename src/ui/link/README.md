@@ -7,7 +7,7 @@ A themable inline text anchor with three underline modes and an external-link va
 ## Usage
 
 ```tsx
-import { Link } from '@viax/uxm';
+import { Link } from '@viax.io/uxm';
 
 function Example() {
   return (

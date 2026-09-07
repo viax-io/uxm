@@ -7,7 +7,7 @@ A small uppercase section header used in dense settings, properties, and form pa
 ## Usage
 
 ```tsx
-import { SectionHeader, InlineAction } from '@viax/uxm';
+import { SectionHeader, InlineAction } from '@viax.io/uxm';
 
 function VariantPanel() {
   return (

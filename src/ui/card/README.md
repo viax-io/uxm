@@ -13,7 +13,7 @@ The card's children are arbitrary — a heading, detail rows, a chart, buttons, 
 Two independent gaps come from composition, not from two card props: the card's own `gap` spaces the header from the content group, and a nested `Stack`/`Cluster` gap spaces the rows.
 
 ```tsx
-import { Card, FormField, Stack } from '@viax/uxm';
+import { Card, FormField, Stack } from '@viax.io/uxm';
 
 function Example() {
   return (

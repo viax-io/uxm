@@ -7,7 +7,7 @@ A breakpoint-free CSS grid layout — drop N children inside and the browser fit
 ## Usage
 
 ```tsx
-import { ResponsiveGrid } from '@viax/uxm';
+import { ResponsiveGrid } from '@viax.io/uxm';
 
 function CardGrid({ items }) {
   return (

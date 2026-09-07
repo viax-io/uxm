@@ -7,7 +7,7 @@ A tiny, text-first button for in-place actions ("Reset section", "Edit", "Match 
 ## Usage
 
 ```tsx
-import { InlineAction, Icon } from '@viax/uxm';
+import { InlineAction, Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

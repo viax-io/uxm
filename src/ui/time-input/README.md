@@ -7,7 +7,7 @@ A time-entry field with optional `HH:MM` typing mask, trailing clock icon, and t
 ## Usage
 
 ```tsx
-import { TimeInput } from '@viax/uxm';
+import { TimeInput } from '@viax.io/uxm';
 
 function Example() {
   const [time, setTime] = useState('09:30 AM');

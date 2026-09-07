@@ -7,8 +7,8 @@ A page-navigation style tab strip — text labels separated by spacing, with a c
 ## Usage
 
 ```tsx
-import { TabsUnderline } from '@viax/uxm';
-import { Icon } from '@viax/uxm';
+import { TabsUnderline } from '@viax.io/uxm';
+import { Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

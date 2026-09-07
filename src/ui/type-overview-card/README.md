@@ -7,8 +7,8 @@ A clickable summary tile pairing a label, a large numeric value, an optional lef
 ## Usage
 
 ```tsx
-import { TypeOverviewCard } from '@viax/uxm';
-import { Icon } from '@viax/uxm';
+import { TypeOverviewCard } from '@viax.io/uxm';
+import { Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

@@ -14,7 +14,7 @@ This is the engine behind `Select`, `PillSelect`, `SearchDropdown`, `PhoneInput`
 ## Usage
 
 ```tsx
-import { Listbox } from '@viax/uxm/ui';
+import { Listbox } from '@viax.io/uxm/ui';
 
 <Listbox
   items={countries}
@@ -38,7 +38,7 @@ import { Listbox } from '@viax/uxm/ui';
 Multi-select with a commit boundary:
 
 ```tsx
-import { MultiListbox } from '@viax/uxm/ui';
+import { MultiListbox } from '@viax.io/uxm/ui';
 
 <MultiListbox
   items={tags}

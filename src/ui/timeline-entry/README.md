@@ -7,7 +7,7 @@ A single row in a vertical activity timeline — a status dot on a rail to the l
 ## Usage
 
 ```tsx
-import { TimelineEntry } from '@viax/uxm';
+import { TimelineEntry } from '@viax.io/uxm';
 
 function Example() {
   return (

@@ -7,7 +7,7 @@ A bordered, rounded container (`List`) with horizontally divided rows (`ListItem
 ## Usage
 
 ```tsx
-import { List, ListItem, Icon } from '@viax/uxm';
+import { List, ListItem, Icon } from '@viax.io/uxm';
 
 function Example() {
   return (
@@ -54,7 +54,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | – | **Required.** Primary label. |
-| `icon` | `ReactNode` | – | Leading icon — typically an `<Icon />` from `@viax/uxm`. Rendered inside a shared `IconTile` (accent-filled rounded tile); the tile owns the glyph size (0.6× the tile via `--uxm-list-item-icon-size`), so any `size` on the passed `<Icon />` is ignored. |
+| `icon` | `ReactNode` | – | Leading icon — typically an `<Icon />` from `@viax.io/uxm`. Rendered inside a shared `IconTile` (accent-filled rounded tile); the tile owns the glyph size (0.6× the tile via `--uxm-list-item-icon-size`), so any `size` on the passed `<Icon />` is ignored. |
 | `value` | `ReactNode` | – | Secondary text shown under the title. Skipped if `undefined` / `null`. |
 | `trailing` | `ReactNode` | – | Trailing content — meta text, chevron, or custom node. |
 | `interactive` | `boolean` | `false` | Render as a clickable element (`<button>` by default, or `<a>` if `href` also set). |

@@ -7,7 +7,7 @@ A dual-thumb range control that selects a sub-range `[start, end]` within `[min,
 ## Usage
 
 ```tsx
-import { RangeSlider } from '@viax/uxm';
+import { RangeSlider } from '@viax.io/uxm';
 import { useState } from 'react';
 
 function PriceFilter() {

@@ -7,7 +7,7 @@ Each owns its own `--uxm-*` registry namespace — `property-field` for the fiel
 ## Usage
 
 ```tsx
-import { PropertyField, PropertyGrid } from '@viax/uxm';
+import { PropertyField, PropertyGrid } from '@viax.io/uxm';
 
 function MetadataPanel({ asset }) {
   return (

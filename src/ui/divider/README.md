@@ -7,7 +7,7 @@ A 1px horizontal separator, with an optional inline label that splits the line i
 ## Usage
 
 ```tsx
-import { Divider } from '@viax/uxm';
+import { Divider } from '@viax.io/uxm';
 
 function Example() {
   return (

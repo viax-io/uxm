@@ -7,7 +7,7 @@ An iOS-style on/off switch — a coloured pill track with a sliding thumb — bu
 ## Usage
 
 ```tsx
-import { ToggleSwitch } from '@viax/uxm';
+import { ToggleSwitch } from '@viax.io/uxm';
 
 function Example() {
   const [enabled, setEnabled] = useState(false);

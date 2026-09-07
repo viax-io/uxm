@@ -7,7 +7,7 @@ A single configuration component (field) row: a drag handle, a coloured type-ico
 ## Usage
 
 ```tsx
-import { ComponentRow, Icon } from '@viax/uxm';
+import { ComponentRow, Icon } from '@viax.io/uxm';
 
 <ComponentRow
   icon={<Icon glyph="list" />}
