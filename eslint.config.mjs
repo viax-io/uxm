@@ -11,7 +11,9 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   // 1. Global ignores.
-  { ignores: ['dist/**', 'dist-portal/**', 'node_modules/**', 'coverage/**', '.idea/**'] },
+  // `todo/` is gitignored scratch space (plans, reviews, pasted snippets) — never lint it,
+  // or a single minified paste there turns `npm run lint` red for the whole repo.
+  { ignores: ['dist/**', 'dist-portal/**', 'node_modules/**', 'coverage/**', '.idea/**', 'todo/**'] },
 
   // 2. JS recommended.
   js.configs.recommended,

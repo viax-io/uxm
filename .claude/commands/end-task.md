@@ -1,6 +1,8 @@
 # /end-task Command
 
-Complete and validate the current development task before marking it done.
+Close out the current task: run every gate the constitution requires, check the
+repo-specific completeness rules, and produce a completion report (optionally
+mirrored to Jira).
 
 ## Usage
 
@@ -10,156 +12,149 @@ Complete and validate the current development task before marking it done.
 
 ## Workflow
 
-When invoked, this command performs the following steps **in order**:
+When invoked, perform the following steps **in order**. Stop at the first step
+that fails and report it — a task is not done while any gate is red.
 
-### 1. Check Todo Status
+### 1. Todo status
 
-- Verify all `TodoWrite` items are marked `completed`
-- List any `pending` or `in_progress` items that must be resolved first
-- If any todos remain open, STOP and report them — do not proceed
+- Every `TodoWrite` item must be `completed`.
+- List any `pending` / `in_progress` items. If any remain, STOP and report them.
 
-### 2. Run Lint & Tests
+### 2. Gates
 
 ```bash
-npm run lint        # must exit with 0 errors (warnings OK)
-npm test            # all Jest tests must pass, including jest-axe assertions
+npm run lint          # 0 errors (warnings are reported, not blocking)
+npm run typecheck     # tsc --noEmit for src + portal — 0 errors
+npm run check:drift   # registry-vs-SCSS state-var gate + type-scale gate
+npm run build         # when src/, tsup.config.ts, tsconfig*, package.json or scripts/ changed
 ```
 
-- Report any ESLint errors with file:line references
-- Report any failing tests with test name and failure message
-- Do NOT mark the task complete if either command fails
+- Report each gate as ✅ / ❌ with `file:line` for every error.
+- **No test framework is configured** — `test:ci` is an intentional no-op stub. Do
+  not run, invent, or report on tests.
+- `npm run build` is slow; skip it only for docs-/skill-only changes.
 
-### 3. Verify Constitution Compliance
+### 3. Constitution check
 
-Check each changed component against the Constitution (`.claude/memory/constitution.md`):
+Read `.claude/memory/constitution.md` and check every changed file under `src/`:
 
-| Gate | Check |
-|------|-------|
-| Component-First | Component is standalone, X/XForm prefixed, exported from `src/index.js` |
-| Accessibility | `jest-axe` test present and passing; interactive elements keyboard-accessible |
-| Test-First | `__tests__/[ComponentName].spec.js` exists with prop/emit/slot/a11y coverage |
-| Semver | Change categorised as MAJOR / MINOR / PATCH; breaking changes documented |
-| Design-System | No hardcoded CSS values — all visual properties use theme tokens |
-| Naming | X/XForm prefix, hygen scaffolded, `.stories.js` file present |
+| Principle | Check |
+|---|---|
+| I. Token-first | every themable declaration reads `var(--uxm-<comp>-<prop>, var(--color-<token>))`; no literal colours/spacing/radii except the documented exceptions, each with a justifying comment |
+| II. BEM | `uxm-` prefix, `__` elements, `--` modifiers (variant folded into the block name is fine); styles in the colocated `<name>.scss`; `src/ui/styles.css` stays a pure `@import` list; no Tailwind outside `src/studio` |
+| III. Semver | Conventional Commit types match the public impact (`feat` = MINOR, `fix` = PATCH); a `BREAKING CHANGE:` footer only for a real external-consumer break (see `gotchas.md`); no deep-import contracts, no default exports, no `"use client"` |
+| IV. A11y | keyboard-operable, visible `:focus-visible`, correct ARIA, WCAG AA text/UI contrast in **both** themes, state never by colour alone |
+| V. Hygiene | gates green; every `eslint-disable` carries `-- <reason>`; no new `any` / `@ts-expect-error` without a comment; no new runtime dependencies |
 
-Flag any gate that is not satisfied.
+Flag any principle that is not satisfied with the file and the rule it breaks.
 
-### 4. Check Code Quality
+### 4. Repo completeness (new or changed component)
 
-- No `console.log` left in code (`console.warn` is OK for prop validation)
-- No hardcoded color, spacing, radius, or shadow values — use `@viax/ui-components-default-theme` tokens
-- No TODO/FIXME comments without a ticket reference
-- No new `<style scoped>` overrides that duplicate or contradict theme SCSS
-- Theme changes go to `themes/viax/ui-components-default-theme/src/` — not to `.vue` files
+- Folder is complete: `<name>.tsx`, `<name>.scss`, `index.ts`, `<name>-preview.tsx`,
+  `README.md` (README updated when props/DOM changed).
+- Re-exported (value **and** `Props` type) from the folder `index.ts` and
+  `src/ui/index.ts`; no `*-preview` module leaks into either barrel.
+- Compiled CSS `@import` present in `src/ui/styles.css` in cascade order.
+- AI skill updated in the same change (`skills/viax-uxm/`): catalog + cheatsheet row
+  marked "(unreleased)" for a new atom; a bullet under `### Unreleased` in
+  `SKILL.md` — check the heading is the **bare** `### Unreleased` at the bottom of the
+  version run, not a stamped `### New in X.Y.Z` (see `gotchas.md`). Version/count
+  markers must be untouched.
+- Studio registry entry (`src/studio/lib/registry/`) and `generate-css.ts` mapping
+  exist for any new themable knob; `npm run check:drift` covers the SCSS fallback.
 
-### 5. Storybook Check
+### 5. Code quality
 
-- Confirm a `.stories.js` file exists for any new or significantly changed component
-- Verify the story covers: default state + at least one variant (disabled, error, loading if applicable)
+- No `console.log` (`console.warn` only for actionable warnings).
+- No TODO / FIXME without a ticket reference.
+- No inline `style={}` for design values — dynamic values flow through CSS custom
+  properties.
+- Visual change smoke-tested in the portal (`npm run dev:modo`) in **light and
+  dark** theme, with **no** saved overrides (the studio projects registry defaults
+  as inline vars, so it never exercises the bare-consumer fallback path). If this
+  was not done, say so explicitly — do not mark it verified.
 
-### 6. Add Jira Comment
+### 6. Jira comment (best-effort)
 
-**6a. Ask the user whether to proceed**
-
-Ask the user:
+**6a.** Ask the user:
 > "Do you want to add a summary comment to Jira for this task? (yes / no / skip)"
 
-- `yes` — generate summary, post to Jira, and also print to console
-- `no` — generate summary and print to console only (for manual copy-paste)
-- `skip` — skip this step entirely and proceed to the completion report
+- `yes` — generate the summary, post it via the `atlassian` MCP server, and print it
+- `no` — generate and print only (for manual copy-paste)
+- `skip` — go to step 7
 
-If the user answers `skip`, stop here and move to Step 7.
+**6b.** Ticket: extract `[A-Z]+-[0-9]+` from `git branch --show-current`; if absent,
+ask ("e.g. VX-1570, or Enter to skip").
 
-**6b. Determine ticket number**
+**6c.** Gather automatically — do NOT ask the user:
+- `git diff master...HEAD --name-only` (the base branch is `master`; there is no `main`)
+- `git log master...HEAD --oneline`
 
-1. Extract the ticket number from the current git branch name using the pattern `[A-Z]+-[0-9]+` (e.g. `VX-1570` from `feature/VX-1570-update-ui-library`):
-   ```bash
-   git branch --show-current
-   ```
-2. If no ticket number is found in the branch name, ask the user:
-   > "What is the Jira ticket number? (e.g. VX-1570, or press Enter to skip)"
-   If the user skips, proceed with console-only output.
-
-**6c. Analyze changes and generate summary**
-
-Gather information automatically — do NOT ask the user:
-- Run `git diff master...HEAD --name-only` to get list of changed files (the base branch is `master` — there is no `main`)
-- Run `git log master...HEAD --oneline` to get commit history
-- Analyze the changed files to determine: what was implemented, what was modified, what was improved
-- Use the same analytical approach as `/commit-message`: read git status, diff, and branch name to infer the nature of changes
-
-Generate a comment in this format:
+Generate:
 
 ```
 ## Task Completed ✅
 
 **What was done:**
-[inferred from commits and changed files — new components, features, bug fixes]
+[from commits + changed files — new atoms, props, fixes]
 
 **What was changed:**
-[list of modified files grouped by component/area]
+[modified files grouped by component/area]
 
 **What was improved:**
-[inferred improvements — accessibility, DX, design system alignment, test coverage, etc.]
+[a11y, DX, theming, docs, skill coverage …]
 
 ---
 _Generated by Claude Code on [current date]_
 ```
 
-**6d. Post to Jira and/or print to console**
-
-- Always print the formatted comment to the console so the user can review it
-- If the user answered `yes` in 6a: additionally post it to Jira via the `atlassian` MCP server
-
-If the `atlassian` MCP server is unavailable or returns an error when posting:
+**6d.** Always print the block. If the MCP post fails:
 
 ```
 ⚠️  Could not post to Jira (ticket: [TICKET] — [reason]).
     Comment printed below for manual copy-paste:
 ```
 
-Always print the comment block regardless:
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[formatted comment]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-### 7. Generate Completion Report
+### 7. Completion report
 
 ```
 ## Task Complete: [task name]
 
 ### Files Changed
-[list of modified files]
+[list]
 
-### Validation Results
-- ESLint: ✅ / ❌
-- Tests:  ✅ / ❌
-- Constitution gates: ✅ / ❌ (list any failures)
+### Gates
+- lint:        ✅ / ❌
+- typecheck:   ✅ / ❌
+- check:drift: ✅ / ❌
+- build:       ✅ / ❌ / skipped (docs-only)
 
-### Jira Comment: ✅ posted to [TICKET] / ⚠️ printed to console
+### Constitution: ✅ / ❌ (list failures)
+### Completeness: ✅ / ❌ (list gaps)
+### Portal smoke test: ✅ light+dark / ⚠️ not done
+
+### Jira Comment: ✅ posted to [TICKET] / ⚠️ printed to console / skipped
 
 ### Summary
-[2-3 sentences on what was implemented]
+[2–3 sentences]
 
 ### Follow-up Tasks
-[any discovered work deferred to next task, with ticket references if known]
+[deferred work, with ticket references if known]
 ```
 
-## Error Handling
+## Error handling
 
-If any validation step fails:
+If any step fails:
 
-1. Report the specific issue with file:line references
-2. Do NOT generate the completion report
-3. Keep the relevant `TodoWrite` item as `in_progress`
-4. Provide actionable fix instructions
+1. Report the specific issue with `file:line` references.
+2. Do NOT generate the completion report.
+3. Keep the relevant `TodoWrite` item `in_progress`.
+4. Give actionable fix instructions.
 
 ## Notes
 
-- This command is the quality gate before a task is considered done
-- All validation must pass — partial completion is not allowed
-- If Storybook must be verified visually, instruct the user to run `npm run storybook` and check the component manually
-- The Jira comment step is best-effort — a failed Jira post does NOT block task completion
+- This is the quality gate before a task is considered done — partial completion
+  is not allowed.
+- The Jira step is best-effort; a failed post does not block completion.
+- After `/end-task`, the next step is `git push -u origin <branch>` (explicit
+  target — never a bare `git push`, see `gotchas.md`) and an MR.

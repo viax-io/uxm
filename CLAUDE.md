@@ -44,7 +44,7 @@ If you touch build config, keep this chain intact — skipping the separate `tsc
 studio / previews  →  ui  →  tokens
 ```
 
-- **`src/ui/`** — one folder per primitive: `<name>.tsx`, `<name>.scss`, `index.ts` barrel, `<name>-preview.tsx` (the preview lives *next to* its component), and a `README.md` (required for anything new — coverage on existing atoms is ~76/89, so don't read a missing one as "READMEs are optional"). Re-exported from `src/ui/index.ts`.
+- **`src/ui/`** — one folder per primitive: `<name>.tsx`, `<name>.scss`, `index.ts` barrel, `<name>-preview.tsx` (the preview lives *next to* its component), and a `README.md` (required — every existing atom has one; keep it at 100 %). Re-exported from `src/ui/index.ts`.
 - **`src/tokens/`** — `index.ts` is the canonical `themeTokens: ThemeToken[]` catalog (each entry has `name`, `cssVar`, `hex`, `darkHex`, `group`); `index.css` declares the matching `--color-*` variables on `:root` (+ dark overrides).
 - **`src/previews/`** — the shared preview *contract* and the multi-atom previews: `types.ts` (the uniform `PreviewProps = { componentId, styles, variants, shell? }`), `composite/`, `demo-row-actions.tsx`, and the barrel. Per-atom previews do **not** live here — they sit next to their component (see `src/ui/` above). Previews project knob values as inline CSS variables onto the real component so they exercise the production CSS path. **Tree-shake guarantee: no `Preview` symbol may leak into `/ui`** — enforced by convention only, nothing checks it at build time. When touching barrels, verify by hand that neither `src/ui/index.ts` nor any `src/ui/*/index.ts` re-exports a `*-preview` module.
 - **`src/studio/`** — the UXM design workbench (`UxmApp`), the same app modo serves at `/uxm`. Backend-decoupled via the `StudioPersistence` contract (`src/studio/persistence/`): `createHttpPersistence()` (Hono API), `createClientPersistence()` (live-preview + client-side asset uploads), `createReadOnlyPersistence()` (static). `shell/` = canvas/sidebar/properties-panel/wcag-panel; `editors/` = the knob inputs; `lib/registry/` = the component registry driving the sidebar. Studio styling uses Tailwind (`studio.css`) — this is the **only** place Tailwind is allowed.
@@ -74,16 +74,13 @@ A Vite dev shell that mounts `UxmApp` with `createClientPersistence`. `portal/ma
 
 Both are version-controlled here — update them in-repo, not in a per-session memory store. `.claude/commands/` holds the slash commands (`/code-review`, `/update-ai-skill`, …) and `.claude/agents/` the subagent definitions.
 
-**Authoritative style references live in `.claude/handbooks/`:**
-- `react-style-guide.md` — component/props/hooks/TS/a11y conventions. This is the guide that matches the real code (`uxm-` prefix, canonical `--` BEM modifiers, `.scss` sources, named exports, `cn()` from `@/helpers`, controlled/uncontrolled pairs, extend native HTML attribute interfaces).
-- `design-tokens.md`, `ui-components.md` — token and component references.
+**Authoritative style reference: `.claude/handbooks/react-style-guide.md`** — component/props/hooks/TS/a11y conventions matching the real code (`uxm-` prefix, canonical `--` BEM modifiers, `.scss` sources, named exports, `cn()` from `@/helpers`, controlled/uncontrolled pairs, extend native HTML attribute interfaces). The live token reference is `src/tokens/index.css` (+ the consumer-facing table in `skills/viax-uxm/references/design-tokens.md`).
 
-**⚠️ Handbook caveats — the handbooks were written against the *future* modo-monorepo state and drift from this repo. When they conflict, the real code wins:**
-- **BEM prefix is `uxm-`, not `x-`.** `bem-style-guide.md` documents the *legacy Viax Vue* `x-block__element_modifier` convention with `.is-*` states — **that is not used here.** This repo uses `uxm-` blocks. (Note variant classes are often folded into the block name, e.g. `uxm-button-primary`, not `uxm-button--primary`.)
-- **Styles are authored as `.scss`** (nested BEM), compiled to `.css` at build. The react-style-guide says `.css` and the `import` aliases say `@modo/uxm` — ignore those; sources are `.scss` and the only path alias here is `@/*` → `src/*` (`tsconfig.json`).
-- The single hand-written `.css` under `src/ui/` is the aggregator `src/ui/styles.css` (an `@import` list). Every other `.css` in the tree is build output.
+`.claude/handbooks/legacy/` holds the Viax Vue-era handbooks (`x-` BEM, `--background-*` tokens, `X*` components). They describe a **different library** and are kept only for archaeology — never apply them here (see `legacy/README.md`).
 
-**Component-count numbers in `README.md` are stale** (e.g. "76 components") — the actual `src/ui` set is larger. Don't trust hard counts; enumerate the directory.
+Two facts worth repeating: variant classes are often folded into the block name (`uxm-button-primary`, not `uxm-button--primary`); and the single hand-written `.css` under `src/ui/` is the aggregator `src/ui/styles.css` (an `@import` list) — every other `.css` in the tree is build output.
+
+**Don't trust hard component counts** in prose — enumerate `src/ui/` instead. The only counts that are kept accurate are the CI-stamped markers in `skills/viax-uxm/`.
 
 ## Adding a component (repo-specific requirement)
 

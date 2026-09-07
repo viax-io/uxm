@@ -18,8 +18,8 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax/uxm — React 19 Component Library
 
-> Documents `@viax/uxm` **v4.36.0** (96 components). To refresh after a new library release, run
-> the `viax-uxm-skill-update` skill — it reads this marker to compute the delta.
+> Documents `@viax/uxm` **v4.36.0** (96 components). The version/count markers are stamped by
+> the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax/uxm` pin
 > in its `package.json` before relying on a recent addition (each "New in X.Y.Z" section below
@@ -1434,7 +1434,7 @@ skill:
 
 ### New in 4.34.0
 
-- **New atoms `CodeEditor` + `CodeBlock` — the developer-tooling code surface.** (unreleased)
+- **New atoms `CodeEditor` + `CodeBlock` — the developer-tooling code surface.**
   `CodeEditor` is a real `<textarea>`: monospace, `spellCheck`/`autoCorrect`/`autoCapitalize`
   off, `Tab`/`Shift+Tab` indent and outdent (selection-aware, keeps the selection), `Enter`
   auto-indent with an extra level after `{ [ (`, optional `lineNumbers` gutter, `wrap`

@@ -281,3 +281,34 @@ or reviewing a rule for a class that isn't built from `&`-nesting inside its
 block, grep the class name in `src/ui/**/*.tsx` before trusting it. It's the
 same failure as a dead fallback — CSS that exists, parses, and paints nothing —
 and neither lint, typecheck, build nor the studio will say a word.
+
+---
+
+## `npm run lint` lints `todo/` — keep scratch out of the ESLint walk
+
+`todo/` is gitignored scratch space (plans, reviews, pasted snippets), but ESLint
+walks the working tree, not the git index. One pasted minified `.js` or a scratch
+`.mjs` there turned `npm run lint` into 15 000+ errors while CI stayed green
+(CI never sees `todo/`). The audit of 07-09-2026 found the `/code-review` agent
+had already adapted by running the gates in a fresh worktree — i.e. the local
+gate was silently dead.
+
+**Fixed:** `todo/**` is in `eslint.config.mjs` `ignores`. **How to apply:** if
+lint suddenly reports thousands of errors from files you never touched, check
+the path in the first error before debugging — and add any new scratch folder to
+`ignores` rather than to `.gitignore` alone.
+
+---
+
+## MCP servers in `.mcp.json`: a launcher script that isn't committed is a dead server
+
+`.mcp.json` is tracked and shared; anything it runs must be too. The
+`chrome-devtools` entry once pointed at `./scripts/chrome-devtools-mcp.sh`,
+which was never committed — every session (and every clone) started with
+`ENOENT`, and the `runtime-debugger` agent's "Chrome DevTools MCP" tool set was
+unavailable without anyone noticing. **Now:** the entry runs
+`npx -y chrome-devtools-mcp@latest` directly, no local script.
+
+Expected noise, not a bug: `figma-dev-mode-mcp-server` (`http://127.0.0.1:3845`)
+fails to connect whenever Figma Desktop isn't running with Dev Mode MCP enabled.
+Treat that as "Figma is closed", not as a config problem.

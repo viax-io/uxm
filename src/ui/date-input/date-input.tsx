@@ -407,7 +407,7 @@ export function DateInput({
               would flash the error state for a frame before the pick lands.
               Focus-retention only — the interactive controls are the
               Calendar's own buttons. */}
-          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- mousedown swallow for focus retention only; nothing interactive lives on this div */}
           <div onMouseDown={(e) => e.preventDefault()}>
             <Calendar value={calendarValue} onChange={handleCalendarChange} />
           </div>

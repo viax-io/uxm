@@ -229,11 +229,11 @@ export function SideFlexpane({
         // stop. eslint-plugin-jsx-a11y still treats `separator` as
         // non-interactive across the board, so disable the two rules
         // that fire on this otherwise-correct shape.
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- role=separator resize handle is interactive per WAI-ARIA (focusable separator), the plugin does not model that
         <div
           onMouseDown={onResizeStart}
           onKeyDown={onHandleKeyDown}
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focusable separator needs a tab stop for keyboard resizing
           tabIndex={0}
           aria-label={resizeLabel}
           role="separator"

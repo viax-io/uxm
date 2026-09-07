@@ -41,15 +41,13 @@ no hydration, no `"use client"`.
 **Before writing or reviewing code**, read:
 - `.claude/memory/constitution.md` — the source of truth; wins over any handbook
 - `.claude/handbooks/react-style-guide.md` — component conventions
-- `.claude/handbooks/design-tokens.md` — documents **legacy token names**
-  (`--background-*`, `--radius-*`); the live system is `--color-*` in `src/tokens/index.css`
-- `.claude/handbooks/bem-style-guide.md` — historical viax BEM (DIFFERENT from this repo; see note below)
+- `src/tokens/index.css` — the live token system (`--color-*`, `--shadow-*`, `--font-*`)
 
 > **BEM note:** this repo uses **canonical BEM** — `uxm-block__element--modifier`
 > (double dash `--` modifiers, double underscore `__` elements); variant classes
-> are often folded into the block name (`uxm-button-primary`). The
-> `bem-style-guide.md` file describes the **legacy viax convention** (`_`
-> modifiers, `x-` prefix). Do not apply that legacy style here.
+> are often folded into the block name (`uxm-button-primary`). The handbooks
+> under `.claude/handbooks/legacy/` describe the old Viax Vue library — never
+> apply anything from there.
 
 ---
 

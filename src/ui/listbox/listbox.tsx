@@ -413,7 +413,7 @@ function ListboxCore<T>({
     }
     // Only on open — selectableIndices / rows recompute as search runs,
     // and we don't want to reset active on every keystroke.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deliberately keyed on `open` only (see above)
   }, [open]);
 
   // Scroll the active option into view after arrow nav. `block: 'nearest'`

@@ -10,7 +10,8 @@ Generate a standardized git commit message based on current repository changes.
 ## Format
 
 The generated commit message follows the **Conventional Commits** specification
-enforced by `commitlint` and consumed by `semantic-release` for CHANGELOG generation:
+enforced by `commitlint` and consumed by `semantic-release` for versioning and
+`CHANGELOG.md` generation:
 
 ```
 type(scope): short description
@@ -22,110 +23,119 @@ Optional longer body explaining what and why (max 100 chars per line).
 
 | Type | When to use | semver impact |
 |------|-------------|---------------|
-| `feat` | New component or new prop/event on existing component | MINOR |
-| `fix` | Bug fix in existing component | PATCH |
+| `feat` | New component, new prop/variant, new token, new export | MINOR |
+| `fix` | Bug fix in an existing component / token / build output | PATCH |
 | `refactor` | Code change that neither fixes a bug nor adds a feature | none |
 | `style` | Formatting, whitespace, missing semicolons — no logic change | none |
 | `perf` | Performance improvement | PATCH |
-| `test` | Adding or correcting tests | none |
-| `docs` | Documentation only (README, stories, JSDoc) | none |
-| `build` | Build system or dependency changes | none |
-| `ci` | CI configuration changes | none |
-| `chore` | Other changes that don't modify src or test files | none |
+| `test` | (no test framework configured — unused for now) | none |
+| `docs` | Documentation only (README, skill, handbooks, `.claude/`) | none |
+| `build` | Build pipeline or dependency changes (`tsup`, `tsc-alias`, deps) | none |
+| `ci` | `.gitlab-ci.yml`, `.releaserc` | none |
+| `chore` | Other changes that don't modify `src/` | none |
 | `revert` | Reverts a previous commit | depends |
 
 ### Scope (recommended)
 
-Use the component name in kebab-case, matching the changed component:
+Use the component folder name (kebab-case) or the area:
 
 ```
-feat(x-tag-input): add clearable prop
-fix(x-form-drop-down): correct label alignment in error state
-refactor(x-input): extract validation logic to composable
-test(x-amount-input): add jest-axe accessibility assertion
-docs(x-form-button): update story with disabled variant
+feat(tag-input): add clearable prop
+fix(config-component-row): keep the actions slot outside the button
+refactor(listbox): extract the roving-tabindex logic into a hook
+feat(tokens): lift the dark theme out of near-black
+docs(skill): post-4.36.0 cleanup - drop the FileUpload (unreleased) qualifier
+fix(studio): persist brand font on publish
+ci: gate lint, typecheck and build in the test job
 ```
 
-For cross-cutting changes with no single component scope, omit scope:
-```
-chore: update @viax/ui-components-default-theme to v1.26.0
-build: upgrade vue to 3.5.14
-```
-
-### Breaking Changes
+For cross-cutting changes with no single scope, omit it:
 
 ```
-feat(x-drop-down)!: rename value prop to model-value
-
-BREAKING CHANGE: consumers must replace :value with v-model or :model-value
+chore: bump sass to 1.104.0
+build: rewrite CJS requires after tsc-alias
 ```
 
-## Example Output
+### Breaking changes
 
 ```
-feat(x-tag-input): add x-tag-input and x-form-tag-input components
+feat(select)!: rename value prop to selected
 
-Introduce tag input components allowing users to create and remove
-string tags. x-form-tag-input wraps x-tag-input with label, validation,
-and error state support.
+BREAKING CHANGE: consumers must replace `value` with `selected`
+```
+
+A `BREAKING CHANGE:` footer forces a **major** release of the whole package.
+Reserve it for a change that breaks a **known external consumer**; an internal
+DOM/class reshuffle on a niche atom is a `feat`/`fix` plus a README migration
+note (see `.claude/memory/gotchas.md` → semver).
+
+## Example output
+
+```
+feat(tag-input): add TagInput atom
+
+Introduce a controlled/uncontrolled tag input for entering and removing
+string tags. Enter adds, Backspace removes the last tag; max-tags limit
+and disabled state are supported. Skill catalog row added (unreleased).
 ```
 
 ```
-fix(x-form-checkbox): correct focus ring visibility in dark mode
+fix(checkbox): make the hover fallback distinct from the resting colour
 
-Theme token --color-focus-ring was not applied on the wrapper element,
-causing keyboard focus to be invisible in dark theme contexts.
+The hover var fell back to --color-border, which is also the resting
+border, so consumers without studio overrides saw no hover state.
 ```
 
 ## Workflow
 
 When invoked:
 
-1. **Analyze Changes** — run these bash commands, nothing else:
+1. **Analyze changes** — run these bash commands, nothing else:
    - `git status`
    - `git diff`
    - `git diff --cached`
    - `git branch --show-current`
 
-2. **Determine Type and Scope**
-   - Identify primary nature of change (new feature, bug fix, refactor, etc.)
-   - Extract component name(s) from changed file paths as scope
-   - If multiple unrelated components changed, consider separate commits or omit scope
+2. **Determine type and scope**
+   - Identify the primary nature of the change (feature, fix, refactor, …)
+   - Take the scope from the changed `src/ui/<name>/` folder or area
+     (`tokens`, `studio`, `skill`, `ci`, …)
+   - If multiple unrelated areas changed, suggest separate commits or omit scope
 
-3. **Generate Message**
-   - Subject line: type(scope): imperative description — max 100 chars
+3. **Generate the message**
+   - Subject: `type(scope): imperative description` — max 100 chars
    - Body (optional): what changed and why, max 100 chars per line
-   - Footer: BREAKING CHANGE: if applicable; ticket reference if known (e.g. Refs: VX-1570)
+   - Footer: `BREAKING CHANGE:` only when justified above; ticket reference if
+     known (e.g. `Refs: VX-1570`)
 
-4. **Present to User**
+4. **Present to the user**
    - Output the commit message as plain text in your response
-   - Ask if user wants to use it, modify it, or create the commit
+   - Ask whether to use it as is, modify it, or create the commit
 
-> **IMPORTANT:** Only use bash for the four git commands listed in step 1.
-> Do NOT run echo, printf, or any other bash command to display output.
-> All output must be plain text in your response, never via bash.
+> **IMPORTANT:** only use bash for the four git commands in step 1. Do NOT run
+> `echo`, `printf`, or any other command to display output — all output is plain
+> text in your response.
 
-## Message Guidelines
+## Message guidelines
 
-- Use imperative mood: "add" not "added" or "adds"
-- Subject line describes WHAT changed; body explains WHY
-- Scope = component name in kebab-case (e.g. x-input, x-form-drop-down, x-tag-input)
-- Do not end subject line with a period
-- Do not include file paths or technical internals in the subject
+- Imperative mood: "add", not "added" / "adds"
+- Subject describes WHAT changed; body explains WHY
+- No trailing period on the subject
+- No file paths or implementation internals in the subject
 
 ## Restrictions
 
-DO NOT include:
-- [branch-name] prefix — this project uses Conventional Commits, not branch prefixes
-- "Generated with Claude Code" attribution
-- "Co-Authored-By: Claude" lines
-- Implementation details or code snippets in the subject line
+- No `[branch-name]` prefix — this project uses Conventional Commits.
+- No implementation details or code snippets in the subject line.
+- Attribution trailers (`Co-Authored-By:`, `Claude-Session:`) follow the
+  session's harness instructions — add exactly what the session specifies,
+  never invent or paraphrase them.
 
 ## Notes
 
-- feat and fix types trigger a new npm release via semantic-release
-- feat → MINOR version bump; fix/perf → PATCH version bump
-- BREAKING CHANGE footer → MAJOR version bump
-- Commit messages feed directly into the published CHANGELOG
+- `feat` and `fix` commits trigger a release via semantic-release on `master`
+  (`feat` → MINOR, `fix` / `perf` → PATCH, `BREAKING CHANGE` → MAJOR)
+- Commit messages feed directly into the published `CHANGELOG.md` and the
+  release notes — write them for a consumer reading the changelog
 
 ARGUMENTS: $ARGUMENTS
