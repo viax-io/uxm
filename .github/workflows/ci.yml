@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.16.0
+          registry-url: https://registry.npmjs.org/
+
+      - run: |
+          echo "Node version: $(node -v)"
+          echo "NPM version: $(npm -v)"
+
+      - run: npm install
+
+      # Registry-vs-CSS state-var drift gate — fails the pipeline if any studio
+      # knob default and its shipped SCSS fallback disagree (the dead-fallback
+      # class; see .claude/memory/gotchas.md and scripts/check-state-var-drift.mjs).
+      - run: npm run check:drift
+
+      - run: npm run test:ci
+
+      - run: npm run test:coverage
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            junit-report.xml
+            coverage/cobertura-coverage.xml
+          if-no-files-found: ignore

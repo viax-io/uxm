@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # @semantic-release/git commit; @semantic-release/github release + tag
+      issues: write          # release comments
+      pull-requests: write   # ditto, on PRs
+      id-token: write        # OIDC trusted publishing to npm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # semantic-release needs full history + all tags
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.16.0
+          registry-url: https://registry.npmjs.org/
+
+      - run: |
+          echo "Node version: $(node -v)"
+          echo "NPM version: $(npm -v)"
+
+      - run: npm install
+
+      - run: npm run build
+
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
