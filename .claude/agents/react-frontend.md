@@ -105,8 +105,9 @@ export type { DisclosureProps } from "./disclosure";
 ```
 
 **Tree-shake guarantee:** never re-export a `*-preview` module from
-`src/ui/index.ts` or any `src/ui/*/index.ts` — nothing enforces this at build
-time, so verify by hand.
+`src/ui/index.ts` or any `src/ui/*/index.ts` — ESLint enforces it, together
+with the layer-boundary zones in `eslint.config.mjs` (a ui file importing
+`@/studio` or the previews barrel fails lint).
 
 ### Props API
 
