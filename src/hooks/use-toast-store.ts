@@ -1,9 +1,10 @@
 import { useSyncExternalStore } from 'react';
 
-import type { ToastVariant as ToastAtomVariant } from '../ui/toast/toast';
-
-/** Re-exported here so consumers can grab the type from one place. */
-export type ToastVariant = ToastAtomVariant;
+/**
+ * Declared here, in the leaf, and re-exported by the `Toast` atom — the hook
+ * must not reach up into `src/ui` (layer rule in eslint.config.mjs).
+ */
+export type ToastVariant = 'success' | 'info' | 'warning' | 'error';
 
 /**
  * Inline action affordance — single button rendered between the message

@@ -164,7 +164,7 @@ discussions (e.g. "fix #3 and #7").
 **New/renamed component completeness:**
 - [ ] Folder is complete: `<name>.tsx`, `<name>.scss`, `index.ts` barrel, `<name>-preview.tsx`, `README.md`
 - [ ] Re-exported from both the folder `index.ts` and `src/ui/index.ts` (component **and** its `Props` type)
-- [ ] **Tree-shake guarantee:** no `*-preview` module is re-exported from `src/ui/index.ts` or any `src/ui/*/index.ts` — nothing enforces this at build time, verify by hand
+- [ ] **Tree-shake guarantee:** no `*-preview` module is re-exported from `src/ui/index.ts` or any `src/ui/*/index.ts` — ESLint enforces it (`no-restricted-imports` on the barrels) alongside the layer zones (`import/no-restricted-paths`); a green lint is the check
 - [ ] The compiled CSS `@import` is added to `src/ui/styles.css` in cascade order
 - [ ] **AI skill updated in the same change** (`skills/viax-uxm/`): catalog + cheatsheet row marked "(unreleased)", a bullet under `### Unreleased` in `SKILL.md`. Version/count markers must NOT be hand-edited — CI stamps them at release; flag any hand-edit as Critical
 
