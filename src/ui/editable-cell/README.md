@@ -10,6 +10,21 @@ Three modes:
 
 Problems never change the row's height: they ride in a `Popover`-anchored compact `Banner` under the cell — **warning** (yellow) for recoverable input problems (`validate` failures, `required` violations, unparseable drafts), **error** (red) for a rejected `onCommit`. Either way the cell stays in edit mode for correction / retry.
 
+## Internals (for maintainers)
+
+The folder is split by responsibility — all of it is private to the barrel, which exports only `EditableCell` and the public types:
+
+| File | Owns |
+|---|---|
+| `editable-cell.tsx` | Applies the prop defaults once, runs the hook, picks the view by `type`. |
+| `use-editable-cell.ts` | Every hook: state, effects, the commit paths (`commitValue` / `commitDate` / `handleCommit`), cancel/clear/keyboard handlers and the derived display values. Hook order is fixed here regardless of the view. |
+| `editable-cell-text.tsx` | `text` / `number` — display button ↔ editing input. |
+| `editable-cell-date.tsx` | `date` — display button ↔ masked input + calendar popover. |
+| `editable-cell-select.tsx` | `select` / `multiselect` — Listbox-driven trigger. |
+| `editable-cell.types.ts`, `editable-cell-utils.ts` | Public prop types; pure ISO/mask helpers. |
+
+The views are hook-free and read one `{ props, cell }` pair, so a behaviour change goes in the hook and a markup change in exactly one view. `tests/editable-cell.test.tsx` is the behavioural baseline for the split.
+
 ## Usage
 
 ```tsx
