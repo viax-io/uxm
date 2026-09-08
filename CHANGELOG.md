@@ -1,3 +1,10 @@
+# [4.38.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.37.1...v4.38.0) (2026-09-08)
+
+
+### Features
+
+* **tokens:** gate tokens.css against themeTokens; deprecate the Tailwind-only palette aliases ([9e90585](https://gitlab.viax.tech/services-viax/uxm/commit/9e9058535a447e384a2cb8558ff5b97371f8e57c))
+
 ## [4.37.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.37.0...v4.37.1) (2026-09-08)
 
 
