@@ -585,8 +585,10 @@ function SelectSingle({
           <Icon
             glyph="chevron-down"
             size={14}
-            className="uxm-select-dropdown__trigger-chevron"
-            style={{ transform: open ? 'rotate(180deg)' : 'none' }}
+            className={cn(
+              'uxm-select-dropdown__trigger-chevron',
+              open && 'uxm-select-dropdown__trigger-chevron--open',
+            )}
           />
         </div>
       )}
@@ -717,8 +719,10 @@ function SelectMulti({
             <Icon
               glyph="chevron-down"
               size={14}
-              className="uxm-select-dropdown__trigger-chevron"
-              style={{ transform: open ? 'rotate(180deg)' : 'none' }}
+              className={cn(
+                'uxm-select-dropdown__trigger-chevron',
+                open && 'uxm-select-dropdown__trigger-chevron--open',
+              )}
             />
           </div>
         )}

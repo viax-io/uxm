@@ -47,7 +47,7 @@
     /* Calendar inside owns its own bg / border / radius / padding, so the
        popover wrapper just needs positioning + a drop shadow. Using a filter
        drop-shadow follows the Calendar's rounded outline cleanly. */
-    filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.18));
+    filter: drop-shadow(var(--uxm-date-input-popover-shadow, var(--shadow-xl)));
     left: 0;
     position: absolute;
     top: calc(100% + 4px);

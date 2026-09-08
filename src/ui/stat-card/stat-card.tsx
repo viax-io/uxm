@@ -37,7 +37,7 @@ export function StatCard({
                 glyph="arrow-up"
                 size={12}
                 strokeWidth={2.5}
-                style={{ transform: trendDirection === 'down' ? 'rotate(180deg)' : undefined }}
+                className="uxm-stat-card__trend-icon"
               />
             )}
             {trend}

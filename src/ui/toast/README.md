@@ -115,6 +115,7 @@ Variant → glyph mapping — the same vocabulary `Banner` uses:
 | `--uxm-toast-info-accent` | `--color-info-text` | – | Icon + action colour, `info`. |
 | `--uxm-toast-warning-accent` | `--color-warning-text` | – | Icon + action colour, `warning`. |
 | `--uxm-toast-error-accent` | `--color-danger-text` | – | Icon + action colour, `error`. |
+| `--uxm-toast-close-hover-background-color` | – | `color-mix(in srgb, currentColor 10%, transparent)` | Close-button fill on hover. |
 | `--z-toast` | – | `80` | Stack order of the container. |
 | `--shadow-xl` | – | – | Card elevation (global shadow scale, not per-component). |
 
@@ -145,7 +146,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Enter (bottom docks) | mount | `uxm-toast-in-up` — fade + slide **up** 8px, so it rises from the edge it docks against. |
 | With action | `action` set | Underlined accent-coloured button before the close X. |
 | Action hover | pointer over `__action` | Underline thickens to 2px. |
-| Close hover | pointer over `__close` | Full opacity plus a 6% black wash. |
+| Close hover | pointer over `__close` | Full opacity plus a 10% `currentColor` wash (`--uxm-toast-close-hover-background-color`), so it reads on every variant and theme. |
 | Overflow | more than `max` toasts | Oldest entries are trimmed. |
 | Long message | text wider than the row | Truncates with an ellipsis — single line by design. |
 
