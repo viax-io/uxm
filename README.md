@@ -289,8 +289,8 @@ This makes commit types carry semver meaning: `fix` → PATCH, `feat` → MINOR,
 - **Add a preview**: create `{name}-preview.tsx` next to the component — previews live beside their component, not in `src/previews/`. Use `PreviewProps` and project knob values as inline CSS vars so production CSS rules paint them. Never re-export a preview from a `src/ui/` barrel (see the tree-shake guarantee above).
 - **Add a token**: add an entry to `themeTokens` in `src/tokens/index.ts` and declare the `--color-*` variable in `src/tokens/index.css`. Reference it from component SCSS via `var(--uxm-foo-bar, var(--color-new-token))` — never hardcode a colour, spacing, or radius.
 - Commits follow conventional-commit format (`commitizen` + `commitlint` enforced via `husky`); `npm run commit` walks you through it. Commit types drive the released version — see [Releases](#releases).
-- Run `npm run lint && npm run typecheck && npm run build` before opening a merge request.
+- Run `npm run lint && npm run typecheck && npm test && npm run build` before opening a pull request.
 
 ## License
 
-UNLICENSED — internal Viax use.
+[MIT](LICENSE.md) © viax.io
