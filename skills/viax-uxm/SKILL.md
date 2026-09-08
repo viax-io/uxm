@@ -255,7 +255,7 @@ skill:
 
 - `references/component-catalog.md` — every export, grouped by purpose, with one-line summaries
   and key prop signatures. Use this to pick the right primitive.
-- `references/design-tokens.md` — all 30 MODO-configurable design tokens with hex values,
+- `references/design-tokens.md` — all 31 MODO-configurable design tokens with hex values,
   groups, and intended use. Use this when wiring custom CSS or token-based styling.
 - `references/quick-recipes.md` — copy-pasteable patterns for the most common compositions
   (page shell, form, list view, theme override).
@@ -1548,6 +1548,14 @@ skill:
   transparent)` — the old 6 % black wash vanished on dark) and
   `--uxm-date-input-popover-shadow` (default `--shadow-xl`, so the calendar popover now
   follows the theme's shadow scale instead of a fixed light-only literal).
+- **Nine legacy palette names are `@deprecated`** — `--color-cream`, `--color-warm-gray`,
+  `--color-ink`, `--color-green`, `--color-mint`, `--color-forest`, `--color-peach`,
+  `--color-lavender`, `--color-lime`. They only ever existed inside `tokens.css`'s Tailwind
+  `@theme inline` block (invisible to a plain-CSS host) and nothing in the library reads them;
+  they are removed in the next major. `references/design-tokens.md` → "Deprecated palette
+  names" has the replacement for each. The token catalog (`themeTokens`) is now gated against
+  `tokens.css` in CI (`npm run check:tokens`), so a catalog entry and its `:root` / dark
+  declaration can no longer drift apart.
 
 ### Unreleased
 
