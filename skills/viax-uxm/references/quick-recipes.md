@@ -841,7 +841,7 @@ about discarding unpublished edits) — a pure picker has no in-progress state a
 
 ---
 
-## 17. App-wide locale (`UxmLocaleProvider` + `LanguageSwitcher`) (unreleased)
+## 17. App-wide locale (`UxmLocaleProvider` + `LanguageSwitcher`)
 
 The library formats; **the host owns the choice.** `LanguageSwitcher` persists nothing and reads
 no context, and `UxmLocaleProvider` holds no state — so the app supplies the loop: state →
