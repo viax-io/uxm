@@ -12,4 +12,15 @@ globalThis.ResizeObserver ??= class {
   disconnect() {}
 } as unknown as typeof ResizeObserver;
 
+// jsdom never lays out, so `offsetParent` is null for every element — and
+// useFocusTrap uses `offsetParent !== null` as its "visible" check, which
+// would make every focusable invisible to the trap. Treat anything attached
+// to the tree as laid out.
+Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+  configurable: true,
+  get() {
+    return (this as HTMLElement).isConnected ? (this as HTMLElement).parentElement : null;
+  },
+});
+
 afterEach(() => cleanup());
