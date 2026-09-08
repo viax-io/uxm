@@ -82,14 +82,16 @@ if (!webhook) {
 
 const response = await fetch(webhook, {
   method: 'POST',
-  headers: { 'Content-type': 'application/json' },
+  headers: {
+    'Content-type': 'application/json',
+    'User-Agent': `viax-uxm-release-notifier/${pkg.version}`,
+  },
   body: payload,
 });
 
 if (!response.ok) {
-  console.error(
-    `notify-slack: webhook returned ${response.status} ${response.statusText}: ${await response.text()}`,
-  );
+  const body = (await response.text()).replace(/\s+/g, ' ').trim().slice(0, 300);
+  console.error(`notify-slack: webhook returned ${response.status} ${response.statusText}: ${body}`);
   process.exit(1);
 }
 
