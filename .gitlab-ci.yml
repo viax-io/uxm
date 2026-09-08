@@ -33,7 +33,7 @@ test:
     - npm run test:ci
     # Nexus has no audit endpoint, so audit against the public registry. The
     # full report is printed for visibility; only CRITICAL advisories fail the
-    # job (the remaining highs are all vite 5 → 8 majors, tracked separately).
+    # job. After the vite 8 upgrade the report is clean bar transitive lows.
     - npm run audit:report || true
     - npm run audit:ci
   artifacts:
