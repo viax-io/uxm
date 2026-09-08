@@ -1,229 +1,31 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
 import { Banner } from '../banner';
 import { ButtonGhost } from '../button';
 import { Calendar, type CalendarValue } from '../calendar';
-import {
-  FORMAT_SPEC,
-  formatDate as formatDateAs,
-  invalidDateMessage,
-  maskDate,
-  parseDate as parseFormattedDate,
-  type DateInputFormat,
-} from '../date-input';
+import { FORMAT_SPEC, formatDate as formatDateAs, invalidDateMessage, maskDate, parseDate as parseFormattedDate } from '../date-input';
 import { HoverTooltip } from '../hover-tooltip';
 import { Icon } from '../icon';
 import { Listbox, MultiListbox, type ListboxRenderTriggerState } from '../listbox';
 import { maskNumeric } from '../number-input';
 import { Popover } from '../popover';
 
-export type EditableCellType = 'text' | 'number' | 'date' | 'select' | 'multiselect';
-export type EditableCellAlign = 'left' | 'right' | 'center';
-export type EditableCellSize = 'small' | 'medium';
-export type EditableCellValue = string | number | string[];
+import { isEmptyValue, isoToFormatted, parseISODate, toISODate } from './editable-cell-utils';
 
-/** Strict `YYYY-MM-DD` → local Date (no TZ surprises), null if not parseable. */
-function parseISODate(s: string): Date | null {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
-  if (!m) return null;
-  const y = Number(m[1]);
-  const mo = Number(m[2]);
-  const day = Number(m[3]);
-  const d = new Date(y, mo - 1, day);
-  // Reject regex-valid but out-of-range dates: `new Date(2024, 1, 30)` silently
-  // rolls over to Mar 1 rather than producing NaN, which would later read as a
-  // value change and trigger an unprompted rewrite. Require a clean round-trip.
-  if (d.getFullYear() !== y || d.getMonth() !== mo - 1 || d.getDate() !== day) return null;
-  return d;
-}
+import type { CellError, EditableCellOption, EditableCellProps, EditableCellValue } from './editable-cell.types';
+// The public types live in ./editable-cell.types.ts; re-exported here so the
+// folder barrel (`export * from './editable-cell'`) keeps the same surface.
+export type {
+  EditableCellAlign,
+  EditableCellOption,
+  EditableCellProps,
+  EditableCellSize,
+  EditableCellType,
+  EditableCellValue,
+} from './editable-cell.types';
 
-/** Serialize a Date to ISO (`YYYY-MM-DD`) — reuses the shared `ymd` formatter. */
-const toISODate = (d: Date): string => formatDateAs(d, 'ymd');
-
-/**
- * Committed dates are stored ISO (`YYYY-MM-DD`); the input and display show
- * the cell's `dateFormat` mask. Convert ISO → mask so `dmy`/`mdy` cells read
- * and edit in their own shape. Values that aren't ISO (e.g. a consumer's
- * already-formatted seed) pass through untouched.
- */
-function isoToFormatted(value: EditableCellValue, format: DateInputFormat): string {
-  if (typeof value !== 'string' || !value) return '';
-  const d = parseISODate(value);
-  return d ? formatDateAs(d, format) : value;
-}
-
-/**
- * Emptiness rule for the `required` check — the single definition shared by
- * every editor type: an empty array (multiselect), a NaN number (blank numeric
- * draft), or a blank/whitespace string (text/select/date).
- */
-function isEmptyValue(v: EditableCellValue): boolean {
-  if (Array.isArray(v)) return v.length === 0;
-  if (typeof v === 'number') return Number.isNaN(v);
-  return String(v ?? '').trim() === '';
-}
-
-export interface EditableCellOption {
-  value: string;
-  label: string;
-}
-
-/**
- * Two severity levels, mapped to Banner variants:
- *   - `warning` — recoverable input problems the user can fix in place
- *     (sync `validate` failures, unparseable number drafts).
- *   - `error` — the commit itself failed (`onCommit` rejected): the value
- *     was fine but saving didn't happen.
- */
-interface CellError {
-  message: string;
-  severity: 'warning' | 'error';
-}
-
-export interface EditableCellProps {
-  /** Current committed value. The atom keeps a draft internally while editing. */
-  value: EditableCellValue;
-  /**
-   * Called when the user commits the change (Enter, or blur with no
-   * validation error). The promise's settlement controls error display:
-   * resolve → exit edit mode, reject → stay in edit mode with the error
-   * surfaced inline so the user can correct.
-   */
-  onCommit: (next: EditableCellValue) => void | Promise<void>;
-  /** Editor type. Text uses a string input; number coerces to Number on commit (an emptied draft commits `""` — the uniform "cleared" value). Defaults to "text". */
-  type?: EditableCellType;
-  /** Date format — only used when `type="date"`. Defaults to `"mdy"`. */
-  dateFormat?: DateInputFormat;
-  /** Options — required for `type="select"` and `type="multiselect"`. */
-  options?: EditableCellOption[];
-  /**
-   * Whether the select panel includes a search box. Defaults to `"auto"` —
-   * the box appears only once the option count passes the shared Listbox
-   * threshold (6) — so a select/multiselect cell matches the `Select` atom's
-   * behavior instead of inheriting the raw Listbox `true` default.
-   */
-  searchable?: boolean | 'auto';
-  /**
-   * Clear affordance — the surface differs per editor type:
-   *   - `select` / `multiselect` — a "Clear" / "Clear all" action in the
-   *     dropdown footer (commits "" / empties the draft).
-   *   - `text` / `number` / `date` — a ✕ inside the EDITING input (mirrors
-   *     TextInput/NumberInput/DateInput) that empties the draft and keeps
-   *     focus; nothing commits until Enter/blur, so `required`/`validate`
-   *     still guard, and Esc still restores the old value. Available on
-   *     required cells too — "wipe it and type the right value" is the
-   *     point. Display mode never shows a ✕ — the pencil owns that gutter,
-   *     and a one-click destroy on a static table cell invites accidents.
-   *
-   * `required` never hides the affordance — it guards the OUTCOME instead:
-   * clearing a required cell surfaces the required warning (the value stays),
-   * clearing an optional one empties it back to the placeholder.
-   *
-   * Defaults to `true` — the input-family default (TextInput, NumberInput,
-   * DateInput …), so consumers like DataTable get the affordance uniformly
-   * without per-column wiring. Pass `false` to opt out.
-   */
-  clearable?: boolean;
-  /** Text alignment — pass through from a DataTable column's `align` so the editing input matches the display alignment. */
-  align?: EditableCellAlign;
-  /**
-   * Size preset. `small` (default) is the dense table scale — the cell reads
-   * like a static text cell inside a DataTable row (its font falls back to
-   * the inherited size). `medium` steps the cell up to the input-family
-   * scale (12/6 padding, 14px font) for standalone use in side panels /
-   * detail views, where a table-dense cell looks undersized next to real
-   * inputs. Each size owns a symmetric
-   * `--uxm-editable-cell-{size}-{padding-x,padding-y,font-size}` knob set;
-   * height always derives from font-size + padding (a `1lh` floor keeps
-   * empty cells clickable).
-   */
-  size?: EditableCellSize;
-  /**
-   * Display-mode formatter. Receives the raw value, returns the React node
-   * to render in display mode. Never called for an empty value — a cleared
-   * cell renders its `placeholder` instead (so a Tag/Badge formatter can't
-   * paint an empty pill).
-   */
-  format?: (value: EditableCellValue) => ReactNode;
-  /** Synchronous validation. Return an error message to block commit; return null/undefined to accept. */
-  validate?: (next: EditableCellValue) => string | null | undefined;
-  /**
-   * Mark the cell required — an empty value blocks commit and surfaces a
-   * warning, checked BEFORE `validate` so you don't hand-write the empty rule.
-   * Uniform across every editor type: `multiselect` → non-empty array (the
-   * rule lives in MultiListbox, shared with every other picker), `select` →
-   * a chosen option, `text`/`number`/`date` → a non-blank value.
-   */
-  required?: boolean;
-  /** Override the default required message (per-type: "Select at least one option" / "Select an option" / "Required"). */
-  requiredMessage?: string;
-  /**
-   * Shown at `error` severity when `onCommit` rejects without a message of
-   * its own. Default `"Failed to save"`. A rejection that *does* carry an
-   * `Error.message` still wins — that text is the server's, not the atom's.
-   */
-  saveErrorMessage?: string;
-  /**
-   * Shown at `warning` severity when a `type="number"` draft isn't a number.
-   * Default `"Enter a number"`.
-   */
-  invalidNumberMessage?: string;
-  /**
-   * Shown at `warning` severity when a `type="date"` draft doesn't parse.
-   * Defaults to `invalidDateMessage(dateFormat)` — `` `Enter a valid date
-   * (YYYY-MM-DD)` `` — which names the expected mask, so a translation
-   * should keep the mask in it.
-   */
-  invalidDateMessage?: string;
-  /**
-   * Sample warning text for `forceMode="warning"`. Preview-only — production
-   * consumers never see it. Default `"Enter a valid value"`.
-   */
-  invalidValueMessage?: string;
-  /** Read-only — clicking does nothing, no edit affordance. */
-  disabled?: boolean;
-  /** Shown when value is empty/blank. */
-  placeholder?: string;
-  className?: string;
-  style?: CSSProperties;
-  'aria-label'?: string;
-  /**
-   * Accessible names for the editors' icon-only controls. Which ones apply
-   * depends on the editor type. The composed "Edit {value}" trigger names
-   * are not here — pass `aria-label` to replace those wholesale.
-   */
-  /** Clear button, select + multiselect editors. Default `"Clear selection"`. */
-  clearSelectionLabel?: string;
-  /** Clear button, date editor. Default `"Clear date"`. */
-  clearDateLabel?: string;
-  /** Clear button, text / number editors. Default `"Clear value"`. */
-  clearValueLabel?: string;
-  /** Calendar trigger, date editor. Default `"Open calendar"`. */
-  openCalendarLabel?: string;
-  /** Calendar popover dialog, date editor. Default `"Choose date"`. */
-  calendarDialogLabel?: string;
-  /** Trigger name when the date editor is empty. Default `"Add date"`. */
-  addDateLabel?: string;
-  /**
-   * Preview-only branch override. UXM's canvas passes this to render the
-   * input branch without a real click — `editing` shows the input, `warning`
-   * / `error` also surface a sample message at that severity so the matching
-   * knobs paint. It does NOT focus the input (the canvas must never steal
-   * focus from the editor panel); the preview mirrors the focus visuals via
-   * a forced CSS class instead. Production consumers leave it unset.
-   */
-  forceMode?: 'editing' | 'warning' | 'error';
-}
 
 /**
  * Inline-editable cell. Three modes:
