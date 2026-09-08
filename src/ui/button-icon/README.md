@@ -1,5 +1,7 @@
 # ButtonIcon
 
+> **Deprecated since 4.39 — use [`IconButton`](../icon-button/README.md) with `variant="filled"`.** It paints exactly this (40 px, `--color-surface-alt` fill, radius 8, accent-subtle hover, accent-bold pressed) and is themed under `--uxm-icon-button-filled-*`. `ButtonIcon`, its `uxm-button-icon` class and the `--uxm-button-icon-*` vars are removed in the next major; until then saved studio themes keep painting. Migration: `<ButtonIcon …>` → `<IconButton variant="filled" …>`, `--uxm-button-icon-background-color` → `--uxm-icon-button-filled-bg`, `-hover-background-color` → `-filled-hover-bg`, `-active-background-color` → `-filled-active-bg`, `-size` → `-filled-size`, `-icon-size` → `-filled-icon-size`, `-border-radius` → `-filled-radius`.
+
 A square icon-only button — renders a native `<button>` with no label text, sized via CSS variable, and enforces the `aria-label` contract at the type level.
 
 `ButtonIcon` is a thin wrapper around `<button>` with a single BEM class (`uxm-button-icon`). It requires `aria-label` (via TypeScript), so an icon-only button can never ship without a screen-reader accessible name. `type` defaults to `"button"` to prevent accidental form submission. The inner `<svg>` is sized through `--uxm-button-icon-icon-size`, so the same component can host glyphs of varying intrinsic size while keeping the hit-target square.

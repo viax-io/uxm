@@ -103,9 +103,68 @@ export default tseslint.config(
     },
   },
 
-  // 5. Build / config files — Node globals, no default-export ban.
+  // 5. Layer boundaries — `studio / previews → ui → tokens` (CLAUDE.md). Until
+  //    now this was convention only; a stray `@/studio` import in an atom would
+  //    ship studio code to every consumer without anything noticing. Zones are
+  //    "files under `target` may not import from `from`". Per-atom previews
+  //    (`src/ui/**/*-preview.tsx`) legitimately read the two leaf modules of
+  //    `src/previews` (the PreviewProps contract and the shared demo actions),
+  //    hence the `except`; the barrel and the composite previews stay off-limits.
   {
-    files: ['*.{js,mjs,cjs,ts}', 'tsup.config.ts', 'eslint.config.mjs'],
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      'import/no-restricted-paths': ['error', {
+        zones: [
+          {
+            target: './src/ui',
+            from: './src/studio',
+            message: 'src/ui must not depend on src/studio — the direction is studio → ui → tokens.',
+          },
+          {
+            target: './src/ui',
+            from: './src/previews',
+            except: ['./types.ts', './demo-row-actions.tsx'],
+            message: 'src/ui may only read the preview contract (src/previews/types.ts) and demo-row-actions, never the previews barrel or composites.',
+          },
+          {
+            target: './src/previews',
+            from: './src/studio',
+            message: 'src/previews must not depend on src/studio — previews are consumed BY the studio.',
+          },
+          {
+            target: './src/tokens',
+            from: './src',
+            except: ['./tokens'],
+            message: 'src/tokens is the leaf layer — it imports nothing from the rest of src.',
+          },
+          {
+            target: ['./src/lib', './src/hooks', './src/helpers'],
+            from: ['./src/ui', './src/studio', './src/previews'],
+            message: 'src/lib, src/hooks and src/helpers are shared leaves — they must not import components or the studio.',
+          },
+        ],
+      }],
+    },
+  },
+
+  // 6. Tree-shake guarantee — no `*-preview` module may be re-exported from a
+  //    ui barrel, or `@viax.io/uxm/ui` drags every canvas preview into consumers.
+  //    Previously "verify by hand" (CLAUDE.md); now the linter does it.
+  {
+    files: ['src/ui/index.ts', 'src/ui/*/index.ts'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          group: ['*-preview', '*-preview.tsx', '**/*-preview', '**/*-preview.tsx'],
+          message: 'Preview modules are exported from src/previews/index.ts only — never from a ui barrel (tree-shake guarantee).',
+        }],
+      }],
+    },
+  },
+
+  // 7. Build / config files — Node globals, no default-export ban.
+  {
+    files: ['*.{js,mjs,cjs,ts}', 'tsup.config.ts', 'vitest.config.ts', 'eslint.config.mjs'],
     languageOptions: { globals: { ...globals.node } },
     rules: { 'import/no-default-export': 'off' },
   },

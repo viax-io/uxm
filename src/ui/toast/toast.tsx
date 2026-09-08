@@ -1,10 +1,10 @@
 import { cn } from '../../helpers/cn';
 import { Icon } from '../icon';
 
-import type { ToastAction } from '../../hooks/use-toast-store';
+import type { ToastAction, ToastVariant } from '../../hooks/use-toast-store';
 import type { HTMLAttributes } from 'react';
 
-export type ToastVariant = 'success' | 'info' | 'warning' | 'error';
+export type { ToastVariant };
 
 export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   variant?: ToastVariant;

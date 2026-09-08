@@ -3,7 +3,8 @@
 /* Soft elevation so the calendar reads as a floating surface in its popover
    usages (DateInput / TimeInput / EditableCell date). On by default via the
    `shadow` prop; the shadow itself is tunable through the
-   `--uxm-calendar-shadow-*` vars. */
+   `--uxm-calendar-shadow-*` vars. The colour fallback is a literal because
+   the knob is a COLOUR and the `--shadow-*` tokens are whole box-shadows. */
 .uxm-calendar--shadow {
   box-shadow: 0 var(--uxm-calendar-shadow-offset-y, 6px) var(--uxm-calendar-shadow-blur, 20px) var(--uxm-calendar-shadow-color, rgba(0, 0, 0, 0.12));
 }

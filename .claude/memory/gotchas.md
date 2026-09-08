@@ -17,9 +17,11 @@ git checkout --no-track -b <name> master     # or origin/master
 git push -u origin <name>                     # explicit branch, first push
 ```
 
-Then open an MR. `master` is protected **by convention only** — GitLab does not
-enforce it — so nothing stops a mis-targeted push from landing there and
-triggering a release (CI runs `semantic-release` on `master`).
+Then open a PR. `master` is protected **by convention only** — and on GitHub it
+is deliberately left unprotected, because `@semantic-release/git` pushes its
+`chore(release)` commit with the default `GITHUB_TOKEN`, which cannot write to a
+protected branch. Nothing stops a mis-targeted push from landing there and
+triggering a release (the Release workflow runs `semantic-release` on `master`).
 
 **Why this matters — the v3.0.1 incident.** A branch was once created with
 `git checkout -b <name> origin/master` (tracking `origin/master`); a bare
@@ -217,7 +219,8 @@ runs. Only an app that imports the compiled CSS and sets no vars sees the bug.
 
 **This actually happened — `ToggleSwitch` hover.** All four
 `--uxm-toggle-switch-hover-*` fallbacks echoed the resting colour
-(`--color-border` / `--color-accent`) while `registry/inputs.ts` declared
+(`--color-border` / `--color-accent`) while `registry/inputs.ts` (now
+`registry/inputs/toggle-switch.ts`) declared
 `--color-text-muted` / `--color-accent-bold` as the hover defaults. The atom's
 own README even documented the symptom as intended ("no additional colour change
 in baseline styles"). Reported from a consumer project, not caught here.
@@ -252,7 +255,7 @@ of the 19 hits its first full-repo run produced, **7 were legacy-alias
 chains** — `var(--uxm-x-new, var(--uxm-x-old, <token>))` where the innermost
 token already matched the registry (the script now resolves those) — and 11
 were real and are fixed, so the script runs green (exit 0) — and now GATES
-CI: the `.gitlab-ci.yml` `test` job runs `npm run check:drift`, so a knob
+CI: the `.github/workflows/ci.yml` `verify` job runs `npm run check:drift`, so a knob
 default and its SCSS fallback can no longer disagree without failing the
 pipeline.
 Three of the 11 changed a *visible aesthetic*, not just a dead state, and
@@ -312,3 +315,39 @@ unavailable without anyone noticing. **Now:** the entry runs
 Expected noise, not a bug: `figma-dev-mode-mcp-server` (`http://127.0.0.1:3845`)
 fails to connect whenever Figma Desktop isn't running with Dev Mode MCP enabled.
 Treat that as "Figma is closed", not as a config problem.
+
+---
+
+## The Nexus proxy-lag lockfile trap — historical, does not apply on public npm
+
+Kept so nobody reintroduces the workaround. While the package installed from the
+Viax Nexus proxy, `npm audit fix` resolved through registry.npmjs.org and could
+lock a version published minutes earlier that Nexus's cached packument did not
+list yet. Locally nothing broke (the tarball was already in `~/.npm`); CI had no
+cache, installed through Nexus, and died with
+`404 Not Found … electron-to-chromium-1.5.423.tgz` before a single test ran
+(08-09-2026, MR !166, job 1554352).
+
+`scripts/check-lock-nexus.mjs` and the `check:lock` script existed only to catch
+that, and were removed with the npm migration: install and audit now both
+resolve through registry.npmjs.org, so the two registries cannot disagree.
+
+**How to apply:** do not add a lockfile-reachability gate back unless the install
+registry and the audit registry diverge again.
+
+---
+
+## GitHub Actions: `pull_request` + `push` on one workflow double-runs every PR
+
+A workflow triggered on both `pull_request` and `push` fires twice for each
+commit on a PR branch — same job, same result, twice the minutes. GitHub has no
+native "push only when there is no PR" condition, so pick one trigger.
+
+`ci.yml` uses `pull_request` alone plus a `concurrency` group keyed on
+`github.head_ref` with `cancel-in-progress: true`, so a new push supersedes the
+in-flight run instead of racing it. The trade is that a branch with no open PR
+gets no CI — the PR is the gate.
+
+**How to apply:** when adding a workflow, name one trigger and add a
+`concurrency` group. If you need `push` as well, scope it to branches that never
+carry a PR.

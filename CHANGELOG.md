@@ -1,3 +1,32 @@
+# [4.39.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.38.0...v4.39.0) (2026-09-08)
+
+
+### Features
+
+* **hooks:** expose the behaviour hooks as @viax/uxm/hooks ([1224dc5](https://gitlab.viax.tech/services-viax/uxm/commit/1224dc53be946ae6d1a43bb7b5d4451f6b0de44a))
+* **icon-button:** add variant="filled"; deprecate ButtonIcon ([e3bb8a5](https://gitlab.viax.tech/services-viax/uxm/commit/e3bb8a5b54d7c547bab4b9e0a743275456b07e3d))
+
+# [4.38.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.37.1...v4.38.0) (2026-09-08)
+
+
+### Features
+
+* **tokens:** gate tokens.css against themeTokens; deprecate the Tailwind-only palette aliases ([9e90585](https://gitlab.viax.tech/services-viax/uxm/commit/9e9058535a447e384a2cb8558ff5b97371f8e57c))
+
+## [4.37.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.37.0...v4.37.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **ui:** theme-aware toast close hover and date-input popover shadow ([d860886](https://gitlab.viax.tech/services-viax/uxm/commit/d8608863351c27408eb02617ae80bd54da3f7cdf))
+
+# [4.37.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.36.0...v4.37.0) (2026-09-07)
+
+
+### Features
+
+* **locale:** add locale sensitivity, resolve static component data from the parent ([eed5b79](https://gitlab.viax.tech/services-viax/uxm/commit/eed5b79c95e98fa230f4e6a12612d7679ab927d0))
+
 # [4.36.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.35.0...v4.36.0) (2026-09-04)
 
 

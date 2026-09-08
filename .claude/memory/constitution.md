@@ -1,32 +1,83 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.1.0 → 1.1.1
-Bump rationale: PATCH — no principle changed. The legacy Viax Vue handbooks
-(bem-style-guide, design-tokens, ui-components) moved to
-`.claude/handbooks/legacy/` (repo audit 2026-09-07); the Principle I reference
-to `design-tokens.md` now points at the archived path. The Vue-era commands
-`/write-tests` and `/figma-audit` were removed and `/end-task` rewritten around
-the gates this document names (lint, typecheck, check:drift, build).
+Version change: 1.3.0 → 1.4.0
+Bump rationale: MINOR — Principle III gains a deprecation rule: replacement
+ships first (MINOR), the old surface is marked @deprecated everywhere it is
+described (JSDoc, README, studio registry, skill), stays painting for at least
+one MINOR, and is removed only in the next MAJOR. First application:
+`ButtonIcon` → `IconButton variant="filled"` (4.39). Also in this release
+train: `@viax.io/uxm/hooks` subpath (new export, MINOR) and Modal's sub-
+components moved from forwardRef to React 19 ref props (no API change).
 
-Modified principles: none (path-only wording in I).
+Modified principles:
+  - III. Component API Stability & Semver — "Deprecation precedes removal"
+    bullet added.
 Added sections: none. Removed sections: none.
 
 Templates requiring updates:
-  ✅ .claude/commands/end-task.md (rewritten — gates + Constitution Check I–V)
-  ✅ .claude/commands/commit-message.md (uxm scopes, semver footer guidance)
-  ✅ .claude/commands/start-task.md, agents/code-review.md, agents/react-frontend.md
-     (legacy-handbook caveats replaced by a pointer to handbooks/legacy/)
+  ✅ .claude/commands/update-ai-skill.md (authoring table gained a
+     "Deprecation" row)
+  ✅ skills/viax-uxm/references/component-catalog.md ("Deprecated" section)
   ✅ .claude/templates/* (no change needed — verified)
 
-Previous report (1.0.0 → 1.1.0, 2026-07-07) — kept for history:
-  MINOR: added "AI Skill & Agent Tooling"; Principles I, II, V and the
-  Development Workflow expanded (lint gate, semantic-release flow, skill
-  lifecycle); token taxonomy corrected to `--color-*`; SCSS-per-component and
-  BEM state modifiers codified; the SMACSS `.is-*` bullet removed.
+Previous report (1.2.0 → 1.3.0, 2026-09-08) — kept for history:
+  Bump rationale: MINOR — Principle V gains a new gate: `npm test`, a Vitest
+  smoke suite (tests/, jsdom + Testing Library + axe-core) that pins the
+  behavioural contracts no other gate can see — focus trap / Escape /
+  outside-click on the floating layers, ARIA wiring on the pickers, the CSS
+  sanitizers, the overrides generator, an axe pass. Deliberately NOT a coverage
+  target: visual atoms are verified in the portal. CI's test job runs it with a
+  junit report, and `npm audit` runs against registry.npmjs.org, gating at
+  critical.
 
-Follow-up TODOs:
-  - none
+  Modified principles:
+    - V. Build Hygiene & Strict Typing — `npm test` added as a MUST gate with
+      the "behavioural contracts, not coverage" scope.
+  Added sections: none. Removed sections: none.
+
+  Templates requiring updates:
+    ✅ CLAUDE.md; .claude/handbooks/react-style-guide.md (K. Gates)
+    ✅ .claude/commands/start-task.md, end-task.md, code-review.md, commit-message.md
+    ✅ .claude/agents/code-review.md, runtime-debugger.md
+    ✅ .claude/templates/plan-template.md (V gate row now lists `npm test`);
+       spec/tasks templates unchanged — verified
+
+  Previous report (1.1.1 → 1.2.0, 2026-09-07) — kept for history:
+    Bump rationale: MINOR — one new principle (VI. Localisation Boundary),
+    codifying the props-in/no-i18n-engine contract that VX-1835 enforced across
+    `src/ui`. No existing principle changed meaning.
+
+    Modified principles: none (VI is additive).
+    Added sections:
+      - VI. Localisation Boundary (1.2.0)
+    Removed sections: none
+
+    Templates requiring updates:
+      ✅ .claude/templates/plan-template.md (Constitution Check gained a
+         "VI. Localisation Boundary" row)
+      ✅ .claude/commands/*, .claude/agents/* (no change needed — none of them
+         enumerate the principles; they point at this document)
+
+    Previous report (1.1.0 → 1.1.1, 2026-09-07) — kept for history:
+      PATCH: no principle changed. The legacy Viax Vue handbooks (bem-style-guide,
+      design-tokens, ui-components) moved to `.claude/handbooks/legacy/` (repo audit
+      2026-09-07); the Principle I reference to `design-tokens.md` now points at the
+      archived path. The Vue-era commands `/write-tests` and `/figma-audit` were
+      removed and `/end-task` rewritten around the gates this document names (lint,
+      typecheck, check:drift, build). Templates synced then: end-task.md (rewritten),
+      commit-message.md (uxm scopes, semver footer), start-task.md +
+      agents/code-review.md + agents/react-frontend.md (legacy-handbook caveats
+      replaced by a pointer to handbooks/legacy/), .claude/templates/* (verified).
+
+    Previous report (1.0.0 → 1.1.0, 2026-07-07) — kept for history:
+      MINOR: added "AI Skill & Agent Tooling"; Principles I, II, V and the
+      Development Workflow expanded (lint gate, semantic-release flow, skill
+      lifecycle); token taxonomy corrected to `--color-*`; SCSS-per-component and
+      BEM state modifiers codified; the SMACSS `.is-*` bullet removed.
+
+    Follow-up TODOs:
+      - none
 -->
 
 # @viax.io/uxm Constitution
@@ -34,7 +85,7 @@ Follow-up TODOs:
 This document is the source of truth for engineering, design and release
 discipline in the `@viax.io/uxm` React 19 UI primitives + design tokens package.
 It governs every change merged into `master` and every artifact published to
-the Viax Nexus npm registry. Where any handbook, command, agent prompt, or
+the public npm registry. Where any handbook, command, agent prompt, or
 ad-hoc practice conflicts with this constitution, **the constitution wins**.
 
 ## Core Principles
@@ -117,6 +168,16 @@ Rules:
   markers, and publishes. Commit types therefore carry semver meaning and MUST
   be chosen accordingly (`feat` = MINOR, `fix` = PATCH, `BREAKING CHANGE` =
   MAJOR).
+- **Deprecation precedes removal.** A public export, prop, CSS class or
+  `--uxm-*` / `--color-*` variable is never removed in the release that
+  introduces its replacement. The sequence is: (1) ship the replacement as a
+  MINOR; (2) in the same MINOR mark the old surface `@deprecated` in JSDoc
+  (with the replacement and the version), in its README banner, in the studio
+  registry name/description, and in the skill (catalog row + the
+  "Deprecated" list in `component-catalog.md`); (3) keep it painting and
+  compiling for at least one MINOR; (4) remove it in the next MAJOR with a
+  `BREAKING CHANGE:` footer that names the replacement. Studio themes saved
+  against a deprecated surface must still render until the removal.
 
 *Rationale:* The package is consumed via `npm install` (and locally via
 `file:` link). Silent breakage cascades into every Viax SPA.
@@ -147,6 +208,12 @@ would be self-defeating, and downstream apps trust its primitives as a floor.
   `// eslint-disable-next-line <rule> -- <reason>` comment.
 - `npm run typecheck` (`tsc --noEmit`, library + portal) **MUST** pass with
   zero errors.
+- `npm test` (Vitest smoke suite in `tests/`) **MUST** pass. The suite pins
+  behavioural contracts — focus trap / Escape / outside-click on the floating
+  layers, ARIA wiring on the pickers, the CSS sanitizers, the overrides
+  generator, an axe pass — and a change to one of those SHOULD add a test.
+  It is deliberately not a coverage target: visual atoms are verified in the
+  portal, not in jsdom.
 - `npm run build` (tsup multi-entry → `dist/{index,ui,tokens,…}`) **MUST**
   succeed and produce ESM + CJS + `.d.ts` + CSS for every exports map entry in
   `package.json`. A missing artifact is a release blocker.
@@ -160,6 +227,44 @@ would be self-defeating, and downstream apps trust its primitives as a floor.
 
 *Rationale:* This is a leaf library — its build output is the product. A lint,
 typecheck or build failure ships broken conventions/types/CSS to every consumer.
+
+### VI. Localisation Boundary
+
+The library formats; the consumer translates. This split is a hard boundary.
+
+- **No i18n engine, ever.** `@viax.io/uxm` MUST NOT depend on `i18next`,
+  `react-intl`, or any translation runtime, and MUST NOT ship a message
+  catalogue. A primitives library that owns translation forces its choice of
+  engine onto every consuming app.
+- **No user-visible string without an override prop.** Every string an atom can
+  render or announce — visible copy, `aria-label`, `placeholder`, `title`,
+  validation and error messages, empty states — MUST be reachable from props.
+  English defaults are expected and encouraged; an unreachable default is a
+  defect, not a style choice. This covers strings the atom generates
+  *conditionally* (a per-row status, a rejected-commit fallback, a
+  preview-only sample), which is exactly where leaks have happened.
+- **Composed names take a function, not a prefix.** When a label interpolates a
+  value, the prop MUST be a callback — `removeFile(name)`,
+  `uploadProgress(percent, size)`, `countLabel(count)` — never a prefix string
+  the atom concatenates. Word order and pluralisation around an interpolated
+  value are language-specific and a prefix cannot express them.
+- **Locale-sensitive formatting goes through `Intl`, seeded from
+  `useUxmLocale`.** Dates, numbers, currencies, and units MUST NOT be
+  hand-formatted (`toFixed`, manual separators, hardcoded unit suffixes). An
+  atom that formats MUST take `locale?: string` and resolve it as
+  prop → `UxmLocaleProvider` → `DEFAULT_UXM_LOCALE`, so a per-instance pin and
+  an app-wide default both work.
+- **Grouping convention.** One or two strings → discrete props
+  (`clearLabel`, `invalidMessage`). Three or more, or anything per-row →
+  a single `labels?: XLabels` object merged over exported defaults
+  (`{ ...DEFAULT_LABELS, ...labels }`), as `ColorInput` and `FileUpload` do.
+- Adding a string to an atom **MUST** add its prop and document the default in
+  the component README's props table in the same change.
+
+*Rationale:* Consumers ship in multiple markets and cannot patch a hardcoded
+string out of a published `dist`. Keeping copy in props and locale in one
+context makes the whole library localisable without the library knowing what a
+translation is.
 
 ## Distribution & Consumer Contract
 
@@ -217,7 +322,7 @@ typecheck or build failure ships broken conventions/types/CSS to every consumer.
    Tradeoffs* section.
 5. **Release** — merging to `master` triggers CI: semantic-release computes the
    version from commits, writes `CHANGELOG.md`, stamps the skill markers, tags,
-   and publishes to Nexus. After a release, sync the skill to `viax-ai-skills`
+   and publishes to npm. After a release, sync the skill to `viax-ai-skills`
    via `/update-ai-skill`.
 
 ## Governance
@@ -241,4 +346,4 @@ typecheck or build failure ships broken conventions/types/CSS to every consumer.
   document end-to-end and file follow-up issues for drift.
 - **Deferred items.** None.
 
-**Version**: 1.1.1 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-07
+**Version**: 1.4.0 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-08

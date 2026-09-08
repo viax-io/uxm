@@ -45,7 +45,9 @@ function PriceFilter() {
 | `unit` | `string` | – | Suffix appended to displayed values (e.g. `"px"`, `"$"`). |
 | `className` | `string` | – | Merged with `uxm-range-slider` via `cn`. |
 | `style` | `CSSProperties` | – | Inline style; merged with the computed gradient-stop vars. |
-| `aria-label` | `string` | – | Base label; each input adds `" (start)"` / `" (end)"` suffix automatically. |
+| `aria-label` | `string` | – | Names the control as a whole. Each thumb derives its own name by appending `" (start)"` / `" (end)"` — English word order baked in, so translate via `startLabel` / `endLabel` rather than relying on the suffix. |
+| `startLabel` | `string` | `` `${aria-label} (start)` ``, else `'Range start'` | Accessible name for the lower thumb, used **verbatim** — it replaces the whole composed name, not just the suffix. |
+| `endLabel` | `string` | `` `${aria-label} (end)` ``, else `'Range end'` | Accessible name for the upper thumb, used **verbatim**. |
 
 ## CSS variables
 
@@ -89,7 +91,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 ## Accessibility
 
 - Each thumb is a real `<input type="range">` — keyboard interaction (Arrow keys, Home/End, PageUp/PageDown) and screen-reader value announcements come from the native primitive.
-- The inputs receive distinct `aria-label`s (`" (start)"` / `" (end)"` suffixes) so assistive tech can disambiguate the two thumbs; supply a base `aria-label` to give them meaningful context.
+- The inputs receive distinct `aria-label`s so assistive tech can disambiguate the two thumbs; supply a base `aria-label` to give them meaningful context.
+- The default suffix composition (`"Price range (start)"`) only reads correctly in English — a language that qualifies a noun differently, or inflects it, needs the whole name replaced. Pass `startLabel` / `endLabel` for that; they are used verbatim.
 - `pointer-events: none` on the input root + `pointer-events: auto` on the thumb pseudo-elements ensures the second-stacked input doesn't block clicks on the first thumb. Touch users can grab whichever thumb is closer to their finger.
 - No native focus ring is rendered (the input's outline is suppressed) — only the thumb's `box-shadow` indicates position. For stricter WCAG 2.1 focus-visible compliance, add a focus-state shadow at the consumer level.
 - Disabled state uses the native `disabled` attribute on both inputs — they're removed from the tab order and announced as unavailable.

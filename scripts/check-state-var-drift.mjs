@@ -21,8 +21,8 @@ const kebab = (k) => k.replace(/(?<!^)(?=[A-Z])/g, '-').toLowerCase();
 // shape the gotchas entry warns about.
 const squash = (s) => s.replace(/\s+/g, ' ').replace(/\(\s/g, '(').replace(/\s\)/g, ')').trim();
 
-// 1. knob → var overrides from generate-css.ts
-const gc = read('src/studio/persistence/generate-css.ts');
+// 1. knob → var overrides from generate-css-mapping.ts
+const gc = read('src/studio/persistence/generate-css-mapping.ts');
 const mapping = {};
 for (const m of gc.matchAll(/'([a-z0-9-]+)':\s*\{([^}]*)\}/g)) {
   const entries = Object.fromEntries([...m[2].matchAll(/(\w+):\s*'(--[\w-]+)'/g)].map((e) => [e[1], e[2]]));
@@ -30,7 +30,7 @@ for (const m of gc.matchAll(/'([a-z0-9-]+)':\s*\{([^}]*)\}/g)) {
 }
 
 // 2. registry state knobs
-const registryFiles = globSync('src/studio/lib/registry/*.ts');
+const registryFiles = globSync('src/studio/lib/registry/**/*.ts');
 const knobs = [];
 for (const f of registryFiles) {
   const src = read(f);

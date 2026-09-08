@@ -16,7 +16,8 @@ deviation under §7 *Complexity / Tradeoffs*).
 - [ ] **II. BEM Discipline (uxm- prefix, canonical)** — no ad-hoc class names or CSS-in-JS
 - [ ] **III. Component API Stability & Semver** — additive change OR documented major bump
 - [ ] **IV. Accessibility & WCAG Contrast** — keyboard nav, ARIA, AA contrast verified
-- [ ] **V. Build Hygiene & Strict Typing** — `npm run lint`, `npm run typecheck` and `npm run build` clean
+- [ ] **V. Build Hygiene & Strict Typing** — `npm run lint`, `npm run typecheck`, `npm test` and `npm run build` clean
+- [ ] **VI. Localisation Boundary** — no i18n dependency; every user-visible string (incl. `aria-label`, placeholders, validation messages) reachable from props; interpolated labels are callbacks, not prefixes; `Intl` formatting resolves prop → `UxmLocaleProvider` → `DEFAULT_UXM_LOCALE`
 - [ ] **AI Skill** — new/renamed/removed public component reflected in `skills/viax-uxm/` (same MR; markers untouched — CI stamps them)
 
 ## 3. Affected Surface

@@ -19,6 +19,7 @@ import { IconButton } from '@/ui';
 export function IconButtonPreview({ styles, variants }: PreviewProps) {
   const glyph = (variants.glyph as string) ?? 'close';
   const state = (variants.state as string) ?? 'default';
+  const filled = variants.variant === 'filled';
   const def = getIcon(glyph);
 
   const [hover, setHover] = useState(false);
@@ -30,25 +31,30 @@ export function IconButtonPreview({ styles, variants }: PreviewProps) {
   const isDisabled = state === 'disabled';
   const isForcedState = forced;
 
-  const iconSize = styles.iconSize as number;
+  // Each variant owns its knob set; pick the active one so both the projected
+  // vars and the forced-state overrides below paint the variant on canvas.
+  const iconSize = (filled ? styles.filledIconSize : styles.iconSize) as number;
+  const base = filled
+    ? { bg: styles.filledBg, color: styles.filledColor, hoverBg: styles.filledHoverBg, hoverColor: styles.filledHoverColor, activeBg: styles.filledActiveBg, activeColor: styles.filledActiveColor }
+    : { bg: styles.backgroundColor, color: styles.color, hoverBg: styles.hoverBackgroundColor, hoverColor: styles.hoverColor, activeBg: styles.activeBackgroundColor, activeColor: styles.activeColor };
 
   const fallback = <T,>(stateValue: T | undefined, base: T) =>
     stateValue !== undefined ? stateValue : base;
 
   const currentBg = isPressed
-    ? fallback(styles.activeBackgroundColor as string | undefined, styles.backgroundColor as string)
+    ? fallback(base.activeBg as string | undefined, base.bg as string)
     : isHover
-    ? fallback(styles.hoverBackgroundColor as string | undefined, styles.backgroundColor as string)
-    : (styles.backgroundColor as string);
+    ? fallback(base.hoverBg as string | undefined, base.bg as string)
+    : (base.bg as string);
   const currentColor = isDisabled
-    ? fallback(styles.disabledColor as string | undefined, styles.color as string)
+    ? fallback(styles.disabledColor as string | undefined, base.color as string)
     : isPressed
-    ? fallback(styles.activeColor as string | undefined, styles.color as string)
+    ? fallback(base.activeColor as string | undefined, base.color as string)
     : isHover
-    ? fallback(styles.hoverColor as string | undefined, styles.color as string)
+    ? fallback(base.hoverColor as string | undefined, base.color as string)
     : isFocused
-    ? fallback(styles.focusColor as string | undefined, styles.color as string)
-    : (styles.color as string);
+    ? fallback(styles.focusColor as string | undefined, base.color as string)
+    : (base.color as string);
 
   const cssVars: CSSProperties = {
     '--uxm-icon-button-size': `${styles.size}px`,
@@ -68,6 +74,16 @@ export function IconButtonPreview({ styles, variants }: PreviewProps) {
     '--uxm-icon-button-focus-color': styles.focusColor as string | undefined,
     '--uxm-icon-button-disabled-opacity': (styles.disabledOpacity as number).toString(),
     '--uxm-icon-button-disabled-color': styles.disabledColor as string | undefined,
+    // Filled-variant vars — read only by `.uxm-icon-button--filled`.
+    '--uxm-icon-button-filled-size': `${styles.filledSize}px`,
+    '--uxm-icon-button-filled-radius': `${styles.filledRadius}px`,
+    '--uxm-icon-button-filled-icon-size': `${styles.filledIconSize}px`,
+    '--uxm-icon-button-filled-bg': styles.filledBg as string,
+    '--uxm-icon-button-filled-color': styles.filledColor as string,
+    '--uxm-icon-button-filled-hover-bg': styles.filledHoverBg as string,
+    '--uxm-icon-button-filled-hover-color': styles.filledHoverColor as string,
+    '--uxm-icon-button-filled-active-bg': styles.filledActiveBg as string | undefined,
+    '--uxm-icon-button-filled-active-color': styles.filledActiveColor as string | undefined,
     // Forced-state direct overrides keep the previewed state painted
     // regardless of real pointer/keyboard interaction. Default state skips
     // these so `:hover` etc. still trigger naturally.
@@ -88,6 +104,7 @@ export function IconButtonPreview({ styles, variants }: PreviewProps) {
   return (
     <div style={{ padding: 16, display: 'inline-flex' }}>
       <IconButton
+        variant={filled ? 'filled' : 'ghost'}
         aria-label={def?.label ?? glyph}
         disabled={isDisabled}
         onMouseEnter={() => !forced && setHover(true)}

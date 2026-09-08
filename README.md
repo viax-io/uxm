@@ -21,9 +21,9 @@ The package ships **no `"use client"` / `"use server"` directives** by design: c
 npm install @viax.io/uxm
 ```
 
-Peer deps: `react@^19`, `react-dom@^19`. Node `>=22.14.0` for local dev.
+Peer deps: `react@^19`, `react-dom@^19`. Node `>=20` for local dev.
 
-The package is published to the private Viax Nexus npm registry; see [Configure the registry](#configure-the-registry) below.
+Published publicly on npm — no registry configuration, credentials or VPN required.
 
 ## Quick start
 
@@ -73,6 +73,7 @@ import { ButtonPrimary, themeTokens } from '@viax.io/uxm';
 | `@viax.io/uxm/ui.css` | Compiled component stylesheet — required for visual output. |
 | `@viax.io/uxm/tokens` | `themeTokens` array + `findToken` / `resolveHex` / `isTokenValue` + `ThemeToken` type. |
 | `@viax.io/uxm/tokens.css` | `--color-*` declarations on `:root`. |
+| `@viax.io/uxm/hooks` | The behaviour hooks the atoms are built on — `useDismiss`, `useFocusTrap`, `useFocusOnMount`, `useRovingTabIndex`, `useScrollLock`, `usePortal`, `useToastStore` — for hosts composing their own floating layers or keyboard widgets. Pure React, no atom imports. |
 | `@viax.io/uxm/previews` | Preview components for host shells building theme editors. **No preview symbol leaks into `/ui`** — see the tree-shake guarantee below. |
 
 ## Component catalog
@@ -85,7 +86,7 @@ Every component folder ships a `README.md` documenting props, CSS variables, MOD
 [`calendar`](src/ui/calendar/README.md) · [`checkbox`](src/ui/checkbox/README.md) · [`color-input`](src/ui/color-input/README.md) (ColorInput + ColorInputPopover) · [`currency-input`](src/ui/currency-input/README.md) · [`date-input`](src/ui/date-input/README.md) · [`editable-cell`](src/ui/editable-cell/README.md) · [`field-error`](src/ui/field-error/README.md) · [`file-upload`](src/ui/file-upload/README.md) · [`form-field`](src/ui/form-field/README.md) · [`input`](src/ui/input/README.md) (TextInput + Select + Textarea) · [`input-with-icon`](src/ui/input-with-icon/README.md) · [`number-input`](src/ui/number-input/README.md) · [`number-stepper`](src/ui/number-stepper/README.md) · [`password-input`](src/ui/password-input/README.md) · [`phone-input`](src/ui/phone-input/README.md) · [`pill-select`](src/ui/pill-select/README.md) · [`radio-group`](src/ui/radio-group/README.md) · [`range-slider`](src/ui/range-slider/README.md) · [`search-dropdown`](src/ui/search-dropdown/README.md) · [`slider`](src/ui/slider/README.md) · [`time-input`](src/ui/time-input/README.md) · [`toggle-switch`](src/ui/toggle-switch/README.md)
 
 ### Buttons & actions
-[`back-link`](src/ui/back-link/README.md) · [`bulk-action-bar`](src/ui/bulk-action-bar/README.md) · [`button`](src/ui/button/README.md) (Primary/Secondary/Tertiary/Ghost) · [`button-group`](src/ui/button-group/README.md) · [`button-icon`](src/ui/button-icon/README.md) · [`button-with-icon`](src/ui/button-with-icon/README.md) · [`icon-button`](src/ui/icon-button/README.md) · [`inline-action`](src/ui/inline-action/README.md) · [`link`](src/ui/link/README.md)
+[`back-link`](src/ui/back-link/README.md) · [`bulk-action-bar`](src/ui/bulk-action-bar/README.md) · [`button`](src/ui/button/README.md) (Primary/Secondary/Tertiary/Ghost) · [`button-group`](src/ui/button-group/README.md) · [`button-icon`](src/ui/button-icon/README.md) (deprecated → `icon-button` `variant="filled"`) · [`button-with-icon`](src/ui/button-with-icon/README.md) · [`icon-button`](src/ui/icon-button/README.md) · [`inline-action`](src/ui/inline-action/README.md) · [`link`](src/ui/link/README.md)
 
 ### Navigation
 [`app-sidebar`](src/ui/app-sidebar/README.md) · [`app-top-bar`](src/ui/app-top-bar/README.md) · [`breadcrumb`](src/ui/breadcrumb/README.md) · [`filter-tabs`](src/ui/filter-tabs/README.md) · [`menu`](src/ui/menu/README.md) · [`sidebar-nav-item`](src/ui/sidebar-nav-item/README.md) · [`tabs`](src/ui/tabs/README.md) · [`tabs-underline`](src/ui/tabs-underline/README.md) · [`view-switcher`](src/ui/view-switcher/README.md)
@@ -104,6 +105,9 @@ Every component folder ships a `README.md` documenting props, CSS variables, MOD
 
 ### Configuration editor
 [`component-row`](src/ui/component-row/README.md) · [`config-component-row`](src/ui/config-component-row/README.md) · [`config-segment-item`](src/ui/config-segment-item/README.md) · [`explorer-list-item`](src/ui/explorer-list-item/README.md) · [`explorer-section`](src/ui/explorer-section/README.md) · [`segment-card`](src/ui/segment-card/README.md) · [`segment-row`](src/ui/segment-row/README.md)
+
+### Localisation
+[`language-switcher`](src/ui/language-switcher/README.md) · [`locale`](src/ui/locale/README.md) (UxmLocaleProvider + `useUxmLocale`)
 
 ### Lifecycle diagrams
 [`lifecycle-connector`](src/ui/lifecycle-connector/README.md) · [`lifecycle-drop-slot`](src/ui/lifecycle-drop-slot/README.md) · [`lifecycle-edge-label`](src/ui/lifecycle-edge-label/README.md) · [`lifecycle-group-box`](src/ui/lifecycle-group-box/README.md) · [`lifecycle-minimap`](src/ui/lifecycle-minimap/README.md) · [`lifecycle-node-card`](src/ui/lifecycle-node-card/README.md) · [`lifecycle-terminal`](src/ui/lifecycle-terminal/README.md) · [`lifecycle-zoom-control`](src/ui/lifecycle-zoom-control/README.md)
@@ -134,6 +138,43 @@ const accent = findToken('--color-accent-bold');
 ```
 
 Each component README's **Design tokens (MODO-configurable)** section names every token the component reads, paired with its `Group / Name` from `themeTokens` — making it straightforward to look up "if I edit X in MODO, what re-tints?"
+
+## Localisation
+
+**The library formats; you translate.** `@viax.io/uxm` ships no i18n engine — no message catalogue, no translation runtime — because a primitives library that owns translation forces its choice of engine onto every consuming app. Localisation splits in two:
+
+**Copy is yours, and arrives as props.** Every user-visible string a component can render or announce has a prop with an English default — `clearLabel`, `closeLabel`, `emptyState`, `requiredMessage`, `placeholder`, or a grouped `labels={{ … }}` object where a component owns several. Translate in your app and pass the result down. A string you cannot reach from props is a bug — [open an issue](#contributing).
+
+**Formatting is ours, and follows one locale.** Month names, decimal separators, and byte units come from `Intl` and can't be expressed as a prop string, so the components that need them read a locale instead. Mount [`UxmLocaleProvider`](src/ui/locale/README.md) once at the app root:
+
+```tsx
+import { UxmLocaleProvider } from '@viax.io/uxm';
+
+<UxmLocaleProvider locale="uk-UA">
+  <App />
+</UxmLocaleProvider>;
+```
+
+`Calendar`, `DateInput`, `EditableCell`, `CurrencyInput`, and `FileUpload` pick it up automatically. Each still takes a `locale` prop that wins locally, so one always-USD amount can opt out. Without a provider everything falls back to `en-US`, exactly as before.
+
+To let the user *change* the language, use [`LanguageSwitcher`](src/ui/language-switcher/README.md) — the one control the library owns. It takes the locale list rather than fetching it, and disappears entirely (no wrapper, no disabled control) when only one locale is configured:
+
+```tsx
+<LanguageSwitcher locales={supportedLocales} value={locale} onChange={setLocale} label={t('language')} />
+```
+
+Labels that interpolate a value take a **function**, not a prefix — `removeFile(name)`, `uploadProgress(percent, size)`, `countLabel(count)` — because word order and pluralisation around the value are language-specific:
+
+```tsx
+<FileUpload
+  files={files}
+  titleText={t('upload.title')}
+  labels={{
+    uploading: t('upload.busy'),
+    removeFile: (name) => t('upload.remove', { name }),
+  }}
+/>
+```
 
 ## Previews
 
@@ -179,14 +220,6 @@ import { ButtonPreview, type PreviewShellContext } from '@viax.io/uxm/previews';
 ```
 
 Every layer is independently importable; every layer has its own type declarations and own CSS bundle.
-
-## Install
-
-Published publicly on npm — no registry configuration and no VPN required:
-
-```bash
-npm install @viax.io/uxm
-```
 
 ## Build & develop
 
@@ -245,7 +278,7 @@ To iterate on the components themselves rather than on the integration, prefer `
 
 ## Releases
 
-**Releases are fully automated — never publish by hand.** Merging to `master` runs semantic-release in CI, which derives the version bump from the Conventional Commit types, writes `CHANGELOG.md`, stamps the AI-skill version markers, publishes to Nexus, and creates the GitLab release.
+**Releases are fully automated — never publish by hand.** Merging to `master` runs semantic-release in CI, which derives the version bump from the Conventional Commit types, writes `CHANGELOG.md`, stamps the AI-skill version markers, publishes to npm, and creates the GitHub release.
 
 This makes commit types carry semver meaning: `fix` → PATCH, `feat` → MINOR, a `BREAKING CHANGE:` footer → MAJOR. Running `npm version` or `npm publish` locally would desynchronise the tags from what CI has already released.
 

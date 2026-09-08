@@ -157,6 +157,9 @@
   color: var(--color-text-muted);
   transition: transform 0.15s;
 }
+.uxm-select-dropdown__trigger-chevron--open {
+  transform: rotate(180deg);
+}
 /* Clear ✕ inside the trigger — rendered when a value is selected AND the
    field can be empty (it has a placeholder option). Mandatory selects (no
    placeholder, a value is always picked) don't render it. Shared chrome

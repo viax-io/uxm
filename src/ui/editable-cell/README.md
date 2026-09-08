@@ -10,6 +10,21 @@ Three modes:
 
 Problems never change the row's height: they ride in a `Popover`-anchored compact `Banner` under the cell — **warning** (yellow) for recoverable input problems (`validate` failures, `required` violations, unparseable drafts), **error** (red) for a rejected `onCommit`. Either way the cell stays in edit mode for correction / retry.
 
+## Internals (for maintainers)
+
+The folder is split by responsibility — all of it is private to the barrel, which exports only `EditableCell` and the public types:
+
+| File | Owns |
+|---|---|
+| `editable-cell.tsx` | Applies the prop defaults once, runs the hook, picks the view by `type`. |
+| `use-editable-cell.ts` | Every hook: state, effects, the commit paths (`commitValue` / `commitDate` / `handleCommit`), cancel/clear/keyboard handlers and the derived display values. Hook order is fixed here regardless of the view. |
+| `editable-cell-text.tsx` | `text` / `number` — display button ↔ editing input. |
+| `editable-cell-date.tsx` | `date` — display button ↔ masked input + calendar popover. |
+| `editable-cell-select.tsx` | `select` / `multiselect` — Listbox-driven trigger. |
+| `editable-cell.types.ts`, `editable-cell-utils.ts` | Public prop types; pure ISO/mask helpers. |
+
+The views are hook-free and read one `{ props, cell }` pair, so a behaviour change goes in the hook and a markup change in exactly one view. `tests/editable-cell.test.tsx` is the behavioural baseline for the split.
+
 ## Usage
 
 ```tsx
@@ -50,13 +65,17 @@ Inside a `DataTable`, don't compose this by hand — mark the column `editable` 
 | `clearable` | `boolean` | `true` | Clear affordance (see below). Pass `false` to opt out. |
 | `required` | `boolean` | `false` | Empty commit is blocked with a warning, checked BEFORE `validate`. Uniform emptiness rule per type: `[]`, `NaN`, blank string. Never hides the clear affordance — it guards the outcome instead. |
 | `requiredMessage` | `string` | per-type | Overrides the default message (`"Required"` / `"Select an option"` / `"Select at least one option"`). |
+| `saveErrorMessage` | `string` | `'Failed to save'` | Shown at `error` severity when `onCommit` rejects **without** a message of its own. A rejection carrying an `Error.message` still wins — that text is the server's, not the atom's. |
+| `invalidNumberMessage` | `string` | `'Enter a number'` | Shown at `warning` severity when a `type="number"` draft isn't a number. |
+| `invalidDateMessage` | `string` | `invalidDateMessage(dateFormat)` | Shown at `warning` severity when a `type="date"` draft doesn't parse. The default names the expected mask (`` `Enter a valid date (YYYY-MM-DD)` ``) — a translation should keep the mask in it. |
+| `invalidValueMessage` | `string` | `'Enter a valid value'` | Sample warning text for `forceMode="warning"`. Preview-only; production consumers never see it. |
 | `validate` | `(next) => string \| null \| undefined` | – | Sync validation; a returned message blocks commit as a yellow warning. |
 | `format` | `(value) => ReactNode` | – | Display-mode formatter (e.g. currency, a `Tag`). **Never called for an empty value** — a cleared cell renders its `placeholder` instead. |
 | `align` | `'left' \| 'right' \| 'center'` | `'left'` | Applies to display AND edit modes — pass through from a DataTable column's `align`. |
 | `placeholder` | `string` | – | Shown when the value is empty (date falls back to the format hint, e.g. `MM/DD/YYYY`). |
 | `disabled` | `boolean` | – | Read-only: no edit affordance, clicks do nothing. |
 | `className` / `style` / `aria-label` | – | – | Root passthroughs. |
-| `forceMode` | `'editing' \| 'warning' \| 'error'` | – | **Preview-only.** Forces the editing branch (plus a sample message at the given severity) so the UXM canvas can paint state knobs without stealing focus. Production consumers leave it unset. |
+| `forceMode` | `'editing' \| 'warning' \| 'error'` | – | **Preview-only.** Forces the editing branch (plus a sample message — `invalidValueMessage` / `saveErrorMessage` — at the given severity) so the UXM canvas can paint state knobs without stealing focus. Production consumers leave it unset. |
 | `clearSelectionLabel` | `string` | `'Clear selection'` | Clear button — select / multiselect editors. |
 | `clearDateLabel` | `string` | `'Clear date'` | Clear button — date editor. |
 | `clearValueLabel` | `string` | `'Clear value'` | Clear button — text / number editors. |

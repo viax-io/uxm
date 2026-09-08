@@ -841,6 +841,80 @@ about discarding unpublished edits) — a pure picker has no in-progress state a
 
 ---
 
+## 17. App-wide locale (`UxmLocaleProvider` + `LanguageSwitcher`)
+
+The library formats; **the host owns the choice.** `LanguageSwitcher` persists nothing and reads
+no context, and `UxmLocaleProvider` holds no state — so the app supplies the loop: state →
+provider (formatting) → switcher (`value` + `onChange`) → storage.
+
+```tsx
+// app/locale-provider.tsx — the host's own state, any mechanism works
+'use client';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { UxmLocaleProvider } from '@viax.io/uxm';
+
+const SUPPORTED = ['en-US', 'de-DE', 'uk-UA'];   // in a viax portal: the realm's supported locales
+const STORAGE_KEY = 'app.locale';
+
+const HostLocale = createContext({ locale: 'en-US', locales: SUPPORTED, setLocale: (_: string) => {} });
+export const useHostLocale = () => useContext(HostLocale);
+
+export function LocaleProvider({ children }: { children: React.ReactNode }) {
+  // Start from the SSR-safe default and adopt the stored tag after mount, so
+  // server and first client render agree (a locale read during render would
+  // hydrate-mismatch).
+  const [locale, setLocale] = useState('en-US');
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved && SUPPORTED.includes(saved)) setLocale(saved);
+  }, []);
+
+  const change = useCallback((next: string) => {
+    setLocale(next);
+    localStorage.setItem(STORAGE_KEY, next);   // or a user-preference mutation
+  }, []);
+
+  return (
+    <HostLocale.Provider value={{ locale, locales: SUPPORTED, setLocale: change }}>
+      {/* Feeding the SAME value here is what makes dates, amounts and file
+          sizes follow the switcher — the switcher alone re-labels itself only. */}
+      <UxmLocaleProvider locale={locale}>{children}</UxmLocaleProvider>
+    </HostLocale.Provider>
+  );
+}
+```
+
+```tsx
+// app/topbar.tsx — the control, wired to that same state
+import { LanguageSwitcher } from '@viax.io/uxm';
+import { useHostLocale } from './locale-provider';
+
+const { locale, locales, setLocale } = useHostLocale();
+
+<LanguageSwitcher
+  locales={locales}
+  value={locale}
+  onChange={setLocale}
+  label={t('common.language')}   // the trigger's accessible name — translate it
+  variant="compact"              // icon-only, for a dense top bar
+/>;
+```
+
+Two failure modes worth naming, because both look like "almost working":
+
+- **Switcher wired, provider not fed** — the trigger's label changes and nothing else
+  reformats. The provider is what carries the tag into `Calendar`, `DateInput`, `EditableCell`,
+  `CurrencyInput` and `FileUpload`.
+- **No persistence** — the choice resets on reload. The atom drops it on purpose; storage is the
+  host's (`localStorage` above, or a user-preference mutation).
+
+Copy stays separate from all of this: the provider drives `Intl` formatting only, and translated
+strings still arrive through each atom's label props (`clearLabel`, `labels={{…}}`, …). A
+Ukrainian calendar whose prev/next buttons still announce "Previous"/"Next" is working as
+designed — pass `previousMonthLabel` / `nextMonthLabel`.
+
+---
+
 ## Anti-patterns
 
 ❌ **Don't handroll a div with the same intent as an existing primitive.** Check the catalog

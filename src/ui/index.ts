@@ -77,7 +77,7 @@ export type { FilterTabsOption, FilterTabsProps } from './filter-tabs';
 export { Icon } from './icon';
 export type { IconProps } from './icon';
 export { IconButton } from './icon-button';
-export type { IconButtonProps } from './icon-button';
+export type { IconButtonProps, IconButtonVariant } from './icon-button';
 export { IconTile } from './icon-tile';
 export type { IconTileProps } from './icon-tile';
 export { LifecycleConnector } from './lifecycle-connector';
@@ -117,7 +117,7 @@ export type { LifecycleZoomControlProps } from './lifecycle-zoom-control';
 export { MetaRow } from './meta-row';
 export type { MetaRowProps } from './meta-row';
 export { Modal } from './modal';
-export type { ModalHeaderProps, ModalProps, ModalSize } from './modal';
+export type { ModalHeaderProps, ModalProps, ModalSectionProps, ModalSize } from './modal';
 export { InlineAction } from './inline-action';
 export type { InlineActionProps } from './inline-action';
 export { InlineFilter } from './inline-filter';
@@ -128,6 +128,8 @@ export { InputWithIcon } from './input-with-icon';
 export type { InputWithIconProps } from './input-with-icon';
 export { Select, Textarea, TextInput } from './input';
 export type { SelectProps, SelectSingleProps, SelectMultiProps, TextareaProps, TextInputProps } from './input';
+export { LanguageSwitcher } from './language-switcher';
+export type { LanguageSwitcherProps, LanguageSwitcherVariant } from './language-switcher';
 export { Link } from './link';
 export type { LinkProps, LinkUnderline } from './link';
 export { List, ListItem } from './list';
@@ -140,6 +142,8 @@ export type {
   ListboxTriggerProps,
   MultiListboxProps,
 } from './listbox';
+export { DEFAULT_UXM_LOCALE, UxmLocaleProvider, useUxmLocale } from './locale';
+export type { UxmLocaleProviderProps } from './locale';
 export { Loader } from './loader';
 export type { LoaderLayout, LoaderProps, LoaderVariant } from './loader';
 export { Menu } from './menu';
@@ -162,6 +166,7 @@ export { FileUpload } from './file-upload';
 export type {
   FileStatus,
   FileUploadFileMeta,
+  FileUploadLabels,
   FileUploadProps,
   FileUploadState,
 } from './file-upload';

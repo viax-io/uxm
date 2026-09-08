@@ -18,11 +18,13 @@ npm run build:modo  # Vite production build of the portal
 npm run typecheck   # tsc --noEmit for src + portal/tsconfig.json
 npm run lint        # eslint .
 npm run lint:fix    # eslint . --fix
-npm run check:drift # registry-vs-CSS state-var drift gate (also runs in CI's test job)
+npm run check:drift # registry-vs-CSS state-var drift + type-scale + tokens.css↔themeTokens parity gates (also run in CI's test job)
+npm test            # Vitest smoke suite (tests/) — jsdom; `npm run test:watch` while iterating
+npm run audit:report # npm audit report; audit:ci gates CI at critical
 npm run commit      # commitizen — use this for conventional-commit prompts
 ```
 
-**There are no tests.** `test:ci` / `test:coverage` are intentional no-op stubs (`echo … && exit 0`). Do not report "tests pass" as verification — verify via `typecheck`, `lint`, `build`, or the portal (`npm run dev:modo`).
+**Tests are a small Vitest smoke suite, not coverage.** `npm test` (`tests/*.test.tsx`, jsdom + Testing Library + axe-core) pins the contracts nothing else can see: focus trap / Escape / outside-click on the floating layers, ARIA wiring on the pickers, the CSS sanitizers and the overrides generator, and an axe pass over a form and a dialog. It runs in CI (`test:ci`, junit report). Add a test when you touch one of those contracts or fix a behavioural bug; do NOT chase coverage on presentational atoms — for a visual change the verification is still `typecheck`, `lint`, `build` and the portal (`npm run dev:modo`). "Tests pass" alone is never proof a visual change is right.
 
 ### Build pipeline (order matters)
 
@@ -46,7 +48,7 @@ studio / previews  →  ui  →  tokens
 
 - **`src/ui/`** — one folder per primitive: `<name>.tsx`, `<name>.scss`, `index.ts` barrel, `<name>-preview.tsx` (the preview lives *next to* its component), and a `README.md` (required — every existing atom has one; keep it at 100 %). Re-exported from `src/ui/index.ts`.
 - **`src/tokens/`** — `index.ts` is the canonical `themeTokens: ThemeToken[]` catalog (each entry has `name`, `cssVar`, `hex`, `darkHex`, `group`); `index.css` declares the matching `--color-*` variables on `:root` (+ dark overrides).
-- **`src/previews/`** — the shared preview *contract* and the multi-atom previews: `types.ts` (the uniform `PreviewProps = { componentId, styles, variants, shell? }`), `composite/`, `demo-row-actions.tsx`, and the barrel. Per-atom previews do **not** live here — they sit next to their component (see `src/ui/` above). Previews project knob values as inline CSS variables onto the real component so they exercise the production CSS path. **Tree-shake guarantee: no `Preview` symbol may leak into `/ui`** — enforced by convention only, nothing checks it at build time. When touching barrels, verify by hand that neither `src/ui/index.ts` nor any `src/ui/*/index.ts` re-exports a `*-preview` module.
+- **`src/previews/`** — the shared preview *contract* and the multi-atom previews: `types.ts` (the uniform `PreviewProps = { componentId, styles, variants, shell? }`), `composite/`, `demo-row-actions.tsx`, and the barrel. Per-atom previews do **not** live here — they sit next to their component (see `src/ui/` above). Previews project knob values as inline CSS variables onto the real component so they exercise the production CSS path. **Tree-shake guarantee: no `Preview` symbol may leak into `/ui`** — enforced by ESLint (`no-restricted-imports` on the ui barrels) together with the layer-boundary zones (`import/no-restricted-paths`: `ui` ✗ `studio|previews`, `tokens` ✗ everything, `lib|hooks|helpers` ✗ components) in `eslint.config.mjs`.
 - **`src/studio/`** — the UXM design workbench (`UxmApp`), the same app modo serves at `/uxm`. Backend-decoupled via the `StudioPersistence` contract (`src/studio/persistence/`): `createHttpPersistence()` (Hono API), `createClientPersistence()` (live-preview + client-side asset uploads), `createReadOnlyPersistence()` (static). `shell/` = canvas/sidebar/properties-panel/wcag-panel; `editors/` = the knob inputs; `lib/registry/` = the component registry driving the sidebar. Studio styling uses Tailwind (`studio.css`) — this is the **only** place Tailwind is allowed.
 
 ### Two-layer theming model (the core design)

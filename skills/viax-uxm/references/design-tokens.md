@@ -185,6 +185,28 @@ never appear in the studio's Color editor and must be set as raw CSS.
   the light theme — under the 3:1 WCAG floor for a non-text indicator. A consumer that needs AA
   sets `--color-drop-target: var(--color-accent-bold)` (5.56:1) once, and every drop target follows.
 
+### Deprecated palette names (Tailwind-only, removed in the next major)
+
+`tokens.css` still carries nine legacy names — `--color-cream`, `--color-warm-gray`,
+`--color-ink`, `--color-green`, `--color-mint`, `--color-forest`, `--color-peach`,
+`--color-lavender`, `--color-lime` — but **only inside its `@theme inline { … }` block**, the same
+Tailwind-v4 at-rule that hides `--font-sans` (see Typography above). Browsers drop that block, so
+a plain-CSS host has never been able to read them, and no uxm atom or studio utility uses them.
+They are `@deprecated` as of 4.37 and go away in the next major. Migrate any Tailwind utility
+built on them (`bg-cream`, `text-ink`, …) to the token each one aliases:
+
+| Deprecated | Use instead |
+|---|---|
+| `--color-cream` | `--color-surface` |
+| `--color-warm-gray` | `--color-surface-alt` |
+| `--color-ink` | `--color-text` |
+| `--color-green` | `--color-accent` |
+| `--color-mint` | `--color-accent-light` |
+| `--color-forest` | `--color-accent-bold` |
+| `--color-peach` | `--color-highlight-warm` |
+| `--color-lavender` | `--color-highlight-cool` |
+| `--color-lime` | `--color-accent-subtle` |
+
 ## Theme variants (`data-theme`)
 
 `@viax.io/uxm/tokens.css` declares the light palette on `:root` and a full dark override set under

@@ -27,7 +27,7 @@ classes are often folded into the block name (`uxm-button-primary`, not
 ## Project Context
 
 - **Project:** `@viax.io/uxm` — a **standalone, published** React 19 UI library
-  (NOT a monorepo). Published to the private Viax Nexus registry.
+  (NOT a monorepo). Published publicly to npm as `@viax.io/uxm`.
 - **Layers** (dependency direction: `studio / previews → ui → tokens`):
   - `src/ui/` — BEM-classed primitives, one folder per component
   - `src/tokens/` — `themeTokens` catalog (`index.ts`) + `--color-*` CSS
@@ -44,9 +44,11 @@ classes are often folded into the block name (`uxm-button-primary`, not
   compiled to a sibling `.css` at build; `src/ui/styles.css` is a pure
   `@import` aggregator — every other `.css` under `src/ui/` is build output
 - **Linter:** flat-config ESLint 9 (`npm run lint`)
-- **Tests:** none configured — do not invent test-related findings.
-  Verification is `lint` + `typecheck` + `build` + portal smoke test
-  (`npm run dev:modo`).
+- **Tests:** a Vitest smoke suite in `tests/` (`npm test`) covering the
+  floating layers' focus/keyboard contracts, picker ARIA, the CSS sanitizers
+  and the overrides generator, plus an axe pass. Expect a test with a
+  behavioural change there; never ask for tests on visual atoms. Visual
+  verification is still `build` + the portal (`npm run dev:modo`).
 
 ---
 
@@ -98,6 +100,7 @@ Apply the checklists below.
 
 - `npm run lint` (no `--workspace` flags — this is not a monorepo)
 - `npm run typecheck`
+- `npm test`
 - If build config, exports, or the barrel structure changed: `npm run build`
 
 ### 4. REPORT findings in structured format
@@ -164,7 +167,7 @@ discussions (e.g. "fix #3 and #7").
 **New/renamed component completeness:**
 - [ ] Folder is complete: `<name>.tsx`, `<name>.scss`, `index.ts` barrel, `<name>-preview.tsx`, `README.md`
 - [ ] Re-exported from both the folder `index.ts` and `src/ui/index.ts` (component **and** its `Props` type)
-- [ ] **Tree-shake guarantee:** no `*-preview` module is re-exported from `src/ui/index.ts` or any `src/ui/*/index.ts` — nothing enforces this at build time, verify by hand
+- [ ] **Tree-shake guarantee:** no `*-preview` module is re-exported from `src/ui/index.ts` or any `src/ui/*/index.ts` — ESLint enforces it (`no-restricted-imports` on the barrels) alongside the layer zones (`import/no-restricted-paths`); a green lint is the check
 - [ ] The compiled CSS `@import` is added to `src/ui/styles.css` in cascade order
 - [ ] **AI skill updated in the same change** (`skills/viax-uxm/`): catalog + cheatsheet row marked "(unreleased)", a bullet under `### Unreleased` in `SKILL.md`. Version/count markers must NOT be hand-edited — CI stamps them at release; flag any hand-edit as Critical
 

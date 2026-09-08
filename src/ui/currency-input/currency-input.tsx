@@ -11,6 +11,7 @@ import { FieldError } from '../field-error';
 import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
 import { Listbox } from '../listbox';
+import { useUxmLocale } from '../locale';
 
 import type { ChangeEvent, FocusEvent, InputHTMLAttributes } from 'react';
 
@@ -42,7 +43,9 @@ export interface CurrencyInputProps
   currencies?: Currency[];
   /**
    * BCP-47 locale tag (e.g. `"en-US"`, `"de-DE"`). Drives thousands
-   * separator style on the blur-display format. Defaults to `"en-US"`.
+   * separator style on the blur-display format. Defaults to the nearest
+   * `UxmLocaleProvider`, then to `"en-US"` — set it here only to pin one
+   * amount to a locale that differs from the rest of the app.
    * Does NOT drive symbol position — the symbol always sits in the
    * leading picker slot, mirroring PhoneInput's country-code shape.
    */
@@ -171,7 +174,7 @@ export function CurrencyInput({
   defaultValue,
   onChange,
   currencies = CURATED_CURRENCIES,
-  locale = 'en-US',
+  locale: localeProp,
   min,
   max,
   allowNegative = false,
@@ -187,6 +190,7 @@ export function CurrencyInput({
   error,
   ...rest
 }: CurrencyInputProps) {
+  const locale = useUxmLocale(localeProp);
   // Uncontrolled default currency must match what's actually displayed —
   // `currencies[0]` when the consumer restricts the list, `'USD'` only when
   // no list is given at all. Hardcoding `'USD'` here would desync every

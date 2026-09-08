@@ -14,7 +14,7 @@ Steps 2 and 3 below (version check, post-release cleanup) apply to **`viax-uxm` 
 **both**. The shared `viax-ai-skills` GitLab repo
 (`ssh://git@ssh.gitlab.viax.tech:2222/ai/viax-ai-skills.git` — port 22 on the bare host
 times out) is a DISTRIBUTION TARGET only — same model as the npm package itself (source
-here → publish to Nexus).
+here → publish to npm). That repo has not migrated off GitLab; only uxm has.
 
 **ALL Claude work happens locally in `skills/viax-uxm/` in this repo. Syncing to
 `viax-ai-skills` (or any other repo) is done MANUALLY by the maintainer — Claude must not
@@ -113,6 +113,7 @@ Edit surgically — keep the existing prose conventions. Where each kind of chan
 | Breaking (removed/renamed atom) | "current API surface" section — old → new mapping incl. CSS-var prefixes | breaking-note under the header; replace the row; cheatsheet rows | replace usages; add an anti-pattern naming the dead export | retarget mentions |
 | New component | bullet under `### Unreleased` | row in the right intent group (+ cheatsheet row), marked "(unreleased)" | new recipe ONLY for a new usage pattern | — |
 | New prop / variant | only if it changes a stated convention | extend the row text | update affected recipes | — |
+| Deprecation (constitution III) | bullet under `### Unreleased` naming the replacement and the removal major | the row starts with **Deprecated → `<replacement>`**; add a line to the "Deprecated" list under the header | replace usages in recipes with the replacement | retarget mentions |
 | Token changes | — | — | — | update rows/values |
 
 ## Notes
