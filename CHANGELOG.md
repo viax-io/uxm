@@ -1,3 +1,11 @@
+## [4.40.1](https://github.com/viax-io/uxm/compare/v4.40.0...v4.40.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **ci:** reduce the release announcement to two links ([7165ab2](https://github.com/viax-io/uxm/commit/7165ab2b0c9ed512c36662fdd53ddb2532d716cf))
+* **ci:** run the Slack announcement as its own rerunnable job ([0b134bb](https://github.com/viax-io/uxm/commit/0b134bb2b6cbf5124819de3ebfb6ef8e8e10706d))
+
 # [4.40.0](https://github.com/viax-io/uxm/compare/v4.39.0...v4.40.0) (2026-09-08)
 
 
