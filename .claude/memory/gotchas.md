@@ -217,7 +217,8 @@ runs. Only an app that imports the compiled CSS and sets no vars sees the bug.
 
 **This actually happened — `ToggleSwitch` hover.** All four
 `--uxm-toggle-switch-hover-*` fallbacks echoed the resting colour
-(`--color-border` / `--color-accent`) while `registry/inputs.ts` declared
+(`--color-border` / `--color-accent`) while `registry/inputs.ts` (now
+`registry/inputs/toggle-switch.ts`) declared
 `--color-text-muted` / `--color-accent-bold` as the hover defaults. The atom's
 own README even documented the symptom as intended ("no additional colour change
 in baseline styles"). Reported from a consumer project, not caught here.

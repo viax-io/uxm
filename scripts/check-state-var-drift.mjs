@@ -30,7 +30,7 @@ for (const m of gc.matchAll(/'([a-z0-9-]+)':\s*\{([^}]*)\}/g)) {
 }
 
 // 2. registry state knobs
-const registryFiles = globSync('src/studio/lib/registry/*.ts');
+const registryFiles = globSync('src/studio/lib/registry/**/*.ts');
 const knobs = [];
 for (const f of registryFiles) {
   const src = read(f);
