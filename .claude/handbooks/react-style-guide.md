@@ -87,8 +87,9 @@ exported together.
 
 `<name>-preview.tsx` is exported **only** from `src/previews/index.ts`. Neither
 `src/ui/index.ts` nor any `src/ui/<name>/index.ts` may re-export it — this is the
-tree-shake guarantee for consumers that import only `@viax/uxm/ui`. Nothing
-enforces it at build time; check by hand when touching a barrel.
+tree-shake guarantee for consumers that import only `@viax/uxm/ui`. ESLint
+enforces it (`no-restricted-imports` on the ui barrels) together with the
+layer-boundary zones in `eslint.config.mjs`.
 
 ---
 
@@ -614,6 +615,6 @@ a real external-consumer break (`gotchas.md` → semver).
 - [ ] Keyboard operable; visible focus ring; AA contrast in both themes
 - [ ] Re-exported (value + `export type`) from `src/ui/<name>/index.ts` and `src/ui/index.ts`; preview only from `src/previews/index.ts`
 - [ ] `@import "./<name>/<name>.css"` added to `src/ui/styles.css` in cascade order
-- [ ] Studio registry entry + `generate-css.ts` mapping for the new knobs
+- [ ] Studio registry entry (`src/studio/lib/registry/<category>/<id>.ts`) + a `generate-css-mapping.ts` entry for any knob that does not follow the default `--uxm-<id>-<kebab-key>` var
 - [ ] AI skill updated in the same MR (`skills/viax-uxm/`): catalog + cheatsheet row "(unreleased)", bullet under the bare `### Unreleased` — markers untouched
 - [ ] `npm run lint`, `npm run typecheck`, `npm run check:drift`, `npm run build` pass; portal smoke-tested light + dark

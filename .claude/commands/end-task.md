@@ -60,7 +60,7 @@ Flag any principle that is not satisfied with the file and the rule it breaks.
   `SKILL.md` — check the heading is the **bare** `### Unreleased` at the bottom of the
   version run, not a stamped `### New in X.Y.Z` (see `gotchas.md`). Version/count
   markers must be untouched.
-- Studio registry entry (`src/studio/lib/registry/`) and `generate-css.ts` mapping
+- Studio registry entry (`src/studio/lib/registry/<category>/<id>.ts`) and `generate-css-mapping.ts` entry
   exist for any new themable knob; `npm run check:drift` covers the SCSS fallback.
 
 ### 5. Code quality
