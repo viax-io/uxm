@@ -67,6 +67,7 @@
     "test:ci": "vitest run --reporter=default --reporter=junit --outputFile=junit-report.xml",
     "audit:report": "npm audit --registry=https://registry.npmjs.org",
     "audit:ci": "npm audit --registry=https://registry.npmjs.org --audit-level=critical",
+    "check:lock": "node scripts/check-lock-nexus.mjs",
     "commit": "cz",
     "prepare": "husky",
     "prepublishOnly": "npm run build",

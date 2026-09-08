@@ -313,3 +313,33 @@ unavailable without anyone noticing. **Now:** the entry runs
 Expected noise, not a bug: `figma-dev-mode-mcp-server` (`http://127.0.0.1:3845`)
 fails to connect whenever Figma Desktop isn't running with Dev Mode MCP enabled.
 Treat that as "Figma is closed", not as a config problem.
+
+---
+
+## `npm audit fix` / `npm update` via registry.npmjs.org can lock a version Nexus can't serve
+
+Nexus has no audit endpoint, so `npm audit` (and `npm audit fix`) must run with
+`--registry=https://registry.npmjs.org`. That also RESOLVES through npmjs — and
+npmjs may list a version published minutes ago that the Nexus proxy's cached
+packument does not have yet. Locally nothing breaks: the tarball lands in
+`~/.npm` straight from npmjs, and every later `npm install`/`npm ci` — even in a
+fresh clone — is served from that cache. CI has no cache, installs through
+Nexus, and gets `404 Not Found … electron-to-chromium-1.5.423.tgz`.
+
+**This actually happened — 08-09-2026, MR !166 (job 1554352).** `npm audit fix`
+took `electron-to-chromium` to 1.5.423; Nexus's packument stopped at 1.5.422.
+The job died in `npm install`, before a single test ran, and every local check
+(`npm ci` in a clean clone included) had been green.
+
+**How to apply:**
+- After any `npm audit fix` / `npm update` / `npm i` that went through npmjs,
+  run **`npm run check:lock`** (`scripts/check-lock-nexus.mjs` — HEADs every
+  lockfile tarball through Nexus) before pushing. Or reproduce CI exactly:
+  `npm ci --cache /tmp/empty-cache` in a clean clone.
+- To fix a hit, pin the entry to the newest version Nexus lists —
+  `npm view <pkg>@latest version dist.integrity dist.tarball --prefer-online`
+  (the `.npmrc` registry IS Nexus; `--prefer-online` skips your local
+  packument) and patch `version` / `resolved` / `integrity` in the lock.
+  `npm update <pkg>` will NOT do it: it never downgrades a satisfying version.
+- `npm audit --registry=…` (read-only, `audit:report` / `audit:ci`) is safe —
+  only the *fix* path writes the lock.
