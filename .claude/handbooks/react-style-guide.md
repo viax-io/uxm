@@ -577,7 +577,10 @@ rules). Template literals are always fine.
   `exports` entry must produce ESM + CJS + `.d.ts` (+ CSS).
 - Portal smoke test (`npm run dev:modo`) in light **and** dark theme for any
   visual change, with no saved overrides.
-- No test framework is configured — do not invent test files.
+- `npm test` — Vitest smoke suite in `tests/` (jsdom, Testing Library, axe-core):
+  behaviour contracts of the floating layers and pickers, the CSS sanitizers,
+  the overrides generator, an axe pass. Add a test for a behavioural change or
+  a bug fix in those areas; don't write tests for purely visual atoms.
 
 ---
 

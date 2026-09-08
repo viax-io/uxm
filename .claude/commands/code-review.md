@@ -90,7 +90,7 @@ Parse `$ARGUMENTS` as follows:
 
 | Category | Checks |
 |----------|--------|
-| **Lint + typecheck + drift** | Must pass `npm run lint`, `npm run typecheck`, and `npm run check:drift` (registry-vs-CSS state-var gate) with zero errors |
+| **Lint + typecheck + drift + tests** | Must pass `npm run lint`, `npm run typecheck`, `npm run check:drift` (registry-vs-CSS state-var gate) and `npm test` with zero errors |
 | **React style guide** | See `.claude/handbooks/react-style-guide.md` |
 | **Project conventions** | Named exports, kebab-case files, `export interface ${Name}Props`, `className`+`cn`, `...rest` spread, no `"use client"` |
 | **UI library specifics** | `uxm-` prefix, canonical BEM, two-layer theming (`var(--uxm-*, var(--color-*))`), no Tailwind outside `src/studio`, barrel re-exports, `styles.css` `@import`, AI-skill update (`skills/viax-uxm/`) |
@@ -100,8 +100,9 @@ Parse `$ARGUMENTS` as follows:
 | **Security** | No hardcoded secrets, proper validation, OWASP awareness |
 | **Performance** | Justified memoisation, no leaks, no needless re-renders |
 
-> Note: no test framework is configured at present — the review does NOT
-> report on tests, jest-axe, or Storybook.
+> Tests are a Vitest smoke suite in `tests/` (`npm test`). Expect a test when a
+> change touches keyboard/focus/ARIA behaviour, the CSS sanitizers or the
+> overrides generator; do not ask for tests on purely visual atoms.
 
 ## Output Format
 

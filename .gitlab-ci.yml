@@ -28,8 +28,18 @@ test:
     # class; see .claude/memory/gotchas.md and scripts/check-state-var-drift.mjs).
     - npm run check:drift
     - npm run build
-    # No test framework is configured yet — this is an intentional no-op stub.
+    # Vitest smoke suite (tests/) — behavioural contracts of the floating
+    # layers, pickers, sanitizers and the generator; junit report for the MR UI.
     - npm run test:ci
+    # Nexus has no audit endpoint, so audit against the public registry. The
+    # full report is printed for visibility; only CRITICAL advisories fail the
+    # job (the remaining highs are all vite 5 → 8 majors, tracked separately).
+    - npm run audit:report || true
+    - npm run audit:ci
+  artifacts:
+    when: always
+    reports:
+      junit: junit-report.xml
 
 publish:
   image: "public.ecr.aws/docker/library/node:24.16.0"

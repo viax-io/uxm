@@ -164,7 +164,7 @@ export default tseslint.config(
 
   // 7. Build / config files — Node globals, no default-export ban.
   {
-    files: ['*.{js,mjs,cjs,ts}', 'tsup.config.ts', 'eslint.config.mjs'],
+    files: ['*.{js,mjs,cjs,ts}', 'tsup.config.ts', 'vitest.config.ts', 'eslint.config.mjs'],
     languageOptions: { globals: { ...globals.node } },
     rules: { 'import/no-default-export': 'off' },
   },
