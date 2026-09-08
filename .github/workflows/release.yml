@@ -38,3 +38,10 @@ jobs:
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify Slack
+        if: hashFiles('.released-version') != ''
+        continue-on-error: true
+        env:
+          SLACK_NOTIFICATION_URL: ${{ secrets.SLACK_NOTIFICATION_URL }}
+        run: node scripts/notify-slack.mjs "$(cat .released-version)"

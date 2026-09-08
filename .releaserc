@@ -7,7 +7,8 @@
       "changelogFile": "CHANGELOG.md"
     }],
     ["@semantic-release/exec", {
-      "prepareCmd": "node scripts/stamp-skill-version.mjs ${nextRelease.version}"
+      "prepareCmd": "node scripts/stamp-skill-version.mjs ${nextRelease.version}",
+      "successCmd": "echo ${nextRelease.version} > .released-version"
     }],
     "@semantic-release/npm",
     ["@semantic-release/github", {
