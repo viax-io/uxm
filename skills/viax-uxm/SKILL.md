@@ -192,6 +192,21 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`IconButton` gained `variant="filled"`; `ButtonIcon` is deprecated.** `filled` paints exactly
+  what `ButtonIcon` painted (40px, `--color-surface-alt` fill, radius 8, accent-subtle hover,
+  accent-bold pressed with inverse icon) under its own `--uxm-icon-button-filled-*` vars, and the
+  studio themes it as a Variant of Icon Button. `ButtonIcon`, `uxm-button-icon` and
+  `--uxm-button-icon-*` keep working until the next major — migrate with
+  `<ButtonIcon>` → `<IconButton variant="filled">` (var map in the ButtonIcon README). This is the
+  first application of the library's deprecation rule: replacement first, old surface marked
+  everywhere, removal only in a major — see `references/component-catalog.md` → "Deprecated".
+- **New subpath `@viax/uxm/hooks`.** `useDismiss`, `useFocusTrap`, `useFocusOnMount`,
+  `useRovingTabIndex`, `useScrollLock`, `usePortal`, `useToastStore` — the behaviour hooks the
+  atoms are built on, for hosts composing their own floating layers or keyboard widgets. Pure
+  React, typed; see `references/component-catalog.md` → "Hooks".
+- `Modal.Header` / `Modal.Body` / `Modal.Footer` take `ref` as a plain prop (React 19) — no API
+  change for callers; `ModalSectionProps` is the exported props type of Body/Footer.
+
 ## Workflow
 
 ### Where the documentation lives

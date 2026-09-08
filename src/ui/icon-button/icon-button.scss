@@ -68,3 +68,32 @@
   stroke-width: var(--uxm-icon-button-stroke-width, 1.75);
   width: var(--uxm-icon-button-icon-size, 16px);
 }
+
+/* `variant="filled"` — the successor of the deprecated ButtonIcon atom, so
+   the defaults are ButtonIcon's exactly (40×40, surface-alt fill, radius 8,
+   18px glyph, accent-subtle hover, accent-bold pressed with inverse icon).
+   It reads its OWN `--uxm-icon-button-filled-*` vars, so a saved ghost theme
+   never leaks into the filled look and vice versa; focus ring, disabled
+   opacity/colour and stroke width stay shared with ghost. */
+.uxm-icon-button--filled {
+  background-color: var(--uxm-icon-button-filled-bg, var(--color-surface-alt));
+  border-radius: var(--uxm-icon-button-filled-radius, 8px);
+  color: var(--uxm-icon-button-filled-color, var(--color-text));
+  height: var(--uxm-icon-button-filled-size, 40px);
+  width: var(--uxm-icon-button-filled-size, 40px);
+
+  &:hover:not(:disabled) {
+    background-color: var(--uxm-icon-button-filled-hover-bg, var(--color-accent-subtle));
+    color: var(--uxm-icon-button-filled-hover-color, var(--color-text));
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--uxm-icon-button-filled-active-bg, var(--color-accent-bold));
+    color: var(--uxm-icon-button-filled-active-color, var(--color-text-inverse));
+  }
+
+  & > svg {
+    height: var(--uxm-icon-button-filled-icon-size, 18px);
+    width: var(--uxm-icon-button-filled-icon-size, 18px);
+  }
+}

@@ -1,6 +1,34 @@
 # @viax/uxm — Component Catalog
 
 All 97 components exported from `@viax/uxm/ui` (as of v4.38.0), grouped by intent. Use this file
+
+## Deprecated (removed in the next major — do not use in new code)
+
+| Export | Since | Use instead |
+|---|---|---|
+| `ButtonIcon` (+ `uxm-button-icon` class, `--uxm-button-icon-*` vars) | 4.39 | `IconButton variant="filled"`; vars `--uxm-icon-button-filled-*` |
+
+The library's rule (constitution III): a replacement ships first as a minor, the old surface is
+marked `@deprecated` (JSDoc, README, studio registry, this list), keeps working for at least one
+minor, and goes away only in the next major. Studio themes saved against a deprecated surface
+keep painting until then.
+
+## Hooks — `@viax/uxm/hooks`
+
+The behaviour hooks the atoms are built on, for a host that composes its own floating layer or
+keyboard widget on top of the primitives. Pure React, no atom imports; all typed.
+
+| Hook | What it does |
+|---|---|
+| `useDismiss({ enabled, onDismiss, refs, excludeClosest?, closeOnEscape?, closeOnOutsideClick? })` | Escape + outside-mousedown → `onDismiss` while `enabled`; the refs (and `excludeClosest` selector) are the exclusion region. |
+| `useFocusTrap({ active, container })` | Tab / Shift+Tab cycle inside `container` while `active`. |
+| `useFocusOnMount({ active, initialFocus?, focusFirstIn?, returnFocus? })` | Focus `initialFocus` (or the first focusable in `focusFirstIn`) one frame after `active`; restore the previous element when it goes false. |
+| `useRovingTabIndex({ … })` | Arrow-key roving tabindex for lists / toolbars (`orientation: 'horizontal' \| 'vertical'`). |
+| `useScrollLock(active)` | Locks body scroll while `active`. |
+| `usePortal()` | `true` once mounted — gate a `createPortal` so it is SSR-safe. |
+| `useToastStore()` / `toastStore` | Subscribe to the module-level toast queue `toast.*` writes to. |
+
+Read the hook's JSDoc in the installed `.d.ts` for the exact option shapes before wiring one.
 to pick the right primitive when the `@viax/uxm` repo is not available locally. When it is, read
 the per-component README at `src/ui/{name}/README.md` in the uxm repo
 (`https://gitlab.viax.tech/services-viax/uxm`) for the full API
@@ -54,9 +82,9 @@ Import path for all: `import { … } from '@viax/uxm/ui';`
 |-----------|-------------|------------|
 | **ButtonPrimary / Secondary / Tertiary / Ghost / Danger** | `ButtonPrimary`, `ButtonSecondary`, `ButtonTertiary`, `ButtonGhost`, `ButtonDanger`, `ButtonProps` | Five button variants on native `<button>`. `type` defaults to `'button'`. **`ButtonDanger`** (2.6.0) is the outlined destructive variant for irreversible actions (Delete/Remove/Discard) — danger token trio, solid danger fill when pressed. From `./button`. |
 | **ButtonGroup** | `ButtonGroup`, `ButtonGroupOption`, `ButtonGroupProps` | Segmented control. Controlled or uncontrolled. |
-| **ButtonIcon** | `ButtonIcon`, `ButtonIconProps` | Square **filled** icon button (40px, `--color-surface-alt` bg, radius 8) with **required** `aria-label`. Same TS API as `IconButton` — the two differ only in look and CSS-var surface; see the `IconButton` row for which to pick. |
+| **ButtonIcon** | `ButtonIcon`, `ButtonIconProps` | **Deprecated since 4.39 → `IconButton variant="filled"`** (identical look: 40px, `--color-surface-alt` fill, radius 8). Removed in the next major; do not use in new code. Migration of the CSS vars: `--uxm-button-icon-*` → `--uxm-icon-button-filled-*` (see the ButtonIcon README banner). |
 | **ButtonWithIcon** | `ButtonWithIcon`, `ButtonWithIconProps` | Bordered button with required `icon` slot + label. |
-| **IconButton** | `IconButton`, `IconButtonProps` | **Ghost** icon-only button (32px, transparent bg, muted icon, surface hover) with **required** `aria-label`. **Prefer this one in new code** — toolbars, row ⋮ triggers, inline chrome; every worked example (`Menu`/`Listbox` triggers, recipes §13) uses it. Reach for `ButtonIcon` only when the button should read as a filled standalone control. |
+| **IconButton** | `IconButton`, `IconButtonProps`, `IconButtonVariant` | Icon-only button with **required** `aria-label` and `variant?: 'ghost' \| 'filled'`. `ghost` (default): 32px, transparent, muted icon, surface hover — toolbars, row ⋮ triggers, inline chrome; every worked example (`Menu`/`Listbox` triggers, recipes §13) uses it. `filled`: 40px, `--color-surface-alt` fill, radius 8, accent-subtle hover, accent-bold pressed — a standalone action ("add", "create"); it replaces the deprecated `ButtonIcon` and is themed under its own `--uxm-icon-button-filled-*` vars. |
 | **InlineAction** | `InlineAction`, `InlineActionProps` | 10px text-first button, muted → accent-bold on hover. Use for in-row affordances. |
 | **Menu** (2.6.0) | `Menu`, `MenuProps`, `MenuItem`, `MenuSeparator`, `MenuEntry`, `MenuTriggerProps` | Action / dropdown menu on the headless `Popover` (`role="menu"`, arrow-key nav, separators, leading icons, trailing hints, `danger` rows). **No selected value / no checkmarks** — pick a row → run its action → dismiss (use `Listbox`/`Select` to HOLD a value). Consumer owns the trigger via `renderTrigger` (spread `triggerProps` on an `IconButton` ⋮, `Button`, …). `items: MenuEntry[]` where `MenuEntry = MenuItem ({ key, label, subtitle?, icon?, hint?, onSelect?, disabled?, danger? }) \| MenuSeparator ({ separator: true })`. A `subtitle?` renders a two-line row (headline `label` + supporting line beneath), themeable via `--uxm-menu-item-subtitle-{font-size,color,gap}`. Portaled panel; studio-themed on `.uxm-menu, .uxm-menu__panel`. `MenuItem` also takes `current?: boolean` (marks where the user already IS — `aria-current="true"` + trailing ✓ + heavier label; composes with the keyboard highlight rather than replacing it; **not** `menuitemradio`/`aria-selected`; opening still highlights the FIRST row) and `iconColor?: string` (tints ONE row's glyph inline — identity colours only, prefer a `var(--color-*)` reference; wins over the active/danger `color: inherit`). `matchAnchorWidth?: boolean \| 'min'` (default `false`) ties the panel width to the trigger — use `'min'` for a field-like trigger that displays a value (a workspace switcher), never for an icon-only ⋮; setting it drops the default 160/280 clamp. ⚠️ Leading-icon default moved `--color-text-subtle` → `--color-text-strong` (subtle measured 1.48:1 and read as disabled) and the hint moved to `--color-text-muted`, so **existing menus change appearance**. From `./menu`. |
 | **BackLink** | `BackLink`, `BackLinkProps` | Anchor with leading back-arrow icon. ⚠️ **Always pass a real `href`**, even when the click is intercepted for client-side nav (`preventDefault()` inside `onClick`) — it renders as `<a>`, so an `onClick`-only usage breaks keyboard focus and right-click/open-in-new-tab. |
@@ -281,7 +309,7 @@ translated prefix.
 | The rail row that opens that switcher (or the account menu) | `SidebarNavTrigger` — a `<button>` built for `triggerProps`; caption + value + chevron, no icon tile. **Not** `SidebarNavItem`: that one is an `<a>` that navigates |
 | Navigate within app | `Link` (`underline="hover"`) |
 | Go back one level | `BackLink` |
-| Icon-only action | `IconButton` (ghost — toolbars, row ⋮, inline) or `ButtonIcon` (filled standalone); both require `aria-label` |
+| Icon-only action | `IconButton` — `variant="ghost"` (default; toolbars, row ⋮, inline) or `variant="filled"` (standalone action); `aria-label` required. `ButtonIcon` is deprecated. |
 | Boolean toggle | `ToggleSwitch` (binary on/off) or `Checkbox` (form field semantics) |
 | Pick one from a few options | `RadioGroup` (≤5 options) or `Select` (more) |
 | Pick one from a large list | `SearchDropdown` |
