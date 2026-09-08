@@ -344,9 +344,9 @@ export const buttonsDefs: ComponentDef[] = [
   },
   {
     id: 'button-icon',
-    name: 'Button — Icon',
+    name: 'Button — Icon (deprecated)',
     category: 'Buttons',
-    description: 'Standalone icon-only action button (e.g. "add", "create new"). Icon variant of the primary button family.',
+    description: 'DEPRECATED — use Icon Button with variant="filled" (same look; its knobs live under `--uxm-icon-button-filled-*`). Kept until the next major so saved themes keep painting.',
     styleProperties: [
       // State-scoped knobs — one "States" section, filtered to the
       // currently-selected State variant via showWhen. Matches the Tag

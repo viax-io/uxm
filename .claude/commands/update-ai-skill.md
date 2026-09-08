@@ -113,6 +113,7 @@ Edit surgically — keep the existing prose conventions. Where each kind of chan
 | Breaking (removed/renamed atom) | "current API surface" section — old → new mapping incl. CSS-var prefixes | breaking-note under the header; replace the row; cheatsheet rows | replace usages; add an anti-pattern naming the dead export | retarget mentions |
 | New component | bullet under `### Unreleased` | row in the right intent group (+ cheatsheet row), marked "(unreleased)" | new recipe ONLY for a new usage pattern | — |
 | New prop / variant | only if it changes a stated convention | extend the row text | update affected recipes | — |
+| Deprecation (constitution III) | bullet under `### Unreleased` naming the replacement and the removal major | the row starts with **Deprecated → `<replacement>`**; add a line to the "Deprecated" list under the header | replace usages in recipes with the replacement | retarget mentions |
 | Token changes | — | — | — | update rows/values |
 
 ## Notes

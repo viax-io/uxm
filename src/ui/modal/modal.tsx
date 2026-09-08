@@ -1,11 +1,11 @@
 import {
   createContext,
-  forwardRef,
   useContext,
   useId,
   useMemo,
   type HTMLAttributes,
   type ReactNode,
+  type Ref,
 } from 'react';
 
 import { cn } from '../../helpers/cn';
@@ -109,39 +109,40 @@ export interface ModalHeaderProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   /** Hide the close X even when Modal received `onClose`. */
   hideClose?: boolean;
+  /** React 19: `ref` is a plain prop — no `forwardRef` needed. */
+  ref?: Ref<HTMLDivElement>;
 }
 
-const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
-  ({ children, hideClose, className, ...rest }, ref) => {
-    const { titleId, onClose, closeLabel } = useModalContext();
-    return (
-      <div ref={ref} className={cn('uxm-modal__header', className)} {...rest}>
-        <h2 id={titleId} className="uxm-modal__title">
-          {children}
-        </h2>
-        {onClose && !hideClose && (
-          <IconButton aria-label={closeLabel} onClick={onClose} className="uxm-modal__close">
-            <Icon glyph="close" size={14} strokeWidth={2} />
-          </IconButton>
-        )}
-      </div>
-    );
-  },
-);
+/** Body / Footer take every div attribute plus a plain `ref` prop. */
+export interface ModalSectionProps extends HTMLAttributes<HTMLDivElement> {
+  ref?: Ref<HTMLDivElement>;
+}
+
+function ModalHeader({ children, hideClose, className, ...rest }: ModalHeaderProps) {
+  const { titleId, onClose, closeLabel } = useModalContext();
+  return (
+    <div className={cn('uxm-modal__header', className)} {...rest}>
+      <h2 id={titleId} className="uxm-modal__title">
+        {children}
+      </h2>
+      {onClose && !hideClose && (
+        <IconButton aria-label={closeLabel} onClick={onClose} className="uxm-modal__close">
+          <Icon glyph="close" size={14} strokeWidth={2} />
+        </IconButton>
+      )}
+    </div>
+  );
+}
 ModalHeader.displayName = 'Modal.Header';
 
-const ModalBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...rest }, ref) => (
-    <div ref={ref} className={cn('uxm-modal__body', className)} {...rest} />
-  ),
-);
+function ModalBody({ className, ...rest }: ModalSectionProps) {
+  return <div className={cn('uxm-modal__body', className)} {...rest} />;
+}
 ModalBody.displayName = 'Modal.Body';
 
-const ModalFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...rest }, ref) => (
-    <div ref={ref} className={cn('uxm-modal__footer', className)} {...rest} />
-  ),
-);
+function ModalFooter({ className, ...rest }: ModalSectionProps) {
+  return <div className={cn('uxm-modal__footer', className)} {...rest} />;
+}
 ModalFooter.displayName = 'Modal.Footer';
 
 export const Modal = Object.assign(ModalRoot, {
