@@ -107,7 +107,7 @@
     "@testing-library/user-event": "^14.6.7",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^4.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
     "axe-core": "^4.13.0",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
@@ -128,8 +128,8 @@
     "tsup": "^8.3.5",
     "typescript": "^5.6.0",
     "typescript-eslint": "8.60.0",
-    "vite": "^5.4.0",
-    "vitest": "^3.2.7"
+    "vite": "^8.2.2",
+    "vitest": "^5.0.0"
   },
   "publishConfig": {
     "registry": "https://nexus.viax.tech/repository/npm-private/"

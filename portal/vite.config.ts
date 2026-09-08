@@ -21,9 +21,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('../src', import.meta.url)),
     },
   },
-  css: {
-    preprocessorOptions: { scss: { api: 'modern-compiler' } },
-  },
   build: {
     outDir: fileURLToPath(new URL('../dist-portal', import.meta.url)),
     emptyOutDir: true,
