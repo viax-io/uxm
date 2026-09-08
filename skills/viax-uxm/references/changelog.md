@@ -1364,3 +1364,56 @@ reached the published library; now shipped in 2.8.0.
   the shared `mergeDescribedBy` (consumer ids first). This closes the FormField `hint` gap: the
   injected association no longer gets silently dropped, so a hint around any of the four is
   announced. Additive — both props optional, nothing changes unless passed.
+
+### New in 4.33.0
+
+- **Brand Settings' Identity section gains a "Brand color" knob.** The 90% rebrand is logo +
+  icon + one colour + typeface, but that colour lived behind the 31-row expert token list. The
+  promoted control follows the asset-row grammar (swatch, hex field, action button) and commits
+  EXPLICITLY: a pick or typed hex stages a draft — the swatch previews it — and Apply re-tints the
+  whole accent ramp in **both themes**. No confirm modal (the button is the confirmation), where
+  the expert list keeps its modal. Undo is "Reset palette", which clears every
+  accent-group override in both themes. State is single-source: the expert list shows the same
+  overrides with its per-row resets. The base is defined against LIGHT; dark derives by hue
+  re-tint (`retintAccentTokens`, shared by both surfaces).
+  **Curation lives in the catalog, not the editor:** `ThemeToken` gains `identity?: boolean`,
+  set on `Accent`. Promote sparingly — only tokens that FAN OUT (the accent base drives a ramp)
+  earn a place; promoting a plain token just relocates a row.
+
+### New in 4.34.0
+
+- **New atoms `CodeEditor` + `CodeBlock` — the developer-tooling code surface.**
+  `CodeEditor` is a real `<textarea>`: monospace, `spellCheck`/`autoCorrect`/`autoCapitalize`
+  off, `Tab`/`Shift+Tab` indent and outdent (selection-aware, keeps the selection), `Enter`
+  auto-indent with an extra level after `{ [ (`, optional `lineNumbers` gutter, `wrap`
+  (**mutually exclusive with `lineNumbers`** — a wrapped line spans several rows, so the
+  gutter is dropped and a warning logged rather than showing numbers that don't line up),
+  `indentSize`, `error`, and a `textareaRef` handle. **Not a keyboard trap** — `Escape` then
+  `Tab` moves focus (CodeMirror's convention), any other key re-arms indenting; `onKeyDown`
+  runs BEFORE the atom's handling so a consumer can claim ⌘Enter with `preventDefault()`.
+  Edits go through `execCommand('insertText')` to keep native undo working.
+  `CodeBlock` is the read-only half — a `<pre><code>` for query output / generated payloads /
+  SDL dumps, with the same gutter and `wrap`. **NO syntax highlighting** and none possible
+  inside a `<textarea>`; that would be a different atom, not a prop.
+  Both read ONE var set (`--uxm-code-editor-*`) and `CodeBlock` has no registry entry of its
+  own — deliberate, so an output panel can never drift from the query above it. Use
+  `<CodeEditor>` instead of `<Textarea className="…mono…">`, which is the hand-roll it replaces.
+
+### New in 4.35.0
+
+- **The dark palette is no longer near-black.** Every dark value in
+  `references/design-tokens.md` moved; that table is regenerated from the token
+  catalog, so read values from it rather than from memory. The neutral ramp
+  lifted to card `#1B1A18` / surface `#232220` / surface-alt `#2A2927` (L* 9 /
+  13 / 17, GitHub-dimmed's register) with border `#444240`; `text-muted` and
+  `text-subtle` lifted to match, `accent-light` to `#3AA36A` so it clears AA on
+  every dark surface, and accent-subtle plus all four semantic bg/border pairs
+  lifted enough to KEEP their separation from the now-lighter page. Light mode
+  is untouched. `--color-highlight-warm` / `-cool` deliberately did NOT move —
+  see the comment in `tokens/index.css` for why (their `on-highlight-*` text
+  pairs constrain them from the other side).
+  ⚠️ **Upgrading a themed deployment:** Brand Settings saves one override per
+  token, so a tenant that pinned some dark tokens keeps them while the rest
+  move — a saved near-black card against the new page is a much harder step
+  than either palette intends. Nothing detects this automatically; re-check
+  saved dark overrides against the new ramp, or clear them to adopt it.

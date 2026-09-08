@@ -1,3 +1,11 @@
+# [4.39.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.38.0...v4.39.0) (2026-09-08)
+
+
+### Features
+
+* **hooks:** expose the behaviour hooks as @viax/uxm/hooks ([1224dc5](https://gitlab.viax.tech/services-viax/uxm/commit/1224dc53be946ae6d1a43bb7b5d4451f6b0de44a))
+* **icon-button:** add variant="filled"; deprecate ButtonIcon ([e3bb8a5](https://gitlab.viax.tech/services-viax/uxm/commit/e3bb8a5b54d7c547bab4b9e0a743275456b07e3d))
+
 # [4.38.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.37.1...v4.38.0) (2026-09-08)
 
 
