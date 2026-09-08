@@ -66,8 +66,9 @@ This command implements a mandatory 14-step workflow:
 13. **LINT**: Run `npm run lint` and `npm run typecheck` — must pass with zero errors
 14. **BUILD CHECK**: Run `npm run build` to confirm the full pipeline (tsup →
     studio CSS → DTS → tsc-alias → CJS fix) is happy; smoke-test visual changes
-    in the portal (`npm run dev:modo`), including dark theme (no test framework
-    is configured at present)
+    in the portal (`npm run dev:modo`), including dark theme; run `npm test` —
+    and add a test when the change touches keyboard/focus/ARIA behaviour, the
+    sanitizers or the generator (see `tests/`)
 
 ## Agent Selection
 
@@ -138,6 +139,6 @@ When this command is invoked:
 - New library component = complete folder (`.tsx` + `.scss` + `index.ts` +
   preview + README) + both barrel re-exports + `styles.css` `@import` + AI-skill
   update — all mandatory in the same change
-- No test framework is configured at present — do NOT invent test files
+- Tests are a Vitest smoke suite in `tests/` — add one for behavioural contracts, not for visual atoms
 
 ARGUMENTS: $ARGUMENTS

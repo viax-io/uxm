@@ -1,41 +1,63 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.1.1 → 1.2.0
-Bump rationale: MINOR — one new principle (VI. Localisation Boundary),
-codifying the props-in/no-i18n-engine contract that VX-1835 enforced across
-`src/ui`. No existing principle changed meaning.
+Version change: 1.2.0 → 1.3.0
+Bump rationale: MINOR — Principle V gains a new gate: `npm test`, a Vitest
+smoke suite (tests/, jsdom + Testing Library + axe-core) that pins the
+behavioural contracts no other gate can see — focus trap / Escape /
+outside-click on the floating layers, ARIA wiring on the pickers, the CSS
+sanitizers, the overrides generator, an axe pass. Deliberately NOT a coverage
+target: visual atoms are verified in the portal. CI's test job runs it with a
+junit report, and `npm audit` now runs against registry.npmjs.org (Nexus has
+no audit endpoint), gating at critical.
 
-Modified principles: none (VI is additive).
-Added sections:
-  - VI. Localisation Boundary (1.2.0)
-Removed sections: none
+Modified principles:
+  - V. Build Hygiene & Strict Typing — `npm test` added as a MUST gate with
+    the "behavioural contracts, not coverage" scope.
+Added sections: none. Removed sections: none.
 
 Templates requiring updates:
-  ✅ .claude/templates/plan-template.md (Constitution Check gained a
-     "VI. Localisation Boundary" row)
-  ✅ .claude/commands/*, .claude/agents/* (no change needed — none of them
-     enumerate the principles; they point at this document)
+  ✅ CLAUDE.md; .claude/handbooks/react-style-guide.md (K. Gates)
+  ✅ .claude/commands/start-task.md, end-task.md, code-review.md, commit-message.md
+  ✅ .claude/agents/code-review.md, runtime-debugger.md
+  ✅ .claude/templates/plan-template.md (V gate row now lists `npm test`);
+     spec/tasks templates unchanged — verified
 
-Previous report (1.1.0 → 1.1.1, 2026-09-07) — kept for history:
-  PATCH: no principle changed. The legacy Viax Vue handbooks (bem-style-guide,
-  design-tokens, ui-components) moved to `.claude/handbooks/legacy/` (repo audit
-  2026-09-07); the Principle I reference to `design-tokens.md` now points at the
-  archived path. The Vue-era commands `/write-tests` and `/figma-audit` were
-  removed and `/end-task` rewritten around the gates this document names (lint,
-  typecheck, check:drift, build). Templates synced then: end-task.md (rewritten),
-  commit-message.md (uxm scopes, semver footer), start-task.md +
-  agents/code-review.md + agents/react-frontend.md (legacy-handbook caveats
-  replaced by a pointer to handbooks/legacy/), .claude/templates/* (verified).
+Previous report (1.1.1 → 1.2.0, 2026-09-07) — kept for history:
+  Bump rationale: MINOR — one new principle (VI. Localisation Boundary),
+  codifying the props-in/no-i18n-engine contract that VX-1835 enforced across
+  `src/ui`. No existing principle changed meaning.
 
-Previous report (1.0.0 → 1.1.0, 2026-07-07) — kept for history:
-  MINOR: added "AI Skill & Agent Tooling"; Principles I, II, V and the
-  Development Workflow expanded (lint gate, semantic-release flow, skill
-  lifecycle); token taxonomy corrected to `--color-*`; SCSS-per-component and
-  BEM state modifiers codified; the SMACSS `.is-*` bullet removed.
+  Modified principles: none (VI is additive).
+  Added sections:
+    - VI. Localisation Boundary (1.2.0)
+  Removed sections: none
 
-Follow-up TODOs:
-  - none
+  Templates requiring updates:
+    ✅ .claude/templates/plan-template.md (Constitution Check gained a
+       "VI. Localisation Boundary" row)
+    ✅ .claude/commands/*, .claude/agents/* (no change needed — none of them
+       enumerate the principles; they point at this document)
+
+  Previous report (1.1.0 → 1.1.1, 2026-09-07) — kept for history:
+    PATCH: no principle changed. The legacy Viax Vue handbooks (bem-style-guide,
+    design-tokens, ui-components) moved to `.claude/handbooks/legacy/` (repo audit
+    2026-09-07); the Principle I reference to `design-tokens.md` now points at the
+    archived path. The Vue-era commands `/write-tests` and `/figma-audit` were
+    removed and `/end-task` rewritten around the gates this document names (lint,
+    typecheck, check:drift, build). Templates synced then: end-task.md (rewritten),
+    commit-message.md (uxm scopes, semver footer), start-task.md +
+    agents/code-review.md + agents/react-frontend.md (legacy-handbook caveats
+    replaced by a pointer to handbooks/legacy/), .claude/templates/* (verified).
+
+  Previous report (1.0.0 → 1.1.0, 2026-07-07) — kept for history:
+    MINOR: added "AI Skill & Agent Tooling"; Principles I, II, V and the
+    Development Workflow expanded (lint gate, semantic-release flow, skill
+    lifecycle); token taxonomy corrected to `--color-*`; SCSS-per-component and
+    BEM state modifiers codified; the SMACSS `.is-*` bullet removed.
+
+  Follow-up TODOs:
+    - none
 -->
 
 # @viax/uxm Constitution
@@ -156,6 +178,12 @@ would be self-defeating, and downstream apps trust its primitives as a floor.
   `// eslint-disable-next-line <rule> -- <reason>` comment.
 - `npm run typecheck` (`tsc --noEmit`, library + portal) **MUST** pass with
   zero errors.
+- `npm test` (Vitest smoke suite in `tests/`) **MUST** pass. The suite pins
+  behavioural contracts — focus trap / Escape / outside-click on the floating
+  layers, ARIA wiring on the pickers, the CSS sanitizers, the overrides
+  generator, an axe pass — and a change to one of those SHOULD add a test.
+  It is deliberately not a coverage target: visual atoms are verified in the
+  portal, not in jsdom.
 - `npm run build` (tsup multi-entry → `dist/{index,ui,tokens,…}`) **MUST**
   succeed and produce ESM + CJS + `.d.ts` + CSS for every exports map entry in
   `package.json`. A missing artifact is a release blocker.
@@ -288,4 +316,4 @@ translation is.
   document end-to-end and file follow-up issues for drift.
 - **Deferred items.** None.
 
-**Version**: 1.2.0 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-07
+**Version**: 1.3.0 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-08

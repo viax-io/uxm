@@ -44,9 +44,11 @@ classes are often folded into the block name (`uxm-button-primary`, not
   compiled to a sibling `.css` at build; `src/ui/styles.css` is a pure
   `@import` aggregator — every other `.css` under `src/ui/` is build output
 - **Linter:** flat-config ESLint 9 (`npm run lint`)
-- **Tests:** none configured — do not invent test-related findings.
-  Verification is `lint` + `typecheck` + `build` + portal smoke test
-  (`npm run dev:modo`).
+- **Tests:** a Vitest smoke suite in `tests/` (`npm test`) covering the
+  floating layers' focus/keyboard contracts, picker ARIA, the CSS sanitizers
+  and the overrides generator, plus an axe pass. Expect a test with a
+  behavioural change there; never ask for tests on visual atoms. Visual
+  verification is still `build` + the portal (`npm run dev:modo`).
 
 ---
 
@@ -98,6 +100,7 @@ Apply the checklists below.
 
 - `npm run lint` (no `--workspace` flags — this is not a monorepo)
 - `npm run typecheck`
+- `npm test`
 - If build config, exports, or the barrel structure changed: `npm run build`
 
 ### 4. REPORT findings in structured format

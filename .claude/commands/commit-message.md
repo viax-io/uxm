@@ -28,7 +28,7 @@ Optional longer body explaining what and why (max 100 chars per line).
 | `refactor` | Code change that neither fixes a bug nor adds a feature | none |
 | `style` | Formatting, whitespace, missing semicolons — no logic change | none |
 | `perf` | Performance improvement | PATCH |
-| `test` | (no test framework configured — unused for now) | none |
+| `test` | Adding or changing tests in `tests/` | none |
 | `docs` | Documentation only (README, skill, handbooks, `.claude/`) | none |
 | `build` | Build pipeline or dependency changes (`tsup`, `tsc-alias`, deps) | none |
 | `ci` | `.gitlab-ci.yml`, `.releaserc` | none |

@@ -52,7 +52,7 @@ root cause.
 - **Rendering:** client-side only (SPA) — no SSR, no hydration, no Server Components, no `"use client"` directives
 - **Styles:** colocated `src/ui/<name>/<name>.scss` (canonical BEM `uxm-block__element--modifier`) with two-layer tokens `var(--uxm-*, var(--color-*))`
 - **Linter:** flat-config ESLint (`@typescript-eslint`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y`)
-- **No test framework is configured** — do not invent test-related findings or runs
+- **Tests:** `npm test` runs the Vitest smoke suite in `tests/` (jsdom) — run it after a fix to a floating layer, picker, sanitizer or the generator; it is not a substitute for the browser check
 
 ## Your Tools
 

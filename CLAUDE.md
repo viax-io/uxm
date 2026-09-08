@@ -19,10 +19,12 @@ npm run typecheck   # tsc --noEmit for src + portal/tsconfig.json
 npm run lint        # eslint .
 npm run lint:fix    # eslint . --fix
 npm run check:drift # registry-vs-CSS state-var drift + type-scale + tokens.css↔themeTokens parity gates (also run in CI's test job)
+npm test            # Vitest smoke suite (tests/) — jsdom; `npm run test:watch` while iterating
+npm run audit:report # npm audit against registry.npmjs.org (Nexus has no audit endpoint); audit:ci gates CI at critical
 npm run commit      # commitizen — use this for conventional-commit prompts
 ```
 
-**There are no tests.** `test:ci` / `test:coverage` are intentional no-op stubs (`echo … && exit 0`). Do not report "tests pass" as verification — verify via `typecheck`, `lint`, `build`, or the portal (`npm run dev:modo`).
+**Tests are a small Vitest smoke suite, not coverage.** `npm test` (`tests/*.test.tsx`, jsdom + Testing Library + axe-core) pins the contracts nothing else can see: focus trap / Escape / outside-click on the floating layers, ARIA wiring on the pickers, the CSS sanitizers and the overrides generator, and an axe pass over a form and a dialog. It runs in CI (`test:ci`, junit report). Add a test when you touch one of those contracts or fix a behavioural bug; do NOT chase coverage on presentational atoms — for a visual change the verification is still `typecheck`, `lint`, `build` and the portal (`npm run dev:modo`). "Tests pass" alone is never proof a visual change is right.
 
 ### Build pipeline (order matters)
 
