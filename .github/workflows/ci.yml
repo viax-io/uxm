@@ -24,19 +24,22 @@ jobs:
 
       - run: npm install
 
-      # Constitution V gates (.claude/memory/constitution.md): lint, typecheck and a
-      # full build MUST be green before merge — the pre-commit hook only lints
-      # staged files and is bypassable, so this job is the real gate.
       - run: npm run lint
 
       - run: npm run typecheck
 
-      # Registry-vs-CSS state-var drift gate — fails the pipeline if any studio
-      # knob default and its shipped SCSS fallback disagree (the dead-fallback
-      # class; see .claude/memory/gotchas.md and scripts/check-state-var-drift.mjs).
       - run: npm run check:drift
 
       - run: npm run build
 
-      # No test framework is configured yet — this is an intentional no-op stub.
       - run: npm run test:ci
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: junit-report
+          path: junit-report.xml
+
+      - run: npm run audit:report || true
+
+      - run: npm run audit:ci
