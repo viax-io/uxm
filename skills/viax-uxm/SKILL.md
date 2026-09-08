@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.37.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.37.1, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax/uxm or the Viax design system; the working directory contains @viax/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax/uxm — React 19 Component Library
 
-> Documents `@viax/uxm` **v4.37.0** (97 components). The version/count markers are stamped by
+> Documents `@viax/uxm` **v4.37.1** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax/uxm`. It does not ge
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax/uxm` is or will be a dependency of the project.
 
-## v4.37.0 — current API surface (overrides training data)
+## v4.37.1 — current API surface (overrides training data)
 
 The library went through a fast release train (1.1.0 → 3.0.1, June–July 2026). If your knowledge
 of the library or old code conflicts with this list, THIS list wins.
@@ -1538,13 +1538,7 @@ skill:
   the prop is a callback, because word order and pluralisation around the value are
   language-specific. Follow that shape for any new label prop instead of exposing a prefix string.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     MR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.37.1
 
 - **Style-contract sweep (no API change).** `Select`'s open chevron and `StatCard`'s
   `down` arrow now rotate via BEM modifiers (`uxm-select-dropdown__trigger-chevron--open`,
@@ -1554,6 +1548,14 @@ skill:
   transparent)` — the old 6 % black wash vanished on dark) and
   `--uxm-date-input-popover-shadow` (default `--shadow-xl`, so the calendar popover now
   follows the theme's shadow scale instead of a fixed light-only literal).
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     MR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 

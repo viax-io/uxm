@@ -1,3 +1,10 @@
+## [4.37.1](https://gitlab.viax.tech/services-viax/uxm/compare/v4.37.0...v4.37.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **ui:** theme-aware toast close hover and date-input popover shadow ([d860886](https://gitlab.viax.tech/services-viax/uxm/commit/d8608863351c27408eb02617ae80bd54da3f7cdf))
+
 # [4.37.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.36.0...v4.37.0) (2026-09-07)
 
 
