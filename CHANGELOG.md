@@ -1,3 +1,15 @@
+# [4.40.0](https://github.com/viax-io/uxm/compare/v4.39.0...v4.40.0) (2026-09-08)
+
+
+### Bug Fixes
+
+* declare the MIT license in package.json and README ([290eead](https://github.com/viax-io/uxm/commit/290eead178aa94e096e3abee503ae8c8885d8668))
+
+
+### Features
+
+* **ci:** announce npm releases in Slack ([559fc0b](https://github.com/viax-io/uxm/commit/559fc0b8964ad1b53a23d0bc6af8cd9a99c1d632))
+
 # [4.39.0](https://gitlab.viax.tech/services-viax/uxm/compare/v4.38.0...v4.39.0) (2026-09-08)
 
 
