@@ -12,6 +12,8 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.released.outputs.version }}
     permissions:
       contents: write        # @semantic-release/git commit; @semantic-release/github release + tag
       issues: write          # release comments
@@ -39,9 +41,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Notify Slack
-        if: hashFiles('.released-version') != ''
-        continue-on-error: true
-        env:
+      - id: released
+        run: |
+          if [ -f .released-version ]; then
+            echo "version=$(cat .released-version)" >> "$GITHUB_OUTPUT"
+          fi
+
+  notify:
+    needs: publish
+    if: needs.publish.outputs.version != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.publish.outputs.version }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.16.0
+
+      - env:
           SLACK_NOTIFICATION_URL: ${{ secrets.SLACK_NOTIFICATION_URL }}
-        run: node scripts/notify-slack.mjs "$(cat .released-version)"
+        run: node scripts/notify-slack.mjs "${{ needs.publish.outputs.version }}"
