@@ -172,6 +172,9 @@ catalog.
   transparent)` — the old 6 % black wash vanished on dark) and
   `--uxm-date-input-popover-shadow` (default `--shadow-xl`, so the calendar popover now
   follows the theme's shadow scale instead of a fixed light-only literal).
+
+### New in 4.38.0
+
 - **Nine legacy palette names are `@deprecated`** — `--color-cream`, `--color-warm-gray`,
   `--color-ink`, `--color-green`, `--color-mint`, `--color-forest`, `--color-peach`,
   `--color-lavender`, `--color-lime`. They only ever existed inside `tokens.css`'s Tailwind
