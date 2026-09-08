@@ -114,7 +114,7 @@ export const fileUploadDef: ComponentDef = {
     { name: 'onError', description: 'Fires when the caller rejects a drop (e.g. wrong MIME). The atom never fires this on its own — drive it from your validation in `onFiles`.', payload: '{ reason: string }' },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: 'FileUpload',
     props: [
       { name: 'onFiles', type: '(files: File[]) => void', description: 'Receives picked or dropped files.' },

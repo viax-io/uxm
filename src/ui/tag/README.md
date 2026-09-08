@@ -7,8 +7,8 @@ A read-only status pill — six semantic palettes (`accent` / `success` / `warni
 ## Usage
 
 ```tsx
-import { Tag } from '@viax/uxm';
-import { Icon } from '@viax/uxm';
+import { Tag } from '@viax.io/uxm';
+import { Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

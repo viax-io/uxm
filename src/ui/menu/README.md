@@ -29,7 +29,7 @@ If you find yourself wanting a second `current` row, or wanting the panel to
 ## Usage
 
 ```tsx
-import { Menu, IconButton, Icon, type MenuEntry } from '@viax/uxm/ui';
+import { Menu, IconButton, Icon, type MenuEntry } from '@viax.io/uxm/ui';
 
 const items: MenuEntry[] = [
   { key: 'edit', label: 'Edit', icon: 'pencil', onSelect: rename },

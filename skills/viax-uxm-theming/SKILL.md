@@ -31,11 +31,11 @@ Four steps, in this order. Everything else in this skill is an implementation of
 |---|---|---|
 | 1 | **Fetch** | `getUxmConfig { config }` → a JSON **string** → parse → read the `uxmStudio` key |
 | 2 | **Seed** | Put `{ overrides, brand }` into a store the UI can subscribe to (cache in `localStorage` so returning users skip the flash) |
-| 3 | **Apply** | `generateOverridesCss(overrides, brand)` from `@viax/uxm/studio/generate-css` → inject as ONE `<style id="uxm-overrides">` in `<head>` |
+| 3 | **Apply** | `generateOverridesCss(overrides, brand)` from `@viax.io/uxm/studio/generate-css` → inject as ONE `<style id="uxm-overrides">` in `<head>` |
 | 4 | **React** | Re-run step 3 whenever the store changes, so a publish (or an embedded save) re-themes live |
 
-Requires `@viax/uxm@^4.15.0` — that is the floor for the dedicated config operations. Always
-`npm i @viax/uxm@latest`.
+Requires `@viax.io/uxm@^4.15.0` — that is the floor for the dedicated config operations. Always
+`npm i @viax.io/uxm@latest`.
 
 **How the store learns of a publish (step 4's trigger):** there is no push channel today. An
 embedded studio's save updates the store directly (reference implementation, file 5). A
@@ -150,7 +150,7 @@ name, never assume `themes[]` exists, always normalise defensively and ignore un
 | Mode | What the app does | Build |
 |---|---|---|
 | **Consume** (default) | Reads + applies the published config. No editor, no save path. | Store, API read half, applier, boot hook |
-| **Embed** | Also mounts `UxmApp` from `@viax/uxm/studio` with server-backed save | + API write half, persistence adapter, studio page, `@viax/uxm/studio.css` |
+| **Embed** | Also mounts `UxmApp` from `@viax.io/uxm/studio` with server-backed save | + API write half, persistence adapter, studio page, `@viax.io/uxm/studio.css` |
 | **Picker** | Also lets end users *select* among themes the designer published | + theme catalog, theme store, picker UI |
 
 Consume is always built. The other two are independent of each other — an app can have a
@@ -247,12 +247,12 @@ top-level default.
   0.5–2, but only for values that flow through `brand.*`; a scale smuggled in via
   `brand.tokens.light` bypasses that check (`safeTokenValue` allows `abc` and unbalanced parens).
   Never route typography through the token bag.
-- **Heading typography is opt-in, and a stale `@viax/uxm` silently swallows it.** `brand.headingFontFamily`
+- **Heading typography is opt-in, and a stale `@viax.io/uxm` silently swallows it.** `brand.headingFontFamily`
   / `headingFontWeight` publish as `--brand-heading-font` / `--brand-heading-weight`, which only the
   heading surfaces read (`PageHeader` / `DetailSection` / `SegmentRow` titles, `ErrorPage` code + title,
   `StatCard` value). Unset is *not* a bug — every surface keeps its own literal fallback, so nothing
   changes until a heading font is chosen. Two consequences: a host whose server regenerates the CSS with
-  an older `@viax/uxm` persists the JSON but emits no heading vars (bump the package, not the config),
+  an older `@viax.io/uxm` persists the JSON but emits no heading vars (bump the package, not the config),
   and an old published sheet predates the vars entirely — the studio's live mirror re-declares them as
   `initial` when unset precisely so reverting repaints immediately instead of waiting for the next Publish.
 - **Never hardcode brand values — anywhere.** Not in global CSS (`--color-accent*` and friends),
@@ -261,7 +261,7 @@ top-level default.
   typeface; they all arrive together at runtime. A hardcoded copy is a second source that keeps
   painting after a studio "Reset all" while the studio's own inputs fall back to library
   defaults — inputs and rendering then disagree, and nothing in the app explains why. Before the
-  first fetch resolves the app paints `@viax/uxm`'s built-in tokens, which is the correct
+  first fetch resolves the app paints `@viax.io/uxm`'s built-in tokens, which is the correct
   neutral state; `localStorage` covers returning users. Keep asset fallbacks at the point of
   use (`brand?.logoUrl || '/logo.svg'`), not in the defaults.
 - **Times New Roman everywhere** means the `--font-sans` bridge is missing. `tokens.css`
@@ -274,7 +274,7 @@ top-level default.
 - **Don't build a font picker.** `brand.fontFamily` from Brand Settings → Typography is turned
   into a Google-Fonts `@import` + `--brand-font` by `generateOverridesCss`. Declare no
   `font-family` beyond the baseline chain, or it will fight the injected rule.
-- **Don't expose border-radius knobs.** Shape belongs to `@viax/uxm` tokens, not per-app brand.
+- **Don't expose border-radius knobs.** Shape belongs to `@viax.io/uxm` tokens, not per-app brand.
 - **One `<style>` element, replaced in place.** Appending a new one per apply leaks nodes and
   makes the last-wins order unpredictable.
 - **In `embed` mode the host owns `data-theme`.** The studio defers light/dark to you.

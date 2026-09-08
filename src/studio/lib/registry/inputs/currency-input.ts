@@ -68,7 +68,7 @@ export const currencyInputDef: ComponentDef = {
     { name: 'onBlur', description: 'Fires when the amount input loses focus. Triggers min/max clamping AND switches display back to locale-formatted.', payload: 'FocusEvent' },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: 'CurrencyInput',
     props: [
       { name: 'value', type: '{ currency: string, amount: string }', description: 'Controlled value. `currency` is an ISO 4217 code; `amount` is the raw digit string.' },

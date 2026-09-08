@@ -7,7 +7,7 @@ A combobox-style picker — a trigger button that opens a popover containing a s
 ## Usage
 
 ```tsx
-import { SearchDropdown, type SearchDropdownOption } from '@viax/uxm';
+import { SearchDropdown, type SearchDropdownOption } from '@viax.io/uxm';
 import { useState } from 'react';
 
 const options: SearchDropdownOption[] = [

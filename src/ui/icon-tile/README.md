@@ -7,7 +7,7 @@ A small, rounded, coloured square that wraps an icon — the recurring "row icon
 ## Usage
 
 ```tsx
-import { IconTile, Icon } from '@viax/uxm';
+import { IconTile, Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

@@ -1,5 +1,5 @@
 /**
- * @viax/uxm/hooks — the behaviour hooks the atoms are built on, for hosts
+ * @viax.io/uxm/hooks — the behaviour hooks the atoms are built on, for hosts
  * that compose their own floating layers or keyboard widgets on top of the
  * library's primitives. Pure React; no atom or studio imports (enforced by the
  * layer rules in eslint.config.mjs).

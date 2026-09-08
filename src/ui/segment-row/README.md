@@ -7,7 +7,7 @@ Header row of a configuration segment: an optional drag handle, an accent line, 
 ## Usage
 
 ```tsx
-import { SegmentCard, SegmentRow, ComponentRow } from '@viax/uxm';
+import { SegmentCard, SegmentRow, ComponentRow } from '@viax.io/uxm';
 
 const [open, setOpen] = useState(true);
 

@@ -7,7 +7,7 @@ A square, icon-only `<button>` for compact controls (toolbars, row actions, dism
 ## Usage
 
 ```tsx
-import { IconButton, Icon } from '@viax/uxm';
+import { IconButton, Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

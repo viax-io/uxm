@@ -7,7 +7,7 @@ A header-only collapsible row — icon + label + right chevron that rotates 90°
 ## Usage
 
 ```tsx
-import { Disclosure, Icon } from '@viax/uxm';
+import { Disclosure, Icon } from '@viax.io/uxm';
 
 function Example() {
   const [open, setOpen] = useState(false);

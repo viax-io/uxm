@@ -6,6 +6,7 @@ dist-portal/
 .idea/
 .vscode/
 coverage/
+.released-version
 junit-report.xml
 
 # work with claude agents — team-shared config (.claude/ commands, agents,

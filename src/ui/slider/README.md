@@ -7,7 +7,7 @@ The track is painted via a CSS `linear-gradient` driven by `--uxm-slider-progres
 ## Usage
 
 ```tsx
-import { Slider, FormField } from '@viax/uxm';
+import { Slider, FormField } from '@viax.io/uxm';
 import { useState } from 'react';
 
 function VolumeControl() {

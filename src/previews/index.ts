@@ -1,9 +1,9 @@
 /**
- * Public barrel for @viax/uxm/previews.
+ * Public barrel for @viax.io/uxm/previews.
  *
  * Re-exports every canvas preview component, plus the shared preview-side
  * types. Imported by the modo uxm-shell to render the registry-driven
- * editor canvas. Tree-shakable: hosts that import only `@viax/uxm/ui` do
+ * editor canvas. Tree-shakable: hosts that import only `@viax.io/uxm/ui` do
  * not pull preview code through this entry.
  */
 

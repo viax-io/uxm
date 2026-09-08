@@ -7,7 +7,7 @@ A bordered card that pairs a label with a large numeric value and an optional tr
 ## Usage
 
 ```tsx
-import { StatCard } from '@viax/uxm';
+import { StatCard } from '@viax.io/uxm';
 
 function Example() {
   return (

@@ -28,7 +28,7 @@ The views are hook-free and read one `{ props, cell }` pair, so a behaviour chan
 ## Usage
 
 ```tsx
-import { EditableCell } from '@viax/uxm';
+import { EditableCell } from '@viax.io/uxm';
 
 // Text — rename-in-place
 <EditableCell value={name} onCommit={(next) => rename(String(next))} required />

@@ -1,4 +1,4 @@
-// ESLint 9 flat config for @viax/uxm (React 19 + TypeScript).
+// ESLint 9 flat config for @viax.io/uxm (React 19 + TypeScript).
 // Modern, lint-fast setup — no Airbnb dependency (incompatible peer deps).
 // See plan: todo/25-05-2026-17-25-eslint-setup.md
 import js from '@eslint/js';
@@ -148,7 +148,7 @@ export default tseslint.config(
   },
 
   // 6. Tree-shake guarantee — no `*-preview` module may be re-exported from a
-  //    ui barrel, or `@viax/uxm/ui` drags every canvas preview into consumers.
+  //    ui barrel, or `@viax.io/uxm/ui` drags every canvas preview into consumers.
   //    Previously "verify by hand" (CLAUDE.md); now the linter does it.
   {
     files: ['src/ui/index.ts', 'src/ui/*/index.ts'],

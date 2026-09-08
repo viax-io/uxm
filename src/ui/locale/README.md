@@ -11,7 +11,7 @@ Only the atoms that actually call `Intl` read it: `Calendar`, `DateInput` (via `
 Mount once near the app root:
 
 ```tsx
-import { UxmLocaleProvider } from '@viax/uxm';
+import { UxmLocaleProvider } from '@viax.io/uxm';
 
 function App() {
   return (

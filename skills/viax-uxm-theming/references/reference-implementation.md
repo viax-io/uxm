@@ -31,7 +31,7 @@ pub/sub so the applier and any brand-reading chrome can subscribe.
 logo, the favicon and the typeface are all published from UXM Studio and arrive together at
 runtime; a hardcoded copy is a second source that keeps painting after a studio "Reset all"
 while the studio's own inputs fall back to library defaults. Until the first fetch resolves the
-app simply paints `@viax/uxm`'s built-in tokens — which is the correct neutral state, not a
+app simply paints `@viax.io/uxm`'s built-in tokens — which is the correct neutral state, not a
 bug. Returning users skip even that: `localStorage` holds the last applied config.
 
 ```javascript
@@ -168,7 +168,7 @@ in place, regenerated on every store change. Mount once at the app root, above t
 
 ```jsx
 import { useEffect } from 'react'
-import { generateOverridesCss } from '@viax/uxm/studio/generate-css'
+import { generateOverridesCss } from '@viax.io/uxm/studio/generate-css'
 import { getUxmConfig, subscribeUxmConfig } from '@/lib/uxm-studio-config'
 
 const STYLE_ID = 'uxm-overrides'
@@ -201,7 +201,7 @@ export default function UxmConfigApplier() {
 }
 ```
 
-`generate-css` is plain JS — a consumer-only app does **not** need `@viax/uxm/studio.css`.
+`generate-css` is plain JS — a consumer-only app does **not** need `@viax.io/uxm/studio.css`.
 
 The generated CSS also declares `--brand-logo-url` (with a dark-theme override) alongside the
 token blocks. In React, prefer reading `brand.logoUrl` from the store (the hook in file 1) —
@@ -292,7 +292,7 @@ export function createConfigRepoPersistence() {
 Studio page:
 
 ```jsx
-import { UxmApp } from '@viax/uxm/studio'
+import { UxmApp } from '@viax.io/uxm/studio'
 import { createConfigRepoPersistence } from '@/lib/uxm-persistence'
 
 const persistence = createConfigRepoPersistence()
@@ -311,7 +311,7 @@ normalised `structure` is otherwise stale. Give the store a `reloadThemes()` (a 
 variant that skips the `structure` early-return) and call it from `save` after
 `setUxmConfig(state)`.
 
-Import `@viax/uxm/studio.css` **once** in your entry file, before your global stylesheet, so
+Import `@viax.io/uxm/studio.css` **once** in your entry file, before your global stylesheet, so
 load order is deterministic — not in the page. In `embed` mode the studio drops full-page
 chrome and defers `data-theme` to the host. If your shell adds content padding, zero it on the
 studio route: the workbench is a full-bleed surface.
@@ -322,7 +322,7 @@ studio route: the workbench is a full-bleed surface.
 
 Read-only selection among published themes. Never writes.
 
-The store below uses `zustand` (`npm i zustand`) — it is **not** a dependency of `@viax/uxm`;
+The store below uses `zustand` (`npm i zustand`) — it is **not** a dependency of `@viax.io/uxm`;
 any subscribable store works if you'd rather not add one.
 
 **6a. Catalog** — `src/lib/theme-catalog.js`. Normalises v1 or v2 into one shape.

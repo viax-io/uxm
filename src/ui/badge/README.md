@@ -7,7 +7,7 @@ A compact notification indicator with two render modes — a numeric pill (`coun
 ## Usage
 
 ```tsx
-import { Badge } from '@viax/uxm';
+import { Badge } from '@viax.io/uxm';
 
 function Example() {
   return (

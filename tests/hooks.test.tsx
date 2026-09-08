@@ -7,8 +7,8 @@ import { useDismiss, useFocusTrap, useScrollLock } from '@/hooks';
 import * as hooks from '@/hooks';
 
 // The subpath is the contract: every hook the atoms are built on is reachable
-// from `@viax/uxm/hooks`, and the two most-copied ones behave on their own.
-describe('@viax/uxm/hooks', () => {
+// from `@viax.io/uxm/hooks`, and the two most-copied ones behave on their own.
+describe('@viax.io/uxm/hooks', () => {
   it('exports the behaviour hooks', () => {
     for (const name of ['useDismiss', 'useFocusTrap', 'useFocusOnMount', 'useRovingTabIndex', 'useScrollLock', 'usePortal', 'useToastStore']) {
       expect(typeof (hooks as Record<string, unknown>)[name], name).toBe('function');

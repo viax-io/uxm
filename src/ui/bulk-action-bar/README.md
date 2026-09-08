@@ -9,7 +9,7 @@ The root **is** the styled element (card surface, border, decomposed shadow), so
 ## Usage
 
 ```tsx
-import { BulkActionBar } from '@viax/uxm/ui';
+import { BulkActionBar } from '@viax.io/uxm/ui';
 
 const [selected, setSelected] = useState<string[]>([]);
 

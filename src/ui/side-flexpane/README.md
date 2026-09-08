@@ -9,7 +9,7 @@ The pane is a semantic `<aside>` with `position: relative`, a card background, d
 ## Usage
 
 ```tsx
-import { SideFlexpane, ButtonPrimary, ButtonTertiary } from '@viax/uxm';
+import { SideFlexpane, ButtonPrimary, ButtonTertiary } from '@viax.io/uxm';
 
 function UserDetail({ user, onClose }) {
   return (

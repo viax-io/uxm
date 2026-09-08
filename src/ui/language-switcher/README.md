@@ -11,7 +11,7 @@ Pair it with [`UxmLocaleProvider`](../locale/README.md): this control picks the 
 ## Usage
 
 ```tsx
-import { LanguageSwitcher, UxmLocaleProvider } from '@viax/uxm/ui';
+import { LanguageSwitcher, UxmLocaleProvider } from '@viax.io/uxm/ui';
 
 function App({ supportedLocales }) {          // e.g. from getSupportedLocales
   const [locale, setLocale] = useLocale();    // your store, your persistence

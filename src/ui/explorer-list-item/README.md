@@ -7,7 +7,7 @@ A label-first list row for component-explorer / file-tree style browsers. Distin
 ## Usage
 
 ```tsx
-import { ExplorerListItem } from '@viax/uxm';
+import { ExplorerListItem } from '@viax.io/uxm';
 
 function Example() {
   return (

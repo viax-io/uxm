@@ -7,7 +7,7 @@ A vertical flex column with a consistent gap — the boring layout primitive tha
 ## Usage
 
 ```tsx
-import { Stack } from '@viax/uxm';
+import { Stack } from '@viax.io/uxm';
 
 function ProfileForm() {
   return (

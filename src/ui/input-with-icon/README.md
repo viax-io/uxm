@@ -7,7 +7,7 @@ A text input with a leading icon slot and (optionally) a trailing clear button. 
 ## Usage
 
 ```tsx
-import { InputWithIcon, Icon } from '@viax/uxm';
+import { InputWithIcon, Icon } from '@viax.io/uxm';
 
 function SearchField() {
   const [query, setQuery] = useState('');

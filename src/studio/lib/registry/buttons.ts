@@ -53,7 +53,7 @@ export const buttonsDefs: ComponentDef[] = [
       { name: 'onBlur', description: 'Fires when the button loses keyboard focus.', payload: 'FocusEvent' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'ButtonPrimary',
       props: [
         { name: 'children', type: 'ReactNode', description: 'Button label — text, icon, or both.' },
@@ -270,7 +270,7 @@ export const buttonsDefs: ComponentDef[] = [
       { name: 'onBlur', description: 'Fires when the button loses keyboard focus.', payload: 'FocusEvent' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'ButtonDanger',
       props: [
         { name: 'children', type: 'ReactNode', description: 'Button label — text, icon, or both. Prefer an explicit verb ("Delete", "Remove").' },

@@ -17,9 +17,11 @@ git checkout --no-track -b <name> master     # or origin/master
 git push -u origin <name>                     # explicit branch, first push
 ```
 
-Then open an MR. `master` is protected **by convention only** — GitLab does not
-enforce it — so nothing stops a mis-targeted push from landing there and
-triggering a release (CI runs `semantic-release` on `master`).
+Then open a PR. `master` is protected **by convention only** — and on GitHub it
+is deliberately left unprotected, because `@semantic-release/git` pushes its
+`chore(release)` commit with the default `GITHUB_TOKEN`, which cannot write to a
+protected branch. Nothing stops a mis-targeted push from landing there and
+triggering a release (the Release workflow runs `semantic-release` on `master`).
 
 **Why this matters — the v3.0.1 incident.** A branch was once created with
 `git checkout -b <name> origin/master` (tracking `origin/master`); a bare
@@ -64,7 +66,7 @@ Don't treat it as an error, retry, or re-stage — confirm success via the usual
 
 Releases are cut by `semantic-release` from conventional commits, and a
 `BREAKING CHANGE:` footer (on **any** commit in the release range) forces a
-**major** bump for the whole `@viax/uxm` package — every consumer must then
+**major** bump for the whole `@viax.io/uxm` package — every consumer must then
 migrate. Reserve that for changes that actually break a **known external
 consumer contract**.
 
@@ -253,7 +255,7 @@ of the 19 hits its first full-repo run produced, **7 were legacy-alias
 chains** — `var(--uxm-x-new, var(--uxm-x-old, <token>))` where the innermost
 token already matched the registry (the script now resolves those) — and 11
 were real and are fixed, so the script runs green (exit 0) — and now GATES
-CI: the `.gitlab-ci.yml` `test` job runs `npm run check:drift`, so a knob
+CI: the `.github/workflows/ci.yml` `verify` job runs `npm run check:drift`, so a knob
 default and its SCSS fallback can no longer disagree without failing the
 pipeline.
 Three of the 11 changed a *visible aesthetic*, not just a dead state, and
@@ -316,30 +318,36 @@ Treat that as "Figma is closed", not as a config problem.
 
 ---
 
-## `npm audit fix` / `npm update` via registry.npmjs.org can lock a version Nexus can't serve
+## The Nexus proxy-lag lockfile trap — historical, does not apply on public npm
 
-Nexus has no audit endpoint, so `npm audit` (and `npm audit fix`) must run with
-`--registry=https://registry.npmjs.org`. That also RESOLVES through npmjs — and
-npmjs may list a version published minutes ago that the Nexus proxy's cached
-packument does not have yet. Locally nothing breaks: the tarball lands in
-`~/.npm` straight from npmjs, and every later `npm install`/`npm ci` — even in a
-fresh clone — is served from that cache. CI has no cache, installs through
-Nexus, and gets `404 Not Found … electron-to-chromium-1.5.423.tgz`.
+Kept so nobody reintroduces the workaround. While the package installed from the
+Viax Nexus proxy, `npm audit fix` resolved through registry.npmjs.org and could
+lock a version published minutes earlier that Nexus's cached packument did not
+list yet. Locally nothing broke (the tarball was already in `~/.npm`); CI had no
+cache, installed through Nexus, and died with
+`404 Not Found … electron-to-chromium-1.5.423.tgz` before a single test ran
+(08-09-2026, MR !166, job 1554352).
 
-**This actually happened — 08-09-2026, MR !166 (job 1554352).** `npm audit fix`
-took `electron-to-chromium` to 1.5.423; Nexus's packument stopped at 1.5.422.
-The job died in `npm install`, before a single test ran, and every local check
-(`npm ci` in a clean clone included) had been green.
+`scripts/check-lock-nexus.mjs` and the `check:lock` script existed only to catch
+that, and were removed with the npm migration: install and audit now both
+resolve through registry.npmjs.org, so the two registries cannot disagree.
 
-**How to apply:**
-- After any `npm audit fix` / `npm update` / `npm i` that went through npmjs,
-  run **`npm run check:lock`** (`scripts/check-lock-nexus.mjs` — HEADs every
-  lockfile tarball through Nexus) before pushing. Or reproduce CI exactly:
-  `npm ci --cache /tmp/empty-cache` in a clean clone.
-- To fix a hit, pin the entry to the newest version Nexus lists —
-  `npm view <pkg>@latest version dist.integrity dist.tarball --prefer-online`
-  (the `.npmrc` registry IS Nexus; `--prefer-online` skips your local
-  packument) and patch `version` / `resolved` / `integrity` in the lock.
-  `npm update <pkg>` will NOT do it: it never downgrades a satisfying version.
-- `npm audit --registry=…` (read-only, `audit:report` / `audit:ci`) is safe —
-  only the *fix* path writes the lock.
+**How to apply:** do not add a lockfile-reachability gate back unless the install
+registry and the audit registry diverge again.
+
+---
+
+## GitHub Actions: `pull_request` + `push` on one workflow double-runs every PR
+
+A workflow triggered on both `pull_request` and `push` fires twice for each
+commit on a PR branch — same job, same result, twice the minutes. GitHub has no
+native "push only when there is no PR" condition, so pick one trigger.
+
+`ci.yml` uses `pull_request` alone plus a `concurrency` group keyed on
+`github.head_ref` with `cancel-in-progress: true`, so a new push supersedes the
+in-flight run instead of racing it. The trade is that a branch with no open PR
+gets no CI — the PR is the gate.
+
+**How to apply:** when adding a workflow, name one trigger and add a
+`concurrency` group. If you need `push` as well, scope it to branches that never
+carry a PR.

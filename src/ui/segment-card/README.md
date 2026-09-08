@@ -7,7 +7,7 @@ Bordered card that wraps a **nested** configuration segment (depth ≥ 1): a hea
 ## Usage
 
 ```tsx
-import { SegmentCard, SegmentRow, ComponentRow, Icon } from '@viax/uxm';
+import { SegmentCard, SegmentRow, ComponentRow, Icon } from '@viax.io/uxm';
 
 <SegmentCard header={<SegmentRow name="Location Details" count={2} dragHandle />}>
   <ComponentRow icon={<Icon glyph="square" />} name="Address" type="Address" />

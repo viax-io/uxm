@@ -7,7 +7,7 @@ A pair of components — `RadioGroup` (the wrapper) and `RadioOption` (the indiv
 ## Usage
 
 ```tsx
-import { RadioGroup, RadioOption } from '@viax/uxm';
+import { RadioGroup, RadioOption } from '@viax.io/uxm';
 import { useState } from 'react';
 
 function PlanPicker() {

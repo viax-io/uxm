@@ -7,7 +7,7 @@ A trail navigation component — renders a `<nav aria-label="Breadcrumb">` conta
 ## Usage
 
 ```tsx
-import { Breadcrumb } from '@viax/uxm';
+import { Breadcrumb } from '@viax.io/uxm';
 
 function PageHeader() {
   return (

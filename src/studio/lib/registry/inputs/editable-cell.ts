@@ -159,7 +159,7 @@ export const editableCellDef: ComponentDef = {
     { name: 'onCommit', description: 'Fires when the user confirms a change (Enter, or blur with no validation error; for multiselect, each toggle). Async — the atom shows a submitting state until the returned promise settles.', payload: '(next: string | number | string[]) => void | Promise<void>' },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: 'EditableCell',
     props: [
       { name: 'value', type: 'string | number | string[]', required: true, description: 'Current committed value (a string[] of picked option values for multiselect). The atom keeps a draft internally during edit.' },

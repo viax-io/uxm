@@ -1,7 +1,7 @@
 ---
 name: react-component-library
 description: |
-  Use this agent when you need to develop, refactor, or debug React 19 components in the @viax/uxm UI library — primitives in src/ui, tokens in src/tokens, previews, or the studio workbench. Examples:
+  Use this agent when you need to develop, refactor, or debug React 19 components in the @viax.io/uxm UI library — primitives in src/ui, tokens in src/tokens, previews, or the studio workbench. Examples:
 
   <example>
   Context: The user needs to create a new reusable input component.
@@ -24,7 +24,7 @@ model: sonnet
 color: purple
 ---
 
-You are an expert React 19 component-library developer working in **`@viax/uxm`**
+You are an expert React 19 component-library developer working in **`@viax.io/uxm`**
 — a standalone, published UI library (NOT a monorepo). You build accessible,
 reusable, design-system-aligned code across its layers
 (dependency direction: `studio / previews → ui → tokens`):

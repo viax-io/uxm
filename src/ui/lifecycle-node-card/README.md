@@ -7,7 +7,7 @@ The pill card used for each node on a BI lifecycle canvas — a fixed-width row 
 ## Usage
 
 ```tsx
-import { LifecycleNodeCard } from '@viax/uxm';
+import { LifecycleNodeCard } from '@viax.io/uxm';
 
 function CanvasNodes() {
   return (
@@ -53,7 +53,7 @@ Kind → glyph mapping (centralised so other lifecycle UI shares the same contra
 
 ## CSS variables
 
-The card sets `box-sizing: border-box` on itself rather than inheriting it from the host, so every sized variable below means what it says: `width: 280px` is 280px of rendered card, and `min-height` is rendered height, not content height. `@viax/uxm/ui.css` ships no global reset, so without this a consumer that doesn't ship one either would silently get padding and border *added* on top of both numbers — and the whole point of `min-height` is that connector geometry can trust a single value.
+The card sets `box-sizing: border-box` on itself rather than inheriting it from the host, so every sized variable below means what it says: `width: 280px` is 280px of rendered card, and `min-height` is rendered height, not content height. `@viax.io/uxm/ui.css` ships no global reset, so without this a consumer that doesn't ship one either would silently get padding and border *added* on top of both numbers — and the whole point of `min-height` is that connector geometry can trust a single value.
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|

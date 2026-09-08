@@ -7,7 +7,7 @@ A segmented control — renders a row of mutually-exclusive `<button>`s sharing 
 ## Usage
 
 ```tsx
-import { ButtonGroup } from '@viax/uxm';
+import { ButtonGroup } from '@viax.io/uxm';
 
 function Example() {
   const [view, setView] = useState('list');

@@ -57,7 +57,7 @@ export const colorInputDef: ComponentDef = {
     { name: 'onOpenChange', description: 'Popover variant only — fires when the panel opens or closes.', payload: '(open: boolean) => void', showWhen: { variant: 'popover' } },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: ['ColorInput', 'ColorInputPopover'],
     props: [
       { name: 'value', type: 'string', description: 'Current color (controlled). Any supported syntax: hex, rgb(a), hsl(a).' },

@@ -9,7 +9,7 @@ The left-rail chrome for a logged-in application — renders a brand mark, an op
 ## Usage
 
 ```tsx
-import { AppSidebar } from '@viax/uxm';
+import { AppSidebar } from '@viax.io/uxm';
 import Link from 'next/link';
 
 function Shell() {
@@ -164,7 +164,7 @@ Unlike the footer, `__lead` imposes **no** `font-size` or `color` — the footer
 
 ## Design tokens (MODO-configurable)
 
-When the component-scoped variables above are not overridden, AppSidebar resolves colour through the global design-token layer exported by `@viax/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor.
+When the component-scoped variables above are not overridden, AppSidebar resolves colour through the global design-token layer exported by `@viax.io/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor.
 
 | Token | Group / name | Used for |
 |-------|--------------|----------|

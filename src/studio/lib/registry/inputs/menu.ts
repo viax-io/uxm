@@ -178,7 +178,7 @@ export const menuDef: ComponentDef = {
     { name: 'onOpenChange', description: 'Fires when the menu opens or closes.', payload: 'boolean' },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: 'Menu',
     props: [
       { name: 'items', type: 'MenuEntry[]', required: true, description: 'Menu entries — actionable items ({ key, label, subtitle?, icon?, iconColor?, hint?, onSelect?, disabled?, danger?, current? }) and separators ({ separator: true }), in display order. Pass `subtitle` to render a two-line row (label = headline), `iconColor` to tint ONE row\'s glyph (prefer a `var(--color-*)` reference; raw hex only for entity-identity colours), and `current` to mark the row the user is already on (aria-current + trailing checkmark + heavier label).' },

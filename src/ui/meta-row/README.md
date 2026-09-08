@@ -7,7 +7,7 @@ Each child becomes one segment; a small circular dot separator is rendered betwe
 ## Usage
 
 ```tsx
-import { MetaRow } from '@viax/uxm';
+import { MetaRow } from '@viax.io/uxm';
 
 function CardFooter() {
   return (

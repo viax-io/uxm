@@ -9,7 +9,7 @@ The shared error-message renderer for the whole input family. Leads with an `exc
 Consumed by input atoms, not usually by application code:
 
 ```tsx
-import { FieldError } from '@viax/uxm/ui';
+import { FieldError } from '@viax.io/uxm/ui';
 
 {error && (
   <FieldError className="uxm-input__error-message" id={errorId}>

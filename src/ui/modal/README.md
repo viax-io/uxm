@@ -9,7 +9,7 @@ Compound slots rather than a `title` / `actions` prop pair let consumers compose
 ## Usage
 
 ```tsx
-import { Dialog, Modal, ButtonPrimary, ButtonTertiary } from '@viax/uxm/ui';
+import { Dialog, Modal, ButtonPrimary, ButtonTertiary } from '@viax.io/uxm/ui';
 
 <Dialog open={open} onOpenChange={setOpen}>
   <Modal size="md" onClose={() => setOpen(false)}>

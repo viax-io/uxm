@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`@viax/uxm` — a **standalone, published** React 19 UI library (not a monorepo, despite what some handbooks imply). It ships four independently-importable layers, each with its own type declarations and CSS bundle: `ui` (BEM-classed primitives + icon registry), `tokens` (the `themeTokens` array + `--color-*` declarations), `previews` (shell-aware theme-editor previews), and `studio` (a full design-workbench app). The root barrel (`@viax/uxm`) re-exports `ui` + `tokens` + WCAG helpers (`src/index.ts`). See `README.md` for the consumer-facing catalog and subpath-export table.
+`@viax.io/uxm` — a **standalone, published** React 19 UI library (not a monorepo, despite what some handbooks imply). It ships four independently-importable layers, each with its own type declarations and CSS bundle: `ui` (BEM-classed primitives + icon registry), `tokens` (the `themeTokens` array + `--color-*` declarations), `previews` (shell-aware theme-editor previews), and `studio` (a full design-workbench app). The root barrel (`@viax.io/uxm`) re-exports `ui` + `tokens` + WCAG helpers (`src/index.ts`). See `README.md` for the consumer-facing catalog and subpath-export table.
 
-Published to the private Nexus registry (`nexus.viax.tech`), not public npm.
+Published publicly to npm (`registry.npmjs.org`) as `@viax.io/uxm`.
 
 ## Commands
 
@@ -20,7 +20,7 @@ npm run lint        # eslint .
 npm run lint:fix    # eslint . --fix
 npm run check:drift # registry-vs-CSS state-var drift + type-scale + tokens.css↔themeTokens parity gates (also run in CI's test job)
 npm test            # Vitest smoke suite (tests/) — jsdom; `npm run test:watch` while iterating
-npm run audit:report # npm audit against registry.npmjs.org (Nexus has no audit endpoint); audit:ci gates CI at critical
+npm run audit:report # npm audit report; audit:ci gates CI at critical
 npm run commit      # commitizen — use this for conventional-commit prompts
 ```
 

@@ -12,7 +12,7 @@ Two exports:
 ## Usage
 
 ```tsx
-import { ColorInput, ColorInputPopover } from '@viax/uxm/ui';
+import { ColorInput, ColorInputPopover } from '@viax.io/uxm/ui';
 
 // Inline, controlled.
 <ColorInput

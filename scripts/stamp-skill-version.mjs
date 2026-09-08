@@ -6,7 +6,7 @@
  * count in lockstep with the library WITHOUT authors hand-editing them:
  *
  *   1. SKILL.md frontmatter  — "(N BEM-classed React components as of vX.Y.Z"
- *   2. SKILL.md marker       — "Documents `@viax/uxm` **vX.Y.Z** (N components)"
+ *   2. SKILL.md marker       — "Documents `@viax.io/uxm` **vX.Y.Z** (N components)"
  *   3. SKILL.md section      — "## vX.Y.Z — current API surface"
  *   4. SKILL.md "### Unreleased" subsection (only when it actually has notes)
  *      → "### New in X.Y.Z", with a fresh empty "### Unreleased" re-opened
@@ -73,8 +73,8 @@ skill = stampOnce(
 );
 skill = stampOnce(
   skill,
-  /Documents `@viax\/uxm` \*\*v\d+\.\d+\.\d+\*\* \(\d+ components\)/,
-  `Documents \`@viax/uxm\` **v${version}** (${componentCount} components)`,
+  /Documents `@viax\.io\/uxm` \*\*v\d+\.\d+\.\d+\*\* \(\d+ components\)/,
+  `Documents \`@viax.io/uxm\` **v${version}** (${componentCount} components)`,
   'version marker',
   'SKILL.md',
 );
@@ -168,8 +168,8 @@ writeFileSync(skillPath, skill);
 let catalog = readFileSync(catalogPath, 'utf8');
 catalog = stampOnce(
   catalog,
-  /All \d+ components exported from `@viax\/uxm\/ui` \(as of v\d+\.\d+\.\d+\)/,
-  `All ${componentCount} components exported from \`@viax/uxm/ui\` (as of v${version})`,
+  /All \d+ components exported from `@viax\.io\/uxm\/ui` \(as of v\d+\.\d+\.\d+\)/,
+  `All ${componentCount} components exported from \`@viax.io/uxm/ui\` (as of v${version})`,
   'catalog header',
   'component-catalog.md',
 );

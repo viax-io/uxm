@@ -7,7 +7,7 @@ Architecturally mirrors `TextInput`: the root `<input>` IS the visible surface (
 ## Usage
 
 ```tsx
-import { NumberInput } from '@viax/uxm';
+import { NumberInput } from '@viax.io/uxm';
 import { useState } from 'react';
 
 function QuantityField() {

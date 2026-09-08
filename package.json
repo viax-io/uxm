@@ -1,5 +1,5 @@
 {
-  "name": "@viax/uxm",
+  "name": "@viax.io/uxm",
   "version": "4.39.0",
   "description": "Viax UXM — React 19 UI primitives and design tokens.",
   "license": "UNLICENSED",
@@ -72,7 +72,6 @@
     "test:ci": "vitest run --reporter=default --reporter=junit --outputFile=junit-report.xml",
     "audit:report": "npm audit --registry=https://registry.npmjs.org",
     "audit:ci": "npm audit --registry=https://registry.npmjs.org --audit-level=critical",
-    "check:lock": "node scripts/check-lock-nexus.mjs",
     "commit": "cz",
     "prepare": "husky",
     "prepublishOnly": "npm run build",
@@ -102,7 +101,7 @@
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/gitlab": "^13.3.2",
+    "@semantic-release/github": "^12.0.9",
     "@semantic-release/npm": "^13.1.5",
     "@semantic-release/release-notes-generator": "^14.1.1",
     "@tailwindcss/cli": "^4.0.0",
@@ -137,11 +136,12 @@
     "vitest": "^5.0.0"
   },
   "publishConfig": {
-    "registry": "https://nexus.viax.tech/repository/npm-private/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.viax.tech/services-viax/uxm.git"
+    "url": "https://github.com/viax-io/uxm.git"
   },
   "engines": {
     "node": ">=20"

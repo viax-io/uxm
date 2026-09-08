@@ -31,7 +31,7 @@ Optional longer body explaining what and why (max 100 chars per line).
 | `test` | Adding or changing tests in `tests/` | none |
 | `docs` | Documentation only (README, skill, handbooks, `.claude/`) | none |
 | `build` | Build pipeline or dependency changes (`tsup`, `tsc-alias`, deps) | none |
-| `ci` | `.gitlab-ci.yml`, `.releaserc` | none |
+| `ci` | `.github/workflows/*`, `.releaserc` | none |
 | `chore` | Other changes that don't modify `src/` | none |
 | `revert` | Reverts a previous commit | depends |
 

@@ -72,7 +72,7 @@ function formatValue(value: string | number | boolean, key: string): string {
 }
 
 // The sanitizers moved to ./css-sanitizers.ts; they stay part of this module's
-// public surface (`@viax/uxm/studio/generate-css`, brand-*-styles.tsx).
+// public surface (`@viax.io/uxm/studio/generate-css`, brand-*-styles.tsx).
 export { safeFontFamily, safeFontWeight, safeLineHeight, safeTokenKey, safeTokenValue, safeTypeScale } from './css-sanitizers';
 
 // The three heading roles, in one place. Both the publish path below and the

@@ -64,7 +64,7 @@ export const passwordInputDef: ComponentDef = {
     { name: 'onBlur', description: 'Fires when the field loses focus.', payload: 'FocusEvent' },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: 'PasswordInput',
     props: [
       { name: 'value', type: 'string', description: 'Current value (controlled).' },

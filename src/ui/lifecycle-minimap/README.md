@@ -7,7 +7,7 @@ A bird's-eye overview of a lifecycle canvas — a fixed-size frame containing sc
 ## Usage
 
 ```tsx
-import { LifecycleMinimap } from '@viax/uxm';
+import { LifecycleMinimap } from '@viax.io/uxm';
 
 function CanvasMinimap() {
   const nodes = [

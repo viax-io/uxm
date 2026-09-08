@@ -1,6 +1,6 @@
-# @viax/uxm — Component Catalog
+# @viax.io/uxm — Component Catalog
 
-All 97 components exported from `@viax/uxm/ui` (as of v4.39.0), grouped by intent. Use this file
+All 97 components exported from `@viax.io/uxm/ui` (as of v4.39.0), grouped by intent. Use this file
 
 ## Deprecated (removed in the next major — do not use in new code)
 
@@ -13,7 +13,7 @@ marked `@deprecated` (JSDoc, README, studio registry, this list), keeps working 
 minor, and goes away only in the next major. Studio themes saved against a deprecated surface
 keep painting until then.
 
-## Hooks — `@viax/uxm/hooks`
+## Hooks — `@viax.io/uxm/hooks`
 
 The behaviour hooks the atoms are built on, for a host that composes its own floating layer or
 keyboard widget on top of the primitives. Pure React, no atom imports; all typed.
@@ -29,13 +29,13 @@ keyboard widget on top of the primitives. Pure React, no atom imports; all typed
 | `useToastStore()` / `toastStore` | Subscribe to the module-level toast queue `toast.*` writes to. |
 
 Read the hook's JSDoc in the installed `.d.ts` for the exact option shapes before wiring one.
-to pick the right primitive when the `@viax/uxm` repo is not available locally. When it is, read
+to pick the right primitive when the `@viax.io/uxm` repo is not available locally. When it is, read
 the per-component README at `src/ui/{name}/README.md` in the uxm repo
-(`https://gitlab.viax.tech/services-viax/uxm`) for the full API
+(`https://github.com/viax-io/uxm`) for the full API
 (note: atoms added in 1.1.0–2.0.0 — toast, dialog, modal, popover, listbox, banner,
 field-error, number-stepper — may not have READMEs yet; read their `.tsx` JSDoc).
 
-Import path for all: `import { … } from '@viax/uxm/ui';`
+Import path for all: `import { … } from '@viax.io/uxm/ui';`
 
 > **v2.0.0 breaking changes:** `Alert` is REMOVED — use `Banner` (same
 > variant/title/icon/children; adds `onDismiss`). `NumberField` is RENAMED to `NumberStepper`
@@ -162,7 +162,7 @@ Import path for all: `import { … } from '@viax/uxm/ui';`
 `<Icon glyph="…">` returns **`null`** for anything not in this list — no error, no warning, just a
 missing icon. There is deliberately no `dashboard`, `folder`, `package`, `external`, `chart`,
 `shopping-cart` or `home`; reaching for those is the most common generation mistake. Verify against
-`ICONS.map(i => i.id)` (or `ICON_OPTIONS`, from `@viax/uxm/ui`) if you suspect the set has grown.
+`ICONS.map(i => i.id)` (or `ICON_OPTIONS`, from `@viax.io/uxm/ui`) if you suspect the set has grown.
 
 ```
 archive-x  arrow-down  arrow-left  arrow-right  arrow-up  arrow-up-right  bell  bolt  bot
@@ -246,7 +246,7 @@ positioning and a11y.
 
 ## Localisation & formatting
 
-`@viax/uxm` ships **no i18n engine** — no message catalogue, no translation runtime, and it will
+`@viax.io/uxm` ships **no i18n engine** — no message catalogue, no translation runtime, and it will
 not grow one: that would push a translation dependency onto every consumer of a primitives
 library. Localisation is split in two, and the split is the whole contract:
 
@@ -264,7 +264,7 @@ library. Localisation is split in two, and the split is the whole contract:
 **Localising an atom, end to end** — provider for formatting, props for copy:
 
 ```tsx
-import { UxmLocaleProvider, DateInput, FileUpload } from '@viax/uxm/ui';
+import { UxmLocaleProvider, DateInput, FileUpload } from '@viax.io/uxm/ui';
 
 <UxmLocaleProvider locale="uk-UA">
   <DateInput

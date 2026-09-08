@@ -15,7 +15,7 @@ export interface PageShellProps extends HTMLAttributes<HTMLDivElement> {
    *   (Back + title + diagram actions) instead of the full AppTopBar.
    */
   variant?: PageShellVariant;
-  /** Left navigation. Typically <AppSidebar /> from @viax/uxm/ui. */
+  /** Left navigation. Typically <AppSidebar /> from @viax.io/uxm/ui. */
   sidebar?: ReactNode;
   /** Top header — anything you want, or omit/null to render no header. */
   topBar?: ReactNode;

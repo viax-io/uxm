@@ -7,7 +7,7 @@ A small rounded pill marking the entry or exit point of a BI lifecycle canvas â€
 ## Usage
 
 ```tsx
-import { LifecycleTerminal } from '@viax/uxm';
+import { LifecycleTerminal } from '@viax.io/uxm';
 
 function Canvas() {
   return (

@@ -9,7 +9,7 @@ A square icon-only button — renders a native `<button>` with no label text, si
 ## Usage
 
 ```tsx
-import { ButtonIcon, Icon } from '@viax/uxm';
+import { ButtonIcon, Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

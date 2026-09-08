@@ -7,7 +7,7 @@ A compact, label-only segmented control for switching between filtered views of 
 ## Usage
 
 ```tsx
-import { FilterTabs } from '@viax/uxm';
+import { FilterTabs } from '@viax.io/uxm';
 
 function Example() {
   const [status, setStatus] = useState('all');

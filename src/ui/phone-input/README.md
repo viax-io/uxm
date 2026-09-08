@@ -9,7 +9,7 @@ Country list defaults to a curated set of ~30 entries (`CURATED_COUNTRIES`); pas
 ## Usage
 
 ```tsx
-import { PhoneInput, type PhoneValue } from '@viax/uxm';
+import { PhoneInput, type PhoneValue } from '@viax.io/uxm';
 import { useState } from 'react';
 
 function ContactForm() {

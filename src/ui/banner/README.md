@@ -9,7 +9,7 @@ A full-width persistent strip rendered inline in page flow, with four semantic v
 ## Usage
 
 ```tsx
-import { Banner } from '@viax/uxm/ui';
+import { Banner } from '@viax.io/uxm/ui';
 
 // Announcement with a title and body.
 <Banner variant="warning" title="Subscription expiring">

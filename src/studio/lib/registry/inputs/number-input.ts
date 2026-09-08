@@ -61,7 +61,7 @@ export const numberInputDef: ComponentDef = {
     { name: 'onFocus', description: 'Fires when the field receives focus.', payload: 'FocusEvent' },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: 'NumberInput',
     props: [
       { name: 'value', type: 'string', description: 'Current value as a digit string (controlled).' },

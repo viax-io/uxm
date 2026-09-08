@@ -117,7 +117,7 @@ export const feedbackDefs: ComponentDef[] = [
       },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'ProgressBar',
       props: [
         { name: 'value', type: 'number', required: true, description: 'Completion 0–100. Clamped into range. In production the consumer drives this from real progress data.' },
@@ -221,7 +221,7 @@ export const feedbackDefs: ComponentDef[] = [
       { name: 'action.onClick', description: "Per-action handler — fires when an action button is clicked. Wired via each entry's `onClick`.", payload: 'void' },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: 'BulkActionBar',
       props: [
         { name: 'count', type: 'number', required: true, description: 'Number of selected items. Drives the default "{n} selected" label.' },
@@ -277,7 +277,7 @@ export const feedbackDefs: ComponentDef[] = [
       },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: ['Toaster', 'toast'],
       props: [
         { name: 'toast.success(message, options?)', type: '(message: string, options?: { duration?: number, id?: string }) => string', description: 'Fire a success toast. Returns the toast id for manual dismissal via toast.dismiss(id).' },

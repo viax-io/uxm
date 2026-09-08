@@ -7,7 +7,7 @@ Visual language of a *region* — no business logic. Position and size come from
 ## Usage
 
 ```tsx
-import { LifecycleGroupBox, LifecycleNodeCard } from '@viax/uxm/ui';
+import { LifecycleGroupBox, LifecycleNodeCard } from '@viax.io/uxm/ui';
 import { useState } from 'react';
 
 function FulfillmentGroup({ rect, members }) {

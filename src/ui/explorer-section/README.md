@@ -7,7 +7,7 @@ A disclosure-style section header for grouping rows in a navigation list (e.g. c
 ## Usage
 
 ```tsx
-import { ExplorerSection } from '@viax/uxm';
+import { ExplorerSection } from '@viax.io/uxm';
 
 // Controlled — caller owns the state (e.g. to persist to localStorage).
 function ControlledExample() {

@@ -7,8 +7,8 @@ A segmented tab strip — pill-style buttons inside a bordered track, with one t
 ## Usage
 
 ```tsx
-import { Tabs } from '@viax/uxm';
-import { Icon } from '@viax/uxm';
+import { Tabs } from '@viax.io/uxm';
+import { Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

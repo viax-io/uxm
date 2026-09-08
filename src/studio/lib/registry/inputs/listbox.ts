@@ -178,7 +178,7 @@ export const listboxDef: ComponentDef = {
     { name: 'onOpenChange', description: 'Fires when the panel opens or closes.', payload: 'boolean' },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: ['Listbox', 'MultiListbox'],
     props: [
       { name: 'items', type: 'T[]', required: true, description: "Source data — the listbox is generic over T and has no knowledge of what's inside." },

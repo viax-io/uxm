@@ -7,7 +7,7 @@ ships first (MINOR), the old surface is marked @deprecated everywhere it is
 described (JSDoc, README, studio registry, skill), stays painting for at least
 one MINOR, and is removed only in the next MAJOR. First application:
 `ButtonIcon` → `IconButton variant="filled"` (4.39). Also in this release
-train: `@viax/uxm/hooks` subpath (new export, MINOR) and Modal's sub-
+train: `@viax.io/uxm/hooks` subpath (new export, MINOR) and Modal's sub-
 components moved from forwardRef to React 19 ref props (no API change).
 
 Modified principles:
@@ -28,8 +28,8 @@ Previous report (1.2.0 → 1.3.0, 2026-09-08) — kept for history:
   outside-click on the floating layers, ARIA wiring on the pickers, the CSS
   sanitizers, the overrides generator, an axe pass. Deliberately NOT a coverage
   target: visual atoms are verified in the portal. CI's test job runs it with a
-  junit report, and `npm audit` now runs against registry.npmjs.org (Nexus has
-  no audit endpoint), gating at critical.
+  junit report, and `npm audit` runs against registry.npmjs.org, gating at
+  critical.
 
   Modified principles:
     - V. Build Hygiene & Strict Typing — `npm test` added as a MUST gate with
@@ -80,12 +80,12 @@ Previous report (1.2.0 → 1.3.0, 2026-09-08) — kept for history:
       - none
 -->
 
-# @viax/uxm Constitution
+# @viax.io/uxm Constitution
 
 This document is the source of truth for engineering, design and release
-discipline in the `@viax/uxm` React 19 UI primitives + design tokens package.
+discipline in the `@viax.io/uxm` React 19 UI primitives + design tokens package.
 It governs every change merged into `master` and every artifact published to
-the Viax Nexus npm registry. Where any handbook, command, agent prompt, or
+the public npm registry. Where any handbook, command, agent prompt, or
 ad-hoc practice conflicts with this constitution, **the constitution wins**.
 
 ## Core Principles
@@ -232,7 +232,7 @@ typecheck or build failure ships broken conventions/types/CSS to every consumer.
 
 The library formats; the consumer translates. This split is a hard boundary.
 
-- **No i18n engine, ever.** `@viax/uxm` MUST NOT depend on `i18next`,
+- **No i18n engine, ever.** `@viax.io/uxm` MUST NOT depend on `i18next`,
   `react-intl`, or any translation runtime, and MUST NOT ship a message
   catalogue. A primitives library that owns translation forces its choice of
   engine onto every consuming app.
@@ -268,8 +268,8 @@ translation is.
 
 ## Distribution & Consumer Contract
 
-- Published name: `@viax/uxm`; registry: Viax Nexus
-  (`https://nexus.viax.tech/repository/viax-npm/`).
+- Published name: `@viax.io/uxm`; registry: public npm
+  (`https://registry.npmjs.org/`).
 - Exports map in `package.json` is the canonical public surface. Adding a new
   entry is a MINOR; removing or renaming one is a MAJOR.
 - `dist/` is the only directory shipped (plus `README.md`, `CHANGELOG.md`).
@@ -322,7 +322,7 @@ translation is.
    Tradeoffs* section.
 5. **Release** — merging to `master` triggers CI: semantic-release computes the
    version from commits, writes `CHANGELOG.md`, stamps the skill markers, tags,
-   and publishes to Nexus. After a release, sync the skill to `viax-ai-skills`
+   and publishes to npm. After a release, sync the skill to `viax-ai-skills`
    via `/update-ai-skill`.
 
 ## Governance

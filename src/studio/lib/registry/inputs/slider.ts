@@ -60,7 +60,7 @@ export const sliderDef: ComponentDef = {
     { name: 'onChange', description: 'Fires continuously while the user drags either thumb. Payload is the full [start, end] range.', payload: '{ value: [number, number] }', showWhen: { mode: 'range' } },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: ['Slider', 'RangeSlider'],
     props: [
       { name: 'value', type: 'number  // (Slider) | [number, number]  // (RangeSlider)', description: 'Current value. Tuple for RangeSlider.' },

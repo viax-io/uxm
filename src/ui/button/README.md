@@ -7,7 +7,7 @@ Each variant is a thin wrapper around `<button>` with a single BEM-style class (
 ## Usage
 
 ```tsx
-import { ButtonPrimary, ButtonSecondary, ButtonTertiary, ButtonGhost } from '@viax/uxm';
+import { ButtonPrimary, ButtonSecondary, ButtonTertiary, ButtonGhost } from '@viax.io/uxm';
 
 function Example() {
   return (
@@ -53,7 +53,7 @@ Each variant exposes a `--uxm-button-{variant}-gap` custom property for fine-tun
 
 ## Design tokens (MODO-configurable)
 
-All non-structural visual aspects (background, foreground, border) read from the global design-token layer exported by `@viax/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor: changes saved there flow into `:root` as `--color-*` declarations and re-tint every consumer instantly. Component CSS vars (above) sit on top of this layer for per-instance fine-tuning.
+All non-structural visual aspects (background, foreground, border) read from the global design-token layer exported by `@viax.io/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor: changes saved there flow into `:root` as `--color-*` declarations and re-tint every consumer instantly. Component CSS vars (above) sit on top of this layer for per-instance fine-tuning.
 
 | Variant | Background | Foreground / border | Hover |
 |---------|------------|---------------------|-------|

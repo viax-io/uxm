@@ -7,7 +7,7 @@ A horizontal layout primitive — a flex row with a configurable gap that wraps 
 ## Usage
 
 ```tsx
-import { Cluster, Chip } from '@viax/uxm';
+import { Cluster, Chip } from '@viax.io/uxm';
 
 function FilterBar({ filters }: { filters: string[] }) {
   return (

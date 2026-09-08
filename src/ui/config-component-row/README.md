@@ -9,7 +9,7 @@ The root is a `<div>` card; the clickable "select for edit" control is an inner 
 ## Usage
 
 ```tsx
-import { ConfigComponentRow, Icon, Tag } from '@viax/uxm';
+import { ConfigComponentRow, Icon, Tag } from '@viax.io/uxm';
 
 function ComponentsList({ rows, activeId, onSelect }: Props) {
   return (

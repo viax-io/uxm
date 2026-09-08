@@ -107,8 +107,8 @@ The design language features a **greyscale/neutral palette**, clean typography, 
 |---|---|
 | Framework | Vite + React 19 (CSR SPA) |
 | Routing | React Router v6 |
-| UI Components | **`@viax/uxm`** — Viax UXM React primitive library (76 BEM-classed components). **Do NOT** use shadcn/ui, Tailwind, or any other UI library. |
-| Styling | Plain CSS — design tokens from `@viax/uxm/tokens.css` (`--color-*`). Layout via `<Stack>`, `<Cluster>`, `<ResponsiveGrid>` primitives. No Tailwind. Inline `style` for one-off tweaks. |
+| UI Components | **`@viax.io/uxm`** — Viax UXM React primitive library (76 BEM-classed components). **Do NOT** use shadcn/ui, Tailwind, or any other UI library. |
+| Styling | Plain CSS — design tokens from `@viax.io/uxm/tokens.css` (`--color-*`). Layout via `<Stack>`, `<Cluster>`, `<ResponsiveGrid>` primitives. No Tailwind. Inline `style` for one-off tweaks. |
 | HTTP Client | Axios (configured as a singleton with interceptors) |
 | Server State | TanStack Query v5 |
 | URL State | React Router `useSearchParams` |
@@ -116,29 +116,24 @@ The design language features a **greyscale/neutral palette**, clean typography, 
 | Auth | keycloak-js (OAuth 2.0 OIDC, browser-only) |
 | Language | JavaScript (ES2024+, JSX) |
 
-### `@viax/uxm` — required UI library
+### `@viax.io/uxm` — required UI library
 
-The portal **must** use `@viax/uxm` for every interactive UI primitive. See the dedicated [`viax-uxm` skill](viax-uxm/SKILL.md) for the authoritative component catalog, design-token reference, and quick-recipes (or browse the library source at [gitlab.viax.tech/services-viax/uxm](https://gitlab.viax.tech/services-viax/uxm)).
+The portal **must** use `@viax.io/uxm` for every interactive UI primitive. See the dedicated [`viax-uxm` skill](viax-uxm/SKILL.md) for the authoritative component catalog, design-token reference, and quick-recipes (or browse the library source at [github.com/viax-io/uxm](https://github.com/viax-io/uxm)).
 
 **Hard rules from that skill (apply here too):**
 
-1. **Never handroll a div** with the same intent as an existing `@viax/uxm` primitive. The library covers ~76 patterns — pick the right one (Button*, Card, FormField, DataTable, List, StatCard, PageShell, AppSidebar, AppTopBar, PageHeader, DetailSection, PropertyField, EmptyState, Loader, Tag, Banner, Avatar, Thumbnail, ToggleSwitch, TimelineEntry, BackLink, …).
+1. **Never handroll a div** with the same intent as an existing `@viax.io/uxm` primitive. The library covers ~76 patterns — pick the right one (Button*, Card, FormField, DataTable, List, StatCard, PageShell, AppSidebar, AppTopBar, PageHeader, DetailSection, PropertyField, EmptyState, Loader, Tag, Banner, Avatar, Thumbnail, ToggleSwitch, TimelineEntry, BackLink, …).
 2. **Never inline literal hex** when a `--color-*` design token covers the intent. Use `var(--color-accent-bold)`, `var(--color-surface)`, etc.
-3. **Import from `@viax/uxm/ui`**, not the root `@viax/uxm`. Tokens from `@viax/uxm/tokens`.
+3. **Import from `@viax.io/uxm/ui`**, not the root `@viax.io/uxm`. Tokens from `@viax.io/uxm/tokens`.
 4. **FormField owns labels** — `<TextInput>`, `<Select>`, `<Textarea>`, etc. render bare; always wrap them in `<FormField label="…">`.
-5. **Never import `@viax/uxm/previews`** into application code — those are for MODO host shells only.
+5. **Never import `@viax.io/uxm/previews`** into application code — those are for MODO host shells only.
 6. **Never wrap `<DataTable>` or `<DetailSection>` in `<Card>`** — both already render their own border + radius, so the wrapper produces a visible double-border. See "UXM Layout & Styling Gotchas" under the Design System section for the full set of gotchas + the canonical `globals.css` baseline that must be in place from day one.
 
-### Private registry setup (`.npmrc`)
+### Installing `@viax.io/uxm`
 
-`@viax/uxm` is published on a private Nexus registry. Create `.npmrc` at the portal root **before** running `npm install`:
+`@viax.io/uxm` is published on public npm — no registry configuration required.
 
-```
-engine-strict=true
-registry=https://nexus.viax.tech/repository/viax-npm/
-```
-
-Then install via `npm i @viax/uxm@latest` (no scope override needed — the Nexus proxy serves public packages too). **Always install `@latest`** so the portal picks up the newest Studio/SCSS build from Nexus; npm pins the resolved version (a caret range like `^4.15.0`) into `package.json` for you — the version shown in the dependency list below is only an illustrative floor, not a number to hardcode.
+Install via `npm i @viax.io/uxm@latest`. **Always install `@latest`** so the portal picks up the newest Studio/SCSS build; npm pins the resolved version (a caret range like `^4.15.0`) into `package.json` for you — the version shown in the dependency list below is only an illustrative floor, not a number to hardcode.
 
 ---
 
@@ -189,12 +184,12 @@ Initialize Keycloak before mounting React. Create `src/main.jsx`:
 ```jsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import '@viax/uxm/tokens.css'
-import '@viax/uxm/ui.css'
+import '@viax.io/uxm/tokens.css'
+import '@viax.io/uxm/ui.css'
 // MODO UXM Studio styles (Tailwind v4). Import BEFORE globals.css so the studio's
 // unlayered `:root` brand defaults sit UNDER the portal brand base — globals.css
 // wins app-wide, while the studio's own runtime <style> still wins live on /uxm.
-import '@viax/uxm/studio.css'
+import '@viax.io/uxm/studio.css'
 import '@/styles/globals.css'
 import App from './App'
 import keycloak from './lib/keycloak'
@@ -350,7 +345,7 @@ Call `keycloak.logout()` (imported from `src/lib/keycloak.js`) to end the sessio
 
 ## Design System
 
-Use **`@viax/uxm`'s canonical `--color-*` design tokens** as the source of truth. They're declared on `:root` by `@viax/uxm/tokens.css` and themed centrally — every component re-tints automatically when a token changes.
+Use **`@viax.io/uxm`'s canonical `--color-*` design tokens** as the source of truth. They're declared on `:root` by `@viax.io/uxm/tokens.css` and themed centrally — every component re-tints automatically when a token changes.
 
 See [`viax-uxm/references/design-tokens.md`](viax-uxm/references/design-tokens.md) for the full catalogue. Quick summary:
 
@@ -379,7 +374,7 @@ Use `--uxm-{component}-*` CSS vars via inline `style` for one-off tweaks. The co
 
 ### Legacy `--primary-*` / `--neutral-*` token table (deprecated — for reference only)
 
-> The viax customer-facing palette below is the OLD viax design system, kept here as reference for visual style. **Do NOT declare these in app code.** They are superseded by `@viax/uxm`'s canonical `--color-*` tokens (table above). Map any old reference (e.g. `--primary-default`) to its `--color-*` equivalent (e.g. `--color-accent-bold` for the primary brand colour). Map the old `--font-family` (Roboto) to `var(--brand-font, var(--font-sans))` — never re-declare a hardcoded family (see the Typography note under Runtime Theming). This assumes the mandatory `:root { --font-sans: … }` bridge from the `globals.css` baseline is present; without it that chain resolves to nothing and the page renders in Times New Roman.
+> The viax customer-facing palette below is the OLD viax design system, kept here as reference for visual style. **Do NOT declare these in app code.** They are superseded by `@viax.io/uxm`'s canonical `--color-*` tokens (table above). Map any old reference (e.g. `--primary-default`) to its `--color-*` equivalent (e.g. `--color-accent-bold` for the primary brand colour). Map the old `--font-family` (Roboto) to `var(--brand-font, var(--font-sans))` — never re-declare a hardcoded family (see the Typography note under Runtime Theming). This assumes the mandatory `:root { --font-sans: … }` bridge from the `globals.css` baseline is present; without it that chain resolves to nothing and the page renders in Times New Roman.
 
 ```css
 --primary-default: #5F859C;
@@ -497,10 +492,10 @@ Use `--uxm-{component}-*` CSS vars via inline `style` for one-off tweaks. The co
 
 ### Reference Aesthetic
 
-Inherits directly from `@viax/uxm`:
+Inherits directly from `@viax.io/uxm`:
 - **Surfaces** — `--color-surface` page bg, `--color-card` rows/cards with `<Card shadow>`.
 - **Accent** used sparingly for primary CTAs (`<ButtonPrimary>`), active sidebar/nav items, indicators.
-- **Typography** — Inter by default (Google-Fonts `<link>` in `index.html` + the `html, body, #root` font chain and the `button, input, select, textarea { font: inherit }` rule in `globals.css` — see the baseline below); the portal-wide typeface is **brand-controlled**: UXM Studio → Brand Settings → **Typography** sets `brand.fontFamily`, and the published config re-fonts the whole portal via `--brand-font` (the applier's generated CSS auto-imports the chosen Google Font). Sizing/weight handled by `@viax/uxm` per component.
+- **Typography** — Inter by default (Google-Fonts `<link>` in `index.html` + the `html, body, #root` font chain and the `button, input, select, textarea { font: inherit }` rule in `globals.css` — see the baseline below); the portal-wide typeface is **brand-controlled**: UXM Studio → Brand Settings → **Typography** sets `brand.fontFamily`, and the published config re-fonts the whole portal via `--brand-font` (the applier's generated CSS auto-imports the chosen Google Font). Sizing/weight handled by `@viax.io/uxm` per component.
 - **Sidebar** — `<AppSidebar>` (sections + items, polymorphic `linkAs` so react-router does client nav).
 - **Top bar** — `<AppTopBar search={…} actions={…}>` with `<InputWithIcon>` and `<Avatar>` + `<InlineAction>` sign-out.
 - **Dashboard widgets** — `<StatCard>` for KPIs, recharts wrapped in `<Card>` for charts, `<DataTable>` for tabular activity feeds (Recent orders etc.), `<Checkbox>` for to-do lists, `<EmptyState>` / `<Loader>` for empty/loading.
@@ -560,7 +555,7 @@ const toggleTask = (id) =>
 The library defaults leave a few visible inconsistencies (mixed radii, asymmetric padding, broken `calc` when accent-width is unitless). Ship this baseline so the first render already looks right:
 
 ```css
-/* src/styles/globals.css — loaded AFTER @viax/uxm/tokens.css and ui.css */
+/* src/styles/globals.css — loaded AFTER @viax.io/uxm/tokens.css and ui.css */
 
 /* Give the document a definite height. <PageShell> is `height:100%` and its
    __content area is `overflow:auto` — it is DESIGNED to bound itself to the
@@ -572,7 +567,7 @@ The library defaults leave a few visible inconsistencies (mixed radii, asymmetri
 html, body, #root { height: 100%; }
 
 /* MANDATORY --font-sans bridge — without it the ENTIRE portal renders in Times
-   New Roman. @viax/uxm/tokens.css declares `--font-sans: var(--font-inter)` ONLY
+   New Roman. @viax.io/uxm/tokens.css declares `--font-sans: var(--font-inter)` ONLY
    inside its `@theme inline { … }` block, which is a Tailwind v4 at-rule. This
    portal is not a Tailwind host, so the browser does not understand `@theme`,
    DROPS the whole block, and --font-sans never exists. With no brand font
@@ -600,7 +595,7 @@ html, body, #root { font-family: var(--brand-font, var(--font-sans)); }
 
 /* MANDATORY form-control inheritance — native <button>/<input>/<select>/<textarea>
    do NOT inherit the document font; browsers give them their own UA default
-   (Arial / system UI). Every @viax/uxm atom already sets `font-family: inherit`,
+   (Arial / system UI). Every @viax.io/uxm atom already sets `font-family: inherit`,
    but any RAW native control in portal code (a custom Menu/Listbox trigger, a
    bare <button>, a plain <select>) silently renders in Arial next to Inter text.
    Force inheritance once — element-level specificity, so uxm class rules and the
@@ -618,7 +613,7 @@ button, input, select, textarea { font: inherit; }
      on /uxm. Re-declaring it here creates a SECOND source that ghosts through after
      a studio "Reset all" (the studio's inputs fall back to the library default
      while these hardcoded values keep painting the buttons). The fallback when no
-     brand is set is the library default from @viax/uxm/tokens.css — exactly what
+     brand is set is the library default from @viax.io/uxm/tokens.css — exactly what
      the studio shows. (Minor trade-off: a brief library-default flash before React
      mounts and the applier runs; the localStorage cache covers returning users.) */
 
@@ -673,7 +668,7 @@ button, input, select, textarea { font: inherit; }
 
 **6. Load Inter in `index.html`.**
 
-`@viax/uxm/tokens.css` only *references* the Inter family (`--font-inter`) — it bundles no font
+`@viax.io/uxm/tokens.css` only *references* the Inter family (`--font-inter`) — it bundles no font
 file. Without a loader the stack degrades to the system-UI fallbacks inside `--font-inter`
 (`system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`) — still sans-serif, just not Inter.
 
@@ -1268,12 +1263,12 @@ viax-lab-portal/
 ├── index.html                               # Vite entry HTML
 ├── .env.local
 ├── .env.example
-├── .npmrc                                   # registry=https://nexus.viax.tech/repository/viax-npm/
+├── .npmrc                                   # engine-strict=true (optional)
 ├── vite.config.js                           # port 9000; define __PORTAL_META__ from package.json "portal" block
 ├── jsconfig.json
 ├── package.json                             # incl. "portal" identity block (id, realm, env, generatedAt)
 ├── src/
-│   ├── main.jsx                             # Entry: import @viax/uxm/tokens.css + ui.css + globals.css; stampPortalId(); init Keycloak; render React
+│   ├── main.jsx                             # Entry: import @viax.io/uxm/tokens.css + ui.css + globals.css; stampPortalId(); init Keycloak; render React
 │   ├── App.jsx                              # Root: QueryProvider + <UxmConfigApplier/> + React Router + Toaster
 │   ├── routes/
 │   │   ├── index.jsx                        # Route definitions (React Router v6)
@@ -1471,7 +1466,7 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 - The portal must be fully functional with `VITE_USE_MOCK_DATA=true`
 - Theme changes apply instantly via the UXM Studio — a Save regenerates the global `#uxm-overrides` stylesheet (no page reload, no custom theme code)
 - Every list page filter/search/sort state must live in the URL via React Router `useSearchParams` (shareable links)
-- **Use `@viax/uxm` for every UI primitive** — see [`viax-uxm/SKILL.md`](viax-uxm/SKILL.md). Never handroll a div with the same intent as an existing primitive (Card, FormField, DataTable, List, StatCard, PageShell, EmptyState, Loader, Tag, Banner, …).
+- **Use `@viax.io/uxm` for every UI primitive** — see [`viax-uxm/SKILL.md`](viax-uxm/SKILL.md). Never handroll a div with the same intent as an existing primitive (Card, FormField, DataTable, List, StatCard, PageShell, EmptyState, Loader, Tag, Banner, …).
 - Layout via `<Stack>`, `<Cluster>`, `<ResponsiveGrid>` — not ad-hoc flex/grid divs.
 - Inline `style` only for one-off overrides via `--uxm-{component}-*` vars or layout sizing the library doesn't expose.
 - JSDoc comments on all function signatures and complex types
@@ -1480,7 +1475,7 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 ### Error Handling
 
 - TanStack Query error boundaries for API failures
-- Toast notifications via the library's own toast API — `import { Toaster, toast } from '@viax/uxm/ui'`, mount `<Toaster position="top-right" max={5} />` ONCE at the app root, then call `toast.error(...)` / `toast.success(...)`. Do **NOT** add `sonner`: `@viax/uxm` already ships its own `Toast`/`Toaster`/`toast`, and a second toast system violates the "never duplicate a primitive" rule
+- Toast notifications via the library's own toast API — `import { Toaster, toast } from '@viax.io/uxm/ui'`, mount `<Toaster position="top-right" max={5} />` ONCE at the app root, then call `toast.error(...)` / `toast.success(...)`. Do **NOT** add `sonner`: `@viax.io/uxm` already ships its own `Toast`/`Toaster`/`toast`, and a second toast system violates the "never duplicate a primitive" rule
 - `<Loader>` for in-flight queries, `<EmptyState>` for zero-result lists — not spinners or hand-rolled skeletons
 - 401 response: call `keycloak.logout()` from `lib/keycloak.js` — Keycloak redirects to its login page and clears the session
 
@@ -1490,17 +1485,17 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 
 Build in this exact sequence:
 
-1. **Project scaffold** — Vite + React 19; create `.npmrc` (private Nexus); install `@viax/uxm` + deps; import `@viax/uxm/tokens.css` and `@viax/uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (Gotcha #6); jsconfig paths. **Portal identity stamp (General Note #4, mandatory):** generate `{{PORTAL_ID}}` via `openssl rand -hex 4`, write the `"portal"` block into `package.json`, add the `__PORTAL_META__` `define` to `vite.config.js`, and the `stampPortalId()` boot call in `main.jsx`.
+1. **Project scaffold** — Vite + React 19; install `@viax.io/uxm` + deps; import `@viax.io/uxm/tokens.css` and `@viax.io/uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (Gotcha #6); jsconfig paths. **Portal identity stamp (General Note #4, mandatory):** generate `{{PORTAL_ID}}` via `openssl rand -hex 4`, write the `"portal"` block into `package.json`, add the `__PORTAL_META__` `define` to `vite.config.js`, and the `stampPortalId()` boot call in `main.jsx`.
 2. **Theme system** — `globals.css` with the **full baseline from "UXM Layout & Styling Gotchas → Required `globals.css`"** (panel-radius unification, DetailSection padding override, InputWithIcon icon clamp, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 10). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchUxmConfig`/`fetchStudioConfig`/`fetchPortalAssignment`/`fetchAppliedStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveUxmConfig`/`saveStudioConfig` write helpers (deferred to step 10). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 4.
-3. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow, `auth-store`, `ProtectedRoute`, login page (mock + real Keycloak — built with `Card` + `FormField` + `TextInput`/`PasswordInput` + `ButtonPrimary` + `Banner` (NOT `Alert` — it was removed in @viax/uxm 2.0.0))
+3. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow, `auth-store`, `ProtectedRoute`, login page (mock + real Keycloak — built with `Card` + `FormField` + `TextInput`/`PasswordInput` + `ButtonPrimary` + `Banner` (NOT `Alert` — it was removed in @viax.io/uxm 2.0.0))
 4. **Shell layout** — `<PageShell>` + `<AppSidebar linkAs={RouterLink}>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; `useUser()` populates roles for sidebar visibility. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle.
 5. **Mock data** — Realistic data for all entity types using real viax field names
 6. **Dashboard** — `<PageHeader>` + `<StatCard>` × 4 + recharts charts in `<Card>` + `<DataTable>` for Recent orders (no Card wrapper — Gotcha #1) + `<Checkbox>`-driven Tasks (Gotcha #3) + Quick links Card (mock data)
 7. **BEM discovery** — Query active BEM via MCP (`get_type` + `execute_query`); call `get_type` on each discovered BI type to resolve interfaces; populate `bi-types.config.js`; build `<BiListPage>` and `<BiDetailPage>` shared templates using `<DataTable>`, `<PageHeader>`, `<InlineFilter>`, `<TimelineEntry>`, `<PropertyGrid>`; scaffold one thin page pair per `BI_TYPES` entry; populate sidebar `navItems` from `BI_TYPES`
 8. **Products** — `<DataTable>` with 5 columns (image `<Thumbnail>`, name, ID, description, categories `<Tag>`s); **no `<Card>` wrapper** (Gotcha #1). Detail page via `<DetailSection>` + `<PropertyGrid>` rendered directly.
 9. **Account** — top `<Card>` for the Avatar identity row; each section (Addresses, Notifications, Security) as a bare `<DetailSection>` — **no `<Card>` around DetailSection** (Gotcha #1). Wire to `useAuthStore(s => s.user)`.
-10. **Admin index (+ UXM Studio editor only if `{{EMBED_UXM_STUDIO}} = yes`)** — Admin index uses `<DataTable>` for the section list (Gotcha #2: Users / Integrations "coming soon", **no Theme row**). **Always** wire the host light/dark toggle in `<AppTopBar>` and the brand-driven sidebar logo (subscribe to `uxm-studio-config`). **Only when `{{EMBED_UXM_STUDIO}} = yes`:** create `lib/uxm-persistence.js` + the `saveUxmConfig`/`saveStudioConfig` write helpers, import `@viax/uxm/studio.css` in `main.jsx`, build the UXM Studio page (`src/pages/uxm/UxmStudioPage.jsx`) mounting `<UxmApp embed persistence={createConfigRepoPersistence()} />`, register `/uxm` in the router, and add the "UXM Studio" item under the **Settings** sidebar group. See [Runtime Theming](#runtime-theming--consume-the-uxm-studio-config-optionally-embed-the-editor-at-uxm).
-11. **Polish** — `<Loader>` / `<EmptyState>` for all data-fetching pages, error boundaries, `<Toaster/>` + `toast.*()` from `@viax/uxm/ui` (no sonner), responsive (`<ResponsiveGrid>` does most of the work)
+10. **Admin index (+ UXM Studio editor only if `{{EMBED_UXM_STUDIO}} = yes`)** — Admin index uses `<DataTable>` for the section list (Gotcha #2: Users / Integrations "coming soon", **no Theme row**). **Always** wire the host light/dark toggle in `<AppTopBar>` and the brand-driven sidebar logo (subscribe to `uxm-studio-config`). **Only when `{{EMBED_UXM_STUDIO}} = yes`:** create `lib/uxm-persistence.js` + the `saveUxmConfig`/`saveStudioConfig` write helpers, import `@viax.io/uxm/studio.css` in `main.jsx`, build the UXM Studio page (`src/pages/uxm/UxmStudioPage.jsx`) mounting `<UxmApp embed persistence={createConfigRepoPersistence()} />`, register `/uxm` in the router, and add the "UXM Studio" item under the **Settings** sidebar group. See [Runtime Theming](#runtime-theming--consume-the-uxm-studio-config-optionally-embed-the-editor-at-uxm).
+11. **Polish** — `<Loader>` / `<EmptyState>` for all data-fetching pages, error boundaries, `<Toaster/>` + `toast.*()` from `@viax.io/uxm/ui` (no sonner), responsive (`<ResponsiveGrid>` does most of the work)
 12. **Font smoke-check (MANDATORY — do not skip).** Before declaring the build done, verify the typography wiring survived generation. In the running app (DevTools → Computed → `font-family`), or by inspecting the built files, confirm ALL of:
     - `globals.css` contains the `:root { --font-sans: var(--font-inter, …) }` bridge, the `html, body, #root { font-family: var(--brand-font, var(--font-sans)) }` chain, and `button, input, select, textarea { font: inherit }`.
     - `index.html` contains the Inter Google-Fonts `<link>` (Gotcha #6).
@@ -1532,7 +1527,7 @@ Ensure these are installed (no shadcn/Tailwind):
     "react-router-dom": "^6.x",
     "keycloak-js": "^24.x",
     "@tanstack/react-query": "^5.x",
-    "@viax/uxm": "^4.15.0",
+    "@viax.io/uxm": "^4.15.0",
     "axios": "^1.x",
     "zustand": "^4.x",
     "recharts": "^2.x"
@@ -1544,11 +1539,10 @@ Ensure these are installed (no shadcn/Tailwind):
 }
 ```
 
-**`.npmrc` (required — at portal root, before `npm install`):**
+**`.npmrc` (optional — at portal root):**
 
 ```
 engine-strict=true
-registry=https://nexus.viax.tech/repository/viax-npm/
 ```
 
-Then `npm install`, followed by `npm i @viax/uxm@latest` to pull the newest Nexus build (the `^4.15.0` above is an illustrative floor — `@latest` overwrites it with whatever is current). Do **not** run `npx shadcn@latest init` — `@viax/uxm` replaces shadcn entirely.
+Then `npm install`, followed by `npm i @viax.io/uxm@latest` to pull the newest build (the `^4.15.0` above is an illustrative floor — `@latest` overwrites it with whatever is current). Do **not** run `npx shadcn@latest init` — `@viax.io/uxm` replaces shadcn entirely.

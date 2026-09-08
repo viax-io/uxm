@@ -1,9 +1,9 @@
 /**
- * @viax/uxm — public entry.
+ * @viax.io/uxm — public entry.
  *
  * Re-exports the UI primitive barrel and the design-token API so consumers
- * can do `import { Button } from "@viax/uxm"` for convenience, while the
- * subpath entries (`@viax/uxm/ui`, `@viax/uxm/tokens`) remain available for
+ * can do `import { Button } from "@viax.io/uxm"` for convenience, while the
+ * subpath entries (`@viax.io/uxm/ui`, `@viax.io/uxm/tokens`) remain available for
  * tree-shaking-friendly, granular consumption.
  */
 export * from './ui';

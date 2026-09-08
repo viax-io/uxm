@@ -1,4 +1,4 @@
-/* @viax/uxm — default styles aggregator.
+/* @viax.io/uxm — default styles aggregator.
    Each @import below pulls a single component's CSS from its folder.
    Cascade order matches the original monolithic styles.css. */
 

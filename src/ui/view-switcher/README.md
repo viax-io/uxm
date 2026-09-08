@@ -7,8 +7,8 @@ An icon-only segmented control — square buttons in a bordered track, one visua
 ## Usage
 
 ```tsx
-import { ViewSwitcher } from '@viax/uxm';
-import { Icon } from '@viax/uxm';
+import { ViewSwitcher } from '@viax.io/uxm';
+import { Icon } from '@viax.io/uxm';
 
 function Example() {
   const [view, setView] = useState<'list' | 'grid' | 'kanban'>('list');

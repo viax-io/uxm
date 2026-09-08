@@ -7,7 +7,7 @@ A vertically-centered placeholder block — optional icon, required title, optio
 ## Usage
 
 ```tsx
-import { EmptyState, ButtonPrimary, Icon } from '@viax/uxm';
+import { EmptyState, ButtonPrimary, Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

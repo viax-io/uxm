@@ -7,7 +7,7 @@ A full-page error layout — optional icon tile, optional large code (e.g. `"404
 ## Usage
 
 ```tsx
-import { ErrorPage, ButtonPrimary, ButtonGhost, Icon } from '@viax/uxm';
+import { ErrorPage, ButtonPrimary, ButtonGhost, Icon } from '@viax.io/uxm';
 
 function NotFound() {
   return (

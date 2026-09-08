@@ -1,9 +1,9 @@
-# @viax/uxm — Design Tokens
+# @viax.io/uxm — Design Tokens
 
 The canonical token catalogue. Source of truth: `src/tokens/index.ts` in the uxm repo
-(`https://gitlab.viax.tech/services-viax/uxm`), exported as the `themeTokens` array from
-`@viax/uxm/tokens`. These tokens declare `--color-*` CSS custom properties on `:root` (via
-`@viax/uxm/tokens.css`) and are the **MODO-configurable layer** — brand-settings UIs edit them
+(`https://github.com/viax-io/uxm`), exported as the `themeTokens` array from
+`@viax.io/uxm/tokens`. These tokens declare `--color-*` CSS custom properties on `:root` (via
+`@viax.io/uxm/tokens.css`) and are the **MODO-configurable layer** — brand-settings UIs edit them
 centrally, and every component re-tints instantly.
 
 ## Theming flow
@@ -126,9 +126,9 @@ array or the studio's Color editor) but they are part of the same theming contra
 
 | Var | Declared by | Value / behaviour |
 |-----|-------------|-------------------|
-| `--font-inter` | `@viax/uxm/tokens.css` (`:root`) | `'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`. No font file is bundled — the host loads Inter (e.g. a Google Fonts `<link>`); the stack degrades to system fonts when absent. |
-| `--font-sans` | ⚠️ **`@viax/uxm/tokens.css` — but ONLY inside its `@theme inline { … }` block, a Tailwind v4 at-rule.** Browsers do not understand `@theme` and drop the whole block, so in a plain (non-Tailwind) host **`--font-sans` is never actually defined.** | Intended as `var(--font-inter)`, the library's base UI stack. **A non-Tailwind host must alias it itself** (see Consumer rules) before using `var(--font-sans)` anywhere. |
-| `--brand-font` | **Emitted at runtime, only when a brand font is chosen.** `generateOverridesCss` (from `@viax/uxm/studio/generate-css`); inside the studio itself, `BrandFontStyles` applies the same output live while editing (pre-Publish). | Turns `brand.fontFamily` — set in the studio's **Brand Settings → Typography** — into a Google-Fonts `@import`, `:root { --brand-font: "X", var(--font-inter), system-ui, sans-serif; }` and `body { font-family: var(--brand-font) !important; }`. |
+| `--font-inter` | `@viax.io/uxm/tokens.css` (`:root`) | `'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`. No font file is bundled — the host loads Inter (e.g. a Google Fonts `<link>`); the stack degrades to system fonts when absent. |
+| `--font-sans` | ⚠️ **`@viax.io/uxm/tokens.css` — but ONLY inside its `@theme inline { … }` block, a Tailwind v4 at-rule.** Browsers do not understand `@theme` and drop the whole block, so in a plain (non-Tailwind) host **`--font-sans` is never actually defined.** | Intended as `var(--font-inter)`, the library's base UI stack. **A non-Tailwind host must alias it itself** (see Consumer rules) before using `var(--font-sans)` anywhere. |
+| `--brand-font` | **Emitted at runtime, only when a brand font is chosen.** `generateOverridesCss` (from `@viax.io/uxm/studio/generate-css`); inside the studio itself, `BrandFontStyles` applies the same output live while editing (pre-Publish). | Turns `brand.fontFamily` — set in the studio's **Brand Settings → Typography** — into a Google-Fonts `@import`, `:root { --brand-font: "X", var(--font-inter), system-ui, sans-serif; }` and `body { font-family: var(--brand-font) !important; }`. |
 
 **Consumer rules:**
 
@@ -163,7 +163,7 @@ array or the studio's Color editor) but they are part of the same theming contra
   `font-family` computes to a real stack rather than showing the declaration struck through.
   If body text is fine but buttons/inputs show Arial, the `font: inherit` rule above is missing.
 - Sanitise before interpolating a font name into CSS/URLs yourself? Don't — reuse the exported
-  `safeFontFamily` / `fontFileUrl` helpers from `@viax/uxm/studio/generate-css`.
+  `safeFontFamily` / `fontFileUrl` helpers from `@viax.io/uxm/studio/generate-css`.
 
 ### Semantic aliases (declared in `tokens.css`, not in `themeTokens`)
 
@@ -209,7 +209,7 @@ built on them (`bg-cream`, `text-ink`, …) to the token each one aliases:
 
 ## Theme variants (`data-theme`)
 
-`@viax/uxm/tokens.css` declares the light palette on `:root` and a full dark override set under
+`@viax.io/uxm/tokens.css` declares the light palette on `:root` and a full dark override set under
 `[data-theme="dark"]`. Setting `data-theme` on the root element switches the palette — every
 component re-tints via the `var(--uxm-*, var(--color-*))` fallback chain, no component code
 involved:
@@ -240,8 +240,8 @@ be assigned centrally via the config's `portals[portal.id].themeId` map (see the
 ## Programmatic access
 
 ```ts
-import { themeTokens, findToken, resolveHex, isTokenValue } from '@viax/uxm/tokens';
-import type { ThemeToken } from '@viax/uxm/tokens';
+import { themeTokens, findToken, resolveHex, isTokenValue } from '@viax.io/uxm/tokens';
+import type { ThemeToken } from '@viax.io/uxm/tokens';
 
 // All tokens, grouped
 themeTokens.filter((t) => t.group === 'accent');
@@ -259,10 +259,10 @@ resolveHex('var(--color-accent-bold)'); // '#1E7150'
 
 ## WCAG / contrast helpers
 
-For audit tooling, the package also exports contrast helpers from `@viax/uxm`:
+For audit tooling, the package also exports contrast helpers from `@viax.io/uxm`:
 
 ```ts
-import { contrastRatio, wcagLevel, suggestAccessibleToken } from '@viax/uxm';
+import { contrastRatio, wcagLevel, suggestAccessibleToken } from '@viax.io/uxm';
 
 contrastRatio('#1E7150', '#FFFFFF');          // → 4.79
 wcagLevel('#1E7150', '#FFFFFF');              // → 'AA'
@@ -274,12 +274,12 @@ choices live.
 
 ## HEX ↔ HSL / palette maths
 
-Also exported from `@viax/uxm` — colour-space converters plus a hue re-tint helper, for tooling
+Also exported from `@viax.io/uxm` — colour-space converters plus a hue re-tint helper, for tooling
 that derives a palette from a single brand colour (e.g. recomputing the accent ramp from one hue):
 
 ```ts
-import { rgbToHsl, hslToRgb, hexToHsl, hslToHex, retintHue } from '@viax/uxm';
-import type { HSL } from '@viax/uxm'; // { h: 0–360, s: 0–100, l: 0–100 }
+import { rgbToHsl, hslToRgb, hexToHsl, hslToHex, retintHue } from '@viax.io/uxm';
+import type { HSL } from '@viax.io/uxm'; // { h: 0–360, s: 0–100, l: 0–100 }
 
 hexToHsl('#3ECC87');            // → { h: 152, s: 58.7, l: 52.5 } (null if unparseable)
 hslToHex({ h: 152, s: 59, l: 52 }); // → '#3ECC86'
@@ -304,10 +304,10 @@ pick ONE accent and you want to derive the rest of the ramp — don't hand-roll 
 2. **Always prefer per-component CSS vars** (`--uxm-{component}-*`) over directly using
    `--color-*` in component overrides; the var has a token fallback, so MODO theming still wins.
 3. **Don't introduce new `--color-*` declarations** in app code. Add them to `themeTokens` via
-   a PR to `@viax/uxm`. Local declarations bypass the MODO theming layer.
+   a PR to `@viax.io/uxm`. Local declarations bypass the MODO theming layer.
 4. **Pair semantic tokens correctly**: always use the matching `Bg` / `Text` / `Border` triplet
    for a given status (don't mix `Success Bg` with `Danger Text`, etc.).
-5. **`@viax/uxm` ships no spacing-scale token** — there is no `--spacing` (or similar) CSS custom
+5. **`@viax.io/uxm` ships no spacing-scale token** — there is no `--spacing` (or similar) CSS custom
    property anywhere in the library or its tokens.css. Never write `gap`/`padding`/`margin` as
    `calc(var(--spacing) * N)` — it silently resolves to nothing, `calc()` goes invalid, and the
    whole declaration drops to `0`/initial (rows and elements collapse together with no visible

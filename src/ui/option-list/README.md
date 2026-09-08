@@ -7,7 +7,7 @@ The list of options nested under a **Predefined Options** configuration componen
 ## Usage
 
 ```tsx
-import { OptionList, IconButton, Icon } from '@viax/uxm';
+import { OptionList, IconButton, Icon } from '@viax.io/uxm';
 
 <OptionList
   options={options}

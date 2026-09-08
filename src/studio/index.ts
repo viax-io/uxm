@@ -1,12 +1,12 @@
 /**
- * @viax/uxm/studio — the UXM design workbench (sidebar + canvas + properties
+ * @viax.io/uxm/studio — the UXM design workbench (sidebar + canvas + properties
  * panel + previews + editors), the same portal shipped at modo's `/uxm` route.
  *
  * Decoupled from any specific backend via `StudioPersistence`: inject
  * `createHttpPersistence()` to read/write against a Hono API, or
  * `createReadOnlyPersistence()` for a static portal (live-preview only).
  *
- * Styles ship separately as `@viax/uxm/studio.css` — import it once in the
+ * Styles ship separately as `@viax.io/uxm/studio.css` — import it once in the
  * host; it bundles tokens + UI atom CSS + the Tailwind utilities the shell
  * uses, so no host Tailwind config is required.
  */

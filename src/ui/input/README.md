@@ -7,7 +7,7 @@ These atoms intentionally do not own labels, hints, or error text — pair them 
 ## Usage
 
 ```tsx
-import { TextInput, Textarea, Select, FormField } from '@viax/uxm';
+import { TextInput, Textarea, Select, FormField } from '@viax.io/uxm';
 
 function Example() {
   return (

@@ -7,8 +7,8 @@ A nav-row primitive for app sidebars — an icon tile, a label, an optional pers
 ## Usage
 
 ```tsx
-import { SidebarNavItem, Icon } from '@viax/uxm';
-import { IconButton } from '@viax/uxm';
+import { SidebarNavItem, Icon } from '@viax.io/uxm';
+import { IconButton } from '@viax.io/uxm';
 import Link from 'next/link';
 
 function ProjectRow({ project, onRemove, isActive }) {

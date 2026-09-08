@@ -7,7 +7,7 @@ Architecturally mirrors `PhoneInput`: the wrapper is the visible surface, the pi
 ## Usage
 
 ```tsx
-import { CurrencyInput, type CurrencyValue } from '@viax/uxm';
+import { CurrencyInput, type CurrencyValue } from '@viax.io/uxm';
 
 function Example() {
   const [value, setValue] = useState<CurrencyValue>({ currency: 'USD', amount: '' });

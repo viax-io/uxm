@@ -7,7 +7,7 @@ A horizontal toolbar that lays out a search field, a row of filter controls, and
 ## Usage
 
 ```tsx
-import { InlineFilter, InputWithIcon, FilterTabs, ButtonPrimary, Icon } from '@viax/uxm';
+import { InlineFilter, InputWithIcon, FilterTabs, ButtonPrimary, Icon } from '@viax.io/uxm';
 
 function Example() {
   return (

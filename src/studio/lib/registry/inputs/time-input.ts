@@ -88,7 +88,7 @@ export const timeInputDef: ComponentDef = {
     { name: 'onBlur', description: 'Fires when the field loses focus.', payload: 'FocusEvent' },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: 'TimeInput',
     props: [
       { name: 'value', type: 'string', description: 'Current value (controlled). 24h: `"HH:MM"`. 12h: `"HH:MM AM"` or `"HH:MM PM"`.' },

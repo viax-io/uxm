@@ -7,7 +7,7 @@ The trailing element is a real `<button>` so the same hover colour-shift pattern
 ## Usage
 
 ```tsx
-import { PasswordInput } from '@viax/uxm';
+import { PasswordInput } from '@viax.io/uxm';
 
 function LoginForm() {
   return (

@@ -7,7 +7,7 @@ A controlled (or uncontrolled) date picker with a unified single-and-range selec
 ## Usage
 
 ```tsx
-import { Calendar, type CalendarValue } from '@viax/uxm';
+import { Calendar, type CalendarValue } from '@viax.io/uxm';
 
 function Example() {
   const [value, setValue] = useState<CalendarValue>({ start: null, end: null });

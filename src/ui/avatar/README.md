@@ -7,7 +7,7 @@ A circular user identifier — renders either uppercase initials inside a tinted
 ## Usage
 
 ```tsx
-import { Avatar } from '@viax/uxm';
+import { Avatar } from '@viax.io/uxm';
 
 function Example() {
   return (

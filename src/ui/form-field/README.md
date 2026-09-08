@@ -9,7 +9,7 @@ Distinct from `PropertyField`, which is for read-only metadata (label + monospac
 ## Usage
 
 ```tsx
-import { FormField, TextInput } from '@viax/uxm';
+import { FormField, TextInput } from '@viax.io/uxm';
 
 function Example() {
   return (

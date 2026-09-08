@@ -64,7 +64,7 @@ export const phoneInputDef: ComponentDef = {
     { name: 'onBlur', description: 'Fires when focus leaves the field.', payload: 'FocusEvent' },
   ],
   api: {
-    importPath: '@viax/uxm/ui',
+    importPath: '@viax.io/uxm/ui',
     importNames: 'PhoneInput',
     props: [
       { name: 'value', type: '{ country: string, number: string }', description: 'Controlled value. `country` is an ISO-3166 alpha-2 code; `number` is raw digits.' },

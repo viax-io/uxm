@@ -459,7 +459,7 @@ export const diagramDefs: ComponentDef[] = [
       },
     ],
     api: {
-      importPath: '@viax/uxm/ui',
+      importPath: '@viax.io/uxm/ui',
       importNames: ['Dialog', 'Modal'],
       props: [
         { name: 'open', type: 'boolean', required: true, description: 'Dialog open state (controlled). Pair with onOpenChange.' },

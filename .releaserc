@@ -7,11 +7,11 @@
       "changelogFile": "CHANGELOG.md"
     }],
     ["@semantic-release/exec", {
-      "prepareCmd": "node scripts/stamp-skill-version.mjs ${nextRelease.version}"
+      "prepareCmd": "node scripts/stamp-skill-version.mjs ${nextRelease.version}",
+      "successCmd": "echo ${nextRelease.version} > .released-version"
     }],
     "@semantic-release/npm",
-    ["@semantic-release/gitlab", {
-      "gitlabUrl": "https://gitlab.viax.tech/",
+    ["@semantic-release/github", {
       "assets": [
         { "path": "CHANGELOG.md", "label": "CHANGELOG" },
         { "path": "package.json", "label": "package.json" },

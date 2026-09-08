@@ -162,7 +162,7 @@ export interface ComponentDef {
 
 export type StyleOverrides = Record<string, string | number | boolean>;
 
-// Authoritative PreviewProps now lives in @viax/uxm/previews. Re-exported
+// Authoritative PreviewProps now lives in @viax.io/uxm/previews. Re-exported
 // here so the rest of the shell (registry, panels) keeps working without
 // import-site changes.
 export type { PreviewProps } from '@/previews';

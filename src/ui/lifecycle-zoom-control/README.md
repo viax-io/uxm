@@ -7,7 +7,7 @@ The compact `−` / percent / `+` cluster that lives in the corner of a lifecycl
 ## Usage
 
 ```tsx
-import { LifecycleZoomControl } from '@viax/uxm';
+import { LifecycleZoomControl } from '@viax.io/uxm';
 import { useState } from 'react';
 
 function CanvasZoom() {
