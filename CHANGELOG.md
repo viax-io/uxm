@@ -1,3 +1,10 @@
+## [4.40.2](https://github.com/viax-io/uxm/compare/v4.40.1...v4.40.2) (2026-09-09)
+
+
+### Bug Fixes
+
+* **build:** stop Sass emitting [@charset](https://github.com/charset) into every component CSS fragment ([cb7c22b](https://github.com/viax-io/uxm/commit/cb7c22b0f9dd44d2c140cd0e5da68bf8c149ce5b))
+
 ## [4.40.1](https://github.com/viax-io/uxm/compare/v4.40.0...v4.40.1) (2026-09-08)
 
 
