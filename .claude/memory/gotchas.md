@@ -354,3 +354,25 @@ gets no CI — the PR is the gate.
 **How to apply:** when adding a workflow, name one trigger and add a
 `concurrency` group. If you need `push` as well, scope it to branches that never
 carry a PR.
+
+---
+
+## The skills distribution repo gets edited directly — diff before you rsync
+
+`/update-ai-skill` says "copy all three skills verbatim into `viax-ai-skills`".
+That assumes this repo is the only writer. It is not: on 07-09-2026 the
+localization work (`VX-1835`) added ~1,050 lines of i18n chapters to
+`viax-portal` **in `viax-io/viax-ai-skills` directly**, never here. The next
+sync from this repo — done with `rsync --delete` as documented — would have
+silently erased them. Caught only because the diff stat showed
+`BEM-based-app-generator-MetaPrompt.md | 1179 +---` where a sync should add.
+
+**How to apply:** before every sync, in the distribution clone run
+`git log origin/main --format='%h %an %s' -- skills/<skill>` for each of the
+three skills. Any commit there that is not a `[VX-1736] … sync` is a direct
+edit: port it INTO this repo first (it is the source of truth), then sync.
+A sync diff that *removes* prose from a skill you did not touch here is the
+alarm — stop and look. The same applies in reverse: our copy of
+`viax-portal/SKILL.md` carried an unquoted `description:` with ": " inside
+(invalid YAML, the skill never triggered) that only the distribution repo's
+`scripts/validate-skills.sh` catches — run it on the synced tree, always.

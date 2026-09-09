@@ -115,6 +115,7 @@ The design language features a **greyscale/neutral palette**, clean typography, 
 | Client State | Zustand |
 | Auth | keycloak-js (OAuth 2.0 OIDC, browser-only) |
 | Language | JavaScript (ES2024+, JSX) |
+| Localization | **Portal-owned two-layer catalog** — generated `src/i18n/locales/*.json` + runtime overlay from the backend `Translation` catalog, wrapped in `UxmLocaleProvider` from `@viax.io/uxm/ui`. **Do NOT** add i18next, react-intl, LinguiJS or any other i18n runtime — see [Localization & i18n](#localization--i18n-mandatory--every-generated-surface). |
 
 ### `@viax.io/uxm` — required UI library
 
@@ -149,7 +150,13 @@ VITE_AUTH_URL=https://auth.viax.lab.viax.tech
 VITE_API_URL=https://api.viax.lab.viax.tech/graphql
 VITE_USE_MOCK_AUTH=false
 VITE_USE_MOCK_DATA=false
+VITE_I18N_CATALOG=auto
 ```
+
+`VITE_I18N_CATALOG`: `auto` (default — probe for a `Translation` read query and
+overlay if one exists), `off` (file layer only; set this when the probe found no
+read query), or `on` (fail loudly if the overlay cannot load, for realms where
+the catalog is known to be the source of truth).
 
 Access them in code via `import.meta.env.VITE_*`.
 
@@ -213,9 +220,14 @@ async function init() {
   if (isMockAuth) {
     useAuthStore.getState().setMockSession()
   } else {
-    await keycloak.init({ onLoad: 'login-required', checkLoginIframe: false })
+    await keycloak.init({
+      onLoad: 'login-required',     // Keycloak owns the login screen — see the note below
+      pkceMethod: 'S256',
+      checkLoginIframe: false,      // MANDATORY — see the CSP note below
+    })
     useAuthStore.getState().syncFromKeycloak(keycloak)
-    // Proactive token refresh — update when < 60s remaining
+    // Proactive token refresh — update when < 60s remaining. REQUIRED once
+    // checkLoginIframe is off: nothing else keeps the token alive.
     setInterval(() => keycloak.updateToken(60), 30_000)
   }
 
@@ -273,26 +285,90 @@ export default useAuthStore
 
 ### Auth Guard (Protected Route)
 
-Create `src/routes/ProtectedRoute.jsx` to guard authenticated routes in the React Router tree:
+Create `src/routes/ProtectedRoute.jsx` to guard authenticated routes in the React
+Router tree. With `onLoad: 'login-required'` a visitor without a session never
+reaches React, so arriving here token-less means the session ended or init
+failed — re-enter the flow rather than render a portal-owned sign-in page (there
+is none):
 
 ```jsx
-import { Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Loader } from '@viax.io/uxm/ui'
 import useAuthStore from '@/stores/auth-store'
+import keycloak from '@/lib/keycloak'
 
 export default function ProtectedRoute({ children }) {
   const accessToken = useAuthStore((s) => s.accessToken)
-  if (!accessToken) return <Navigate to="/login" replace />
+  useEffect(() => {
+    if (!accessToken && !isMockAuth) keycloak.login()
+  }, [accessToken])
+  if (!accessToken) return <Loader />
   return children
 }
 ```
 
 Wrap all authenticated routes in `<ProtectedRoute>` in the router definition (`src/routes/index.jsx`).
 
+#### `checkLoginIframe: false` is MANDATORY — the realm refuses to be framed
+
+`keycloak-js` defaults `checkLoginIframe` to **true**, which embeds
+`/realms/{realm}/protocol/openid-connect/login-status-iframe.html` from the auth
+host and polls it every few seconds for session status. viax realms serve a
+`frame-ancestors` Content Security Policy that refuses framing, so the browser
+blocks it and the console fills with:
+
+```
+Framing 'https://auth.{realm}.{env}.viax.io/' violates the following
+Content Security Policy directive: "frame-ancestors 'self' http:* https:*".
+The request has been blocked.
+```
+
+(Note that policy is also malformed — `http:*` / `https:*` are not valid CSP
+source expressions; a browser that rejects them falls back to `'self'` alone, so
+**no** origin can frame the auth host, not even over https.)
+
+Consequences if you omit the flag: the error above on every load, a
+session-status check that silently never works, and — because the adapter
+believes the iframe is handling it — no other mechanism keeping the token fresh.
+Always pair `checkLoginIframe: false` with the explicit
+`setInterval(() => keycloak.updateToken(60), 30_000)` refresh.
+
+#### The login screen belongs to Keycloak
+
+**The portal generates no pre-login page and does not touch that screen.**
+Keycloak's hosted credential form *is* the login screen: it is themed and
+localized by the realm's own built-in internationalization, and nothing about it
+is the portal's business — no i18n, no locale parameter, no page in front of it
+whose only job is a redirect button.
+
+Realm side (ops, not code): Realm settings → Localization →
+*Internationalization* enabled, with the supported locales and default set to
+match `getSupportedLocales`. Keycloak picks the form's language itself.
+
+Custom copy or branding on the credential form (beyond translation) requires a
+custom Keycloak **theme**. That is a separate deliverable, owned by whoever owns
+the realm — not something the portal can do from its own codebase.
+
+#### `onLoad`: `login-required`
+
+`login-required` redirects an unauthenticated visitor to the auth server
+immediately, before React mounts. That is what makes Keycloak's own form the
+login screen and lets the portal ship no pre-login page at all — one screen,
+owned by whoever owns the realm, already themed and already translated.
+
+It is also the only `onLoad` mode in which `keycloak.init({ locale })` takes
+effect, which is how the form gets the right language (see above).
+
+Do **not** use `check-sso` here: it renders the portal instead of redirecting,
+which only makes sense if the portal has its own sign-in surface to show. Do
+**not** set `silentCheckSsoRedirectUri` either — it switches to an iframe
+strategy and reintroduces the CSP failure above.
+
 ### Auth Architecture
 
 **Session flow:**
-1. `main.jsx` calls `keycloak.init({ onLoad: 'login-required' })`
-2. If no active session → Keycloak redirects to its login page automatically
+1. `main.jsx` calls `keycloak.init({ onLoad: 'login-required', checkLoginIframe: false, … })`
+2. If no active session → Keycloak redirects to its own login page immediately, before React mounts
 3. After login → Keycloak redirects back to the app with tokens
 4. `syncFromKeycloak` stores `accessToken` and parsed user info into Zustand
 5. Proactive token refresh runs every 30s (silently refreshes when < 60s remaining)
@@ -339,7 +415,7 @@ axiosInstance.interceptors.response.use(
 
 ### Sign-Out
 
-Call `keycloak.logout()` (imported from `src/lib/keycloak.js`) to end the session and redirect back to Keycloak. For mock auth, clear the store and navigate to `/login`.
+Call `keycloak.logout()` (imported from `src/lib/keycloak.js`) to end the session and redirect back to Keycloak. **Under mock auth render no sign-out control at all** — the mock session is minted at boot and there is nothing to end, so a button that cannot work is worse than its absence.
 
 ---
 
@@ -496,7 +572,7 @@ Inherits directly from `@viax.io/uxm`:
 - **Surfaces** — `--color-surface` page bg, `--color-card` rows/cards with `<Card shadow>`.
 - **Accent** used sparingly for primary CTAs (`<ButtonPrimary>`), active sidebar/nav items, indicators.
 - **Typography** — Inter by default (Google-Fonts `<link>` in `index.html` + the `html, body, #root` font chain and the `button, input, select, textarea { font: inherit }` rule in `globals.css` — see the baseline below); the portal-wide typeface is **brand-controlled**: UXM Studio → Brand Settings → **Typography** sets `brand.fontFamily`, and the published config re-fonts the whole portal via `--brand-font` (the applier's generated CSS auto-imports the chosen Google Font). Sizing/weight handled by `@viax.io/uxm` per component.
-- **Sidebar** — `<AppSidebar>` (sections + items, polymorphic `linkAs` so react-router does client nav).
+- **Sidebar** — `<AppSidebar>` (sections + items, polymorphic `linkAs` so react-router does client nav — it must be a `forwardRef` `href` → `to` adapter, never react-router's `Link` itself; see step 5 of [Implementation Order](#implementation-order)).
 - **Top bar** — `<AppTopBar search={…} actions={…}>` with `<InputWithIcon>` and `<Avatar>` + `<InlineAction>` sign-out.
 - **Dashboard widgets** — `<StatCard>` for KPIs, recharts wrapped in `<Card>` for charts, `<DataTable>` for tabular activity feeds (Recent orders etc.), `<Checkbox>` for to-do lists, `<EmptyState>` / `<Loader>` for empty/loading.
 
@@ -772,6 +848,909 @@ specified in the theming skill — see *"App identity"* there; `{{PORTAL_ID}}` a
 `{{GENERATED_AT}}` are the values to substitute.
 
 
+## Localization & i18n (mandatory — every generated surface)
+
+Every portal is localized on first build. There is no "add i18n later" path: a
+surface generated without this section has hardcoded English in it, and the
+hardcoded-string scan (step 14 of Implementation Order) fails the build.
+
+**The contract in one line:** the *library* formats, the *backend* owns the
+strings, the *portal* wires the two together and never invents either.
+
+### 🔴 Introspect with `__type`, not with the MCP `get_type` tool
+
+`get_type` reads the viax **meta-model** and lists only a type's **directly
+defined** fields; inherited ones are absent. GraphQL introspection returns the
+real, flattened schema:
+
+| Query | Fields returned for `User` |
+|---|---|
+| MCP `get_type("User")` | **2** — `parDigitalIdentities`, `party` |
+| `__type(name: "User") { fields { name } }` | **16** — including `parProfile`, `parParty`, `parId` |
+
+`parProfile` — the field that leads to the user's i18n preferences — is one of
+the 14 the shorter answer omits.
+
+**Always confirm a "field does not exist" conclusion with `__type` before
+designing around it.** The introspection response can be large; save it and query
+it with `jq` rather than reading it whole.
+
+Two more introspection notes for this environment:
+
+- The MCP query tool **blocks any request containing the string `mutation`**,
+  including read-only introspection of the mutation type
+  (`__schema { mutationType }`, `__type(name: "Mutation")`). It is a substring
+  guard, not an operation check. Use the MCP `get_type("Mutation")` tool instead
+  — that one is not filtered, and returns all 5050 mutation names.
+- A validation error and a runtime error mean different things.
+  `GRAPHQL_VALIDATION_FAILED` says the field path is wrong;
+  `INTERNAL_SERVER_ERROR` ("UID for current user is empty") says the path is
+  **correct** and only the execution context is missing. The second is a pass for
+  schema-shape purposes.
+
+### What is verified to exist in the viax API
+
+Confirmed against a live environment — do not assume anything beyond this list,
+and re-verify per realm at scaffold time:
+
+| Capability | Shape | Notes |
+|---|---|---|
+| Configured locales for the realm | `getSupportedLocales` → `[String]` | e.g. `["en-US"]`. **The only source of truth.** Never hardcode a locale list. ⚠️ **Authenticated in some realms** — it returns nothing to an anonymous caller, so it can never be in the boot path. See "Where the locale list comes from — boot and after". |
+| Server's current locale | `currentLocale` → `String` | Use as the configured default when nothing else resolves. Takes **no arguments** — it is derived from request context, not stored state. It is **not** `getSupportedLocales[0]`: a realm returning `["de-DE","en-US","en-CA"]` answered `en-US`. Which context input feeds it (the header, `Accept-Language`, the user's `i18Language`, a realm setting) was **not** determined — do not depend on any particular one. |
+| The caller's own preferences | `getCurrentUserInfo { parProfile { prpI18NPreferences { … } } }` | **This is the link — a direct traversal, no filtering.** `User.parProfile: UserProfile` → `UserProfile.prpI18NPreferences: I18NPreferences`. Verified live: `USER-25` resolves to a row with `i18TimeZone: "Europe/Warsaw"`. |
+| No profile yet | `parProfile` is **nullable** | 3 of 5 sampled users have `parProfile: null`. That — or a null `prpI18NPreferences` — is the "no preferences row yet" case; handle it, do not assume the traversal always lands. |
+| Single-record fetch | `getViaxI18NPreferences(pk, uid)` | **Not useful for "find my row".** It is get-by-key and errors without one: *"Query must have at least one identification input argument passed"*. |
+| Sorting on filter queries | `_orderBy` | **`_sort` is not accepted** by `filter<TypeName>` — it exists only on the 16 `fullTextSearch*` fields. 1510 filter queries take `_orderBy`. |
+| Per-request locale | **The `X-Viax-User-Locale` header — NOT a `_locale` argument.** | ⚠️ `_locale` is a **mutation** argument. On the query side, exactly **1 of 3661** query fields accepts it (`fullTextSearchProducts`); no `filter*` or `get*` query does. Passing it to one fails validation outright: `Unknown argument "_locale" on field "Query.filterOrder"`. Verified by introspecting `Query`'s field args. |
+| Determination context | `X-Viax-User-Locale`, `X-Viax-User-Currency` request headers | Plus `X-Viax-User-Order`, `-Order-Item`, `-Product`. |
+| Translation catalog entity | `Translation { code: String!, value: String, _value_i18n: [LocalizedString!], value_en_US: String }` | Codes are page-scoped and dotted: `page.orders.title`. |
+| Catalog write | `upsertTranslation(_locale: "es", input: { code: "page.orders.title", value: { node: "Pedidos" } })` | This is how a business user's change lands. |
+| User i18n preference | `I18NPreferences { i18Language, i18TimeZone, i18DateFormat, i18Currency }` | Server-side persistence of the user's choice. Implementors: `ViaxI18NPreferences`. Written with **`upsertViaxI18NPreferences`**; input is `{ uid, pk, i18Language: LanguageTag, i18TimeZone: String, i18DateFormat: String, i18Currency: UnitOfMeasureInput, … }`. |
+| Setting the locale server-side | **There is no mutation for `currentLocale`.** | Verified: of 5050 mutations none sets it (the only `set*` is `setConfigurationComponentResultValue`). `currentLocale` is a *derived* read of the request context, not stored state — the docs list `$currentLocale` as a **filter placeholder**, "used to substitute on the current locale". You influence it with the `X-Viax-User-Locale` header and persist the user's choice via `upsertViaxI18NPreferences`. |
+| Localized entity fields | `deName_Locale_en_US`, `value_en_US`, `_field_i18n` | Per-locale field variants exist on entities. Which one the bare `field` resolves to follows the request's locale context — i.e. the header — not a per-query argument. |
+
+⚠️ **Two environment-dependent gaps you MUST probe before relying on them:**
+
+1. **A read query for `Translation` may not exist.** In the Palooza Demo realm
+   none of the 3642 query fields matches `/translat/i` — the entity and its
+   `upsert` mutation exist, but nothing reads the catalog back. Probe at
+   scaffold time and branch:
+   ```graphql
+   query ProbeCatalog { __schema { queryType { fields { name } } } }
+   ```
+   Filter for `translat`. If a read query exists, wire the runtime overlay
+   (below). If it does not, generate the file layer only, set
+   `VITE_I18N_CATALOG=off` in `.env.local`, and state the limitation in
+   `design.md` — do **not** silently ship a portal that claims live catalog
+   updates it cannot perform.
+2. **`i18Language` is frequently `null`.** In Palooza Demo every
+   `ViaxI18NPreferences` row has `i18TimeZone` and `i18DateFormat` populated but
+   `i18Language` and `i18Currency` `null`. Treat the server preference as an
+   *optional* input to resolution, never as a guaranteed one.
+
+### The two-layer catalog
+
+Files and the backend catalog are not alternatives — they are layers, and each
+exists for a criterion the other cannot meet:
+
+- **Generated JSON files** (`src/i18n/locales/{locale}.json`) — the build-time
+  seed and the guaranteed fallback. They make the portal render with real copy
+  offline, with `VITE_USE_MOCK_DATA=true`, and before the first catalog fetch
+  resolves. They are also what the hardcoded-string scan checks against.
+- **Runtime overlay from the `Translation` catalog** — fetched on boot and
+  merged *over* the file layer. This is the only thing that satisfies *"a
+  business user changes a label and the surface reflects it with no code change
+  and no deploy"*. A file-only portal cannot meet that criterion; say so in
+  `design.md` if the read query is absent.
+
+Merge order, lowest to highest precedence:
+
+```
+file[configured default locale]  →  file[selected locale]  →  catalog[selected locale]
+```
+
+### File layout and the key ↔ code mapping
+
+Create `src/i18n/locales/{locale}.json` for **every** locale in
+`getSupportedLocales` — the default locale fully populated, the others created
+with the same key set so a translator has a complete checklist and a missing
+value is visibly `null` rather than absent. Generate them with
+`scripts/gen-locale-files.mjs` rather than by hand, and keep using it for every
+later change — see [Every later change must touch the locale files](#every-later-change-must-touch-the-locale-files).
+
+Two levels, no more. **Level 1 is the page key; level 2 is the label key:**
+
+```json
+{
+  "common": {
+    "clear": "Clear",
+    "close": "Close",
+    "search": "Search",
+    "save": "Save"
+  },
+  "products": {
+    "title": "Products",
+    "col.id": "Product ID",
+    "col.name": "Name",
+    "addToCart": "Add to cart",
+    "empty": "No products match this filter."
+  },
+  "orders": {
+    "title": "Orders",
+    "col.status": "Status"
+  }
+}
+```
+
+The nesting maps mechanically onto the backend translation code, in both
+directions — this is what lets one key space serve both layers:
+
+| File position | Translation `code` |
+|---|---|
+| `products.title` | `page.products.title` |
+| `products.col.id` | `page.products.col.id` |
+| `common.clear` | `common.clear` |
+
+`common` is the one reserved level-1 key: it maps to `common.*`, every other
+level-1 key maps to `page.<key>.*`. Level-2 keys may contain dots for grouping
+(`col.id`) — they are opaque string keys, not further nesting. Never introduce a
+third level of objects: the flat-ish shape is what keeps the file diffable and
+the code round-trippable.
+
+A non-default locale file starts as the key set with `null` values:
+
+```json
+{ "common": { "clear": null, "close": null }, "products": { "title": null } }
+```
+
+`null` means "no value in this locale" and triggers the fallback chain. An empty
+string means "deliberately blank" and is respected — do not conflate them.
+
+### Every later change must touch the locale files
+
+The first generation creates the files. **Everything after it keeps them in
+sync** — this is not a follow-up chore, it is part of the same change.
+
+Whenever a change introduces, renames, or removes user-visible text — a new
+page, a new column, a new validation message, a new empty state — the locale
+files move with it, in the same commit:
+
+| File | What happens |
+|---|---|
+| `locales/{default}.json` | New keys **with real values** — the English copy the surface actually renders. |
+| Every other `locales/*.json` | The same keys with **`null` values**. A translator gets a complete checklist; the fallback chain renders the default until they fill it. |
+
+Concretely — asked to *"add a deliveries list page"*, with the realm on
+`["de-DE", "en-US", "en-CA"]` and `en-US` the default:
+
+```jsonc
+// locales/en-US.json  — new page key, populated
+"deliveries": {
+  "title": "Deliveries",
+  "meta": "{count} deliveries",
+  "col.id": "Delivery ID",
+  "col.status": "Status",
+  "empty": "No deliveries match this filter."
+}
+
+// locales/de-DE.json and locales/en-CA.json — same keys, null values
+"deliveries": {
+  "title": null, "meta": null, "col.id": null, "col.status": null, "empty": null
+}
+```
+
+`null` means "no value in this locale" and falls through the chain. `""` means
+"deliberately blank" and is rendered as such — never use one for the other.
+**Provide a first-pass translation for every locale** rather than leaving the
+new keys null — see [Seed translations, and mark them as drafts](#seed-translations-and-mark-them-as-drafts).
+
+Ship a generator so this is mechanical rather than remembered —
+`scripts/gen-locale-files.mjs`, wired as `"gen:locales"`:
+
+```bash
+npm run gen:locales -- de-DE en-US en-CA --default=en-US
+```
+
+It must:
+
+- **Preserve every existing non-null value.** Re-running it after a translator
+  has worked must never blank their strings — that is the one failure that
+  makes a team stop trusting the tool.
+- **Add keys missing from a non-default file** as `null`, taking the key set
+  from the default locale.
+- **Delete files for locales the realm no longer configures** — a stale file
+  keeps offering a language that has been withdrawn.
+- **Report `filled/total` per locale**, so translation debt is visible.
+
+Two more obligations on the same change:
+
+- **Removing a page removes its keys** from every locale file, and its codes
+  from `design.md`. Orphaned keys accumulate into a catalogue nobody trusts.
+- **`design.md` lists the codes the change introduced**, so they can be loaded
+  into the backend translation catalog.
+
+The hardcoded-string scan (step 14) is what enforces all of this: a new page
+whose copy never reached the locale files still has literals in the JSX, and the
+build fails. **Run `npm run scan:i18n` after adding any surface** — it is the
+difference between "I added the keys" and "the keys are actually being used".
+
+### Seed translations, and mark them as drafts
+
+Generate a first-pass translation for every configured locale. A file full of
+`null` renders as the default language, which looks like the feature is broken
+and gives a reviewer nothing to react to — a draft they can correct is worth more
+than a blank they have to author.
+
+**The drafts must be visibly provisional.** Machine-written copy that is
+indistinguishable from approved copy is how unreviewed text reaches production.
+Each non-default locale file carries a reserved level-1 `_meta` key:
+
+```jsonc
+{
+  "_meta": { "status": "machine-translated", "reviewed": [] },
+  "common": { "clear": "Löschen", "close": "Schließen" },
+  "products": { "title": "Produkte" }
+}
+```
+
+- `_meta` is reserved alongside `common` — it is **not** a page and maps to no
+  translation code. The `t()` lookup must never reach into it.
+- As a reviewer approves keys, their dotted paths move into `reviewed`. The
+  generator reports `reviewed / total` per locale so the remaining debt is
+  visible, and `design.md` states that non-default locales ship as drafts.
+
+#### Translating well
+
+- **Keep placeholders and markup verbatim.** `{count}`, `{name}`, `{percent}`
+  must survive untouched; a translated placeholder silently renders as literal
+  text.
+- **Never translate identifiers**: field codes (`maId`, `biCreatedAt`), currency
+  codes, IANA timezones, BCP-47 tags, glyph ids, status codes from the API
+  (`Active_Trial`), product or brand names.
+- **Match the register the locale expects of business software.** German portals
+  address the user with *Sie*, not *du*; French with *vous*. Getting this wrong
+  reads as amateurish faster than a mistranslation does.
+- **Follow each language's UI conventions**, not English ones translated
+  literally: German capitalises all nouns; French inserts a narrow space before
+  `:` `!` `?` `»`; Ukrainian and Polish decline nouns after numerals, so a
+  `{count}` string may need a different phrasing rather than a direct rendering.
+- **Watch length.** German runs roughly 30% longer than English; a label that
+  fits a column header in `en-US` may truncate in `de-DE`. Prefer the shorter
+  natural wording for table headers and buttons.
+- **Endonyms are never translated** — the language switcher derives them from
+  `Intl.DisplayNames` and no locale file should contain language names.
+
+#### Regional variants: translate only the differences
+
+For a second locale sharing a base language — `en-CA` beside `en-US`,
+`de-AT` beside `de-DE` — **fill only the keys that genuinely differ** and leave
+the rest `null`. The base-language link in the fallback chain resolves them.
+
+Copying an identical string into both files creates two places to update, and
+they will drift. `en-CA` typically needs a handful of spelling changes
+(`-our`, `-re`) and nothing else; a file that is 95% duplicated `en-US` is
+noise, not a translation.
+
+### Where the locale list comes from
+
+**One source: the realm.** `getSupportedLocales` + `currentLocale`, fetched once
+the session exists. There is **no pre-auth locale list and no pre-auth guess** —
+the login screen belongs to Keycloak, and the portal renders nothing localized
+before the server has answered (see
+[Nothing renders in the wrong language first](#nothing-renders-in-the-wrong-language-first)).
+
+The generated locale files are the **copy** source, not a locale list to resolve
+against. They also serve as the fallback list if `getSupportedLocales` cannot be
+read at all, since they are the only locales the build has strings for.
+
+Rules:
+
+- **A realm locale with no bundled file is still selectable** — it falls through
+  the value chain to the configured default. Log the gap; do not hide the locale.
+- If the realm list and the bundle disagree, that is drift worth reporting in
+  `design.md`: the portal needs regenerating to pick up the new locale's file.
+
+### Reading and writing the user's language preference
+
+**Read it in one query, by traversing the profile.** The user owns a profile,
+the profile owns the preferences — the server resolves the link, so there is no
+filtering, no identity juggling and no way to land on somebody else's row:
+
+```graphql
+query MyI18nPreferences {
+  getCurrentUserInfo {
+    uid
+    parProfile {
+      uid
+      prpI18NPreferences {
+        uid
+        i18Language
+        i18TimeZone
+        i18DateFormat
+      }
+    }
+  }
+}
+```
+
+`User.parProfile: UserProfile` → `UserProfile.prpI18NPreferences: I18NPreferences`.
+Verified against the live realm.
+
+**This traversal is the only way to obtain the row's `uid`.**
+
+**Both hops are nullable, and that is the "no row yet" signal.** Of five sampled
+users, three had `parProfile: null`. A null at either hop means the user has no
+row: persist locally (see [Locale resolution](#locale-resolution)). It is not an
+error.
+
+**Write with the row's own `uid`, and nothing else.**
+
+```graphql
+mutation SetPreferredLanguage($uid: UUID, $tag: LanguageTag) {
+  upsertViaxI18NPreferences(input: { uid: $uid, i18Language: $tag }) {
+    uid
+    i18Language
+  }
+}
+```
+
+Per the backend: *an existing record already carries its owner link, so there is
+no reason to send it on every update.* The input shape confirms it —
+`{ uid, pk, i18Language: LanguageTag, i18TimeZone, i18DateFormat, i18Currency, createdBy, … }`
+carries no party or user field.
+
+**Do not upsert without a `uid`.** The mutation is keyed on it; omitting the key
+mints a fresh row on every switch, leaving a trail of orphans under one user.
+
+⚠️ **Open question — how a user's FIRST preferences row is created.** With
+`parProfile` null for most users and `i18Language` null on every existing row,
+this path is the common case, not the edge. Until the backend confirms whether
+an upsert without `uid` creates-and-links, or whether rows arrive via
+provisioning, a portal with no row **persists locally only** and says so in
+`design.md`. Do not guess.
+
+**Do not look for `currentLocale` on the write side.** There is no mutation for
+it and nothing to set: it is a derived read of the request context, driven by
+the `X-Viax-User-Locale` header the client already sends.
+
+**Fire the write in the background.** The local switch has already taken effect;
+a failed mirror is not a user-facing error. Wrap it so a rejection cannot reach
+an error boundary.
+
+### Nothing renders in the wrong language first
+
+Two of the inputs that decide the language need a token, so they land *after*
+login: the realm's configured list and the user's stored preference. Render
+before they arrive and the whole surface paints in the browser-detected
+language, then repaints in the user's — a visible English → German flip that
+reads as a bug.
+
+**Hold the WHOLE app until the language is settled.** The gate is the
+`I18nProvider` itself: it starts with no locale at all and renders a
+**full-screen spinner** until the realm's list, its default and the user's
+preference have landed. No separate `LocaleGate` component, and nothing below
+it — not the shell, not a page — renders before then.
+
+```jsx
+// src/i18n/index.jsx
+const [locale, setLocaleState] = useState(null)   // nothing is guessed
+…
+if (!locale) return <FullScreenSpinner />         // no copy: no locale to render it in
+return (
+  <I18nContext.Provider value={value}>
+    <UxmLocaleProvider locale={locale}>{children}</UxmLocaleProvider>
+  </I18nContext.Provider>
+)
+```
+
+```js
+// per hook — signed out there is nothing to wait for
+ready: !accessToken || isFetched
+// the gate
+localeReady = realmReady && prefsReady
+```
+
+Rules that make this correct rather than a hang:
+
+- **No initial guess, therefore no repaint.** Seeding the locale from the
+  browser (or from anything else) and correcting it when the server answers is
+  what produces the visible English→German flip. Start with `null`.
+- **`isFetched`, not `isSuccess`.** A 403 or a network failure settles the
+  question as firmly as a 200. Waiting for success holds the spinner forever on
+  a query that will never succeed; fall through to the bundled list instead.
+- **The spinner carries no copy.** There is no resolved locale yet, so any text
+  would have to be hardcoded in one language — render the bare `<Loader />`.
+- **Do not send a locale header before one is resolved.** The module-level
+  locale starts `null` and the request interceptor omits
+  `X-Viax-User-Locale` while it is — a guessed header on the very query that
+  decides the locale is circular.
+- **It also removes a double data fetch.** Page queries are keyed by locale, so
+  a locale that changes under them invalidates and refetches. Mounting pages
+  only once the locale is final means each list loads once.
+
+#### Fetch the locale inputs with TanStack Query, not a raw effect
+
+`React.StrictMode` double-invokes effects in development, so a hand-rolled
+`useEffect` + fetch issues **every request twice** — visible as duplicated
+`LocaleConfig` / `MyIdentity` / `MyI18nPreferences` in the network panel. A
+`cancelled` flag does not help: it guards the state update, never the call.
+
+The portal already has TanStack Query in its stack for page data; use it here
+too and the query key deduplicates. `staleTime: Infinity` and `retry: false`
+suit both — the realm's locale list and a user's preference do not change
+mid-session, and a failure should fall through to the bundle rather than retry
+behind a spinner the gate is holding.
+
+### Locale resolution
+
+**The backend is the only store for a signed-in user's language.** Nothing about
+it is kept in `localStorage` — a second copy is how the two sources silently
+disagree, and the server is authoritative.
+
+```
+1. Server user preference   I18NPreferences.i18Language        ← the only stored source
+2. Browser locale           navigator.languages, first match against supported
+3. Configured default       currentLocale
+4. First supported locale   getSupportedLocales[0]
+```
+
+`resolve.js` must **return which link resolved**, not just the tag
+(`{ locale, source }`) — it makes the whole chain debuggable from one log line.
+
+Rules that the acceptance criteria turn on:
+
+- **Match browser locale against the configured list, never against a hardcoded
+  one.** Match exact tag first (`de-DE`), then base language (`de` matches
+  `de-DE` or `de-AT`). An unsupported candidate — from *any* link, the server's
+  value included — must never survive: match every one against `supported`
+  before accepting it. Resolution only ever runs with the realm's own inputs —
+  there is no earlier pass to seed a locale from.
+
+- **🔴 No client-side persistence of the locale. At all.** No `localStorage`
+  key, no `sessionStorage`, no cookie, no "fallback" entry keyed by user. If a
+  generated portal has a locale storage module, that is a defect. The chain
+  above has no stored link, so a local copy cannot be reintroduced without
+  changing `resolve.js` itself.
+
+- **A user with no preferences row CANNOT set a language — that is the
+  behaviour, not a gap to paper over.** `upsertViaxI18NPreferences` is keyed on
+  the row's `uid`, so with no row there is nowhere to write. Handle it exactly
+  like a failed write: the switch applies to the **current session**, nothing is
+  persisted, and the user is told it was not saved (`toast.error` with a
+  translated `common.*` key). Creating a user's first row is a **separate
+  iteration** — do not invent a client-side workaround for it, and do not upsert
+  without a `uid` hoping the server links the row.
+
+  | Situation | What happens |
+  |---|---|
+  | Row exists, write **succeeds** | The server holds the language. Also write it into the cached `['i18n-preferences', userId]` row. |
+  | Row exists, write **fails** | Session-only switch + `toast.error`. The server still holds its previous value, so the pick reverts on reload — say so rather than fail silently. |
+  | **No row** (`parProfile` or `prpI18NPreferences` is null) | Session-only switch + the same `toast.error`. Nothing is stored anywhere. |
+
+- **The switch must never block on the network.** Update the UI synchronously
+  and write the server behind it.
+
+- **Key the preferences query by user** (`['i18n-preferences', userId]`), or
+  signing in as somebody else serves the previous user's record from cache.
+
+- **Pin the resolution with tests.** `resolve.js` is pure — no framework needed,
+  and no new dependency is allowed for this: ship
+  `scripts/test-locale-resolution.mjs` using `node:test`, wired as
+  `"test:i18n": "node --test scripts/test-locale-resolution.mjs"`. It must
+  cover, at minimum: the server value winning; no server value falling through
+  to the browser; **a `stored` input being ignored, so client-side persistence
+  cannot creep back in**; an unsupported value never surviving; the first
+  supported locale as the last resort; base-language matching; and the value
+  chain ending at the POPULATED default.
+
+#### Writing the language server-side
+
+**Do NOT try to mutate `currentLocale` — no such mutation exists.** The write is:
+
+```graphql
+mutation SetLanguage($uid: UUID, $tag: LanguageTag) {
+  upsertViaxI18NPreferences(input: { uid: $uid, i18Language: $tag }) {
+    uid
+    i18Language
+  }
+}
+```
+
+The row is found by traversing the profile — `getCurrentUserInfo { parProfile
+{ prpI18NPreferences { uid … } } }`, verified by introspection: `User.parProfile:
+UserProfile` → `UserProfile.prpI18NPreferences: I18NPreferences`. Use that
+`uid`, and **never upsert without one**: the mutation is keyed on it, so omitting
+it mints a fresh row on every switch.
+
+⚠️ **Still open: how a user's FIRST row is created — a separate iteration.**
+With `parProfile` null for most users this is the common case, not an edge.
+Until the backend confirms whether an upsert without `uid` creates-and-links, or
+whether rows arrive via provisioning, such a user simply **cannot persist a
+language**: the switch lasts the session, a toast says it was not saved, and
+`design.md` records it as a known limitation. Do not guess, and do not build a
+client-side substitute.
+
+### Wiring — files to create
+
+```
+src/i18n/
+├── index.jsx                    I18nProvider + useT() + useLocale(); wraps UxmLocaleProvider
+├── resolve.js                   the resolution order above → { locale, source }; pure and unit-testable
+├── bundled.js                   the bundled files + BUNDLED_LOCALES; the COPY source and the fallback list
+├── locale-state.js              module-level locale/currency holder the graphql client reads
+├── catalog.js                   runtime overlay: fetch Translation catalog, merge over files
+├── codes.js                     fileKey ↔ translation code mapping, both directions
+└── locales/
+    ├── en-US.json               generated, fully populated (default locale)
+    └── {each other supported}.json
+```
+
+`I18nProvider` sits **above the router and above the auth guard** in `App.jsx`,
+and it must not depend on an access token: the boot paint happens before the
+authenticated inputs land. The **file layer** works unauthenticated
+and supplies both the copy and the pre-auth locale list;
+`getSupportedLocales` / `currentLocale`, the catalog overlay, and
+`I18NPreferences` are all wired in only once a token exists (see "Where the
+locale list comes from, pre- and post-auth").
+
+It renders `<UxmLocaleProvider locale={locale}>` from `@viax.io/uxm/ui` around its
+children. That provider is what makes every UXM atom's `Intl` call — month
+names, decimal separators, byte units — follow the selected locale. It does
+**not** translate copy: UXM ships no catalog by design, so every UXM label prop
+(`clearLabel`, `emptyState`, `labels={{…}}`, `requiredMessage`, …) still has to
+be passed a `t()` value by the portal.
+
+```jsx
+// The shape every generated page uses. `t` is page-scoped so a page never
+// reaches into another page's keys.
+const t = useT('products')
+<ButtonPrimary>{t('addToCart')}</ButtonPrimary>
+<DataTable columns={[{ key: 'maId', header: t('col.id') }]} … />
+<EmptyState title={t('empty')} />
+<TextInput clearLabel={useT('common')('clear')} />
+```
+
+### Value fallback chain
+
+When the selected locale has no value for a key — in the catalog or the files:
+
+```
+selected locale (de-AT)  →  base language (de)  →  configured default (en-US)  →  the code itself
+```
+
+Never render blank. Rendering the code (`page.products.col.id`) is the last
+resort and is deliberately ugly — it is a visible bug report, not a fallback to
+be relied on. The same chain applies to **API-sourced localized values**
+(product names, BI type and status labels, attribute labels, category names,
+determination model names), not just chrome.
+
+### 🔴 The chain's last resort is the POPULATED default, not the configured one
+
+These are two different locales and conflating them breaks the whole surface:
+
+| | What it is | Where it comes from |
+|---|---|---|
+| **Configured default** | The realm's `currentLocale` | Server, post-auth, **can change** |
+| **Populated default** | The one locale file generation actually filled | A constant in the code, changes only on regeneration |
+
+The chain must end with the populated one:
+
+```
+catalog[selected] → file[selected] → file[base language]
+                  → file[configured default] → file[POPULATED default] → the code
+```
+
+Leave the last link out and the moment a realm names a locale nobody has
+translated yet, **every label renders as its code** — with a perfectly good
+`en-US.json` sitting right there unused. Every link above it is `null`, because
+the untranslated file is both the selected locale and the configured default.
+
+This shipped and was caught in manual testing: a mock returning
+`currentLocale: 'de-DE'` against an all-null `de-DE.json` turned the entire UI
+into `common.brandAlt`, `page.products.title`, and so on.
+
+```js
+const POPULATED_DEFAULT = 'en-US'   // the file generation filled
+
+// …
+fromLayer(BUNDLED, configuredDefault),
+configuredDefault === POPULATED_DEFAULT ? undefined : fromLayer(BUNDLED, POPULATED_DEFAULT),
+```
+
+Do **not** collapse this by hardcoding the last link to the scaffold default and
+dropping `configuredDefault` — that silently ignores a realm that legitimately
+changed its default. Both links, in that order.
+
+#### Mock data must mirror the realm it stands in for
+
+The same defect arrived through the mock: `fetchLocaleConfig` returned
+`{ getSupportedLocales: ['en-US','de-DE'], currentLocale: 'de-DE' }` while the
+realm actually returns `['de-DE','en-US','en-CA']` with `currentLocale: 'en-US'`.
+
+A mock that disagrees with production is not a mock, it is a second source of
+truth — and this one named an **untranslated** locale as the default, which is
+precisely the input that dead-ends the chain. Take mock values from the
+scaffold-time probe, verbatim.
+
+#### Never ship a stub that impersonates a working API
+
+An API module that returns a hardcoded shape instead of calling the server —
+
+```js
+export async function fetchMyI18nPreferences() {
+  return { i18Language: null, ownerResolvable: false }   // ← never queries
+}
+```
+
+— reads as implemented at every call site, and the missing behaviour surfaces
+only as "the feature does nothing". If a capability cannot be built yet, the
+function must be **absent**, or throw, or be named so the gap is unmissable
+(`fetchMyI18nPreferencesNotImplemented`). Record the blocker in `design.md`,
+never as a return value that looks like data.
+
+### Locale on every API call — one place only
+
+Locale propagation lives in `lib/graphql-client.js` and **nowhere else**. No
+component, hook, or `lib/api/*` module passes locale explicitly.
+
+```javascript
+// lib/graphql-client.js — request interceptor, in addition to the Bearer token
+config.headers['X-Viax-User-Locale'] = getLocale()      // from the i18n store
+config.headers['X-Viax-User-Currency'] = getCurrency()  // from user/pricing context, NOT from locale
+// Locale travels in the HEADER ONLY. Do NOT add a `_locale` argument to
+// queries — see the capability table: it is a mutation argument, and adding
+// it to a filter query is a hard validation error.
+```
+
+Changing locale must **re-run the affected queries, not reload the page**.
+Include the locale in the TanStack Query key so a switch invalidates cleanly:
+
+```javascript
+queryKey: ['products', locale, filters]
+```
+
+Criterion: switching locale re-renders chrome and data with no page reload,
+without losing form state or navigation position. A `window.location.reload()`
+anywhere in the switcher is an automatic fail.
+
+### The language switcher
+
+**PREREQUISITE — check before generating.** The switcher is a single
+UXM-owned component; the portal must not hand-roll one, and must not copy one
+between portals.
+
+```js
+import { LanguageSwitcher } from '@viax.io/uxm/ui'
+```
+
+If the installed `@viax.io/uxm` does **not** export `LanguageSwitcher`, **STOP and
+report it** — do not substitute a local `<Select>`-based switcher. A local copy
+is exactly the duplication the single-component rule exists to prevent, and it
+will diverge on brand tokens and WCAG compliance. Report to the user: *"the
+portal skill requires `LanguageSwitcher` from @viax.io/uxm; the installed version
+does not export it."*
+
+#### API
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `locales` | `string[]` | – | **Required.** BCP-47 tags — the realm's `getSupportedLocales`. Nothing renders before it has been fetched, so there is no earlier list. |
+| `value` | `string` | – | **Required.** Controlled; must be one of `locales`. |
+| `onChange` | `(locale: string) => void` | – | **Required.** Persist + re-resolve here; the atom stores nothing. |
+| `label` | `string` | `'Language'` | Trigger's accessible name. **Always pass a `t()` value** — see below. |
+| `searchLabel` | `string` | `'Search languages'` | Panel search box name + placeholder. Translate it too. |
+| `variant` | `'full' \| 'compact'` | `'full'` | `compact` = icon-only, for tight bars. |
+| `searchable` | `boolean \| 'auto'` | `'auto'` | Search appears past 6 locales. |
+| `disabled` | `boolean` | `false` | |
+| `getLabel` | `(locale: string) => string` | endonym | **Do not pass this.** See "Language names". |
+
+```jsx
+<LanguageSwitcher
+  locales={supported}
+  value={locale}
+  onChange={setLocale}
+  label={t('common.language')}
+  searchLabel={t('common.searchLanguages')}
+/>
+```
+
+**It is data-free.** It issues no query, reads no context, persists nothing. The
+list, the value and the handler all come from the portal's i18n layer.
+
+#### Placement
+
+- In `<AppTopBar actions>`, **immediately before the Sign out button** — it is
+  the last control the user touches before leaving, and grouping it with the
+  session actions keeps the account-related cluster together. Full order:
+  user name → light/dark toggle → theme picker → **LanguageSwitcher** → Sign
+  out. There is no second call site: the portal has no pre-login surface.
+- The call site renders it **unconditionally**. Do **not** add
+  `{locales.length > 1 && …}` — the component already returns `null` at one
+  locale or none, emitting no wrapper and costing no layout. A second guard at
+  the call site duplicates a rule that has exactly one owner, and the two
+  copies will eventually disagree.
+
+#### Language names
+
+The component derives the **endonym** itself — `Deutsch`, not `German` — from
+`Intl.DisplayNames`. **Do not compute names in the portal and do not pass
+`getLabel`.** Two traps that the component already handles and a hand-rolled
+version reliably gets wrong:
+
+- `new Intl.DisplayNames([tag], { type: 'language' }).of(tag)` on a **full** tag
+  returns `"Deutsch (Deutschland)"` / `"American English"` — country names in a
+  language picker. The component resolves on the base subtag instead.
+- It then re-adds the region **only where two configured tags share a base
+  language**, so `["en-US", "en-GB"]` renders `American English` /
+  `British English` while `["en-US", "de-DE"]` renders `English` / `Deutsch`.
+
+`getLabel` exists for a genuinely different rendering (a flag, a marketing
+name). It is not the translation hook: endonyms are identical in every UI
+language, so they do not change when the app's locale changes.
+
+#### Accessibility
+
+`label` is the **only** accessible name the control has. Its visible text is a
+language name, which tells a screen-reader user what is *selected* but not what
+the control *does* — "English, button" gives no hint that pressing it changes
+the language. Never leave it at the English default in a localized portal.
+
+### Library caveats found the hard way
+
+Four traps that cost real debugging time. None is a defect you can fix from the
+portal; all four change how portal code must be written.
+
+**1. No UXM date atom accepts a `timeZone`.** `Calendar`, `DateInput` and
+`EditableCell`'s date editor all operate on local `Date` objects. The API returns
+UTC, so every instant must be formatted in portal code with an explicit zone.
+Handing a UTC instant straight to an atom renders it in the browser's zone and
+silently misfiles any row recorded near midnight.
+
+**2. `DateInput` and `EditableCell` forward nothing to their inner `Calendar`.**
+Both render `<Calendar value={…} onChange={…} />` and nothing more, so
+`previousMonthLabel` / `nextMonthLabel` / `drillUpLabel` are unreachable through
+either wrapper, and `weekStartsOn` is stuck on Sunday — wrong for every European
+locale. Month and weekday names *do* localize, but only because
+`UxmLocaleProvider` reaches the inner `Calendar` through context where
+prop-drilling never existed. Do not assume the a11y labels follow.
+
+**3. `parseDate` / `FORMAT_SPEC` are not exported from `@viax.io/uxm/ui`.** They
+exist in the library source but the barrel re-exports only the component and its
+types. A portal comparing a typed date against its own data has to re-derive the
+mask itself.
+
+**4. A `Listbox`-backed atom shares its root node with `.uxm-listbox`.** The
+class a consumer passes is merged onto Listbox's own root (`cn('uxm-listbox',
+className)`), which is `width: 100%` — right for field-embedded pickers, wrong
+for a standalone trigger. Specificity ties, so cascade order decides, and it can
+stretch the control across its flex parent and push its neighbours out of the
+row. If you hit this in portal CSS, qualify the selector
+(`.uxm-listbox.uxm-language-switcher`) rather than reordering imports.
+
+#### `keycloak-js` cannot be imported outside a browser
+
+`lib/keycloak.js` constructs its `Keycloak` instance at **module scope**, and the
+constructor reads `document`. Importing that module in Node — an SSR pass, a
+smoke test, a unit test — throws `ReferenceError: document is not defined`
+before a single line of portal code runs.
+
+Not a defect for the running app, which only ever loads in a browser, but it
+means the auth module (and anything importing it, including most pages) is
+untestable outside one. If tests are planned, make the instantiation lazy —
+create the client on first use rather than at import.
+
+### Currency — display only in this story
+
+#### Where the currency comes from
+
+Amount **and** currency both come from the pricing result — `amount` +
+`units.code` — and travel together as one value:
+
+```graphql
+pricPrice { edges { node { amount units { code } } } }
+```
+
+Normalise the connection to `[{ amount, currency }]` by mapping
+`units.code → currency`. Two shape traps: the edges routinely contain
+`{ node: null }` holes, and the same BI can carry several price types, so the
+TOTAL is the first **non-null** node, not `edges[0]`.
+
+**Never infer currency from the locale** — a `de-DE` user is not automatically
+paying in EUR — and **never hardcode a fallback**. A row with no resolvable
+`units.code` renders no amount; inventing `'USD'` to avoid a blank cell prints a
+number in the wrong currency, which is worse than printing nothing.
+
+#### The locale controls presentation, never the value
+
+```js
+new Intl.NumberFormat(locale, { style: 'currency', currency: units.code })
+```
+
+The same EUR amount, same value, two locales — verified output:
+
+| Locale | `1234.56` EUR |
+|---|---|
+| `en-US` | `€1,234.56` |
+| `de-DE` | `1.234,56 €` |
+
+⚠️ **Precision follows the CURRENCY, not the locale** — despite how the rule is
+usually phrased. `Intl` applies the currency's minor-unit digits, and the locale
+never overrides them:
+
+| | `en-US` | `de-DE` | `ja-JP` |
+|---|---|---|---|
+| `JPY` 1234.56 | `¥1,235` | `1.235 ¥` | `￥1,235` |
+| `BHD` 1234.5678 | `BHD 1,234.568` | — | — |
+
+JPY has no minor unit, so it renders whole in every locale; BHD has three. This
+is why you must **not** pass `minimumFractionDigits` / `maximumFractionDigits`
+to "make it consistent": a hardcoded `2` invents decimals JPY does not have and
+truncates one off BHD. Let `Intl` read the currency.
+
+#### Currency context goes to the engine, never to a converter
+
+Pass `X-Viax-User-Currency` from the same interceptor that carries the locale
+header, and let prices be **re-resolved through the Determination Engine**.
+
+There must be **no client-side conversion anywhere in the portal** — no rate
+table, no multiply, no cached FX. A converted number is a number the pricing
+engine never approved, and it will disagree with the invoice. If a currency
+context changes, re-query; do not recompute.
+
+#### Mixed-currency lists
+
+Render each row in its **own** currency. `formatMoney(row.amount, row.currency, locale)`
+— the currency is per row, never lifted to the table.
+
+**Never total across differing `units.code`.** Summing raw `amount` values from
+mixed currencies produces a number that looks authoritative and means nothing —
+the "silent totalling error". If a total is required, group by currency and show
+per-currency subtotals; if that is not acceptable to the design, the total does
+not belong on that screen.
+
+#### Display-only
+
+Currency is **derived** from the pricing result and the user's context. It is
+not user-switchable in this story, so the portal renders no control for it.
+(`CurrencyInput` remains available for *entering* a monetary value — a different
+job from choosing the display currency.)
+
+### Dates, times and numbers### Dates, times and numbers
+
+- The API returns UTC (viax date & time rules: store UTC, return UTC). Render in
+  the **user's timezone** — `I18NPreferences.i18TimeZone`, falling back to
+  `Intl.DateTimeFormat().resolvedOptions().timeZone`.
+- ⚠️ **No UXM date atom accepts a `timeZone`.** `Calendar`, `DateInput` and
+  `EditableCell`'s date editor all operate on local `Date` objects. Every
+  UTC-instant render therefore goes through `lib/utils/format.js` in portal
+  code — `formatDateTime(iso, locale, timeZone)`. Passing a UTC instant
+  straight to a UXM atom silently renders it in the browser's zone, which
+  misfiles any row recorded near midnight.
+- `DateInput`'s mask (`mdy` / `dmy` / `ymd`) is not derived from the locale by
+  the library — pick it per locale in `lib/i18n/` and pass it explicitly.
+- Numbers, percentages and quantities go through `Intl.NumberFormat(locale)`.
+  No `toFixed()` with a hand-written separator anywhere.
+
+### What `design.md` must state
+
+The emitted `design.md` is incomplete without:
+
+1. **Locales in play** — the value of `getSupportedLocales` at generation time,
+   which one is the configured default, and that the runtime re-check happens
+   post-login (the query is authenticated).
+2. **Translation codes introduced** — every `page.<page>.<label>` and
+   `common.<label>` the generated surface added, so they can be loaded into the
+   backend catalog.
+3. **Where the switcher lives** — or, if `getSupportedLocales.length === 1`,
+   an explicit note that no switcher is rendered and why.
+4. **Whether the runtime catalog overlay is active** — and if not, that live
+   catalog edits will not surface until a read query exists in the realm.
+5. **That a user without a preferences row cannot persist a language** — the
+   switch lasts the session and a toast says so — and that creating the first
+   row is a separate iteration.
+
+---
+
 ## viax GraphQL API Gotchas
 
 > Critical corrections — these mistakes cause runtime errors. Apply them exactly.
@@ -804,6 +1783,10 @@ specified in the theming skill — see *"App identity"* there; `{{PORTAL_ID}}` a
 // lib/graphql-client.js
 // - Singleton Axios instance pointed at VITE_API_URL
 // - Request interceptor: attach Bearer token from useAuthStore.getState().accessToken
+// - Request interceptor: attach X-Viax-User-Locale + X-Viax-User-Currency and inject
+//   nothing else. THIS IS THE ONLY PLACE locale touches the API — no component,
+//   hook or lib/api/* module passes it. Do NOT inject a `_locale` variable or
+//   argument; it is not accepted by filter/get queries. See "Localization & i18n".
 // - Response interceptor: 401 → keycloak.logout() → Keycloak redirects to login
 // - Generic execute function: (query, variables?) => Promise
 // - No direct fetch() calls anywhere — all GraphQL goes through this client
@@ -1272,9 +2255,8 @@ viax-lab-portal/
 │   ├── App.jsx                              # Root: QueryProvider + <UxmConfigApplier/> + React Router + Toaster
 │   ├── routes/
 │   │   ├── index.jsx                        # Route definitions (React Router v6)
-│   │   └── ProtectedRoute.jsx               # Auth guard: redirect to /login if no accessToken
+│   │   └── ProtectedRoute.jsx               # Auth guard: token-less → keycloak.login() (no portal sign-in page)
 │   ├── pages/
-│   │   ├── LoginPage.jsx                    # Card + FormField + TextInput + PasswordInput + ButtonPrimary (mock) or ButtonPrimary → keycloak.login()
 │   │   ├── dashboard/
 │   │   │   └── DashboardPage.jsx            # PageHeader + StatCard × 4 + recharts in Card + List recent
 │   │   ├── bi/                              # Shared BI page wrappers (one BiListPage + BiDetailPage handle every slug)
@@ -1293,7 +2275,7 @@ viax-lab-portal/
 │   │   ├── layout/
 │   │   │   ├── uxm-config-applier.jsx       # generateOverridesCss(config) → global <style id="uxm-overrides"> + favicon
 │   │   │   ├── theme-picker.jsx             # OPTIONAL ({{THEME_PICKER}}=yes): header trigger + Listbox dropdown, select-only
-│   │   │   └── shell.jsx                    # PageShell + AppSidebar (linkAs router) + AppTopBar + light/dark toggle
+│   │   │   └── shell.jsx                    # PageShell + AppSidebar (linkAs = forwardRef href→to adapter, NOT bare RouterLink) + AppTopBar + light/dark toggle
 │   │   ├── dashboard/
 │   │   │   ├── revenue-chart.jsx            # recharts LineChart in <Card>
 │   │   │   ├── status-donut.jsx             # recharts PieChart in <Card>
@@ -1309,9 +2291,19 @@ viax-lab-portal/
 │   │       ├── status-badge.jsx             # Maps status → <Tag type="…">
 │   │       ├── money-display.jsx
 │   │       └── date-display.jsx
+│   ├── i18n/
+│   │   ├── index.jsx                        # I18nProvider + useT(page) + useLocale(); wraps <UxmLocaleProvider>
+│   │   ├── bundled.js                       # the bundled locale files + BUNDLED_LOCALES (copy source + fallback list)
+│   │   ├── resolve.js                       # locale resolution (server prefs → browser → default) → { locale, source }; no stored link
+│   │   ├── locale-state.js                  # module-level locale/currency the graphql client reads
+│   │   ├── catalog.js                       # runtime overlay: Translation catalog merged over the file layer
+│   │   ├── codes.js                         # fileKey ↔ `page.<page>.<label>` mapping, both directions
+│   │   └── locales/
+│   │       ├── en-US.json                   # GENERATED, fully populated (configured default locale)
+│   │       └── {each getSupportedLocales entry}.json   # GENERATED, same key set, null values
 │   ├── lib/
 │   │   ├── keycloak.js                      # Keycloak singleton instance
-│   │   ├── graphql-client.js
+│   │   ├── graphql-client.js                # + X-Viax-User-Locale / -Currency headers (headers only — no `_locale` arg)
 │   │   ├── uxm-studio-config.js             # live { overrides, brand } store: localStorage cache + pub/sub + brand seed
 │   │   ├── theme-catalog.js                 # OPTIONAL ({{THEME_PICKER}}=yes): pure read-only helpers over uxmStudio's themes[]
 │   │   ├── uxm-persistence.js               # StudioPersistence adapter: load→live store, save→server (saveUxmConfig)+mirror
@@ -1351,15 +2343,6 @@ viax-lab-portal/
 ---
 
 ## Page Specifications
-
-### Login (`/login`)
-
-- Centered card on subtle gradient background
-- Portal logo above form — read `brand.logoUrl` from `lib/uxm-studio-config` (the same brand source the sidebar uses), falling back to `/logo.svg`
-- **`VITE_USE_MOCK_AUTH=false`:** "Login" button → `keycloak.login()` — Keycloak handles the full OIDC redirect flow; this page is typically bypassed since `keycloak.init({ onLoad: 'login-required' })` redirects automatically
-- **`VITE_USE_MOCK_AUTH=true`:** Username + password fields → call `useAuthStore.getState().setMockSession()` then navigate to `/dashboard`
-- Error display: read `?error=` from URL search params (`useSearchParams`)
-- Loading state on submit; redirect to `/dashboard` on success
 
 ### Dashboard (`/dashboard`)
 
@@ -1486,23 +2469,87 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 Build in this exact sequence:
 
 1. **Project scaffold** — Vite + React 19; install `@viax.io/uxm` + deps; import `@viax.io/uxm/tokens.css` and `@viax.io/uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (Gotcha #6); jsconfig paths. **Portal identity stamp (General Note #4, mandatory):** generate `{{PORTAL_ID}}` via `openssl rand -hex 4`, write the `"portal"` block into `package.json`, add the `__PORTAL_META__` `define` to `vite.config.js`, and the `stampPortalId()` boot call in `main.jsx`.
-2. **Theme system** — `globals.css` with the **full baseline from "UXM Layout & Styling Gotchas → Required `globals.css`"** (panel-radius unification, DetailSection padding override, InputWithIcon icon clamp, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 10). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchUxmConfig`/`fetchStudioConfig`/`fetchPortalAssignment`/`fetchAppliedStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveUxmConfig`/`saveStudioConfig` write helpers (deferred to step 10). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 4.
-3. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow, `auth-store`, `ProtectedRoute`, login page (mock + real Keycloak — built with `Card` + `FormField` + `TextInput`/`PasswordInput` + `ButtonPrimary` + `Banner` (NOT `Alert` — it was removed in @viax.io/uxm 2.0.0))
-4. **Shell layout** — `<PageShell>` + `<AppSidebar linkAs={RouterLink}>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; `useUser()` populates roles for sidebar visibility. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle.
-5. **Mock data** — Realistic data for all entity types using real viax field names
-6. **Dashboard** — `<PageHeader>` + `<StatCard>` × 4 + recharts charts in `<Card>` + `<DataTable>` for Recent orders (no Card wrapper — Gotcha #1) + `<Checkbox>`-driven Tasks (Gotcha #3) + Quick links Card (mock data)
-7. **BEM discovery** — Query active BEM via MCP (`get_type` + `execute_query`); call `get_type` on each discovered BI type to resolve interfaces; populate `bi-types.config.js`; build `<BiListPage>` and `<BiDetailPage>` shared templates using `<DataTable>`, `<PageHeader>`, `<InlineFilter>`, `<TimelineEntry>`, `<PropertyGrid>`; scaffold one thin page pair per `BI_TYPES` entry; populate sidebar `navItems` from `BI_TYPES`
-8. **Products** — `<DataTable>` with 5 columns (image `<Thumbnail>`, name, ID, description, categories `<Tag>`s); **no `<Card>` wrapper** (Gotcha #1). Detail page via `<DetailSection>` + `<PropertyGrid>` rendered directly.
-9. **Account** — top `<Card>` for the Avatar identity row; each section (Addresses, Notifications, Security) as a bare `<DetailSection>` — **no `<Card>` around DetailSection** (Gotcha #1). Wire to `useAuthStore(s => s.user)`.
-10. **Admin index (+ UXM Studio editor only if `{{EMBED_UXM_STUDIO}} = yes`)** — Admin index uses `<DataTable>` for the section list (Gotcha #2: Users / Integrations "coming soon", **no Theme row**). **Always** wire the host light/dark toggle in `<AppTopBar>` and the brand-driven sidebar logo (subscribe to `uxm-studio-config`). **Only when `{{EMBED_UXM_STUDIO}} = yes`:** create `lib/uxm-persistence.js` + the `saveUxmConfig`/`saveStudioConfig` write helpers, import `@viax.io/uxm/studio.css` in `main.jsx`, build the UXM Studio page (`src/pages/uxm/UxmStudioPage.jsx`) mounting `<UxmApp embed persistence={createConfigRepoPersistence()} />`, register `/uxm` in the router, and add the "UXM Studio" item under the **Settings** sidebar group. See [Runtime Theming](#runtime-theming--consume-the-uxm-studio-config-optionally-embed-the-editor-at-uxm).
-11. **Polish** — `<Loader>` / `<EmptyState>` for all data-fetching pages, error boundaries, `<Toaster/>` + `toast.*()` from `@viax.io/uxm/ui` (no sonner), responsive (`<ResponsiveGrid>` does most of the work)
-12. **Font smoke-check (MANDATORY — do not skip).** Before declaring the build done, verify the typography wiring survived generation. In the running app (DevTools → Computed → `font-family`), or by inspecting the built files, confirm ALL of:
+2. **Theme system** — `globals.css` with the **full baseline from "UXM Layout & Styling Gotchas → Required `globals.css`"** (panel-radius unification, DetailSection padding override, InputWithIcon icon clamp, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 11). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchUxmConfig`/`fetchStudioConfig`/`fetchPortalAssignment`/`fetchAppliedStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveUxmConfig`/`saveStudioConfig` write helpers (deferred to step 11). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 5.
+3. **i18n foundation (before ANY page)** — query `getSupportedLocales` + `currentLocale` **at scaffold time** (as the generator, with your own credentials) to learn the realm's list; probe whether a `Translation` read query exists and set `VITE_I18N_CATALOG` accordingly; generate `src/i18n/locales/{locale}.json` for every supported locale (default fully populated, others same key set with `null`); build `src/i18n/{index.jsx,bundled.js,resolve.js,locale-state.js,catalog.js,codes.js}` — the backend is the ONLY store for a signed-in user's language, so persist nothing client-side and follow the write rules in [Locale resolution](#locale-resolution) exactly, and ship `scripts/test-locale-resolution.mjs` (`npm run test:i18n`) with it; mount `<I18nProvider>` in `App.jsx` **above the router and above the auth guard**, starting with **no locale at all** and holding a full-screen spinner until the realm's inputs land — the runtime `getSupportedLocales` call is authenticated and belongs in a post-login hook that reconciles the list, never in the boot path; add the locale/currency **headers** to `lib/graphql-client.js` (headers only — `_locale` is a mutation argument and is rejected by `filter*` / `get*` queries). Verify `LanguageSwitcher` is exported by the installed `@viax.io/uxm` — **if it is not, STOP and report; never hand-roll one.** Building any page before this step guarantees hardcoded strings that step 14 will reject. See [Localization & i18n](#localization--i18n-mandatory--every-generated-surface).
+4. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow with `onLoad: 'login-required'`, `auth-store`, `ProtectedRoute` (token-less → `keycloak.login()`). **Generate NO login page and no `/login` route** — Keycloak's own form is the login screen; a portal page whose only job is a button that redirects there is pure friction. Mock auth mints its session at boot, so it needs no form either, and renders no sign-out control. The portal passes Keycloak **no locale**: that screen is the realm's.
+5. **Shell layout** — `<PageShell>` + `<AppSidebar>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; `useUser()` populates roles for sidebar visibility. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle.
+
+   🔴 **`linkAs` needs an `href` → `to` adapter — never pass react-router's `Link` directly.**
+   `AppSidebar` renders each item as `<linkAs href={item.href}>`. `next/link` accepts `href`, but
+   react-router's `Link` requires `to` and **overwrites** the `href` it was handed with
+   `useHref(undefined)` — i.e. the current path. `linkAs={Link}` therefore renders *every* nav item
+   pointing at the page you are already on, and clicking one navigates nowhere. Verified in a jsdom
+   render: `linkAs={Link}` → `["/dashboard","/dashboard"]`, location unchanged after a click;
+   with the adapter → `["/dashboard","/subscription-orders"]` and the click navigates.
+
+   ```jsx
+   import { forwardRef } from 'react'
+   import { Link as RouterLink } from 'react-router-dom'
+
+   const RouterNavLink = forwardRef(function RouterNavLink({ href, ...rest }, ref) {
+     return <RouterLink ref={ref} to={href ?? '#'} {...rest} />
+   })
+
+   <AppSidebar brand={brand} sections={sections} linkAs={RouterNavLink} />
+   ```
+
+   The same adapter is required for any other UXM component with a polymorphic link prop. See
+   [`viax-uxm/references/quick-recipes.md`](../../viax-uxm/references/quick-recipes.md) §1.
+
+6. **Mock data** — Realistic data for all entity types using real viax field names
+7. **Dashboard** — `<PageHeader>` + `<StatCard>` × 4 + recharts charts in `<Card>` + `<DataTable>` for Recent orders (no Card wrapper — Gotcha #1) + `<Checkbox>`-driven Tasks (Gotcha #3) + Quick links Card (mock data)
+8. **BEM discovery** — Query active BEM via MCP (`get_type` + `execute_query`); call `get_type` on each discovered BI type to resolve interfaces; populate `bi-types.config.js`; build `<BiListPage>` and `<BiDetailPage>` shared templates using `<DataTable>`, `<PageHeader>`, `<InlineFilter>`, `<TimelineEntry>`, `<PropertyGrid>`; scaffold one thin page pair per `BI_TYPES` entry; populate sidebar `navItems` from `BI_TYPES`
+9. **Products** — `<DataTable>` with 5 columns (image `<Thumbnail>`, name, ID, description, categories `<Tag>`s); **no `<Card>` wrapper** (Gotcha #1). Detail page via `<DetailSection>` + `<PropertyGrid>` rendered directly.
+10. **Account** — top `<Card>` for the Avatar identity row; each section (Addresses, Notifications, Security) as a bare `<DetailSection>` — **no `<Card>` around DetailSection** (Gotcha #1). Wire to `useAuthStore(s => s.user)`.
+11. **Admin index (+ UXM Studio editor only if `{{EMBED_UXM_STUDIO}} = yes`)** — Admin index uses `<DataTable>` for the section list (Gotcha #2: Users / Integrations "coming soon", **no Theme row**). **Always** wire the host light/dark toggle in `<AppTopBar>` and the brand-driven sidebar logo (subscribe to `uxm-studio-config`). **Only when `{{EMBED_UXM_STUDIO}} = yes`:** create `lib/uxm-persistence.js` + the `saveUxmConfig`/`saveStudioConfig` write helpers, import `@viax.io/uxm/studio.css` in `main.jsx`, build the UXM Studio page (`src/pages/uxm/UxmStudioPage.jsx`) mounting `<UxmApp embed persistence={createConfigRepoPersistence()} />`, register `/uxm` in the router, and add the "UXM Studio" item under the **Settings** sidebar group. See [Runtime Theming](#runtime-theming--consume-the-uxm-studio-config-optionally-embed-the-editor-at-uxm).
+12. **Polish** — `<Loader>` / `<EmptyState>` for all data-fetching pages, error boundaries, `<Toaster/>` + `toast.*()` from `@viax.io/uxm/ui` (no sonner), responsive (`<ResponsiveGrid>` does most of the work)
+13. **Font smoke-check (MANDATORY — do not skip).** Before declaring the build done, verify the typography wiring survived generation. In the running app (DevTools → Computed → `font-family`), or by inspecting the built files, confirm ALL of:
     - `globals.css` contains the `:root { --font-sans: var(--font-inter, …) }` bridge, the `html, body, #root { font-family: var(--brand-font, var(--font-sans)) }` chain, and `button, input, select, textarea { font: inherit }`.
     - `index.html` contains the Inter Google-Fonts `<link>` (Gotcha #6).
     - Computed `font-family` on `<body>` is Inter (or the published brand font) — **never a serif**. Serif body text → the bridge is missing.
     - Computed `font-family` on a native `<button>`/`<input>` matches the body — **never Arial/Helvetica**. Arial controls → the `font: inherit` rule is missing.
     - Sans-serif but not Inter → the `index.html` `<link>` is missing.
     If any check fails, fix `globals.css`/`index.html` from the Gotcha #5/#6 baselines verbatim — do not improvise alternative font declarations.
+14. **Hardcoded-string scan (MANDATORY — do not skip).** Generate
+    `scripts/scan-hardcoded-strings.mjs`, wire it as `"scan:i18n"` in
+    `package.json`, and run it. **It must exit non-zero on any literal UI text**,
+    and the build is not done while it fails.
+
+    What it flags in `src/**/*.jsx` (excluding `src/i18n/locales/*.json`):
+    - A JSX text node that contains a letter and is not wrapped in `{…}`:
+      `<ButtonPrimary>Add to cart</ButtonPrimary>`.
+    - A string literal passed to a known user-facing prop:
+      `title`, `label`, `header`, `placeholder`, `aria-label`, `emptyState`,
+      `helpText`, `titleText`, `description`, and every UXM label prop
+      (`clearLabel`, `closeLabel`, `requiredMessage`, `invalidMessage`,
+      `openCalendarLabel`, `startLabel`, `endLabel`, …).
+    - A string literal on a user-facing key **inside an object literal** — a
+      `DataTable` column's `header:`, a `labels={{ … }}` entry, a config array.
+      **This case is easy to omit and is where hardcoded copy actually hides:**
+      it is not JSX so the first rule misses it, and it is not a JSX attribute
+      so the second misses it too. A scan without it reports zero on a file
+      whose entire table is hardcoded:
+
+      ```js
+      // must be flagged
+      const columns = [{ key: 'maName', header: 'Product name' }]
+      ```
+
+      Match `(?:^|[,{(]\s*)([\w-]+):\s*['"]…['"]` and flag when the key is in
+      the user-facing prop list **or** matches `/label|message|text|header|title/i`.
+
+    What it must NOT flag (or the scan is useless noise and will be disabled):
+    - Anything inside `src/i18n/`.
+    - Non-linguistic literals: CSS values, `--color-*` / `--uxm-*` var names,
+      glyph ids (`<Icon glyph="search">`), `data-*`, `role`, `type`, `key`,
+      route paths, field codes (`maId`, `biCreatedAt`), currency codes,
+      IANA timezones, BCP-47 tags, `className`.
+    - Single non-letter tokens: `—`, `·`, `/`, `%`.
+
+    Report each hit as `file:line  <the literal>` so it is directly fixable, and
+    print the total. A generated surface starts at **zero** hits — every hit is
+    a key that should have been added to `src/i18n/locales/` and pulled through
+    `t()`.
 
 ---
 

@@ -92,6 +92,10 @@ Syncing to `viax-ai-skills` is the maintainer's manual step. Claude only reminds
 run, whether a sync is due (distribution repo behind the published version) or appears
 done. Reference checklist for the human (do not execute any of it):
 
+- **First** check the distribution repo for direct edits since the last sync
+  (`git log origin/main --format='%h %an %s' -- skills/<skill>` for each of the three; anything
+  that is not a `[VX-1736] … sync` commit must be ported INTO this repo before continuing —
+  see gotchas.md → "The skills distribution repo gets edited directly").
 - Copy **all three** — `skills/viax-uxm/`, `skills/viax-portal/` and `skills/viax-uxm-theming/` — verbatim into `viax-ai-skills`
   (same relative paths) on a branch `feature/<ticket>-viax-uxm-skill-v<VERSION>` off
   up-to-date `main` (VX-1736 is the standing ticket used by past syncs). `viax-portal` has
