@@ -76,7 +76,7 @@ renamed — the breaking notes for 3.0.0 and 4.0.0 are below).
   globally. The var names match what the studio's `generateOverridesCss` emits
   (`--uxm-{id}-{kebab(prop)}`). This is what makes a host's saved theme repaint real component
   *states* (hover/checked/…), not just the resting look.
-- **`@viax.io/uxm/studio` ships the live style editor as a mountable component (`UxmApp`)** — the MODO
+- **`uxm/studio` ships the live style editor as a mountable component (`UxmApp`)** — the MODO
   design workbench, embeddable in any host portal. See "Embedding the style editor" below. (Present
   since 2.2.x; matured through 2.3.1–2.4.1 with brand-asset handling, a light/dark toggle, and a
   brand-aware colour picker.)
@@ -256,7 +256,7 @@ reached the published library; now shipped in 2.8.0.
     config).
   - **The font picker is the library `Select`** (was a raw native `<select>`, whose OS-level popup
     dropped picks under the canvas event-capture re-renders — selections never landed).
-- **`fontFileUrl` / `safeFontFamily` are now exported from `@viax.io/uxm/studio/generate-css`** —
+- **`fontFileUrl` / `safeFontFamily` are now exported from `uxm/studio/generate-css`** —
   the Google-Fonts css2 URL builder (weights 400–700) and the font-name sanitiser the Build path
   uses. Reuse these in host appliers instead of hand-rolling font URL/escaping logic.
 
@@ -290,7 +290,7 @@ reached the published library; now shipped in 2.8.0.
 - **`required` + `requiredMessage` across the pickers** — `Select` (both modes), `PillSelect`,
   `EditableCell` and `DataTable` columns (`editorRequired` / `editorRequiredMessage`). The wording
   is shared: `DEFAULT_MULTI_REQUIRED_MESSAGE` (`'Select at least one option'`) is exported from
-  `@viax.io/uxm/ui` so every picker reports the identical text. Semantics differ by family, on purpose:
+  `uxm/ui` so every picker reports the identical text. Semantics differ by family, on purpose:
   the **live** input-family atoms (`Select`, `PillSelect`) let you empty the field and just flag it
   (`aria-required` + a `FieldError` below), while the **commit-boundary** `EditableCell` refuses the
   commit and shows a warning Banner — checked BEFORE your `validate`, so you never hand-write the
@@ -723,7 +723,7 @@ reached the published library; now shipped in 2.8.0.
      heading silently mislabels them and they never get re-stamped. -->
 
 - **New `ComponentDef.canvasFill` — a studio-canvas layout flag.** Exported from
-  `@viax.io/uxm/studio`. The canvas centres a preview on both axes by default; set `canvasFill: true`
+  `uxm/studio`. The canvas centres a preview on both axes by default; set `canvasFill: true`
   on a def and it fills the width and top-aligns instead. For gallery/list previews, where
   centring wastes horizontal space and — worse — re-centres vertically as content height changes,
   so filtering a list makes the whole block jump. Optional and additive: every def that omits it

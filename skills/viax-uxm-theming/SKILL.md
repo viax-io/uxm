@@ -31,11 +31,12 @@ Four steps, in this order. Everything else in this skill is an implementation of
 |---|---|---|
 | 1 | **Fetch** | `getUxmConfig { config }` → a JSON **string** → parse → read the `uxmStudio` key |
 | 2 | **Seed** | Put `{ overrides, brand }` into a store the UI can subscribe to (cache in `localStorage` so returning users skip the flash) |
-| 3 | **Apply** | `generateOverridesCss(overrides, brand)` from `@viax.io/uxm/studio/generate-css` → inject as ONE `<style id="uxm-overrides">` in `<head>` |
+| 3 | **Apply** | `generateOverridesCss(overrides, brand)` from `uxm/studio/generate-css` → inject as ONE `<style id="uxm-overrides">` in `<head>` |
 | 4 | **React** | Re-run step 3 whenever the store changes, so a publish (or an embedded save) re-themes live |
 
-Requires `@viax.io/uxm@^4.15.0` — that is the floor for the dedicated config operations. Always
-`npm i @viax.io/uxm@latest`.
+Requires `@viax.io/uxm@^4.15.0` — that is the floor for the dedicated config operations —
+installed under the `uxm` alias (`"uxm": "npm:@viax.io/uxm@^4.40.1"` in `package.json`, imports
+`from 'uxm/…'`). Always `npm i uxm@npm:@viax.io/uxm@latest`.
 
 **How the store learns of a publish (step 4's trigger):** there is no push channel today. An
 embedded studio's save updates the store directly (reference implementation, file 5). A
@@ -150,7 +151,7 @@ name, never assume `themes[]` exists, always normalise defensively and ignore un
 | Mode | What the app does | Build |
 |---|---|---|
 | **Consume** (default) | Reads + applies the published config. No editor, no save path. | Store, API read half, applier, boot hook |
-| **Embed** | Also mounts `UxmApp` from `@viax.io/uxm/studio` with server-backed save | + API write half, persistence adapter, studio page, `@viax.io/uxm/studio.css` |
+| **Embed** | Also mounts `UxmApp` from `uxm/studio` with server-backed save | + API write half, persistence adapter, studio page, `uxm/studio.css` |
 | **Picker** | Also lets end users *select* among themes the designer published | + theme catalog, theme store, picker UI |
 
 Consume is always built. The other two are independent of each other — an app can have a

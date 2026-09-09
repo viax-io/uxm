@@ -168,7 +168,7 @@ in place, regenerated on every store change. Mount once at the app root, above t
 
 ```jsx
 import { useEffect } from 'react'
-import { generateOverridesCss } from '@viax.io/uxm/studio/generate-css'
+import { generateOverridesCss } from 'uxm/studio/generate-css'
 import { getUxmConfig, subscribeUxmConfig } from '@/lib/uxm-studio-config'
 
 const STYLE_ID = 'uxm-overrides'
@@ -201,7 +201,7 @@ export default function UxmConfigApplier() {
 }
 ```
 
-`generate-css` is plain JS — a consumer-only app does **not** need `@viax.io/uxm/studio.css`.
+`generate-css` is plain JS — a consumer-only app does **not** need `uxm/studio.css`.
 
 The generated CSS also declares `--brand-logo-url` (with a dark-theme override) alongside the
 token blocks. In React, prefer reading `brand.logoUrl` from the store (the hook in file 1) —
@@ -292,7 +292,7 @@ export function createConfigRepoPersistence() {
 Studio page:
 
 ```jsx
-import { UxmApp } from '@viax.io/uxm/studio'
+import { UxmApp } from 'uxm/studio'
 import { createConfigRepoPersistence } from '@/lib/uxm-persistence'
 
 const persistence = createConfigRepoPersistence()
@@ -311,7 +311,7 @@ normalised `structure` is otherwise stale. Give the store a `reloadThemes()` (a 
 variant that skips the `structure` early-return) and call it from `save` after
 `setUxmConfig(state)`.
 
-Import `@viax.io/uxm/studio.css` **once** in your entry file, before your global stylesheet, so
+Import `uxm/studio.css` **once** in your entry file, before your global stylesheet, so
 load order is deterministic — not in the page. In `embed` mode the studio drops full-page
 chrome and defers `data-theme` to the host. If your shell adds content padding, zero it on the
 studio route: the workbench is a full-bleed surface.

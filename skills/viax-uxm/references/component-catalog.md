@@ -1,6 +1,6 @@
 # @viax.io/uxm — Component Catalog
 
-All 97 components exported from `@viax.io/uxm/ui` (as of v4.40.2), grouped by intent. Use this file
+All 97 components exported from `@viax.io/uxm/ui` (as of v4.40.2) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
 
 ## Deprecated (removed in the next major — do not use in new code)
 
@@ -13,7 +13,7 @@ marked `@deprecated` (JSDoc, README, studio registry, this list), keeps working 
 minor, and goes away only in the next major. Studio themes saved against a deprecated surface
 keep painting until then.
 
-## Hooks — `@viax.io/uxm/hooks`
+## Hooks — `uxm/hooks`
 
 The behaviour hooks the atoms are built on, for a host that composes its own floating layer or
 keyboard widget on top of the primitives. Pure React, no atom imports; all typed.
@@ -35,7 +35,7 @@ the per-component README at `src/ui/{name}/README.md` in the uxm repo
 (note: atoms added in 1.1.0–2.0.0 — toast, dialog, modal, popover, listbox, banner,
 field-error, number-stepper — may not have READMEs yet; read their `.tsx` JSDoc).
 
-Import path for all: `import { … } from '@viax.io/uxm/ui';`
+Import path for all: `import { … } from 'uxm/ui';`
 
 > **v2.0.0 breaking changes:** `Alert` is REMOVED — use `Banner` (same
 > variant/title/icon/children; adds `onDismiss`). `NumberField` is RENAMED to `NumberStepper`
@@ -162,7 +162,7 @@ Import path for all: `import { … } from '@viax.io/uxm/ui';`
 `<Icon glyph="…">` returns **`null`** for anything not in this list — no error, no warning, just a
 missing icon. There is deliberately no `dashboard`, `folder`, `package`, `external`, `chart`,
 `shopping-cart` or `home`; reaching for those is the most common generation mistake. Verify against
-`ICONS.map(i => i.id)` (or `ICON_OPTIONS`, from `@viax.io/uxm/ui`) if you suspect the set has grown.
+`ICONS.map(i => i.id)` (or `ICON_OPTIONS`, from `uxm/ui`) if you suspect the set has grown.
 
 ```
 archive-x  arrow-down  arrow-left  arrow-right  arrow-up  arrow-up-right  bell  bolt  bot
@@ -264,7 +264,7 @@ library. Localisation is split in two, and the split is the whole contract:
 **Localising an atom, end to end** — provider for formatting, props for copy:
 
 ```tsx
-import { UxmLocaleProvider, DateInput, FileUpload } from '@viax.io/uxm/ui';
+import { UxmLocaleProvider, DateInput, FileUpload } from 'uxm/ui';
 
 <UxmLocaleProvider locale="uk-UA">
   <DateInput

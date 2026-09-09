@@ -4,8 +4,8 @@ Copy-pasteable patterns for the most common compositions. Each recipe assumes:
 
 ```ts
 // app/layout.tsx (Next.js) — done once
-import '@viax.io/uxm/tokens.css';
-import '@viax.io/uxm/ui.css';
+import 'uxm/tokens.css';
+import 'uxm/ui.css';
 ```
 
 …and that the host stylesheet carries the baseline in recipe 0.
@@ -17,6 +17,14 @@ import '@viax.io/uxm/ui.css';
 **Do this before anything else.** The library ships deliberate defaults that a host has to
 complete — two of them are load-bearing, and skipping either produces a broken app that looks
 like a library bug. Load this AFTER `tokens.css` and `ui.css`.
+
+The dependency itself is installed under the **`uxm` alias** — every import in this file and in
+the app reads `uxm/…`, and the real package name appears exactly once:
+
+```jsonc
+// package.json
+"dependencies": { "uxm": "npm:@viax.io/uxm@^4.40.1" }
+```
 
 ```css
 /* MANDATORY box-sizing reset — the library ships NO global reset, and several atoms
@@ -75,7 +83,7 @@ import {
   TextInput,
   Icon,
   type AppSidebarSection,
-} from '@viax.io/uxm/ui';
+} from 'uxm/ui';
 
 // NOTE: the section key is `heading`, NOT `label`. And `glyph` must be a real id
 // from the registry (see component-catalog.md) — <Icon> renders NOTHING for an
@@ -154,7 +162,7 @@ import {
   ButtonPrimary,
   ButtonTertiary,
   Cluster,
-} from '@viax.io/uxm/ui';
+} from 'uxm/ui';
 
 export function ContactForm() {
   const [name, setName] = useState('');
@@ -210,7 +218,7 @@ export function ContactForm() {
 ## 3. Tabular list with `DataTable`
 
 ```tsx
-import { DataTable, type DataTableColumn, InlineAction, Icon } from '@viax.io/uxm/ui';
+import { DataTable, type DataTableColumn, InlineAction, Icon } from 'uxm/ui';
 
 type User = { id: string; name: string; email: string; signups: number };
 
@@ -258,7 +266,7 @@ Two different tools — pick by lifetime, not by look:
 
 ```tsx
 // Banner — inline in page flow
-import { Banner } from '@viax.io/uxm/ui';
+import { Banner } from 'uxm/ui';
 
 <Banner variant="success" title="Q1 forecast beat target by 12%." onDismiss={() => setShow(false)} />
 <Banner variant="warning">Working offline — changes are queued.</Banner>
@@ -266,12 +274,12 @@ import { Banner } from '@viax.io/uxm/ui';
 
 ```tsx
 // Toast — mount the outlet ONCE at the app root…
-import { Toaster } from '@viax.io/uxm/ui';
+import { Toaster } from 'uxm/ui';
 // in app/layout.tsx / App.tsx:
 <Toaster position="top-right" max={5} />
 
 // …then fire imperatively from anywhere (no hooks, no context):
-import { toast } from '@viax.io/uxm/ui';
+import { toast } from 'uxm/ui';
 toast.success('Saved');
 toast.error('Import failed', { duration: 8000 });
 const id = toast.info('Syncing…');
@@ -285,7 +293,7 @@ For inline FIELD errors, use the input atom's own `error` prop — not a Banner.
 ## 5. Empty + loading + error states for a list view
 
 ```tsx
-import { EmptyState, Loader, Banner, Icon } from '@viax.io/uxm/ui';
+import { EmptyState, Loader, Banner, Icon } from 'uxm/ui';
 
 if (loading) return <Loader variant="spinner" message="Loading projects…" />;
 if (error) return <Banner variant="error">{error.message}</Banner>;
@@ -306,7 +314,7 @@ an upload, a batch job, a stepped flow — reach for **`ProgressBar`** (2.7.0) i
 `value` (0–100) from real progress:
 
 ```tsx
-import { ProgressBar } from '@viax.io/uxm/ui';
+import { ProgressBar } from 'uxm/ui';
 
 <ProgressBar value={uploadedPct} label="Uploading…" />        {/* linear track + fill */}
 <ProgressBar variant="ring" value={uploadedPct} />            {/* circular gauge */}
@@ -322,7 +330,7 @@ import { ProgressBar } from '@viax.io/uxm/ui';
 ```tsx
 'use client';
 import { useState } from 'react';
-import { Dialog, Modal, ButtonPrimary, ButtonTertiary, Cluster } from '@viax.io/uxm/ui';
+import { Dialog, Modal, ButtonPrimary, ButtonTertiary, Cluster } from 'uxm/ui';
 
 export function DeleteProjectButton({ onConfirm }: { onConfirm: () => void }) {
   const [open, setOpen] = useState(false);
@@ -379,7 +387,7 @@ commit/validate/error semantics outside a table.
 ## 8. Theme override per-instance (without touching MODO tokens)
 
 ```tsx
-import { Card, ButtonPrimary } from '@viax.io/uxm/ui';
+import { Card, ButtonPrimary } from 'uxm/ui';
 
 // Per-instance override: pass --uxm-* vars via inline style.
 <Card style={{ '--uxm-card-padding': '24px' } as React.CSSProperties}>
@@ -399,7 +407,7 @@ For self-hosted apps that don't use MODO brand-settings, override `--color-*` de
 a global CSS file that loads AFTER `tokens.css`:
 
 ```css
-/* app/brand.css — imported after @viax.io/uxm/tokens.css */
+/* app/brand.css — imported after uxm/tokens.css */
 :root {
   --color-accent: #FF4400;
   --color-accent-bold: #CC2200;
@@ -425,8 +433,8 @@ import {
   themeTokens,
   findToken,
   resolveHex,
-} from '@viax.io/uxm/tokens';
-import { parseColor, contrastRatio, wcagLevel } from '@viax.io/uxm';
+} from 'uxm/tokens';
+import { parseColor, contrastRatio, wcagLevel } from 'uxm';
 
 const accentBold = findToken('--color-accent-bold');
 const textInverse = findToken('--color-text-inverse');
@@ -452,7 +460,7 @@ if (fg && bg) {
 > bespoke editor surface. Application code should NOT import previews — host shells (editors) only:
 
 ```tsx
-import { ButtonPreview, type PreviewShellContext } from '@viax.io/uxm/previews';
+import { ButtonPreview, type PreviewShellContext } from 'uxm/previews';
 
 function HostShellPanel({ shell }: { shell: PreviewShellContext }) {
   return (
@@ -473,13 +481,13 @@ function HostShellPanel({ shell }: { shell: PreviewShellContext }) {
 
 ---
 
-## 12. Embed the ready-made style editor (`@viax.io/uxm/studio`)
+## 12. Embed the ready-made style editor (`uxm/studio`)
 
 Mount the whole MODO workbench in a host route — designers tune the brand live, no editor to build:
 
 ```tsx
-import { UxmApp, createClientPersistence, generateOverridesCss } from '@viax.io/uxm/studio';
-import '@viax.io/uxm/studio.css'; // in a non-Tailwind host, import BEFORE the host's global CSS
+import { UxmApp, createClientPersistence, generateOverridesCss } from 'uxm/studio';
+import 'uxm/studio.css'; // in a non-Tailwind host, import BEFORE the host's global CSS
 
 const persistence = createClientPersistence({
   // seed the studio with the host brand so it adopts them as its managed Accent tokens
@@ -495,7 +503,7 @@ Apply the saved config to the WHOLE host (all routes) via the same generator the
 mount once at the app root and re-run whenever the saved config changes:
 
 ```tsx
-import { generateOverridesCss } from '@viax.io/uxm/studio/generate-css';
+import { generateOverridesCss } from 'uxm/studio/generate-css';
 
 function applyTheme(config) {
   const el =
@@ -526,7 +534,7 @@ A `Menu` runs an action from a consumer-owned trigger (no held value — that's 
 into a `DataTable` via `rowActions`, and surface multi-select operations with `BulkActionBar`.
 
 ```tsx
-import { DataTable, BulkActionBar, type MenuEntry, type BulkAction } from '@viax.io/uxm/ui';
+import { DataTable, BulkActionBar, type MenuEntry, type BulkAction } from 'uxm/ui';
 
 // Per-row ⋮ column — each action closes over its row.
 const rowActions = (row: Deal): MenuEntry[] => [
@@ -613,7 +621,7 @@ take the label's `htmlFor`, so the cell names itself.
 'use client';
 
 import { useState } from 'react';
-import { Card, EditableCell, FormField, Stack } from '@viax.io/uxm/ui';
+import { Card, EditableCell, FormField, Stack } from 'uxm/ui';
 
 export function EntityDetailCard() {
   const [name, setName] = useState('Dental Customer Onboarding');
@@ -659,7 +667,7 @@ import {
   Cluster,
   Tag,
   Avatar,
-} from '@viax.io/uxm/ui';
+} from 'uxm/ui';
 import { useNavigate } from 'react-router-dom';
 
 function OrderDetailPage({ order }: { order: Order }) {
@@ -741,7 +749,7 @@ list never needs the search row `Listbox` shows by default past its `SEARCHABLE_
 row is redundant; only the current theme needs a badge at all.
 
 ```jsx
-import { Avatar, Icon, Listbox, Tag } from '@viax.io/uxm/ui';
+import { Avatar, Icon, Listbox, Tag } from 'uxm/ui';
 
 function ThemePicker({ rows, selectedId, onSelect }) {
   const selectedRow = rows.find((r) => r.id === selectedId) ?? null;
@@ -851,7 +859,7 @@ provider (formatting) → switcher (`value` + `onChange`) → storage.
 // app/locale-provider.tsx — the host's own state, any mechanism works
 'use client';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { UxmLocaleProvider } from '@viax.io/uxm';
+import { UxmLocaleProvider } from 'uxm';
 
 const SUPPORTED = ['en-US', 'de-DE', 'uk-UA'];   // in a viax portal: the realm's supported locales
 const STORAGE_KEY = 'app.locale';
@@ -886,7 +894,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
 
 ```tsx
 // app/topbar.tsx — the control, wired to that same state
-import { LanguageSwitcher } from '@viax.io/uxm';
+import { LanguageSwitcher } from 'uxm';
 import { useHostLocale } from './locale-provider';
 
 const { locale, locales, setLocale } = useHostLocale();
@@ -923,7 +931,7 @@ first — chances are `Card`, `Disclosure`, `PropertyField`, `MetaRow` already c
 ❌ **Don't inline literal hex** when a token covers the intent. Use `--color-*` via `var()` so
 MODO brand-settings can re-tint.
 
-❌ **Don't import previews into application code.** They live behind `@viax.io/uxm/previews` for a
+❌ **Don't import previews into application code.** They live behind `uxm/previews` for a
 reason — host shells only.
 
 ❌ **Don't put `"use client"` on every file.** UXM components themselves don't need it. Only add
@@ -943,7 +951,7 @@ keyboard nav, and ARIA; render your trigger via `renderTrigger` and spread `trig
 imperative `toast.*()` calls render through it.
 
 ❌ **Don't import from the root `@viax.io/uxm`** for production code. Prefer
-`@viax.io/uxm/ui` for tree-shake-friendly per-component imports.
+`uxm/ui` for tree-shake-friendly per-component imports.
 
 ❌ **Don't pass `value` to `PropertyField`.** It takes `children`, not a `value` prop —
 `<PropertyField label="Total" value={total} />` silently renders an empty value cell. Use
