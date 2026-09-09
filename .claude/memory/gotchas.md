@@ -376,3 +376,25 @@ alarm — stop and look. The same applies in reverse: our copy of
 `viax-portal/SKILL.md` carried an unquoted `description:` with ": " inside
 (invalid YAML, the skill never triggered) that only the distribution repo's
 `scripts/validate-skills.sh` catches — run it on the synced tree, always.
+
+---
+
+## GitHub: a stacked PR merges into its BASE BRANCH, not into master
+
+PR #8 (`docs/skill-uxm-alias`) was opened with base `docs/skill-portal-port-localization`
+so it would show only its own commit while #6 was pending. #6 merged into master
+first; #8 then merged **into the already-merged, now-stale base branch** —
+merge commit `ba253d1`, reachable from nothing once that branch was deleted.
+`gh pr view 8` said MERGED, master never got the commit, and only
+`git merge-base --is-ancestor <sha> origin/master` after the fact showed it.
+GitHub retargets a stacked PR to the default branch only when the base branch
+is deleted *through the PR page's "Delete branch" button*; a branch deleted any
+other way, or one that survives (`delete_branch_on_merge` is off here), leaves
+the stacked PR pointing at it.
+
+**How to apply:** don't stack PRs in this repo. Open every PR against `master`;
+if it depends on another open PR, say so in the description and merge in
+order — the second PR's diff shrinks to its own commits once the first lands.
+After any merge, verify with `git merge-base --is-ancestor <sha> origin/master`
+rather than trusting the PR's MERGED badge. Recovered here by cherry-picking
+`81a6b5f` onto master (PR #9).
