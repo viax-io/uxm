@@ -7,6 +7,9 @@ concurrency:
   group: ci-${{ github.head_ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -22,7 +25,9 @@ jobs:
           echo "Node version: $(node -v)"
           echo "NPM version: $(npm -v)"
 
-      - run: npm install
+      # `npm ci` installs exactly the lockfile (and fails if package.json drifted
+      # from it) — the reproducibility a gate needs; `npm install` would resolve.
+      - run: npm ci
 
       - run: npm run lint
 
