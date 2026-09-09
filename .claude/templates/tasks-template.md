@@ -32,7 +32,7 @@ one task or an explicit `N/A — rationale` line.
 
 - [ ] T-E1 Commit messages carry the correct Conventional Commit types (CI derives the semver
       bump, CHANGELOG, and skill-marker stamps from them — no manual version/CHANGELOG edits)
-- [ ] T-E2 AI skill updated for public-surface changes (`skills/viax-uxm/` — same MR,
+- [ ] T-E2 AI skill updated for public-surface changes (`skills/viax-uxm/` — same PR,
       "(unreleased)" marks, markers untouched)
 - [ ] T-E3 Update README / handbooks if public surface changed
 

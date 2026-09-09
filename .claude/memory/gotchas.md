@@ -21,7 +21,10 @@ Then open a PR. `master` is protected **by convention only** — and on GitHub i
 is deliberately left unprotected, because `@semantic-release/git` pushes its
 `chore(release)` commit with the default `GITHUB_TOKEN`, which cannot write to a
 protected branch. Nothing stops a mis-targeted push from landing there and
-triggering a release (the Release workflow runs `semantic-release` on `master`).
+triggering a release (the Release workflow runs `semantic-release` on `master`)
+— the only net under it is that the Release job re-runs lint / typecheck /
+check:drift / test before `semantic-release`, so a push that would fail CI is
+stopped before it is tagged and published. A push that passes still releases.
 
 **Why this matters — the v3.0.1 incident.** A branch was once created with
 `git checkout -b <name> origin/master` (tracking `origin/master`); a bare

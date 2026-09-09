@@ -11,10 +11,11 @@ Maintain the Claude skills this repo owns. **The editing source lives IN THIS RE
 
 Steps 2 and 3 below (version check, post-release cleanup) apply to **`viax-uxm` only** —
 `viax-portal` has no markers to stamp. Step 1 (drift + hygiene) and step 4 (sync) cover
-**both**. The shared `viax-ai-skills` GitLab repo
-(`ssh://git@ssh.gitlab.viax.tech:2222/ai/viax-ai-skills.git` — port 22 on the bare host
-times out) is a DISTRIBUTION TARGET only — same model as the npm package itself (source
-here → publish to npm). That repo has not migrated off GitLab; only uxm has.
+**both**. The shared `viax-ai-skills` repo (`https://github.com/viax-io/viax-ai-skills`,
+private; clone as `git@github-viax:viax-io/viax-ai-skills.git` with the work-account ssh
+alias) is a DISTRIBUTION TARGET only — same model as the npm package itself (source here →
+publish to npm). It migrated to GitHub alongside uxm but still runs its own release flow
+(`main` → `release`, tag + zips) — follow ITS `CLAUDE.md`, not this one, for the release side.
 
 **ALL Claude work happens locally in `skills/viax-uxm/` in this repo. Syncing to
 `viax-ai-skills` (or any other repo) is done MANUALLY by the maintainer — Claude must not
@@ -25,7 +26,7 @@ files correct + a reminder to the maintainer that a manual sync is (or isn't) du
 
 | What | When | Who |
 |---|---|---|
-| Skill CONTENT (catalog rows, recipes, "### Unreleased" notes) | in the SAME feature MR as the library change | the author of the change |
+| Skill CONTENT (catalog rows, recipes, "### Unreleased" notes) | in the SAME feature PR as the library change | the author of the change |
 | Version marker + component count + "### Unreleased" → "New in X.Y.Z" | at release, automatically | CI: `scripts/stamp-skill-version.mjs` via `@semantic-release/exec` (see `.releaserc`); the stamped files land in the `chore(release)` commit |
 | Post-release cleanup (drop obsolete "(unreleased)" qualifiers) in `skills/viax-uxm/` | after a release lands | this command, locally in this repo |
 | Sync to `viax-ai-skills` | after a release lands | the MAINTAINER, manually — this command only reminds |
@@ -96,10 +97,12 @@ done. Reference checklist for the human (do not execute any of it):
   up-to-date `main` (VX-1736 is the standing ticket used by past syncs). `viax-portal` has
   no version of its own — it rides the same sync, so a portal-skill change alone is still a
   reason to sync even when `viax-uxm` is unchanged.
-- Run that repo's `bash scripts/validate-skills.sh` — must pass. Do NOT bump
-  `.claude-plugin/plugin.json` or touch `marketplace.json` — plugin releasing is the skills
-  repo's own CI-driven flow (see its `CLAUDE.md`).
-- Push, open an MR (`[VX-…]`-prefixed message summarising the version jump).
+- Run that repo's `bash scripts/validate-skills.sh` — must pass. Its `CLAUDE.md` → "Releasing"
+  owns the plugin version: at the time of writing it asks for a `.claude-plugin/plugin.json`
+  version bump IN the same PR and forbids touching `marketplace.json` (CI updates it) — re-read
+  that section before each sync rather than trusting this line.
+- Push, open a PR to `main` (`[VX-…]`-prefixed title summarising the version jump); the
+  `main` → `release` PR that actually publishes the plugin is a separate step in that repo.
 
 Report back: version jump, list of catalog rows added/changed/removed, recipes touched, and
 an explicit reminder that the manual sync to `viax-ai-skills` is pending (or looks done).

@@ -40,7 +40,7 @@ Perform code review with configurable scope, target, and depth.
 - Uses `git diff master...HEAD --name-only` (the base branch is `master` — there is no `main`)
 - Includes all commits made in the feature branch
 - Reviews only the **changed lines** (diff)
-- Perfect for pre-MR review when code is already committed/pushed
+- Perfect for pre-PR review when code is already committed/pushed
 
 ### Full mode (`--full`)
 **Reviews entire file content, not just the diff:**
@@ -163,7 +163,7 @@ When invoked:
 - `--full` is slower but catches issues that exist outside the changed lines
 - Path mode is ideal for auditing a component that was not recently modified
 - Use `--quick` for small changes or when you want a fast sanity check
-- Run before opening an MR to catch issues early
+- Run before opening a PR to catch issues early
 - Review output includes line numbers for easy navigation
 
 ARGUMENTS: $ARGUMENTS
