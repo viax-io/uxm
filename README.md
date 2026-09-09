@@ -18,8 +18,13 @@ The package ships **no `"use client"` / `"use server"` directives** by design: c
 ## Install
 
 ```bash
-npm install @viax.io/uxm
+npm i uxm@npm:@viax.io/uxm@latest
 ```
+
+That installs the package under the **`uxm` alias** — the convention every viax app uses — so the
+real name appears once, in `package.json` (`"uxm": "npm:@viax.io/uxm@^4.40.1"`), and imports stay
+short and rename-proof: `import { Button } from 'uxm/ui'`, `import 'uxm/tokens.css'`. A plain
+`npm install @viax.io/uxm` works too; the subpath exports are identical under either name.
 
 Peer deps: `react@^19`, `react-dom@^19`. Node `>=20` for local dev.
 
