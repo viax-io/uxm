@@ -58,7 +58,14 @@ async function compileScssTree(srcDir: string, destDir: string) {
       } else if (entry.isFile() && entry.name.endsWith('.scss')) {
         const rel = relative(absSrc, p).replace(/\.scss$/, '.css');
         const dest = join(absDest, rel);
-        const { css } = sass.compile(p, { style: 'expanded', sourceMap: false });
+        // `charset: false`: these outputs are fragments — `styles.css`
+        // concatenates every one with `@import` — and `@charset` is legal only
+        // as a stylesheet's first byte, so Sass emitting one per file holding a
+        // non-ASCII character (ours hold them only in comments) is invalid past
+        // the first fragment. A consumer that imports the aggregator into a
+        // cascade layer, as it must with rules that ship unlayered, then gets
+        // one "unknown at-rule" warning per fragment. The bundle stays UTF-8.
+        const { css } = sass.compile(p, { style: 'expanded', sourceMap: false, charset: false });
         await mkdir(dirname(dest), { recursive: true });
         await writeFile(dest, css);
         count += 1;
