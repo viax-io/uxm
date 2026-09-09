@@ -4,7 +4,7 @@ export const listItemDef: ComponentDef = {
   id: 'list-item',
   name: 'List Item',
   category: 'Composite',
-  description: "Row with icon, title, and optional trailing slot — used in stacked lists. Renders as `<div>` (static) or `<button>` / `<a>` (interactive) depending on the atom's `interactive` / `href` props. State knobs gate on `mode` rather than trailing — trailing is purely a visual choice and the two are orthogonal: an interactive row can have any trailing, a static row can have a chevron decoration without being tappable.",
+  description: "Row with a leading slot (accent icon tile, or media rendered as-is for a thumbnail / avatar), title, and optional trailing slot — used in stacked lists. Renders as `<div>` (static) or `<button>` / `<a>` (interactive) depending on the atom's `interactive` / `href` props. State knobs gate on `mode` rather than trailing — trailing is purely a visual choice and the two are orthogonal: an interactive row can have any trailing, a static row can have a chevron decoration without being tappable.",
   styleProperties: [
     // ── Per-state row colors. Filtered into the "States" section by
     // the State variant. Default-state knobs (`inactiveBg`,
@@ -49,10 +49,14 @@ export const listItemDef: ComponentDef = {
     // glyph inside. Keeps the icon visually distinct from the row bg in
     // every state (default / hover / active / disabled), so the shared
     // icon knobs don't need to vary per-state.
-    { key: 'iconBg', label: 'Icon Bg', control: 'color', defaultValue: 'var(--color-accent)', section: 'icon' },
-    { key: 'iconColor', label: 'Icon Color', control: 'color', defaultValue: 'var(--color-card)', section: 'icon' },
-    { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 24, min: 16, max: 40, step: 2, unit: 'px', section: 'icon' },
-    { key: 'iconRadius', label: 'Icon Radius', control: 'slider', defaultValue: 6, min: 0, max: 16, step: 1, unit: 'px', section: 'icon' },
+    { key: 'iconBg', label: 'Icon Bg', control: 'color', defaultValue: 'var(--color-accent)', section: 'icon', showWhen: { leading: 'icon' } },
+    { key: 'iconColor', label: 'Icon Color', control: 'color', defaultValue: 'var(--color-card)', section: 'icon', showWhen: { leading: 'icon' } },
+    { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 24, min: 16, max: 40, step: 2, unit: 'px', section: 'icon', showWhen: { leading: 'icon' } },
+    { key: 'iconRadius', label: 'Icon Radius', control: 'slider', defaultValue: 6, min: 0, max: 16, step: 1, unit: 'px', section: 'icon', showWhen: { leading: 'icon' } },
+    // Media slot is the un-tiled leading alternative: the passed node
+    // (Thumbnail / avatar / <img>) brings its own surface and radius, so
+    // the row only owns the box it sits in — one size knob, no colours.
+    { key: 'mediaSize', label: 'Media Size', control: 'number', defaultValue: 36, min: 24, max: 64, step: 2, unit: 'px', section: 'media', showWhen: { leading: 'media' } },
   ],
   layoutVariants: [
     {
@@ -89,6 +93,19 @@ export const listItemDef: ComponentDef = {
         { value: 'disabled', label: 'Disabled' },
       ],
       defaultValue: 'default',
+    },
+    {
+      key: 'leading',
+      label: 'Leading',
+      options: [
+        // `icon` → the accent `IconTile` (the long-standing default, so an
+        // existing saved theme opens on the same row it was saved against).
+        // `media` → the node renders as-is; the preview passes a `Thumbnail`,
+        // which is the shape this slot exists for (product / people rows).
+        { value: 'icon', label: 'Icon' },
+        { value: 'media', label: 'Media' },
+      ],
+      defaultValue: 'icon',
     },
     {
       key: 'value',

@@ -26,6 +26,26 @@ export const LIST_ITEM_ICON_TILE_STYLE = {
   '--uxm-icon-tile-icon-size': 'calc(var(--uxm-list-item-icon-size, 24px) * 0.6)',
 } as CSSProperties;
 
+/**
+ * Forward the row's media-size knob into the size vars of the atoms that
+ * plausibly fill the `media` slot, so each one sizes itself through its OWN
+ * machinery — frame, border, radius and inner glyph / initials all scale with
+ * it — instead of being stretched from the outside. Mirrors
+ * `LIST_ITEM_ICON_TILE_STYLE` above, and is the only order-independent fix:
+ * both `Thumbnail` (`.uxm-thumbnail`, 0,1,0 but imported AFTER list in
+ * `styles.css`) and `Avatar` (double-class size presets at 0,2,0, deliberately
+ * so per its own note) would otherwise win or lose the cascade against a slot
+ * rule purely on stylesheet order. The generic `> *` stretch in `list.scss`
+ * stays as the fallback for a bare `<img>` / `<svg>` or any atom with no size
+ * var of its own; both mechanisms resolve to the same number. Kept as a module
+ * constant so the studio preview can reuse the exact same forwarding.
+ */
+export const LIST_ITEM_MEDIA_STYLE = {
+  '--uxm-thumbnail-size': 'var(--uxm-list-item-media-size, 36px)',
+  '--uxm-avatar-size': 'var(--uxm-list-item-media-size, 36px)',
+  '--uxm-avatar-small-size': 'var(--uxm-list-item-media-size, 36px)',
+} as CSSProperties;
+
 export interface ListProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
@@ -51,6 +71,22 @@ export function List({ children, className, ...rest }: ListProps) {
 export interface ListItemProps {
   /** Leading icon — typically <Icon ... /> from @modo/uxm/ui. */
   icon?: ReactNode;
+  /** Leading media rendered as-is (a <Thumbnail>, <img>, avatar…) — NOT
+   *  wrapped in the accent `IconTile` the `icon` slot uses. Mutually
+   *  exclusive with `icon`: when both are passed, `media` wins. The slot
+   *  box is `--uxm-list-item-media-size` (36px) square; a `Thumbnail` or
+   *  `Avatar` gets that size forwarded into its own size var (see
+   *  `LIST_ITEM_MEDIA_STYLE`) and anything else is stretched to fill, so
+   *  rows stay on one leading grid either way.
+   *
+   *  Prefer decorative media in a row whose title already names the thing
+   *  (`alt=""`): the slot sits INSIDE the row's `<button>`/`<a>`, so a
+   *  described image is concatenated into the row's accessible name.
+   *
+   *  Note: this shadows the native `media` attribute of `<a>` for the
+   *  anchor form of the row — pass it through `className`/a wrapper if
+   *  you genuinely need the HTML attribute. */
+  media?: ReactNode;
   /** Secondary text shown under the title (e.g. a value). */
   value?: ReactNode;
   /** Trailing content — meta text, chevron icon, or a custom node. */
@@ -85,6 +121,7 @@ type DivRest = Omit<HTMLAttributes<HTMLDivElement>, keyof ListItemProps>;
 
 export function ListItem({
   icon,
+  media,
   value,
   trailing,
   children,
@@ -103,10 +140,20 @@ export function ListItem({
   const isInteractive = interactive || href !== undefined;
   const inner = (
     <>
-      {icon && (
-        <IconTile className="uxm-list-item__icon" style={LIST_ITEM_ICON_TILE_STYLE}>
-          {icon}
-        </IconTile>
+      {/* Leading slot. `media` renders as-is so a product photo / avatar
+          keeps its own frame; `icon` keeps the accent IconTile treatment.
+          `media` wins when both are passed — a row has one leading grid
+          position, and the as-is rendering is the more specific intent. */}
+      {media ? (
+        <span className="uxm-list-item__media" style={LIST_ITEM_MEDIA_STYLE}>
+          {media}
+        </span>
+      ) : (
+        icon && (
+          <IconTile className="uxm-list-item__icon" style={LIST_ITEM_ICON_TILE_STYLE}>
+            {icon}
+          </IconTile>
+        )
       )}
       <span className="uxm-list-item__content">
         <span className="uxm-list-item__title">{children}</span>

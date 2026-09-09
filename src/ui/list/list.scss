@@ -59,6 +59,29 @@
      which owns the accent-tile treatment. The studio icon knobs are forwarded
      into IconTile's var namespace via `LIST_ITEM_ICON_TILE_STYLE`, so the tile
      pattern is defined once instead of being re-implemented here. */
+
+  /* Media slot — the alternative leading position for a thumbnail / avatar /
+     bare <img>, rendered as-is (no IconTile, no accent fill, no colour of its
+     own: the media brings its own frame). The row still owns the geometry, so
+     every leading element lands on the same grid whichever slot filled it. */
+  &__media {
+    align-items: center;
+    box-sizing: border-box;
+    display: inline-flex;
+    /* Never let a long title squeeze the media out of square. */
+    flex-shrink: 0;
+    height: var(--uxm-list-item-media-size, 36px);
+    justify-content: center;
+    width: var(--uxm-list-item-media-size, 36px);
+
+    /* Only for a bare <img> passed straight in — without this it would
+       stretch to the box. `Thumbnail`'s own `--cover` / `--contain` rule is
+       more specific, so its fit choice still wins. */
+    img {
+      object-fit: cover;
+    }
+  }
+
   &__content {
     display: flex;
     flex: 1;
@@ -80,4 +103,23 @@
     color: var(--uxm-list-item-chevron-color, var(--color-text-muted));
     font-size: calc(12px * var(--type-scale, 1));
   }
+}
+
+/* Media fallback stretch, at (0,2,0) on purpose — same reasoning as
+   `avatar.scss`'s double-class size presets: a single-class selector here
+   (`.uxm-list-item__media > *`) TIES with a child atom's own size rule
+   (`.uxm-thumbnail`, also 0,1,0) and then loses or wins on nothing but the
+   `styles.css` import order, which is alphabetical — `Avatar` (line 7) would
+   obey the slot and `Thumbnail` (line 94) would ignore it. Two classes settle
+   it for every child regardless of order. The slot is always rendered inside a
+   row, so the descendant selector costs nothing.
+
+   Atoms with a size var of their own are ALSO handled by the forwarding in
+   `LIST_ITEM_MEDIA_STYLE` (list.tsx) — that path is what makes their border /
+   radius / inner glyph scale with the row instead of merely being clamped to
+   its box. Both resolve to the same size; this rule is the floor for a bare
+   <img>, <svg>, or a consumer's own node. */
+.uxm-list-item .uxm-list-item__media > * {
+  height: 100%;
+  width: 100%;
 }
