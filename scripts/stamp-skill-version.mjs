@@ -10,7 +10,7 @@
  *   3. SKILL.md section      — "## vX.Y.Z — current API surface"
  *   4. SKILL.md "### Unreleased" subsection (only when it actually has notes)
  *      → "### New in X.Y.Z", with a fresh empty "### Unreleased" re-opened
- *      below it so the next MR always has somewhere to park its notes
+ *      below it so the next PR always has somewhere to park its notes
  *   5. component-catalog.md  — "All N components exported ... (as of vX.Y.Z)"
  *   6. SKILL.md keeps only the KEEP_RELEASE_SECTIONS most recent "### New in"
  *      sections; older ones are rolled verbatim to the END of
@@ -95,14 +95,14 @@ const UNRELEASED_HEADING = '### Unreleased';
 const UNRELEASED_BLOCK = `${UNRELEASED_HEADING}
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     MR as the change. At release the pipeline renames this heading to
+     PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
 `;
 
-// A feature MR may have parked its notes under "### Unreleased". Promote that
+// A feature PR may have parked its notes under "### Unreleased". Promote that
 // section to the released version and immediately re-open an empty one.
 //
 // Re-opening is the whole point: before this was automated the heading was

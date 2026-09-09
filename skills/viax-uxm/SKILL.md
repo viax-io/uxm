@@ -151,7 +151,7 @@ catalog.
 ### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     MR as the change. At release the pipeline renames this heading to
+     PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->

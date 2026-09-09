@@ -33,7 +33,16 @@ jobs:
           echo "Node version: $(node -v)"
           echo "NPM version: $(npm -v)"
 
-      - run: npm install
+      - run: npm ci
+
+      # master is deliberately unprotected (gotchas.md → Git), so a direct push
+      # would otherwise publish unverified code. Re-run the CI gates here: a
+      # PR-merged commit passes them in a minute, a stray push is stopped
+      # before semantic-release tags and publishes it.
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run check:drift
+      - run: npm test
 
       - run: npm run build
 

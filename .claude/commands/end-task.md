@@ -160,4 +160,4 @@ If any step fails:
   is not allowed.
 - The Jira step is best-effort; a failed post does not block completion.
 - After `/end-task`, the next step is `git push -u origin <branch>` (explicit
-  target — never a bare `git push`, see `gotchas.md`) and an MR.
+  target — never a bare `git push`, see `gotchas.md`) and a PR (`gh pr create`).

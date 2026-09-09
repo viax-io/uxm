@@ -1,83 +1,102 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.3.0 → 1.4.0
-Bump rationale: MINOR — Principle III gains a deprecation rule: replacement
-ships first (MINOR), the old surface is marked @deprecated everywhere it is
-described (JSDoc, README, studio registry, skill), stays painting for at least
-one MINOR, and is removed only in the next MAJOR. First application:
-`ButtonIcon` → `IconButton variant="filled"` (4.39). Also in this release
-train: `@viax.io/uxm/hooks` subpath (new export, MINOR) and Modal's sub-
-components moved from forwardRef to React 19 ref props (no API change).
+Version change: 1.4.0 → 1.4.1
+Bump rationale: PATCH — wording only, after the GitLab → GitHub migration:
+the skills distribution repo is named as a GitHub repo, and "MR" reads "PR"
+in Principle III and the Development Workflow. No principle changed meaning.
+The release itself already moved (public npm, GitHub Actions, constitution
+"Distribution" section) in the migration PR.
 
-Modified principles:
-  - III. Component API Stability & Semver — "Deprecation precedes removal"
-    bullet added.
+Modified principles: none (path/wording in III; AI Skill & Agent Tooling;
+Development Workflow).
 Added sections: none. Removed sections: none.
 
 Templates requiring updates:
-  ✅ .claude/commands/update-ai-skill.md (authoring table gained a
-     "Deprecation" row)
-  ✅ skills/viax-uxm/references/component-catalog.md ("Deprecated" section)
-  ✅ .claude/templates/* (no change needed — verified)
+  ✅ .claude/commands/update-ai-skill.md (GitHub distribution repo, PR wording,
+     defers plugin-version rules to that repo's CLAUDE.md)
+  ✅ .claude/commands/code-review.md, end-task.md; .claude/templates/plan-template.md,
+     tasks-template.md; .claude/handbooks/react-style-guide.md (MR → PR)
+  ✅ scripts/stamp-skill-version.mjs + skills/viax-uxm/SKILL.md guidance comment
+     (kept byte-identical to each other; MR → PR)
 
-Previous report (1.2.0 → 1.3.0, 2026-09-08) — kept for history:
-  Bump rationale: MINOR — Principle V gains a new gate: `npm test`, a Vitest
-  smoke suite (tests/, jsdom + Testing Library + axe-core) that pins the
-  behavioural contracts no other gate can see — focus trap / Escape /
-  outside-click on the floating layers, ARIA wiring on the pickers, the CSS
-  sanitizers, the overrides generator, an axe pass. Deliberately NOT a coverage
-  target: visual atoms are verified in the portal. CI's test job runs it with a
-  junit report, and `npm audit` runs against registry.npmjs.org, gating at
-  critical.
+Previous report (1.3.0 → 1.4.0, 2026-09-08) — kept for history:
+  Bump rationale: MINOR — Principle III gains a deprecation rule: replacement
+  ships first (MINOR), the old surface is marked @deprecated everywhere it is
+  described (JSDoc, README, studio registry, skill), stays painting for at least
+  one MINOR, and is removed only in the next MAJOR. First application:
+  `ButtonIcon` → `IconButton variant="filled"` (4.39). Also in this release
+  train: `@viax.io/uxm/hooks` subpath (new export, MINOR) and Modal's sub-
+  components moved from forwardRef to React 19 ref props (no API change).
 
   Modified principles:
-    - V. Build Hygiene & Strict Typing — `npm test` added as a MUST gate with
-      the "behavioural contracts, not coverage" scope.
+    - III. Component API Stability & Semver — "Deprecation precedes removal"
+      bullet added.
   Added sections: none. Removed sections: none.
 
   Templates requiring updates:
-    ✅ CLAUDE.md; .claude/handbooks/react-style-guide.md (K. Gates)
-    ✅ .claude/commands/start-task.md, end-task.md, code-review.md, commit-message.md
-    ✅ .claude/agents/code-review.md, runtime-debugger.md
-    ✅ .claude/templates/plan-template.md (V gate row now lists `npm test`);
-       spec/tasks templates unchanged — verified
+    ✅ .claude/commands/update-ai-skill.md (authoring table gained a
+       "Deprecation" row)
+    ✅ skills/viax-uxm/references/component-catalog.md ("Deprecated" section)
+    ✅ .claude/templates/* (no change needed — verified)
 
-  Previous report (1.1.1 → 1.2.0, 2026-09-07) — kept for history:
-    Bump rationale: MINOR — one new principle (VI. Localisation Boundary),
-    codifying the props-in/no-i18n-engine contract that VX-1835 enforced across
-    `src/ui`. No existing principle changed meaning.
+  Previous report (1.2.0 → 1.3.0, 2026-09-08) — kept for history:
+    Bump rationale: MINOR — Principle V gains a new gate: `npm test`, a Vitest
+    smoke suite (tests/, jsdom + Testing Library + axe-core) that pins the
+    behavioural contracts no other gate can see — focus trap / Escape /
+    outside-click on the floating layers, ARIA wiring on the pickers, the CSS
+    sanitizers, the overrides generator, an axe pass. Deliberately NOT a coverage
+    target: visual atoms are verified in the portal. CI's test job runs it with a
+    junit report, and `npm audit` runs against registry.npmjs.org, gating at
+    critical.
 
-    Modified principles: none (VI is additive).
-    Added sections:
-      - VI. Localisation Boundary (1.2.0)
-    Removed sections: none
+    Modified principles:
+      - V. Build Hygiene & Strict Typing — `npm test` added as a MUST gate with
+        the "behavioural contracts, not coverage" scope.
+    Added sections: none. Removed sections: none.
 
     Templates requiring updates:
-      ✅ .claude/templates/plan-template.md (Constitution Check gained a
-         "VI. Localisation Boundary" row)
-      ✅ .claude/commands/*, .claude/agents/* (no change needed — none of them
-         enumerate the principles; they point at this document)
+      ✅ CLAUDE.md; .claude/handbooks/react-style-guide.md (K. Gates)
+      ✅ .claude/commands/start-task.md, end-task.md, code-review.md, commit-message.md
+      ✅ .claude/agents/code-review.md, runtime-debugger.md
+      ✅ .claude/templates/plan-template.md (V gate row now lists `npm test`);
+         spec/tasks templates unchanged — verified
 
-    Previous report (1.1.0 → 1.1.1, 2026-09-07) — kept for history:
-      PATCH: no principle changed. The legacy Viax Vue handbooks (bem-style-guide,
-      design-tokens, ui-components) moved to `.claude/handbooks/legacy/` (repo audit
-      2026-09-07); the Principle I reference to `design-tokens.md` now points at the
-      archived path. The Vue-era commands `/write-tests` and `/figma-audit` were
-      removed and `/end-task` rewritten around the gates this document names (lint,
-      typecheck, check:drift, build). Templates synced then: end-task.md (rewritten),
-      commit-message.md (uxm scopes, semver footer), start-task.md +
-      agents/code-review.md + agents/react-frontend.md (legacy-handbook caveats
-      replaced by a pointer to handbooks/legacy/), .claude/templates/* (verified).
+    Previous report (1.1.1 → 1.2.0, 2026-09-07) — kept for history:
+      Bump rationale: MINOR — one new principle (VI. Localisation Boundary),
+      codifying the props-in/no-i18n-engine contract that VX-1835 enforced across
+      `src/ui`. No existing principle changed meaning.
 
-    Previous report (1.0.0 → 1.1.0, 2026-07-07) — kept for history:
-      MINOR: added "AI Skill & Agent Tooling"; Principles I, II, V and the
-      Development Workflow expanded (lint gate, semantic-release flow, skill
-      lifecycle); token taxonomy corrected to `--color-*`; SCSS-per-component and
-      BEM state modifiers codified; the SMACSS `.is-*` bullet removed.
+      Modified principles: none (VI is additive).
+      Added sections:
+        - VI. Localisation Boundary (1.2.0)
+      Removed sections: none
 
-    Follow-up TODOs:
-      - none
+      Templates requiring updates:
+        ✅ .claude/templates/plan-template.md (Constitution Check gained a
+           "VI. Localisation Boundary" row)
+        ✅ .claude/commands/*, .claude/agents/* (no change needed — none of them
+           enumerate the principles; they point at this document)
+
+      Previous report (1.1.0 → 1.1.1, 2026-09-07) — kept for history:
+        PATCH: no principle changed. The legacy Viax Vue handbooks (bem-style-guide,
+        design-tokens, ui-components) moved to `.claude/handbooks/legacy/` (repo audit
+        2026-09-07); the Principle I reference to `design-tokens.md` now points at the
+        archived path. The Vue-era commands `/write-tests` and `/figma-audit` were
+        removed and `/end-task` rewritten around the gates this document names (lint,
+        typecheck, check:drift, build). Templates synced then: end-task.md (rewritten),
+        commit-message.md (uxm scopes, semver footer), start-task.md +
+        agents/code-review.md + agents/react-frontend.md (legacy-handbook caveats
+        replaced by a pointer to handbooks/legacy/), .claude/templates/* (verified).
+
+      Previous report (1.0.0 → 1.1.0, 2026-07-07) — kept for history:
+        MINOR: added "AI Skill & Agent Tooling"; Principles I, II, V and the
+        Development Workflow expanded (lint gate, semantic-release flow, skill
+        lifecycle); token taxonomy corrected to `--color-*`; SCSS-per-component and
+        BEM state modifiers codified; the SMACSS `.is-*` bullet removed.
+
+      Follow-up TODOs:
+        - none
 -->
 
 # @viax.io/uxm Constitution
@@ -282,13 +301,13 @@ translation is.
 
 - The `viax-uxm` Claude skill (`skills/viax-uxm/` — SKILL.md + `references/`)
   is **authored in this repo**: the library is the source of truth for every
-  fact the skill states. The shared `viax-ai-skills` GitLab repo is a
+  fact the skill states. The shared `viax-ai-skills` GitHub repo is a
   distribution target only, synced from release commits **manually by the
   maintainer**. `/update-ai-skill` works only locally (drift-check +
   post-release cleanup in `skills/viax-uxm/`) and ends by reminding about the
   manual sync — Claude never pushes to the distribution repo.
-- Any MR that adds, renames, or removes a public component **MUST** update the
-  skill in the same MR: a catalog/cheatsheet row (marked "(unreleased)") and a
+- Any PR that adds, renames, or removes a public component **MUST** update the
+  skill in the same PR: a catalog/cheatsheet row (marked "(unreleased)") and a
   bullet under `### Unreleased` in SKILL.md.
 - The skill's version marker, component count, and the `### Unreleased` →
   `New in X.Y.Z` rename are **stamped by CI at release**
@@ -311,7 +330,7 @@ translation is.
    *Constitution Check* section MUST be filled in.
 2. **Implement** — follow Principles I–V; small, reviewable Conventional
    Commits (the commit type drives the semver bump). New/changed public
-   components update the AI skill in the same MR (see AI Skill & Agent
+   components update the AI skill in the same PR (see AI Skill & Agent
    Tooling).
 3. **Local gates (pre-PR)** — `npm run lint`, `npm run typecheck` and
    `npm run build` MUST be green. New visual primitives MUST be smoke-tested in
@@ -346,4 +365,4 @@ translation is.
   document end-to-end and file follow-up issues for drift.
 - **Deferred items.** None.
 
-**Version**: 1.4.0 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-08
+**Version**: 1.4.1 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-09

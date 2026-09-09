@@ -37,7 +37,7 @@ src/
   hooks/                       # shared hooks (use-dismiss, use-focus-trap, …)
   lib/                         # pure logic + data (icons, contrast, calendar-grid, …)
 portal/                        # Vite dev shell for the studio (`npm run dev:modo`) — not published
-skills/viax-uxm/               # the consumer-facing AI skill — updated in the same MR as a component
+skills/viax-uxm/               # the consumer-facing AI skill — updated in the same PR as a component
 ```
 
 The only path alias is `@/*` → `src/*` (`tsconfig.json`).
@@ -619,5 +619,5 @@ a real external-consumer break (`gotchas.md` → semver).
 - [ ] Re-exported (value + `export type`) from `src/ui/<name>/index.ts` and `src/ui/index.ts`; preview only from `src/previews/index.ts`
 - [ ] `@import "./<name>/<name>.css"` added to `src/ui/styles.css` in cascade order
 - [ ] Studio registry entry (`src/studio/lib/registry/<category>/<id>.ts`) + a `generate-css-mapping.ts` entry for any knob that does not follow the default `--uxm-<id>-<kebab-key>` var
-- [ ] AI skill updated in the same MR (`skills/viax-uxm/`): catalog + cheatsheet row "(unreleased)", bullet under the bare `### Unreleased` — markers untouched
+- [ ] AI skill updated in the same PR (`skills/viax-uxm/`): catalog + cheatsheet row "(unreleased)", bullet under the bare `### Unreleased` — markers untouched
 - [ ] `npm run lint`, `npm run typecheck`, `npm run check:drift`, `npm run build` pass; portal smoke-tested light + dark
