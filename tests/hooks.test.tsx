@@ -4,17 +4,10 @@ import { useRef, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useDismiss, useFocusTrap, useScrollLock } from '@/hooks';
-import * as hooks from '@/hooks';
 
-// The subpath is the contract: every hook the atoms are built on is reachable
-// from `@viax.io/uxm/hooks`, and the two most-copied ones behave on their own.
+// The export list of `@viax.io/uxm/hooks` is pinned in public-api.test.ts;
+// here the most-copied hooks are checked to behave on their own.
 describe('@viax.io/uxm/hooks', () => {
-  it('exports the behaviour hooks', () => {
-    for (const name of ['useDismiss', 'useFocusTrap', 'useFocusOnMount', 'useRovingTabIndex', 'useScrollLock', 'usePortal', 'useToastStore']) {
-      expect(typeof (hooks as Record<string, unknown>)[name], name).toBe('function');
-    }
-  });
-
   it('useDismiss fires on Escape and on a mousedown outside the refs', async () => {
     const onDismiss = vi.fn();
     function Host() {
