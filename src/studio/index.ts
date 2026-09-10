@@ -7,8 +7,9 @@
  * `createReadOnlyPersistence()` for a static portal (live-preview only).
  *
  * Styles ship separately as `@viax.io/uxm/studio.css` — import it once in the
- * host; it bundles tokens + UI atom CSS + the Tailwind utilities the shell
- * uses, so no host Tailwind config is required.
+ * host next to `tokens.css` + `ui.css`; it bundles the token declarations and
+ * the Tailwind utilities the shell uses (NOT the atom CSS, so atoms are never
+ * duplicated), so no host Tailwind config is required.
  */
 export { UxmApp } from './uxm-app';
 export type { UxmAppProps } from './uxm-app';
