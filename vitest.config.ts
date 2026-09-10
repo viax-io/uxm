@@ -21,5 +21,24 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     css: false,
     restoreMocks: true,
+    // One jsdom per worker instead of one per file — jsdom set-up was ~40 %
+    // of the run. Files stay isolated in their own VM context.
+    pool: 'vmThreads',
+    // Orientation only — there are deliberately NO thresholds and no CI gate
+    // (`npm run test:coverage`). Previews, barrels and the studio's shell /
+    // editors are portal-verified and excluded so the numbers describe the
+    // logic that can actually be unit-tested.
+    coverage: {
+      provider: 'v8',
+      reporter: ['text-summary', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*-preview.tsx',
+        'src/**/index.ts',
+        'src/previews/**',
+        'src/studio/shell/**',
+        'src/studio/editors/**',
+      ],
+    },
   },
 });
