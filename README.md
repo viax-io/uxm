@@ -272,12 +272,13 @@ npm run lint         # eslint .
 npm run lint:fix     # eslint . --fix
 npm run check:drift  # state-var drift, type-scale and tokens.css ↔ themeTokens parity gates
 npm test             # Vitest smoke suite (tests/), jsdom — `npm run test:watch` while iterating
+npm run test:coverage # coverage summary for orientation only — no thresholds, not a gate
 npm run dev          # tsup --watch — only for local linked dev against a consumer
 ```
 
 **`npm run dev:modo` is the fastest way to see a UI change.** The portal pulls `src/ui/**/*.scss` through `import.meta.glob`, so components render with real CSS over HMR without building `dist/` first.
 
-**Tests are a small Vitest smoke suite, not coverage.** `npm test` (`tests/*.test.tsx`, jsdom + Testing Library + axe-core) pins the contracts nothing else can see: focus trap / Escape / outside-click on the floating layers, ARIA wiring on the pickers, the CSS sanitizers and the overrides generator, and an axe pass over a form and a dialog. Add a test when you touch one of those contracts or fix a behavioural bug; do not chase coverage on presentational atoms. For a visual change "tests pass" proves nothing — the verification is `typecheck`, `lint`, `build` and the portal.
+**Tests are a small Vitest smoke suite, not coverage.** `npm test` (`tests/*.test.tsx`, jsdom + Testing Library + axe-core) pins the contracts nothing else can see: focus trap / Escape / outside-click on the floating layers, ARIA wiring on the pickers, the CSS sanitizers and the overrides generator, and an axe pass over a form and a dialog. It also pins the public surface: the export names of every subpath, every `--uxm-*` variable the stylesheets read, and that `dist/` loads as ESM and CJS (snapshots in `tests/__snapshots__/`; a minus line in the diff is a removed export or knob, i.e. a MAJOR). See `tests/README.md`. Add a test when you touch one of those contracts or fix a behavioural bug; do not chase coverage on presentational atoms. For a visual change "tests pass" proves nothing — the verification is `typecheck`, `lint`, `build` and the portal.
 
 CI (`.github/workflows/ci.yml`) runs `lint`, `typecheck`, `check:drift`, `build` and `test:ci` on every pull request, plus an `npm audit` job that fails at critical.
 
