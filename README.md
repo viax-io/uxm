@@ -11,7 +11,9 @@ The package ships **no `"use client"` / `"use server"` directives** by design: c
 - **UI primitives** (`@viax.io/uxm/ui`) — BEM-classed React 19 components.
 - **Icon registry** (`@viax.io/uxm/ui`) — `ICONS`, `ICON_OPTIONS`, `getIcon`, `IconDef` for tooling that enumerates the bundled icon set.
 - **Design tokens** (`@viax.io/uxm/tokens`) — the canonical `themeTokens` array plus helpers (`findToken`, `resolveHex`, `isTokenValue`) and the `ThemeToken` type.
+- **Behaviour hooks** (`@viax.io/uxm/hooks`) — `useDismiss`, `useFocusTrap`, `useFocusOnMount`, `useRovingTabIndex`, `useScrollLock`, `usePortal`, `useToastStore` for hosts composing their own floating layers or keyboard widgets.
 - **Themable previews** (`@viax.io/uxm/previews`) — preview components (one per atom, plus composite previews) used by host shells like MODO's brand-settings editor to render live, knob-driven theme exploration.
+- **Studio** (`@viax.io/uxm/studio`) — `UxmApp`, the full design workbench MODO serves at `/uxm`, backend-decoupled through the `StudioPersistence` contract; see [Studio](#studio).
 - **WCAG / contrast helpers** (`@viax.io/uxm`) — `contrastRatio`, `parseColor`, `rgbToHex`, `suggestAccessibleColor`, `suggestAccessibleToken`, `wcagLevel`, plus `RGB` and `TokenCandidate` types.
 - **Default stylesheets** — `@viax.io/uxm/ui.css` (component primitive defaults) and `@viax.io/uxm/tokens.css` (token declarations).
 
@@ -80,6 +82,9 @@ import { ButtonPrimary, themeTokens } from '@viax.io/uxm';
 | `@viax.io/uxm/tokens.css` | `--color-*` declarations on `:root`. |
 | `@viax.io/uxm/hooks` | The behaviour hooks the atoms are built on — `useDismiss`, `useFocusTrap`, `useFocusOnMount`, `useRovingTabIndex`, `useScrollLock`, `usePortal`, `useToastStore` — for hosts composing their own floating layers or keyboard widgets. Pure React, no atom imports. |
 | `@viax.io/uxm/previews` | Preview components for host shells building theme editors. **No preview symbol leaks into `/ui`** — see the tree-shake guarantee below. |
+| `@viax.io/uxm/studio` | `UxmApp` + `UxmProvider` / `useUxm`, the component `registry`, the `StudioPersistence` contract and its three adapters (`createHttpPersistence`, `createClientPersistence`, `createReadOnlyPersistence`). |
+| `@viax.io/uxm/studio/generate-css` | `generateOverridesCss` + the CSS sanitizers — turn saved studio overrides and a `BrandConfig` into a stylesheet on the server, without pulling in the workbench UI. |
+| `@viax.io/uxm/studio.css` | Tailwind utilities for the studio shell + token declarations. Does **not** bundle the atom CSS — a studio host imports `ui.css` alongside it. |
 
 ## Component catalog
 
@@ -88,13 +93,13 @@ Every component folder ships a `README.md` documenting props, CSS variables, MOD
 > The catalog below covers every folder in `src/ui/`. If you add a component, add it here too — and keep `src/ui/` the authoritative source if the two ever drift.
 
 ### Forms & inputs
-[`calendar`](src/ui/calendar/README.md) · [`checkbox`](src/ui/checkbox/README.md) · [`color-input`](src/ui/color-input/README.md) (ColorInput + ColorInputPopover) · [`currency-input`](src/ui/currency-input/README.md) · [`date-input`](src/ui/date-input/README.md) · [`editable-cell`](src/ui/editable-cell/README.md) · [`field-error`](src/ui/field-error/README.md) · [`file-upload`](src/ui/file-upload/README.md) · [`form-field`](src/ui/form-field/README.md) · [`input`](src/ui/input/README.md) (TextInput + Select + Textarea) · [`input-with-icon`](src/ui/input-with-icon/README.md) · [`number-input`](src/ui/number-input/README.md) · [`number-stepper`](src/ui/number-stepper/README.md) · [`password-input`](src/ui/password-input/README.md) · [`phone-input`](src/ui/phone-input/README.md) · [`pill-select`](src/ui/pill-select/README.md) · [`radio-group`](src/ui/radio-group/README.md) · [`range-slider`](src/ui/range-slider/README.md) · [`search-dropdown`](src/ui/search-dropdown/README.md) · [`slider`](src/ui/slider/README.md) · [`time-input`](src/ui/time-input/README.md) · [`toggle-switch`](src/ui/toggle-switch/README.md)
+[`calendar`](src/ui/calendar/README.md) · [`checkbox`](src/ui/checkbox/README.md) · [`code-editor`](src/ui/code-editor/README.md) (CodeEditor + CodeBlock) · [`color-input`](src/ui/color-input/README.md) (ColorInput + ColorInputPopover) · [`currency-input`](src/ui/currency-input/README.md) · [`date-input`](src/ui/date-input/README.md) · [`editable-cell`](src/ui/editable-cell/README.md) · [`field-error`](src/ui/field-error/README.md) · [`file-upload`](src/ui/file-upload/README.md) · [`form-field`](src/ui/form-field/README.md) · [`input`](src/ui/input/README.md) (TextInput + Select + Textarea) · [`input-with-icon`](src/ui/input-with-icon/README.md) · [`number-input`](src/ui/number-input/README.md) · [`number-stepper`](src/ui/number-stepper/README.md) · [`password-input`](src/ui/password-input/README.md) · [`phone-input`](src/ui/phone-input/README.md) · [`pill-select`](src/ui/pill-select/README.md) · [`radio-group`](src/ui/radio-group/README.md) · [`range-slider`](src/ui/range-slider/README.md) · [`search-dropdown`](src/ui/search-dropdown/README.md) · [`slider`](src/ui/slider/README.md) · [`time-input`](src/ui/time-input/README.md) · [`toggle-switch`](src/ui/toggle-switch/README.md)
 
 ### Buttons & actions
 [`back-link`](src/ui/back-link/README.md) · [`bulk-action-bar`](src/ui/bulk-action-bar/README.md) · [`button`](src/ui/button/README.md) (Primary/Secondary/Tertiary/Ghost) · [`button-group`](src/ui/button-group/README.md) · [`button-icon`](src/ui/button-icon/README.md) (deprecated → `icon-button` `variant="filled"`) · [`button-with-icon`](src/ui/button-with-icon/README.md) · [`icon-button`](src/ui/icon-button/README.md) · [`inline-action`](src/ui/inline-action/README.md) · [`link`](src/ui/link/README.md)
 
 ### Navigation
-[`app-sidebar`](src/ui/app-sidebar/README.md) · [`app-top-bar`](src/ui/app-top-bar/README.md) · [`breadcrumb`](src/ui/breadcrumb/README.md) · [`filter-tabs`](src/ui/filter-tabs/README.md) · [`menu`](src/ui/menu/README.md) · [`sidebar-nav-item`](src/ui/sidebar-nav-item/README.md) · [`tabs`](src/ui/tabs/README.md) · [`tabs-underline`](src/ui/tabs-underline/README.md) · [`view-switcher`](src/ui/view-switcher/README.md)
+[`app-sidebar`](src/ui/app-sidebar/README.md) · [`app-top-bar`](src/ui/app-top-bar/README.md) · [`breadcrumb`](src/ui/breadcrumb/README.md) · [`filter-tabs`](src/ui/filter-tabs/README.md) · [`menu`](src/ui/menu/README.md) · [`sidebar-nav-item`](src/ui/sidebar-nav-item/README.md) · [`sidebar-nav-trigger`](src/ui/sidebar-nav-trigger/README.md) · [`tabs`](src/ui/tabs/README.md) · [`tabs-underline`](src/ui/tabs-underline/README.md) · [`view-switcher`](src/ui/view-switcher/README.md)
 
 ### Overlays & floating layers
 [`dialog`](src/ui/dialog/README.md) · [`hover-tooltip`](src/ui/hover-tooltip/README.md) · [`listbox`](src/ui/listbox/README.md) (Listbox + MultiListbox) · [`modal`](src/ui/modal/README.md) · [`option-list`](src/ui/option-list/README.md) · [`popover`](src/ui/popover/README.md) · [`toast`](src/ui/toast/README.md) (Toast + Toaster + the `toast.*` API)
@@ -130,6 +135,9 @@ The canonical token catalogue lives in `src/tokens/index.ts` as the `themeTokens
 - `cssVar` — the `--color-*` identifier consumed by components
 - `hex` / `darkHex` — light/dark defaults
 - `group` — one of `surfaces` · `text` · `borders` · `accent` · `highlights` · `categories` · `semantic`
+- `identity` (optional) — promotes the token into the brand editor's Identity section as a top-level knob; reserved for tokens that fan out (the accent base drives the whole ramp)
+
+`tokens.css` and `themeTokens` must stay in lockstep — `npm run check:drift` fails when a `--color-*` variable exists on one side only.
 
 ```ts
 import { themeTokens, findToken } from '@viax.io/uxm/tokens';
@@ -200,47 +208,78 @@ import { ButtonPreview, type PreviewShellContext } from '@viax.io/uxm/previews';
 />;
 ```
 
-**Tree-shake guarantee**: no preview symbols leak into `@viax.io/uxm/ui`, so consumers that only import primitives never pay for preview code. This is **upheld by convention, not enforced by the build** — nothing fails if a barrel breaks it. When you touch `src/ui/index.ts` or any `src/ui/*/index.ts`, check by hand that no `*-preview` module is re-exported; after a build, `grep "Preview" dist/ui/index.js` should return nothing.
+**Tree-shake guarantee**: no preview symbols leak into `@viax.io/uxm/ui`, so consumers that only import primitives never pay for preview code. **ESLint enforces it** (`eslint.config.mjs`): `no-restricted-imports` rejects any `*-preview` re-export from `src/ui/index.ts` or a `src/ui/*/index.ts`, and the `import/no-restricted-paths` zones pin the layer direction — `ui` may not import `studio` or the previews barrel, `tokens` imports nothing, and `lib` / `hooks` / `helpers` may not import components. After a build, `grep "Preview" dist/ui/index.js` still returns nothing.
+
+## Studio
+
+`@viax.io/uxm/studio` ships `UxmApp`, the design workbench MODO serves at `/uxm`: sidebar, canvas, properties panel and WCAG panel over the same previews. It is decoupled from any backend through the `StudioPersistence` contract — pick an adapter per host:
+
+- `createHttpPersistence()` — reads and writes against a Hono API.
+- `createClientPersistence()` — live preview plus client-side asset uploads (what the `portal/` dev shell uses).
+- `createReadOnlyPersistence()` — a static, view-only portal.
+
+```tsx
+import '@viax.io/uxm/tokens.css';
+import '@viax.io/uxm/ui.css';
+import '@viax.io/uxm/studio.css';
+import { UxmApp, createHttpPersistence } from '@viax.io/uxm/studio';
+
+<UxmApp persistence={createHttpPersistence('/api/uxm')} />;
+```
+
+`@viax.io/uxm/studio/generate-css` exposes `generateOverridesCss` and the CSS sanitizers on their own, so a server can render the saved overrides into a stylesheet without loading the workbench. The studio is the only layer styled with Tailwind; `studio.css` bundles those utilities and the token declarations but not the atom CSS.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  @viax.io/uxm/previews                             │  ← host editors (MODO brand-settings)
+│  @viax.io/uxm/studio (+ studio.css)             │  ← the design workbench (MODO /uxm)
+│  UxmApp, registry, StudioPersistence adapters   │
+└────────────────┬────────────────────────────────┘
+                 │ renders
+                 ▼
+┌─────────────────────────────────────────────────┐
+│  @viax.io/uxm/previews                          │  ← host editors (MODO brand-settings)
 │  themable, shell-aware preview components       │
 └────────────────┬────────────────────────────────┘
                  │ consumes
                  ▼
 ┌─────────────────────────────────────────────────┐
-│  @viax.io/uxm/ui                                   │  ← application code
+│  @viax.io/uxm/ui (+ ui.css)                     │  ← application code
 │  BEM-classed React components                   │
 │  + Icon registry (ICONS, getIcon, …)            │
+│  built on @viax.io/uxm/hooks                    │
 └────────────────┬────────────────────────────────┘
                  │ reads fallbacks
                  ▼
 ┌─────────────────────────────────────────────────┐
-│  @viax.io/uxm/tokens (+ tokens.css)                │  ← MODO brand-settings edits this
+│  @viax.io/uxm/tokens (+ tokens.css)             │  ← MODO brand-settings edits this
 │  themeTokens array + --color-* declarations     │
 └─────────────────────────────────────────────────┘
 ```
 
-Every layer is independently importable; every layer has its own type declarations and own CSS bundle.
+The dependency direction is `studio / previews → ui → tokens`, enforced by the ESLint layer zones. Every layer is independently importable; every layer has its own type declarations and own CSS bundle.
 
 ## Build & develop
 
 ```bash
 npm install
-npm run dev:modo   # Vite dev server for the studio portal — fastest loop, no build needed
-npm run build      # full dist/ (see the pipeline below)
-npm run typecheck  # tsc --noEmit for src + portal
-npm run lint       # eslint .
-npm run lint:fix   # eslint . --fix
-npm run dev        # tsup --watch — only for local linked dev against a consumer
+npm run dev:modo     # Vite dev server for the studio portal — fastest loop, no build needed
+npm run build:modo   # Vite production build of the portal
+npm run build        # full dist/ (see the pipeline below)
+npm run typecheck    # tsc --noEmit for src + portal
+npm run lint         # eslint .
+npm run lint:fix     # eslint . --fix
+npm run check:drift  # state-var drift, type-scale and tokens.css ↔ themeTokens parity gates
+npm test             # Vitest smoke suite (tests/), jsdom — `npm run test:watch` while iterating
+npm run dev          # tsup --watch — only for local linked dev against a consumer
 ```
 
 **`npm run dev:modo` is the fastest way to see a UI change.** The portal pulls `src/ui/**/*.scss` through `import.meta.glob`, so components render with real CSS over HMR without building `dist/` first.
 
-**There are no tests.** `test:ci` and `test:coverage` are intentional no-op stubs, so "tests pass" is never a meaningful verification here — use `typecheck`, `lint`, `build`, or the portal.
+**Tests are a small Vitest smoke suite, not coverage.** `npm test` (`tests/*.test.tsx`, jsdom + Testing Library + axe-core) pins the contracts nothing else can see: focus trap / Escape / outside-click on the floating layers, ARIA wiring on the pickers, the CSS sanitizers and the overrides generator, and an axe pass over a form and a dialog. Add a test when you touch one of those contracts or fix a behavioural bug; do not chase coverage on presentational atoms. For a visual change "tests pass" proves nothing — the verification is `typecheck`, `lint`, `build` and the portal.
+
+CI (`.github/workflows/ci.yml`) runs `lint`, `typecheck`, `check:drift`, `build` and `test:ci` on every pull request, plus an `npm audit` job that fails at critical.
 
 `npm run build` chains five steps, and the order is deliberate:
 
@@ -264,9 +303,15 @@ dist/
 ├── tokens/
 │   ├── index.{js,cjs,d.ts}
 │   └── index.css
-└── previews/
+├── hooks/
+│   └── index.{js,cjs,d.ts}
+├── previews/
+│   ├── index.{js,cjs,d.ts}
+│   └── …per-preview files…
+└── studio/
     ├── index.{js,cjs,d.ts}
-    └── …per-preview files…
+    ├── studio.css
+    └── persistence/generate-css.{js,cjs,d.ts}
 ```
 
 ## Local linked development (e.g. modo)
@@ -292,9 +337,9 @@ This makes commit types carry semver meaning: `fix` → PATCH, `feat` → MINOR,
 - **Add a component**: create `src/ui/{name}/` with `{name}.tsx`, `{name}.scss`, `index.ts`. Re-export from **both** the folder `index.ts` and `src/ui/index.ts`. Add the compiled stylesheet to `src/ui/styles.css` as `@import "./{name}/{name}.css";` in cascade order — the aggregator is hand-written, and a component whose `@import` is missing ships with no CSS. Add a `README.md` mirroring [`button/README.md`](src/ui/button/README.md) (simple) or [`data-table/README.md`](src/ui/data-table/README.md) (complex).
 - **Update the AI skill in the same change**: `skills/viax-uxm/` needs a catalog row, a cheatsheet row, and a bullet under `### Unreleased` in `SKILL.md`. Leave the version and component-count markers alone — CI stamps those at release via `scripts/stamp-skill-version.mjs`.
 - **Add a preview**: create `{name}-preview.tsx` next to the component — previews live beside their component, not in `src/previews/`. Use `PreviewProps` and project knob values as inline CSS vars so production CSS rules paint them. Never re-export a preview from a `src/ui/` barrel (see the tree-shake guarantee above).
-- **Add a token**: add an entry to `themeTokens` in `src/tokens/index.ts` and declare the `--color-*` variable in `src/tokens/index.css`. Reference it from component SCSS via `var(--uxm-foo-bar, var(--color-new-token))` — never hardcode a colour, spacing, or radius.
+- **Add a token**: add an entry to `themeTokens` in `src/tokens/index.ts` and declare the `--color-*` variable in `src/tokens/index.css` — `npm run check:drift` fails if only one side changes. Reference it from component SCSS via `var(--uxm-foo-bar, var(--color-new-token))` — never hardcode a colour, spacing, or radius.
 - Commits follow conventional-commit format (`commitizen` + `commitlint` enforced via `husky`); `npm run commit` walks you through it. Commit types drive the released version — see [Releases](#releases).
-- Run `npm run lint && npm run typecheck && npm test && npm run build` before opening a pull request.
+- Run `npm run lint && npm run typecheck && npm run check:drift && npm test && npm run build` before opening a pull request — the same gates CI runs.
 
 ## License
 
