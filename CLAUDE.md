@@ -15,6 +15,7 @@ npm run build       # full dist/ — see pipeline below
 npm run dev         # tsup --watch; recompiles dist/ for local linked dev
 npm run dev:modo    # Vite dev server for the studio portal (portal/) — HMR over src/, no build needed
 npm run build:modo  # Vite production build of the portal
+npm run build:cdn   # dist-cdn/ — self-contained <script>-tag bundles (esm, standalone, css, bundled .d.ts, manifest); needs a fresh `npm run build`
 npm run typecheck   # tsc --noEmit for src + portal/tsconfig.json
 npm run lint        # eslint .
 npm run lint:fix    # eslint . --fix
