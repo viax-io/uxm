@@ -965,6 +965,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-list-item-hover-text",
   "--uxm-list-item-inactive-bg",
   "--uxm-list-item-inactive-text",
+  "--uxm-list-item-media-size",
   "--uxm-list-item-padding-x",
   "--uxm-list-item-padding-y",
   "--uxm-list-item-value-color",
