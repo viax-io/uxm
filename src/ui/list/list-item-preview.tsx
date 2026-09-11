@@ -5,11 +5,13 @@ import type { PreviewProps } from '@/previews/types';
 import { Icon, IconTile } from '@/ui';
 import { List, ListItem } from '@/ui';
 import { Tag, type TagType } from '@/ui';
+import { Thumbnail } from '@/ui';
 
-import { LIST_ITEM_ICON_TILE_STYLE } from './list';
+import { LIST_ITEM_ICON_TILE_STYLE, LIST_ITEM_MEDIA_STYLE } from './list';
 
 type Styles = PreviewProps['styles'];
 type Mode = 'static' | 'interactive';
+type Leading = 'icon' | 'media';
 
 /**
  * Project every registry knob as a `--uxm-list-item-*` custom property
@@ -45,9 +47,23 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-list-item-icon-color': styles.iconColor as string,
     '--uxm-list-item-icon-size': `${styles.iconSize}px`,
     '--uxm-list-item-icon-radius': `${styles.iconRadius}px`,
+    '--uxm-list-item-media-size': `${styles.mediaSize}px`,
     '--uxm-list-item-chevron-color': styles.chevronColor as string,
   } as CSSProperties;
 }
+
+/**
+ * The demo media node for the `leading: "media"` variant — a `Thumbnail`
+ * with no `src`, so it renders the atom's own placeholder instead of
+ * reaching for a network image the canvas may not be able to load. It
+ * tracks the Media Size knob because the slot forwards
+ * `--uxm-list-item-media-size` into `--uxm-thumbnail-size`
+ * (`LIST_ITEM_MEDIA_STYLE`), so the frame AND its placeholder glyph scale
+ * together — the row owns the leading geometry, the media owns its surface.
+ * `alt=""` because the row's title is the accessible name; a described
+ * image here would be concatenated into it.
+ */
+const DEMO_MEDIA = <Thumbnail alt="" />;
 
 /**
  * Pick the canonical trailing element for the given mode. The trailing
@@ -88,21 +104,30 @@ function StaticShowcase({
   mode,
   state,
   showValue,
+  leading,
 }: {
   mode: Mode;
   state: string;
   showValue: boolean;
+  leading: Leading;
 }) {
   const isInteractive = mode === 'interactive';
   const isActive = isInteractive && state === 'active';
   const isDisabled = state === 'disabled';
   const inner = (
     <>
-      {/* Mirrors the atom: the icon slot is an IconTile, sized/coloured from
-          the same forwarded knob vars (glyph size comes from the tile var). */}
-      <IconTile className="uxm-list-item__icon" style={LIST_ITEM_ICON_TILE_STYLE}>
-        <Icon glyph="square" />
-      </IconTile>
+      {/* Mirrors the atom's leading slot: an IconTile sized/coloured from the
+          same forwarded knob vars (glyph size comes from the tile var), or the
+          un-tiled media span when the Leading variant selects it. */}
+      {leading === 'media' ? (
+        <span className="uxm-list-item__media" style={LIST_ITEM_MEDIA_STYLE}>
+          {DEMO_MEDIA}
+        </span>
+      ) : (
+        <IconTile className="uxm-list-item__icon" style={LIST_ITEM_ICON_TILE_STYLE}>
+          <Icon glyph="square" />
+        </IconTile>
+      )}
       <span className="uxm-list-item__content">
         <span className="uxm-list-item__title">Owner</span>
         {showValue && <span className="uxm-list-item__value">Alex Morgan</span>}
@@ -163,6 +188,7 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
   const mode = ((variants.mode as string) ?? 'interactive') as Mode;
   const state = (variants.state as string) ?? 'default';
   const showValue = ((variants.value as string) ?? 'shown') === 'shown';
+  const leading = ((variants.leading as string) ?? 'icon') as Leading;
   const [activeKey, setActiveKey] = useState<string>('plan');
   const cssVars = buildVars(styles);
 
@@ -178,7 +204,7 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32, minWidth: 380, ...cssVars } as CSSProperties}>
       <div>
         <div style={sectionLabel}>{state} state</div>
-        <StaticShowcase mode={mode} state={state} showValue={showValue} />
+        <StaticShowcase mode={mode} state={state} showValue={showValue} leading={leading} />
       </div>
 
       {/* List — interactivity is driven by the `mode` variant. Trailing
@@ -207,7 +233,9 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
                 // interactive rows (CSS `:disabled` / `[aria-disabled]`)
                 // and static rows (`[aria-disabled]` on `<div>`).
                 disabled={state === 'disabled' && i === 1}
-                icon={<Icon glyph="square" />}
+                {...(leading === 'media'
+                  ? { media: DEMO_MEDIA }
+                  : { icon: <Icon glyph="square" /> })}
                 value={showValue ? row.value : undefined}
                 trailing={trailingForMode(mode, row.meta, row.tagType)}
                 onClick={isInteractive ? () => setActiveKey(row.key) : undefined}
