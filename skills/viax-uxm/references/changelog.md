@@ -1417,3 +1417,22 @@ reached the published library; now shipped in 2.8.0.
   move — a saved near-black card against the new page is a much harder step
   than either palette intends. Nothing detects this automatically; re-check
   saved dark overrides against the new ramp, or clear them to adopt it.
+
+### New in 4.36.0
+
+- **`FileUpload` rows can hand the file back.** A `done` row now renders a trailing
+  download control, via either `FileUploadFileMeta.href` (renders `<a href download>`) or
+  the new `onOpenFile?(id)` prop (renders a `<button>`). **Pick by whether a browser can
+  fetch the URL unauthenticated:** `href` is better where it works — only a real anchor
+  gives ⌘/middle-click-to-new-tab, right-click "Save link as" and the native download UI
+  — but an anchor navigation carries no `Authorization` header, so token-protected
+  storage needs `onOpenFile` plus a `fetch` + blob (revoke the object URL, and pass the
+  filename or the file saves as a UUID). Setting both is allowed; `onOpenFile` wins.
+  Setting neither renders nothing, so existing consumers are untouched.
+  ⚠️ `download` is **ignored cross-origin** — the browser navigates instead of saving.
+  The anchor carries `target="_blank"` so that lands in a new tab rather than taking the
+  app's; still pass `downloadGlyph="arrow-up-right"` AND `downloadLabel="Open"` so
+  neither the icon nor the accessible name promises a save (the glyph alone fixes it for
+  sighted users only), or use the blob route. While `disabled` the anchor drops its
+  `href` — a greyed-out link that keeps one is still tab-reachable and Enter still
+  follows it. New vars: `--uxm-file-upload-download-icon-color` / `-hover-color`.

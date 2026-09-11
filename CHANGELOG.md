@@ -1,3 +1,10 @@
+# [4.41.0](https://github.com/viax-io/uxm/compare/v4.40.2...v4.41.0) (2026-09-11)
+
+
+### Features
+
+* **list:** add a media leading slot to ListItem ([f346cd4](https://github.com/viax-io/uxm/commit/f346cd43acf89df9c194d733ffe0b218cfdb1f51))
+
 ## [4.40.2](https://github.com/viax-io/uxm/compare/v4.40.1...v4.40.2) (2026-09-09)
 
 
