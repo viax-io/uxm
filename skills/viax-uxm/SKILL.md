@@ -202,10 +202,16 @@ skill:
    - Check `package.json` for the `"uxm": "npm:@viax.io/uxm@…"` entry (and the `react@^19` peer).
    - If the app still lists `"@viax.io/uxm"` directly, switch it to the alias and rewrite the
      imports in the same change — mixing the two forms installs the package twice.
-   - If absent and the user wants to add it: `npm i uxm@npm:@viax.io/uxm@latest` (public npm, no
-     registry configuration). Why the alias: short, stable import paths; ONE place to bump the
-     version; and a package rename (it already happened once — `@viax/uxm` → `@viax.io/uxm`) never
-     touches application code again.
+   - If absent and the user wants to add it: `npm i uxm@npm:@viax.io/uxm@latest`. Why the alias:
+     short, stable import paths; ONE place to bump the version; and a package rename (it already
+     happened once — `@viax/uxm` → `@viax.io/uxm`) never touches application code again.
+   - **Check `.npmrc` for a registry override.** If the project's default registry points at
+     Nexus (`registry=https://nexus.viax.tech/repository/viax-npm/` — a common viax-internal
+     setup) rather than public npm, it MUST also carry
+     `@viax.io:registry=https://registry.npmjs.org/`. Nexus mirrors `registry.npmjs.org` with a
+     delay, so installing or bumping right after a fresh `@viax.io/uxm` release can 404 or
+     silently resolve a stale version through Nexus without this override. Add it if missing —
+     see `uxm-studio/.npmrc` for a working example.
 2. Confirm CSS imports are in place. Both stylesheets must be imported once at the app entry:
    ```ts
    // app/layout.tsx (Next.js) or main.tsx (Vite/CRA)
