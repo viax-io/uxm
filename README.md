@@ -38,7 +38,17 @@ Every example in this README imports from `@viax.io/uxm` and its subpaths.
 
 Peer deps: `react@^19`, `react-dom@^19`. Node `>=20` for local dev.
 
-Published publicly on npm — no registry configuration, credentials or VPN required.
+Published publicly on npm — no registry configuration, credentials or VPN required for a plain
+`npm i @viax.io/uxm` against the default npm registry.
+
+> **If your project's default registry points at Nexus** (`registry=https://nexus.viax.tech/repository/viax-npm/`
+> in `.npmrc` — the common viax-internal setup), add a scope override so this package still
+> resolves straight from npm:
+> ```
+> @viax.io:registry=https://registry.npmjs.org/
+> ```
+> Nexus mirrors `registry.npmjs.org` with a delay, so installing right after a fresh release can
+> 404 or silently resolve a stale version through Nexus without this override.
 
 ## Quick start
 

@@ -2246,7 +2246,7 @@ viax-lab-portal/
 ├── index.html                               # Vite entry HTML
 ├── .env.local
 ├── .env.example
-├── .npmrc                                   # engine-strict=true (optional)
+├── .npmrc                                   # engine-strict=true + @viax.io npm registry override
 ├── vite.config.js                           # port 9000; define __PORTAL_META__ from package.json "portal" block
 ├── jsconfig.json
 ├── package.json                             # incl. "portal" identity block (id, realm, env, generatedAt)
@@ -2586,10 +2586,17 @@ Ensure these are installed (no shadcn/Tailwind):
 }
 ```
 
-**`.npmrc` (optional — at portal root):**
+**`.npmrc` (at portal root):**
 
 ```
 engine-strict=true
+@viax.io:registry=https://registry.npmjs.org/
 ```
+
+The `@viax.io:registry` line is **required**, not optional, whenever the portal's (or the
+environment's) default registry points at Nexus (`registry=https://nexus.viax.tech/repository/viax-npm/`)
+instead of public npm — see `uxm-studio/.npmrc` for a working example with both lines. Nexus
+mirrors `registry.npmjs.org` with a delay, so installing or bumping `@viax.io/uxm` right after a
+fresh release can 404 or silently resolve a stale version through Nexus without this override.
 
 Then `npm install`, followed by `npm i uxm@npm:@viax.io/uxm@latest` to pull the newest build (the `^4.15.0` above is an illustrative floor — `@latest` overwrites it with whatever is current). Do **not** run `npx shadcn@latest init` — `@viax.io/uxm` replaces shadcn entirely.
