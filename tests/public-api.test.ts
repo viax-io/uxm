@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 
@@ -22,12 +22,20 @@ import pkg from '../package.json';
  *    and both module formats must agree. Skipped when `dist/` is absent
  *    (a plain `npm test` before any build); CI always builds first.
  *
+ * 3. **That the CDN bundles carry the same surface.** `npm run build:cdn`
+ *    (`dist-cdn/`, see scripts/build-cdn.mjs) rolls `./ui` and
+ *    `./studio/generate-css` into single files for <script>-tag consumers.
+ *    Each must export exactly what its npm subpath does — the snapshot above
+ *    is then the CDN changelog too. Skipped when `dist-cdn/` is absent.
+ *
  * Types are not covered — an `interface` leaves no runtime trace.
  */
 
 const ROOT = resolve(__dirname, '..');
 const DIST = resolve(ROOT, 'dist');
+const DIST_CDN = resolve(ROOT, 'dist-cdn');
 const hasDist = existsSync(DIST);
+const hasDistCdn = existsSync(DIST_CDN);
 const requireCjs = createRequire(import.meta.url);
 
 type ExportTarget = string | { types?: string; import?: string; require?: string };
@@ -89,4 +97,34 @@ describe.skipIf(!hasDist)('dist/ (built package)', () => {
       expect(exportNames(cjs)).toEqual(esmNames);
     });
   }
+});
+
+describe.skipIf(!hasDistCdn)('dist-cdn/ (CDN bundles)', () => {
+  const CDN_ENTRIES: Record<string, string> = {
+    './ui': 'uxm.esm.js',
+    './studio/generate-css': 'uxm-generate-css.esm.js',
+  };
+
+  for (const [subpath, file] of Object.entries(CDN_ENTRIES)) {
+    it(`${file} exports exactly the ${subpath} surface`, async () => {
+      const cdn = (await import(resolve(DIST_CDN, file))) as Record<string, unknown>;
+      const source = await SOURCE_ENTRIES[subpath]();
+      expect(exportNames(cdn)).toEqual(exportNames(source));
+    });
+  }
+
+  it('ships a bundled .d.ts next to every JS bundle and a manifest that lists them all', () => {
+    const manifest = JSON.parse(readFileSync(resolve(DIST_CDN, 'cdn-manifest.json'), 'utf8')) as {
+      version: string;
+      files: Record<string, { bytes: number; gzip: number; sri: string }>;
+    };
+    expect(manifest.version).toBe(pkg.version);
+    for (const file of Object.values(CDN_ENTRIES)) {
+      expect(existsSync(resolve(DIST_CDN, file.replace(/\.js$/, '.d.ts')))).toBe(true);
+    }
+    for (const [file, meta] of Object.entries(manifest.files)) {
+      expect(existsSync(resolve(DIST_CDN, file)), file).toBe(true);
+      expect(meta.sri).toMatch(/^sha384-[A-Za-z0-9+/]+=*$/);
+    }
+  });
 });

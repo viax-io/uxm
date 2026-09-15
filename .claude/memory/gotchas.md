@@ -398,3 +398,21 @@ order — the second PR's diff shrinks to its own commits once the first lands.
 After any merge, verify with `git merge-base --is-ancestor <sha> origin/master`
 rather than trusting the PR's MERGED badge. Recovered here by cherry-picking
 `81a6b5f` onto master (PR #9).
+
+---
+
+## tsup: named entries only from a config file, and the config must live in the repo
+
+Building the CDN bundles (`tsup.cdn.config.ts`, 11-09-2026) hit three tsup
+surprises in a row. `--entry.uxm.esm dist/ui/index.d.ts` on the CLI dies with
+`Cannot find uxm: [object Object]` — the dot in the output name is parsed as a
+nested key. A positional `.d.ts` entry with `--dts-only` is emitted as
+`index.d.d.ts`. And an IIFE build gets a `.global.js` suffix by default, so the
+driver script looked for `uxm.standalone.js` and found nothing.
+
+**How to apply:** any tsup build whose output names matter goes through a
+config file with an `entry` object (`{ 'uxm.esm': '…' }`) and an explicit
+`outExtension` for IIFE; the config must sit in the repo tree (one in a
+scratch dir cannot resolve `tsup` itself). Same root cause as the standalone
+entry needing to live under `scripts/cdn/`: Node resolves from the file's
+location, never from `cwd`.
