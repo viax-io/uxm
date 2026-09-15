@@ -1,3 +1,10 @@
+# [4.42.0](https://github.com/viax-io/uxm/compare/v4.41.0...v4.42.0) (2026-09-15)
+
+
+### Features
+
+* **cdn:** add build:cdn pipeline for self-contained script-tag bundles ([77a48be](https://github.com/viax-io/uxm/commit/77a48bedddb4b2a6c25f2d8f65ff6d7a67a29eab))
+
 # [4.41.0](https://github.com/viax-io/uxm/compare/v4.40.2...v4.41.0) (2026-09-11)
 
 
