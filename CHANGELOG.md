@@ -1,3 +1,10 @@
+# [4.43.0](https://github.com/viax-io/uxm/compare/v4.42.0...v4.43.0) (2026-09-16)
+
+
+### Features
+
+* added deploy to s3 ([b01d2c4](https://github.com/viax-io/uxm/commit/b01d2c4a62d71653bbc8b060023efd12db7af596))
+
 # [4.42.0](https://github.com/viax-io/uxm/compare/v4.41.0...v4.42.0) (2026-09-15)
 
 
