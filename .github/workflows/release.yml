@@ -56,6 +56,27 @@ jobs:
             echo "version=$(cat .released-version)" >> "$GITHUB_OUTPUT"
           fi
 
+      # build:cdn stamps pkg.version into uxm.esm.js's banner comment and
+      # cdn-manifest.json, so it must run after semantic-release has bumped
+      # package.json — not alongside the earlier `npm run build`.
+      - if: steps.released.outputs.version != ''
+        run: npm run build:cdn
+
+      - if: steps.released.outputs.version != ''
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.S3_REGION }}
+
+      # Versioned, immutable path (see scripts/build-cdn.mjs) — never overwritten,
+      # so a long max-age is safe.
+      - if: steps.released.outputs.version != ''
+        run: |
+          aws s3 cp dist-cdn/ "s3://${{ vars.S3_BUCKET }}/${{ steps.released.outputs.version }}/" \
+            --recursive \
+            --cache-control "public, max-age=31536000, immutable"
+
   notify:
     needs: publish
     if: needs.publish.outputs.version != ''
