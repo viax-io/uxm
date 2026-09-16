@@ -923,6 +923,68 @@ designed — pass `previousMonthLabel` / `nextMonthLabel`.
 
 ---
 
+## 18. Consuming from the CDN (no npm / no bundler)
+
+When the target page can't run npm at all — a static prototype, a CodePen repro, an embed on
+someone else's site — skip recipe 0's `uxm/tokens.css` + `uxm/ui.css` npm imports and pull the
+CDN bundles instead. The full artifact table, SRI verification, and the exact host-baseline CSS
+live in the package README's
+[CDN usage](../../../README.md#cdn-usage) section — this recipe is the two shapes you'll
+actually reach for.
+
+**Pick the format by what the page already has:**
+- Page already runs React 19 (or maps `react` to a CDN like esm.sh) → `uxm.esm.js` (ESM, React
+  external) via an import map.
+- Page has no React at all → `uxm.standalone.js` (IIFE, `window.UXM`, React bundled in). **Never**
+  load this next to another React instance — two copies break hooks/context.
+
+```html
+<!-- ESM — page already has/maps React 19 -->
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19",
+    "react-dom/client": "https://esm.sh/react-dom@19/client",
+    "@viax.io/uxm/ui": "https://uxm.viax.io/4.43.0/uxm.esm.js"
+  }
+}
+</script>
+<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
+<script type="module">
+  import { ButtonPrimary } from '@viax.io/uxm/ui';
+  import { createElement } from 'react';
+  import { createRoot } from 'react-dom/client';
+
+  createRoot(document.getElementById('root')).render(createElement(ButtonPrimary, null, 'Hello UXM'));
+</script>
+```
+
+```html
+<!-- Standalone — page has NO React -->
+<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
+<script src="https://uxm.viax.io/4.43.0/uxm.standalone.js"></script>
+<script>
+  const { React, createRoot, ButtonPrimary } = window.UXM;
+  createRoot(document.getElementById('root')).render(React.createElement(ButtonPrimary, null, 'Hello UXM'));
+</script>
+```
+
+Still copy recipe 0's host baseline in verbatim — a CDN page gets none of a bundler-based app's
+resets, and skipping it renders the whole page in Times New Roman with inputs overflowing their
+containers.
+
+URLs are versioned and immutable (`https://uxm.viax.io/<version>/…`, no `/latest/`) — pin one
+version number and reuse it across **every** file on the page, JS and CSS both. Mixing versions
+across files is the failure mode this scheme exists to prevent.
+
+Need type-checking in a non-npm project too? `.d.ts` bundles ship alongside the JS
+(`uxm.esm.d.ts`) — curl it and map it in `tsconfig.json`, exact recipe in the README section
+above. Skip all of this for a page that can `npm i -D @viax.io/uxm` instead — that's simpler and
+covers every subpath's types at once; the CDN `.d.ts` route exists only for projects that truly
+can't take even a dev-only npm dependency.
+
+---
+
 ## Anti-patterns
 
 ❌ **Don't handroll a div with the same intent as an existing primitive.** Check the catalog

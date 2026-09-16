@@ -104,6 +104,100 @@ import { ButtonPrimary, themeTokens } from '@viax.io/uxm';
 | `@viax.io/uxm/studio/generate-css` | `generateOverridesCss` + the CSS sanitizers — turn saved studio overrides and a `BrandConfig` into a stylesheet on the server, without pulling in the workbench UI. |
 | `@viax.io/uxm/studio.css` | Tailwind utilities for the studio shell + token declarations. Does **not** bundle the atom CSS — a studio host imports `ui.css` alongside it. |
 
+## CDN usage
+
+For pages that can't run npm at all — prototypes, CodePen repros, embeds in someone else's site — every release also publishes a handful of self-contained `<script>`/`<link>`-ready bundles, built by `npm run build:cdn` and uploaded automatically on release.
+
+> **If your project has a bundler, this is not what you want.** Use [`npm i @viax.io/uxm`](#install) — the CDN bundles below exist specifically for pages that can't.
+
+All files live at `https://uxm.viax.io/<version>/<file>` — versioned and immutable (`Cache-Control: public, max-age=31536000, immutable`). There is no `/latest/`: pin an exact version, and use the same version across every file you load on one page.
+
+| File | Format | React | For |
+|---|---|---|---|
+| `uxm.esm.js` | ESM, `react` / `react-dom` / `react/jsx-runtime` **external** | the host page's, via import map | pages that already have React 19 |
+| `uxm.standalone.js` | IIFE, `window.UXM`, React **bundled in** | its own, inside the bundle | pages with **no** React at all |
+| `uxm.css` | flattened `tokens.css` + `ui.css` | — | both |
+| `uxm-generate-css.esm.js` | ESM, no deps | — | only if you need `generateOverridesCss` (the theming applier) |
+| `uxm.esm.d.ts` / `uxm-generate-css.esm.d.ts` | bundled `.d.ts` per JS artifact | needs `@types/react` | editor/type-check support |
+| `cdn-manifest.json` | byte size, gzip size, `sha384` SRI hash per file | — | verify what you fetched |
+
+⚠️ **React 19 ships no UMD build.** The classic "two `<script>` tags from a CDN plus our UMD on top" isn't possible — that's why there are two separate formats above instead of one.
+
+### ESM — page that already has React 19
+
+```html
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19",
+    "react-dom/client": "https://esm.sh/react-dom@19/client",
+    "@viax.io/uxm/ui": "https://uxm.viax.io/4.43.0/uxm.esm.js"
+  }
+}
+</script>
+<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
+<script type="module">
+  import { ButtonPrimary } from '@viax.io/uxm/ui';
+  import { createElement } from 'react';
+  import { createRoot } from 'react-dom/client';
+
+  createRoot(document.getElementById('root')).render(createElement(ButtonPrimary, null, 'Hello UXM'));
+</script>
+```
+
+### Standalone — page with no React
+
+```html
+<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
+<script src="https://uxm.viax.io/4.43.0/uxm.standalone.js"></script>
+<script>
+  const { React, createRoot, ButtonPrimary } = window.UXM;
+  createRoot(document.getElementById('root')).render(React.createElement(ButtonPrimary, null, 'Hello UXM'));
+</script>
+```
+
+⚠️ **Never load `uxm.standalone.js` on a page that already has another React instance** — two copies of React break hooks and context. If the page has React, use the ESM build above instead.
+
+### Required host baseline
+
+A CDN page gets none of the resets a bundler-based app inherits from its own global stylesheet. Add this once, after `uxm.css` — skip it and the app renders in Times New Roman with inputs overflowing their containers. This is the same baseline npm consumers need; see `skills/viax-uxm/references/quick-recipes.md` (recipe 0) for the full version and why each line is load-bearing.
+
+```css
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+:root { --font-sans: var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif); }
+html, body, #root { font-family: var(--brand-font, var(--font-sans)); }
+button, input, select, textarea { font: inherit; }
+```
+
+### Types
+
+The `.d.ts` bundles need `@types/react` in your project — they extend React's own prop types (`ButtonHTMLAttributes` and friends), which aren't ours to inline. Fetch one alongside your CDN import and map it in `tsconfig.json`:
+
+```sh
+UXM=4.43.0
+curl -fsSL -o types/uxm.esm.d.ts https://uxm.viax.io/$UXM/uxm.esm.d.ts
+```
+
+```json
+{ "compilerOptions": { "paths": { "@viax.io/uxm/ui": ["./types/uxm.esm.d.ts"] } } }
+```
+
+If your project can take even a dev-only npm dependency, `npm i -D @viax.io/uxm@<version>` is simpler and gives every subpath's types at once — the curl route above exists for projects that can't.
+
+### Verifying what you fetched (SRI)
+
+`cdn-manifest.json` next to every version's files lists a `sha384` hash per file — pass it as `integrity` on the `<script>` tag:
+
+```html
+<script
+  type="module"
+  src="https://uxm.viax.io/4.43.0/uxm.esm.js"
+  integrity="sha384-X5wmfaVzW+An31gN2SpznF1F6UxTbD4SsCynzec/bElec2EneSTZf2l0O81YHLVt"
+  crossorigin="anonymous"
+></script>
+```
+
 ## Component catalog
 
 Every component folder ships a `README.md` documenting props, CSS variables, MODO-configurable design tokens, states/variants, and accessibility. Click through any name for the full reference.
