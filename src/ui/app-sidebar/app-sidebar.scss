@@ -229,18 +229,30 @@
     left: 0;
     position: fixed;
     top: 0;
+    /* Closed by default at this width — `--mobile-open` is what slides it in,
+       so a consumer that never wires `mobileOpen` gets a hidden drawer rather
+       than a rail parked over its content. */
+    transform: translateX(-100%);
+    /* `width` stays in the transition: the collapse toggle is still reachable
+       here. `visibility` is stepped, not eased — delayed by the slide duration
+       when closing so the drawer is still painted while it leaves, and
+       immediate when opening so it is visible from the first frame. */
+    transition: transform 0.2s ease, width 0.2s ease, visibility 0s linear 0.2s;
+    /* Translating alone would leave the closed drawer VISIBLE-but-off-screen:
+       its nav rows stay keyboard tab stops with no focus indicator anywhere on
+       screen, screen readers announce the landmark as present, and its
+       box-shadow — zero x-offset, 20px blur, right edge resting exactly on x=0
+       — bleeds a grey strip down the left of every page. `hidden` takes it out
+       of the tab order and the a11y tree, and stops it painting. */
+    visibility: hidden;
     /* Below `--z-dialog` (60) and `--z-toast` (80): a dialog opened from a nav
        row, and any toast, must still cover the drawer. */
     z-index: var(--z-drawer, 40);
-    /* Closed by default at this width — `--mobile-open` is what slides it in,
-       so a consumer that never wires `mobileOpen` gets a hidden drawer rather
-       than a rail parked over its content. `width` stays in the transition:
-       the collapse toggle is still reachable here. */
-    transform: translateX(-100%);
-    transition: transform 0.2s ease, width 0.2s ease;
 
     &--mobile-open {
       transform: translateX(0);
+      transition: transform 0.2s ease, width 0.2s ease, visibility 0s;
+      visibility: visible;
     }
   }
 

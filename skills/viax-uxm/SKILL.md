@@ -155,7 +155,7 @@ catalog.
   hamburger below 768px, but `app-sidebar.scss` shipped no rules for any of it — so on a narrow
   viewport the 256px rail stayed in flow, pushed the page sideways, and the hamburger appeared
   dead. The CSS now ships: below 768px the rail is `position: fixed` and closed at
-  `translateX(-100%)`, `--mobile-open` slides it in over a `--backdrop-color` scrim at
+  `translateX(-100%)` + `visibility: hidden` (so it is not a stray tab stop), `--mobile-open` slides it in over a `--backdrop-color` scrim at
   `--z-drawer` (40, under Dialog's 60), and at 768px+ the backdrop is hidden. **Consumers need
   no code change** — wiring `mobileOpen` / `onMobileClose` (as the props always documented) is
   enough. Honours `prefers-reduced-motion`.
