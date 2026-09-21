@@ -204,3 +204,83 @@
     }
   }
 }
+
+/* ── Mobile drawer ──────────────────────────────────────────────────────────
+   The 768px line is `AppTopBar`'s: its `__menu` hamburger is hidden at
+   min-width 768px, so below that a hamburger is on screen driving `mobileOpen`.
+   `app-sidebar.tsx` has always emitted `--mobile-open` and `__mobile-backdrop`
+   for it (and its comment promised "CSS hides both `--mobile-*` chrome at
+   min-width: 768px"), but the stylesheet never carried the matching rules — the
+   classes rendered and nothing reacted, so the 256px rail stayed in flow and
+   pushed the page sideways. These three rules are that missing half.
+
+   Physical `left` + `translateX`, not the logical pair: nothing in `src/ui`
+   handles `[dir]` today, and a logical inset with a physical transform would
+   anchor the drawer to the inline-start edge in RTL while still sliding it the
+   other way. When the library takes on RTL, both move together.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .uxm-app-sidebar {
+    /* Out of flow, so the shell's row collapses to the content column and the
+       page stops overflowing horizontally. */
+    bottom: 0;
+    box-shadow: var(--uxm-app-sidebar-drawer-shadow, var(--shadow-lg));
+    left: 0;
+    position: fixed;
+    top: 0;
+    /* Below `--z-dialog` (60) and `--z-toast` (80): a dialog opened from a nav
+       row, and any toast, must still cover the drawer. */
+    z-index: var(--z-drawer, 40);
+    /* Closed by default at this width — `--mobile-open` is what slides it in,
+       so a consumer that never wires `mobileOpen` gets a hidden drawer rather
+       than a rail parked over its content. `width` stays in the transition:
+       the collapse toggle is still reachable here. */
+    transform: translateX(-100%);
+    transition: transform 0.2s ease, width 0.2s ease;
+
+    &--mobile-open {
+      transform: translateX(0);
+    }
+  }
+
+  .uxm-app-sidebar__mobile-backdrop {
+    /* Matches `.uxm-dialog__backdrop` — same scrim knobs, so an app that
+       retints one gets the other for free. */
+    backdrop-filter: blur(var(--backdrop-blur, 4px));
+    -webkit-backdrop-filter: blur(var(--backdrop-blur, 4px));
+    background-color: var(--backdrop-color, rgba(0, 0, 0, 0.5));
+    border: none;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    /* It is a <button>, so the UA padding has to go or it inflates the hit
+       area's box beyond the viewport. */
+    padding: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: calc(var(--z-drawer, 40) - 1);
+  }
+}
+
+/* The backdrop only renders while `mobileOpen` is true, and a consumer holding
+   that flag through a resize past the breakpoint would otherwise be left with a
+   full-viewport scrim over an in-flow sidebar. */
+@media (min-width: 768px) {
+  .uxm-app-sidebar {
+    &__mobile-backdrop {
+      display: none;
+    }
+  }
+}
+
+/* A full-height panel flying in from the edge is exactly the motion a reduced-
+   motion preference is about; the drawer still opens and closes, it just
+   arrives. First such guard in `src/ui` — the pattern to copy when another
+   atom needs one. */
+@media (prefers-reduced-motion: reduce) {
+  .uxm-app-sidebar {
+    transition: none;
+  }
+}
