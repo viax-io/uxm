@@ -161,6 +161,10 @@ Unlike the footer, `__lead` imposes **no** `font-size` or `color` — the footer
 | `--uxm-app-sidebar-footer-padding` | – | `8px` | Footer padding, in both rail states. Was `12px 24px`; see [Alignment](#alignment). |
 | `--uxm-app-sidebar-lead-gap` | – | `8px` | Row gap between controls in the header slot. |
 | `--uxm-app-sidebar-footer-gap` | – | `8px` | Row gap between controls in the footer slot. |
+| `--uxm-app-sidebar-drawer-shadow` | `--shadow-lg` | – | Drawer elevation below 768px. |
+| `--z-drawer` | – | `40` | Drawer stacking order; the backdrop sits at `calc(--z-drawer - 1)`. Deliberately under `--z-dialog` (60) and `--z-toast` (80). |
+| `--backdrop-color` | – | `rgba(0,0,0,0.5)` | Drawer scrim. **Shared with `Dialog`** — retinting one retints both. |
+| `--backdrop-blur` | – | `4px` | Drawer scrim blur. Shared with `Dialog`. |
 
 ## Design tokens (MODO-configurable)
 
@@ -182,7 +186,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 |-----------------|---------|--------|
 | Expanded | `collapsed={false}` | Full width (`--expanded-width`), labels + headings + footer visible. |
 | Collapsed | `collapsed={true}` | Narrow width (`--collapsed-width`); brand swaps to icon button, labels & headings hide, `trailing` hides, `badge` collapses to a corner status dot on the icon tile, item width clamps to 32×32. **Both slots still render**; the footer stops imposing its caption `font-size`. |
-| Mobile drawer open | `mobileOpen={true}` | Adds `--mobile-open` modifier and renders the backdrop button as a sibling. |
+| Mobile drawer open | `mobileOpen={true}` | Adds `--mobile-open` modifier and renders the backdrop button as a sibling. Below 768px this slides the fixed rail in over the page behind a scrim; at wider widths the flag is inert and the backdrop is hidden. |
 | Toggle button | `onCollapseToggle` provided | Chevron-left icon rendered in the header; clickable to flip state. |
 | Heading hidden | `collapsed` truthy or `section.heading` undefined | Section heading paragraph is not rendered. |
 
@@ -193,4 +197,4 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Mobile backdrop is a real `<button type="button">` with `aria-label="Close navigation"` — focusable and keyboard-activatable; click forwards to `onMobileClose`.
 - Each nav item announces **identically collapsed and expanded**: the label and the inline `badge` stay in the accessibility tree when collapsed (visually clipped, not removed), so "Inbox 3" reads the same in both states. The corner status dot that visually stands in for the badge is `aria-hidden` — a sighted-only cue backed by the clipped badge text. `title={item.label}` is additionally set when collapsed for the pointer-hover tooltip; it is not the accessible name (the clipped content is). The interactive `trailing` slot IS dropped when collapsed — a clipped focusable control would be an invisible tab stop.
 - The component does not manage focus when toggling collapsed / mobile state; consumers should move focus to the drawer on open if needed.
-- The SCSS does not currently ship a media query for the `--mobile-*` modifier classes or the backdrop — consumers must layer their own responsive rules if they need a drawer at `< 768px`.
+- **The drawer CSS ships.** Below 768px — the same line `AppTopBar` uses to show its hamburger — the rail leaves the flow (`position: fixed`, full height, `--z-drawer`) and sits closed at `translateX(-100%)` **and `visibility: hidden`** — so the closed drawer is not a keyboard tab stop, is not announced, and paints nothing (its shadow would otherwise bleed past the viewport edge); `--mobile-open` slides it in and the backdrop covers the viewport just beneath it. At `min-width: 768px` the backdrop is hidden and the rail is in flow as before, so a consumer holding `mobileOpen` true across a resize is not left with a scrim over its page. Consumers need no responsive rules of their own; wiring `mobileOpen` / `onMobileClose` is enough. The slide honours `prefers-reduced-motion: reduce`.
