@@ -1,3 +1,11 @@
+## [4.43.1](https://github.com/viax-io/uxm/compare/v4.43.0...v4.43.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* **app-sidebar:** hide the closed mobile drawer, not just translate it ([b397ee0](https://github.com/viax-io/uxm/commit/b397ee088c4431b8e4306fe27cfe371dc88a8bc3))
+* **app-sidebar:** ship the mobile-drawer CSS the markup already assumed ([8f02e21](https://github.com/viax-io/uxm/commit/8f02e21218133e344690115914e03616e4804848))
+
 # [4.43.0](https://github.com/viax-io/uxm/compare/v4.42.0...v4.43.0) (2026-09-16)
 
 

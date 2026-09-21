@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.43.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.43.1, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.43.0** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.43.1** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.43.0 — current API surface (overrides training data)
+## v4.43.1 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,55 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.37.0
-
-- **New `UxmLocaleProvider` — one BCP-47 tag for every `Intl` call in the library.** Mount it
-  once at the app root and `Calendar`, `DateInput`, `EditableCell` (via Calendar),
-  `CurrencyInput`, and `FileUpload` format in that locale. `Calendar` and `CurrencyInput`
-  previously hardcoded `locale = 'en-US'` as a default parameter; they now resolve
-  prop → provider → `DEFAULT_UXM_LOCALE` (still `'en-US'`), so an app that mounts no provider
-  renders exactly as before. Also exports `useUxmLocale(explicit?)` for the same resolution
-  inside a consumer's own component. **It is not an i18n engine** — no catalogue, no runtime;
-  translated copy still arrives through each atom's label props.
-- **Every user-visible string in `/ui` is now reachable from props.** The library's standing rule
-  was already "no user-facing string without an override prop", but ten strings had leaked past
-  it. Closed:
-  - `FileUpload` — new `labels?: FileUploadLabels` (`uploading`, `uploadFailed`, and the composed
-    `uploadProgress(percent, size)` / `removeFile(name)` / `cancelFile(name)`), plus
-    `formatSize?: (bytes) => string`.
-  - `EditableCell` — new `saveErrorMessage`, `invalidNumberMessage`, `invalidDateMessage`,
-    `invalidValueMessage`, joining the existing `requiredMessage`.
-  - `DateInput` — new `invalidMessage`, overriding the mask-naming blur message. The exported
-    `invalidDateMessage(format)` helper stays as the default.
-  - `RangeSlider` — new `startLabel` / `endLabel`, used verbatim for the two thumbs. The old
-    `` `${aria-label} (start)` `` composition remains the default.
-- **File sizes are `Intl`-formatted.** `FileUpload` rows go through
-  `Intl.NumberFormat(locale, { style: 'unit', unit: 'kilobyte', … })` instead of
-  `` `${n.toFixed(1)} KB` ``, so both the decimal separator and the unit follow the locale
-  (`482,3 кБ` under `uk-UA`, `482,3 ko` under `fr-FR`). ⚠️ **Both the unit and the number shift**
-  in the English default: `Intl`'s `kilobyte` is SI (1000 B) while the old formatter divided by
-  1024, so the same 482,304-byte file now reads `482.3 kB` where it read `471.0 KB`. Sub-1000
-  sizes move from `512 B` to the pluralised `512 bytes` (CLDR's *short* byte form is neither
-  short nor pluralised in English, so that tier alone uses `unitDisplay: "long"`). `Intl` has no
-  binary unit to switch to — a product that wants `KiB`/`MiB` owns the formatter via
-  `formatSize`. A runtime without `style: "unit"` support falls back to the English SI form
-  rather than throwing.
-- **New atom `LanguageSwitcher` — the one language control the library owns.** Globe + the
-  current language's endonym + caret, opening the shared Listbox panel. It is deliberately
-  **presentational and data-free**: `locales: string[]`, `value`, `onChange`, and nothing else —
-  no query, no context read, no persistence. Where the list comes from and how the choice is
-  stored stay the consumer's, which is what lets one component serve every viax surface instead
-  of each one forking its own. Two behaviours worth knowing because they are easy to regress:
-  it **renders `null`** (not hidden, not disabled) when `locales.length <= 1`, and its labels are
-  **endonyms from `Intl.DisplayNames`** resolved on the base subtag — `Deutsch`, not
-  `Deutsch (Deutschland)` and not `German` — with the region re-added only where two tags share a
-  base language. Pair it with `UxmLocaleProvider`: the switcher picks the tag, the provider pushes
-  it into every atom's `Intl` formatting.
-- **Composed labels are functions, never prefixes.** Anywhere a name interpolates a value —
-  `removeFile(name)`, `uploadProgress(percent, size)`, `BulkActionBar`'s `countLabel(count)` —
-  the prop is a callback, because word order and pluralisation around the value are
-  language-specific. Follow that shape for any new label prop instead of exposing a prefix string.
 
 ### New in 4.37.1
 
@@ -148,7 +99,7 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
-### Unreleased
+### New in 4.43.1
 
 - **`AppSidebar`'s mobile drawer actually works now.** The component always rendered the
   drawer markup (`--mobile-open`, `__mobile-backdrop`) and `AppTopBar` always showed its
@@ -159,6 +110,14 @@ catalog.
   `--z-drawer` (40, under Dialog's 60), and at 768px+ the backdrop is hidden. **Consumers need
   no code change** — wiring `mobileOpen` / `onMobileClose` (as the props always documented) is
   enough. Honours `prefers-reduced-motion`.
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
+
+### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
