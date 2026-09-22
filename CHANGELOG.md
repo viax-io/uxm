@@ -1,3 +1,10 @@
+# [4.44.0](https://github.com/viax-io/uxm/compare/v4.43.2...v4.44.0) (2026-09-22)
+
+
+### Features
+
+* **list:** add a plain container variant ([6388c97](https://github.com/viax-io/uxm/commit/6388c97ddd6229786bc46033db1760fa9b17f70f))
+
 ## [4.43.2](https://github.com/viax-io/uxm/compare/v4.43.1...v4.43.2) (2026-09-22)
 
 
