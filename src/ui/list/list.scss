@@ -77,6 +77,20 @@
      into IconTile's var namespace via `LIST_ITEM_ICON_TILE_STYLE`, so the tile
      pattern is defined once instead of being re-implemented here. */
 
+  /* Selection affordance. The box itself is `Checkbox`'s — same classes, so
+     it paints from `--uxm-checkbox-*` and re-tints with it; this slot only
+     places it. Sized by the checkbox's own knob rather than a second one, so
+     a themed checkbox stays one size everywhere. */
+  &__check {
+    align-items: center;
+    display: inline-flex;
+    flex-shrink: 0;
+    /* Containing block for the visually-hidden input, which `checkbox.scss`
+       positions absolutely — without this it would resolve against the row
+       and drag the focus ring with it. */
+    position: relative;
+  }
+
   /* Media slot — the alternative leading position for a thumbnail / avatar /
      bare <img>, rendered as-is (no IconTile, no accent fill, no colour of its
      own: the media brings its own frame). The row still owns the geometry, so
@@ -120,6 +134,16 @@
     color: var(--uxm-list-item-chevron-color, var(--color-text-muted));
     font-size: calc(12px * var(--type-scale, 1));
   }
+}
+
+/* A selectable row is a <label>, so it wants the pointer a button row gets —
+   the base block is a <div> by default and declares none. */
+.uxm-list-item--selectable {
+  cursor: pointer;
+}
+
+.uxm-list-item--selectable:has(.uxm-checkbox__input:disabled) {
+  cursor: not-allowed;
 }
 
 /* Media fallback stretch, at (0,2,0) on purpose — same reasoning as

@@ -1,12 +1,15 @@
 import { cn } from '@/helpers';
 
+import { Icon } from '../icon';
 import { IconTile } from '../icon-tile';
 
 import type {
   AnchorHTMLAttributes,
+  ChangeEvent,
   ButtonHTMLAttributes,
   CSSProperties,
   HTMLAttributes,
+  LabelHTMLAttributes,
   ReactNode,
 } from 'react';
 
@@ -129,6 +132,23 @@ export interface ListItemProps {
   disabled?: boolean;
   /** Navigate to this URL on click. Implies `interactive`. */
   href?: string;
+  /**
+   * Controlled selection state. Passing `selected` OR `onSelectedChange` puts
+   * the row in **selectable** mode: it renders as a `<label>` around a real
+   * checkbox, so activating anywhere on the row toggles it natively — the
+   * shape for "tick several, then commit" lists (a product picker, recipients,
+   * file selection).
+   *
+   * Distinct from `active`, which is a *toggle button* (`aria-pressed`) —
+   * the wrong semantic for a member of a checkable set. The two can still
+   * combine if a consumer wants the row-fill as well as the tick.
+   *
+   * Mutually exclusive with `interactive` / `href`: a row either navigates or
+   * is ticked, and selectable mode wins if both are passed (dev warning).
+   */
+  selected?: boolean;
+  /** Toggle handler for selectable mode; `next` is the new checked state. */
+  onSelectedChange?: (next: boolean, e: ChangeEvent<HTMLInputElement>) => void;
   className?: string;
 }
 
@@ -141,6 +161,9 @@ type ButtonRest = Omit<
   keyof ListItemProps
 >;
 type DivRest = Omit<HTMLAttributes<HTMLDivElement>, keyof ListItemProps>;
+// Selectable rows render a <label>, whose handlers are typed to
+// HTMLLabelElement — a DivRest cast does not fit it.
+type LabelRest = Omit<LabelHTMLAttributes<HTMLLabelElement>, keyof ListItemProps>;
 
 export function ListItem({
   icon,
@@ -152,17 +175,64 @@ export function ListItem({
   active,
   disabled,
   href,
+  selected,
+  onSelectedChange,
   className,
   ...rest
-}: ListItemProps & (AnchorRest | ButtonRest | DivRest)) {
+}: ListItemProps & (AnchorRest | ButtonRest | DivRest | LabelRest)) {
+  const isSelectable = selected !== undefined || onSelectedChange !== undefined;
   const classes = cn(
     'uxm-list-item',
     active && 'uxm-list-item--active',
+    isSelectable && 'uxm-list-item--selectable',
     className,
   );
-  const isInteractive = interactive || href !== undefined;
+  const isInteractive = (interactive || href !== undefined) && !isSelectable;
+
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    isSelectable &&
+    (interactive || href !== undefined)
+  ) {
+     
+    console.warn(
+      '[uxm] ListItem: `selected`/`onSelectedChange` cannot be combined with `interactive`/`href` — ' +
+        'a row is either a navigate/activate row or a member of a checkable set. Selectable mode wins.',
+    );
+  }
   const inner = (
     <>
+      {/* Selection affordance, before the leading slot. It renders `Checkbox`'s
+          OWN classes rather than nesting the component: `Checkbox` is itself a
+          `<label>`, and a `<label>` inside the row `<label>` is invalid HTML
+          (Chrome tolerates it — measured, one change event either way — but the
+          spec does not, and assistive tech is not guaranteed to). Reusing the
+          classes keeps the box pixel-identical and re-tints with the checkbox's
+          own knobs, at the cost of a coupling to its internals: `list-item.test`
+          asserts these classes still match what `Checkbox` renders, so a change
+          there fails here rather than shipping an unstyled box. */}
+      {isSelectable && (
+        <span className="uxm-list-item__check">
+          <input
+            type="checkbox"
+            className="uxm-checkbox__input"
+            // `?? false`, never a bare `undefined`: selectable mode is
+            // documented as controlled, and a consumer deriving it from async
+            // data (`selected={data?.picked.includes(id)}`) would otherwise
+            // hand React an uncontrolled input that turns controlled the
+            // moment the data lands — React warns, and until it does the DOM
+            // owns the checked state, so a tick made while loading is taken
+            // over instead of reported. `RadioGroup` pins its own mode for the
+            // component's lifetime for exactly this reason.
+            checked={selected ?? false}
+            disabled={disabled}
+            onChange={(e) => onSelectedChange?.(e.target.checked, e)}
+          />
+          <span className="uxm-checkbox__box" aria-hidden="true">
+            <Icon glyph="check" strokeWidth={3} />
+          </span>
+        </span>
+      )}
       {/* Leading slot. `media` renders as-is so a product photo / avatar
           keeps its own frame; `icon` keeps the accent IconTile treatment.
           `media` wins when both are passed — a row has one leading grid
@@ -187,6 +257,22 @@ export function ListItem({
       {trailing && <span className="uxm-list-item__trailing">{trailing}</span>}
     </>
   );
+
+  if (isSelectable) {
+    // A real `<label>`: whole-row activation is the browser's, not a click
+    // handler's, so it works for pointer and keyboard and needs no ARIA of its
+    // own. The row is NOT `aria-pressed` — that is a toggle button, the wrong
+    // semantic for one member of a checkable set.
+    return (
+      <label
+        className={classes}
+        {...(disabled ? { 'aria-disabled': true as const } : {})}
+        {...(rest as LabelRest)}
+      >
+        {inner}
+      </label>
+    );
+  }
 
   if (href !== undefined) {
     return (

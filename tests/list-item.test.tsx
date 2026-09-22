@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { Icon, ListItem, Thumbnail } from '@/ui';
+import { Checkbox, Icon, ListItem, Thumbnail } from '@/ui';
 
 /**
  * The `media` slot's whole point is that it does NOT go through `IconTile`,
@@ -79,5 +79,84 @@ describe('ListItem leading slot', () => {
     const row = screen.getByRole('button', { name: /Bolt M6/ });
     expect(row).toHaveClass('uxm-list-item', 'uxm-list-item--active');
     expect(row).toHaveAttribute('aria-pressed', 'true');
+  });
+});
+
+describe('ListItem selectable mode', () => {
+  it('renders a label-wrapped checkbox and keeps the row out of button semantics', () => {
+    render(
+      <ListItem selected onSelectedChange={() => {}} media={<Thumbnail alt="" />}>
+        Bolt M6
+      </ListItem>,
+    );
+    const box = screen.getByRole('checkbox');
+    expect(box).toBeChecked();
+    // A member of a checkable set, not a toggle button.
+    expect(screen.queryByRole('button')).toBeNull();
+    expect(box.closest('label')).toHaveClass('uxm-list-item--selectable');
+  });
+
+  it('toggles from a click anywhere on the row', () => {
+    const onSelectedChange = vi.fn();
+    render(
+      <ListItem selected={false} onSelectedChange={onSelectedChange}>
+        Bolt M6
+      </ListItem>,
+    );
+    // The label is the whole row, so clicking the title text activates the
+    // input natively — no click handler involved.
+    screen.getByText('Bolt M6').click();
+    expect(onSelectedChange).toHaveBeenCalledWith(true, expect.anything());
+  });
+
+  it('wins over interactive/href and warns in dev', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(
+      <ListItem selected onSelectedChange={() => {}} interactive href="/x">
+        Both
+      </ListItem>,
+    );
+    expect(screen.queryByRole('button')).toBeNull();
+    expect(screen.queryByRole('link')).toBeNull();
+    expect(screen.getByRole('checkbox')).toBeInTheDocument();
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
+  });
+
+  it('disables the input', () => {
+    render(
+      <ListItem selected={false} onSelectedChange={() => {}} disabled>
+        Bolt M6
+      </ListItem>,
+    );
+    expect(screen.getByRole('checkbox')).toBeDisabled();
+  });
+
+  it('leaves every other mode untouched', () => {
+    const { container, rerender } = render(<ListItem>Plain</ListItem>);
+    expect(container.querySelector('.uxm-list-item--selectable')).toBeNull();
+    expect(container.querySelector('input')).toBeNull();
+    rerender(<ListItem interactive>Button</ListItem>);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+    rerender(<ListItem href="/docs">Link</ListItem>);
+    expect(screen.getByRole('link')).toBeInTheDocument();
+  });
+
+  it('renders the same checkbox internals the Checkbox atom does', () => {
+    // The coupling this mode accepts: ListItem paints Checkbox's classes rather
+    // than nesting the component (a <label> inside the row <label> is invalid
+    // HTML). If Checkbox's internals move, this fails here instead of shipping
+    // an unstyled box.
+    const a = render(<Checkbox checked onChange={() => {}} />).container;
+    const b = render(
+      <ListItem selected onSelectedChange={() => {}}>
+        Row
+      </ListItem>,
+    ).container;
+    for (const cls of ['.uxm-checkbox__input', '.uxm-checkbox__box']) {
+      expect(a.querySelector(cls), `Checkbox renders ${cls}`).not.toBeNull();
+      expect(b.querySelector(cls), `selectable ListItem renders ${cls}`).not.toBeNull();
+    }
+    expect(b.querySelector('.uxm-checkbox__box svg')).not.toBeNull();
   });
 });
