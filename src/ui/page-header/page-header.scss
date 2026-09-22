@@ -9,6 +9,16 @@
 .uxm-page-header {
   align-items: flex-start;
   display: flex;
+  /* Actions are `flex-shrink: 0` and the body used to be `min-width: 0`, so a
+     row too narrow for both crushed the body to nothing instead of wrapping:
+     measured at 343px with ~4 actions, the header rendered 244px tall with the
+     body 14px wide and the meta line stacked over 9 rows. Wrapping is what lets
+     the actions drop to their own line — but only together with the body's
+     width floor below, since a body that may shrink to 0 never forces a wrap.
+     Deliberately width-driven rather than a breakpoint: `PageHeader` is just as
+     likely to be squeezed inside a docked flexpane at desktop width as on a
+     phone, and neither a media nor a container query catches both. */
+  flex-wrap: wrap;
   gap: var(--uxm-page-header-gap, 16px);
   padding: var(--uxm-page-header-padding-y, 0px)
     var(--uxm-page-header-padding-x, 0px);
@@ -18,7 +28,21 @@
 
   &__body {
     flex: 1;
-    min-width: 0;
+    /* The floor that turns `flex-wrap` into real behaviour: below this the body
+       stops yielding and the actions wrap instead. `min()` keeps it from ever
+       exceeding the line — in a container narrower than the floor it degrades
+       to 100% rather than overflowing. Was `min-width: 0`, which let the title
+       and meta be squeezed to a sliver.
+
+       10rem, not 16: the wrap is decided against this floor rather than against
+       what the title actually needs (`min()` takes lengths, so `max-content`
+       cannot go here), so too generous a floor wraps headers that were fine.
+       Measured with a short title and two actions, a 16rem floor wrapped at
+       460 / 420 / 380px — 88px tall where one 40px row had been legible, the
+       title on a single line in every case. 10rem moves that threshold to
+       ~400px and still gives a long title 160px at 343px, against the 14px it
+       got before any floor existed. */
+    min-width: min(100%, var(--uxm-page-header-body-min, 10rem));
   }
 
   &__title {
@@ -41,5 +65,8 @@
     display: inline-flex;
     flex-shrink: 0;
     gap: 8px;
+    /* No indent to line the wrapped row up under the body: the icon slot is
+       conditional (`{icon && <IconTile …>}`), so a fixed icon-width margin
+       would indent the actions of every header that has no icon. */
   }
 }

@@ -1116,6 +1116,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-option-list-row-hover-radius",
   "--uxm-option-list-row-padding-x",
   "--uxm-option-list-row-padding-y",
+  "--uxm-page-header-body-min",
   "--uxm-page-header-gap",
   "--uxm-page-header-meta-color",
   "--uxm-page-header-meta-size",
