@@ -2,7 +2,7 @@
 
 A family of four button variants — `ButtonPrimary`, `ButtonSecondary`, `ButtonTertiary`, `ButtonGhost` — rendering a native `<button>` element with a shared visual contract and per-variant theming hooks.
 
-Each variant is a thin wrapper around `<button>` with a single BEM-style class (`uxm-button-{variant}`). All native `ButtonHTMLAttributes` flow through, `type` defaults to `"button"` to avoid accidental form submission, and a consumer-supplied `className` is merged via the `cn` helper.
+Each variant is a thin wrapper around `<button>` with a single BEM-style class (`uxm-button-{variant}`). All native button attributes flow through — **including `ref`**, which is placed on the `<button>` — `type` defaults to `"button"` to avoid accidental form submission, and a consumer-supplied `className` is merged via the `cn` helper.
 
 ## Usage
 
@@ -23,11 +23,15 @@ function Example() {
 
 ## Props
 
-All four components share the same prop signature:
+All five components share the same prop signature:
 
 ```ts
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
+type ButtonProps = ComponentPropsWithRef<'button'>;
 ```
+
+`ComponentPropsWithRef`, not `ButtonHTMLAttributes`: the latter does not declare `ref`, so
+`<ButtonPrimary ref={…}>` was a type error even though React 19 delivered the ref to the element
+at runtime. See [Refs](#refs).
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -36,7 +40,8 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 | `children` | `ReactNode` | – | Label content. Accepts text and icon nodes. |
 | `disabled` | `boolean` | `false` | Native disabled state; styles dim via opacity transition. |
 | `onClick` | `(e: MouseEvent) => void` | – | Standard click handler. |
-| _(any native button attribute)_ | – | – | All `ButtonHTMLAttributes<HTMLButtonElement>` are spread onto the root `<button>`. |
+| `ref` | `Ref<HTMLButtonElement>` | – | Placed on the underlying `<button>`. Makes the button a `HoverTooltip` / `Popover` anchor with no wrapper element. |
+| _(any native button attribute)_ | – | – | Every native `<button>` attribute is spread onto the root `<button>`. |
 
 The components emit no custom events — all event semantics come from the native `<button>` element.
 
@@ -72,6 +77,24 @@ The token group / token name pairs map 1-to-1 to entries in `themeTokens` (`src/
 | Hover | `:hover` | Distinct fill per variant (no opacity dim): Primary darkens its accent, Secondary → `--color-accent-subtle`, Tertiary / Ghost → `--color-surface-alt`. Each behind its `--uxm-button-{variant}-hover-background-color` var so studio overrides win. |
 | Disabled | `disabled` attribute | Native disabled cursor; rely on consumer-managed opacity if a dimmer state is desired. |
 | Focus | `:focus-visible` | Inherits the browser's default focus ring; consumers can extend via global focus-ring tokens. |
+
+## Refs
+
+Takes a `ref`, placed on the underlying `<button>`. That makes it a first-class anchor for the
+shipped floating layers — `HoverTooltip` and `Popover` both position against a ref on their
+child — so no wrapper element is needed:
+
+```tsx
+<HoverTooltip content="Download model configuration">
+  <IconButton aria-label="Download model" onClick={download}>
+    <Icon glyph="arrow-down" size={16} />
+  </IconButton>
+</HoverTooltip>
+```
+
+There is no `forwardRef` here: on React 19 `ref` is an ordinary prop, so the atom destructures
+it and places it on the element. The props type is `ComponentPropsWithRef<'button'>` — declaring
+`ref` is what the type surface was missing.
 
 ## Accessibility
 
