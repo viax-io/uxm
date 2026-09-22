@@ -1,3 +1,10 @@
+# [4.45.0](https://github.com/viax-io/uxm/compare/v4.44.0...v4.45.0) (2026-09-22)
+
+
+### Features
+
+* **button,icon-button:** declare ref on the button family ([ee76076](https://github.com/viax-io/uxm/commit/ee760764465faf8054f550d816d2c188adf0bc82))
+
 # [4.44.0](https://github.com/viax-io/uxm/compare/v4.43.2...v4.44.0) (2026-09-22)
 
 
