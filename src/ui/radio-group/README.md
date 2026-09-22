@@ -39,6 +39,8 @@ function PlanPicker() {
 | `defaultValue` | `string` | – | Initial selection for uncontrolled usage. |
 | `onChange` | `(value: string, e: ChangeEvent<HTMLInputElement>) => void` | – | Group-level change callback. |
 | `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | Lays children out as a column or row. |
+| `variant` | `'default' \| 'card'` | `'default'` | Option presentation. `default` is the `[circle] label` row. `card` renders each option as a selectable tile — the option's `children` fill the card body and the selected state is an accent frame — for a visual single-select (layout picker, plan tiers, theme swatches). |
+| `indicator` | `'hidden' \| 'corner'` | `'hidden'` | **Card mode only.** `hidden` drops the circle (the frame is the affordance); `corner` pins it to the tile's top-right for redundancy. Ignored when `variant` is `default`. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | `children` | `ReactNode` | – | One or more `RadioOption` elements. |
 | `id` / `aria-describedby` | `string` | – | Forwarded to the `role="radiogroup"` root. `FormField` injects both (label association + hint), so the atom is hint-associable; describedby merges with the atom's own error-message id, consumer ids first. |
@@ -108,6 +110,41 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Disabled | `disabled` prop | Native `disabled` on the input + `--disabled` modifier on the label: `cursor: not-allowed` and `opacity: 0.4` (`--uxm-radio-group-disabled-opacity`). |
 | Hover (unselected) | `:hover` on the label, input unselected | Circle border moves to `--color-text-strong`; the circle stays unfilled. |
 | Hover (selected) | `:hover` on the label, input selected | Circle border and inner dot deepen to `--color-accent-bold`. |
+
+## Card variant
+
+```tsx
+<RadioGroup name="layout" variant="card" direction="horizontal" value={layout} onChange={setLayout}>
+  {PRESETS.map((p) => (
+    <RadioOption key={p.value} value={p.value}>
+      <LayoutDiagram preset={p.value} />
+      <strong>{p.title}</strong>
+      <span>{p.sub}</span>
+    </RadioOption>
+  ))}
+</RadioGroup>
+```
+
+It is a presentation change, not a different control: underneath it is still a native radio
+group in a `role="radiogroup"`, so `aria-checked`, arrow-key selection and the focus behaviour
+are the ones the row presentation gets. That is the point — a visual picker hand-wired from
+clickable `Card`s has none of them.
+
+Two implementation details worth knowing before restyling it:
+
+- **The circle stays a sibling of the input**, even in card mode where it is pinned to a corner
+  or hidden. Nesting it inside the tile would put it out of reach of every existing
+  `__input:checked + __circle` / hover / focus rule, which would then need a parallel card-mode
+  copy to keep in step. `corner` only moves it.
+- **The frame's colours are the row's colours** — `--uxm-radio-group-selected-border`,
+  `-hover-*`, `-focus-ring`. A theme that re-tints the circle re-tints the frame with it, so the
+  two presentations cannot drift apart. The card-specific knobs (`--uxm-radio-card-padding`,
+  `-radius`, `-gap`, `-border-width`, `-bg`, `-selected-bg`) are geometry and surface only.
+
+In card mode the **frame** carries the focus ring, not the circle — ringing a hidden or
+corner-shrunk circle would put the focus indicator on the smallest thing on screen instead of
+the control being chosen. `direction="horizontal"` wraps in card mode, since a row of tiles that
+cannot wrap either overflows or squeezes every tile below its content.
 
 ## Accessibility
 

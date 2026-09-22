@@ -30,6 +30,14 @@ export const radioGroupDef: ComponentDef = {
     // below is the sole signal (errorColor colors it, errorMessageSize sizes it).
     { key: 'errorColor', label: 'Message', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'errorState', showWhen: { state: 'error' } },
     { key: 'errorMessageSize', label: 'Message Size', control: 'number', defaultValue: 12, min: 10, max: 16, step: 1, unit: 'px', section: 'errorState', showWhen: { state: 'error' } },
+    // Card presentation — geometry only. The frame, hover and focus colours
+    // come from the shared `--uxm-radio-group-*` vars the row already uses, so
+    // a theme cannot drift between the two presentations.
+    { key: 'cardPadding', label: 'Padding', control: 'number', defaultValue: 12, min: 4, max: 32, step: 2, unit: 'px', section: 'card', showWhen: { variant: 'card' } },
+    { key: 'cardRadius', label: 'Radius', control: 'slider', defaultValue: 8, min: 0, max: 20, step: 1, unit: 'px', section: 'card', showWhen: { variant: 'card' } },
+    { key: 'cardGap', label: 'Content Gap', control: 'number', defaultValue: 4, min: 0, max: 16, step: 1, unit: 'px', section: 'card', showWhen: { variant: 'card' } },
+    { key: 'cardBorderWidth', label: 'Border Width', control: 'number', defaultValue: 1, min: 1, max: 4, step: 1, unit: 'px', section: 'card', showWhen: { variant: 'card' } },
+    { key: 'cardBg', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'card', showWhen: { variant: 'card' } },
   ],
   layoutVariants: [
     {
@@ -43,6 +51,30 @@ export const radioGroupDef: ComponentDef = {
         { value: 'error', label: 'Error' },
       ],
       defaultValue: 'default',
+    },
+    {
+      // Presentation, not state: `card` swaps the option from a
+      // `[circle] label` row to a selectable tile. Every colour it paints
+      // resolves through the same `--uxm-radio-group-*` vars the row uses, so
+      // the States picker above keeps meaning what it means in both.
+      key: 'variant',
+      label: 'Presentation',
+      options: [
+        { value: 'default', label: 'Row' },
+        { value: 'card', label: 'Card' },
+      ],
+      defaultValue: 'default',
+    },
+    {
+      key: 'indicator',
+      label: 'Indicator',
+      options: [
+        { value: 'hidden', label: 'Frame only' },
+        { value: 'corner', label: 'Corner dot' },
+      ],
+      defaultValue: 'hidden',
+      // Meaningless on a row, where the circle IS the control.
+      showWhen: { variant: 'card' },
     },
     {
       key: 'direction',
