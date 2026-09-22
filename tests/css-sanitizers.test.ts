@@ -53,4 +53,9 @@ describe('css sanitizers', () => {
     expect(safeTokenValue('red; } body { display: none }')).toBeUndefined();
     expect(safeTokenValue('a\nb')).toBeUndefined();
   });
+
+  it('safeTokenValue cannot break out of a <style> tag either', () => {
+    expect(safeTokenValue('red</style><script>alert(1)</script>')).toBeUndefined();
+    expect(safeTokenValue('red<b>')).toBeUndefined();
+  });
 });

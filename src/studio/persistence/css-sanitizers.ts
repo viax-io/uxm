@@ -51,7 +51,14 @@ export function safeLineHeight(v: unknown): string | undefined {
 export function safeTokenKey(v: string): boolean {
   return /^--[A-Za-z0-9-]+$/.test(v);
 }
+// Blocks CSS-declaration break-out (`{`, `}`, `;`, newlines) AND HTML
+// break-out (`<`, `>`): this value is interpolated not just into persisted
+// stylesheets but into a live `<style>` JSX text child (brand-token-styles.tsx).
+// React's own DOM renderer treats that as a text node, so `</style>` is inert
+// on the client — but the same string is one `renderToString()` away (a host
+// SSR path, a prerender, any future dangerouslySetInnerHTML mirror) from
+// literally closing the tag and turning whatever follows into real markup.
 export function safeTokenValue(v: unknown): string | undefined {
   if (typeof v !== 'string') return undefined;
-  return /[{};\n\r]/.test(v) ? undefined : v;
+  return /[{};\n\r<>]/.test(v) ? undefined : v;
 }
