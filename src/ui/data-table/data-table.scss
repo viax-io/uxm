@@ -49,9 +49,15 @@
      anonymous `table` box, which is `width: auto` and shrinks to min-content.
      The rows' `width: 100%` then resolved against THAT box, so a stacked card
      rendered at a fraction of its container (measured: 318px table, 81px
-     tbody, 81px row). Making the tbody a block removes the anonymous box. */
+     tbody, 81px row). Making the tbody a block removes the anonymous box.
+
+     Child combinator, not descendant: cells take arbitrary `ReactNode`, and a
+     descendant selector reached into any table a consumer nested inside one —
+     forcing ITS tbody to block and collapsing their layout to a sliver, with
+     nothing in their own CSS to explain it. A tbody is always a direct child
+     of its table, so `>` covers this table exactly and stops there. */
   .uxm-data-table__table,
-  .uxm-data-table__table tbody,
+  .uxm-data-table__table > tbody,
   .uxm-data-table__row,
   .uxm-data-table__td {
     display: block;

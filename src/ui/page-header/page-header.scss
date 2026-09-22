@@ -32,8 +32,17 @@
        stops yielding and the actions wrap instead. `min()` keeps it from ever
        exceeding the line — in a container narrower than the floor it degrades
        to 100% rather than overflowing. Was `min-width: 0`, which let the title
-       and meta be squeezed to a sliver. */
-    min-width: min(100%, var(--uxm-page-header-body-min, 16rem));
+       and meta be squeezed to a sliver.
+
+       10rem, not 16: the wrap is decided against this floor rather than against
+       what the title actually needs (`min()` takes lengths, so `max-content`
+       cannot go here), so too generous a floor wraps headers that were fine.
+       Measured with a short title and two actions, a 16rem floor wrapped at
+       460 / 420 / 380px — 88px tall where one 40px row had been legible, the
+       title on a single line in every case. 10rem moves that threshold to
+       ~400px and still gives a long title 160px at 343px, against the 14px it
+       got before any floor existed. */
+    min-width: min(100%, var(--uxm-page-header-body-min, 10rem));
   }
 
   &__title {

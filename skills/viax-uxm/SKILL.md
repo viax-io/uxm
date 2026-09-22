@@ -126,7 +126,7 @@ catalog.
 - **`PageHeader` wraps its actions instead of crushing the title.** The row was `nowrap` with
   `flex-shrink: 0` actions and a `min-width: 0` body, so a narrow container squeezed the title and
   meta to a sliver — 244px tall at 343px wide. It now wraps, with a `--uxm-page-header-body-min`
-  (16rem) floor on the body; the same header is 122px. Width-driven rather than a breakpoint, so a
+  (10rem) floor on the body; the same header is 122px. Width-driven rather than a breakpoint, so a
   header docked in a narrow flexpane at desktop width degrades the same way. Wide layouts unchanged.
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
