@@ -1,3 +1,10 @@
+# [4.48.0](https://github.com/viax-io/uxm/compare/v4.47.0...v4.48.0) (2026-09-22)
+
+
+### Features
+
+* **list:** add a selectable (multi-select) mode to ListItem ([f8c603a](https://github.com/viax-io/uxm/commit/f8c603a956f60a68a495b51d2738255b30c8440f))
+
 # [4.47.0](https://github.com/viax-io/uxm/compare/v4.46.0...v4.47.0) (2026-09-22)
 
 

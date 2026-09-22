@@ -1561,3 +1561,21 @@ reached the published library; now shipped in 2.8.0.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
+
+### New in 4.43.2
+
+- **`DataTable` stacked rows fill their card.** In stacked mode (`@container (max-width: 480px)`)
+  the `tbody` kept its default `table-row-group` while everything around it went to `display:
+  block`, so the browser wrapped it in an anonymous min-content `table` box and each "full-width"
+  card rendered at a fraction of its container (318px table, 81px row). No consumer change needed.
+- **`PageHeader` wraps its actions instead of crushing the title.** The row was `nowrap` with
+  `flex-shrink: 0` actions and a `min-width: 0` body, so a narrow container squeezed the title and
+  meta to a sliver — 244px tall at 343px wide. It now wraps, with a `--uxm-page-header-body-min`
+  (10rem) floor on the body; the same header is 122px. Width-driven rather than a breakpoint, so a
+  header docked in a narrow flexpane at desktop width degrades the same way. Wide layouts unchanged.
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
