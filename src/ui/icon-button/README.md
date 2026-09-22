@@ -2,7 +2,7 @@
 
 A square, icon-only `<button>` for compact controls (toolbars, row actions, dismissals). Required `aria-label` is enforced at the type level.
 
-`IconButton` is a thin wrapper around `<button>` that applies the `uxm-icon-button` class, plus `uxm-icon-button--filled` for `variant="filled"` (the successor of the deprecated `ButtonIcon` atom). All native `ButtonHTMLAttributes` flow through; `type` defaults to `"button"` to avoid accidental form submission. The component is structural only — sizing of the inner SVG is enforced by CSS so per-instance `<Icon size>` props are visually overridden once the icon lives inside an IconButton.
+`IconButton` is a thin wrapper around `<button>` that applies the `uxm-icon-button` class, plus `uxm-icon-button--filled` for `variant="filled"` (the successor of the deprecated `ButtonIcon` atom). All native button attributes flow through — **including `ref`**, which is placed on the `<button>`; `type` defaults to `"button"` to avoid accidental form submission. The component is structural only — sizing of the inner SVG is enforced by CSS so per-instance `<Icon size>` props are visually overridden once the icon lives inside an IconButton.
 
 ## Usage
 
@@ -22,7 +22,7 @@ function Example() {
 
 ### `IconButtonProps`
 
-Extends `ButtonHTMLAttributes<HTMLButtonElement>` — any standard button attribute (disabled, onClick, type, data-*, aria-*) is forwarded to the root.
+Extends `ComponentPropsWithRef<'button'>` — any standard button attribute (disabled, onClick, type, data-*, aria-*) is forwarded to the root, and so is `ref`. (`ButtonHTMLAttributes` does not declare `ref`, which is why `<IconButton ref={…}>` used to be a type error even though React 19 delivered the ref at runtime. See [Refs](#refs).)
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -31,6 +31,7 @@ Extends `ButtonHTMLAttributes<HTMLButtonElement>` — any standard button attrib
 | `variant` | `'ghost' \| 'filled'` | `'ghost'` | `ghost` — 32 px, transparent, for toolbars / row ⋮ / inline chrome. `filled` — 40 px, `--color-surface-alt` fill, radius 8, for a standalone action ("add", "create"); replaces `ButtonIcon`. |
 | `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | Overridden default — set to `'submit'` explicitly when used inside a form. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
+| `ref` | `Ref<HTMLButtonElement>` | – | Placed on the underlying `<button>`. Makes the button a `HoverTooltip` / `Popover` anchor with no wrapper element. |
 | `disabled` | `boolean` | `false` | Native disabled state. |
 | _(any native button attribute)_ | – | – | Spread onto the root `<button>`. |
 
@@ -80,6 +81,24 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Disabled | `disabled` attribute | `opacity: 0.4`, `cursor: not-allowed`. |
 | Focus | `:focus-visible` | 2 px `--color-accent` outline, offset 2 px (shared by both variants). |
 | `variant="filled"` | prop | 40 px, `--color-surface-alt` fill, radius 8, 18 px glyph; hover `--color-accent-subtle`, pressed `--color-accent-bold` with inverse icon — the former `ButtonIcon` look, themed under `--uxm-icon-button-filled-*`. |
+
+## Refs
+
+Takes a `ref`, placed on the underlying `<button>`. That makes it a first-class anchor for the
+shipped floating layers — `HoverTooltip` and `Popover` both position against a ref on their
+child — so no wrapper element is needed:
+
+```tsx
+<HoverTooltip content="Download model configuration">
+  <IconButton aria-label="Download model" onClick={download}>
+    <Icon glyph="arrow-down" size={16} />
+  </IconButton>
+</HoverTooltip>
+```
+
+There is no `forwardRef` here: on React 19 `ref` is an ordinary prop, so the atom destructures
+it and places it on the element. The props type is `ComponentPropsWithRef<'button'>` — declaring
+`ref` is what the type surface was missing.
 
 ## Accessibility
 

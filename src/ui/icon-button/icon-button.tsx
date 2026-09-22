@@ -1,10 +1,10 @@
 import { cn } from '@/helpers';
 
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ComponentPropsWithRef, ReactNode } from 'react';
 
 export type IconButtonVariant = 'ghost' | 'filled';
 
-export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IconButtonProps extends ComponentPropsWithRef<'button'> {
   /** SVG content (use the Icon component or a raw <svg>). */
   children: ReactNode;
   /** Required for accessibility on icon-only buttons. */
@@ -23,10 +23,12 @@ export function IconButton({
   className,
   type = 'button',
   variant = 'ghost',
+  ref,
   ...rest
 }: IconButtonProps) {
   return (
     <button
+      ref={ref}
       type={type}
       className={cn('uxm-icon-button', variant === 'filled' && 'uxm-icon-button--filled', className)}
       {...rest}
