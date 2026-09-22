@@ -68,8 +68,25 @@ export const listItemDef: ComponentDef = {
   ],
   layoutVariants: [
     {
+      // Selection is a MODE, not a decoration: a selectable row renders as a
+      // <label> around a real checkbox instead of a <button>, because a member
+      // of a checkable set is not a toggle button. The atom enforces the same
+      // exclusivity — `selected` wins over `interactive`/`href` — so the Mode
+      // picker below hides here rather than offering a combination that cannot
+      // exist.
+      key: 'selection',
+      label: 'Selection',
+      options: [
+        { value: 'none', label: 'Off' },
+        { value: 'selectable', label: 'Checkbox' },
+      ],
+      defaultValue: 'none',
+    },
+    {
       key: 'mode',
       label: 'Mode',
+      // Meaningless once the row is selectable — that mode owns the element.
+      showWhen: { selection: 'none' },
       options: [
         // `static` → renders as `<div>`; no hover / focus / active
         // styling. `interactive` → renders as `<button>` (or `<a>`

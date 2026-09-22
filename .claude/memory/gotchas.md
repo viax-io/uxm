@@ -416,3 +416,49 @@ config file with an `entry` object (`{ 'uxm.esm': '…' }`) and an explicit
 scratch dir cannot resolve `tsup` itself). Same root cause as the standalone
 entry needing to live under `scripts/cdn/`: Node resolves from the file's
 location, never from `cwd`.
+
+---
+
+## A new mode isn't done until the studio can reach it
+
+Three times in one release train (4.44-4.48) an atom gained a mode and the
+studio kept showing the old one, and **no gate caught any of them** — lint,
+typecheck, `check:drift` and the whole Vitest suite passed each time, because
+every one of these lives in the registry or a preview, not in the atom.
+
+The three, all found only by opening the workbench:
+
+- **`List variant="plain"`** — the registry's "Border Color" knob was gated to
+  `container: 'card'`. It reads as a container knob and sits in a Container
+  section, but it maps to `--uxm-list-item-border-color`, whose only read is the
+  ROW DIVIDER. Gating it took the divider colour away from the one presentation
+  where dividers are the only separator left.
+- **`RadioGroup variant="card"`** — the forced-state showcase is hand-written
+  row markup and didn't follow `variant`, so picking Card and then Hover/Focus
+  painted a circle for a control that is a tile. The knobs it was tuning
+  (`--uxm-radio-group-hover-*`, `-focus-ring`) really do drive the card frame,
+  so the feedback was wrong about the thing being edited.
+- **`ListItem selected`** — the preview had no way to reach selectable mode at
+  all; and once it did, the showcase still rendered a `<button>` row while the
+  live list rendered `<label>` rows, and `trailing` still derived from `mode`,
+  putting a navigation chevron on a checkbox row.
+
+**How to apply.** When an atom gains a variant or mode, treat these as part of
+the change, not follow-up:
+
+1. A registry variant so it can be selected at all.
+2. Every hand-written preview branch follows it — especially a forced-state
+   showcase, which is usually the ONLY renderer of hover/focus/disabled. If the
+   showcase can't produce the new element, it must render the new element.
+3. Anything derived from a sibling variant is re-checked. **Hiding a variant
+   picker with `showWhen` does not reset its stored value** — `mode` stays
+   `'interactive'` while its picker is hidden, so `showWhen: { mode: 'interactive' }`
+   options stay on offer and `trailingForMode(mode, …)` keeps returning the
+   chevron. Gate on the NEW variant, or pass it in.
+4. Trace what a knob actually paints before gating it — the label and the
+   section it sits in are not evidence. `grep` the variable it maps to in
+   `generate-css-mapping.ts`, then grep that variable in the SCSS.
+
+Related: "A per-state var whose fallback is the resting value ships a dead rule"
+is the same family — the workbench looking right while the shipped path is
+wrong.

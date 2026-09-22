@@ -76,7 +76,17 @@ function trailingForMode(
   mode: Mode,
   meta: string,
   tagType: TagType,
+  selectable: boolean,
 ): ReactNode {
+  if (selectable) {
+    // NOT the chevron. `mode` keeps its `interactive` default in selectable
+    // mode (its picker is hidden, which does not reset the stored value), so
+    // deriving trailing from it put a "tap to drill in" affordance on a row
+    // that ticks a checkbox — two contradictory signals in the one place
+    // consumers copy from. A multi-select row's trailing is meta: modo's real
+    // rows put a price there.
+    return meta;
+  }
   if (mode === 'interactive') {
     // Color inherits via `currentColor` from `.uxm-list-item__trailing`,
     // which reads `--uxm-list-item-chevron-color`. Keeps saves working
@@ -106,18 +116,41 @@ function StaticShowcase({
   showValue,
   leading,
   container,
+  selectable,
 }: {
   mode: Mode;
   state: string;
   showValue: boolean;
   leading: Leading;
   container: ListVariant;
+  selectable: boolean;
 }) {
-  const isInteractive = mode === 'interactive';
+  // A selectable row is a <label> around a checkbox — it can never be the
+  // <button> this showcase renders for `interactive`. Painting a forced state
+  // on the wrong element is worse than painting none: the State picker is the
+  // only place hover / focus / disabled are shown at all, so a designer would
+  // be tuning against a row the atom cannot produce in this mode.
+  const isInteractive = mode === 'interactive' && !selectable;
   const isActive = isInteractive && state === 'active';
   const isDisabled = state === 'disabled';
   const inner = (
     <>
+      {/* Mirrors the atom's selection affordance — same classes the atom
+          renders, so the forced state is shown on the real element. */}
+      {selectable && (
+        <span className="uxm-list-item__check">
+          <input
+            type="checkbox"
+            className="uxm-checkbox__input"
+            checked={state !== 'default'}
+            disabled={isDisabled}
+            readOnly
+          />
+          <span className="uxm-checkbox__box" aria-hidden="true">
+            <Icon glyph="check" strokeWidth={3} />
+          </span>
+        </span>
+      )}
       {/* Mirrors the atom's leading slot: an IconTile sized/coloured from the
           same forwarded knob vars (glyph size comes from the tile var), or the
           un-tiled media span when the Leading variant selects it. */}
@@ -135,7 +168,7 @@ function StaticShowcase({
         {showValue && <span className="uxm-list-item__value">Alex Morgan</span>}
       </span>
       <span className="uxm-list-item__trailing">
-        {trailingForMode(mode, 'Verified', 'success')}
+        {trailingForMode(mode, 'Verified', 'success', selectable)}
       </span>
     </>
   );
@@ -158,6 +191,14 @@ function StaticShowcase({
         >
           {inner}
         </button>
+      ) : selectable ? (
+        // The atom's selectable element: a <label>, never a <button>.
+        <label
+          className={cn('uxm-list-item', 'uxm-list-item--selectable')}
+          {...(isDisabled ? { 'aria-disabled': true } : {})}
+        >
+          {inner}
+        </label>
       ) : (
         <div
           className="uxm-list-item"
@@ -192,7 +233,12 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
   const showValue = ((variants.value as string) ?? 'shown') === 'shown';
   const leading = ((variants.leading as string) ?? 'icon') as Leading;
   const container = ((variants.container as string) ?? 'card') as ListVariant;
+  const selectable = ((variants.selection as string) ?? 'none') === 'selectable';
   const [activeKey, setActiveKey] = useState<string>('plan');
+  // Selectable mode is controlled, so the preview has to hold the set —
+  // the same thing a consumer does. Two ticked by default so the checked
+  // and unchecked box are both on screen without touching anything.
+  const [picked, setPicked] = useState<string[]>(['plan', 'owner']);
   const cssVars = buildVars(styles);
 
   const sectionLabel = {
@@ -207,7 +253,7 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32, minWidth: 380, ...cssVars } as CSSProperties}>
       <div>
         <div style={sectionLabel}>{state} state</div>
-        <StaticShowcase mode={mode} state={state} showValue={showValue} leading={leading} container={container} />
+        <StaticShowcase mode={mode} state={state} showValue={showValue} leading={leading} container={container} selectable={selectable} />
       </div>
 
       {/* List — interactivity is driven by the `mode` variant. Trailing
@@ -223,15 +269,26 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
           via the registry's showWhen. `disabled` still applies to divs
           via `[aria-disabled]`. */}
       <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
-        <div style={sectionLabel}>{mode === 'interactive' ? 'Interactive' : 'Static'}</div>
+        <div style={sectionLabel}>{selectable ? 'Selectable' : mode === 'interactive' ? 'Interactive' : 'Static'}</div>
         <List variant={container}>
           {ROWS.map((row, i) => {
             const isInteractive = mode === 'interactive';
             return (
               <ListItem
                 key={row.key}
-                interactive={isInteractive}
-                active={isInteractive && row.key === activeKey}
+                {...(selectable
+                  ? {
+                      selected: picked.includes(row.key),
+                      onSelectedChange: (on: boolean) =>
+                        setPicked((prev) =>
+                          on ? [...prev, row.key] : prev.filter((k) => k !== row.key),
+                        ),
+                    }
+                  : {
+                      interactive: isInteractive,
+                      active: isInteractive && row.key === activeKey,
+                      onClick: isInteractive ? () => setActiveKey(row.key) : undefined,
+                    })}
                 // Disabled is a visual treatment that applies to both
                 // interactive rows (CSS `:disabled` / `[aria-disabled]`)
                 // and static rows (`[aria-disabled]` on `<div>`).
@@ -240,8 +297,7 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
                   ? { media: DEMO_MEDIA }
                   : { icon: <Icon glyph="square" /> })}
                 value={showValue ? row.value : undefined}
-                trailing={trailingForMode(mode, row.meta, row.tagType)}
-                onClick={isInteractive ? () => setActiveKey(row.key) : undefined}
+                trailing={trailingForMode(mode, row.meta, row.tagType, selectable)}
               >
                 {row.title}
               </ListItem>

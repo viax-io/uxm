@@ -97,6 +97,8 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | `active` | `boolean` | `false` | Adds the `--active` modifier; also forwards `aria-pressed` on the button form. Only meaningful when interactive. |
 | `disabled` | `boolean` | `false` | Disables interaction. Maps to native `disabled` on `<button>`, `aria-disabled` + `tabIndex={-1}` on `<a>`, or `aria-disabled` on `<div>`. |
 | `href` | `string` | – | Navigate on click. Implies `interactive` and forces the element to `<a>`. |
+| `selected` | `boolean` | – | Controlled selection. Passing this **or** `onSelectedChange` puts the row in **selectable** mode: it renders as a `<label>` around a real checkbox, so activating anywhere on the row toggles it natively. Distinct from `active`, which is a toggle button (`aria-pressed`) — the wrong semantic for one member of a checkable set. Mutually exclusive with `interactive` / `href`; selectable wins, with a dev warning. |
+| `onSelectedChange` | `(next: boolean, e: ChangeEvent<HTMLInputElement>) => void` | – | Toggle handler for selectable mode. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(rest)_ | `AnchorRest \| ButtonRest \| DivRest` | – | Spread onto the chosen element; the prop type narrows to match. |
 
@@ -114,6 +116,35 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 ```
 
 (The bleed itself comes from the margin on the `List` plus the row padding knob — rows are `width: 100%`, so they follow the container either way. That part works in both variants; what `plain` removes is the nested card around it.)
+
+### Selectable rows
+
+For "tick several, then commit" lists — a product picker, recipients, file selection:
+
+```tsx
+<List variant="plain">
+  {products.map((p) => (
+    <ListItem
+      key={p.id}
+      selected={picked.includes(p.id)}
+      onSelectedChange={(on) => toggle(p.id, on)}
+      media={<Thumbnail src={p.thumbnailUrl} alt="" />}
+      value={p.sku}
+      trailing={p.listPrice}
+    >
+      {p.name}
+    </ListItem>
+  ))}
+</List>
+```
+
+The row is a real `<label>` wrapping a real `<input type="checkbox">`, so whole-row activation is the browser's — it works for pointer and keyboard, needs no ARIA of its own, and the row is deliberately **not** `aria-pressed`.
+
+Two implementation notes worth knowing before restyling it:
+
+- **The checkbox is `Checkbox`'s classes, not a nested `<Checkbox>`.** `Checkbox` is itself a `<label>`, and a `<label>` inside the row `<label>` is invalid HTML — Chrome tolerates it (measured: one `change` event either way) but the spec doesn't, and assistive tech isn't guaranteed to. Painting `uxm-checkbox__input` / `__box` keeps the box pixel-identical and re-tinted by the checkbox's own knobs. The trade is a coupling to those internals, which a test guards: if `Checkbox`'s DOM moves, `tests/list-item.test.tsx` fails rather than an unstyled box shipping.
+- **Leading order is checkbox → `media`/`icon` → content → `trailing`**, so a selectable media row keeps the same leading grid as a non-selectable one.
+- **The mode is controlled for the component's lifetime.** `checked` is `selected ?? false`, never a bare `undefined`, so deriving it from async data (`selected={data?.picked.includes(id)}`) cannot hand React an uncontrolled input that turns controlled when the data lands — which would warn, and would let the DOM own a tick made while loading instead of reporting it. A row with only `onSelectedChange` therefore stays unticked until you feed `selected` back.
 
 ## CSS variables
 
@@ -147,6 +178,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 |-----------------|---------|--------|
 | Card container | `variant` unset / `'card'` | `--color-card` background, border, radius, `overflow: hidden`. |
 | Plain container | `variant="plain"` | No background, border or radius; `overflow: visible`, so a control a row hangs outside the container stays painted and clickable. Rows and dividers unchanged. |
+| Selectable row | `selected` or `onSelectedChange` set | Renders as `<label>` around a checkbox; whole-row click toggles. Overrides `interactive` / `href`. |
 | Static row | No `href`, `interactive` falsy | Renders as `<div>` with no hover / focus state. |
 | Button row | `interactive` true, no `href` | Renders as `<button type="button">` — emits clicks; carries `aria-pressed` when `active`. |
 | Anchor row | `href` set | Renders as `<a href={href}>`; if `disabled`, also `aria-disabled="true"` and `tabIndex={-1}`. |
