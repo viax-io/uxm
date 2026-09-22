@@ -126,6 +126,15 @@ catalog.
 
 ### Unreleased
 
+- **`List` gained `variant="plain"`.** The container was an unconditional card — background,
+  border, radius, `overflow: hidden` — which is right on a page ground and wrong for a list
+  already inside a surface (flexpane body, card body, disclosure section), where it reads as a
+  card inside a card. `plain` removes all four, so a consumer stops undoing the atom's structural
+  paint from outside. Purely subtractive: no new token, no colour, no change to any row rule or
+  `--uxm-list-item-*` knob. `overflow` goes `visible` with it: there is no radius left to clip to,
+  and the clip's only other effect is to crop — and un-hit-test — anything a row hangs outside the
+  container box.
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh

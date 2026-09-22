@@ -28,8 +28,16 @@ export const listItemDef: ComponentDef = {
     { key: 'focusRing', label: 'Ring Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'focusState', showWhen: { state: 'focus', mode: 'interactive' } },
     { key: 'disabledOpacity', label: 'Opacity', control: 'slider', defaultValue: 0.5, min: 0.1, max: 1, step: 0.05, section: 'disabledState', showWhen: { state: 'disabled' } },
     // ── Container (List wrapper)
+    // NOT container-gated, despite the label and the section it sits in:
+    // `borderColor` maps to `--uxm-list-item-border-color`, whose only read is
+    // the ROW divider (`.uxm-list-item` border-bottom). The container's own
+    // border is a hardcoded `var(--color-border)` with no knob. Gating this on
+    // `card` took the divider colour away from `plain` — the one presentation
+    // where the dividers are the only separator left.
     { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'container' },
-    { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px', section: 'container' },
+    // This one IS the container's: `--uxm-list-item-border-radius` is read only
+    // by `.uxm-list`'s own radius, which `plain` removes.
+    { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px', section: 'container', showWhen: { container: 'card' } },
     // ── Shared sizing (applies to every state)
     { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 16, min: 8, max: 32, step: 2, unit: 'px' },
     { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 12, min: 4, max: 24, step: 2, unit: 'px' },
@@ -93,6 +101,18 @@ export const listItemDef: ComponentDef = {
         { value: 'disabled', label: 'Disabled' },
       ],
       defaultValue: 'default',
+    },
+    {
+      // The List wrapper's presentation, not the row's — but it lives on this
+      // entry because `List` has no registry entry of its own and its two
+      // container knobs (Border Color / Border Radius) are already here.
+      key: 'container',
+      label: 'Container',
+      options: [
+        { value: 'card', label: 'Card' },
+        { value: 'plain', label: 'Plain' },
+      ],
+      defaultValue: 'card',
     },
     {
       key: 'leading',

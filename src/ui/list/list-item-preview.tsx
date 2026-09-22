@@ -3,7 +3,7 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '@/helpers';
 import type { PreviewProps } from '@/previews/types';
 import { Icon, IconTile } from '@/ui';
-import { List, ListItem } from '@/ui';
+import { List, ListItem, type ListVariant } from '@/ui';
 import { Tag, type TagType } from '@/ui';
 import { Thumbnail } from '@/ui';
 
@@ -105,11 +105,13 @@ function StaticShowcase({
   state,
   showValue,
   leading,
+  container,
 }: {
   mode: Mode;
   state: string;
   showValue: boolean;
   leading: Leading;
+  container: ListVariant;
 }) {
   const isInteractive = mode === 'interactive';
   const isActive = isInteractive && state === 'active';
@@ -139,7 +141,7 @@ function StaticShowcase({
   );
 
   return (
-    <List>
+    <List variant={container}>
       {isInteractive ? (
         <button
           type="button"
@@ -189,6 +191,7 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
   const state = (variants.state as string) ?? 'default';
   const showValue = ((variants.value as string) ?? 'shown') === 'shown';
   const leading = ((variants.leading as string) ?? 'icon') as Leading;
+  const container = ((variants.container as string) ?? 'card') as ListVariant;
   const [activeKey, setActiveKey] = useState<string>('plan');
   const cssVars = buildVars(styles);
 
@@ -204,7 +207,7 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32, minWidth: 380, ...cssVars } as CSSProperties}>
       <div>
         <div style={sectionLabel}>{state} state</div>
-        <StaticShowcase mode={mode} state={state} showValue={showValue} leading={leading} />
+        <StaticShowcase mode={mode} state={state} showValue={showValue} leading={leading} container={container} />
       </div>
 
       {/* List — interactivity is driven by the `mode` variant. Trailing
@@ -221,7 +224,7 @@ export function ListItemPreview({ styles, variants }: PreviewProps) {
           via `[aria-disabled]`. */}
       <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
         <div style={sectionLabel}>{mode === 'interactive' ? 'Interactive' : 'Static'}</div>
-        <List>
+        <List variant={container}>
           {ROWS.map((row, i) => {
             const isInteractive = mode === 'interactive';
             return (
