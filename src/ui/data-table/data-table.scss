@@ -42,7 +42,16 @@
        — hide it rather than reflow it as another card. */
     display: none;
   }
+  /* `tbody` is in this list for a reason that is invisible until it is missing.
+     It carries no class, so it kept its default `table-row-group` while the
+     table around it became a block — and a table-row-group inside a non-table
+     parent triggers CSS anonymous-table fixup: the browser wraps it in an
+     anonymous `table` box, which is `width: auto` and shrinks to min-content.
+     The rows' `width: 100%` then resolved against THAT box, so a stacked card
+     rendered at a fraction of its container (measured: 318px table, 81px
+     tbody, 81px row). Making the tbody a block removes the anonymous box. */
   .uxm-data-table__table,
+  .uxm-data-table__table tbody,
   .uxm-data-table__row,
   .uxm-data-table__td {
     display: block;
