@@ -62,6 +62,7 @@
 @import "./listbox/listbox.css";
 @import "./loader/loader.css";
 @import "./menu/menu.css";
+@import "./menu/menu-button.css";
 @import "./meta-row/meta-row.css";
 @import "./modal/modal.css";
 @import "./number-stepper/number-stepper.css";

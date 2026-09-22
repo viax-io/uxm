@@ -1,0 +1,33 @@
+/* ── menu-button ── */
+
+/* `MenuButton` is a composition: the trigger IS a shipped `Button*`, so the
+   whole row — `display: inline-flex`, the alignment, and
+   `gap: var(--uxm-button-{variant}-gap, 8px)` — already comes from that atom.
+   Nothing here re-declares any of it.
+
+   That is not tidiness, it is the difference between the button's gap knob
+   working and not: `styles.css` imports `button.css` at line 16 and this file
+   at 65, so a `gap` declared here would win the cascade at equal specificity
+   and quietly pin a MenuButton to its own value while every other button in
+   the app followed `--uxm-button-{variant}-gap`.
+
+   So this block owns exactly one thing the button cannot know about: the
+   chevron's open state. */
+
+.uxm-menu-button__chevron {
+  flex-shrink: 0;
+  /* Turns to point at the open panel. Purely decorative — `aria-expanded` on
+     the trigger is what actually announces the state. */
+  transition: transform 0.15s ease;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+/* The rotation is decoration; the chevron must still point the right way. */
+@media (prefers-reduced-motion: reduce) {
+  .uxm-menu-button__chevron {
+    transition: none;
+  }
+}

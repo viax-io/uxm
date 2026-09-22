@@ -157,6 +157,60 @@ Panel bg/border read `--color-card` / `--color-border`; rows read `--color-text`
 - **Opening never follows `current`.** Even a keyboard-opened switcher starts at row one, not at the current row — menu semantics, not select semantics.
 - **Two-line rows:** any item with a `subtitle` renders a `.uxm-menu__item-text` column (headline + subtitle). Single-line rows are unchanged (no wrapper element). On an active/danger row the subtitle inherits the row's text colour at **full strength** — no opacity is applied. Hierarchy comes from the smaller subtitle font instead, because an opacity multiplier composites 11px text toward the surface and can push it under AA.
 
+## `MenuButton` — the labelled dropdown
+
+`Menu` is trigger-agnostic on purpose: `renderTrigger` is required so a ⋮ `IconButton`, an
+avatar or a field can all open one. The cost is that the single most common shape — a button
+that says what it does and drops a menu — gets re-derived at every call site, together with a
+hand-added chevron and the `triggerProps` plumbing. `MenuButton` is that shape, shipped once.
+
+```tsx
+import { MenuButton } from '@viax.io/uxm';
+
+<MenuButton
+  variant="primary"
+  items={STATUSES.map((s) => ({
+    key: s.value,
+    label: s.label,
+    current: s.value === order.status,
+    onSelect: () => setStatus(s.value),
+  }))}
+>
+  {humanize(order.status)}
+</MenuButton>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `MenuEntry[]` | – | **Required.** The same entries `Menu` takes. |
+| `children` | `ReactNode` | – | **Required.** Button label. |
+| `variant` | `'primary' \| 'secondary' \| 'tertiary' \| 'ghost'` | `'secondary'` | Which shipped `Button*` renders the trigger. |
+| `icon` | `ReactNode` | – | Optional leading icon, before the label. |
+| `chevron` | `boolean` | `true` | Trailing `chevron-down`, rotating while open. `false` omits it. |
+| `placement` | `PopoverPlacement` | `'bottom-end'` | Forwarded to `Menu`. |
+| `disabled` | `boolean` | `false` | Disables the trigger; the menu cannot open. |
+| `aria-label` | `string` | – | Accessible name for the **panel**, forwarded to `Menu`. |
+| `className` | `string` | – | Class on the trigger button. |
+
+It is a composition, not a new primitive: the trigger is a real `Button*` and the panel is a
+real `Menu`, so both are themed by those atoms' own variables — including the spacing between
+icon, label and chevron, which is the button's own `--uxm-button-{variant}-gap` (8px). The only
+thing `MenuButton` adds is the chevron's rotation, which honours `prefers-reduced-motion`.
+
+That is deliberate rather than incidental: `menu-button.css` is imported after `button.css`, so
+a `gap` declared on `.uxm-menu-button` would win the cascade at equal specificity and pin a
+`MenuButton` to its own value while every other button in the app followed the knob. Keep this
+block free of anything the button already declares.
+
+**When to drop back to `Menu` + `renderTrigger`:** a bespoke trigger (⋮, avatar, field),
+controlled `open` / `onOpenChange`, `matchAnchorWidth`, or per-instance panel styling.
+`MenuButton` deliberately exposes none of those — it is the shorthand, not a replacement, and
+the general API is unchanged.
+
+**The chevron is decoration.** What announces the control is `aria-haspopup="menu"` +
+`aria-expanded`, which `Menu` sets on whatever the trigger is; `chevron={false}` changes
+nothing about that.
+
 ## Accessibility
 
 - WAI-ARIA menu-button pattern: `role="menu"` panel, `role="menuitem"` rows, `role="separator"` dividers; Enter/Space/ArrowDown open, arrows navigate (wrapping, skipping separators + disabled), Escape closes, focus restores to the trigger.

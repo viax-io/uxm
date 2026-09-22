@@ -131,6 +131,17 @@ catalog.
 
 ### Unreleased
 
+- **New: `MenuButton`** — the labelled dropdown button, i.e. `Menu` with a shipped `Button*` as
+  its trigger, the chevron, the ARIA and the trigger ref already wired. `Menu` stays
+  trigger-agnostic (`renderTrigger` is still required and unchanged) — this is the shorthand for
+  the one shape every app was re-deriving, chevron and `triggerProps` plumbing included.
+  `variant` picks the button (`secondary` default), `icon` adds a leading glyph, `chevron={false}`
+  drops the affordance, `placement` / `aria-label` / `disabled` forward to `Menu`. A composition,
+  not a new visual primitive: the trigger is a real `Button*`, the panel a real `Menu`, and both
+  are themed by those atoms' own vars — including the icon/label/chevron spacing, which stays the
+  button's own `--uxm-button-{variant}-gap`; `MenuButton` adds only the chevron rotation. Anything it does not expose (controlled `open`, `matchAnchorWidth`, a bespoke
+  trigger, panel styling) is the signal to use `Menu` + `renderTrigger` directly.
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
