@@ -1524,3 +1524,22 @@ reached the published library; now shipped in 2.8.0.
   React, typed; see `references/component-catalog.md` → "Hooks".
 - `Modal.Header` / `Modal.Body` / `Modal.Footer` take `ref` as a plain prop (React 19) — no API
   change for callers; `ModalSectionProps` is the exported props type of Body/Footer.
+
+### New in 4.41.0
+
+- **`ListItem` gained a `media` leading slot.** The node renders **as-is** — no `IconTile`, no
+  accent fill — for a product thumbnail, avatar or bare `<img>`; the row sizes it through
+  `--uxm-list-item-media-size` (36px square, studio knob "Media Size"), which it also forwards
+  into `--uxm-thumbnail-size` / `--uxm-avatar-size` so those atoms scale with the row instead of
+  keeping their own 48/40px default. `icon` is unchanged and still tiles its glyph; `media` wins
+  when both are passed. This is the slot to reach for on a click-to-select media row
+  (`interactive` + `active` + `media`) instead of hand-wiring a native `<button>` and re-deriving
+  hover / focus / `aria-pressed`. ⚠️ The slot is inside the row's `<button>`/`<a>`, so pass
+  `alt=""` on media the row's title already names — a described image is concatenated into the
+  row's accessible name.
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->

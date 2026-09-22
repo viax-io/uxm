@@ -1,3 +1,10 @@
+# [4.46.0](https://github.com/viax-io/uxm/compare/v4.45.0...v4.46.0) (2026-09-22)
+
+
+### Features
+
+* **radio-group:** add a card variant for visual single-select ([5c9aa80](https://github.com/viax-io/uxm/commit/5c9aa801bf30630b628d7c3f312ade6dffc09036)), closes [#EBEBEA](https://github.com/viax-io/uxm/issues/EBEBEA)
+
 # [4.45.0](https://github.com/viax-io/uxm/compare/v4.44.0...v4.45.0) (2026-09-22)
 
 
