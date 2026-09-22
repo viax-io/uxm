@@ -5,6 +5,23 @@
   border: 1px solid var(--color-border);
   border-radius: var(--uxm-list-item-border-radius, 8px);
   overflow: hidden;
+
+  /* For a list already sitting on a surface. Purely subtractive — it paints
+     nothing of its own, so there is no colour or token here to keep in step
+     with the card above.
+
+     `overflow` goes back to visible deliberately. The card clips so rows cannot
+     spill past its radius; with no radius there is nothing to clip to, and the
+     clip's only remaining effect is to crop what a row renders OUTSIDE the
+     container box. Measured: a control overhanging a row's corner is not even
+     hit-testable through a card container (`elementFromPoint` there returns the
+     row), and is under `plain`. */
+  &--plain {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+  }
 }
 
 .uxm-list-item {

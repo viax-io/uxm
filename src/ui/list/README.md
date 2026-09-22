@@ -2,7 +2,7 @@
 
 A bordered, rounded container (`List`) with horizontally divided rows (`ListItem`) that can be display-only, button-interactive, or anchor-interactive depending on the props passed to each item.
 
-`List` is a thin `<div>` wrapper that gives the group its card surface, border, and overflow clipping. `ListItem` decides its own element type at render time: it becomes an `<a>` if `href` is set, a `<button>` if `interactive` is true without an `href`, and a static `<div>` otherwise. State styling (hover / focus / active / disabled) is wired only to the interactive element types so display-only divs stay inert. Each item has two mutually exclusive leading slots — `icon` (wrapped in an accent `IconTile`) and `media` (rendered as-is, for a thumbnail / avatar / bare `<img>`) — plus a `value` sub-line under the title and a `trailing` node (meta text, chevron, custom node).
+`List` is a thin `<div>` wrapper that gives the group its card surface, border, and overflow clipping — or, with `variant="plain"`, gives it none of those. `ListItem` decides its own element type at render time: it becomes an `<a>` if `href` is set, a `<button>` if `interactive` is true without an `href`, and a static `<div>` otherwise. State styling (hover / focus / active / disabled) is wired only to the interactive element types so display-only divs stay inert. Each item has two mutually exclusive leading slots — `icon` (wrapped in an accent `IconTile`) and `media` (rendered as-is, for a thumbnail / avatar / bare `<img>`) — plus a `value` sub-line under the title and a `trailing` node (meta text, chevron, custom node).
 
 ## Usage
 
@@ -78,6 +78,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | – | **Required.** `ListItem` elements (or any custom row content). |
+| `variant` | `'card' \| 'plain'` | `'card'` | Container presentation. `card` keeps the bordered, rounded surface. `plain` drops the background, border and radius — for a list **already inside a surface** (a flexpane body, a card body, a disclosure section), where a card container reads as a card inside a card. It also releases `overflow` to `visible`: with no radius to clip to, the card's clip would only crop what a row renders **outside** the container box — an overhanging corner control, a focus ring with a positive offset — which under `card` is neither painted nor clickable. Row styling and every `--uxm-list-item-*` knob are identical in both. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div>`. |
 
@@ -98,6 +99,21 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | `href` | `string` | – | Navigate on click. Implies `interactive` and forces the element to `<a>`. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(rest)_ | `AnchorRest \| ButtonRest \| DivRest` | – | Spread onto the chosen element; the prop type narrows to match. |
+
+## Choosing a variant
+
+`card` is right for a list standing on its own on a page ground. Reach for `plain` when the list is already on a surface — the two give a card-inside-a-card otherwise, and the nested border stops the row hover and dividers short of the surface's own gutters.
+
+`plain` is purely subtractive: it paints nothing of its own, adds no token, and changes no row rule. The one thing it does beyond removing paint is release `overflow`. The card needs the clip so rows cannot spill past its radius; a plain list has no radius, so the clip's only remaining effect would be to crop what a row renders *outside* the container — an overhanging control, a positive-offset focus ring. Under `card` such an element is not merely hidden, it stops being hit-testable.
+
+```tsx
+// A list filling a flexpane body, bled out to the pane gutters
+<List variant="plain" style={{ margin: '0 -24px', '--uxm-list-item-padding-x': '24px' }}>
+  …
+</List>
+```
+
+(The bleed itself comes from the margin on the `List` plus the row padding knob — rows are `width: 100%`, so they follow the container either way. That part works in both variants; what `plain` removes is the nested card around it.)
 
 ## CSS variables
 
@@ -129,6 +145,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 | State / variant | Trigger | Visual |
 |-----------------|---------|--------|
+| Card container | `variant` unset / `'card'` | `--color-card` background, border, radius, `overflow: hidden`. |
+| Plain container | `variant="plain"` | No background, border or radius; `overflow: visible`, so a control a row hangs outside the container stays painted and clickable. Rows and dividers unchanged. |
 | Static row | No `href`, `interactive` falsy | Renders as `<div>` with no hover / focus state. |
 | Button row | `interactive` true, no `href` | Renders as `<button type="button">` — emits clicks; carries `aria-pressed` when `active`. |
 | Anchor row | `href` set | Renders as `<a href={href}>`; if `disabled`, also `aria-disabled="true"` and `tabIndex={-1}`. |

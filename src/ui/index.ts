@@ -133,7 +133,7 @@ export type { LanguageSwitcherProps, LanguageSwitcherVariant } from './language-
 export { Link } from './link';
 export type { LinkProps, LinkUnderline } from './link';
 export { List, ListItem } from './list';
-export type { ListItemProps, ListProps } from './list';
+export type { ListItemProps, ListProps, ListVariant } from './list';
 export { SEARCHABLE_AUTO_THRESHOLD, Listbox, MultiListbox } from './listbox';
 export type {
   ListboxProps,

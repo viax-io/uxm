@@ -46,13 +46,36 @@ export const LIST_ITEM_MEDIA_STYLE = {
   '--uxm-avatar-small-size': 'var(--uxm-list-item-media-size, 36px)',
 } as CSSProperties;
 
+/** Container presentation. See `ListProps.variant`. */
+export type ListVariant = 'card' | 'plain';
+
 export interface ListProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
+  /**
+   * Container presentation. `card` (default) keeps the bordered, rounded
+   * surface — right for a free-standing list on a page ground. `plain` drops
+   * the background, border and radius for a list that is ALREADY inside a
+   * surface (a flexpane body, a card body, a disclosure section), where a card
+   * container reads as a card inside a card.
+   *
+   * `plain` also releases `overflow` to `visible`. The card has to clip so rows
+   * cannot spill past its radius; with no radius there is nothing to clip to,
+   * and `hidden` would only crop what a row deliberately renders OUTSIDE the
+   * container box — an overhanging corner control, a focus ring with a positive
+   * offset. Clipped, those are neither painted nor hit-testable.
+   *
+   * Row styling is untouched — every `--uxm-list-item-*` knob behaves
+   * identically in both.
+   */
+  variant?: ListVariant;
 }
 
-export function List({ children, className, ...rest }: ListProps) {
+export function List({ children, className, variant = 'card', ...rest }: ListProps) {
   return (
-    <div className={cn('uxm-list', className)} {...rest}>
+    <div
+      className={cn('uxm-list', variant === 'plain' && 'uxm-list--plain', className)}
+      {...rest}
+    >
       {children}
     </div>
   );
