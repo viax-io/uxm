@@ -126,6 +126,22 @@ catalog.
 
 ### Unreleased
 
+- **`LifecycleNodeCard` gained `actions` + `actionsVisible` and `target`.** `actions` is the
+  per-node control slot (edit / delete) at the card's top-right, overhanging the box and revealed
+  on hover **and** `:focus-within`, always visible under `@media (hover: none)` — the placement,
+  reveal and touch fallback consumers were rebuilding as a sibling element. `target` is the
+  drop-target highlight, orthogonal to `active` (a card can be both; one paints border + ring, the
+  other an outline) and sharing `--color-drop-target` with `LifecycleGroupBox` so one canvas
+  highlights consistently. Omitting `actions` leaves the DOM and CSS exactly as before.
+- **`LifecycleEdgeLabel` gained `variant="accent"`.** `true` / `false` name a condition's branches
+  and `neutral` is deliberately the quietest thing on a canvas; `accent` carries hierarchy — the
+  entry pill, or the one naming the model — in accent-subtle on accent-bold. Verified with the
+  package's own `contrastRatio`: AA in both themes (5.54:1 light, 6.83:1 dark), and the border,
+  not the fill, is what makes it a shape against the canvas (5.56:1 / 10.64:1). Weight is NOT part
+  of the variant: it already goes through `--uxm-lifecycle-edge-label-font-weight`.
+- **Docs:** `LifecycleEdgeLabel` is static text only — a plain `<span>` with no hover/focus/pressed
+  state. A *clickable* edge label (a group name that opens an editor) is a **`Chip`**, not this.
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh

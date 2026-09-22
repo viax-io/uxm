@@ -1,5 +1,7 @@
 import type { PreviewProps } from '@/previews/types';
 import {
+  Icon,
+  IconButton,
   LifecycleNodeCard,
   type LifecycleNodeKind,
 } from '@/ui';
@@ -34,13 +36,39 @@ export function LifecycleNodeCardPreview({ styles, variants }: PreviewProps) {
     '--uxm-lifecycle-node-card-title-size': `${styles.titleSize}px`,
     '--uxm-lifecycle-node-card-bg': styles.backgroundColor as string,
     '--uxm-lifecycle-node-card-border-color': styles.borderColor as string,
+    '--uxm-lifecycle-node-card-target-color': styles.targetColor as string,
+    '--uxm-lifecycle-node-card-target-width': `${styles.targetWidth}px`,
+    '--uxm-lifecycle-node-card-target-offset': `${styles.targetOffset}px`,
+    '--uxm-lifecycle-node-card-actions-offset': `${styles.actionsOffset}px`,
+    '--uxm-lifecycle-node-card-actions-gap': `${styles.actionsGap}px`,
   } as CSSProperties;
+
+  const state = (variants.state as string) ?? 'default';
+  const actionsMode = (variants.actions as string) ?? 'hidden';
 
   return (
     <LifecycleNodeCard
       kind={kind}
       title={sample.title}
       badge={sample.badge}
+      active={state === 'active'}
+      target={state === 'target'}
+      // `hover` is the atom's own default; the canvas here has no pointer of
+      // its own, so the Always option is what makes the slot inspectable in
+      // the workbench — the hover path is exercised by really hovering the card.
+      actionsVisible={actionsMode === 'always' ? 'always' : 'hover'}
+      actions={
+        actionsMode === 'hidden' ? undefined : (
+          <>
+            <IconButton variant="filled" aria-label="Edit node">
+              <Icon glyph="pencil" />
+            </IconButton>
+            <IconButton variant="filled" aria-label="Delete node">
+              <Icon glyph="trash" />
+            </IconButton>
+          </>
+        )
+      }
       style={cssVars}
     />
   );

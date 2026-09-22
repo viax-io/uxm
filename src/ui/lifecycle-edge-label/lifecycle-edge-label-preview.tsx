@@ -10,6 +10,23 @@ const VARIANT_LABEL: Record<LifecycleEdgeLabelVariant, string> = {
   true: 'true',
   false: 'false',
   neutral: 'on approve',
+  accent: 'Order lifecycle',
+};
+
+/**
+ * The canvas, not the panel, is where these pills live: `neutral` is card-on-
+ * card and `accent`'s fill shares a luminance with the surface, so both are
+ * judged by their border. Previewing them on the flat panel background flatters
+ * exactly the thing that is hard to get right, so the swatch carries the same
+ * sunken dot-grid the diagram canvas uses.
+ */
+const CANVAS_STYLE: CSSProperties = {
+  backgroundColor: 'var(--color-surface)',
+  backgroundImage: 'radial-gradient(var(--color-border) 1px, transparent 1px)',
+  backgroundSize: '12px 12px',
+  borderRadius: 8,
+  display: 'inline-flex',
+  padding: 24,
 };
 
 export function LifecycleEdgeLabelPreview({ styles, variants }: PreviewProps) {
@@ -25,8 +42,10 @@ export function LifecycleEdgeLabelPreview({ styles, variants }: PreviewProps) {
   } as CSSProperties;
 
   return (
-    <LifecycleEdgeLabel variant={variant} style={cssVars}>
-      {VARIANT_LABEL[variant]}
-    </LifecycleEdgeLabel>
+    <div style={CANVAS_STYLE}>
+      <LifecycleEdgeLabel variant={variant} style={cssVars}>
+        {VARIANT_LABEL[variant]}
+      </LifecycleEdgeLabel>
+    </div>
   );
 }

@@ -35,6 +35,27 @@ export interface LifecycleNodeCardProps extends Omit<HTMLAttributes<HTMLDivEleme
   kindLabel?: ReactNode;
   /** Render the active/selected state. */
   active?: boolean;
+  /**
+   * Drop-target highlight while a drag is over this card. Orthogonal to
+   * `active` (which means selected/current) — a card can be both, and they
+   * paint different properties: `active` a border + ring, `target` an outline.
+   * Shares `--color-drop-target` with `LifecycleGroupBox`, so every drop
+   * target on one canvas highlights identically.
+   */
+  target?: boolean;
+  /**
+   * Per-node controls (edit, delete, …) placed at the card's top-right corner,
+   * overhanging its box. Absolutely positioned, so they never disturb the
+   * card's own row. Omit and neither the node nor the rule for it is rendered.
+   */
+  actions?: ReactNode;
+  /**
+   * When the `actions` slot is revealed. `hover` (default) fades it in on
+   * pointer hover and on keyboard focus within the card; `always` keeps it
+   * visible. A coarse pointer gets `always` regardless — there is no hover to
+   * reveal it with.
+   */
+  actionsVisible?: 'hover' | 'always';
 }
 
 const KIND_LABEL: Record<LifecycleNodeKind, string> = {
@@ -87,6 +108,9 @@ export function LifecycleNodeCard({
   badge,
   kindLabel,
   active,
+  target,
+  actions,
+  actionsVisible = 'hover',
   className,
   ...rest
 }: LifecycleNodeCardProps) {
@@ -98,6 +122,10 @@ export function LifecycleNodeCard({
         'uxm-lifecycle-node-card',
         `uxm-lifecycle-node-card--${kind}`,
         active && 'uxm-lifecycle-node-card--active',
+        target && 'uxm-lifecycle-node-card--target',
+        /* Positioning context for the actions only when there are actions, so
+           a card without them keeps byte-identical CSS output. */
+        actions != null && 'uxm-lifecycle-node-card--has-actions',
         className,
       )}
       style={containerStyle}
@@ -110,6 +138,16 @@ export function LifecycleNodeCard({
         <p className="uxm-lifecycle-node-card__title">{title}</p>
       </div>
       {badge != null && <span className="uxm-lifecycle-node-card__badge">{badge}</span>}
+      {actions != null && (
+        <span
+          className={cn(
+            'uxm-lifecycle-node-card__actions',
+            actionsVisible === 'always' && 'uxm-lifecycle-node-card__actions--always',
+          )}
+        >
+          {actions}
+        </span>
+      )}
     </div>
   );
 }

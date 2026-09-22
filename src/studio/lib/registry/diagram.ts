@@ -18,8 +18,48 @@ export const diagramDefs: ComponentDef[] = [
       { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 32, min: 24, max: 48, step: 2, unit: 'px' },
       { key: 'titleSize', label: 'Title Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px' },
       { key: 'kindSize', label: 'Kind Label Size', control: 'number', defaultValue: 11, min: 9, max: 14, step: 1, unit: 'px' },
+      // Offset of the actions slot's corner overhang. One knob for both axes:
+      // the slot sits on a corner, and two numbers that should move together
+      // is how a corner stops being a corner.
+      { key: 'actionsOffset', label: 'Offset', control: 'number', defaultValue: -10, min: -24, max: 8, step: 1, unit: 'px', section: 'actions', showWhen: { actions: ['shown', 'always'] } },
+      { key: 'actionsGap', label: 'Gap', control: 'number', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px', section: 'actions', showWhen: { actions: ['shown', 'always'] } },
+      // Same three knobs, same section name and the same `var(--color-accent)`
+      // default as `lifecycle-group-box` — the two highlight one canvas during
+      // one drag, so their editors should read identically. (The CSS chain is
+      // knob → `--color-drop-target` → accent; the alias is not a themeTokens
+      // entry, so the picker gets the token, not the raw var string.)
+      { key: 'targetColor', label: 'Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'dropOutline', showWhen: { state: 'target' } },
+      { key: 'targetWidth', label: 'Width', control: 'slider', defaultValue: 2, min: 1, max: 5, step: 1, unit: 'px', section: 'dropOutline', showWhen: { state: 'target' } },
+      { key: 'targetOffset', label: 'Offset', control: 'number', defaultValue: 2, min: 0, max: 8, step: 1, unit: 'px', section: 'dropOutline', showWhen: { state: 'target' } },
     ],
     layoutVariants: [
+      {
+        // `active` and `target` are orthogonal in the atom — a selected card can
+        // also be the drop target, and they paint different properties — but the
+        // picker is one list because the panel scopes sections by variant value,
+        // and the knobs below only ever belong to one of them.
+        key: 'state',
+        label: 'State',
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'active', label: 'Active' },
+          { value: 'target', label: 'Drop target' },
+        ],
+        defaultValue: 'default',
+      },
+      {
+        key: 'actions',
+        // "Action Slot", not "Actions": the properties panel builds its section
+        // subtitles by appending an "s" to the variant LABEL, so a label that
+        // already ends in one arrives as "Shared across all actionss".
+        label: 'Action Slot',
+        options: [
+          { value: 'hidden', label: 'None' },
+          { value: 'shown', label: 'Hover reveal' },
+          { value: 'always', label: 'Always visible' },
+        ],
+        defaultValue: 'hidden',
+      },
       {
         key: 'type',
         label: 'Node Type',
@@ -67,7 +107,8 @@ export const diagramDefs: ComponentDef[] = [
     id: 'lifecycle-edge-label',
     name: 'Lifecycle Edge Label',
     category: 'Diagram',
-    description: 'Pill label attached to a transition edge (true / false / custom).',
+    description:
+      'Pill label attached to a transition edge (true / false / custom / accent). Static text only — a <span> with no hover, focus or pressed state, so a clickable edge label (a group name you can open) is a `Chip`, not this.',
     styleProperties: [
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 24, step: 1, unit: 'px' },
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 3, min: 0, max: 10, step: 1, unit: 'px' },
@@ -84,6 +125,9 @@ export const diagramDefs: ComponentDef[] = [
           { value: 'true', label: 'True' },
           { value: 'false', label: 'False' },
           { value: 'neutral', label: 'Custom / Neutral' },
+          // Not a branch answer like true/false — hierarchy. The entry pill of
+          // a diagram, or the one naming the model.
+          { value: 'accent', label: 'Accent / Primary' },
         ],
         defaultValue: 'true',
       },

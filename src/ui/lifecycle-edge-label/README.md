@@ -1,6 +1,8 @@
 # LifecycleEdgeLabel
 
-A small inline-flex pill rendered on the midpoint of a `LifecycleConnector` to label its branch condition (true / false / neutral).
+A small inline-flex pill rendered on the midpoint of a `LifecycleConnector` to label its branch condition (true / false / neutral), or to mark the entry point of a diagram (accent).
+
+> **Static labels only.** This is a plain `<span>` with no hover, focus or pressed state. A label the user can *click* — a group name that opens an editor, a filter pill — is a **`Chip`**, not this. Reaching for `LifecycleEdgeLabel` there produces something that looks interactive and answers to neither pointer nor keyboard.
 
 `LifecycleEdgeLabel` is a thin `<span>` wrapper with one of three colour variants. Variant communicates the semantic, not the literal text — a connector labelled "approved" can still be `variant="true"` to render in green. Positioning is the consumer's responsibility: the typical pattern is to wrap the label in an absolutely-positioned div pinned to the edge midpoint. Sibling of `LifecycleConnector`, `LifecycleNodeCard`, `LifecycleTerminal`, `LifecycleMinimap`, and `LifecycleZoomControl`.
 
@@ -26,13 +28,13 @@ Extends `HTMLAttributes<HTMLSpanElement>` — any standard span attribute (id, s
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'true' \| 'false' \| 'neutral'` | `'neutral'` | Colour variant. See [States](#states--variants). |
+| `variant` | `'true' \| 'false' \| 'neutral' \| 'accent'` | `'neutral'` | Colour variant. `true`/`false` name a condition's branches, `neutral` is the quiet default, `accent` marks hierarchy — the entry pill, or the one naming the model. See [States](#states--variants). |
 | `children` | `ReactNode` | – | **Required.** Label content. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native span attribute)_ | – | – | Spread onto the root `<span>`. |
 
 ```ts
-type LifecycleEdgeLabelVariant = 'true' | 'false' | 'neutral';
+type LifecycleEdgeLabelVariant = 'true' | 'false' | 'neutral' | 'accent';
 ```
 
 ## CSS variables

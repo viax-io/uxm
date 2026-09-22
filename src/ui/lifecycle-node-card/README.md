@@ -35,6 +35,9 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — the native `title` a
 | `badge` | `ReactNode` | – | Trailing pill content — e.g. action count or truncated expression. Hidden if not provided. |
 | `kindLabel` | `ReactNode` | humanised `kind` (`interaction` → `Business Interaction`) | Override for the sub-text shown above the title. |
 | `active` | `boolean` | `false` | Render the active/selected state. Adds the `--active` modifier class. |
+| `target` | `boolean` | `false` | Drop-target highlight while a drag is over the card. Adds `--target`. Orthogonal to `active` — a card can be both, and they paint different properties (`active` a border + ring, `target` an outline), so neither hides the other. Shares `--color-drop-target` with `LifecycleGroupBox` so every drop target on one canvas highlights identically. |
+| `actions` | `ReactNode` | – | Per-node controls (edit, delete, …) at the card's top-right, overhanging its box. Absolutely positioned, so they never disturb the card's own row, and not clipped. Omit and neither the node nor its positioning context is rendered — a card without `actions` is byte-identical to one from before this prop existed. |
+| `actionsVisible` | `'hover' \| 'always'` | `'hover'` | When the slot is revealed. `hover` fades in on pointer hover **and** on keyboard focus within the card (the controls stay focusable while faded, so tabbing to one reveals it). A coarse pointer gets `always` regardless — there is no hover to reveal with. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute except `title`)_ | – | – | Spread onto the root `<div>`. |
 
@@ -67,6 +70,11 @@ The card sets `box-sizing: border-box` on itself rather than inheriting it from 
 | `--uxm-lifecycle-node-card-icon-size` | – | `32px` | Icon tile size (bridged into `--uxm-icon-tile-size`). |
 | `--uxm-lifecycle-node-card-kind-size` | – | `11px` | Kind sub-label font size. |
 | `--uxm-lifecycle-node-card-title-size` | – | `14px` | Title font size. |
+| `--uxm-lifecycle-node-card-target-width` | – | `2px` | Drop-outline width (`target`). |
+| `--uxm-lifecycle-node-card-target-color` | `--color-drop-target` → `--color-accent` | – | Drop-outline colour. The shared alias is the point: a card and the `LifecycleGroupBox` under it highlight together during one drag. |
+| `--uxm-lifecycle-node-card-target-offset` | – | `2px` | Drop-outline offset. |
+| `--uxm-lifecycle-node-card-actions-offset` | – | `-10px` | Corner overhang of the `actions` slot, both axes. |
+| `--uxm-lifecycle-node-card-actions-gap` | – | `4px` | Gap between controls in the `actions` slot. |
 | `--kind-icon-bg` | per-kind | – | IconTile background (bridged to `--uxm-icon-tile-bg`). |
 | `--kind-icon-color` | per-kind | – | IconTile foreground (bridged to `--uxm-icon-tile-color`). |
 | `--kind-badge-bg` | per-kind | – | Trailing badge background. |
@@ -93,6 +101,8 @@ Per-kind accent colours are sourced from the shared accent / highlight tokens vi
 The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI.
 
 ## States & variants
+
+`active` and `target` are independent: a selected card that is also the drop target renders both, because one paints border + ring and the other an outline. The `actions` slot is revealed on `:hover`, on `:focus-within`, whenever `actionsVisible="always"`, and unconditionally under `@media (hover: none)`; its fade honours `prefers-reduced-motion`.
 
 | State / variant | Trigger | Visual |
 |-----------------|---------|--------|

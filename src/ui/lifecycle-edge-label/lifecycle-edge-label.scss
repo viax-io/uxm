@@ -30,4 +30,30 @@
     border-color: var(--color-border);
     color: var(--color-text-muted);
   }
+
+  /* The hierarchy variant — an entry pill, or the one naming the model. Shares
+     `true`'s accent family on purpose (one accent per canvas), and separates
+     from it on weight and fill: `true` is a branch answer, this is the top of
+     the tree, so it is the bolder of the two rather than a second green.
+
+     Measured with the package's own `contrastRatio`, both themes: text on the
+     pill 5.54:1 light / 6.83:1 dark — AA. The fill alone is 1.00:1 against the
+     light canvas (accent-subtle and surface happen to share a luminance), so
+     the BORDER is what makes this pill a shape: 5.56:1 light, 10.64:1 dark,
+     well past the 3:1 a UI boundary needs. Do not drop the border to a fill-
+     only treatment without re-measuring — on the canvas it would disappear. */
+  &--accent {
+    background-color: var(--color-accent-subtle);
+    border-color: var(--color-accent-bold);
+    color: var(--color-accent-bold);
+    /* No weight override here, deliberately. The proposal asked for 600, but
+       weight ALREADY goes through `--uxm-lifecycle-edge-label-font-weight` —
+       it was the three colours that had no supported route, which is what this
+       variant adds. A heavier default would have to come either from a private
+       `--accent-font-weight` (which would then ignore the studio's own Font
+       Weight knob on this one variant — a control that looks broken) or from
+       the shared var, whose registry default the preview projects as an inline
+       500 and would shadow it in the workbench while consumers saw 600. Set
+       the existing knob to 600 for an entry pill. */
+  }
 }

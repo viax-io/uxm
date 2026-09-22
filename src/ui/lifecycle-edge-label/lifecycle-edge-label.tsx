@@ -2,10 +2,17 @@ import { cn } from '@/helpers';
 
 import type { HTMLAttributes, ReactNode } from 'react';
 
-export type LifecycleEdgeLabelVariant = 'true' | 'false' | 'neutral';
+export type LifecycleEdgeLabelVariant = 'true' | 'false' | 'neutral' | 'accent';
 
 export interface LifecycleEdgeLabelProps extends HTMLAttributes<HTMLSpanElement> {
-  /** Color variant — `true` (green) / `false` (warm) / `neutral` (border-only). */
+  /**
+   * Color variant. `true` (green) / `false` (warm) name the two branches of a
+   * condition; `neutral` (border-only) is the quietest thing on the canvas, for
+   * an ordinary transition label. `accent` is the odd one out: it carries no
+   * branch semantics, it carries HIERARCHY — the entry pill of a diagram, or
+   * the one naming the model itself — and is the only variant that reads as
+   * primary against a sunken canvas.
+   */
   variant?: LifecycleEdgeLabelVariant;
   /** Label content. */
   children: ReactNode;
