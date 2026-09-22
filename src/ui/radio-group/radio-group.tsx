@@ -7,12 +7,37 @@ import type { ChangeEvent, ReactNode } from 'react';
 
 export type RadioGroupDirection = 'vertical' | 'horizontal';
 
+/** Option presentation. See `RadioGroupProps.variant`. */
+export type RadioGroupVariant = 'default' | 'card';
+
+/** Where the radio dot goes in card mode. See `RadioGroupProps.indicator`. */
+export type RadioGroupIndicator = 'hidden' | 'corner';
+
 export interface RadioGroupProps {
   name: string;
   value?: string;
   defaultValue?: string;
   onChange?: (value: string, e: ChangeEvent<HTMLInputElement>) => void;
   direction?: RadioGroupDirection;
+  /**
+   * Option presentation. `default` (unchanged) renders each option as a
+   * `[circle] label` row. `card` renders each one as a selectable tile: the
+   * option's `children` fill the card body and the selected state is an accent
+   * frame around the whole tile — for a visual single-select (a layout picker,
+   * plan tiers, theme swatches).
+   *
+   * The control stays a native radio group either way, so `role="radiogroup"`,
+   * `aria-checked` and arrow-key selection are unaffected by this prop.
+   */
+  variant?: RadioGroupVariant;
+  /**
+   * Card mode only. `hidden` (default) drops the radio circle — the frame is
+   * the affordance. `corner` keeps it, pinned to the tile's top-right, for
+   * redundancy where a frame alone is too subtle.
+   *
+   * Ignored when `variant` is `default`.
+   */
+  indicator?: RadioGroupIndicator;
   className?: string;
   children: ReactNode;
   /**
@@ -51,6 +76,10 @@ interface RadioGroupContextValue {
   value?: string;
   hasValue: boolean;
   onChange: (value: string, e: ChangeEvent<HTMLInputElement>) => void;
+  // Presentation travels down the same channel as `name`/`value` so an option
+  // never has to be told twice what group it is in.
+  variant: RadioGroupVariant;
+  indicator: RadioGroupIndicator;
 }
 
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
@@ -61,6 +90,8 @@ export function RadioGroup({
   defaultValue,
   onChange,
   direction = 'vertical',
+  variant = 'default',
+  indicator = 'hidden',
   className,
   children,
   error,
@@ -85,6 +116,7 @@ export function RadioGroup({
         className={cn(
           'uxm-radio-group',
           `uxm-radio-group--${direction}`,
+          variant === 'card' && 'uxm-radio-group--card',
           error && 'uxm-radio-group--error',
           className,
         )}
@@ -92,7 +124,9 @@ export function RadioGroup({
         aria-invalid={error ? true : undefined}
         aria-describedby={mergeDescribedBy(describedBy, error ? errorId : undefined)}
       >
-        <RadioGroupContext.Provider value={{ name, value, hasValue, onChange: handleChange }}>
+        <RadioGroupContext.Provider
+          value={{ name, value, hasValue, onChange: handleChange, variant, indicator }}
+        >
           {children}
         </RadioGroupContext.Provider>
       </div>
@@ -150,8 +184,19 @@ export function RadioOption({
     group?.onChange?.(value, e);
   }
 
+  const isCard = group?.variant === 'card';
+  const indicator = group?.indicator ?? 'hidden';
+
   return (
-    <label className={cn('uxm-radio', disabled && 'uxm-radio--disabled', className)}>
+    <label
+      className={cn(
+        'uxm-radio',
+        isCard && 'uxm-radio--card',
+        isCard && indicator === 'corner' && 'uxm-radio--indicator-corner',
+        disabled && 'uxm-radio--disabled',
+        className,
+      )}
+    >
       <input
         type="radio"
         className="uxm-radio__input"
@@ -162,10 +207,23 @@ export function RadioOption({
         disabled={disabled}
         onChange={handleChange}
       />
+      {/* The circle stays a SIBLING of the input in both presentations, even
+          in card mode where it is pinned to a corner by CSS. Nesting it inside
+          the card body would have put it out of reach of every existing
+          `__input:checked + __circle` / hover / focus rule, which would then
+          need a parallel card-mode copy — two sets of state rules to keep in
+          step. Card mode only moves it, or hides it. */}
       <span className="uxm-radio__circle" aria-hidden="true">
         <span className="uxm-radio__dot" />
       </span>
-      {children && <span className="uxm-radio__label">{children}</span>}
+      {isCard ? (
+        // The tile itself. A general-sibling selector off the input paints its
+        // selected frame, so it works for a controlled option and an
+        // uncontrolled one alike — the DOM, not React, knows which is checked.
+        <span className="uxm-radio__card">{children}</span>
+      ) : (
+        children && <span className="uxm-radio__label">{children}</span>
+      )}
     </label>
   );
 }

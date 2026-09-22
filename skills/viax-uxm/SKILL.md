@@ -132,6 +132,16 @@ catalog.
 
 ### Unreleased
 
+- **`RadioGroup` gained `variant="card"` (+ `indicator`).** Options could only ever be a
+  `[circle] label` row, so a *visual* single-select — a layout picker, plan tiers, theme swatches —
+  had to be hand-wired from clickable `Card`s, which throws away `role="radiogroup"`,
+  `aria-checked` and arrow-key selection. `card` renders each option as a selectable tile: the
+  option's `children` fill the body, the selected state is an accent frame, and the circle is
+  hidden (`indicator="corner"` keeps it, pinned to the tile's top-right). It is a presentation
+  change only — the control underneath is the same native radio group, so the a11y comes free.
+  The frame reads the row's own `--uxm-radio-group-*` colours, so the two presentations cannot
+  drift; the new `--uxm-radio-card-*` knobs are geometry and surface only.
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh

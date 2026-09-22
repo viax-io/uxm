@@ -114,3 +114,86 @@
   font-size: calc(var(--uxm-radio-group-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-radio-group-error-color, var(--color-danger-text));
 }
+
+/* ── Card variant ───────────────────────────────────────────────────────────
+   A selectable tile instead of a `[circle] label` row: the option's children
+   fill the card body and the selected state is a frame around the whole tile.
+   The control underneath is untouched — still a native radio in a label, so
+   arrow-key selection, `aria-checked` and the focus behaviour are the same
+   ones the default presentation gets.
+
+   Every colour here resolves through a var that the default presentation
+   already exposes (`--uxm-radio-group-selected-border`, `-focus-ring`), so a
+   theme that re-tints the circle re-tints the frame with it and there is no
+   second accent to keep in step. The card-specific knobs are geometry only. */
+
+.uxm-radio--card {
+  /* Containing block for the corner indicator. */
+  position: relative;
+  /* The label is now a frame around one block, not a row of two. */
+  align-items: stretch;
+  display: inline-flex;
+  gap: 0;
+
+  .uxm-radio__card {
+    background-color: var(--uxm-radio-card-bg, var(--color-card));
+    border: var(--uxm-radio-card-border-width, 1px) solid
+      var(--uxm-radio-group-unselected-border, var(--uxm-radio-group-border-color, var(--color-border)));
+    border-radius: var(--uxm-radio-card-radius, 8px);
+    box-sizing: border-box;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--uxm-radio-card-gap, 4px);
+    padding: var(--uxm-radio-card-padding, 12px);
+    transition: background-color 0.15s, border-color 0.15s;
+    width: 100%;
+  }
+
+  /* General sibling, not adjacent: the circle sits between the input and the
+     card in the DOM, and is absent from the flow when the indicator is
+     hidden. `~` is indifferent to both. */
+  .uxm-radio__input:checked ~ .uxm-radio__card {
+    background-color: var(--uxm-radio-card-selected-bg, var(--uxm-radio-card-bg, var(--color-card)));
+    border-color: var(--uxm-radio-group-selected-border, var(--uxm-radio-group-active-color, var(--color-accent)));
+  }
+
+  /* The frame carries focus in card mode. The default presentation rings the
+     circle, which here is hidden or shrunk into a corner — ringing it would
+     put the focus indicator on the smallest thing on screen instead of the
+     control the user is actually choosing. */
+  .uxm-radio__input:focus-visible ~ .uxm-radio__card {
+    outline: 2px solid var(--uxm-radio-group-focus-ring, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &:not(.uxm-radio--disabled):hover .uxm-radio__input:not(:checked) ~ .uxm-radio__card {
+    border-color: var(--uxm-radio-group-hover-unselected-border, var(--color-text-strong));
+  }
+
+  &:not(.uxm-radio--disabled):hover .uxm-radio__input:checked ~ .uxm-radio__card {
+    border-color: var(--uxm-radio-group-hover-selected-border, var(--color-accent-bold));
+  }
+
+  /* Default indicator: the frame IS the affordance, so the circle goes. */
+  .uxm-radio__circle {
+    display: none;
+  }
+
+  /* …unless asked for, in which case it is pinned to the corner. Absolute, so
+     it never takes part in the card's own column layout. */
+  &.uxm-radio--indicator-corner .uxm-radio__circle {
+    display: inline-flex;
+    position: absolute;
+    right: var(--uxm-radio-card-padding, 12px);
+    top: var(--uxm-radio-card-padding, 12px);
+    z-index: 1;
+  }
+}
+
+/* Tiles wrap. A row of cards that cannot wrap either overflows its container
+   or squeezes every tile below its content — neither is what a picker wants,
+   and the default row presentation is unaffected. */
+.uxm-radio-group--card.uxm-radio-group--horizontal {
+  flex-wrap: wrap;
+}

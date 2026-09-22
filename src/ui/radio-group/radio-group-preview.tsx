@@ -10,19 +10,31 @@ function ShowcaseRow({
   state,
   styles,
   label,
+  variant,
+  indicator,
 }: {
   selected: boolean;
   state: string;
   styles: Styles;
   label: string;
+  variant: 'default' | 'card';
+  indicator: 'hidden' | 'corner';
 }) {
   // Static showcase — paints the selected forced state regardless of
   // pointer interaction. Inline JSX (not the real <RadioOption>) so each
   // forced state can override the circle + dot directly; the interactive
   // instance below is where production CSS rules exercise.
+  //
+  // It has to follow `variant`: this is the ONLY thing that paints the forced
+  // hover / focus / disabled states — the interactive group below shows the
+  // resting state and real input. Left as a row while the variant is `card`,
+  // the States picker would show a hovered CIRCLE for a control that is a
+  // tile, and the hover / focus knobs (which the card frame genuinely reads)
+  // would be tuned against feedback that is not what ships.
   const isHover = state === 'hover';
   const isFocus = state === 'focus';
   const isDisabled = state === 'disabled';
+  const isCard = variant === 'card';
 
   const bg = isHover
     ? styles.hoverUnselectedBg
@@ -33,6 +45,74 @@ function ShowcaseRow({
   const dot = isHover ? styles.hoverDotColor : styles.dotColor;
   const ring = styles.focusRing;
   const size = (styles.size as number) ?? 20;
+
+  const circle = (
+    <span
+      aria-hidden="true"
+      style={{
+        width: size,
+        height: size,
+        flexShrink: 0,
+        borderRadius: '50%',
+        border: `2px solid ${border as string}`,
+        backgroundColor: bg as string,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'border-color 0.15s, background-color 0.15s',
+        ...(isFocus && !isCard
+          ? { outline: `2px solid ${ring as string}`, outlineOffset: 2 }
+          : {}),
+        ...(isCard
+          ? { position: 'absolute' as const, top: styles.cardPadding as number, right: styles.cardPadding as number }
+          : {}),
+      }}
+    >
+      {selected && (
+        <span
+          style={{
+            width: size * 0.5,
+            height: size * 0.5,
+            borderRadius: '50%',
+            backgroundColor: dot as string,
+          }}
+        />
+      )}
+    </span>
+  );
+
+  if (isCard) {
+    // Mirrors `.uxm-radio--card`: the tile carries the frame and the focus
+    // ring, and the circle is either gone or pinned to the corner.
+    return (
+      <div
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: styles.cardGap as number,
+          minWidth: 150,
+          boxSizing: 'border-box',
+          padding: styles.cardPadding as number,
+          borderRadius: styles.cardRadius as number,
+          border: `${styles.cardBorderWidth}px solid ${border as string}`,
+          backgroundColor: styles.cardBg as string,
+          fontSize: 14,
+          color: 'var(--color-text)',
+          opacity: isDisabled ? ((styles.disabledOpacity as number) ?? 0.4) : 1,
+          cursor: isDisabled ? 'not-allowed' : 'pointer',
+          transition: 'border-color 0.15s, background-color 0.15s',
+          ...(isFocus ? { outline: `2px solid ${ring as string}`, outlineOffset: 2 } : {}),
+        }}
+      >
+        {indicator === 'corner' && circle}
+        <strong>{label}</strong>
+        <span style={{ color: 'var(--color-text-muted)', fontSize: 12 }}>
+          What this option does
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -46,35 +126,7 @@ function ShowcaseRow({
         cursor: isDisabled ? 'not-allowed' : 'pointer',
       }}
     >
-      <span
-        aria-hidden="true"
-        style={{
-          width: size,
-          height: size,
-          flexShrink: 0,
-          borderRadius: '50%',
-          border: `2px solid ${border as string}`,
-          backgroundColor: bg as string,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transition: 'border-color 0.15s, background-color 0.15s',
-          ...(isFocus
-            ? { outline: `2px solid ${ring as string}`, outlineOffset: 2 }
-            : {}),
-        }}
-      >
-        {selected && (
-          <span
-            style={{
-              width: size * 0.5,
-              height: size * 0.5,
-              borderRadius: '50%',
-              backgroundColor: dot as string,
-            }}
-          />
-        )}
-      </span>
+      {circle}
       {label}
     </div>
   );
@@ -85,6 +137,8 @@ const INTERACTIVE_OPTIONS = ['Small', 'Medium', 'Large'];
 export function RadioGroupPreview({ styles, variants }: PreviewProps) {
   const state = (variants.state as string) ?? 'default';
   const direction = (variants.direction as 'vertical' | 'horizontal' | undefined) ?? 'vertical';
+  const variant = (variants.variant as 'default' | 'card' | undefined) ?? 'default';
+  const indicator = (variants.indicator as 'hidden' | 'corner' | undefined) ?? 'hidden';
 
   // Project every registry knob as a `--uxm-radio-group-*` custom property
   // on the wrapper. The interactive <RadioGroup> below renders the real
@@ -108,6 +162,11 @@ export function RadioGroupPreview({ styles, variants }: PreviewProps) {
     '--uxm-radio-group-error-color': styles.errorColor as string | undefined,
     '--uxm-radio-group-error-message-size':
       styles.errorMessageSize != null ? `${styles.errorMessageSize}px` : undefined,
+    '--uxm-radio-card-padding': `${styles.cardPadding}px`,
+    '--uxm-radio-card-radius': `${styles.cardRadius}px`,
+    '--uxm-radio-card-gap': `${styles.cardGap}px`,
+    '--uxm-radio-card-border-width': `${styles.cardBorderWidth}px`,
+    '--uxm-radio-card-bg': styles.cardBg as string,
   };
 
   const sectionLabel = {
@@ -130,8 +189,8 @@ export function RadioGroupPreview({ styles, variants }: PreviewProps) {
       <div>
         <div style={sectionLabel}>{state} state</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <ShowcaseRow selected={false} state={state} styles={styles} label="Unselected" />
-          <ShowcaseRow selected={true} state={state} styles={styles} label="Selected" />
+          <ShowcaseRow selected={false} state={state} styles={styles} label="Unselected" variant={variant} indicator={indicator} />
+          <ShowcaseRow selected={true} state={state} styles={styles} label="Selected" variant={variant} indicator={indicator} />
         </div>
       </div>
 
@@ -146,6 +205,8 @@ export function RadioGroupPreview({ styles, variants }: PreviewProps) {
           key={interactiveKey}
           name={`uxm-radio-preview-${interactiveKey}`}
           direction={direction}
+          variant={variant}
+          indicator={indicator}
           error={state === 'error' ? 'Pick an option to continue' : undefined}
         >
           {INTERACTIVE_OPTIONS.map((opt) => (
@@ -155,7 +216,18 @@ export function RadioGroupPreview({ styles, variants }: PreviewProps) {
               value={opt}
               disabled={interactiveDisabled}
             >
-              {opt}
+              {variant === 'card' ? (
+                // Card mode is for rich content — a one-word label in a tile
+                // would demo a box, not the shape the variant exists for.
+                <>
+                  <strong>{opt}</strong>
+                  <span style={{ color: 'var(--color-text-muted)', fontSize: 12 }}>
+                    What this option does
+                  </span>
+                </>
+              ) : (
+                opt
+              )}
             </RadioOption>
           ))}
         </RadioGroup>
