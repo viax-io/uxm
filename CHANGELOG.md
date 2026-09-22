@@ -1,3 +1,12 @@
+## [4.43.2](https://github.com/viax-io/uxm/compare/v4.43.1...v4.43.2) (2026-09-22)
+
+
+### Bug Fixes
+
+* **data-table,page-header:** scope the tbody rule, lower the body floor ([e61c23e](https://github.com/viax-io/uxm/commit/e61c23ecbb6b8928d98ddd00bd593265eb504d5e))
+* **data-table:** stop stacked rows collapsing to min-content width ([8289024](https://github.com/viax-io/uxm/commit/828902417e3a9c55975ae2e5013e51b8eab24fa0))
+* **page-header:** wrap the actions instead of crushing the title ([9fa690b](https://github.com/viax-io/uxm/commit/9fa690bf2b2c5cc2e28e606cd17406d31fa7e777))
+
 ## [4.43.1](https://github.com/viax-io/uxm/compare/v4.43.0...v4.43.1) (2026-09-21)
 
 
