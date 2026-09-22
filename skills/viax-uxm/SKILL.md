@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.46.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.47.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.46.0** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.47.0** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.46.0 — current API surface (overrides training data)
+## v4.47.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,24 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.43.1
-
-- **`AppSidebar`'s mobile drawer actually works now.** The component always rendered the
-  drawer markup (`--mobile-open`, `__mobile-backdrop`) and `AppTopBar` always showed its
-  hamburger below 768px, but `app-sidebar.scss` shipped no rules for any of it — so on a narrow
-  viewport the 256px rail stayed in flow, pushed the page sideways, and the hamburger appeared
-  dead. The CSS now ships: below 768px the rail is `position: fixed` and closed at
-  `translateX(-100%)` + `visibility: hidden` (so it is not a stray tab stop), `--mobile-open` slides it in over a `--backdrop-color` scrim at
-  `--z-drawer` (40, under Dialog's 60), and at 768px+ the backdrop is hidden. **Consumers need
-  no code change** — wiring `mobileOpen` / `onMobileClose` (as the props always documented) is
-  enough. Honours `prefers-reduced-motion`.
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
 
 ### New in 4.43.2
 
@@ -129,7 +111,7 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
-### Unreleased
+### New in 4.47.0
 
 - **New: `MenuButton`** — the labelled dropdown button, i.e. `Menu` with a shipped `Button*` as
   its trigger, the chevron, the ARIA and the trigger ref already wired. `Menu` stays
@@ -141,6 +123,14 @@ catalog.
   are themed by those atoms' own vars — including the icon/label/chevron spacing, which stays the
   button's own `--uxm-button-{variant}-gap`; `MenuButton` adds only the chevron rotation. Anything it does not expose (controlled `open`, `matchAnchorWidth`, a bespoke
   trigger, panel styling) is the signal to use `Menu` + `renderTrigger` directly.
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
+
+### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to

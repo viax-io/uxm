@@ -1,3 +1,10 @@
+# [4.47.0](https://github.com/viax-io/uxm/compare/v4.46.0...v4.47.0) (2026-09-22)
+
+
+### Features
+
+* **menu:** add MenuButton, the labelled dropdown trigger ([2e08a16](https://github.com/viax-io/uxm/commit/2e08a16345f00e6902395db79095457e7d9d2f53))
+
 # [4.46.0](https://github.com/viax-io/uxm/compare/v4.45.0...v4.46.0) (2026-09-22)
 
 
