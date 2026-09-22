@@ -146,9 +146,11 @@ export { DEFAULT_UXM_LOCALE, UxmLocaleProvider, useUxmLocale } from './locale';
 export type { UxmLocaleProviderProps } from './locale';
 export { Loader } from './loader';
 export type { LoaderLayout, LoaderProps, LoaderVariant } from './loader';
-export { Menu } from './menu';
+export { Menu, MenuButton } from './menu';
 export type {
   MenuProps,
+  MenuButtonProps,
+  MenuButtonVariant,
   MenuItem,
   MenuSeparator,
   MenuEntry,
