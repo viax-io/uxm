@@ -51,6 +51,19 @@ export function safeLineHeight(v: unknown): string | undefined {
 export function safeTokenKey(v: string): boolean {
   return /^--[A-Za-z0-9-]+$/.test(v);
 }
+
+const CSS_URL_FN_REGEX = /url\(([^)]*)\)/gi;
+
+function stripUrlQuotes(inner: string): string {
+  const trimmed = inner.trim();
+  const first = trimmed[0];
+  const last = trimmed[trimmed.length - 1];
+  if (trimmed.length >= 2 && (first === '"' || first === "'") && first === last) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+}
+
 // Blocks CSS-declaration break-out (`{`, `}`, `;`, newlines) AND HTML
 // break-out (`<`, `>`): this value is interpolated not just into persisted
 // stylesheets but into a live `<style>` JSX text child (brand-token-styles.tsx).
@@ -58,7 +71,19 @@ export function safeTokenKey(v: string): boolean {
 // on the client — but the same string is one `renderToString()` away (a host
 // SSR path, a prerender, any future dangerouslySetInnerHTML mirror) from
 // literally closing the tag and turning whatever follows into real markup.
+//
+// The code editor (code-editor.tsx) lets a Studio user type a raw
+// `property: value;` line for ANY per-component override, so a value here
+// can just as easily be `background: url(...)` as a plain color — reuse
+// `safeUrl`'s http(s)/relative-only whitelist on every `url(...)` found,
+// the same gate already applied to `logoUrl`/`iconUrl`, so a text override
+// can't turn into a `javascript:`/`data:` load or a third-party tracking
+// beacon fired from every session that renders the stylesheet.
 export function safeTokenValue(v: unknown): string | undefined {
   if (typeof v !== 'string') return undefined;
-  return /[{};\n\r<>]/.test(v) ? undefined : v;
+  if (/[{};\n\r<>]/.test(v)) return undefined;
+  for (const match of v.matchAll(CSS_URL_FN_REGEX)) {
+    if (safeUrl(stripUrlQuotes(match[1])) === undefined) return undefined;
+  }
+  return v;
 }
