@@ -1,3 +1,11 @@
+## [4.48.1](https://github.com/viax-io/uxm/compare/v4.48.0...v4.48.1) (2026-09-23)
+
+
+### Bug Fixes
+
+* **persistence:** block HTML break-out chars in safeTokenValue ([a5dc9a3](https://github.com/viax-io/uxm/commit/a5dc9a3a918b99b534a82d0d1adc110b9362e047))
+* **persistence:** validate url(...) values in safeTokenValue against safeUrl ([98e5081](https://github.com/viax-io/uxm/commit/98e5081fdfef70c67ddc80aba1c00b20d185b065))
+
 # [4.48.0](https://github.com/viax-io/uxm/compare/v4.47.0...v4.48.0) (2026-09-22)
 
 
