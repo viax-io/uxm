@@ -155,7 +155,21 @@ if (unreleasedAt !== -1) {
   const starts = [...region.matchAll(/^### New in \d/gm)].map((m) => m.index);
   if (starts.length > KEEP_RELEASE_SECTIONS) {
     const cut = starts[starts.length - KEEP_RELEASE_SECTIONS];
-    const moved = region.slice(starts[0], cut).replace(/\n+$/, '\n');
+    const moved = region
+      .slice(starts[0], cut)
+      // Strip the author-guidance comment again on the way out. The promote
+      // step above already drops it from the section it stamps, but a copy can
+      // still ride along here — it only has to be sitting inside the rolled
+      // span once (a hand-edit, or a section stamped before that strip
+      // existed) to be appended verbatim, and then it is permanent: the
+      // changelog is append-only, so nothing ever revisits it. Eight had
+      // accumulated in two different wordings before this was added.
+      //
+      // It is guidance for AUTHORS about SKILL.md's live "### Unreleased";
+      // in a shipped release history it means nothing.
+      .replace(/\n?<!-- Notes for changes merged but not yet published\.[\s\S]*?-->\n?/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .replace(/\n+$/, '\n');
     skill = skill.slice(0, afterHeading) + region.slice(0, starts[0]) + region.slice(cut) + skill.slice(regionEnd);
     const changelog = readFileSync(changelogPath, 'utf8').replace(/\n+$/, '\n');
     writeFileSync(changelogPath, `${changelog}\n${moved}`);
