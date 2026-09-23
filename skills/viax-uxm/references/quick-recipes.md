@@ -568,6 +568,13 @@ const actions: BulkAction[] = [
 Standalone `Menu` (overflow / command list) owns only the trigger contract — spread `triggerProps`
 onto any element: `<Menu items={...} renderTrigger={({ triggerProps }) => <IconButton {...triggerProps}><Icon glyph="kebab"/></IconButton>} />`.
 
+For the **labelled dropdown button** — a button that says what it does and drops a menu, with a
+trailing chevron — use `MenuButton` (4.47.0) instead of hand-writing that trigger:
+`<MenuButton variant="primary" items={...}>{label}</MenuButton>`. It wires the chevron, the ARIA
+and the trigger ref. Stay on `Menu` + `renderTrigger` for a bespoke trigger (⋮, avatar, field),
+controlled `open`, `matchAnchorWidth`, or per-instance panel styling — `MenuButton` exposes none
+of those.
+
 ### The other shape of the same atom: a context switcher
 
 Same DOM, same ARIA, same `--uxm-menu-*` knobs — what changes is the **entries** plus two framing
