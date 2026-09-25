@@ -1,3 +1,10 @@
+## [4.48.2](https://github.com/viax-io/uxm/compare/v4.48.1...v4.48.2) (2026-09-25)
+
+
+### Bug Fixes
+
+* **scripts:** strip author-guidance comments when rolling changelog sections ([742574b](https://github.com/viax-io/uxm/commit/742574b5116a5becab020cdc6028d210047918e3))
+
 ## [4.48.1](https://github.com/viax-io/uxm/compare/v4.48.0...v4.48.1) (2026-09-23)
 
 
