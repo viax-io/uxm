@@ -102,6 +102,25 @@ const UNRELEASED_BLOCK = `${UNRELEASED_HEADING}
 
 `;
 
+/**
+ * Remove the author-guidance comment from a span of release notes.
+ *
+ * It is instructions for whoever edits the live "### Unreleased" section; in a
+ * stamped release entry, and in the append-only changelog downstream of it, it
+ * says only that a section published months ago is "not yet published".
+ *
+ * Deliberately unanchored. The first version of this only matched a comment
+ * sitting at the very top of the body, because UNRELEASED_BLOCK writes it
+ * directly under the heading. Authors then add their bullets ABOVE it, so by
+ * promote time it is trailing the notes and the anchor misses -- which is how
+ * 4.44.0 through 4.48.0 each ended up carrying one.
+ */
+function stripGuidanceComment(text) {
+  return text
+    .replace(/\n?<!-- Notes for changes merged but not yet published\.[\s\S]*?-->\n?/g, '\n')
+    .replace(/\n{3,}/g, '\n\n');
+}
+
 // A feature PR may have parked its notes under "### Unreleased". Promote that
 // section to the released version and immediately re-open an empty one.
 //
@@ -123,12 +142,11 @@ if (unreleasedAt !== -1) {
   const body = skill.slice(bodyStart, bodyEnd);
 
   if (/^- /m.test(body)) {
-    // Drop the guidance comment on the way through: it explains how to PARK
-    // notes, which is meaningless once the section is a shipped changelog
-    // entry. Left in place it gets copied into every release section — 4.10.0
-    // and 4.12.0 on master each carry a stranded one.
-    const promoted = body
-      .replace(/^\n+<!--[\s\S]*?-->\n/, '\n')
+    // Drop the guidance comment on the way through (see stripGuidanceComment).
+    // Left in place it is copied into every release section: 4.10.0 and 4.12.0
+    // carried one before this strip existed, 4.44.0-4.48.0 after it, because
+    // it only matched the comment in the one position authors do not leave it.
+    const promoted = stripGuidanceComment(body)
       // Normalise the tail so the re-opened section always sits exactly one
       // blank line below, whatever spacing the author happened to leave.
       .replace(/\n+$/, '\n\n');
@@ -155,21 +173,14 @@ if (unreleasedAt !== -1) {
   const starts = [...region.matchAll(/^### New in \d/gm)].map((m) => m.index);
   if (starts.length > KEEP_RELEASE_SECTIONS) {
     const cut = starts[starts.length - KEEP_RELEASE_SECTIONS];
-    const moved = region
-      .slice(starts[0], cut)
-      // Strip the author-guidance comment again on the way out. The promote
-      // step above already drops it from the section it stamps, but a copy can
-      // still ride along here — it only has to be sitting inside the rolled
-      // span once (a hand-edit, or a section stamped before that strip
-      // existed) to be appended verbatim, and then it is permanent: the
-      // changelog is append-only, so nothing ever revisits it. Eight had
-      // accumulated in two different wordings before this was added.
-      //
-      // It is guidance for AUTHORS about SKILL.md's live "### Unreleased";
-      // in a shipped release history it means nothing.
-      .replace(/\n?<!-- Notes for changes merged but not yet published\.[\s\S]*?-->\n?/g, '\n')
-      .replace(/\n{3,}/g, '\n\n')
-      .replace(/\n+$/, '\n');
+    // Strip the guidance comment again on the way out. The promote step above
+    // drops it from the section it stamps, but a copy can still ride along
+    // here — it only has to be sitting inside the rolled span once (a
+    // hand-edit, or a section stamped before the strip caught this shape) to
+    // be appended verbatim, and then it is permanent: the changelog is
+    // append-only, so nothing ever revisits it. Eight had accumulated in two
+    // different wordings before this was added.
+    const moved = stripGuidanceComment(region.slice(starts[0], cut)).replace(/\n+$/, '\n');
     skill = skill.slice(0, afterHeading) + region.slice(0, starts[0]) + region.slice(cut) + skill.slice(regionEnd);
     const changelog = readFileSync(changelogPath, 'utf8').replace(/\n+$/, '\n');
     writeFileSync(changelogPath, `${changelog}\n${moved}`);
