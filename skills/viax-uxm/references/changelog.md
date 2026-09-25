@@ -409,12 +409,6 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.5.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
 
 - **`EditableCell` open pickers now wear the editing chrome.** While a select / multiselect
   panel is open, the trigger paints the same card surface + accent border + focus halo as the
@@ -529,12 +523,6 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.10.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
 
 - **New atom `LifecycleGroupBox` — the frame around one lifecycle group, and its drop zone.** A
   frosted, absolutely-positioned region frame: translucent `--color-card` tint over a
@@ -603,12 +591,6 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.12.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
 
 - **Every icon-only control now has a translatable accessible name.** Four atoms hardcoded
   English `aria-label`s on buttons that carry no visible text, so the label was the *only* thing
@@ -656,12 +638,6 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.13.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
 
 - **`FormField`'s side layout no longer lets a non-wrapping control escape its container.**
   The input column was a bare `1fr`, i.e. `minmax(auto, 1fr)`, whose automatic minimum is the
@@ -715,12 +691,6 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.14.0
 
-<!-- Notes for changes merged but not yet published. The release pipeline renames
-     this heading to "New in X.Y.Z" and stamps the version/count markers
-     (scripts/stamp-skill-version.mjs) — never hand-edit those. Always leave a bare
-     "### Unreleased" heading behind for the next MR: the stamper only matches that
-     exact string, so appending notes under an already-stamped "New in X.Y.Z"
-     heading silently mislabels them and they never get re-stamped. -->
 
 - **New `ComponentDef.canvasFill` — a studio-canvas layout flag.** Exported from
   `uxm/studio`. The canvas centres a preview on both axes by default; set `canvasFill: true`
@@ -1538,11 +1508,6 @@ reached the published library; now shipped in 2.8.0.
   `alt=""` on media the row's title already names — a described image is concatenated into the
   row's accessible name.
 
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
 
 ### New in 4.43.1
 
@@ -1556,11 +1521,6 @@ reached the published library; now shipped in 2.8.0.
   no code change** — wiring `mobileOpen` / `onMobileClose` (as the props always documented) is
   enough. Honours `prefers-reduced-motion`.
 
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
 
 ### New in 4.43.2
 
@@ -1574,8 +1534,3 @@ reached the published library; now shipped in 2.8.0.
   (10rem) floor on the body; the same header is 122px. Width-driven rather than a breakpoint, so a
   header docked in a narrow flexpane at desktop width degrades the same way. Wide layouts unchanged.
 
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
