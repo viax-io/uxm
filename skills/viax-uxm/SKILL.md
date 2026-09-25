@@ -52,12 +52,6 @@ catalog.
   and the clip's only other effect is to crop — and un-hit-test — anything a row hangs outside the
   container box.
 
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
-
 ### New in 4.45.0
 
 - **The button family declares `ref`.** `IconButton` and `ButtonPrimary` / `Secondary` /
@@ -68,12 +62,6 @@ catalog.
   `HoverTooltip` / `Popover` anchors (both position against a ref on their child) and forced a
   wrapper element around each one. No `forwardRef` — 4.39 moved `Modal` the other way, off
   `forwardRef` and onto React 19 ref props.
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
 
 ### New in 4.46.0
 
@@ -86,12 +74,6 @@ catalog.
   change only — the control underneath is the same native radio group, so the a11y comes free.
   The frame reads the row's own `--uxm-radio-group-*` colours, so the two presentations cannot
   drift; the new `--uxm-radio-card-*` knobs are geometry and surface only.
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
 
 ### New in 4.47.0
 
@@ -106,12 +88,6 @@ catalog.
   button's own `--uxm-button-{variant}-gap`; `MenuButton` adds only the chevron rotation. Anything it does not expose (controlled `open`, `matchAnchorWidth`, a bespoke
   trigger, panel styling) is the signal to use `Menu` + `renderTrigger` directly.
 
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
-
 ### New in 4.48.0
 
 - **`ListItem` gained a selectable (multi-select) mode.** `selected` / `onSelectedChange` render
@@ -123,12 +99,6 @@ catalog.
   content → trailing. The checkbox is `Checkbox`'s own classes rather than a nested `<Checkbox>`
   — that component is itself a `<label>`, and a label inside the row label is invalid HTML — so
   it re-tints with the checkbox's knobs and adds no theming variable of its own.
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
 
 ### Unreleased
 
