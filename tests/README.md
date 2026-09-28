@@ -17,6 +17,7 @@ way of a library that ships several fixes a day.
 | **Hooks** | `hooks.test.tsx` | Every hook exported from `/hooks`, through a throwaway component. |
 | **Floating layers & pickers** | `dialog`, `popover`, `listbox`, `disclosure`, `radio-group`, `editable-cell`, `toast`, `icon-button`, `icon` | Focus trap, Escape, outside click, ARIA wiring, commit / cancel paths — what only a screen reader would otherwise catch. |
 | **Studio persistence** | `css-sanitizers`, `generate-css` | The CSS the studio writes into a consumer's app. |
+| **Release tooling** | `stamp-skill-version` | The skill stamper runs only inside semantic-release, so a regression otherwise surfaces in a shipped SKILL.md / changelog. Run for real against a temp repo root. |
 | **axe** | `a11y.test.tsx` | One axe pass over a form and a dialog. Keep it to a handful of `it`s; axe is slow. |
 
 ## The snapshot rule
