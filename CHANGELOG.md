@@ -1,3 +1,10 @@
+## [4.48.3](https://github.com/viax-io/uxm/compare/v4.48.2...v4.48.3) (2026-09-28)
+
+
+### Bug Fixes
+
+* **scripts:** keep note spacing when stripping the guidance comment ([0411252](https://github.com/viax-io/uxm/commit/0411252c721cd15bb7d7a623a555658d58dfa722))
+
 ## [4.48.2](https://github.com/viax-io/uxm/compare/v4.48.1...v4.48.2) (2026-09-25)
 
 
