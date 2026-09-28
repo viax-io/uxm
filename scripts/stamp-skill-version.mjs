@@ -114,11 +114,14 @@ const UNRELEASED_BLOCK = `${UNRELEASED_HEADING}
  * directly under the heading. Authors then add their bullets ABOVE it, so by
  * promote time it is trailing the notes and the anchor misses -- which is how
  * 4.44.0 through 4.48.0 each ended up carrying one.
+ *
+ * The comment takes the blank lines around it with it and leaves exactly one
+ * behind. That spacing fix is scoped to the comment on purpose: an earlier
+ * version collapsed every run of blank lines in the whole span, which also
+ * squashed deliberate blank lines inside fenced code in the release notes.
  */
 function stripGuidanceComment(text) {
-  return text
-    .replace(/\n?<!-- Notes for changes merged but not yet published\.[\s\S]*?-->\n?/g, '\n')
-    .replace(/\n{3,}/g, '\n\n');
+  return text.replace(/\n*<!-- Notes for changes merged but not yet published\.[\s\S]*?-->\n*/g, '\n\n');
 }
 
 // A feature PR may have parked its notes under "### Unreleased". Promote that
