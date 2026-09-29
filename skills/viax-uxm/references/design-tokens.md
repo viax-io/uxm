@@ -44,8 +44,8 @@ bgs.
 |-------|--------|-------|------|---------|
 | `Text Strong` | `--color-text-strong` | `#4A4A4A` | `#C8C8C8` | Headings; emphasized labels. |
 | `Text` | `--color-text` | `#1E1E1E` | `#F5F5F5` | Body text (default). |
-| `Text Muted` | `--color-text-muted` | `#6E6A64` | `#A3A3A3` | Secondary text, labels, table header text. AA on both light surfaces (5.02:1 / 5.37:1). |
-| `Text Subtle` | `--color-text-subtle` | `#908B83` | `#6E6E6E` | Tertiary, disabled, placeholder. Clears the 3:1 non-text floor on light (3.16:1 / 3.38:1), **not** the 4.5:1 text floor — don't use it for content. |
+| `Text Muted` | `--color-text-muted` | `#6E6A64` | `#A3A3A3` | Secondary text, labels, table header text. AA on all three light grounds (4.76 surface-alt / 5.02 surface / 5.37 card). |
+| `Text Subtle` | `--color-text-subtle` | `#8A857D` | `#6E6E6E` | Separators, idle strokes, disabled marks. Clears the 3:1 non-text floor on all three light grounds (3.25 surface-alt / 3.42 surface / 3.66 card), **not** the 4.5:1 text floor. Several atoms still use it for real text (section titles, group headers, placeholders) — that fails 1.4.3 and is a known follow-up, not a licence to add more. |
 | `Text Inverse` | `--color-text-inverse` | `#FFFFFF` | `#1B1A18` | Text on accent backgrounds (e.g. Primary button). |
 
 ### Borders (1 token)

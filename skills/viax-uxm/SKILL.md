@@ -106,15 +106,18 @@ catalog.
   family.** `--color-text-muted` was `#9CA3AF` — 2.37:1 on `--color-surface` and 2.54:1 on
   `--color-card`, under even the 3:1 floor, so every secondary string in the library failed
   AA on light. It is now `#6E6A64` (5.02:1 / 5.37:1). `--color-text-subtle` was worse at
-  1.39:1 / 1.48:1 and is now `#908B83` (3.16:1 / 3.38:1) — enough for separators, idle
-  strokes and disabled marks, deliberately still short of the 4.5:1 text floor so it cannot
-  pass as content. Both are now WARM neutrals (hue ~36), matching the surfaces they sit on
+  1.39:1 / 1.48:1 and is now `#8A857D` (3.25 on `--color-surface-alt`, 3.42 surface, 3.66
+  card) — enough for separators, idle strokes and disabled marks, deliberately still short
+  of the 4.5:1 text floor. Note several atoms do still paint real text with it (section
+  titles, group headers, placeholders); that is a pre-existing 1.4.3 failure this change
+  improves but does not close. Both are now WARM neutrals (hue ~36), matching the surfaces they sit on
   (`--color-surface` is hue 30, `--color-border` 60) instead of the cool blue-greys
   (218 / 213) they were, which read as borrowed from another palette. Separately,
   `--color-accent-subtle`
-  was `#E6FFD1`, a hue-93 yellow-green among an emerald scale (147 / 151 / 156), which made
-  every default `IconTile` read acidic under its forest glyph; it is `#E2F3E8` (hue 141), and
-  the glyph keeps AA on it at 5.16:1. **Dark theme is untouched** — it passed on all three.
+  was `#E6FFD1`, a hue-93 yellow-green among an emerald scale (147 / 151 / 156), which made the
+  `PageHeader` / `TypeOverviewCard` / `ErrorPage` icon tiles read acidic under their forest
+  glyph (the bare `IconTile` default is `--color-surface-alt`, not this); it is `#E2F3E8`
+  (hue 141), and the glyph keeps AA on it at 5.16:1. **Dark theme is untouched.** Dark muted and the accent pair already passed; dark subtle sits right at the 3:1 non-text floor (3.12 surface / 3.41 card, but 2.85 on surface-alt), so it is no worse than before but is not clean either.
   Consequences worth knowing: this retires several documented AA *exceptions* (the Menu hint,
   the SidebarNavTrigger caption) whose rationales are rewritten in the same change, and the
   lifecycle connector's idle and dashed strokes clear the 3:1 UI floor for the first time.

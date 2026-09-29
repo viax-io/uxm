@@ -68,5 +68,5 @@ The tile itself has no interactive states — wrap it in an `IconButton` or `<a>
 
 - The root is a `<span>` — purely presentational and not in the tab order. If the tile represents an actionable element (e.g. a category filter), wrap it in an `IconButton` or `<button>`/`<a>` and supply an `aria-label`.
 - The inner `Icon` inherits its own `aria-label` from the registry. For tiles that already have a labelled wrapper, mark the icon `aria-hidden="true"` to avoid double-announcement.
-- Background/foreground combinations chosen by the consumer must meet WCAG contrast where the icon carries meaning. Default `surface-alt` + `text-muted` is intentionally low-contrast and best paired with a labelled sibling.
+- Background/foreground combinations chosen by the consumer must meet WCAG contrast where the icon carries meaning. The default `surface-alt` + `text-muted` pairing measures 4.76:1, clear of AA; it used to be intentionally low-contrast and is no longer. A labelled sibling is still good practice where the glyph carries meaning on its own.
 - `flex-shrink: 0` is enforced so the tile never collapses inside flex rows — keeps row-icon alignment stable when sibling text wraps.

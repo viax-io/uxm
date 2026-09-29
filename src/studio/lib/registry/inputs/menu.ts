@@ -61,7 +61,7 @@ export const menuDef: ComponentDef = {
     //
     // `--color-text-strong`, not `--color-text-subtle`: subtle was 1.48:1 on
     // the panel in light and read fainter than a disabled row. It clears the
-    // 3:1 non-text floor now (3.38:1 light, 3.41:1 dark), so the contrast
+    // 3:1 non-text floor now (3.66:1 light, 3.41:1 dark), so the contrast
     // case is gone in both themes; subtle still READS inactive, which is why
     // the default stays. See the note in menu.scss.
     { key: 'itemIconColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'icon', showWhen: { withIcons: 'yes' } },

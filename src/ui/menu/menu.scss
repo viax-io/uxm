@@ -95,12 +95,13 @@
 /* `--color-text-strong`, NOT `--color-text-subtle`. Subtle used to measure
    1.48:1 on `--color-card` in light — fainter than a disabled row (which
    multiplies `--color-text` by 0.4), so a live glyph read as switched off.
-   It is 3.38:1 now and clears the 3:1 non-text floor, but only just — and
-   dark measures 3.41:1, which clears it too. So the CONTRAST case for strong
-   is gone in both themes; what remains is that subtle still reads as an
-   inactive glyph. Strong measures 8.86:1 light / 10.39:1 dark and sits a
-   clear step below the label, so the default stays put. Same token the
-   subtitle uses. */
+   It is 3.66:1 now and clears the 3:1 non-text floor, and dark measures
+   3.41:1, which clears it too. So the CONTRAST case for strong is gone in
+   both themes. What remains is hierarchy: strong measures 8.86:1 light /
+   10.39:1 dark, a clear step above subtle and a clear step below the label.
+   Note this is no longer an "it would look disabled" argument — a disabled
+   row multiplies --color-text by 0.4 (~2.46:1), so a subtle glyph now sits
+   ABOVE it. Same token the subtitle uses. */
 .uxm-menu__item-icon {
   flex-shrink: 0;
   color: var(--uxm-menu-item-icon-color, var(--color-text-strong));
@@ -167,9 +168,8 @@
    shortcut echo ("⌘C") carrying no content the label lacks. The exception is
    retired: the hint is legible on its own terms now. The hierarchy reason to
    keep the two slots apart survives — the subtitle carries information and
-   takes the stronger `--color-text-strong`. Do not
-   "fix" this by unifying the two; they differ on purpose. If a hint ever
-   starts carrying meaning the label lacks, move it to strong. */
+   takes the stronger `--color-text-strong`. If a hint ever starts carrying
+   meaning the label lacks, move it to strong. */
 .uxm-menu__item-hint {
   flex-shrink: 0;
   margin-left: auto;

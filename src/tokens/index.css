@@ -12,11 +12,16 @@
      sat far below their contrast floors on light:
        muted   #9CA3AF → 2.37:1 surface / 2.54:1 card — under even the 3:1 floor
        subtle  #CBD5E1 → 1.39:1 / 1.48:1 — fainter than a disabled row
-     Each level is now measured against BOTH light surfaces, worst case first. */
+     There are THREE light grounds, not two: --color-surface, --color-card and
+     --color-surface-alt (#F2F1F0 — hover rows, neutral badges, the default
+     IconTile). surface-alt is the worst case for both levels, so it is the one
+     quoted first below. An earlier draft of this change put subtle at #908B83,
+     which measured 2.999:1 there — a miss by 0.001 that reading only surface
+     and card would never have shown. */
   --color-text: #1E1E1E;
   --color-text-strong: #4A4A4A;
-  --color-text-muted: #6E6A64;   /* 5.02:1 surface / 5.37:1 card — AA for text */
-  --color-text-subtle: #908B83;  /* 3.16:1 / 3.38:1 — the 3:1 non-text floor */
+  --color-text-muted: #6E6A64;   /* 4.76 alt / 5.02 surface / 5.37 card — AA */
+  --color-text-subtle: #8A857D;  /* 3.25 alt / 3.42 surface / 3.66 card — 3:1 */
   --color-text-inverse: #FFFFFF;
 
   /* ── Borders ── */
@@ -24,9 +29,11 @@
 
   /* ── Accent (primary action) ── */
   /* `subtle` was #E6FFD1 — a hue-93 yellow-green, the one member off the
-     emerald family the other three share (147 / 151 / 156). As the default
-     IconTile base it made those tiles read acidic under the forest glyph they
-     carry. #E2F3E8 is hue 141, adjacent to `light`. The glyph keeps AA on it
+     emerald family the other three share (147 / 151 / 156). It is the icon-tile
+     base that PageHeader, TypeOverviewCard and ErrorPage project through
+     --uxm-icon-tile-bg (the BARE IconTile default is --color-surface-alt, not
+     this), so those tiles read acidic under the forest glyph they carry.
+     #E2F3E8 is hue 141, adjacent to `light`. The glyph keeps AA on it
      (--color-accent-bold at 5.16:1, down from 5.54:1). */
   --color-accent-subtle: #E2F3E8;
   --color-accent-light: #90E9B8;

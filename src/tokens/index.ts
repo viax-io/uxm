@@ -26,7 +26,7 @@ export const themeTokens: ThemeToken[] = [
   { name: 'Text', variable: 'var(--color-text)', cssVar: '--color-text', hex: '#1E1E1E', darkHex: '#F5F5F5', group: 'text' },
   { name: 'Text Strong', variable: 'var(--color-text-strong)', cssVar: '--color-text-strong', hex: '#4A4A4A', darkHex: '#C8C8C8', group: 'text' },
   { name: 'Text Muted', variable: 'var(--color-text-muted)', cssVar: '--color-text-muted', hex: '#6E6A64', darkHex: '#A3A3A3', group: 'text' },
-  { name: 'Text Subtle', variable: 'var(--color-text-subtle)', cssVar: '--color-text-subtle', hex: '#908B83', darkHex: '#6E6E6E', group: 'text' },
+  { name: 'Text Subtle', variable: 'var(--color-text-subtle)', cssVar: '--color-text-subtle', hex: '#8A857D', darkHex: '#6E6E6E', group: 'text' },
   { name: 'Text Inverse', variable: 'var(--color-text-inverse)', cssVar: '--color-text-inverse', hex: '#FFFFFF', darkHex: '#1B1A18', group: 'text' },
 
   // ── Borders ──
