@@ -92,12 +92,15 @@
   color: var(--uxm-menu-item-danger-color, var(--color-danger-text));
 }
 
-/* `--color-text-strong`, NOT `--color-text-subtle`. Subtle measures 1.48:1
-   on `--color-card` in the light theme and 2.85:1 in dark — below even the
-   3:1 non-text floor, and in practice FAINTER than a disabled row (which
+/* `--color-text-strong`, NOT `--color-text-subtle`. Subtle used to measure
+   1.48:1 on `--color-card` in light — fainter than a disabled row (which
    multiplies `--color-text` by 0.4), so a live glyph read as switched off.
-   Strong measures 8.86:1 / 11.76:1 and still sits a clear step below the
-   label. Same token the subtitle uses, for the same reason. */
+   It is 3.38:1 now and clears the 3:1 non-text floor, but only just — and
+   dark measures 3.41:1, which clears it too. So the CONTRAST case for strong
+   is gone in both themes; what remains is that subtle still reads as an
+   inactive glyph. Strong measures 8.86:1 light / 10.39:1 dark and sits a
+   clear step below the label, so the default stays put. Same token the
+   subtitle uses. */
 .uxm-menu__item-icon {
   flex-shrink: 0;
   color: var(--uxm-menu-item-icon-color, var(--color-text-strong));
@@ -132,11 +135,11 @@
    colour. Muted is the obvious pick for a supporting line and it is what the
    hint uses — but a hint is a terse, redundant echo, whereas a subtitle
    carries real information ("Currently in Inbox", "Remove permanently") at
-   11px. Muted measures 2.54:1 on `--color-card` in the light theme, under
-   even the 3:1 large-text floor, and Principle IV requires AA for text.
-   Strong measures 8.86:1 light / 11.76:1 dark and still reads a clear step
-   below `--color-text`, so the hierarchy survives without the contrast
-   failure. Recheck with `contrastRatio()` if this default ever moves. */
+   11px. That used to be a contrast argument too — muted was 2.54:1 on
+   `--color-card` in light, under even the 3:1 large-text floor — and it is
+   not any more: muted is 5.37:1 and clears AA. Strong stays the default on
+   hierarchy alone, at 8.86:1 light, a clear step below `--color-text` and a
+   clear step above the hint. Recheck with `contrastRatio()` if it moves. */
 .uxm-menu__item-subtitle {
   overflow: hidden;
   /* AA floor: 11px is the documented minimum at which this subtitle keeps 4.5:1
@@ -158,14 +161,13 @@
 .uxm-menu__item--danger .uxm-menu__item-subtitle {
   color: inherit;
 }
-/* `--color-text-muted` — 2.54:1 on `--color-card` in the LIGHT theme, below
-   the 4.5:1 AA floor for text (dark measures 5.70:1 and passes). A
-   deliberate, narrow exception, then, not the oversight it
-   looks like next to the subtitle note above. A hint is a redundant shortcut
-   echo ("⌘C"): the row is fully identified by its label without it, nothing
-   is lost if it goes unread, and it is the one slot here carrying no
-   content. The subtitle is the opposite — it carries information, which is
-   exactly why it refuses muted and takes `--color-text-strong`. Do not
+/* `--color-text-muted` — 5.37:1 on `--color-card` in the LIGHT theme, clear
+   of the 4.5:1 AA floor for text. This slot used to be a deliberate AA
+   exception at 2.54:1, defended on the grounds that a hint is a redundant
+   shortcut echo ("⌘C") carrying no content the label lacks. The exception is
+   retired: the hint is legible on its own terms now. The hierarchy reason to
+   keep the two slots apart survives — the subtitle carries information and
+   takes the stronger `--color-text-strong`. Do not
    "fix" this by unifying the two; they differ on purpose. If a hint ever
    starts carrying meaning the label lacks, move it to strong. */
 .uxm-menu__item-hint {

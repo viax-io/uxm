@@ -34,10 +34,9 @@ export const sidebarNavTriggerDef: ComponentDef = {
     { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px', section: 'value', showWhen: { collapsed: 'no' } },
     { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600', '700'], section: 'value', showWhen: { collapsed: 'no' } },
 
-    // ── The caption. Muted is under the AA text floor on the card surface
-    // (2.54:1), which is acceptable here ONLY because a caption names the
-    // control rather than carrying content — the value beneath it is the
-    // content. Swap to --color-text-strong if that ever stops being true.
+    // ── The caption. Muted clears the AA text floor on the card surface
+    // (5.37:1), so the slot no longer rests on the "a caption only names the
+    // control" exemption it used to need at 2.54:1. Nothing to swap.
     { key: 'captionColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'caption', showWhen: { withCaption: 'yes', collapsed: 'no' } },
     { key: 'captionFontSize', label: 'Font Size', control: 'number', defaultValue: 10, min: 8, max: 14, step: 1, unit: 'px', section: 'caption', showWhen: { withCaption: 'yes', collapsed: 'no' } },
     { key: 'captionFontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600', '700'], section: 'caption', showWhen: { withCaption: 'yes', collapsed: 'no' } },

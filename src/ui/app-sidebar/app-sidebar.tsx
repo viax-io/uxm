@@ -70,7 +70,7 @@ export interface AppSidebarIconColor {
 export const DEFAULT_SIDEBAR_ICON_COLORS: AppSidebarIconColor[] = [
   { bg: 'var(--color-highlight-warm)', color: 'var(--color-on-highlight-warm)' },  // 3.64 / 4.10
   { bg: 'var(--color-highlight-cool)', color: 'var(--color-on-highlight-cool)' },  // 3.74 / 4.62
-  { bg: 'var(--color-accent-subtle)', color: 'var(--color-accent-bold)' },         // 5.54 / 8.54
+  { bg: 'var(--color-accent-subtle)', color: 'var(--color-accent-bold)' },         // 5.16 / 6.83
   { bg: 'var(--color-category-diagram)', color: 'var(--color-text-inverse)' },     // 4.47 / 6.60
 ];
 

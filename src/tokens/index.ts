@@ -25,8 +25,8 @@ export const themeTokens: ThemeToken[] = [
   // ── Text ──
   { name: 'Text', variable: 'var(--color-text)', cssVar: '--color-text', hex: '#1E1E1E', darkHex: '#F5F5F5', group: 'text' },
   { name: 'Text Strong', variable: 'var(--color-text-strong)', cssVar: '--color-text-strong', hex: '#4A4A4A', darkHex: '#C8C8C8', group: 'text' },
-  { name: 'Text Muted', variable: 'var(--color-text-muted)', cssVar: '--color-text-muted', hex: '#9CA3AF', darkHex: '#A3A3A3', group: 'text' },
-  { name: 'Text Subtle', variable: 'var(--color-text-subtle)', cssVar: '--color-text-subtle', hex: '#CBD5E1', darkHex: '#6E6E6E', group: 'text' },
+  { name: 'Text Muted', variable: 'var(--color-text-muted)', cssVar: '--color-text-muted', hex: '#6E6A64', darkHex: '#A3A3A3', group: 'text' },
+  { name: 'Text Subtle', variable: 'var(--color-text-subtle)', cssVar: '--color-text-subtle', hex: '#908B83', darkHex: '#6E6E6E', group: 'text' },
   { name: 'Text Inverse', variable: 'var(--color-text-inverse)', cssVar: '--color-text-inverse', hex: '#FFFFFF', darkHex: '#1B1A18', group: 'text' },
 
   // ── Borders ──
@@ -34,7 +34,7 @@ export const themeTokens: ThemeToken[] = [
 
   // ── Accent ── (brand colour first; the others derive from its hue)
   { name: 'Accent', variable: 'var(--color-accent)', cssVar: '--color-accent', hex: '#3ECC87', darkHex: '#4FD99A', group: 'accent', identity: true },
-  { name: 'Accent Subtle', variable: 'var(--color-accent-subtle)', cssVar: '--color-accent-subtle', hex: '#E6FFD1', darkHex: '#1A4A2C', group: 'accent' },
+  { name: 'Accent Subtle', variable: 'var(--color-accent-subtle)', cssVar: '--color-accent-subtle', hex: '#E2F3E8', darkHex: '#1A4A2C', group: 'accent' },
   { name: 'Accent Light', variable: 'var(--color-accent-light)', cssVar: '--color-accent-light', hex: '#90E9B8', darkHex: '#3AA36A', group: 'accent' },
   { name: 'Accent Bold', variable: 'var(--color-accent-bold)', cssVar: '--color-accent-bold', hex: '#1E7150', darkHex: '#8AE6B4', group: 'accent' },
 

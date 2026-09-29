@@ -44,8 +44,8 @@ bgs.
 |-------|--------|-------|------|---------|
 | `Text Strong` | `--color-text-strong` | `#4A4A4A` | `#C8C8C8` | Headings; emphasized labels. |
 | `Text` | `--color-text` | `#1E1E1E` | `#F5F5F5` | Body text (default). |
-| `Text Muted` | `--color-text-muted` | `#9CA3AF` | `#A3A3A3` | Secondary text, labels, table header text. |
-| `Text Subtle` | `--color-text-subtle` | `#CBD5E1` | `#6E6E6E` | Tertiary, disabled, placeholder. |
+| `Text Muted` | `--color-text-muted` | `#6E6A64` | `#A3A3A3` | Secondary text, labels, table header text. AA on both light surfaces (5.02:1 / 5.37:1). |
+| `Text Subtle` | `--color-text-subtle` | `#908B83` | `#6E6E6E` | Tertiary, disabled, placeholder. Clears the 3:1 non-text floor on light (3.16:1 / 3.38:1), **not** the 4.5:1 text floor — don't use it for content. |
 | `Text Inverse` | `--color-text-inverse` | `#FFFFFF` | `#1B1A18` | Text on accent backgrounds (e.g. Primary button). |
 
 ### Borders (1 token)
@@ -63,7 +63,7 @@ designed to derive from its hue (each keeps its own saturation + lightness step)
 | Token | cssVar | Light | Dark | Use for |
 |-------|--------|-------|------|---------|
 | `Accent` | `--color-accent` | `#3ECC87` | `#4FD99A` | Lead brand colour; indicators, active borders. |
-| `Accent Subtle` | `--color-accent-subtle` | `#E6FFD1` | `#1A4A2C` | Selected-state background, soft accent backdrops. |
+| `Accent Subtle` | `--color-accent-subtle` | `#E2F3E8` | `#1A4A2C` | Selected-state background, soft accent backdrops. `--color-accent-bold` on it is 5.16:1. |
 | `Accent Light` | `--color-accent-light` | `#90E9B8` | `#3AA36A` | Hover backdrop, illustrative. |
 | `Accent Bold` | `--color-accent-bold` | `#1E7150` | `#8AE6B4` | Primary button bg; link text; primary CTA. |
 

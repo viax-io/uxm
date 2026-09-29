@@ -6,7 +6,7 @@ Position, size and the drag handlers are the consumer's — the same contract [`
 
 ## One appearance, no states
 
-The slot exists only while it **is** the target: the canvas creates it for the hovered zone and removes it when the cursor leaves. Its appearance is the signal, so there is no quiet variant — and consequently nothing here has to stay legible at a contrast a faint placeholder could not carry. Text and dashes sit at `--color-accent-bold` on a flat `--color-accent-subtle` fill: **5.54:1** in the light theme, 8.54:1 in dark, so AA holds for the label; the dashes measure 5.56:1 / 12.33:1 against the canvas, clearing the 3:1 non-text floor.
+The slot exists only while it **is** the target: the canvas creates it for the hovered zone and removes it when the cursor leaves. Its appearance is the signal, so there is no quiet variant — and consequently nothing here has to stay legible at a contrast a faint placeholder could not carry. Text and dashes sit at `--color-accent-bold` on a flat `--color-accent-subtle` fill: **5.16:1** in the light theme, 6.83:1 in dark, so AA holds for the label; the dashes measure 5.56:1 / 10.64:1 against the canvas, clearing the 3:1 non-text floor.
 
 ## Usage
 

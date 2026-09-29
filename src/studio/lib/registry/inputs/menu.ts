@@ -59,25 +59,26 @@ export const menuDef: ComponentDef = {
     // Leading icon colour at rest (tracks the row text colour when
     // active / danger — no separate knobs for those states).
     //
-    // `--color-text-strong`, not `--color-text-subtle`: subtle measures
-    // 1.48:1 on the panel in the light theme (2.85:1 dark), below even the
-    // 3:1 non-text floor, and ends up fainter than a disabled row — a live
-    // glyph read as switched off. See the note in menu.scss.
+    // `--color-text-strong`, not `--color-text-subtle`: subtle was 1.48:1 on
+    // the panel in light and read fainter than a disabled row. It clears the
+    // 3:1 non-text floor now (3.38:1 light, 3.41:1 dark), so the contrast
+    // case is gone in both themes; subtle still READS inactive, which is why
+    // the default stays. See the note in menu.scss.
     { key: 'itemIconColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'icon', showWhen: { withIcons: 'yes' } },
 
-    // Trailing hint (a shortcut echo like ⌘C). Muted is BELOW the AA floor
-    // for text at 2.54:1 — a deliberate exception because the hint carries
-    // no content the label lacks. The subtitle below refuses the same token
-    // for exactly the opposite reason; see menu.scss.
+    // Trailing hint (a shortcut echo like ⌘C). Muted clears the AA floor for
+    // text at 5.37:1; it used to sit at 2.54:1 as a deliberate exception.
+    // The subtitle below still takes the stronger token, now on hierarchy
+    // rather than contrast; see menu.scss.
     { key: 'itemHintFontSize', label: 'Font Size', control: 'number', defaultValue: 12, min: 9, max: 16, step: 1, unit: 'px', section: 'hint', showWhen: { withHints: 'yes' } },
     { key: 'itemHintColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'hint', showWhen: { withHints: 'yes' } },
 
     // Two-line rows — a headline (label) plus a supporting subtitle
     // beneath. Only shown when the Subtitles variant is on.
     { key: 'itemSubtitleFontSize', label: 'Font Size', control: 'number', defaultValue: 11, min: 9, max: 16, step: 1, unit: 'px', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
-    // Default is text-STRONG, not text-muted: muted fails WCAG AA on the
-    // panel in the light theme (2.54:1) and a subtitle carries real content.
-    // See the note in menu.scss.
+    // Default is text-STRONG, not text-muted. Muted no longer fails AA on the
+    // panel (5.37:1, was 2.54:1), so this is a hierarchy call now: a subtitle
+    // carries real content and outranks the hint. See the note in menu.scss.
     { key: 'itemSubtitleColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
     { key: 'itemSubtitleGap', label: 'Row Gap', control: 'number', defaultValue: 2, min: 0, max: 8, step: 1, unit: 'px', section: 'subtitle', showWhen: { withSubtitles: 'yes' } },
 

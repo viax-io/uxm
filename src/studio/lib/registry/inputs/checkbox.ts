@@ -15,7 +15,10 @@ export const checkboxDef: ComponentDef = {
     { key: 'checkGlyphColor', label: 'Check Glyph', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'checkedColors', showWhen: { state: 'default' } },
     // Hover — unchecked
     { key: 'hoverUncheckedBg', label: 'Background', control: 'color', defaultValue: 'transparent', section: 'uncheckedColors', showWhen: { state: 'hover' } },
-    // text-strong, not text-muted: muted is 2.54:1 on card in light — under the 3:1 UI floor (Principle IV)
+    // text-strong, not text-muted. The original reason was contrast — muted was
+    // 2.54:1 on card in light, under the 3:1 UI floor (Principle IV) — and that
+    // no longer applies: muted is 5.37:1 there now. Kept as the darker of the two
+    // so hover reads as a step up, which is a hierarchy call, not an a11y one.
     { key: 'hoverUncheckedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'uncheckedColors', showWhen: { state: 'hover' } },
     // Hover — checked
     { key: 'hoverCheckedBg', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'checkedColors', showWhen: { state: 'hover' } },
