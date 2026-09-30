@@ -163,10 +163,10 @@
     }
   }
 
-  /* `--color-text-muted` measures 2.54:1 on `--color-card` in the light theme,
-     under the 4.5:1 AA floor — but a caption is not information: it names the
-     control ("WORKSPACE"), and the value beneath it is the content. `-strong`
-     is the safe swap if a consumer ever gives the slot real meaning. */
+  /* `--color-text-muted` measures 5.37:1 on `--color-card` in the light theme,
+     clearing the 4.5:1 AA floor. It used to sit at 2.54:1 and was defended as
+     "a caption names the control, it is not information" — that argument is no
+     longer load-bearing, so the slot needs no exemption and no swap. */
   &__caption {
     overflow: hidden;
     font-size: calc(var(--uxm-sidebar-nav-trigger-caption-font-size, 10px) * var(--type-scale, 1));

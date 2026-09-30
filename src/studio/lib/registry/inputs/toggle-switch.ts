@@ -13,7 +13,10 @@ export const toggleSwitchDef: ComponentDef = {
     { key: 'onTrack', label: 'Track', control: 'color', defaultValue: 'var(--color-accent)', section: 'onColors', showWhen: { state: 'default' } },
     { key: 'onThumb', label: 'Thumb', control: 'color', defaultValue: 'var(--color-card)', section: 'onColors', showWhen: { state: 'default' } },
     // Hover — off
-    // text-strong, not text-muted: muted is 2.54:1 on card in light — under the 3:1 UI floor (Principle IV)
+    // text-strong, not text-muted. The original reason was contrast — muted was
+    // 2.54:1 on card in light, under the 3:1 UI floor (Principle IV) — and that
+    // no longer applies: muted is 5.37:1 there now. Kept as the darker of the two
+    // so hover reads as a step up, which is a hierarchy call, not an a11y one.
     { key: 'hoverOffTrack', label: 'Track', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'offColors', showWhen: { state: 'hover' } },
     { key: 'hoverOffThumb', label: 'Thumb', control: 'color', defaultValue: 'var(--color-card)', section: 'offColors', showWhen: { state: 'hover' } },
     // Hover — on

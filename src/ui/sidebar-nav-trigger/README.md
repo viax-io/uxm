@@ -165,7 +165,7 @@ Caption: `--uxm-sidebar-nav-trigger-caption-{font-size,font-weight,letter-spacin
 
 Mark and chevron: `--uxm-sidebar-nav-trigger-icon-{size,color}`, `--uxm-sidebar-nav-trigger-trailing-color`.
 
-The caption defaults to `--color-text-muted`, which measures 2.54:1 on `--color-card` in the light theme — under the 4.5:1 AA floor for text. That is acceptable **only** because a caption names the control rather than carrying content: the value beneath it is the content, and nothing is lost if the caption goes unread. Swap to `--color-text-strong` if a consumer ever gives the slot real meaning.
+The caption defaults to `--color-text-muted`, which measures **5.37:1** on `--color-card` in the light theme — clear of the 4.5:1 AA floor for text. It previously sat at 2.54:1 and was defended on the grounds that a caption names the control rather than carrying content; that exemption is no longer needed, so the slot is legible whatever a consumer puts in it.
 
 ## Accessibility
 

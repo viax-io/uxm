@@ -14,7 +14,10 @@ export const radioGroupDef: ComponentDef = {
     { key: 'dotColor', label: 'Dot', control: 'color', defaultValue: 'var(--color-accent)', section: 'selectedColors', showWhen: { state: 'default' } },
     // Hover — unselected
     { key: 'hoverUnselectedBg', label: 'Background', control: 'color', defaultValue: 'transparent', section: 'unselectedColors', showWhen: { state: 'hover' } },
-    // text-strong, not text-muted: muted is 2.54:1 on card in light — under the 3:1 UI floor (Principle IV)
+    // text-strong, not text-muted. The original reason was contrast — muted was
+    // 2.54:1 on card in light, under the 3:1 UI floor (Principle IV) — and that
+    // no longer applies: muted is 5.37:1 there now. Kept as the darker of the two
+    // so hover reads as a step up, which is a hierarchy call, not an a11y one.
     { key: 'hoverUnselectedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-text-strong)', section: 'unselectedColors', showWhen: { state: 'hover' } },
     // Hover — selected
     { key: 'hoverSelectedBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'selectedColors', showWhen: { state: 'hover' } },
