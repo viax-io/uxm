@@ -980,9 +980,15 @@ Still copy recipe 0's host baseline in verbatim — a CDN page gets none of a bu
 resets, and skipping it renders the whole page in Times New Roman with inputs overflowing their
 containers.
 
-URLs are versioned and immutable (`https://uxm.viax.io/<version>/…`, no `/latest/`) — pin one
-version number and reuse it across **every** file on the page, JS and CSS both. Mixing versions
-across files is the failure mode this scheme exists to prevent.
+URLs are versioned and immutable (`https://uxm.viax.io/<version>/…`) — pin one version number
+and reuse it across **every** file on the page, JS and CSS both. Mixing versions across files is
+the failure mode this scheme exists to prevent.
+
+`https://uxm.viax.io/latest/…` also exists (overwritten every release, `Cache-Control: no-cache`),
+but reach for it only in a throwaway demo that must always show the newest release — never in
+code you hand to a consumer: it picks up breaking changes silently, can briefly serve mixed
+versions mid-release, and can't carry an `integrity` (SRI) attribute since its hashes change
+every release. Default to a pinned version.
 
 Need type-checking in a non-npm project too? `.d.ts` bundles ship alongside the JS
 (`uxm.esm.d.ts`) — curl it and map it in `tsconfig.json`, exact recipe in the README section
