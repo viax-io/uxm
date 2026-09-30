@@ -1,3 +1,10 @@
+## [4.48.5](https://github.com/viax-io/uxm/compare/v4.48.4...v4.48.5) (2026-09-30)
+
+
+### Bug Fixes
+
+* **studio:** stamp data-theme before layout effects so the WCAG panel tracks the theme ([56c0ea4](https://github.com/viax-io/uxm/commit/56c0ea47b044f0c0dfe5526c218ed42ba9f69029))
+
 ## [4.48.4](https://github.com/viax-io/uxm/compare/v4.48.3...v4.48.4) (2026-09-30)
 
 
