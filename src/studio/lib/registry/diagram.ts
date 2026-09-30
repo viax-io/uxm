@@ -117,6 +117,11 @@ export const diagramDefs: ComponentDef[] = [
       { key: 'connectorIdleStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 1.5, min: 0.5, max: 4, step: 0.5, unit: 'px', section: 'states', showWhen: { state: 'idle' } },
       // Active colour/width also drive `dashed-active` — it shares the active
       // emphasis, so its knobs surface for both states.
+      // Plain accent, deliberately. It measures 1.93:1 on the canvas and is
+      // quieter than the idle stroke (3.42:1) after the light-theme token
+      // repair, so active emphasis rests on HUE and the 2px-vs-1.5px width,
+      // not on luminance. Keeping the brand green here is a design call; see
+      // the Accessibility note in lifecycle-connector/README.md.
       { key: 'connectorActiveColor', label: 'Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { state: ['active', 'dashed-active'] } },
       { key: 'connectorActiveStrokeWidth', label: 'Stroke Width', control: 'slider', defaultValue: 2, min: 0.5, max: 5, step: 0.5, unit: 'px', section: 'states', showWhen: { state: ['active', 'dashed-active'] } },
       { key: 'connectorDashedColor', label: 'Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'states', showWhen: { state: 'dashed' } },
