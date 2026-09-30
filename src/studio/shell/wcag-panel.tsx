@@ -14,6 +14,7 @@ import { themeTokens } from '@/tokens';
 import { Chip, Icon, SectionHeader, Tag, type TagType } from '@/ui';
 
 import { useUxm } from '../lib/context';
+import { useGlobalTheme } from '../lib/use-global-theme';
 
 import type { ComponentDef } from '../lib/types';
 
@@ -148,7 +149,25 @@ function findPairs(
 }
 
 export function WcagPanel({ def }: { def: ComponentDef }) {
-  const { theme, selectedId, getOverrides, setOverride, getCurrentVariants } = useUxm();
+  const { brand, selectedId, getOverrides, setOverride, getCurrentVariants } = useUxm();
+  // The DOM is the authority here, NOT `theme` from the studio context.
+  //
+  // Every ratio below comes from `getComputedStyle`, so what matters is the
+  // `data-theme` actually on <html> — and the two can disagree:
+  //
+  //   * In `embed` the studio does not own the theme at all. `ThemeSync` is
+  //     not rendered (uxm-app.tsx) and the host drives `data-theme`, so
+  //     context `theme` NEVER changes on a host toggle and this effect never
+  //     re-ran. The panel showed the wrong theme's ratios indefinitely —
+  //     embed is the mode consuming apps run the studio in.
+  //   * Standalone, context `theme` changes but `ThemeSync` applies it in an
+  //     effect, so the two are only in sync if that effect has already run.
+  //
+  // `useGlobalTheme` is a MutationObserver on the attribute itself, so it
+  // reports what the CSS variables will actually resolve to, whoever set it
+  // and whenever they set it. That removes this panel's dependence on effect
+  // ordering entirely.
+  const domTheme = useGlobalTheme();
   const scopeRef = useRef<HTMLDivElement>(null);
   const [results, setResults] = useState<Result[]>([]);
 
@@ -225,8 +244,12 @@ export function WcagPanel({ def }: { def: ComponentDef }) {
       return { pair, ratio, level, suggestion };
     });
     setResults(computed);
+    // `brand` belongs here because BrandTokenStyles rewrites the --color-*
+    // layer through a <style> element: editing a brand colour changes what
+    // every `var(--color-*)` in these pairs resolves to, and without it the
+    // panel kept reporting ratios for the previous brand.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [def.id, overridesKey, theme]);
+  }, [def.id, overridesKey, domTheme, brand]);
 
   if (results.length === 0) return <div ref={scopeRef} />;
 

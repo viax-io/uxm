@@ -25,9 +25,13 @@ export function ThemeSync() {
   // the stored theme in a passive effect (lib/context.tsx), which this does not
   // touch.
   //
-  // Sibling order matters as a result: ThemeSync is rendered BEFORE the shell
-  // in UxmApp, so this runs before the panel's layout effect. Keep it there —
-  // nothing enforces it, and a reorder would silently restore the bug.
+  // This USED to make sibling order load-bearing — ThemeSync is rendered
+  // before the shell in UxmApp, and a reorder would have silently restored the
+  // bug. It no longer is: WcagPanel now reads the attribute through
+  // `useGlobalTheme` (a MutationObserver), so it sees the write whenever and
+  // by whomever it happens. Keeping the layout effect anyway, because a DOM
+  // sync belongs before paint on its own merits and the panel should not be
+  // the only reason it is correct.
   useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
