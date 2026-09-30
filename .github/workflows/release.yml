@@ -77,6 +77,15 @@ jobs:
             --recursive \
             --cache-control "public, max-age=31536000, immutable"
 
+      # latest/ is mutable — overwritten on every release, so caches must
+      # always revalidate (not the immutable header above), and --delete
+      # drops files dropped from this release's dist-cdn/.
+      - if: steps.released.outputs.version != ''
+        run: |
+          aws s3 sync dist-cdn/ "s3://${{ vars.S3_BUCKET }}/latest/" \
+            --delete \
+            --cache-control "no-cache"
+
   notify:
     needs: publish
     if: needs.publish.outputs.version != ''
