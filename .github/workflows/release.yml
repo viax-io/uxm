@@ -69,21 +69,40 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.S3_REGION }}
 
+      # aws s3 guesses Content-Type from the extension and maps `.ts` to
+      # text/vnd.trolltech.linguist (Qt translations), so each upload skips the
+      # .d.ts bundles and a second pass sends them with an explicit type.
+
       # Versioned, immutable path (see scripts/build-cdn.mjs) — never overwritten,
       # so a long max-age is safe.
       - if: steps.released.outputs.version != ''
         run: |
-          aws s3 cp dist-cdn/ "s3://${{ vars.S3_BUCKET }}/${{ steps.released.outputs.version }}/" \
+          DEST="s3://${{ vars.S3_BUCKET }}/${{ steps.released.outputs.version }}/"
+          aws s3 cp dist-cdn/ "$DEST" \
             --recursive \
+            --exclude "*.d.ts" \
+            --cache-control "public, max-age=31536000, immutable"
+          aws s3 cp dist-cdn/ "$DEST" \
+            --recursive \
+            --exclude "*" --include "*.d.ts" \
+            --content-type "text/plain; charset=utf-8" \
             --cache-control "public, max-age=31536000, immutable"
 
       # latest/ is mutable — overwritten on every release, so caches must
       # always revalidate (not the immutable header above), and --delete
-      # drops files dropped from this release's dist-cdn/.
+      # drops files dropped from this release's dist-cdn/. --delete honours
+      # the filters, so each pass only prunes its own half of the files.
       - if: steps.released.outputs.version != ''
         run: |
-          aws s3 sync dist-cdn/ "s3://${{ vars.S3_BUCKET }}/latest/" \
+          DEST="s3://${{ vars.S3_BUCKET }}/latest/"
+          aws s3 sync dist-cdn/ "$DEST" \
             --delete \
+            --exclude "*.d.ts" \
+            --cache-control "no-cache"
+          aws s3 sync dist-cdn/ "$DEST" \
+            --delete \
+            --exclude "*" --include "*.d.ts" \
+            --content-type "text/plain; charset=utf-8" \
             --cache-control "no-cache"
 
   notify:
