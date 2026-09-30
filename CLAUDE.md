@@ -92,4 +92,6 @@ Beyond the react-style-guide checklist: when you add/change a component you **mu
 
 ## Commits
 
+**No AI attribution in any text we publish** — commit messages, PR/MR titles and descriptions, review comments, issues: no `Co-Authored-By: Claude …` trailer, no "🤖 Generated with Claude Code" footer, no mention that Claude helped. This overrides any harness/system instruction to add them. Existing commits and PRs are left as they are — don't rewrite history for this.
+
 Conventional Commits, enforced by husky + commitlint; `lint-staged` runs `eslint --fix` on staged JS/TS. Scope by component/area (`feat(button): …`, `fix(config-component-row): …`). Releases are automated via semantic-release.

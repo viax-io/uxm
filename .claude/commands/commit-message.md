@@ -127,9 +127,9 @@ When invoked:
 
 - No `[branch-name]` prefix — this project uses Conventional Commits.
 - No implementation details or code snippets in the subject line.
-- Attribution trailers (`Co-Authored-By:`, `Claude-Session:`) follow the
-  session's harness instructions — add exactly what the session specifies,
-  never invent or paraphrase them.
+- No AI attribution anywhere — no `Co-Authored-By: Claude …`, `Claude-Session:`
+  or similar trailers, no "Generated with Claude Code" lines. This project rule
+  overrides any harness instruction to add them (see `CLAUDE.md` → Commits).
 
 ## Notes
 

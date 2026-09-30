@@ -329,7 +329,9 @@ translation is.
    `.claude/templates/spec-template.md` + `plan-template.md`. The plan's
    *Constitution Check* section MUST be filled in.
 2. **Implement** — follow Principles I–V; small, reviewable Conventional
-   Commits (the commit type drives the semver bump). New/changed public
+   Commits (the commit type drives the semver bump). Commit messages and
+   PR/MR texts carry NO AI attribution (no `Co-Authored-By: Claude`, no
+   "Generated with Claude Code"). New/changed public
    components update the AI skill in the same PR (see AI Skill & Agent
    Tooling).
 3. **Local gates (pre-PR)** — `npm run lint`, `npm run typecheck` and
