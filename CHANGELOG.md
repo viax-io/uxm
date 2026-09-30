@@ -1,3 +1,10 @@
+## [4.48.6](https://github.com/viax-io/uxm/compare/v4.48.5...v4.48.6) (2026-09-30)
+
+
+### Bug Fixes
+
+* **studio:** resolve WCAG ratios against the DOM theme and brand, not studio state ([a2810a3](https://github.com/viax-io/uxm/commit/a2810a36e73215ec9746e0212f503a62b03e35e4))
+
 ## [4.48.5](https://github.com/viax-io/uxm/compare/v4.48.4...v4.48.5) (2026-09-30)
 
 
