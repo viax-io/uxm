@@ -139,11 +139,11 @@ Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same 
   "imports": {
     "react": "https://esm.sh/react@19",
     "react-dom/client": "https://esm.sh/react-dom@19/client",
-    "@viax.io/uxm/ui": "https://uxm.viax.io/4.43.0/uxm.esm.js"
+    "@viax.io/uxm/ui": "https://uxm.viax.io/4.49.0/uxm.esm.js"
   }
 }
 </script>
-<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
+<link rel="stylesheet" href="https://uxm.viax.io/4.49.0/uxm.css" />
 <script type="module">
   import { ButtonPrimary } from '@viax.io/uxm/ui';
   import { createElement } from 'react';
@@ -156,8 +156,8 @@ Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same 
 ### Standalone — page with no React
 
 ```html
-<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
-<script src="https://uxm.viax.io/4.43.0/uxm.standalone.js"></script>
+<link rel="stylesheet" href="https://uxm.viax.io/4.49.0/uxm.css" />
+<script src="https://uxm.viax.io/4.49.0/uxm.standalone.js"></script>
 <script>
   const { React, createRoot, ButtonPrimary } = window.UXM;
   createRoot(document.getElementById('root')).render(React.createElement(ButtonPrimary, null, 'Hello UXM'));
@@ -183,7 +183,7 @@ button, input, select, textarea { font: inherit; }
 The `.d.ts` bundles need `@types/react` in your project — they extend React's own prop types (`ButtonHTMLAttributes` and friends), which aren't ours to inline. Fetch one alongside your CDN import and map it in `tsconfig.json`:
 
 ```sh
-UXM=4.43.0
+UXM=4.49.0
 curl -fsSL -o types/uxm.esm.d.ts https://uxm.viax.io/$UXM/uxm.esm.d.ts
 ```
 
@@ -200,8 +200,8 @@ If your project can take even a dev-only npm dependency, `npm i -D @viax.io/uxm@
 ```html
 <script
   type="module"
-  src="https://uxm.viax.io/4.43.0/uxm.esm.js"
-  integrity="sha384-X5wmfaVzW+An31gN2SpznF1F6UxTbD4SsCynzec/bElec2EneSTZf2l0O81YHLVt"
+  src="https://uxm.viax.io/4.49.0/uxm.esm.js"
+  integrity="sha384-hYdrrlscSgQ/mygtET1TPR6Xhy33ni/34XknZ6ulVsSLU8SGO70Qse8i4UznFzEw"
   crossorigin="anonymous"
 ></script>
 ```

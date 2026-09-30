@@ -952,11 +952,11 @@ actually reach for.
   "imports": {
     "react": "https://esm.sh/react@19",
     "react-dom/client": "https://esm.sh/react-dom@19/client",
-    "@viax.io/uxm/ui": "https://uxm.viax.io/4.43.0/uxm.esm.js"
+    "@viax.io/uxm/ui": "https://uxm.viax.io/4.49.0/uxm.esm.js"
   }
 }
 </script>
-<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
+<link rel="stylesheet" href="https://uxm.viax.io/4.49.0/uxm.css" />
 <script type="module">
   import { ButtonPrimary } from '@viax.io/uxm/ui';
   import { createElement } from 'react';
@@ -968,8 +968,8 @@ actually reach for.
 
 ```html
 <!-- Standalone — page has NO React -->
-<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
-<script src="https://uxm.viax.io/4.43.0/uxm.standalone.js"></script>
+<link rel="stylesheet" href="https://uxm.viax.io/4.49.0/uxm.css" />
+<script src="https://uxm.viax.io/4.49.0/uxm.standalone.js"></script>
 <script>
   const { React, createRoot, ButtonPrimary } = window.UXM;
   createRoot(document.getElementById('root')).render(React.createElement(ButtonPrimary, null, 'Hello UXM'));
