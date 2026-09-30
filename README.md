@@ -110,7 +110,15 @@ For pages that can't run npm at all — prototypes, CodePen repros, embeds in so
 
 > **If your project has a bundler, this is not what you want.** Use [`npm i @viax.io/uxm`](#install) — the CDN bundles below exist specifically for pages that can't.
 
-All files live at `https://uxm.viax.io/<version>/<file>` — versioned and immutable (`Cache-Control: public, max-age=31536000, immutable`). There is no `/latest/`: pin an exact version, and use the same version across every file you load on one page.
+All files live at `https://uxm.viax.io/<version>/<file>` — versioned and immutable (`Cache-Control: public, max-age=31536000, immutable`). Pin an exact version, and use the same version across every file you load on one page.
+
+Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same files (`Cache-Control: no-cache` — browsers revalidate on every load). It is for demos and throwaway prototypes that should always show the newest release — **never for production**:
+
+- it changes under you on every release, breaking changes included;
+- the upload is not atomic, so for a few seconds during a release `latest/` can serve a new `uxm.esm.js` next to the previous `uxm.css`;
+- SRI does not work with it (see [below](#verifying-what-you-fetched-sri)).
+
+`latest/cdn-manifest.json` → `version` tells you which release `latest/` currently holds.
 
 | File | Format | React | For |
 |---|---|---|---|
@@ -197,6 +205,8 @@ If your project can take even a dev-only npm dependency, `npm i -D @viax.io/uxm@
   crossorigin="anonymous"
 ></script>
 ```
+
+Don't put `integrity` on a `latest/` URL: its hashes change with every release, and the browser then refuses to run the script. SRI only makes sense on a versioned path.
 
 ## Component catalog
 
