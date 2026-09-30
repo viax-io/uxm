@@ -952,11 +952,11 @@ actually reach for.
   "imports": {
     "react": "https://esm.sh/react@19",
     "react-dom/client": "https://esm.sh/react-dom@19/client",
-    "@viax.io/uxm/ui": "https://uxm.viax.io/4.43.0/uxm.esm.js"
+    "@viax.io/uxm/ui": "https://uxm.viax.io/4.49.0/uxm.esm.js"
   }
 }
 </script>
-<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
+<link rel="stylesheet" href="https://uxm.viax.io/4.49.0/uxm.css" />
 <script type="module">
   import { ButtonPrimary } from '@viax.io/uxm/ui';
   import { createElement } from 'react';
@@ -968,8 +968,8 @@ actually reach for.
 
 ```html
 <!-- Standalone — page has NO React -->
-<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
-<script src="https://uxm.viax.io/4.43.0/uxm.standalone.js"></script>
+<link rel="stylesheet" href="https://uxm.viax.io/4.49.0/uxm.css" />
+<script src="https://uxm.viax.io/4.49.0/uxm.standalone.js"></script>
 <script>
   const { React, createRoot, ButtonPrimary } = window.UXM;
   createRoot(document.getElementById('root')).render(React.createElement(ButtonPrimary, null, 'Hello UXM'));
@@ -980,9 +980,15 @@ Still copy recipe 0's host baseline in verbatim — a CDN page gets none of a bu
 resets, and skipping it renders the whole page in Times New Roman with inputs overflowing their
 containers.
 
-URLs are versioned and immutable (`https://uxm.viax.io/<version>/…`, no `/latest/`) — pin one
-version number and reuse it across **every** file on the page, JS and CSS both. Mixing versions
-across files is the failure mode this scheme exists to prevent.
+URLs are versioned and immutable (`https://uxm.viax.io/<version>/…`) — pin one version number
+and reuse it across **every** file on the page, JS and CSS both. Mixing versions across files is
+the failure mode this scheme exists to prevent.
+
+`https://uxm.viax.io/latest/…` also exists (overwritten every release, `Cache-Control: no-cache`),
+but reach for it only in a throwaway demo that must always show the newest release — never in
+code you hand to a consumer: it picks up breaking changes silently, can briefly serve mixed
+versions mid-release, and can't carry an `integrity` (SRI) attribute since its hashes change
+every release. Default to a pinned version.
 
 Need type-checking in a non-npm project too? `.d.ts` bundles ship alongside the JS
 (`uxm.esm.d.ts`) — curl it and map it in `tsconfig.json`, exact recipe in the README section

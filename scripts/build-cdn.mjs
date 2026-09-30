@@ -26,8 +26,9 @@
 //   5. gzip-size budgets — a sudden blow-up fails here, not on the CDN;
 //   6. write cdn-manifest.json.
 //
-// Publishing is NOT done here (that is a later phase: versioned, immutable
-// paths on the CDN; `latest` is a separate decision). Usage:
+// Publishing is NOT done here — .github/workflows/release.yml uploads dist-cdn/
+// on every release to `<version>/` (immutable) and `latest/` (mutable,
+// no-cache, overwritten each release). Usage:
 //   npm run build && npm run build:cdn
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';

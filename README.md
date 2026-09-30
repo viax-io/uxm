@@ -110,7 +110,15 @@ For pages that can't run npm at all — prototypes, CodePen repros, embeds in so
 
 > **If your project has a bundler, this is not what you want.** Use [`npm i @viax.io/uxm`](#install) — the CDN bundles below exist specifically for pages that can't.
 
-All files live at `https://uxm.viax.io/<version>/<file>` — versioned and immutable (`Cache-Control: public, max-age=31536000, immutable`). There is no `/latest/`: pin an exact version, and use the same version across every file you load on one page.
+All files live at `https://uxm.viax.io/<version>/<file>` — versioned and immutable (`Cache-Control: public, max-age=31536000, immutable`). Pin an exact version, and use the same version across every file you load on one page.
+
+Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same files (`Cache-Control: no-cache` — browsers revalidate on every load). It is for demos and throwaway prototypes that should always show the newest release — **never for production**:
+
+- it changes under you on every release, breaking changes included;
+- the upload is not atomic, so for a few seconds during a release `latest/` can serve a new `uxm.esm.js` next to the previous `uxm.css`;
+- SRI does not work with it (see [below](#verifying-what-you-fetched-sri)).
+
+`latest/cdn-manifest.json` → `version` tells you which release `latest/` currently holds.
 
 | File | Format | React | For |
 |---|---|---|---|
@@ -131,11 +139,11 @@ All files live at `https://uxm.viax.io/<version>/<file>` — versioned and immut
   "imports": {
     "react": "https://esm.sh/react@19",
     "react-dom/client": "https://esm.sh/react-dom@19/client",
-    "@viax.io/uxm/ui": "https://uxm.viax.io/4.43.0/uxm.esm.js"
+    "@viax.io/uxm/ui": "https://uxm.viax.io/4.49.0/uxm.esm.js"
   }
 }
 </script>
-<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
+<link rel="stylesheet" href="https://uxm.viax.io/4.49.0/uxm.css" />
 <script type="module">
   import { ButtonPrimary } from '@viax.io/uxm/ui';
   import { createElement } from 'react';
@@ -148,8 +156,8 @@ All files live at `https://uxm.viax.io/<version>/<file>` — versioned and immut
 ### Standalone — page with no React
 
 ```html
-<link rel="stylesheet" href="https://uxm.viax.io/4.43.0/uxm.css" />
-<script src="https://uxm.viax.io/4.43.0/uxm.standalone.js"></script>
+<link rel="stylesheet" href="https://uxm.viax.io/4.49.0/uxm.css" />
+<script src="https://uxm.viax.io/4.49.0/uxm.standalone.js"></script>
 <script>
   const { React, createRoot, ButtonPrimary } = window.UXM;
   createRoot(document.getElementById('root')).render(React.createElement(ButtonPrimary, null, 'Hello UXM'));
@@ -175,7 +183,7 @@ button, input, select, textarea { font: inherit; }
 The `.d.ts` bundles need `@types/react` in your project — they extend React's own prop types (`ButtonHTMLAttributes` and friends), which aren't ours to inline. Fetch one alongside your CDN import and map it in `tsconfig.json`:
 
 ```sh
-UXM=4.43.0
+UXM=4.49.0
 curl -fsSL -o types/uxm.esm.d.ts https://uxm.viax.io/$UXM/uxm.esm.d.ts
 ```
 
@@ -192,11 +200,13 @@ If your project can take even a dev-only npm dependency, `npm i -D @viax.io/uxm@
 ```html
 <script
   type="module"
-  src="https://uxm.viax.io/4.43.0/uxm.esm.js"
-  integrity="sha384-X5wmfaVzW+An31gN2SpznF1F6UxTbD4SsCynzec/bElec2EneSTZf2l0O81YHLVt"
+  src="https://uxm.viax.io/4.49.0/uxm.esm.js"
+  integrity="sha384-hYdrrlscSgQ/mygtET1TPR6Xhy33ni/34XknZ6ulVsSLU8SGO70Qse8i4UznFzEw"
   crossorigin="anonymous"
 ></script>
 ```
+
+Don't put `integrity` on a `latest/` URL: its hashes change with every release, and the browser then refuses to run the script. SRI only makes sense on a versioned path.
 
 ## Component catalog
 
