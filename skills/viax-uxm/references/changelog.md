@@ -1534,3 +1534,13 @@ reached the published library; now shipped in 2.8.0.
   (10rem) floor on the body; the same header is 122px. Width-driven rather than a breakpoint, so a
   header docked in a narrow flexpane at desktop width degrades the same way. Wide layouts unchanged.
 
+### New in 4.44.0
+
+- **`List` gained `variant="plain"`.** The container was an unconditional card — background,
+  border, radius, `overflow: hidden` — which is right on a page ground and wrong for a list
+  already inside a surface (flexpane body, card body, disclosure section), where it reads as a
+  card inside a card. `plain` removes all four, so a consumer stops undoing the atom's structural
+  paint from outside. Purely subtractive: no new token, no colour, no change to any row rule or
+  `--uxm-list-item-*` knob. `overflow` goes `visible` with it: there is no radius left to clip to,
+  and the clip's only other effect is to crop — and un-hit-test — anything a row hangs outside the
+  container box.

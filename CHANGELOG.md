@@ -1,3 +1,11 @@
+## [4.48.4](https://github.com/viax-io/uxm/compare/v4.48.3...v4.48.4) (2026-09-30)
+
+
+### Bug Fixes
+
+* **tokens:** address code-review findings on the light-theme repair ([6dba187](https://github.com/viax-io/uxm/commit/6dba187a8be5df7755b38c91a278b5e4b8513751)), closes [#908B83](https://github.com/viax-io/uxm/issues/908B83) [#F2F1F0](https://github.com/viax-io/uxm/issues/F2F1F0) [#908B83](https://github.com/viax-io/uxm/issues/908B83) [#8A857D](https://github.com/viax-io/uxm/issues/8A857D)
+* **tokens:** repair light-theme text contrast, warm the neutrals, de-lime accent-subtle ([50db56a](https://github.com/viax-io/uxm/commit/50db56ace5b6901567681a75c183b5c7809a8217)), closes [#9CA3AF](https://github.com/viax-io/uxm/issues/9CA3AF) [#6E6A64](https://github.com/viax-io/uxm/issues/6E6A64) [#CBD5E1](https://github.com/viax-io/uxm/issues/CBD5E1) [#908B83](https://github.com/viax-io/uxm/issues/908B83) [#E6FFD1](https://github.com/viax-io/uxm/issues/E6FFD1) [#E2F3E8](https://github.com/viax-io/uxm/issues/E2F3E8) [#F8F7F6](https://github.com/viax-io/uxm/issues/F8F7F6) [#E2F3E8](https://github.com/viax-io/uxm/issues/E2F3E8) [#0B0B0B](https://github.com/viax-io/uxm/issues/0B0B0B) [#141414](https://github.com/viax-io/uxm/issues/141414) [#8A8A8A](https://github.com/viax-io/uxm/issues/8A8A8A) [#5A5A5A](https://github.com/viax-io/uxm/issues/5A5A5A) [#0F3A1F](https://github.com/viax-io/uxm/issues/0F3A1F)
+
 ## [4.48.3](https://github.com/viax-io/uxm/compare/v4.48.2...v4.48.3) (2026-09-28)
 
 
