@@ -1,3 +1,10 @@
+# [4.49.0](https://github.com/viax-io/uxm/compare/v4.48.6...v4.49.0) (2026-09-30)
+
+
+### Features
+
+* added latest cdn path ([c29f3d0](https://github.com/viax-io/uxm/commit/c29f3d011f15fb7b1bcab6dcac0febc001d48880))
+
 ## [4.48.6](https://github.com/viax-io/uxm/compare/v4.48.5...v4.48.6) (2026-09-30)
 
 

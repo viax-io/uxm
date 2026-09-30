@@ -1544,3 +1544,14 @@ reached the published library; now shipped in 2.8.0.
   `--uxm-list-item-*` knob. `overflow` goes `visible` with it: there is no radius left to clip to,
   and the clip's only other effect is to crop — and un-hit-test — anything a row hangs outside the
   container box.
+
+### New in 4.45.0
+
+- **The button family declares `ref`.** `IconButton` and `ButtonPrimary` / `Secondary` /
+  `Tertiary` / `Ghost` / `Danger` now type their props as `ComponentPropsWithRef<'button'>` and
+  place the ref on the element. React 19 already passed `ref` through the rest spread, so this
+  changes no runtime behaviour for existing call sites — what it fixes is the TYPE surface:
+  `<IconButton ref={…}>` was a TS2322, which is what stopped the buttons being used directly as
+  `HoverTooltip` / `Popover` anchors (both position against a ref on their child) and forced a
+  wrapper element around each one. No `forwardRef` — 4.39 moved `Modal` the other way, off
+  `forwardRef` and onto React 19 ref props.
