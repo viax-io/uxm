@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.49.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.49.1, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.49.0** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.49.1** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.49.0 — current API surface (overrides training data)
+## v4.49.1 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,18 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.46.0
-
-- **`RadioGroup` gained `variant="card"` (+ `indicator`).** Options could only ever be a
-  `[circle] label` row, so a *visual* single-select — a layout picker, plan tiers, theme swatches —
-  had to be hand-wired from clickable `Card`s, which throws away `role="radiogroup"`,
-  `aria-checked` and arrow-key selection. `card` renders each option as a selectable tile: the
-  option's `children` fill the body, the selected state is an accent frame, and the circle is
-  hidden (`indicator="corner"` keeps it, pinned to the tile's top-right). It is a presentation
-  change only — the control underneath is the same native radio group, so the a11y comes free.
-  The frame reads the row's own `--uxm-radio-group-*` colours, so the two presentations cannot
-  drift; the new `--uxm-radio-card-*` knobs are geometry and surface only.
 
 ### New in 4.47.0
 
@@ -114,7 +102,7 @@ catalog.
   `var(--color-accent-bold)` (5.56:1 / 5.94:1). Note the studio's TimelineEntry knob defaults
   to `accent-bold`, so the editor shows a darker dot than a bare consumer render.
 
-### Unreleased
+### New in 4.49.1
 
 - **The `sparkle` icon is two sparks.** It shipped as a single four-point star — only one of
   Heroicons' three `sparkles` subpaths was ever copied in, leaving an empty lower-right. It is
@@ -124,15 +112,17 @@ catalog.
   strokes on small sizes the smaller spark closes up — at 12px with `strokeWidth={2}` it reads
   as a dot rather than a star. It is clear at 18–20px with the 1.5–1.75 range.
 
+- **CDN `latest/` path** — every release now also syncs the CDN bundles to
+  `https://uxm.viax.io/latest/…` (`no-cache`). Demos only; pin `https://uxm.viax.io/<version>/…`
+  anywhere else, and never put SRI on a `latest/` URL. See `references/quick-recipes.md` → recipe 18.
+
+### Unreleased
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
-
-- **CDN `latest/` path** — every release now also syncs the CDN bundles to
-  `https://uxm.viax.io/latest/…` (`no-cache`). Demos only; pin `https://uxm.viax.io/<version>/…`
-  anywhere else, and never put SRI on a `latest/` URL. See `references/quick-recipes.md` → recipe 18.
 
 ## Workflow
 

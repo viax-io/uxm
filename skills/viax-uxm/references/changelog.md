@@ -1555,3 +1555,15 @@ reached the published library; now shipped in 2.8.0.
   `HoverTooltip` / `Popover` anchors (both position against a ref on their child) and forced a
   wrapper element around each one. No `forwardRef` — 4.39 moved `Modal` the other way, off
   `forwardRef` and onto React 19 ref props.
+
+### New in 4.46.0
+
+- **`RadioGroup` gained `variant="card"` (+ `indicator`).** Options could only ever be a
+  `[circle] label` row, so a *visual* single-select — a layout picker, plan tiers, theme swatches —
+  had to be hand-wired from clickable `Card`s, which throws away `role="radiogroup"`,
+  `aria-checked` and arrow-key selection. `card` renders each option as a selectable tile: the
+  option's `children` fill the body, the selected state is an accent frame, and the circle is
+  hidden (`indicator="corner"` keeps it, pinned to the tile's top-right). It is a presentation
+  change only — the control underneath is the same native radio group, so the a11y comes free.
+  The frame reads the row's own `--uxm-radio-group-*` colours, so the two presentations cannot
+  drift; the new `--uxm-radio-card-*` knobs are geometry and surface only.

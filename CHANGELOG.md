@@ -1,3 +1,10 @@
+## [4.49.1](https://github.com/viax-io/uxm/compare/v4.49.0...v4.49.1) (2026-10-02)
+
+
+### Bug Fixes
+
+* **icon:** make sparkle two sparks ([4e99326](https://github.com/viax-io/uxm/commit/4e993267dc678fd96dad2966ca6f66778112404a))
+
 # [4.49.0](https://github.com/viax-io/uxm/compare/v4.48.6...v4.49.0) (2026-09-30)
 
 
