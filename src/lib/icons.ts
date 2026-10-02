@@ -87,7 +87,21 @@ export const ICONS: IconDef[] = [
     // whose subpath boundaries include lowercase `m` continuations.
     body: '<path d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"/>',
   },
-  { id: 'sparkle', label: 'Sparkle', path: 'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z' },
+  // Two sparks. The small one is the SAME star scaled to 0.611 (8.25 units), NOT
+  // Heroicons' own small spark, and the size is forced by the stroke: stroke
+  // width is a prop (`Icon` defaults to 1.75) and it does not scale with the
+  // shape, so the smaller a star gets the more of its interior the stroke eats.
+  // Heroicons' small spark is 6 units and a fatter outline (void 19% of its own
+  // size, against 30% for this star), which closes to a blob. At 8.25 the void
+  // survives: 1.89 units, i.e. 1.57px at 20px/stroke-1.5 and 1.36px at the
+  // 1.75 default. It is thinner at heavier strokes -- 0.69px at the studio's
+  // 12px/stroke-2 chip, where the small spark reads as a dot.
+  //
+  // The large spark is lifted 2.25 units to clear the bottom-right corner,
+  // which leaves a 2.04-unit gap between the two and even 2.25 margins top and
+  // bottom. Geometry is baked in rather than applied with a transform, so both
+  // sparks inherit one stroke and `strokeWidth` drives them together.
+  { id: 'sparkle', label: 'Sparkle', path: 'M9.813 13.654 9 16.5l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 9.75l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 3l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 9.75l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.122 19.261 17.625 21l-.497-1.739a2.75 2.75 0 0 0-1.888-1.888L13.5 16.875l1.739-.497a2.75 2.75 0 0 0 1.888-1.888L17.625 12.75l.497 1.739a2.75 2.75 0 0 0 1.888 1.888L21.75 16.875l-1.739.497a2.75 2.75 0 0 0-1.888 1.888Z' },
   { id: 'grid', label: 'Grid (Dashboard)', path: 'M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z' },
   { id: 'list', label: 'List', path: 'M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75' },
   { id: 'code', label: 'Code', path: 'M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5' },

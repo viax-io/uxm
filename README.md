@@ -68,7 +68,7 @@ import { ButtonPrimary, Icon } from '@viax.io/uxm/ui';
 export function Page() {
   return (
     <ButtonPrimary>
-      <Icon glyph="sparkles" /> Hello UXM
+      <Icon glyph="sparkle" /> Hello UXM
     </ButtonPrimary>
   );
 }

@@ -116,6 +116,14 @@ catalog.
 
 ### Unreleased
 
+- **The `sparkle` icon is two sparks.** It shipped as a single four-point star — only one of
+  Heroicons' three `sparkles` subpaths was ever copied in, leaving an empty lower-right. It is
+  now a large spark plus a smaller one (61%) in that corner. **Anything rendering
+  `glyph="sparkle"` changes appearance**; the id is unchanged and `strokeWidth` still drives
+  both sparks together. One caveat: `strokeWidth` does not scale with the shape, so at heavy
+  strokes on small sizes the smaller spark closes up — at 12px with `strokeWidth={2}` it reads
+  as a dot rather than a star. It is clear at 18–20px with the 1.5–1.75 range.
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
