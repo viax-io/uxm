@@ -112,10 +112,11 @@ For pages that can't run npm at all — prototypes, CodePen repros, embeds in so
 
 All files live at `https://uxm.viax.io/<version>/<file>` — versioned and immutable (`Cache-Control: public, max-age=31536000, immutable`). Pin an exact version, and use the same version across every file you load on one page.
 
-Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same files (`Cache-Control: no-cache` — browsers revalidate on every load). It is for demos and throwaway prototypes that should always show the newest release — **never for production**:
+Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same files (`Cache-Control: no-cache` — browsers revalidate on every load). We use it in demos and prototypes that should always show the newest release. **Production use is not recommended yet** — it needs further research and a careful rollout, so production pages pin a version for now. What makes it risky today:
 
 - it changes under you on every release, breaking changes included;
 - the upload is not atomic, so for a few seconds during a release `latest/` can serve a new `uxm.esm.js` next to the previous `uxm.css`;
+- the CDN edge currently caches `latest/` for about 5 minutes despite `no-cache`, so a page can lag behind a release — and different files can switch over at different moments;
 - SRI does not work with it (see [below](#verifying-what-you-fetched-sri)).
 
 `latest/cdn-manifest.json` → `version` tells you which release `latest/` currently holds.

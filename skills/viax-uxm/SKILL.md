@@ -124,6 +124,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **CDN `latest/` — production stance clarified.** `latest/` is used in demos; production use
+  needs further research and a careful rollout (the CDN edge currently caches it ~5 min despite
+  `no-cache`). Until then pin `https://uxm.viax.io/<version>/…` in anything you hand to a
+  consumer. See `references/quick-recipes.md` → recipe 18.
+
 ## Workflow
 
 ### Where the documentation lives

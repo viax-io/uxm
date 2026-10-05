@@ -985,10 +985,11 @@ and reuse it across **every** file on the page, JS and CSS both. Mixing versions
 the failure mode this scheme exists to prevent.
 
 `https://uxm.viax.io/latest/…` also exists (overwritten every release, `Cache-Control: no-cache`),
-but reach for it only in a throwaway demo that must always show the newest release — never in
-code you hand to a consumer: it picks up breaking changes silently, can briefly serve mixed
-versions mid-release, and can't carry an `integrity` (SRI) attribute since its hashes change
-every release. Default to a pinned version.
+and is used in demos that must always show the newest release. Production use needs further
+research and a careful rollout, so don't put it in code you hand to a consumer yet: it picks up
+breaking changes silently, can serve mixed versions mid-release (the CDN edge currently holds
+`latest/` for ~5 minutes despite `no-cache`), and can't carry an `integrity` (SRI) attribute
+since its hashes change every release. Default to a pinned version.
 
 Need type-checking in a non-npm project too? `.d.ts` bundles ship alongside the JS
 (`uxm.esm.d.ts`) — curl it and map it in `tsconfig.json`, exact recipe in the README section
