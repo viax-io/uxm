@@ -1,3 +1,11 @@
+# [4.50.0](https://github.com/viax-io/uxm/compare/v4.49.2...v4.50.0) (2026-10-06)
+
+
+### Features
+
+* **icons:** add 19 admin-UI glyphs and a registerIcons API ([3c8fbab](https://github.com/viax-io/uxm/commit/3c8fbab0f17e79a0b7cf4d1451eaaead1fb894eb))
+* **icons:** share one search predicate and let keywords reach every picker ([fabfa35](https://github.com/viax-io/uxm/commit/fabfa35a14966e94f7256103bf5bd618c065eca6))
+
 ## [4.49.2](https://github.com/viax-io/uxm/compare/v4.49.1...v4.49.2) (2026-10-06)
 
 

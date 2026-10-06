@@ -1580,3 +1580,15 @@ reached the published library; now shipped in 2.8.0.
   are themed by those atoms' own vars — including the icon/label/chevron spacing, which stays the
   button's own `--uxm-button-{variant}-gap`; `MenuButton` adds only the chevron rotation. Anything it does not expose (controlled `open`, `matchAnchorWidth`, a bespoke
   trigger, panel styling) is the signal to use `Menu` + `renderTrigger` directly.
+
+### New in 4.48.0
+
+- **`ListItem` gained a selectable (multi-select) mode.** `selected` / `onSelectedChange` render
+  the row as a `<label>` around a real checkbox, so activating anywhere on the row toggles it —
+  the "tick several, then commit" shape (product pickers, recipients, file lists) that could not
+  use the atom at all, since `active` + `aria-pressed` is a toggle BUTTON, the wrong semantic for
+  one member of a checkable set. Mutually exclusive with `interactive` / `href` (selectable wins,
+  dev warning). Composes with `media` / `value` / `trailing`: leading order is checkbox → media →
+  content → trailing. The checkbox is `Checkbox`'s own classes rather than a nested `<Checkbox>`
+  — that component is itself a `<label>`, and a label inside the row label is invalid HTML — so
+  it re-tints with the checkbox's knobs and adds no theming variable of its own.
