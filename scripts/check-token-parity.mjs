@@ -23,7 +23,14 @@
 // Usage: node scripts/check-token-parity.mjs   (exits 1 on any mismatch)
 import { readFileSync } from 'node:fs';
 
-const css = readFileSync('src/tokens/index.css', 'utf8');
+// Comments are stripped BEFORE any selector or brace scanning. `block()` works
+// on raw text, so a selector name or a brace inside a comment is indistinguishable
+// from the real thing: `[data-theme="dark"]` already appears in the elevation
+// comment, and the lookup only found the right block because no `{` happened to
+// sit between that comment and the real selector. Adding one anywhere above the
+// dark block silently pointed the dark map at a comment and reported every token
+// as missing its override.
+const css = readFileSync('src/tokens/index.css', 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
 const ts = readFileSync('src/tokens/index.ts', 'utf8');
 
 /**
@@ -63,7 +70,7 @@ function block(selector) {
     if (css[i] === '{') depth += 1;
     else if (css[i] === '}' && (depth -= 1) === 0) break;
   }
-  const body = css.slice(open + 1, i).replace(/\/\*[\s\S]*?\*\//g, '');
+  const body = css.slice(open + 1, i); // comments already stripped at load
   const out = new Map();
   for (const m of body.matchAll(/(--color-[a-z0-9-]+)\s*:\s*([^;]+);/g)) out.set(m[1], m[2].trim());
   return out;

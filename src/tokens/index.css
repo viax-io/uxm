@@ -100,6 +100,46 @@
   --font-inter: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* ── Layering — the stacking scale ─────────────────────────────────────────
+   Tiers for portaled and fixed-position layers. Every value is the fallback
+   the component ALREADY reads, so declaring the scale moves no stacking:
+
+     panel    40  reserved — nothing in the library reads it
+     drawer   40  AppSidebar's mobile drawer (backdrop one below)
+     dialog   60  Dialog's root
+     toast    80  Toaster
+     popover  90  the opt-in for Popover
+
+   `:where()` on purpose. These three were previously UNDECLARED, so a
+   consumer's own declaration was the only one and always won. Declaring them
+   at `:root` (0,1,0) would start beating an app that sets them more weakly —
+   `html { --z-toast: 100 }` (0,0,1), or a `:root` rule that loads earlier.
+   `:where(:root)` has specificity 0, so any consumer declaration still wins.
+   One case it cannot fix: an unlayered declaration beats a layered one
+   regardless of specificity, so an app setting these inside `@layer base`
+   (the usual Tailwind v4 shape) is overridden. Set them outside a layer.
+
+   Popover does NOT read `--z-popover` by default — it stays on
+   `var(--uxm-popover-z-index, 50)`. Opt in per app:
+
+     :where(:root) { --uxm-popover-z-index: var(--z-popover); }
+
+   which is what makes a Select inside a Dialog paint above the backdrop.
+
+   `--z-popover` is ABOVE `--z-toast` deliberately: a popover is only on screen
+   while the user is driving it, and a toast arriving mid-interaction should
+   not cover the list they are reading.
+
+   `--z-panel` and `--z-drawer` share 40 because a docked panel and the mobile
+   drawer are alternatives, never both on screen at once. */
+:where(:root) {
+  --z-panel: 40;
+  --z-drawer: 40;
+  --z-dialog: 60;
+  --z-toast: 80;
+  --z-popover: 90;
+}
+
 /* Dark theme.
 
    The neutral ramp deliberately sits ABOVE near-black: card L*9, surface L*13,

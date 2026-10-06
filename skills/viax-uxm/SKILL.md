@@ -118,6 +118,21 @@ catalog.
 
 ### Unreleased
 
+- **A published stacking scale (`--z-*`), and a supported way to put a popover above a
+  dialog.** `Popover` defaults to `z-index: 50`, below `Dialog` (60), so a `Select` or
+  `Menu` opened inside a dialog painted behind the backdrop — both portal to `<body>`, so
+  nothing but `z-index` separates them. The tiers are now declared on `:where(:root)`:
+  `--z-panel` 40, `--z-drawer` 40, `--z-dialog` 60, `--z-toast` 80, `--z-popover` 90.
+  **Nothing changes by default** — every value is the fallback the components already
+  used, `Popover` still reads `var(--uxm-popover-z-index, 50)`, and zero specificity keeps
+  your own `--z-dialog` / `--z-toast` / `--z-drawer` declarations winning as before (an
+  `@layer` declaration is the exception — set these outside a layer). Opt in with
+  `:where(:root) { --uxm-popover-z-index: var(--z-popover); }`, which replaces a
+  hand-rolled `--uxm-popover-z-index: 120`. `--z-popover` sits above `--z-toast` on
+  purpose, so a toast cannot cover a list the user is reading; swapping 120 for it is
+  equivalent unless your app stacks something between 91 and 120. `--z-panel` is
+  reserved: nothing in the library reads it.
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh

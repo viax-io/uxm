@@ -2,7 +2,7 @@
 
 A headless floating-panel primitive. It owns positioning, portal mounting, click-outside, Escape and optional focus management — and **no visual chrome at all**. Consumers style the panel through `className`.
 
-This is the non-modal counterpart to [`Dialog`](../dialog/README.md): shells contribute positioning and z-index, the rendered child owns the look. `Listbox`, `Menu`, the `PhoneInput` country picker, `DateInput` and `HoverTooltip` all build on it.
+This is the non-modal counterpart to [`Dialog`](../dialog/README.md): shells contribute positioning and z-index, the rendered child owns the look. `Listbox` (and everything built on it — `Select`, `SearchDropdown`, the `PhoneInput` and `CurrencyInput` pickers), `Menu`, `HoverTooltip`, `TimeInput`, `ColorInput` and the `EditableCell` pickers all build on it. `DateInput` does **not** — its calendar is in-flow.
 
 **Trigger ownership stays with the consumer** — you pass a ref via `anchor` rather than a render prop. That is what makes composite fields like `PhoneInput` and `PillSelect`, where the trigger lives inside a larger field surface, wire-able without renderProp acrobatics.
 
@@ -81,7 +81,48 @@ A `Listbox` or `Select` opened *from inside* a popover portals to `document.body
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
-| `--uxm-popover-z-index` | – | `50` | Stack order of the panel. |
+| `--uxm-popover-z-index` | – | `50` | Stack order of the panel. See **Stacking above a Dialog** below. |
+
+### Stacking above a Dialog
+
+The default `50` sits **below** `Dialog` (`--z-dialog`, 60), so a `Select`, `Menu` or
+`EditableCell` picker opened *inside* a dialog paints behind the backdrop. Both ship
+with `portal` on, so they land as siblings in `<body>` and nothing but `z-index`
+separates them — a descendant selector cannot reach the panel.
+
+> `DateInput` is **not** affected: its calendar is in-flow (`position: absolute`,
+> `z-index: 10`), so it stays inside the dialog's own stacking context. The portaled
+> date picker is `EditableCell`'s.
+
+The default is deliberately unchanged, because raising it moves stacking for every
+consumer. Opt in per app against the published scale (see
+[design tokens → Layering](../../../skills/viax-uxm/references/design-tokens.md)):
+
+```css
+:where(:root) {
+  --uxm-popover-z-index: var(--z-popover); /* 90 — above dialog (60) and toast (80) */
+}
+```
+
+`--z-popover` is above `--z-toast` on purpose: a popover is only on screen while the
+user is driving it, and a toast arriving mid-interaction should not swallow the list
+they are reading.
+
+#### Scoping it to one panel
+
+The panel is portaled, so target the panel itself — an ancestor rule cannot reach it.
+What hook you have depends on the atom:
+
+| Atom | Hook | How |
+|---|---|---|
+| `Popover` | `className` / `style` | directly on the panel |
+| `Listbox`, `Menu` | **`panelClassName`** | the only two that expose it as a prop |
+| `PhoneInput`, `CurrencyInput` | **`style`** | hard-code `panelClassName` internally and forward `style` as `panelStyle`, so `style={{ '--uxm-popover-z-index': 'var(--z-popover)' }}` reaches the panel |
+| `Select`, `SearchDropdown`, `LanguageSwitcher`, `HoverTooltip`, `TimeInput`, `ColorInput`, `EditableCell` pickers | *(none)* | `:where(:root)` form only |
+
+That last row includes `Select`, which is the common case — so in practice most apps
+want the global form anyway: if you put pickers inside dialogs, you want all of them
+above, not one.
 
 That is the entire stylesheet, by design: `z-index` plus `outline: none`. Everything visible — background, border, radius, shadow, padding — belongs to whatever the consumer renders inside, or to the `className` they pass.
 
