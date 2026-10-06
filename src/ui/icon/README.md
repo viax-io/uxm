@@ -30,7 +30,7 @@ Extends `Omit<SVGAttributes<SVGSVGElement>, 'children'>` — any standard SVG at
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `glyph` | `string` | – | **Required.** Registry key (e.g. `"check"`, `"chevron-down"`). Unknown keys render `null`. |
+| `glyph` | `IconName \| (string & {})` | – | **Required.** Registry key (e.g. `"check"`, `"chevron-down"`). The union drives autocomplete; any string still type-checks, so computed names and ids added via `registerIcons` compile. Unknown keys render `null`. |
 | `size` | `number` | `24` | Width and height in pixels. Applied as both `width` and `height` attributes on the `<svg>`. |
 | `strokeWidth` | `number` | `1.75` | Stroke width for outline glyphs. Ignored for filled glyphs (which use `fill="currentColor"`). |
 | `className` | `string` | – | Merged with `uxm-icon` via `cn`. |
@@ -39,6 +39,57 @@ Extends `Omit<SVGAttributes<SVGSVGElement>, 'children'>` — any standard SVG at
 The render mode (stroke vs fill) is decided by the registry entry's `filled` flag, not a prop. Outline glyphs use `stroke="currentColor"` + `fill="none"`; filled glyphs use `fill="currentColor"` + `stroke="none"`. Both modes use `stroke-linecap="round"` and `stroke-linejoin="round"`.
 
 The registry set is **currently all-outline** — no glyph sets `filled: true`, so every icon responds to `strokeWidth`. The `filled` mode and the row below remain as a documented extension point for a future glyph that can't be expressed as a stroke (e.g. a solid brand mark).
+
+## Extending the set
+
+The registry is a module-global array. `registerIcons` is the supported way to add
+to it, because it keeps three things in step that would otherwise drift:
+
+```ts
+import { registerIcons } from '@viax.io/uxm';
+
+registerIcons([
+  { id: 'rocket', label: 'Rocket', path: 'M…', keywords: ['launch', 'deploy'] },
+]);
+```
+
+`label` is a **name** — one human-readable thing the glyph is called, with at most a
+single disambiguator in parentheses, matching the set's existing style (`Cog (6 Tooth)`,
+`Archive (Empty)`). Synonyms go in **`keywords`**, which the icon search matches alongside
+`id` and `label`. That is how a glyph stays findable under the name it carries in another
+icon set — `no-symbol` answers to `ban`, `paper-airplane` to `send` — without the label
+turning into a keyword list.
+
+All three pickers run the same exported predicate, `matchesIconQuery(def, query)`. Use it
+rather than writing the substring test again: the preview grid and the studio's glyph
+picker have to agree, and the one duplicate that existed drifted silently.
+
+| Export | What it is |
+|---|---|
+| `ICONS` | `IconDef[]` — the registry itself, in order. |
+| `ICON_OPTIONS` | `IconOption[]` (`{ value, label, keywords? }`) for a picker — `keywords` mirrors the def's, so a `SearchDropdown` matches synonyms too. **Mutated in place** by `registerIcons`, so a consumer holding a reference (the studio registry does, at module scope) sees additions without re-importing. |
+| `ICON_IDS` | Const tuple of the built-in ids. |
+| `IconName` | Literal union of `ICON_IDS` — use it to narrow your own props. |
+| `getIcon(id)` | Looks the id up in `ICONS`. Reads the array live, so it cannot go stale. |
+| `IconDef.keywords` | Optional extra search terms. Not rendered anywhere — search only. |
+| `matchesIconQuery(def, q)` | The shared search predicate — substring match on `id`, `label` and `keywords`; an empty query matches everything. |
+| `registerIcons(defs)` | Adds or replaces; returns how many ids it **replaced**. |
+
+Notes worth knowing before you call it:
+
+- **An existing id is replaced in place**, not appended, so swapping a built-in glyph
+  for your own does not leave a duplicate row in the picker. The return value is the
+  replacement count — assert it is `0` if you only meant to add.
+- **Call it once at start-up**, before anything renders. It mutates shared state;
+  there is no re-render signal, so glyphs registered after a component has mounted
+  will not appear until that component next renders for some other reason.
+- **`IconName` cannot include runtime registrations.** Types are static; the union
+  covers the built-ins only. That is why `glyph` stays assignable from `string`.
+- **Pushing onto `ICONS` directly is out of contract.** `getIcon` will still find what
+  you put there — it reads the array live — but nothing can keep `ICON_OPTIONS` in sync,
+  which is the stale-picker bug this API exists to remove.
+- Two bundled copies of the package mean two registries. That is a packaging problem,
+  not something the API can paper over.
 
 ## CSS variables
 

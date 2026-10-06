@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import type { PreviewProps } from '@/previews/types';
-import { Icon, ICONS, InputWithIcon } from '@/ui';
+import { Icon, ICONS, InputWithIcon, matchesIconQuery } from '@/ui';
 
 import type { CSSProperties } from 'react';
 
@@ -11,7 +11,7 @@ import type { CSSProperties } from 'react';
  * and what are they called" at a glance, and stays usable as the set grows.
  * Each cell shows the real <Icon> atom (so both path- and body-based glyphs
  * render) above its `id` — the exact string you pass to `glyph=` — with the
- * human label as a tooltip. The search filters on both id and label.
+ * human label as a tooltip. The search filters on id, label and keywords.
  *
  * Relies on the registry's `canvasFill` so the canvas fills width + top-
  * aligns: the grid flows a flexible column count with the pane width, and
@@ -29,10 +29,9 @@ export function IconPreview({ styles }: PreviewProps) {
   const color = styles.color as string;
 
   const [query, setQuery] = useState('');
-  const q = query.trim().toLowerCase();
-  const matches = q
-    ? ICONS.filter((d) => d.id.toLowerCase().includes(q) || d.label.toLowerCase().includes(q))
-    : ICONS;
+  // Shared with the studio's glyph picker — see `matchesIconQuery`. Do not
+  // re-inline this: the duplicate it replaced went untested for a release.
+  const matches = ICONS.filter((d) => matchesIconQuery(d, query));
 
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>

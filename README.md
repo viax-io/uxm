@@ -9,7 +9,7 @@ The package ships **no `"use client"` / `"use server"` directives** by design: c
 ## What's in this package
 
 - **UI primitives** (`@viax.io/uxm/ui`) — BEM-classed React 19 components.
-- **Icon registry** (`@viax.io/uxm/ui`) — `ICONS`, `ICON_OPTIONS`, `getIcon`, `IconDef` for tooling that enumerates the bundled icon set.
+- **Icon registry** (`@viax.io/uxm/ui`) — `ICONS`, `ICON_IDS`, `ICON_OPTIONS`, `getIcon`, `registerIcons`, `IconDef`, `IconName` for tooling that enumerates the bundled icon set, and for adding your own glyphs to it.
 - **Design tokens** (`@viax.io/uxm/tokens`) — the canonical `themeTokens` array plus helpers (`findToken`, `resolveHex`, `isTokenValue`) and the `ThemeToken` type.
 - **Behaviour hooks** (`@viax.io/uxm/hooks`) — `useDismiss`, `useFocusTrap`, `useFocusOnMount`, `useRovingTabIndex`, `useScrollLock`, `usePortal`, `useToastStore` for hosts composing their own floating layers or keyboard widgets.
 - **Themable previews** (`@viax.io/uxm/previews`) — preview components (one per atom, plus composite previews) used by host shells like MODO's brand-settings editor to render live, knob-driven theme exploration.

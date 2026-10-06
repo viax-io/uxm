@@ -1,10 +1,16 @@
 import { cn } from '@/helpers';
+import type { IconName } from '@/lib/icons';
 import { getIcon } from '@/lib/icons';
 
 import type { SVGAttributes } from 'react';
 
 export interface IconProps extends Omit<SVGAttributes<SVGSVGElement>, 'children'> {
-  glyph: string;
+  /**
+   * Which glyph to render. Typed as the built-in union PLUS `string`, so the
+   * union drives autocomplete while a computed name — or an id added at
+   * runtime via `registerIcons`, which types cannot see — still compiles.
+   */
+  glyph: IconName | (string & {});
   size?: number;
   strokeWidth?: number;
 }

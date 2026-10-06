@@ -2,7 +2,7 @@
 
 A combobox-style picker — a trigger button that opens a popover containing a search input and a filtered list of options.
 
-`SearchDropdown` is intended for value pickers with more options than a native `<select>` can comfortably scan (icon glyphs, country codes, large enums). For short lists (≤12 options) the native `<Select>` atom is preferred. The popover handles keyboard navigation (Arrow / Enter / Escape), filters options against the search query case-insensitively, and closes on click-outside. Focus moves to the search input on open; the highlight index is clamped against the filtered list to avoid stale-index renders after the list shrinks.
+`SearchDropdown` is intended for value pickers with more options than a native `<select>` can comfortably scan (icon glyphs, country codes, large enums). For short lists (≤12 options) the native `<Select>` atom is preferred. The popover handles keyboard navigation (Arrow / Enter / Escape), filters options against the search query case-insensitively (on `label` and, when present, `keywords`), and closes on click-outside. Focus moves to the search input on open; the highlight index is clamped against the filtered list to avoid stale-index renders after the list shrinks.
 
 ## Usage
 
@@ -57,6 +57,7 @@ function CountryPicker() {
 | `label` | `string` | yes | Primary text shown in the option row and the trigger. |
 | `meta` | `string` | no | Trailing secondary text (e.g. a country dialing code, category meta). Right-aligned in the option row. |
 | `icon` | `ReactNode` | no | Leading visual — typically an `<Icon>` for icon-glyph pickers. |
+| `keywords` | `string[]` | no | Extra search terms matched alongside `label`, never rendered. Lets an option stay findable under a synonym without that synonym appearing in its visible name — the icon registry feeds its `IconDef.keywords` through `ICON_OPTIONS` this way. |
 
 ## CSS variables
 

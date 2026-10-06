@@ -14,6 +14,28 @@ export interface SearchDropdownOption {
   meta?: string;
   /** Optional leading visual — typically an `<Icon>` for icon-glyph pickers. */
   icon?: ReactNode;
+  /**
+   * Extra search terms matched alongside `label`, never rendered. Lets a
+   * picker stay findable by synonym without stuffing those synonyms into the
+   * visible name — the icon registry's `keywords` arrive here via
+   * `ICON_OPTIONS`.
+   */
+  keywords?: string[];
+}
+
+// Module-level so the reference is stable: `Listbox` memoises its filtered
+// list on `filterItems`, and an inline arrow would recompute it every render.
+function filterByLabelOrKeywords(
+  items: SearchDropdownOption[],
+  query: string,
+): SearchDropdownOption[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return items;
+  return items.filter(
+    (o) =>
+      o.label.toLowerCase().includes(q) ||
+      (o.keywords?.some((k) => k.toLowerCase().includes(q)) ?? false),
+  );
 }
 
 export interface SearchDropdownProps {
@@ -98,6 +120,9 @@ export function SearchDropdown({
       items={options}
       getKey={(o) => o.value}
       getLabel={(o) => o.label}
+      // Default filter widened to `keywords`; without this the base Listbox
+      // matches `label` only, and a synonym-only match is unreachable.
+      filterItems={filterByLabelOrKeywords}
       value={selected}
       // The old SearchDropdown's `onChange(value: string)` signature stays
       // — coerce null (Listbox supports clear via the widened signature)

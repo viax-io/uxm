@@ -127,6 +127,32 @@ catalog.
 
 ### Unreleased
 
+- **19 admin-UI glyphs, and a supported way to add your own.** The set grows 72 → 91.
+  Thirteen are Heroicons 24/outline like everything already in it: `arrows-up-down`,
+  `archive-box`, `no-symbol`, `book-open`, `x-circle`, `key`,
+  `arrow-right-start-on-rectangle`, `paper-airplane`, `server`, `shield-exclamation`,
+  `shield-check`, `wrench`, `document-text`. Six are **house-drawn**, because Heroicons has
+  no equivalent and the nearest candidates mean something else: `activity`, `dot-circle`,
+  `coins`, `git-fork`, `plug`, `webhook`. Those follow the same house rules (24×24 box, round
+  caps/joins, stroke inherited not baked in, geometry 3 units clear of the edge) but read
+  slightly lighter than true Heroicons — **do not regenerate them from an upstream package,
+  there is none.** Their circle centres and radii sit on 0.375, the half-step of the 0.75 grid
+  Heroicons snaps to; the tangent points where a connector meets a circle in `coins` and
+  `webhook` are computed, not snapped, because snapping detaches the line from the circle.
+  Ids follow the Heroicons convention the set already
+  uses rather than another library's naming — so lucide's `circle-dot` is `dot-circle`,
+  matching the existing `x-circle` / `check-circle` pattern. Names from other sets live in a
+  new optional **`IconDef.keywords`**, so "ban", "send", "log out", "scroll-text" or
+  "shield-alert" all find the right glyph without the label pretending to be a keyword list.
+  Matching runs through one exported predicate, **`matchesIconQuery(def, query)`**, shared by
+  the preview grid and the studio picker; `SearchDropdownOption` gained a matching
+  `keywords?: string[]` that its default filter reads, so synonyms reach that picker too. New API: `registerIcons(defs)` adds or replaces at
+  runtime and returns the replacement count, `ICON_OPTIONS` is kept in sync by it instead of
+  being a one-shot `.map()` that went stale the moment anything extended the set, and
+  `ICON_IDS` / `IconName` give a literal union. **Nothing is removed or renamed**; `glyph` is
+  typed `IconName | (string & {})`, so the union drives autocomplete while any string — a
+  computed name, or an id registered at runtime — still compiles.
+
 - **Documented the AA gap on small labels, and the one-liner that closes it.** `Listbox`
   group headers (10px) and `SectionHeader` titles (11px) default to `--color-text-subtle`,
   which is 3.66:1 on card in light and 3.41:1 in dark — under the 4.5:1 text floor, and at
