@@ -71,6 +71,26 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 - Heading renders as `<h4>` **by default** — picks up native heading semantics and contributes to the document outline. Verify it lands at the right depth in your page's heading hierarchy, and pass `level` when it doesn't: an `<h4>` directly under an `<h2>` skips a level, leaving screen-reader users navigating by heading unable to tell how the sections nest.
 - The uppercase rendering is CSS-only (`text-transform: uppercase`) — assistive tech reads the original casing from the DOM, so authors should write the heading in the casing they want announced.
+- **The title does not meet AA, and the fix is a one-liner.** The default
+  `--color-text-subtle` measures **3.66:1** on `--color-card` in light and **3.41:1** in dark,
+  against the 4.5:1 floor. At 11px the large-text exemption does not apply. This matters more
+  here than for most small labels: the element is a real `<h4>`, so it is in the heading
+  outline and is what a screen-reader user navigating by heading lands on — it should not be
+  the faintest text on the surface. The default is unchanged because darkening it shifts every
+  settings panel, but the knob is there:
+
+  ```css
+  :where(:root) {
+    --uxm-section-header-title-color: var(--color-text-muted); /* 5.37:1 light, 6.89:1 dark */
+  }
+  ```
+
+  **The hierarchy is also inverted today, which is the stronger reason to set this.** The
+  subtitle defaults to `--color-text-muted` (5.37:1) while the title sits on
+  `--color-text-subtle` (3.66:1) — so the title is *fainter than its own subtitle*, in both
+  themes. **Prefer `--color-text-strong` (8.86:1)**: muted would clear AA but make title and
+  subtitle identical, flattening the distinction the component exists to express. `strong`
+  clears AA and puts the title back above the line it heads.
 - The trailing slot is inert by default — any interactive content placed there (e.g. `<InlineAction>`) carries its own semantics.
 - The subtitle is a plain `<div>` with no implicit ARIA — for status-style subtitles that update dynamically, the consumer should add `aria-live="polite"` themselves.
 - No bundled focus / hover state — the header is presentational only.
