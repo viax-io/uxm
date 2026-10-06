@@ -55,19 +55,24 @@ registerIcons([
 
 `label` is a **name** — one human-readable thing the glyph is called, with at most a
 single disambiguator in parentheses, matching the set's existing style (`Cog (6 Tooth)`,
-`Archive (Empty)`). Synonyms go in **`keywords`**, which the studio's icon search matches
-alongside `id` and `label`. That is how a glyph stays findable under the name it carries
-in another icon set — `no-symbol` answers to `ban`, `paper-airplane` to `send` — without
-the label turning into a keyword list.
+`Archive (Empty)`). Synonyms go in **`keywords`**, which the icon search matches alongside
+`id` and `label`. That is how a glyph stays findable under the name it carries in another
+icon set — `no-symbol` answers to `ban`, `paper-airplane` to `send` — without the label
+turning into a keyword list.
+
+All three pickers run the same exported predicate, `matchesIconQuery(def, query)`. Use it
+rather than writing the substring test again: the preview grid and the studio's glyph
+picker have to agree, and the one duplicate that existed drifted silently.
 
 | Export | What it is |
 |---|---|
 | `ICONS` | `IconDef[]` — the registry itself, in order. |
-| `ICON_OPTIONS` | `{ value, label }[]` for a picker. **Mutated in place** by `registerIcons`, so a consumer holding a reference (the studio registry does, at module scope) sees additions without re-importing. |
+| `ICON_OPTIONS` | `IconOption[]` (`{ value, label, keywords? }`) for a picker — `keywords` mirrors the def's, so a `SearchDropdown` matches synonyms too. **Mutated in place** by `registerIcons`, so a consumer holding a reference (the studio registry does, at module scope) sees additions without re-importing. |
 | `ICON_IDS` | Const tuple of the built-in ids. |
 | `IconName` | Literal union of `ICON_IDS` — use it to narrow your own props. |
 | `getIcon(id)` | Looks the id up in `ICONS`. Reads the array live, so it cannot go stale. |
 | `IconDef.keywords` | Optional extra search terms. Not rendered anywhere — search only. |
+| `matchesIconQuery(def, q)` | The shared search predicate — substring match on `id`, `label` and `keywords`; an empty query matches everything. |
 | `registerIcons(defs)` | Adds or replaces; returns how many ids it **replaced**. |
 
 Notes worth knowing before you call it:

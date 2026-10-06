@@ -1,8 +1,10 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
-import { ICONS, ICON_IDS, ICON_OPTIONS, getIcon, registerIcons } from '@/lib/icons';
-import { Icon } from '@/ui';
+import { ICONS, ICON_IDS, ICON_OPTIONS, getIcon, matchesIconQuery, registerIcons } from '@/lib/icons';
+import { Icon, SearchDropdown } from '@/ui';
+import { IconPreview } from '@/ui/icon/icon-preview';
 
 // The accessible-name pollution this guards ("Kebab (More) Publish") was
 // reported from a consumer, not caught here — hence the test.
@@ -106,6 +108,26 @@ describe('icon registry', () => {
     }
   });
 
+  it('keeps house-drawn circles on the 0.375 half-grid', () => {
+    // The house glyphs claim Heroicons' grid discipline. The claim is only
+    // true of circle centres/radii and axis-aligned bars: the points where a
+    // connector meets a circle tangentially are computed, and snapping them
+    // visibly detaches the line. So pin the part that IS a rule, and let the
+    // comment in icons.ts carry the exception — an unpinned prose claim about
+    // `coins` and `webhook` was simply false for a release.
+    const HOUSE = ['activity', 'dot-circle', 'coins', 'git-fork', 'plug', 'webhook'];
+    const onGrid = (n: number) => Math.abs(n / 0.375 - Math.round(n / 0.375)) < 1e-9;
+    for (const id of HOUSE) {
+      const def = ICONS.find((d) => d.id === id);
+      expect(def?.body, `${id} should be a house-drawn body glyph`).toBeTruthy();
+      for (const circle of def!.body!.match(/<circle[^>]*>/g) ?? []) {
+        for (const n of (circle.match(/-?\d*\.?\d+/g) ?? []).map(Number)) {
+          expect(onGrid(n), `${id}: ${n} in ${circle} is off the 0.375 grid`).toBe(true);
+        }
+      }
+    }
+  });
+
   it('keeps ids unique', () => {
     const ids = ICONS.map((d) => d.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -189,25 +211,19 @@ describe('ICON_IDS', () => {
 // ── Findability ──────────────────────────────────────────────────────────────
 // Ids follow this set's naming, not another library's, so a glyph people know
 // under a different name is reachable through `keywords` instead. That only
-// works if the studio's icon search actually consults the field — nothing else
-// would fail if someone dropped it from the filter, and the labels were
-// deliberately cleaned of those terms, so the fallback is gone.
+// works if the pickers actually consult the field — the labels were
+// deliberately cleaned of those terms, so there is no fallback.
 describe('icon keywords', () => {
-  // Mirrors the filter in src/ui/icon/icon-preview.tsx.
-  const search = (q: string) => {
-    const needle = q.trim().toLowerCase();
-    return ICONS.filter(
-      (d) =>
-        d.id.toLowerCase().includes(needle) ||
-        d.label.toLowerCase().includes(needle) ||
-        d.keywords?.some((k) => k.toLowerCase().includes(needle)),
-    ).map((d) => d.id);
-  };
+  // The REAL predicate, imported — not a copy. A copy of the filter lived here
+  // once and all sixteen tests stayed green when the shipped filter lost its
+  // `keywords` clause, which is the whole failure this suite exists to catch.
+  const search = (q: string) => ICONS.filter((d) => matchesIconQuery(d, q)).map((d) => d.id);
 
   it('finds a glyph by a name that ONLY `keywords` carries', () => {
     // Deliberately terms the id and label do NOT contain. An earlier version of
-    // this test used "ban", which the label "No Symbol (Ban)" matches on its
-    // own — so it passed even with the keywords deleted, proving nothing.
+    // this test used "ban" while the label still read "No Symbol (Ban)", which
+    // matched on its own — so it passed with the keywords deleted, proving
+    // nothing. The label is now just "No Symbol", so "ban" is a real probe.
     const byIdOrLabel = (q: string) =>
       ICONS.filter(
         (d) => d.id.toLowerCase().includes(q) || d.label.toLowerCase().includes(q),
@@ -221,6 +237,8 @@ describe('icon keywords', () => {
       ['credits', 'coins'],
       ['blocked', 'no-symbol'],
       ['logout', 'arrow-right-start-on-rectangle'],
+      ['ban', 'no-symbol'],
+      ['send', 'paper-airplane'],
     ] as const) {
       expect(byIdOrLabel(term), `"${term}" is reachable without keywords — pick a sharper term`)
         .not.toContain(expected);
@@ -228,21 +246,77 @@ describe('icon keywords', () => {
     }
   });
 
-  it('keeps labels as names, not keyword lists', () => {
-    // The set's convention: at most ONE parenthetical disambiguator
-    // ("Cog (6 Tooth)", "Archive (Empty)") — never a comma-separated synonym
-    // list, which is what `keywords` is for.
-    for (const d of ICONS) {
-      const paren = /\(([^)]*)\)/.exec(d.label);
-      expect(paren?.[1] ?? '', `${d.id}: "${d.label}" reads as a keyword list`).not.toContain(',');
+  it('matches case- and whitespace-insensitively', () => {
+    expect(search('  LOG OUT  ')).toContain('arrow-right-start-on-rectangle');
+    expect(search('')).toHaveLength(ICONS.length);
+  });
+
+  it('carries keywords through to ICON_OPTIONS for the studio picker', () => {
+    // The studio's glyph pickers render ICON_OPTIONS, not ICONS. Synonyms used
+    // to ride along in the label; once they moved to `keywords`, dropping them
+    // from this projection would silently cost those pickers every synonym.
+    const noSymbol = ICON_OPTIONS.find((o) => o.value === 'no-symbol');
+    expect(noSymbol?.keywords).toContain('ban');
+    for (const d of ICONS.filter((i) => i.keywords?.length)) {
+      expect(
+        ICON_OPTIONS.find((o) => o.value === d.id)?.keywords,
+        `${d.id}: keywords missing from ICON_OPTIONS`,
+      ).toEqual(d.keywords);
     }
   });
 
-  it('declares no keyword that merely repeats the id', () => {
+  it('keeps labels as names, not keyword lists', () => {
+    // The set's convention: at most ONE parenthetical disambiguator
+    // ("Cog (6 Tooth)", "Archive (Empty)") — never a synonym list, which is
+    // what `keywords` is for. Checks EVERY parenthetical, and both separators
+    // a list would use: "(Ban; Blocked)" and "(Ban) (Blocked)" used to pass.
     for (const d of ICONS) {
-      for (const k of d.keywords ?? []) {
-        expect(k.toLowerCase(), `${d.id}: keyword "${k}" is redundant`).not.toBe(d.id.toLowerCase());
+      const parens = [...d.label.matchAll(/\(([^)]*)\)/g)].map((m) => m[1]);
+      expect(parens.length, `${d.id}: "${d.label}" has ${parens.length} parentheticals`)
+        .toBeLessThanOrEqual(1);
+      for (const inner of parens) {
+        expect(inner, `${d.id}: "${d.label}" reads as a keyword list`).not.toMatch(/[,;]/);
       }
     }
+  });
+
+  it('declares no keyword already reachable through the id or label', () => {
+    // Not just equality — a keyword that is a SUBSTRING of either is dead
+    // weight, because the filter is a substring test on all three. "archive"
+    // on `archive-box` and "fork" on `git-fork` were exactly this.
+    const norm = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    for (const d of ICONS) {
+      for (const k of d.keywords ?? []) {
+        const reachable = norm(d.id).includes(norm(k)) || norm(d.label).includes(norm(k));
+        expect(reachable, `${d.id}: keyword "${k}" is already found via id/label`).toBe(false);
+      }
+    }
+  });
+});
+
+// The two consumers of the predicate, exercised through what they actually
+// render — the unit tests above cannot tell whether either one calls it.
+describe('icon search reaches both pickers', () => {
+  it('filters the preview grid by a keyword-only term', async () => {
+    const user = userEvent.setup();
+    render(
+      <IconPreview
+        componentId="icon"
+        styles={{ size: 24, strokeWidth: 1.75, color: 'currentColor' }}
+        variants={{}}
+      />,
+    );
+    expect(screen.getByText('no-symbol')).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Search icons'), 'blocked');
+    expect(screen.getByText('no-symbol')).toBeInTheDocument();
+    expect(screen.queryByText('archive-box')).not.toBeInTheDocument();
+  });
+
+  it('filters a SearchDropdown of ICON_OPTIONS by a keyword-only term', async () => {
+    const user = userEvent.setup();
+    render(<SearchDropdown value="" onChange={() => {}} options={ICON_OPTIONS} aria-label="Glyph" />);
+    await user.click(screen.getByRole('combobox'));
+    await user.type(screen.getByPlaceholderText(/search/i), 'blocked');
+    expect(screen.getByRole('option', { name: /no symbol/i })).toBeInTheDocument();
   });
 });

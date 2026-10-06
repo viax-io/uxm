@@ -205,7 +205,7 @@ Ids follow the Heroicons convention the set already uses, not another library's 
 | `shield-alert` | `shield-exclamation` |
 | `scroll-text` / logs / audit trail | `document-text` (`document` is the blank-page variant) |
 | `circle-dot` | `dot-circle` — the set names enclosed glyphs inner-thing-first (`x-circle`, `check-circle`, `exclamation-circle`). |
-| `activity` / `coins` / `dot-circle` / `git-fork` / `plug` / `webhook` | All present, but **house-drawn, not Heroicons** — Heroicons has no equivalent and the nearest candidates (`chart-bar`, `banknotes`, `stop-circle`, `share`, `bolt`, `link`) mean different things. Drawn to the same house rules (24×24, stroke 1.5, 0.75 grid, 2.25 margin); they read slightly lighter than true Heroicons. Do not regenerate them from an upstream package — there is none. |
+| `activity` / `coins` / `dot-circle` / `git-fork` / `plug` / `webhook` | All present, but **house-drawn, not Heroicons** — Heroicons has no equivalent and the nearest candidates (`chart-bar`, `banknotes`, `stop-circle`, `share`, `bolt`, `link`) mean different things. Drawn to the same house rules (24×24, round caps/joins, inherited stroke, geometry 3 units clear of the edge; circle centres and radii on 0.375 — only the computed tangent points in `coins`/`webhook` sit off-grid); they read slightly lighter than true Heroicons. Do not regenerate them from an upstream package — there is none. |
 
 `Icon` defaults to `size={24}`. Inside `InputWithIcon` the slot reserves **16px** via padding only
 (see the InputWithIcon row above) — clamp the SVG in global CSS rather than passing `size={16}` at

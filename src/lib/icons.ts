@@ -202,17 +202,20 @@ export const ICONS: IconDef[] = [
 
   // ── Admin-UI glyphs ──────────────────────────────────────────────────────
   // Heroicons 24/outline, same family and stroke contract as everything above.
-  // The parentheticals in the labels are deliberate: the studio's icon search
-  // matches BOTH id and label, so searching "ban", "send", "log out" or "sort"
-  // finds the Heroicons glyph under its Heroicons name.
-  { id: 'arrows-up-down', label: 'Arrows Up Down (Sort)', keywords: ['sort', 'order', 'arrow-down-up'], path: 'M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5' },
-  { id: 'archive-box', label: 'Archive Box', keywords: ['archive', 'store', 'box'], path: 'm20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z' },
-  { id: 'no-symbol', label: 'No Symbol (Ban)', keywords: ['ban', 'blocked', 'forbidden', 'disabled', 'deny'], path: 'M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636' },
+  // Labels are the glyph's own Heroicons name; synonyms live in `keywords`, so
+  // searching "ban", "send", "log out" or "sort" still finds the glyph without
+  // stuffing those words into the name shown in the picker. A parenthetical in
+  // a label is a disambiguator for an ambiguous name (`Globe (Language /
+  // Region)`, which predates this convention), not a
+  // search hook -- see `matchesIconQuery`.
+  { id: 'arrows-up-down', label: 'Arrows Up Down', keywords: ['sort', 'order', 'arrow-down-up'], path: 'M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5' },
+  { id: 'archive-box', label: 'Archive Box', keywords: ['store', 'crate', 'put away'], path: 'm20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z' },
+  { id: 'no-symbol', label: 'No Symbol', keywords: ['ban', 'blocked', 'forbidden', 'disabled', 'deny'], path: 'M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636' },
   { id: 'book-open', label: 'Book Open', keywords: ['docs', 'documentation', 'manual', 'guide'], path: 'M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25' },
   { id: 'x-circle', label: 'X Circle', keywords: ['close', 'fail', 'error', 'cancel'], path: 'm9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' },
   { id: 'key', label: 'Key', keywords: ['secret', 'credential', 'token', 'api key', 'auth'], path: 'M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z' },
-  { id: 'arrow-right-start-on-rectangle', label: 'Arrow Right Start On Rectangle (Log Out)', keywords: ['log out', 'logout', 'sign out', 'exit'], path: 'M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9' },
-  { id: 'paper-airplane', label: 'Paper Airplane (Send)', keywords: ['send', 'send-horizontal', 'submit', 'deliver'], path: 'M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5' },
+  { id: 'arrow-right-start-on-rectangle', label: 'Arrow Right Start On Rectangle', keywords: ['log out', 'logout', 'sign out', 'exit'], path: 'M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9' },
+  { id: 'paper-airplane', label: 'Paper Airplane', keywords: ['send', 'send-horizontal', 'submit', 'deliver'], path: 'M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5' },
   { id: 'server', label: 'Server', keywords: ['host', 'instance', 'machine', 'backend'], path: 'M21.75 17.25v-.228a4.5 4.5 0 0 0-.12-1.03l-2.268-9.64a3.375 3.375 0 0 0-3.285-2.602H7.923a3.375 3.375 0 0 0-3.285 2.602l-2.268 9.64a4.5 4.5 0 0 0-.12 1.03v.228m19.5 0a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3m19.5 0a3 3 0 0 0-3-3H5.25a3 3 0 0 0-3 3m16.5 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Z' },
   { id: 'shield-exclamation', label: 'Shield Exclamation', keywords: ['shield-alert', 'security warning', 'risk'], path: 'M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z' },
   { id: 'shield-check', label: 'Shield Check', keywords: ['verified', 'secure', 'trusted', 'passed'], path: 'M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z' },
@@ -223,9 +226,21 @@ export const ICONS: IconDef[] = [
   // NOT Heroicons. These six have no Heroicons equivalent (the nearest
   // candidates -- chart-bar, banknotes, stop-circle, share, bolt, link -- mean
   // different things), so they are original, drawn to the Heroicons house
-  // rules: 24x24, stroke 1.5 inherited from the <svg>, round caps and joins,
-  // every coordinate and radius on the 0.75 grid Heroicons itself snaps to,
-  // ink kept inside a 2.25 margin.
+  // rules: a 24x24 box, round caps and joins, stroke inherited from the <svg>
+  // rather than baked in, and geometry held 3 units clear of the box edge.
+  //
+  // On the grid, precisely: every circle centre and radius sits on 0.375 --
+  // the half-step of the 0.75 grid Heroicons snaps to, which `coins` (bar at
+  // 11.625) and `webhook` (r 2.625, bar at 8.625) need and the other four do
+  // not. The exception is the tangent points where a connector meets a circle
+  // -- 10.2/9.03 and 14.97/13.8 on `coins`, 10.7/9.03, 7.3, 13.3 and 3.4/5.94
+  // on `webhook`. Those are computed from the geometry, and snapping them to
+  // the grid visibly detaches the line from the circle it should touch.
+  // `tests/icon.test.tsx` pins the circle rule so this stays true.
+  //
+  // Note the stroke is NOT 1.5: Heroicons draws at 1.5, but this library's
+  // <Icon> defaults to 1.75, which is what these actually render at. That also
+  // moves the visible ink margin to 2.125 (3 less half the stroke), not 2.25.
   //
   // They read slightly lighter and more geometric than real Heroicons, which
   // carry more internal detail. If Heroicons ever ships equivalents, replace
@@ -236,7 +251,7 @@ export const ICONS: IconDef[] = [
   // hand-written arc commands.
   {
     id: 'activity',
-    label: 'Activity (Pulse)',
+    label: 'Activity',
     keywords: ['pulse', 'health', 'heartbeat', 'monitoring', 'live'],
     body: '<path d="M3 12h3.75l2.25-6.75 4.5 13.5 2.25-6.75H21"/>',
   },
@@ -263,7 +278,7 @@ export const ICONS: IconDef[] = [
   {
     id: 'git-fork',
     label: 'Git Fork',
-    keywords: ['branch', 'fork', 'version control', 'vcs'],
+    keywords: ['branch', 'version control', 'vcs'],
     body:
       '<circle cx="6.75" cy="5.25" r="2.25"/><circle cx="17.25" cy="5.25" r="2.25"/>' +
       '<circle cx="12" cy="18.75" r="2.25"/>' +
@@ -346,10 +361,44 @@ export type IconName = (typeof ICON_IDS)[number];
  * was a one-shot `.map()` taken at module load, which went stale the moment
  * anything extended the set.
  */
-export const ICON_OPTIONS: { value: string; label: string }[] = ICONS.map((i) => ({
-  value: i.id,
-  label: i.label,
-}));
+export interface IconOption {
+  value: string;
+  label: string;
+  /** Mirrors `IconDef.keywords` so pickers can match synonyms, not just the name. */
+  keywords?: string[];
+}
+
+// One projection, used by the initial map AND by both `registerIcons` branches.
+// Written out three times before, and the two replace-branch copies had already
+// dropped `keywords` -- a registration that replaced a built-in would have
+// silently stripped its synonyms from the picker.
+const toOption = (def: IconDef): IconOption => ({
+  value: def.id,
+  label: def.label,
+  keywords: def.keywords,
+});
+
+export const ICON_OPTIONS: IconOption[] = ICONS.map(toOption);
+
+/**
+ * The icon-search predicate: matches `id`, `label` and `keywords`, each a
+ * case-insensitive substring test. An empty query matches everything.
+ *
+ * Exported and shared rather than inlined per picker, because the preview grid
+ * and the studio's `SearchDropdown` have to agree. The first version of this
+ * lived inline in `icon-preview.tsx` with a copy in the test suite, which meant
+ * the tests stayed green when the real filter lost its `keywords` clause --
+ * a test of a copy proves nothing about the thing shipped.
+ */
+export function matchesIconQuery(def: IconDef, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return (
+    def.id.toLowerCase().includes(q) ||
+    def.label.toLowerCase().includes(q) ||
+    (def.keywords?.some((k) => k.toLowerCase().includes(q)) ?? false)
+  );
+}
 
 export function getIcon(id: string): IconDef | undefined {
   // A linear scan, deliberately. An id→def Map was tried and removed: it has to
@@ -388,15 +437,15 @@ export function registerIcons(defs: IconDef[]): number {
     const at = ICONS.findIndex((i) => i.id === def.id);
     if (at === -1) {
       ICONS.push(def);
-      ICON_OPTIONS.push({ value: def.id, label: def.label });
+      ICON_OPTIONS.push(toOption(def));
     } else {
       ICONS[at] = def;
       // Find the option row by value rather than reusing `at`: the two arrays
       // are only index-aligned while every write goes through here, and a
       // direct `ICONS.push` elsewhere would silently shift them apart.
       const optionAt = ICON_OPTIONS.findIndex((o) => o.value === def.id);
-      if (optionAt === -1) ICON_OPTIONS.push({ value: def.id, label: def.label });
-      else ICON_OPTIONS[optionAt] = { value: def.id, label: def.label };
+      if (optionAt === -1) ICON_OPTIONS.push(toOption(def));
+      else ICON_OPTIONS[optionAt] = toOption(def);
       replaced += 1;
     }
   }

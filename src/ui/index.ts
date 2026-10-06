@@ -250,6 +250,7 @@ export type { ViewSwitcherOption, ViewSwitcherProps } from './view-switcher';
 
 // Icon registry — useful for shell-style tooling that needs to enumerate icons,
 // surface them in a picker, or look one up by id.
-export { ICONS, ICON_IDS, ICON_OPTIONS, getIcon, registerIcons } from '../lib/icons';
+export { ICONS, ICON_IDS, ICON_OPTIONS, getIcon, registerIcons, matchesIconQuery } from '../lib/icons';
+export type { IconOption } from '../lib/icons';
 export type { IconName } from '../lib/icons';
 export type { IconDef } from '../lib/icons';
