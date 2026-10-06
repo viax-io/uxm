@@ -127,6 +127,17 @@ catalog.
 
 ### Unreleased
 
+- **Documented the AA gap on small labels, and the one-liner that closes it.** `Listbox`
+  group headers (10px) and `SectionHeader` titles (11px) default to `--color-text-subtle`,
+  which is 3.66:1 on card in light and 3.41:1 in dark — under the 4.5:1 text floor, and at
+  that size the large-text exemption does not apply. **No default changed**: both already
+  have knobs, so an app clears AA today with
+  `--uxm-listbox-group-header-color: var(--color-text-muted)` and
+  `--uxm-section-header-title-color: var(--color-text-strong)`. Use `strong` for the section
+  title specifically — its subtitle already defaults to muted, so putting the title there
+  too makes the two identical. Darkening the defaults is still open, and is a major-release
+  decision because it shifts every listbox and settings panel.
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh

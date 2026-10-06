@@ -217,6 +217,21 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 ## Accessibility
 
 - The panel is `role="listbox"` with rows as `role="option"` carrying `aria-selected` and `aria-disabled`. Group headers are `role="presentation"` so they are not announced as options.
+- **Group headers do not meet AA, and the fix is a one-liner.** The default
+  `--color-text-subtle` measures **3.66:1** on `--color-card` in light and **3.41:1** in dark,
+  against the 4.5:1 floor for normal text. At 10px the large-text exemption (18pt, or 14pt
+  bold) does not apply, so this is a real 1.4.3 failure — the header is a visible label, not
+  decoration. The default is left alone because darkening it changes every listbox, but the
+  knob is there:
+
+  ```css
+  :where(:root) {
+    --uxm-listbox-group-header-color: var(--color-text-muted); /* 5.37:1 light, 6.89:1 dark */
+  }
+  ```
+
+  Use `--color-text-strong` (8.86:1) if you want the header to read as a heading rather than
+  a quiet label. Both are theme-aware, so one declaration covers light and dark.
 - The trigger receives `aria-haspopup="listbox"`, `aria-expanded`, and `aria-controls` (only while open) through `triggerProps`. **Do not override these** — the wiring is what makes the pattern announce correctly.
 - Focus stays on the **search input** (or the panel) while `aria-activedescendant` points at the arrow-highlighted option — the standard combobox pattern, so arrow keys move the highlight without moving DOM focus. The search input also carries `aria-autocomplete="list"`.
 - **Pass `searchAriaLabel` for a domain-specific picker.** A placeholder is not a reliable accessible name: it disappears once the field has a value, and AT support for placeholder-as-name is inconsistent. `searchAriaLabel` falls back to the placeholder, but "Search countries" beats "Search…".

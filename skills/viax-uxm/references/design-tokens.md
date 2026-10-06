@@ -45,7 +45,7 @@ bgs.
 | `Text Strong` | `--color-text-strong` | `#4A4A4A` | `#C8C8C8` | Headings; emphasized labels. |
 | `Text` | `--color-text` | `#1E1E1E` | `#F5F5F5` | Body text (default). |
 | `Text Muted` | `--color-text-muted` | `#6E6A64` | `#A3A3A3` | Secondary text, labels, table header text. AA on all three light grounds (4.76 surface-alt / 5.02 surface / 5.37 card). |
-| `Text Subtle` | `--color-text-subtle` | `#8A857D` | `#6E6E6E` | Separators, idle strokes, disabled marks. Clears the 3:1 non-text floor on all three light grounds (3.25 surface-alt / 3.42 surface / 3.66 card), **not** the 4.5:1 text floor. Several atoms still use it for real text (section titles, group headers, placeholders) — that fails 1.4.3 and is a known follow-up, not a licence to add more. |
+| `Text Subtle` | `--color-text-subtle` | `#8A857D` | `#6E6E6E` | Separators, idle strokes, disabled marks. Clears the 3:1 non-text floor on all three light grounds (3.25 surface-alt / 3.42 surface / 3.66 card), **not** the 4.5:1 text floor. Several atoms still use it for real text (section titles, group headers, placeholders) — that fails 1.4.3 and is a known follow-up, not a licence to add more. Each has a knob, so an app can fix it today without waiting: see **Small labels that fail AA** below. |
 | `Text Inverse` | `--color-text-inverse` | `#FFFFFF` | `#1B1A18` | Text on accent backgrounds (e.g. Primary button). |
 
 ### Borders (1 token)
@@ -206,6 +206,44 @@ built on them (`bg-cream`, `text-ink`, …) to the token each one aliases:
 | `--color-peach` | `--color-highlight-warm` |
 | `--color-lavender` | `--color-highlight-cool` |
 | `--color-lime` | `--color-accent-subtle` |
+
+## Small labels that fail AA
+
+`--color-text-subtle` is below the 4.5:1 text floor by design — it exists for separators,
+idle strokes and disabled marks. A few atoms nonetheless default their *label* text to it,
+and at 10–11px the large-text exemption (18pt, or 14pt bold) does not apply, so these are
+real 1.4.3 failures in both themes:
+
+| Element | Knob | Default |
+|---|---|---|
+| `Listbox` group header (10px) | `--uxm-listbox-group-header-color` | 3.66:1 light / 3.41:1 dark |
+| `SectionHeader` title (11px) | `--uxm-section-header-title-color` | same |
+| `SearchDropdown` option meta (10px) | `--uxm-search-dropdown-option-meta-size` sets the size; colour is not knobbed | same |
+| `ExplorerSection` / `ExplorerListItem` trailing | `--uxm-explorer-section-trailing-color`, `--uxm-explorer-list-item-trailing-color` | same |
+| `TimelineEntry` trailing | not knobbed | same |
+| `NumberStepper` unit suffix | `--uxm-number-stepper-unit-color` | same |
+
+31 declarations read `--color-text-subtle` as a `color`, but most are **not** 1.4.3 failures:
+WCAG exempts inactive controls, which covers the `:disabled` states (`Chip` ×4, `Breadcrumb`,
+`ExplorerSection`, `Calendar`), and the rest are non-text — icons, drag handles, the
+breadcrumb separator, the timeline dot, outside-month days. Placeholders sit in between.
+The seven rows above are the ones painting real content text.
+
+The defaults are unchanged — darkening them shifts every listbox and settings panel, which
+is a major-release decision. Every one is a knob, so an app can clear AA today:
+
+```css
+:where(:root) {
+  --uxm-listbox-group-header-color: var(--color-text-muted);  /* 5.37:1 light, 6.89:1 dark */
+  --uxm-section-header-title-color: var(--color-text-strong);  /* 8.86:1 */
+}
+```
+
+`SectionHeader` wants `strong` rather than `muted`, for a reason beyond contrast: its
+subtitle already defaults to muted (5.37:1) while the title sits on subtle (3.66:1), so the
+title is currently **fainter than its own subtitle** in both themes. Moving the title to
+muted would clear AA but make the two identical; `strong` clears AA and restores the order.
+Both tokens are theme-aware, so one declaration covers light and dark.
 
 ## Layering (`--z-*`)
 
