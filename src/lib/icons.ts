@@ -28,6 +28,15 @@ export interface IconDef {
    * glyph tracks the stroke-width knob. Kept as an extension point.
    */
   filled?: boolean;
+  /**
+   * Extra search terms. The label is a NAME — one human-readable thing the
+   * glyph is called, optionally with a single disambiguator in parentheses
+   * (`Cog (6 Tooth)`, `Archive (Empty)`). Synonyms belong here instead: the
+   * names people reach for from other icon sets (`ban` for `no-symbol`), or
+   * the domain words they would search (`credits`, `billing`). Matched by the
+   * studio's icon search alongside `id` and `label`.
+   */
+  keywords?: string[];
 }
 
 export const ICONS: IconDef[] = [
@@ -190,10 +199,206 @@ export const ICONS: IconDef[] = [
   { id: 'bot', label: 'Bot', body: '<path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>' },
   // Money — Heroicons banknotes.
   { id: 'money', label: 'Money', path: 'M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z' },
+
+  // ── Admin-UI glyphs ──────────────────────────────────────────────────────
+  // Heroicons 24/outline, same family and stroke contract as everything above.
+  // The parentheticals in the labels are deliberate: the studio's icon search
+  // matches BOTH id and label, so searching "ban", "send", "log out" or "sort"
+  // finds the Heroicons glyph under its Heroicons name.
+  { id: 'arrows-up-down', label: 'Arrows Up Down (Sort)', keywords: ['sort', 'order', 'arrow-down-up'], path: 'M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5' },
+  { id: 'archive-box', label: 'Archive Box', keywords: ['archive', 'store', 'box'], path: 'm20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z' },
+  { id: 'no-symbol', label: 'No Symbol (Ban)', keywords: ['ban', 'blocked', 'forbidden', 'disabled', 'deny'], path: 'M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636' },
+  { id: 'book-open', label: 'Book Open', keywords: ['docs', 'documentation', 'manual', 'guide'], path: 'M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25' },
+  { id: 'x-circle', label: 'X Circle', keywords: ['close', 'fail', 'error', 'cancel'], path: 'm9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' },
+  { id: 'key', label: 'Key', keywords: ['secret', 'credential', 'token', 'api key', 'auth'], path: 'M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z' },
+  { id: 'arrow-right-start-on-rectangle', label: 'Arrow Right Start On Rectangle (Log Out)', keywords: ['log out', 'logout', 'sign out', 'exit'], path: 'M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9' },
+  { id: 'paper-airplane', label: 'Paper Airplane (Send)', keywords: ['send', 'send-horizontal', 'submit', 'deliver'], path: 'M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5' },
+  { id: 'server', label: 'Server', keywords: ['host', 'instance', 'machine', 'backend'], path: 'M21.75 17.25v-.228a4.5 4.5 0 0 0-.12-1.03l-2.268-9.64a3.375 3.375 0 0 0-3.285-2.602H7.923a3.375 3.375 0 0 0-3.285 2.602l-2.268 9.64a4.5 4.5 0 0 0-.12 1.03v.228m19.5 0a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3m19.5 0a3 3 0 0 0-3-3H5.25a3 3 0 0 0-3 3m16.5 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Z' },
+  { id: 'shield-exclamation', label: 'Shield Exclamation', keywords: ['shield-alert', 'security warning', 'risk'], path: 'M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z' },
+  { id: 'shield-check', label: 'Shield Check', keywords: ['verified', 'secure', 'trusted', 'passed'], path: 'M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z' },
+  { id: 'wrench', label: 'Wrench', keywords: ['tools', 'maintenance', 'repair', 'settings'], path: 'M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852ZM4.867 19.125h.008v.008h-.008v-.008Z' },
+  { id: 'document-text', label: 'Document Text', keywords: ['scroll-text', 'logs', 'audit', 'notes'], path: 'M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z' },
+
+  // ── House-drawn glyphs ───────────────────────────────────────────────────
+  // NOT Heroicons. These six have no Heroicons equivalent (the nearest
+  // candidates -- chart-bar, banknotes, stop-circle, share, bolt, link -- mean
+  // different things), so they are original, drawn to the Heroicons house
+  // rules: 24x24, stroke 1.5 inherited from the <svg>, round caps and joins,
+  // every coordinate and radius on the 0.75 grid Heroicons itself snaps to,
+  // ink kept inside a 2.25 margin.
+  //
+  // They read slightly lighter and more geometric than real Heroicons, which
+  // carry more internal detail. If Heroicons ever ships equivalents, replace
+  // these.
+  //
+  // Do NOT regenerate these from an upstream package -- there is no upstream.
+  // They use `body` because circles express them far more reliably than
+  // hand-written arc commands.
+  {
+    id: 'activity',
+    label: 'Activity (Pulse)',
+    keywords: ['pulse', 'health', 'heartbeat', 'monitoring', 'live'],
+    body: '<path d="M3 12h3.75l2.25-6.75 4.5 13.5 2.25-6.75H21"/>',
+  },
+  {
+    id: 'dot-circle',
+    label: 'Dot Circle',
+    keywords: ['circle-dot', 'status', 'record', 'radio', 'selected'],
+    body: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.25"/>',
+  },
+  {
+    id: 'coins',
+    label: 'Coins',
+    keywords: ['credits', 'billing', 'payment', 'money', 'balance'],
+    // A front coin with a face bar, and a second trimmed to a C behind it. The
+    // trim is the point: two full circles cross each other and read as a Venn
+    // diagram, where an arc stopping at the front coin's edge reads as
+    // occlusion, i.e. depth. Two plainer versions were tried and dropped -- a
+    // three-mark face that read as clutter, and a cylinder stack that read as a
+    // database.
+    body:
+      '<circle cx="9.75" cy="14.25" r="5.25"/><path d="M9.75 11.625v5.25"/>' +
+      '<path d="M10.2 9.03A5.25 5.25 0 1 1 14.97 13.8"/>',
+  },
+  {
+    id: 'git-fork',
+    label: 'Git Fork',
+    keywords: ['branch', 'fork', 'version control', 'vcs'],
+    body:
+      '<circle cx="6.75" cy="5.25" r="2.25"/><circle cx="17.25" cy="5.25" r="2.25"/>' +
+      '<circle cx="12" cy="18.75" r="2.25"/>' +
+      '<path d="M6.75 7.5v2.25a2.25 2.25 0 0 0 2.25 2.25h6a2.25 2.25 0 0 0 2.25-2.25V7.5M12 12v4.5"/>',
+  },
+  {
+    id: 'plug',
+    label: 'Plug',
+    keywords: ['connector', 'integration', 'connection', 'adapter'],
+    body:
+      '<path d="M9 3v5.25M15 3v5.25M6.75 8.25h10.5v3a5.25 5.25 0 0 1-5.25 5.25 ' +
+      '5.25 5.25 0 0 1-5.25-5.25v-3ZM12 16.5V21"/>',
+  },
+  {
+    id: 'webhook',
+    label: 'Webhook',
+    keywords: ['event hook', 'callback', 'subscription', 'trigger'],
+    body:
+      '<circle cx="12" cy="6.75" r="2.625"/><circle cx="6" cy="17.25" r="2.625"/>' +
+      '<circle cx="18" cy="17.25" r="2.625"/>' +
+      '<path d="M10.7 9.03 7.3 14.97M13.3 9.03l3.4 5.94M8.625 17.25h6.75"/>',
+  },
 ];
 
-export const ICON_OPTIONS = ICONS.map((i) => ({ value: i.id, label: i.label }));
+/**
+ * Every built-in id, as a const tuple.
+ *
+ * Yes, this repeats the ids in `ICONS`. It has to: `ICONS` is annotated
+ * `IconDef[]`, where `id` is `string`, so `(typeof ICONS)[number]['id']`
+ * collapses to `string` and the union is worthless. Literal types need
+ * const-ness, and `as const` on `ICONS` itself would emit ~16KB of path-string
+ * literals into the public `.d.ts` to get 1KB of ids — and would freeze the
+ * array that `registerIcons` has to mutate. `tests/icon.test.tsx` asserts this
+ * tuple matches `ICONS` exactly, in order, so the duplication cannot drift.
+ */
+export const ICON_IDS = [
+  'search', 'close', 'plus', 'minus',
+  'check', 'chevron-down', 'chevron-up', 'chevron-left',
+  'chevron-right', 'arrow-up', 'arrow-down', 'arrow-left',
+  'arrow-right', 'check-circle', 'question-mark-circle', 'exclamation-triangle',
+  'exclamation-circle', 'cog-6-tooth', 'bolt', 'filter',
+  'chat-bubble', 'archive-x', 'square', 'list-lines',
+  'cursor-arrow-rays', 'dock-bottom', 'dock-right', 'drag-handle',
+  'pencil', 'trash', 'eye', 'eye-slash',
+  'sparkle', 'grid', 'list', 'code',
+  'paint-brush', 'eyedropper', 'sun', 'moon',
+  'model-revenue-motion', 'model-business-interaction', 'model-determination', 'model-configuration',
+  'product', 'organization', 'business-interaction', 'kebab',
+  'arrow-up-right', 'info', 'image', 'cloud-arrow-up',
+  'document', 'calendar', 'settings', 'history',
+  'clock', 'save', 'upload', 'refresh',
+  'user', 'bell', 'menu', 'globe',
+  'copy', 'play', 'pause', 'calculator',
+  'paper-clip', 'json', 'bot', 'money',
+  'arrows-up-down', 'archive-box', 'no-symbol', 'book-open',
+  'x-circle', 'key', 'arrow-right-start-on-rectangle', 'paper-airplane',
+  'server', 'shield-exclamation', 'shield-check', 'wrench',
+  'document-text', 'activity', 'dot-circle', 'coins',
+  'git-fork', 'plug', 'webhook',
+] as const;
+
+/**
+ * Every id shipped in `ICONS`, as a literal union.
+ *
+ * Exported for autocomplete and for narrowing a consumer's own prop types. It
+ * deliberately does NOT narrow `Icon`'s `glyph`, which stays assignable from
+ * `string`: tightening it would break every call site passing a computed name,
+ * and it would reject ids added at runtime through `registerIcons`, which the
+ * type system cannot see. `glyph` is typed `IconName | (string & {})` instead —
+ * the union drives autocomplete while any string still type-checks.
+ */
+export type IconName = (typeof ICON_IDS)[number];
+
+/**
+ * Options for a select/picker, in registry order.
+ *
+ * Kept in sync by `registerIcons`, which mutates this array in place rather
+ * than reassigning it — so a consumer holding a reference (the studio registry
+ * does, at module scope) sees registrations without re-importing. Before this
+ * was a one-shot `.map()` taken at module load, which went stale the moment
+ * anything extended the set.
+ */
+export const ICON_OPTIONS: { value: string; label: string }[] = ICONS.map((i) => ({
+  value: i.id,
+  label: i.label,
+}));
 
 export function getIcon(id: string): IconDef | undefined {
+  // A linear scan, deliberately. An id→def Map was tried and removed: it has to
+  // be invalidated, and every cheap invalidation check is wrong. Keying off
+  // `ICONS.length` misses an in-place replacement (`ICONS[i] = {...}`), which is
+  // exactly how the set was extended before `registerIcons` existed — so the
+  // Map silently returned the old glyph for the code most likely to be
+  // mid-migration. `.find` over ~85 entries is not a cost worth that risk, and
+  // it cannot go stale.
   return ICONS.find((i) => i.id === id);
+}
+
+/**
+ * Add glyphs to the registry at runtime, keeping `ICONS`, `ICON_OPTIONS` and
+ * the lookup index consistent. This is the supported way to extend the set;
+ * pushing onto `ICONS` directly leaves `ICON_OPTIONS` stale.
+ *
+ * An id that already exists is REPLACED in place, so an app can substitute a
+ * built-in glyph for its own without the picker gaining a duplicate row. New
+ * ids are appended in call order.
+ *
+ * Returns the number of entries that replaced an existing id, which is a
+ * cheap way for a caller to assert it is not clobbering the set by accident.
+ *
+ * ```ts
+ * registerIcons([{ id: 'webhook', label: 'Webhook', keywords: ['event hook', 'callback', 'subscription', 'trigger'], path: 'M...' }]);
+ * ```
+ *
+ * The registry is module-global mutable state, so call it once during app
+ * start-up, before anything renders. Two bundled copies of the package have
+ * two registries; that is a packaging problem, not something this can fix.
+ */
+export function registerIcons(defs: IconDef[]): number {
+  let replaced = 0;
+  for (const def of defs) {
+    const at = ICONS.findIndex((i) => i.id === def.id);
+    if (at === -1) {
+      ICONS.push(def);
+      ICON_OPTIONS.push({ value: def.id, label: def.label });
+    } else {
+      ICONS[at] = def;
+      // Find the option row by value rather than reusing `at`: the two arrays
+      // are only index-aligned while every write goes through here, and a
+      // direct `ICONS.push` elsewhere would silently shift them apart.
+      const optionAt = ICON_OPTIONS.findIndex((o) => o.value === def.id);
+      if (optionAt === -1) ICON_OPTIONS.push({ value: def.id, label: def.label });
+      else ICON_OPTIONS[optionAt] = { value: def.id, label: def.label };
+      replaced += 1;
+    }
+  }
+  return replaced;
 }

@@ -11,7 +11,7 @@ import type { CSSProperties } from 'react';
  * and what are they called" at a glance, and stays usable as the set grows.
  * Each cell shows the real <Icon> atom (so both path- and body-based glyphs
  * render) above its `id` — the exact string you pass to `glyph=` — with the
- * human label as a tooltip. The search filters on both id and label.
+ * human label as a tooltip. The search filters on id, label and keywords.
  *
  * Relies on the registry's `canvasFill` so the canvas fills width + top-
  * aligns: the grid flows a flexible column count with the pane width, and
@@ -31,7 +31,12 @@ export function IconPreview({ styles }: PreviewProps) {
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
   const matches = q
-    ? ICONS.filter((d) => d.id.toLowerCase().includes(q) || d.label.toLowerCase().includes(q))
+    ? ICONS.filter(
+        (d) =>
+          d.id.toLowerCase().includes(q) ||
+          d.label.toLowerCase().includes(q) ||
+          d.keywords?.some((k) => k.toLowerCase().includes(q)),
+      )
     : ICONS;
 
   return (

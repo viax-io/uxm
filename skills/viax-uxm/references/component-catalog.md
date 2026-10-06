@@ -148,7 +148,7 @@ Import path for all: `import { … } from 'uxm/ui';`
 | **DataTable** | `DataTable`, `DataTableColumn`, `DataTableDensity`, `DataTableProps` | Generic typed table. `density: 'compact' \| 'default' \| 'relaxed'`. Per-column `render`, `align`, `key`, `maxWidth` (ellipsis clamp; capped plain cells auto-wrap in HoverTooltip; on an editable column it feeds the cell's per-size max-width vars, so the column cap wins at either size — uncapped editable columns fall back to the atom's own default: 320px at `small`, none at `medium`), plus inline editing: `editable`, `editor: EditableCellType` (`text`/`number`/`date`/`select`/`multiselect`), `dateFormat`, `editorOptions`, `editorSearchable`, `editorClearable`, (3.4.0) `editorRequired` / `editorRequiredMessage` (empty blocks the commit with a warning, checked before `validate`), `formatValue`, `validate`, `isEditable`, `onCommit` (async). **`rowActions?: (row) => MenuEntry[]`** (2.6.0) appends a trailing ⋮ column that opens a `Menu` of per-row actions (clicks don't bubble to `onRowClick`). Card-list reflow at <480px container width. |
 | **EditableCell** | `EditableCell`, `EditableCellType`, `EditableCellAlign`, `EditableCellSize`, `EditableCellValue`, `EditableCellOption`, `EditableCellProps` | Inline-editable cell: click to edit, Enter commits, Esc cancels, blur commits; async `onCommit` (reject → inline error), sync `validate`, `format`. `type: 'text' \| 'number' \| 'date' \| 'select' \| 'multiselect'`; value `string \| number \| string[]`. **number** editor is masked per keystroke (2.9.0: `type="text"` + `inputMode="decimal"` via NumberInput's `maskNumeric` — no native number input); **date** = masked input + Calendar hybrid (`dateFormat`, commits ISO); **select/multiselect** = `options` via Listbox/MultiListbox + `searchable`/`clearable`. (3.4.0) `required` / `requiredMessage` block an empty commit with a warning BEFORE `validate` runs (uniform across types); `searchable` now defaults to `'auto'` (was the raw Listbox `true`), matching the `Select` atom; multiselect stages its picks and commits once when the panel closes, so "clear all → pick one" never trips the required rule. Truncated values reveal via HoverTooltip. Problems surface in a Popover-anchored compact Banner. Standalone or via DataTable columns. `size: 'small' \| 'medium'` — `small` (default) is the dense table scale (font falls back to inherited `1em`); `medium` steps up to the input-family scale (12/6 padding, 14px font) for standalone use in side panels / detail views. Symmetric per-size theming: `--uxm-editable-cell-{small\|medium}-{padding-x,padding-y,font-size,max-width}`; height always derives from font-size + padding (`1lh` floor keeps empty cells clickable; the old un-namespaced dimension vars incl. min-height are gone). `clearable` now also covers text/number/date — a ✕ inside the editing input (draft-only clear, focus kept, commit still via Enter/blur; date's ✕ sits inboard of the calendar toggle). `required` never hides a clear affordance — clearing a required cell surfaces the required warning, an optional one empties to the placeholder. ⚠️ `clearable` now **defaults to `true`** (input-family convention; was opt-in) — pass `false` / `editorClearable: false` to opt out. **Pickers clear from the field too**: alongside the dropdown-footer Clear, a clearable select/multiselect renders a ✕ on the trigger inboard of the chevron, revealed only while the panel is open, out of the tab order, committing `''` / `[]` directly. **Open pickers wear the editing chrome** — while the panel is open the trigger paints the same card surface + accent border + focus halo as the text/number/date editing input (same `--uxm-editable-cell-input-*` vars), so "being edited" reads identically across all five editor types. **The width cap is per size**: `small` keeps the 320px cap (a long value truncates instead of pushing its table column), `medium` has **no** cap and fills its container like any input-family field; knobs are `--uxm-editable-cell-{small\|medium}-max-width`. ⚠️ the shared `--uxm-editable-cell-max-width` is retired — a pre-split saved override no longer applies and must be re-saved per size. **The value colour is pinned, not inherited**: `--uxm-editable-cell-color` (fallback `--color-text`), so a muted column / dimmed row no longer bleeds into the cell; font-size still inherits by design. (4.37.0) Every message the cell can raise on its own is now a prop: `saveErrorMessage` (a rejected `onCommit` with no `Error.message`), `invalidNumberMessage`, `invalidDateMessage` (defaults to DateInput's mask-naming message), `invalidValueMessage` (the `forceMode="warning"` sample), alongside the existing `requiredMessage`. |
 | **Disclosure** | `Disclosure`, `DisclosureProps` | Expand/collapse panel. |
-| **Icon** | `Icon`, `IconProps`, `ICONS`, `ICON_OPTIONS`, `getIcon`, `IconDef` | SVG by `glyph` id from the registry. Props: `glyph` (required), `size` (default **24**), `strokeWidth` (default **1.75**). Inherits `currentColor`. **Returns `null` for an unknown glyph — it fails silently, so only use ids from the registry below.** Decorative by default: renders `aria-hidden="true"` unless you pass `aria-label`, which switches it to `role="img"` — icon+text buttons get clean accessible names; name icon-only controls on the control itself. |
+| **Icon** | `Icon`, `IconProps`, `ICONS`, `ICON_OPTIONS`, `getIcon`, `IconDef`, `ICON_IDS` (unreleased), `IconName` (unreleased), `registerIcons` (unreleased) | SVG by `glyph` id from the registry. Props: `glyph` (required), `size` (default **24**), `strokeWidth` (default **1.75**). Inherits `currentColor`. **Returns `null` for an unknown glyph — it fails silently, so only use ids from the registry below.** Decorative by default: renders `aria-hidden="true"` unless you pass `aria-label`, which switches it to `role="img"` — icon+text buttons get clean accessible names; name icon-only controls on the control itself. |
 | **IconTile** | `IconTile`, `IconTileProps` | Square coloured tile holding an Icon; used as a visual anchor in headers/rows. |
 | **List / ListItem** | `List`, `ListItem`, `ListProps`, `ListItemProps`, `ListVariant` | Vertical list container + item. ListItem polymorphs to div/button/anchor based on `interactive` / `href`. Two mutually exclusive leading slots: `icon` (wrapped in an accent `IconTile`, so a picture passed here gets tiled — not what you want) and **`media`**, which renders the node as-is for a `Thumbnail` / `Avatar` / `<img>` in a square `--uxm-list-item-media-size` box (36px, forwarded into `--uxm-thumbnail-size` / `--uxm-avatar-size` so those atoms scale with the row); `media` wins if both are passed. ⚠️ `media` lands inside the row's `<button>`/`<a>` — pass `alt=""` unless the image says something the row's text doesn't. `value` is a `ReactNode`, so a two-line sub-label needs no extra prop. Use `interactive` + `media` for product / people pickers instead of hand-wiring a `<button>` row. `List` takes **`variant='card' \| 'plain'`** — `plain` drops background/border/radius/clipping for a list already inside a surface; use it instead of overriding `.uxm-list` from your own CSS. `selected` / `onSelectedChange` add a **selectable** mode: the row becomes a `<label>` around a real checkbox, so a click anywhere toggles it — the multi-select shape (`active`+`aria-pressed` is a toggle BUTTON, wrong for a member of a checkable set). Mutually exclusive with `interactive`/`href` (selectable wins + dev warning); composes with `media`/`value`/`trailing`, leading order checkbox → media → content → trailing. |
 | **MetaRow** | `MetaRow`, `MetaRowProps` | Dot-separated inline metadata strip. |
@@ -158,7 +158,7 @@ Import path for all: `import { … } from 'uxm/ui';`
 | **TimelineEntry** | `TimelineEntry`, `TimelineDotState`, `TimelineEntryProps` | Single rail + dot + card row; `lineBefore` / `lineAfter` toggles. |
 | **TypeOverviewCard** | `TypeOverviewCard`, `TypeOverviewCardProps` | Icon tile + label + value + hover-revealed trailing + accent stripe. |
 
-## Icon glyph registry (all 72 ids)
+## Icon glyph registry (every id; enumerate `ICONS` rather than trusting a count here)
 
 `<Icon glyph="…">` returns **`null`** for anything not in this list — no error, no warning, just a
 missing icon. There is deliberately no `dashboard`, `folder`, `package`, `external`, `chart`,
@@ -166,18 +166,23 @@ missing icon. There is deliberately no `dashboard`, `folder`, `package`, `extern
 `ICONS.map(i => i.id)` (or `ICON_OPTIONS`, from `uxm/ui`) if you suspect the set has grown.
 
 ```
-archive-x  arrow-down  arrow-left  arrow-right  arrow-up  arrow-up-right  bell  bolt  bot
-business-interaction  calculator  calendar  chat-bubble  check  check-circle  chevron-down
-chevron-left  chevron-right  chevron-up  clock  close  cloud-arrow-up  code  cog-6-tooth  copy
-cursor-arrow-rays  dock-bottom  dock-right  document  drag-handle  exclamation-circle
-exclamation-triangle  eye  eye-slash  eyedropper  filter  globe  grid  history  image  info
-json  kebab  list  list-lines  menu  minus  model-business-interaction  model-configuration
-model-determination  model-revenue-motion  money  moon  organization  paint-brush  paper-clip
-pause  pencil  play  plus  product  question-mark-circle  refresh  save  search  settings
-sparkle  square  sun  trash  upload  user
+activity  archive-box  archive-x  arrow-down  arrow-left  arrow-right
+arrow-right-start-on-rectangle  arrow-up  arrow-up-right  arrows-up-down  bell  bolt  book-open
+bot  business-interaction  calculator  calendar  chat-bubble  check  check-circle  chevron-down
+chevron-left  chevron-right  chevron-up  clock  close  cloud-arrow-up  code  cog-6-tooth  coins
+copy  cursor-arrow-rays  dock-bottom  dock-right  document  document-text  dot-circle
+drag-handle  exclamation-circle  exclamation-triangle  eye  eye-slash  eyedropper  filter
+git-fork  globe  grid  history  image  info  json  kebab  key  list  list-lines  menu  minus
+model-business-interaction  model-configuration  model-determination  model-revenue-motion
+money  moon  no-symbol  organization  paint-brush  paper-airplane  paper-clip  pause  pencil
+play  plug  plus  product  question-mark-circle  refresh  save  search  server  settings
+shield-check  shield-exclamation  sparkle  square  sun  trash  upload  user  webhook  wrench
+x-circle
 ```
 
 Substitutions for the ids people reach for but that don't exist:
+
+Ids follow the Heroicons convention the set already uses, not another library's naming. Where a glyph is widely known by a different name, that name is a **`keywords` entry** on the `IconDef` — the studio's icon search matches `id`, `label` and `keywords`, so searching `ban`, `send`, `log out` or `scroll-text` finds the right glyph without the label pretending to be a keyword list.
 
 | Wanted | Use |
 |---|---|
@@ -192,6 +197,15 @@ Substitutions for the ids people reach for but that don't exist:
 | error / failure | `exclamation-triangle`, `exclamation-circle` |
 | light / dark toggle | `sun` / `moon` |
 | overflow ⋮ menu | `kebab` |
+| `ban` / blocked / disabled-state mark | `no-symbol` |
+| `send` / `send-horizontal` | `paper-airplane` — one glyph covers both |
+| `log-out` / sign out | `arrow-right-start-on-rectangle` |
+| `archive` | `archive-box` (`archive-x` is the EMPTY-archive variant) |
+| `arrow-down-up` / sort | `arrows-up-down` |
+| `shield-alert` | `shield-exclamation` |
+| `scroll-text` / logs / audit trail | `document-text` (`document` is the blank-page variant) |
+| `circle-dot` | `dot-circle` — the set names enclosed glyphs inner-thing-first (`x-circle`, `check-circle`, `exclamation-circle`). |
+| `activity` / `coins` / `dot-circle` / `git-fork` / `plug` / `webhook` | All present, but **house-drawn, not Heroicons** — Heroicons has no equivalent and the nearest candidates (`chart-bar`, `banknotes`, `stop-circle`, `share`, `bolt`, `link`) mean different things. Drawn to the same house rules (24×24, stroke 1.5, 0.75 grid, 2.25 margin); they read slightly lighter than true Heroicons. Do not regenerate them from an upstream package — there is none. |
 
 `Icon` defaults to `size={24}`. Inside `InputWithIcon` the slot reserves **16px** via padding only
 (see the InputWithIcon row above) — clamp the SVG in global CSS rather than passing `size={16}` at
