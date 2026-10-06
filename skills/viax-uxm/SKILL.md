@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.49.1, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.49.2, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.49.1** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.49.2** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.49.1 — current API surface (overrides training data)
+## v4.49.2 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,19 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.47.0
-
-- **New: `MenuButton`** — the labelled dropdown button, i.e. `Menu` with a shipped `Button*` as
-  its trigger, the chevron, the ARIA and the trigger ref already wired. `Menu` stays
-  trigger-agnostic (`renderTrigger` is still required and unchanged) — this is the shorthand for
-  the one shape every app was re-deriving, chevron and `triggerProps` plumbing included.
-  `variant` picks the button (`secondary` default), `icon` adds a leading glyph, `chevron={false}`
-  drops the affordance, `placement` / `aria-label` / `disabled` forward to `Menu`. A composition,
-  not a new visual primitive: the trigger is a real `Button*`, the panel a real `Menu`, and both
-  are themed by those atoms' own vars — including the icon/label/chevron spacing, which stays the
-  button's own `--uxm-button-{variant}-gap`; `MenuButton` adds only the chevron rotation. Anything it does not expose (controlled `open`, `matchAnchorWidth`, a bespoke
-  trigger, panel styling) is the signal to use `Menu` + `renderTrigger` directly.
 
 ### New in 4.48.0
 
@@ -116,7 +103,7 @@ catalog.
   `https://uxm.viax.io/latest/…` (`no-cache`). Demos only; pin `https://uxm.viax.io/<version>/…`
   anywhere else, and never put SRI on a `latest/` URL. See `references/quick-recipes.md` → recipe 18.
 
-### Unreleased
+### New in 4.49.2
 
 - **A published stacking scale (`--z-*`), and a supported way to put a popover above a
   dialog.** `Popover` defaults to `z-index: 50`, below `Dialog` (60), so a `Select` or
@@ -133,16 +120,18 @@ catalog.
   equivalent unless your app stacks something between 91 and 120. `--z-panel` is
   reserved: nothing in the library reads it.
 
+- **CDN `latest/` — production stance clarified.** `latest/` is used in demos; production use
+  needs further research and a careful rollout (the CDN edge currently caches it ~5 min despite
+  `no-cache`). Until then pin `https://uxm.viax.io/<version>/…` in anything you hand to a
+  consumer. See `references/quick-recipes.md` → recipe 18.
+
+### Unreleased
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
-
-- **CDN `latest/` — production stance clarified.** `latest/` is used in demos; production use
-  needs further research and a careful rollout (the CDN edge currently caches it ~5 min despite
-  `no-cache`). Until then pin `https://uxm.viax.io/<version>/…` in anything you hand to a
-  consumer. See `references/quick-recipes.md` → recipe 18.
 
 ## Workflow
 

@@ -1,3 +1,10 @@
+## [4.49.2](https://github.com/viax-io/uxm/compare/v4.49.1...v4.49.2) (2026-10-06)
+
+
+### Bug Fixes
+
+* **tokens:** publish the --z-* stacking scale, with a supported popover-over-dialog opt-in ([be6b61b](https://github.com/viax-io/uxm/commit/be6b61bdb4616fd588b6895dd4b2ec454802b12c))
+
 ## [4.49.1](https://github.com/viax-io/uxm/compare/v4.49.0...v4.49.1) (2026-10-02)
 
 

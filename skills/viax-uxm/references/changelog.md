@@ -1567,3 +1567,16 @@ reached the published library; now shipped in 2.8.0.
   change only — the control underneath is the same native radio group, so the a11y comes free.
   The frame reads the row's own `--uxm-radio-group-*` colours, so the two presentations cannot
   drift; the new `--uxm-radio-card-*` knobs are geometry and surface only.
+
+### New in 4.47.0
+
+- **New: `MenuButton`** — the labelled dropdown button, i.e. `Menu` with a shipped `Button*` as
+  its trigger, the chevron, the ARIA and the trigger ref already wired. `Menu` stays
+  trigger-agnostic (`renderTrigger` is still required and unchanged) — this is the shorthand for
+  the one shape every app was re-deriving, chevron and `triggerProps` plumbing included.
+  `variant` picks the button (`secondary` default), `icon` adds a leading glyph, `chevron={false}`
+  drops the affordance, `placement` / `aria-label` / `disabled` forward to `Menu`. A composition,
+  not a new visual primitive: the trigger is a real `Button*`, the panel a real `Menu`, and both
+  are themed by those atoms' own vars — including the icon/label/chevron spacing, which stays the
+  button's own `--uxm-button-{variant}-gap`; `MenuButton` adds only the chevron rotation. Anything it does not expose (controlled `open`, `matchAnchorWidth`, a bespoke
+  trigger, panel styling) is the signal to use `Menu` + `renderTrigger` directly.
