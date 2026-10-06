@@ -16,6 +16,7 @@ The package ships **no `"use client"` / `"use server"` directives** by design: c
 - **Studio** (`@viax.io/uxm/studio`) — `UxmApp`, the full design workbench MODO serves at `/uxm`, backend-decoupled through the `StudioPersistence` contract; see [Studio](#studio).
 - **WCAG / contrast helpers** (`@viax.io/uxm`) — `contrastRatio`, `parseColor`, `rgbToHex`, `suggestAccessibleColor`, `suggestAccessibleToken`, `wcagLevel`, plus `RGB` and `TokenCandidate` types.
 - **Default stylesheets** — `@viax.io/uxm/ui.css` (component primitive defaults) and `@viax.io/uxm/tokens.css` (token declarations).
+- **CDN bundles** (`https://uxm.viax.io/<version>/…`) — self-contained `<script>`/`<link>` builds of the UI primitives + styles for pages that can't use npm; see [CDN usage](#cdn-usage).
 
 ## Install
 
@@ -24,6 +25,10 @@ npm i @viax.io/uxm
 ```
 
 Every example in this README imports from `@viax.io/uxm` and its subpaths.
+
+> **No npm or bundler?** (a static page, a prototype, an embed) Load uxm straight from the CDN
+> with `<script>`/`<link>` tags instead — see [CDN usage](#cdn-usage). If the project has a
+> bundler, stick with `npm i`.
 
 > **Tip: install under an alias.** viax apps install the package as `uxm` so the real name
 > appears once, in `package.json`, and imports stay short and rename-proof:
