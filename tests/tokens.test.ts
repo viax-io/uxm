@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from 'node:fs';
+
 import { describe, expect, it } from 'vitest';
 
 import { contrastRatio, parseColor } from '@/lib/contrast';
@@ -120,5 +122,92 @@ describe('token contrast floors', () => {
     // NOT asserted: dark subtle on --color-surface-alt, which measures 2.85:1.
     // That is a real pre-existing miss, left visible here rather than papered
     // over — see the Unreleased note in skills/viax-uxm/SKILL.md.
+  });
+});
+
+// ── Layering contract ────────────────────────────────────────────────────────
+// The `--z-*` scale is a published ordering, and this change's whole promise is
+// that declaring it moved nothing. Both halves are pinned here because neither
+// is reachable from jsdom: there is no CSS cascade in the test environment, so
+// these read the stylesheets as text.
+//
+// Comments are stripped FIRST, and the tiers are read only from their own
+// block. The first version of this test did neither, and a planted
+// `/* --z-dialog: 60; */` above a real `--z-dialog: 99;` passed all 13 cases —
+// the same bug the parity script had.
+describe('layering scale', () => {
+  const strip = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const tokensCss = strip(readFileSync('src/tokens/index.css', 'utf8'));
+
+  /** The `:where(:root)` block that declares the scale — not any other block. */
+  const scaleBlock = (() => {
+    const m = /:where\(:root\)\s*\{([^}]*)\}/.exec(tokensCss);
+    if (!m) throw new Error('the :where(:root) layering block is gone');
+    return m[1];
+  })();
+
+  const tier = (name: string) => {
+    const m = new RegExp(String.raw`--z-${name}:\s*(\d+);`).exec(scaleBlock);
+    if (!m) throw new Error(`--z-${name} is not declared in the layering block`);
+    return Number(m[1]);
+  };
+
+  /** Every `var(--z-NAME, FALLBACK)` across the shipped stylesheets. */
+  const readers = (() => {
+    const out: { file: string; name: string; fallback: number }[] = [];
+    const walk = (dir: string) => {
+      for (const e of readdirSync(dir, { withFileTypes: true })) {
+        const full = `${dir}/${e.name}`;
+        if (e.isDirectory()) walk(full);
+        else if (e.name.endsWith('.scss') || e.name.endsWith('.css')) {
+          const src = strip(readFileSync(full, 'utf8'));
+          for (const m of src.matchAll(/var\(\s*--z-([a-z]+)\s*,\s*(\d+)\s*\)/g)) {
+            out.push({ file: full, name: m[1], fallback: Number(m[2]) });
+          }
+        }
+      }
+    };
+    walk('src');
+    return out;
+  })();
+
+  it('declares the tiers in a strict order', () => {
+    // panel and drawer share 40 on purpose — alternatives, never both on screen.
+    expect(tier('panel')).toBe(tier('drawer'));
+    expect(tier('drawer')).toBeLessThan(tier('dialog'));
+    expect(tier('dialog')).toBeLessThan(tier('toast'));
+    expect(tier('toast')).toBeLessThan(tier('popover'));
+  });
+
+  it('leaves the Popover default BELOW the dialog tier', () => {
+    // The compatibility promise: Popover keeps its shipped fallback, so no
+    // consumer's stacking moves until they opt in. Raising it is a
+    // major-release decision — if this fails, that is the question being
+    // answered, not a number to update.
+    const popoverScss = strip(readFileSync('src/ui/popover/popover.scss', 'utf8'));
+    const fallback = /--uxm-popover-z-index,\s*(\d+)\)/.exec(popoverScss);
+    expect(fallback, 'popover.scss no longer reads --uxm-popover-z-index with a fallback').not.toBeNull();
+    expect(Number(fallback![1])).toBe(50);
+    expect(Number(fallback![1])).toBeLessThan(tier('dialog'));
+  });
+
+  it('keeps EVERY reader\'s fallback equal to the tier it reads', () => {
+    // Globbed, not a hard-coded list: a tier declared at a value different from
+    // some reader's fallback restacks that component silently, and a new reader
+    // added later must not slip past this.
+    expect(readers.length, 'no --z-* readers found — the glob is broken').toBeGreaterThan(0);
+    for (const r of readers) {
+      expect(Number.isNaN(tier(r.name)), `${r.file} reads undeclared --z-${r.name}`).toBe(false);
+      expect(r.fallback, `${r.file}: var(--z-${r.name}, ${r.fallback}) drifted from the declared ${tier(r.name)}`).toBe(tier(r.name));
+    }
+  });
+
+  it('keeps the opt-in tiers read by nobody', () => {
+    // `--z-popover` and `--z-panel` are opt-in/reserved. The moment a stylesheet
+    // reads one, the default stacking HAS moved and this stops being additive.
+    for (const name of ['popover', 'panel']) {
+      const found = readers.filter((r) => r.name === name);
+      expect(found.map((r) => r.file), `--z-${name} is now read by the library — that changes a default`).toEqual([]);
+    }
   });
 });

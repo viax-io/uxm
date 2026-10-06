@@ -2,7 +2,7 @@
 
 The canonical token catalogue. Source of truth: `src/tokens/index.ts` in the uxm repo
 (`https://github.com/viax-io/uxm`), exported as the `themeTokens` array from
-`uxm/tokens`. These tokens declare `--color-*` CSS custom properties on `:root` (via
+`uxm/tokens`. These tokens declare `--color-*` CSS custom properties on `:root` (via It also declares the `--shadow-*`, `--font-*` and `--z-*` globals (see **Layering** below).
 `uxm/tokens.css`) and are the **MODO-configurable layer** — brand-settings UIs edit them
 centrally, and every component re-tints instantly.
 
@@ -206,6 +206,60 @@ built on them (`bg-cream`, `text-ink`, …) to the token each one aliases:
 | `--color-peach` | `--color-highlight-warm` |
 | `--color-lavender` | `--color-highlight-cool` |
 | `--color-lime` | `--color-accent-subtle` |
+
+## Layering (`--z-*`)
+
+Stacking tiers for portaled and fixed-position layers, declared on `:where(:root)` in
+`tokens/index.css`. Every value is the fallback the components already used, so the
+scale documents what shipped rather than changing it.
+
+| Tier | Value | Who reads it |
+|---|---|---|
+| `--z-panel` | `40` | **Nothing** — reserved for a consumer's own docked, non-modal surface. |
+| `--z-drawer` | `40` | `AppSidebar`'s mobile drawer (backdrop one below). |
+| `--z-dialog` | `60` | `Dialog`'s root. |
+| `--z-toast` | `80` | `Toaster`. |
+| `--z-popover` | `90` | **Nothing by default** — the opt-in for `Popover`, below. |
+
+`--z-panel` and `--z-drawer` share `40` on purpose: a docked panel and the mobile
+drawer are alternatives, never both on screen.
+
+**`:where(:root)`, not `:root`.** `--z-dialog`, `--z-toast` and `--z-drawer` are
+documented knobs that were previously undeclared, so your declaration was the only one
+and always won. Zero specificity keeps it that way — `html { --z-toast: 100 }` or a
+`:root` rule loading before `tokens.css` still beats the library. The one case it
+cannot fix: an unlayered declaration beats a layered one whatever the specificity, so
+if you set these inside `@layer base` (the usual Tailwind v4 shape) the library wins —
+set them outside a layer.
+
+### Putting a popover above a dialog
+
+`Popover` stays on `var(--uxm-popover-z-index, 50)`, which is **below** `--z-dialog`
+— so a `Select`, `Menu` or `EditableCell` picker opened inside a `Dialog` paints behind
+the backdrop. Both portal to `<body>`, so only `z-index` separates them and no
+descendant selector can reach the panel. (`DateInput` is *not* affected — its calendar
+is in-flow at `z-index: 10`, inside the dialog's own stacking context.)
+
+The default is left alone because raising it moves stacking for every consumer.
+Opt in per app:
+
+```css
+:where(:root) {
+  --uxm-popover-z-index: var(--z-popover);
+}
+```
+
+`--z-popover` (90) is **above** `--z-toast` (80) deliberately: a popover is only on
+screen while the user is driving it, and a toast arriving mid-interaction should not
+cover the list they are reading.
+
+To scope it to one panel instead, set the knob on a class and pass `panelClassName` —
+exposed by `Listbox` and `Menu` only. `PhoneInput` and `CurrencyInput` hard-code that
+internally but forward `style` to the panel, so use
+`style={{ '--uxm-popover-z-index': 'var(--z-popover)' }}` there. `Select`,
+`SearchDropdown`, `LanguageSwitcher`, `HoverTooltip`, `TimeInput`, `ColorInput` and the
+`EditableCell` pickers expose no panel hook at all, so they follow the `:where(:root)`
+form only — which covers `Select`, the most common case.
 
 ## Theme variants (`data-theme`)
 
