@@ -1,3 +1,10 @@
+# [4.52.0](https://github.com/viax-io/uxm/compare/v4.51.0...v4.52.0) (2026-10-07)
+
+
+### Features
+
+* **studio:** give the workbench modo's account mechanic ([7d4437c](https://github.com/viax-io/uxm/commit/7d4437c82ba048d2a8f96de430a8cf16ce8649a7))
+
 # [4.51.0](https://github.com/viax-io/uxm/compare/v4.50.0...v4.51.0) (2026-10-07)
 
 
