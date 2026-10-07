@@ -13,6 +13,7 @@ import {
 } from '@/ui';
 import type { MenuEntry } from '@/ui';
 
+import { useStudioT } from '../i18n';
 import { useUxm, type ThemeMode } from '../lib/context';
 
 import type { ReactNode } from 'react';
@@ -60,11 +61,6 @@ function initialsFrom(name: string): string {
   return (first + last).toUpperCase();
 }
 
-const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
-  { value: 'auto', label: 'Auto · match time of day' },
-];
 
 /** One read-only label/value row inside a settings section. */
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -81,7 +77,20 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
  * absent on insecure origins and can reject even where it exists, so the
  * button reports what actually happened rather than assuming success.
  */
-function CopyableValue({ label, value, href }: { label: string; value: string; href?: string }) {
+function CopyableValue({
+  value,
+  href,
+  copyLabel,
+  copiedLabel,
+}: {
+  value: string;
+  href?: string;
+  /** Accessible name and tooltip of the copy button, e.g. "Copy email". */
+  copyLabel: string;
+  /** Accessible name after a successful copy, e.g. "Email copied". */
+  copiedLabel: string;
+}) {
+  const t = useStudioT();
   const [copied, setCopied] = useState(false);
   const resetTimer = useRef<number | undefined>(undefined);
   // The pane can be dismissed (Escape, backdrop) inside the 1.5s window.
@@ -106,8 +115,8 @@ function CopyableValue({ label, value, href }: { label: string; value: string; h
         <span className="truncate">{value}</span>
       )}
       <IconButton
-        aria-label={copied ? `${label} copied` : `Copy ${label.toLowerCase()}`}
-        title={copied ? 'Copied' : `Copy ${label.toLowerCase()}`}
+        aria-label={copied ? copiedLabel : copyLabel}
+        title={copied ? t('chrome', 'Copied') : copyLabel}
         onClick={copy}
       >
         <Icon glyph={copied ? 'check' : 'copy'} size={14} />
@@ -152,6 +161,12 @@ function AccountSettingsPane({
   onClose: () => void;
 }) {
   const { themeMode, setThemeMode, theme } = useUxm();
+  const t = useStudioT();
+  const themeOptions: { value: ThemeMode; label: string }[] = [
+    { value: 'light', label: t('chrome', 'Light') },
+    { value: 'dark', label: t('chrome', 'Dark') },
+    { value: 'auto', label: t('chrome', 'Auto · match time of day') },
+  ];
 
   // Lift the popover tier for the lifetime of this pane only — see the
   // `body.uxm-studio-pane-open` rule in studio-shell.css for why it is scoped
@@ -166,7 +181,7 @@ function AccountSettingsPane({
     <Dialog open onOpenChange={(next) => { if (!next) onClose(); }} className="uxm-studio-account-dialog">
       <SideFlexpane
         title={account.name}
-        subtitle="Account settings"
+        subtitle={t('chrome', 'Account settings')}
         icon={
           <IconTile size={40}>
             <Icon glyph="user" size={20} />
@@ -177,13 +192,18 @@ function AccountSettingsPane({
         minWidth={420}
         maxWidth={840}
       >
-        <Section title="Profile">
-          <Field label="Name">{account.name}</Field>
-          <Field label="Email">
-            <CopyableValue label="Email" value={account.email} href={`mailto:${account.email}`} />
+        <Section title={t('chrome', 'Profile')}>
+          <Field label={t('chrome', 'Name')}>{account.name}</Field>
+          <Field label={t('chrome', 'Email')}>
+            <CopyableValue
+              value={account.email}
+              href={`mailto:${account.email}`}
+              copyLabel={t('chrome', 'Copy email')}
+              copiedLabel={t('chrome', 'Email copied')}
+            />
           </Field>
-          {account.role && <Field label="Role">{account.role}</Field>}
-          {account.realm && <Field label="Realm">{account.realm}</Field>}
+          {account.role && <Field label={t('chrome', 'Role')}>{account.role}</Field>}
+          {account.realm && <Field label={t('chrome', 'Realm')}>{account.realm}</Field>}
         </Section>
 
         {/* Appearance is omitted when embedded: `UxmApp` mounts ThemeSync only
@@ -193,14 +213,14 @@ function AccountSettingsPane({
             owns its own theme control, which is the same reason the canvas
             hides its light/dark toggle there. */}
         {!embed && (
-        <Section title="Appearance">
-          <Field label="Theme">
+        <Section title={t('chrome', 'Appearance')}>
+          <Field label={t('chrome', 'Theme')}>
             <Select
               value={themeMode}
-              aria-label="Theme"
+              aria-label={t('chrome', 'Theme')}
               onChange={(e) => setThemeMode(e.currentTarget.value as ThemeMode)}
             >
-              {THEME_OPTIONS.map((o) => (
+              {themeOptions.map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.label}
                 </option>
@@ -209,7 +229,9 @@ function AccountSettingsPane({
           </Field>
           {themeMode === 'auto' && (
             <p className="pt-1 text-[12px] text-text-muted">
-              Auto is on — showing the {theme} theme for the current time of day.
+              {theme === 'dark'
+                ? t('chrome', 'Auto is on — showing the dark theme for the current time of day.')
+                : t('chrome', 'Auto is on — showing the light theme for the current time of day.')}
             </p>
           )}
         </Section>
@@ -230,6 +252,7 @@ function AccountSettingsPane({
  */
 export function AccountMenu({ account, embed = false }: { account: StudioAccount; embed?: boolean }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const t = useStudioT();
   const triggerRef = useRef<HTMLSpanElement | null>(null);
 
   /**
@@ -255,7 +278,7 @@ export function AccountMenu({ account, embed = false }: { account: StudioAccount
     { separator: true, key: 'sep-account' },
     {
       key: 'settings',
-      label: 'Account settings',
+      label: t('chrome', 'Account settings'),
       icon: 'cog-6-tooth',
       onSelect: () => setSettingsOpen(true),
     },
@@ -263,7 +286,7 @@ export function AccountMenu({ account, embed = false }: { account: StudioAccount
       ? [
           {
             key: 'logout',
-            label: 'Log out',
+            label: t('chrome', 'Log out'),
             icon: 'arrow-right-start-on-rectangle',
             onSelect: account.onSignOut,
           },
@@ -276,7 +299,7 @@ export function AccountMenu({ account, embed = false }: { account: StudioAccount
       <Menu
         items={items}
         placement="bottom-end"
-        aria-label="Account"
+        aria-label={t('chrome', 'Account')}
         renderTrigger={({ triggerProps }) => {
           // Menu's `ref` goes straight onto Avatar (which spreads rest onto its
           // own span), and the wrapper carries a plain ref object of our own.
@@ -293,7 +316,7 @@ export function AccountMenu({ account, embed = false }: { account: StudioAccount
                 initials={account.initials || initialsFrom(account.name)}
                 role="button"
                 tabIndex={0}
-                aria-label="Account"
+                aria-label={t('chrome', 'Account')}
                 {...triggerProps}
               />
             </span>

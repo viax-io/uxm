@@ -13,6 +13,7 @@ import {
 import { themeTokens } from '@/tokens';
 import { Chip, Icon, SectionHeader, Tag, type TagType } from '@/ui';
 
+import { useStudioT } from '../i18n';
 import { useUxm } from '../lib/context';
 import { useGlobalTheme } from '../lib/use-global-theme';
 
@@ -168,6 +169,7 @@ export function WcagPanel({ def }: { def: ComponentDef }) {
   // and whenever they set it. That removes this panel's dependence on effect
   // ordering entirely.
   const domTheme = useGlobalTheme();
+  const t = useStudioT();
   const scopeRef = useRef<HTMLDivElement>(null);
   const [results, setResults] = useState<Result[]>([]);
 
@@ -255,7 +257,7 @@ export function WcagPanel({ def }: { def: ComponentDef }) {
 
   return (
     <div ref={scopeRef} className="mb-6">
-      <SectionHeader>Accessibility</SectionHeader>
+      <SectionHeader>{t('chrome', 'Accessibility')}</SectionHeader>
       <div className="space-y-2">
         {results.map(({ pair, ratio, level, suggestion }) => {
           const failing = level === 'fail' || level === 'AA-large';
@@ -277,7 +279,7 @@ export function WcagPanel({ def }: { def: ComponentDef }) {
                     />
                   </div>
                   <span className="text-[11px] text-text-strong truncate">
-                    {pair.fgLabel} / {pair.bgLabel}
+                    {t('label', pair.fgLabel)} / {t('label', pair.bgLabel)}
                   </span>
                 </div>
                 <LevelBadge level={level} ratio={ratio} />
@@ -288,7 +290,7 @@ export function WcagPanel({ def }: { def: ComponentDef }) {
                   onClick={() => setOverride(selectedId, pair.fgKey, suggestion.value)}
                   iconLeft={<Icon glyph="sparkle" size={12} strokeWidth={2} />}
                 >
-                  Quick fix → {suggestion.label}
+                  {t('chrome', 'Quick fix')} → {suggestion.label}
                 </Chip>
               )}
               {level === null && (
@@ -325,12 +327,17 @@ const LEVEL_LABEL: Record<Level, string> = {
 };
 
 function LevelBadge({ level, ratio }: { level: Level | null; ratio: number | null }) {
+  const t = useStudioT();
   if (level === null || ratio === null) {
     return <span className="text-[10px] text-text-subtle">—</span>;
   }
+  // `AAA` / `AA` / `AA-large` are WCAG conformance codes — the same in every
+  // language, and a translated one would stop matching the spec a designer is
+  // checking against. Only the verdict word is prose.
+  const label = level === 'fail' ? t('chrome', 'Fail') : LEVEL_LABEL[level];
   return (
     <Tag type={LEVEL_TAG_TYPE[level]} style={{ flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
-      {LEVEL_LABEL[level]} · {ratio.toFixed(2)}
+      {label} · {ratio.toFixed(2)}
     </Tag>
   );
 }

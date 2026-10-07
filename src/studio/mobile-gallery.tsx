@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { BrandSettingsPreview } from '@/previews';
 import { Icon } from '@/ui';
 
+import { useStudioT } from './i18n';
 import { useUxm } from './lib/context';
 import { usePreviewShell } from './lib/preview-shell';
 import { registry, categoryColors } from './lib/registry';
@@ -31,6 +32,7 @@ function resolveStylesAndVariants(def: ComponentDef, overrides: StyleMap): { sty
 
 export function MobileGallery() {
   const { getAllOverrides } = useUxm();
+  const t = useStudioT();
   const shell = usePreviewShell();
   const allOverrides = getAllOverrides();
 
@@ -58,7 +60,7 @@ export function MobileGallery() {
       {/* Brand Settings — editable on mobile */}
       <section className="border-b border-border px-4 py-5">
         <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-          Brand
+          {t('chrome', 'Brand')}
         </h2>
         <BrandSettingsPreview
           styles={{}}
@@ -71,7 +73,7 @@ export function MobileGallery() {
       {/* Component gallery — read-only */}
       <section className="px-4 py-5">
         <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-          Components
+          {t('chrome', 'Components')}
         </h2>
         <div className="flex flex-col gap-4">
           {galleryItems.map((def) => {
@@ -86,8 +88,8 @@ export function MobileGallery() {
               >
                 <header className="flex items-start justify-between gap-2 border-b border-border px-4 py-3">
                   <div className="min-w-0">
-                    <h3 className="truncate text-[14px] font-semibold text-text">{def.name}</h3>
-                    <p className="mt-0.5 text-[11px] text-text-muted">{def.description}</p>
+                    <h3 className="truncate text-[14px] font-semibold text-text">{t('component', def.name)}</h3>
+                    <p className="mt-0.5 text-[11px] text-text-muted">{t('description', def.description)}</p>
                   </div>
                   <span
                     className="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-text-strong"
@@ -97,7 +99,7 @@ export function MobileGallery() {
                       className="h-1.5 w-1.5 rounded-full"
                       style={{ backgroundColor: categoryColors[def.category] }}
                     />
-                    {def.category}
+                    {t('category', def.category)}
                   </span>
                 </header>
                 <div

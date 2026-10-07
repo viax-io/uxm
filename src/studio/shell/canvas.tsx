@@ -108,6 +108,7 @@ import {
 import { ButtonGhost, ButtonPrimary, IconButton } from '@/ui';
 import { Icon } from '@/ui';
 
+import { useStudioT } from '../i18n';
 import { useUxm } from '../lib/context';
 import { usePreviewShell } from '../lib/preview-shell';
 import { getComponentDef } from '../lib/registry';
@@ -277,6 +278,7 @@ export function Canvas({
 }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const { selectedId, getOverrides, resetOverrides, getCurrentVariants, pushEvent, capabilities, theme, setTheme } = useUxm();
+  const t = useStudioT();
   const shell = usePreviewShell();
   const def = getComponentDef(selectedId);
   const overrides = getOverrides(selectedId);
@@ -319,9 +321,9 @@ export function Canvas({
             flex item ignores the constraint and pushes the actions
             cluster off-screen. */}
         <div className="min-w-0 flex-1">
-          <h2 className="text-[15px] font-semibold text-text truncate">{def.name}</h2>
+          <h2 className="text-[15px] font-semibold text-text truncate">{t('component', def.name)}</h2>
           <p className="text-xs text-text-muted mt-0.5 hidden @[640px]:block truncate">
-            {def.description}
+            {t('description', def.description)}
           </p>
         </div>
         {/* flex-shrink-0 keeps the actions cluster from wrapping; the
@@ -329,9 +331,9 @@ export function Canvas({
             space gets tight. */}
         <div className="flex items-center gap-2 flex-shrink-0">
           {hasOverrides && (
-            <ButtonGhost onClick={() => resetOverrides(selectedId)} title="Reset overrides">
+            <ButtonGhost onClick={() => resetOverrides(selectedId)} title={t('chrome', 'Reset overrides')}>
               <Icon glyph="refresh" size={14} />
-              <span className="hidden @[480px]:inline">Reset</span>
+              <span className="hidden @[480px]:inline">{t('chrome', 'Reset')}</span>
             </ButtonGhost>
           )}
           {/* Light/dark toggle — only in the standalone portal (the studio
@@ -340,15 +342,15 @@ export function Canvas({
           {!embed && (
             <IconButton
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-              title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              aria-label={theme === 'dark' ? t('chrome', 'Switch to light theme') : t('chrome', 'Switch to dark theme')}
+              title={theme === 'dark' ? t('chrome', 'Switch to light theme') : t('chrome', 'Switch to dark theme')}
             >
               <Icon glyph={theme === 'dark' ? 'sun' : 'moon'} size={16} />
             </IconButton>
           )}
           <ButtonPrimary onClick={() => setPreviewOpen(true)}>
             <Icon glyph="eye" size={14} />
-            {capabilities.persist ? 'Preview & Publish' : 'Preview'}
+            {capabilities.persist ? t('chrome', 'Preview & Publish') : t('chrome', 'Preview')}
           </ButtonPrimary>
           {headerActions}
           {account && <AccountMenu account={account} embed={embed} />}

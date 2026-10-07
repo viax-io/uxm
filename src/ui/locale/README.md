@@ -2,7 +2,9 @@
 
 Broadcasts one BCP-47 locale to every UXM atom that formats dates, numbers, or units through `Intl`.
 
-**This is not an i18n engine.** UXM ships no message catalogue and no translation runtime, and it never will — that would force a translation dependency onto every consumer of a primitives library. Translated *copy* stays the consumer's job and arrives through each atom's label props (`clearLabel`, `labels`, `countLabel`, …). What this provider carries is the one thing those props cannot express: which locale `Intl` should format with, so month names, decimal separators, and byte units follow the app instead of silently defaulting to US English.
+**This is not an i18n engine.** UXM ships no message catalogue and no translation runtime for `/ui`, and it never will — that would force a translation dependency onto every consumer of a primitives library.
+
+> The **studio** is the one exception, and it is not one in spirit: `src/studio/i18n/` ships dictionaries for the design workbench's own chrome, because those strings live inside the library and no consumer can reach them. Nothing there touches `/ui`, and a consuming app never pays for it — the dictionaries load only under the `/studio` subpath. See [`src/studio/i18n/README.md`](../../studio/i18n/README.md). Translated *copy* stays the consumer's job and arrives through each atom's label props (`clearLabel`, `labels`, `countLabel`, …). What this provider carries is the one thing those props cannot express: which locale `Intl` should format with, so month names, decimal separators, and byte units follow the app instead of silently defaulting to US English.
 
 Only the atoms that actually call `Intl` read it: `Calendar`, `DateInput` (via `Calendar`), `EditableCell` (via `Calendar`), `CurrencyInput`, and `FileUpload`.
 

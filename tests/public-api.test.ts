@@ -50,6 +50,7 @@ const SOURCE_ENTRIES: Record<string, () => Promise<Record<string, unknown>>> = {
   './previews': () => import('@/previews'),
   './studio': () => import('@/studio'),
   './studio/generate-css': () => import('@/studio/persistence/generate-css'),
+  './studio/i18n': () => import('@/studio/i18n'),
 };
 
 const exportNames = (mod: Record<string, unknown>) => Object.keys(mod).filter((k) => k !== 'default').sort();
