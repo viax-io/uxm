@@ -301,6 +301,50 @@ export const ICONS: IconDef[] = [
       '<circle cx="18" cy="17.25" r="2.625"/>' +
       '<path d="M10.7 9.03 7.3 14.97M13.3 9.03l3.4 5.94M8.625 17.25h6.75"/>',
   },
+
+  // ── Sort states ──────────────────────────────────────────────────────────
+  // A family, not three unrelated glyphs. Every one is the SAME frame -- three
+  // bars on the left, one shaft on the right -- and only the arrowheads differ,
+  // so the path-geometry (centre-line) box is identical in all three states:
+  // x 3..21, y 4.5..19.5. The stroke adds the same margin to every member, so
+  // equality here is equality on screen. That is the point of the set: a table
+  // header swapping between them keeps one footprint and one visual weight,
+  // where swapping `arrow-up` (ink 15 wide) for `arrows-up-down` (18 wide)
+  // changes the mark's weight mid-column. (An arrowhead still appears and
+  // disappears between states -- that is the signal; what does not move is the
+  // footprint.)
+  //
+  // (The layout box never moved: <Icon> always renders width/height = size on a
+  // fixed 24x24 viewBox, so no glyph swap can reflow text. It is the ink that
+  // jumped.)
+  //
+  // The bars are constant across the three on purpose. Which bar order means
+  // "ascending" is a convention that disagrees between icon sets, so the bars
+  // only say "a list under a sort" and the arrowhead carries the direction --
+  // the one part everybody reads the same way.
+  //
+  // Absolute commands only (M/L/H/V). `tests/icon.test.tsx` parses these to
+  // assert the three boxes really are identical, and that parser deliberately
+  // supports nothing else, so a relative command fails loudly rather than
+  // being mis-measured.
+  {
+    id: 'sort-none',
+    label: 'Sort',
+    keywords: ['unsorted', 'sortable', 'two way', 'column header'],
+    path: 'M3 6.75H12M3 12H9.75M3 17.25H7.5M18 4.5V19.5M15 7.5L18 4.5L21 7.5M15 16.5L18 19.5L21 16.5',
+  },
+  {
+    id: 'sort-asc',
+    label: 'Sort Ascending',
+    keywords: ['bars-arrow-up', 'a to z', 'smallest first', 'increasing'],
+    path: 'M3 6.75H12M3 12H9.75M3 17.25H7.5M18 4.5V19.5M15 7.5L18 4.5L21 7.5',
+  },
+  {
+    id: 'sort-desc',
+    label: 'Sort Descending',
+    keywords: ['bars-arrow-down', 'z to a', 'largest first', 'decreasing'],
+    path: 'M3 6.75H12M3 12H9.75M3 17.25H7.5M18 4.5V19.5M15 16.5L18 19.5L21 16.5',
+  },
 ];
 
 /**
@@ -337,7 +381,8 @@ export const ICON_IDS = [
   'x-circle', 'key', 'arrow-right-start-on-rectangle', 'paper-airplane',
   'server', 'shield-exclamation', 'shield-check', 'wrench',
   'document-text', 'activity', 'dot-circle', 'coins',
-  'git-fork', 'plug', 'webhook',
+  'git-fork', 'plug', 'webhook', 'sort-none',
+  'sort-asc', 'sort-desc',
 ] as const;
 
 /**

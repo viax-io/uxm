@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.50.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.51.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.50.0** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.51.0** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.50.0 — current API surface (overrides training data)
+## v4.51.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,29 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.48.4
-
-- **Light-theme text ramp repaired, and `--color-accent-subtle` put back in the emerald
-  family.** `--color-text-muted` was `#9CA3AF` — 2.37:1 on `--color-surface` and 2.54:1 on
-  `--color-card`, under even the 3:1 floor, so every secondary string in the library failed
-  AA on light. It is now `#6E6A64` (5.02:1 / 5.37:1). `--color-text-subtle` was worse at
-  1.39:1 / 1.48:1 and is now `#8A857D` (3.25 on `--color-surface-alt`, 3.42 surface, 3.66
-  card) — enough for separators, idle strokes and disabled marks, deliberately still short
-  of the 4.5:1 text floor. Note several atoms do still paint real text with it (section
-  titles, group headers, placeholders); that is a pre-existing 1.4.3 failure this change
-  improves but does not close. Both are now WARM neutrals (hue ~36), matching the surfaces they sit on
-  (`--color-surface` is hue 30, `--color-border` 60) instead of the cool blue-greys
-  (218 / 213) they were, which read as borrowed from another palette. Separately,
-  `--color-accent-subtle`
-  was `#E6FFD1`, a hue-93 yellow-green among an emerald scale (147 / 151 / 156), which made the
-  `PageHeader` / `TypeOverviewCard` / `ErrorPage` icon tiles read acidic under their forest
-  glyph (the bare `IconTile` default is `--color-surface-alt`, not this); it is `#E2F3E8`
-  (hue 141), and the glyph keeps AA on it at 5.16:1. **Dark theme is untouched.** Dark muted and the accent pair already passed; dark subtle sits right at the 3:1 non-text floor (3.12 surface / 3.41 card, but 2.85 on surface-alt), so it is no worse than before but is not clean either.
-  Consequences worth knowing: this retires several documented AA *exceptions* (the Menu hint,
-  the SidebarNavTrigger caption) whose rationales are rewritten in the same change, and the
-  lifecycle connector's idle and dashed strokes clear the 3:1 UI floor for the first time.
-  Nothing changes shape or spacing; every affected surface is a colour.
 
 ### New in 4.49.0
 
@@ -151,6 +128,23 @@ catalog.
   title specifically — its subtitle already defaults to muted, so putting the title there
   too makes the two identical. Darkening the defaults is still open, and is a major-release
   decision because it shifts every listbox and settings panel.
+
+### New in 4.51.0
+
+- **A sort-state icon family that holds one box: `sort-none`, `sort-asc`, `sort-desc`.**
+  All three are the same frame — three bars left, one shaft right — with only the
+  arrowheads differing, so the path-geometry (centre-line) box is identical in every
+  state (x 3..21, y 4.5..19.5), and the stroke adds the same margin to each. A table
+  header toggling between them keeps one footprint and one visual weight. That is what the previous pattern could not do: swapping `arrow-up` (ink 15
+  wide) for `arrows-up-down` (18 wide) changed the mark's weight mid-column. Note the
+  *layout* box was never the problem — `<Icon>` always renders `width`/`height` = `size`
+  on a fixed 24×24 viewBox, so no glyph swap can reflow text; it is the ink that jumped.
+  The bars stay constant across the three deliberately: which bar order means "ascending"
+  is a convention icon sets disagree on, so the arrowhead carries the direction and the
+  bars only say "a list under a sort". `tests/icon.test.tsx` parses the paths and pins
+  the three boxes as equal, so the guarantee cannot quietly rot. Replaces the
+  three-way `active ? (asc ? 'arrow-up' : 'arrow-down') : 'arrows-up-down'` conditional
+  consumers were writing.
 
 ### Unreleased
 

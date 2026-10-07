@@ -1,3 +1,10 @@
+# [4.51.0](https://github.com/viax-io/uxm/compare/v4.50.0...v4.51.0) (2026-10-07)
+
+
+### Features
+
+* **icons:** add a sort-state family that holds one box ([9b2c5a5](https://github.com/viax-io/uxm/commit/9b2c5a5f27cb3aeaa552070f6509daf2e5cd7031))
+
 # [4.50.0](https://github.com/viax-io/uxm/compare/v4.49.2...v4.50.0) (2026-10-06)
 
 

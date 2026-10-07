@@ -1,6 +1,6 @@
 # @viax.io/uxm — Component Catalog
 
-All 97 components exported from `@viax.io/uxm/ui` (as of v4.50.0) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
+All 97 components exported from `@viax.io/uxm/ui` (as of v4.51.0) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
 
 ## Deprecated (removed in the next major — do not use in new code)
 
@@ -167,17 +167,16 @@ missing icon. There is deliberately no `dashboard`, `folder`, `package`, `extern
 
 ```
 activity  archive-box  archive-x  arrow-down  arrow-left  arrow-right
-arrow-right-start-on-rectangle  arrow-up  arrow-up-right  arrows-up-down  bell  bolt  book-open
-bot  business-interaction  calculator  calendar  chat-bubble  check  check-circle  chevron-down
+arrow-right-start-on-rectangle  arrow-up  arrow-up-right  arrows-up-down  bell  bolt  book-open  bot
+business-interaction  calculator  calendar  chat-bubble  check  check-circle  chevron-down
 chevron-left  chevron-right  chevron-up  clock  close  cloud-arrow-up  code  cog-6-tooth  coins
-copy  cursor-arrow-rays  dock-bottom  dock-right  document  document-text  dot-circle
-drag-handle  exclamation-circle  exclamation-triangle  eye  eye-slash  eyedropper  filter
-git-fork  globe  grid  history  image  info  json  kebab  key  list  list-lines  menu  minus
-model-business-interaction  model-configuration  model-determination  model-revenue-motion
-money  moon  no-symbol  organization  paint-brush  paper-airplane  paper-clip  pause  pencil
-play  plug  plus  product  question-mark-circle  refresh  save  search  server  settings
-shield-check  shield-exclamation  sparkle  square  sun  trash  upload  user  webhook  wrench
-x-circle
+copy  cursor-arrow-rays  dock-bottom  dock-right  document  document-text  dot-circle  drag-handle
+exclamation-circle  exclamation-triangle  eye  eye-slash  eyedropper  filter  git-fork  globe  grid
+history  image  info  json  kebab  key  list  list-lines  menu  minus  model-business-interaction
+model-configuration  model-determination  model-revenue-motion  money  moon  no-symbol  organization
+paint-brush  paper-airplane  paper-clip  pause  pencil  play  plug  plus  product
+question-mark-circle  refresh  save  search  server  settings  shield-check  shield-exclamation
+sort-asc  sort-desc  sort-none  sparkle  square  sun  trash  upload  user  webhook  wrench  x-circle
 ```
 
 Substitutions for the ids people reach for but that don't exist:
@@ -201,7 +200,8 @@ Ids follow the Heroicons convention the set already uses, not another library's 
 | `send` / `send-horizontal` | `paper-airplane` — one glyph covers both |
 | `log-out` / sign out | `arrow-right-start-on-rectangle` |
 | `archive` | `archive-box` (`archive-x` is the EMPTY-archive variant) |
-| `arrow-down-up` / sort | `arrows-up-down` |
+| `arrow-down-up` | `arrows-up-down` (the plain two-way arrow) |
+| sort state in a table header | `sort-none` / `sort-asc` / `sort-desc` — one family, identical path-geometry box in all three states, so toggling keeps one footprint and weight. Prefer these over hand-swapping `arrow-up` / `arrow-down` / `arrows-up-down`, whose ink widths differ (15 vs 18). |
 | `shield-alert` | `shield-exclamation` |
 | `scroll-text` / logs / audit trail | `document-text` (`document` is the blank-page variant) |
 | `circle-dot` | `dot-circle` — the set names enclosed glyphs inner-thing-first (`x-circle`, `check-circle`, `exclamation-circle`). |
