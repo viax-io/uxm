@@ -46,6 +46,12 @@ export interface PreviewShellContext {
    * through it.
    */
   t?: PreviewTranslate;
+  /**
+   * Display name of a theme token (`ThemeToken.name`) in the studio's locale —
+   * the `token` namespace, which `t` (always `chrome`) cannot reach. Absent,
+   * the English name renders.
+   */
+  tToken?: (name: string) => string;
 }
 
 export interface PreviewProps {

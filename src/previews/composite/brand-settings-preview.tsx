@@ -137,6 +137,7 @@ function BrandColorRow({ shell }: { shell: PreviewShellContext }) {
   // deliberately NOT translated — it shows where copy lands and at what size,
   // and a translated sample would imply the library picks a real app's wording.
   const t = shell.t ?? ((source: string) => source);
+  const tToken = shell.tToken ?? ((name: string) => name);
   // Any `identity`-flagged token renders; only the accent one carries the ramp
   // retint. Silently requiring `group === 'accent'` here would make the catalog
   // flag a no-op with no signal for every other group.
@@ -186,8 +187,8 @@ function BrandColorRow({ shell }: { shell: PreviewShellContext }) {
     <FormField
       label={t('Brand color')}
       hint={fansOut
-        ? 'Apply rebuilds the whole accent palette for light and dark — including any shades fine-tuned in Color below.'
-        : `Applies to ${token.name}. Fine-tune related tokens in Color below.`}
+        ? t('Apply rebuilds the whole accent palette for light and dark — including any shades fine-tuned in Color below.')
+        : t('Applies to {token}. Fine-tune related tokens in Color below.', { token: tToken(token.name) })}
       htmlFor={fieldId}
     >
       <Cluster id={`${fieldId}-row`} gap={12} align="center">
@@ -199,7 +200,7 @@ function BrandColorRow({ shell }: { shell: PreviewShellContext }) {
           outputFormat="hex"
           alpha={false}
           // ColorInputPopover appends the current value to this itself.
-          triggerLabel="Pick brand color"
+          triggerLabel={t('Pick brand color')}
           title={t('Pick a color')}
           style={{
             '--uxm-color-input-trigger-size': '44px',
@@ -225,11 +226,11 @@ function BrandColorRow({ shell }: { shell: PreviewShellContext }) {
           />
         </Stack>
         <ButtonSecondary onClick={apply} disabled={!staged}>
-          Apply
+          {t('Apply')}
         </ButtonSecondary>
         {overridden && (
           <InlineAction onClick={reset} icon={<Icon glyph="refresh" size={11} />}>
-            {fansOut ? 'Reset palette' : `Reset ${token.name.toLowerCase()}`}
+            {fansOut ? t('Reset palette') : t('Reset {token}', { token: tToken(token.name) })}
           </InlineAction>
         )}
       </Cluster>
@@ -304,10 +305,10 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
     setError(null);
     try {
       const data = await shell.uploadAsset(file, REMOTE_KIND(kind, tab));
-      if (!data?.url) throw new Error('Upload failed');
+      if (!data?.url) throw new Error(t('Upload failed'));
       setBrand({ [BRAND_FIELD(kind, tab)]: data.url });
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Upload failed');
+      setError(e instanceof Error ? e.message : t('Upload failed'));
     } finally {
       setUploading(null);
     }
@@ -403,8 +404,8 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
             value={typeTab}
             onChange={(v) => setTypeTab(v as TypeTab)}
             options={[
-              { value: 'body', label: 'Body', icon: dirtyDot(bodyDirty) },
-              { value: 'headings', label: 'Headings', icon: dirtyDot(headingsDirty) },
+              { value: 'body', label: t('Body'), icon: dirtyDot(bodyDirty) },
+              { value: 'headings', label: t('Headings'), icon: dirtyDot(headingsDirty) },
             ]}
           />
 
@@ -506,8 +507,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
               {levelsOpen && (
                 <Stack id="uxm-typography-levels-panel" gap={10}>
                   <p style={{ margin: 0, fontSize: 'calc(12px * var(--type-scale, 1))', color: 'var(--color-text-muted)', lineHeight: 'var(--type-body-line-height, 1.5)' }}>
-                    Each level inherits the settings above until you change it here.
-                    Display covers metric values and error codes.
+                    {t('Each level inherits the settings above until you change it here. Display covers metric values and error codes.')}
                   </p>
                   {/* Selects (not segments) in here: three controls share one
                       row, so the compact form is the one that fits. */}
@@ -556,7 +556,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                         >
                           {SCALE_OPTIONS.map((s) => (
                             <option key={s.value} value={s.value} disabled={s.value === ''}>
-                              {s.value === '' ? 'Size' : s.label.replace(/ —.*$/, '')}
+                              {s.value === '' ? t('Size') : s.label.replace(/ —.*$/, '')}
                             </option>
                           ))}
                         </Select>
@@ -649,32 +649,36 @@ function Group({
   );
 }
 
-const GROUP_LABELS: Record<ThemeToken['group'], string> = {
-  surfaces: 'Surfaces',
-  text: 'Text',
-  borders: 'Borders',
-  accent: 'Accent',
-  highlights: 'Highlights',
-  categories: 'Categories',
-  semantic: 'Semantic',
-};
+// Built per render through `t` rather than held as module data: the extractor
+// harvests literal translator calls in previews, and a bare object would ship English.
+const groupLabels = (t: PreviewTranslate): Record<ThemeToken['group'], string> => ({
+  surfaces: t('Surfaces'),
+  text: t('Text'),
+  borders: t('Borders'),
+  accent: t('Accent'),
+  highlights: t('Highlights'),
+  categories: t('Categories'),
+  semantic: t('Semantic'),
+});
 
 const GROUP_ORDER: ThemeToken['group'][] = [
   'surfaces', 'text', 'borders', 'accent', 'highlights', 'categories', 'semantic',
 ];
 
-function groupTokens(): { group: ThemeToken['group']; label: string; tokens: ThemeToken[] }[] {
+function groupTokens(t: PreviewTranslate): { group: ThemeToken['group']; label: string; tokens: ThemeToken[] }[] {
+  const labels = groupLabels(t);
   const by: Record<string, ThemeToken[]> = {};
-  for (const t of themeTokens) (by[t.group] ??= []).push(t);
+  for (const tok of themeTokens) (by[tok.group] ??= []).push(tok);
   return GROUP_ORDER
     .filter((g) => by[g])
-    .map((g) => ({ group: g, label: GROUP_LABELS[g], tokens: by[g] }));
+    .map((g) => ({ group: g, label: labels[g], tokens: by[g] }));
 }
 
 function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
   const t = shell.t ?? ((source: string) => source);
+  const tToken = shell.tToken ?? ((name: string) => name);
   const { theme, setTheme, brand, setBrand } = shell;
-  const grouped = groupTokens();
+  const grouped = groupTokens(t);
   const overrides = brand.tokens?.[theme] ?? {};
   // When non-null, the recalc modal is open; holds the just-changed accent token
   // (its cssVar + new hex) to use as the base for re-tinting the rest of the group.
@@ -745,7 +749,7 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
             disabled={!hasOverrides}
             icon={<Icon glyph="refresh" size={11} />}
           >
-            Reset {theme} values
+            {theme === 'dark' ? t('Reset dark values') : t('Reset light values')}
           </InlineAction>
         </Cluster>
         <LightDarkTabs value={theme} onChange={setTheme} t={t} />
@@ -761,6 +765,7 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
               {g.tokens.map((tok) => (
                 <TokenRow
                   t={t}
+                  tToken={tToken}
                   key={tok.cssVar}
                   token={tok}
                   theme={theme}
@@ -790,8 +795,8 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
           <Modal.Body>
             <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text)', lineHeight: 1.5 }}>
               {(() => {
-                const name = themeTokens.find((tok) => tok.cssVar === pendingAccent?.cssVar)?.name
-                  ?? t('an accent color');
+                const found = themeTokens.find((tok) => tok.cssVar === pendingAccent?.cssVar);
+                const name = found ? tToken(found.name) : t('an accent color');
                 // One key, not three fragments: word order around the token name
                 // is language-specific and a concatenation cannot express it.
                 const [before, after] = t(
@@ -816,19 +821,22 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
 }
 
 function TokenRow({
-  token, theme, override, onChange, onCommitColor, t,
+  token, theme, override, onChange, onCommitColor, t, tToken,
 }: {
   token: ThemeToken;
   theme: 'light' | 'dark';
   override: string | undefined;
   /** Chrome translator, handed down from the shell — see PreviewTranslate. */
   t: PreviewTranslate;
+  /** Token display-name translator — see `PreviewShellContext.tToken`. */
+  tToken: (name: string) => string;
   /** Live update — streams during a drag in the picker. */
   onChange: (hex: string | undefined) => void;
   /** Fires once the pick is committed (popover close or hex entry), not mid-drag. */
   onCommitColor?: (hex: string) => void;
 }) {
   const defaultHex = theme === 'dark' ? token.darkHex : token.hex;
+  const name = tToken(token.name);
   const effective = (override ?? defaultHex).toUpperCase();
   const isOverridden = override !== undefined;
   const [draft, setDraft] = useState<string | null>(null);
@@ -879,7 +887,7 @@ function TokenRow({
         }}
         outputFormat="hex"
         alpha={false}
-        triggerLabel={`Pick colour for ${token.name}`}
+        triggerLabel={t('Pick color for {token}', { token: name })}
         title={t('Pick a color')}
         style={{
           '--uxm-color-input-trigger-size': '20px',
@@ -887,7 +895,7 @@ function TokenRow({
         } as React.CSSProperties}
       />
       <span style={{ color: 'var(--color-text)', fontWeight: isOverridden ? 600 : 400, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {token.name}
+        {name}
         <span style={{ marginLeft: 6, color: 'var(--color-text-muted)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 11 }}>
           {token.cssVar}
         </span>
@@ -907,7 +915,7 @@ function TokenRow({
           textAlign: 'right',
           visibility: isOverridden ? 'visible' : 'hidden',
         }}
-        title={`Default: ${defaultHex}`}
+        title={t('Default: {hex}', { hex: defaultHex.toUpperCase() })}
       >
         {defaultHex.toUpperCase()}
       </span>
@@ -922,7 +930,7 @@ function TokenRow({
         onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
         spellCheck={false}
         clearable={false}
-        aria-label={`${token.name} hex value`}
+        aria-label={t('{token} hex value', { token: name })}
         style={{
           width: 84,
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
@@ -938,7 +946,7 @@ function TokenRow({
         onClick={() => onChange(undefined)}
         disabled={!isOverridden}
         title={t('Reset to default')}
-        aria-label={`Reset ${token.name}`}
+        aria-label={t('Reset {token}', { token: name })}
         style={{
           '--uxm-icon-button-size': '18px',
           '--uxm-icon-button-radius': '4px',

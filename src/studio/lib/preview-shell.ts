@@ -32,6 +32,7 @@ export function usePreviewShell(): PreviewShellContext {
       setTheme,
       uploadAsset: capabilities.upload ? persistence.uploadAsset : undefined,
       t: (source: string, vars?: Record<string, string | number>) => studioT('chrome', source, vars),
+      tToken: (name: string) => studioT('token', name),
     }),
     [brand, setBrand, theme, setTheme, persistence, capabilities.upload, studioT],
   );
