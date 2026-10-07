@@ -128,6 +128,82 @@ describe('icon registry', () => {
     }
   });
 
+  it('draws the sort family in one identical ink box', () => {
+    // The whole reason this family exists: a header that swaps between the
+    // three must keep one footprint. Asserting that means measuring the path, so
+    // the glyphs are written with absolute commands only and parsed here.
+    const SORT = ['sort-none', 'sort-asc', 'sort-desc'];
+
+    const box = (d: string) => {
+      // M/L/H/V absolute only — deliberately no curves, arcs or relative
+      // commands. Anything else throws rather than being silently mismeasured.
+      const unsupported = d.replace(/[MLHV\d.\s,-]/g, '');
+      expect(unsupported, `unsupported path commands: ${unsupported}`).toBe('');
+      let x = 0, y = 0;
+      const xs: number[] = [], ys: number[] = [];
+      for (const [, cmd, rawArgs] of d.matchAll(/([MLHV])([^MLHV]*)/g)) {
+        const n = (rawArgs.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+        if (cmd === 'H') for (const v of n) { x = v; xs.push(x); ys.push(y); }
+        else if (cmd === 'V') for (const v of n) { y = v; xs.push(x); ys.push(y); }
+        else for (let i = 0; i < n.length; i += 2) { x = n[i]; y = n[i + 1]; xs.push(x); ys.push(y); }
+      }
+      return { minX: Math.min(...xs), minY: Math.min(...ys), maxX: Math.max(...xs), maxY: Math.max(...ys) };
+    };
+
+    const boxes = SORT.map((id) => {
+      const def = ICONS.find((d) => d.id === id);
+      expect(def?.path, `${id} should be a path glyph`).toBeTruthy();
+      return { id, ...box(def!.path!) };
+    });
+
+    // All three identical, and the frame is the one documented in icons.ts.
+    // Centre-line geometry, not painted extent: the stroke adds the same
+    // margin to every member, so equality here is equality on screen.
+    const expected = { minX: 3, minY: 4.5, maxX: 21, maxY: 19.5 };
+    for (const b of boxes) {
+      const { id, ...actual } = b;
+      expect(actual, `${id} ink box`).toEqual(expected);
+    }
+
+    // And every coordinate on the 0.375 half-grid the house glyphs use.
+    for (const id of SORT) {
+      const d = ICONS.find((i) => i.id === id)!.path!;
+      for (const n of (d.match(/-?\d*\.?\d+/g) ?? []).map(Number)) {
+        expect(Math.abs(n / 0.375 - Math.round(n / 0.375)) < 1e-9, `${id}: ${n} off-grid`).toBe(true);
+      }
+    }
+  });
+
+  it('shares one frame across the sort family, differing only in arrowheads', () => {
+    // `sort-none` is the reference: it carries every stroke the family uses, so
+    // asc and desc must be drawn FROM it, never invent one. Stated this way the
+    // check needs no coordinate literals — an earlier version partitioned on an
+    // `M15 ` prefix and let a reshaped arrowhead through, because it only
+    // counted heads instead of matching them.
+    const segs = (id: string) => ICONS.find((d) => d.id === id)!.path!.split(/(?=M)/);
+    const none = segs('sort-none'), asc = segs('sort-asc'), desc = segs('sort-desc');
+
+    for (const [id, member] of [['sort-asc', asc], ['sort-desc', desc]] as const) {
+      for (const seg of member) {
+        expect(none, `${id}: "${seg}" is not a stroke sort-none draws`).toContain(seg);
+      }
+    }
+
+    // Between them the two members account for all of sort-none — nothing in the
+    // reference is unreachable, so sort-none is exactly "both heads at once".
+    expect([...new Set([...asc, ...desc])].sort()).toEqual([...none].sort());
+
+    // What they share is the frame; what each holds alone is its one arrowhead.
+    const ascOnly = asc.filter((x) => !desc.includes(x));
+    const descOnly = desc.filter((x) => !asc.includes(x));
+    const frame = asc.filter((x) => desc.includes(x));
+    expect(ascOnly, 'sort-asc should differ from sort-desc by exactly one stroke').toHaveLength(1);
+    expect(descOnly, 'sort-desc should differ from sort-asc by exactly one stroke').toHaveLength(1);
+    expect(ascOnly).not.toEqual(descOnly);
+    expect(frame.length, 'the shared frame should not be empty').toBeGreaterThan(0);
+    expect(none, 'sort-none should be the frame plus both heads').toHaveLength(frame.length + 2);
+  });
+
   it('keeps ids unique', () => {
     const ids = ICONS.map((d) => d.id);
     expect(new Set(ids).size).toBe(ids.length);
