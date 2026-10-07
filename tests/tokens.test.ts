@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 
+import postcss from 'postcss';
 import { describe, expect, it } from 'vitest';
 
 import { contrastRatio, parseColor } from '@/lib/contrast';
@@ -154,15 +155,19 @@ describe('layering scale', () => {
 
   /** Every `var(--z-NAME, FALLBACK)` across the shipped stylesheets. */
   const readers = (() => {
-    const out: { file: string; name: string; fallback: number }[] = [];
+    const out: { file: string; name: string; fallback: number | null }[] = [];
     const walk = (dir: string) => {
       for (const e of readdirSync(dir, { withFileTypes: true })) {
         const full = `${dir}/${e.name}`;
         if (e.isDirectory()) walk(full);
         else if (e.name.endsWith('.scss') || e.name.endsWith('.css')) {
           const src = strip(readFileSync(full, 'utf8'));
-          for (const m of src.matchAll(/var\(\s*--z-([a-z]+)\s*,\s*(\d+)\s*\)/g)) {
-            out.push({ file: full, name: m[1], fallback: Number(m[2]) });
+          // The fallback is OPTIONAL in this match on purpose. It used to be
+          // required, which meant `var(--z-popover)` — a reader with no
+          // fallback, which is exactly how an opt-in is written — slipped
+          // past the very test meant to catch it.
+          for (const m of src.matchAll(/var\(\s*--z-([a-z]+)\s*(?:,\s*(\d+)\s*)?\)/g)) {
+            out.push({ file: full, name: m[1], fallback: m[2] === undefined ? null : Number(m[2]) });
           }
         }
       }
@@ -198,16 +203,94 @@ describe('layering scale', () => {
     expect(readers.length, 'no --z-* readers found — the glob is broken').toBeGreaterThan(0);
     for (const r of readers) {
       expect(Number.isNaN(tier(r.name)), `${r.file} reads undeclared --z-${r.name}`).toBe(false);
+      // A reader with no fallback is an opt-in, not a component default; the
+      // scoping rule below is what governs those.
+      if (r.fallback === null) continue;
       expect(r.fallback, `${r.file}: var(--z-${r.name}, ${r.fallback}) drifted from the declared ${tier(r.name)}`).toBe(tier(r.name));
     }
   });
 
-  it('keeps the opt-in tiers read by nobody', () => {
-    // `--z-popover` and `--z-panel` are opt-in/reserved. The moment a stylesheet
-    // reads one, the default stacking HAS moved and this stops being additive.
-    for (const name of ['popover', 'panel']) {
-      const found = readers.filter((r) => r.name === name);
-      expect(found.map((r) => r.file), `--z-${name} is now read by the library — that changes a default`).toEqual([]);
+  it('lets exactly ONE place take an opt-in tier, under exactly one scoped selector', () => {
+    // An ALLOWLIST, not a denylist. The previous shape of this test rejected
+    // `:root` and allowed everything else, which let five regressions through:
+    // a `:root` nested in `@media`, an `html` selector, a second read later in
+    // the same file, and — worst — a component stylesheet taking the tier as
+    // its own default (`.x { z-index: var(--z-popover) }`), which the ORIGINAL
+    // "read by nobody" test had caught. Enumerate what is allowed instead, so
+    // anything new has to be added here deliberately.
+    //
+    // Parsed with postcss rather than regex: the selector is `rule.selector`
+    // and the at-rule chain is walkable, so `@media { :root { … } }` cannot be
+    // mistaken for a scoped rule the way string slicing did.
+    const ALLOWED = [
+      { file: 'src/studio/studio-shell.css', selector: 'body.uxm-studio-pane-open' },
+    ];
+
+    const found: { file: string; selector: string; atRules: string[] }[] = [];
+    const walkDir = (dir: string) => {
+      for (const e of readdirSync(dir, { withFileTypes: true })) {
+        const full = `${dir}/${e.name}`;
+        if (e.isDirectory()) { walkDir(full); continue; }
+        if (!e.name.endsWith('.css') && !e.name.endsWith('.scss')) continue;
+        let root;
+        try { root = postcss.parse(readFileSync(full, 'utf8'), { from: full }); }
+        catch { continue; } // scss the CSS parser can't take — none read these tiers
+        root.walkDecls((decl) => {
+          if (!/var\(\s*--z-(popover|panel)\b/.test(decl.value)) return;
+          const atRules: string[] = [];
+          let node: postcss.Container | postcss.Document | undefined = decl.parent;
+          let selector = '';
+          while (node) {
+            if (node.type === 'rule' && !selector) {
+              selector = (node as postcss.Rule).selector.replace(/\s+/g, ' ').trim();
+            }
+            if (node.type === 'atrule') {
+              const at = node as postcss.AtRule;
+              atRules.unshift(`@${at.name} ${at.params}`.trim());
+            }
+            node = node.parent;
+          }
+          found.push({ file: full, selector, atRules });
+        });
+      }
+    };
+    walkDir('src');
+
+    // Nothing may hide inside an at-rule, where a root selector reads as scoped.
+    for (const f of found) {
+      expect(f.atRules, `${f.file}: opt-in tier taken inside ${f.atRules.join(' > ')}`).toEqual([]);
+    }
+
+    // The set must match the allowlist EXACTLY — every entry, every selector.
+    const norm = (x: { file: string; selector: string }) => `${x.file} :: ${x.selector}`;
+    expect(
+      found.map(norm).sort(),
+      'a stylesheet takes --z-popover/--z-panel somewhere new. That moves default stacking, which the constitution calls a major-release decision — add it here only if that is the intent.',
+    ).toEqual(ALLOWED.map(norm).sort());
+  });
+
+  it('never pins the popover tier at a root selector with a literal', () => {
+    // The sibling hole: `:root { --uxm-popover-z-index: 90 }` moves the same
+    // default without mentioning --z-* at all, so the tier-reader scan above
+    // cannot see it.
+    const walkDir = (dir: string, out: string[] = []): string[] => {
+      for (const e of readdirSync(dir, { withFileTypes: true })) {
+        const full = `${dir}/${e.name}`;
+        if (e.isDirectory()) walkDir(full, out);
+        else if (e.name.endsWith('.css') || e.name.endsWith('.scss')) out.push(full);
+      }
+      return out;
+    };
+    for (const file of walkDir('src')) {
+      let root;
+      try { root = postcss.parse(readFileSync(file, 'utf8'), { from: file }); } catch { continue; }
+      root.walkDecls('--uxm-popover-z-index', (decl) => {
+        const selector = decl.parent?.type === 'rule' ? decl.parent.selector : '';
+        expect(
+          /(^|,)\s*(:where\()?\s*(:root|html|\*)\b/.test(selector),
+          `${file}: --uxm-popover-z-index set at "${selector}" — that moves every host's stacking`,
+        ).toBe(false);
+      });
     }
   });
 });

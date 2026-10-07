@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useReducer, useRef, type ReactNode } from 'react';
 
 import { createReadOnlyPersistence } from '../persistence/read-only';
 
@@ -9,6 +9,29 @@ import type { StudioPersistence } from '../persistence/types';
 
 
 export type Theme = 'light' | 'dark';
+
+/**
+ * What the user PICKED, which is not the same thing as `Theme` — the concrete
+ * theme actually painted. `auto` resolves by time of day, so it has no fixed
+ * answer and cannot live in `Theme`.
+ *
+ * Deliberately a separate type rather than widening `Theme`: `useUxm().theme`
+ * is public, and consumers branch on it exhaustively. Adding a third member
+ * there would break every one of those at compile time for no gain, since what
+ * they want is still "light or dark, right now".
+ */
+export type ThemeMode = Theme | 'auto';
+
+/** Daytime is light, night is dark — the same 06:00-18:00 split modo uses. */
+function themeForNow(): Theme {
+  const hour = new Date().getHours();
+  return hour >= 6 && hour < 18 ? 'light' : 'dark';
+}
+
+/** Collapse a picked mode to the theme that should actually paint. */
+export function resolveThemeMode(mode: ThemeMode): Theme {
+  return mode === 'auto' ? themeForNow() : mode;
+}
 
 /** A captured runtime event, shown in the Events tab's live log. */
 export interface LoggedEvent {
@@ -43,8 +66,13 @@ interface UxmContextValue {
    * empty on every `selectComponent`. */
   getCurrentVariants: () => Record<string, string | number | boolean>;
   setVariant: (key: string, value: string | number | boolean) => void;
+  /** The theme actually painted. `auto` is already resolved here. */
   theme: Theme;
+  /** Set a concrete theme. Equivalent to `setThemeMode` with 'light' or 'dark'. */
   setTheme: (theme: Theme) => void;
+  /** What the user picked — 'auto' included. Use this to drive a mode control. */
+  themeMode: ThemeMode;
+  setThemeMode: (mode: ThemeMode) => void;
   brand: BrandConfig;
   setBrand: (partial: Partial<BrandConfig>) => void;
   /** Event log for the currently-selected component. Resets on selection change. */
@@ -128,7 +156,37 @@ export function UxmProvider({
   const [selectedId, setSelectedId] = useState(registry[0].id);
   const [allOverrides, setAllOverrides] = useState<Record<string, StyleOverrides>>({});
   const [currentVariants, setCurrentVariants] = useState<Record<string, string | number | boolean>>({});
-  const [theme, setThemeState] = useState<Theme>('light');
+  // `mode` is the source of truth; `theme` is derived from it. Storing the
+  // resolved theme too would let the two drift once 'auto' crosses 18:00.
+  const [themeMode, setThemeModeState] = useState<ThemeMode>('light');
+  // Deriving in render is not enough on its own: nothing re-renders at 18:00,
+  // so a tab left open would keep painting the old theme until some unrelated
+  // state changed. `tick` exists purely to force that re-render.
+  const [tick, bumpTick] = useReducer((n: number) => n + 1, 0);
+  const theme = resolveThemeMode(themeMode);
+
+  useEffect(() => {
+    if (themeMode !== 'auto') return undefined;
+    const now = new Date();
+    const next = new Date(now);
+    next.setMinutes(0, 0, 0);
+    const hour = now.getHours();
+    if (hour < 6) next.setHours(6);
+    else if (hour < 18) next.setHours(18);
+    else { next.setDate(next.getDate() + 1); next.setHours(6); }
+    // Re-running on `tick` is what re-arms it: the fire bumps the counter,
+    // which re-enters this effect and schedules the following boundary.
+    const id = window.setTimeout(bumpTick, Math.max(1_000, next.getTime() - now.getTime()));
+    // A background tab's timer can be throttled or coalesced, so a tab woken
+    // after the boundary would still show yesterday's answer. Re-check on the
+    // way back in rather than trusting the timer alone.
+    const onVisible = () => { if (document.visibilityState === 'visible') bumpTick(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      window.clearTimeout(id);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [themeMode, tick]);
   const [brand, setBrandState] = useState<BrandConfig>({});
   // The log lives on a single state array, not keyed by component id —
   // it represents the *current* selected component's recent activity.
@@ -187,16 +245,20 @@ export function UxmProvider({
     try {
       const stored = localStorage.getItem(THEME_STORAGE_KEY);
       // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot read of persisted theme on mount
-      if (stored === 'light' || stored === 'dark') setThemeState(stored);
+      if (stored === 'light' || stored === 'dark' || stored === 'auto') setThemeModeState(stored);
     } catch {
       /* ignore unavailable localStorage */
     }
   }, [persistence]);
 
-  const setTheme = useCallback((t: Theme) => {
-    setThemeState(t);
-    try { localStorage.setItem(THEME_STORAGE_KEY, t); } catch { /* ignore */ }
+  const setThemeMode = useCallback((mode: ThemeMode) => {
+    setThemeModeState(mode);
+    try { localStorage.setItem(THEME_STORAGE_KEY, mode); } catch { /* ignore */ }
   }, []);
+
+  // Kept as-is for callers that only deal in light/dark (the canvas toggle,
+  // and any host written before modes existed).
+  const setTheme = useCallback((t: Theme) => { setThemeMode(t); }, [setThemeMode]);
 
   const setBrand = useCallback((partial: Partial<BrandConfig>) => {
     setBrandState((prev) => ({ ...prev, ...partial }));
@@ -285,6 +347,8 @@ export function UxmProvider({
         setVariant,
         theme,
         setTheme,
+        themeMode,
+        setThemeMode,
         brand,
         setBrand,
         eventLog,

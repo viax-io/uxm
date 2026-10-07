@@ -112,6 +112,7 @@ import { useUxm } from '../lib/context';
 import { usePreviewShell } from '../lib/preview-shell';
 import { getComponentDef } from '../lib/registry';
 
+import { AccountMenu, type StudioAccount } from './account-menu';
 import { PreviewModal } from './preview-modal';
 
 import type { PreviewProps } from '../lib/types';
@@ -265,11 +266,14 @@ export const previewMap: Record<string, PreviewComponent> = {
 export function Canvas({
   embed = false,
   headerActions,
+  account,
 }: {
   embed?: boolean;
   /** Optional host-provided actions rendered at the end of the top-bar
       cluster, right after the Preview & Publish button (e.g. a user avatar). */
   headerActions?: ReactNode;
+  /** Signed-in user — renders the avatar account menu when present. */
+  account?: StudioAccount;
 }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const { selectedId, getOverrides, resetOverrides, getCurrentVariants, pushEvent, capabilities, theme, setTheme } = useUxm();
@@ -347,6 +351,7 @@ export function Canvas({
             {capabilities.persist ? 'Preview & Publish' : 'Preview'}
           </ButtonPrimary>
           {headerActions}
+          {account && <AccountMenu account={account} embed={embed} />}
         </div>
       </div>
 
