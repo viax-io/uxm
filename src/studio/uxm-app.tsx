@@ -1,8 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 
+import { UxmLocaleProvider } from '@/ui';
+
 import { BrandFontStyles } from './brand-font-styles';
 import { BrandTokenStyles } from './brand-token-styles';
 import { FaviconSync } from './favicon-sync';
+import { StudioI18nProvider, useStudioI18n, useStudioT } from './i18n';
 import { UxmProvider, useUxm } from './lib/context';
 import { getComponentDef } from './lib/registry';
 import { MobileGallery } from './mobile-gallery';
@@ -37,24 +40,66 @@ export interface UxmAppProps {
    * chrome only — the mobile gallery does not render it.
    */
   headerActions?: ReactNode;
+  /**
+   * BCP-47 tag for the workbench's own chrome — sidebar, canvas, the
+   * properties panel, component names. Defaults to English.
+   *
+   * **The host decides what this is; the library never works it out.** UXM has
+   * no backend, no storage and no business guessing a user's language, so
+   * whatever resolved the locale in the hosting app (a user preference, a
+   * realm default, a URL segment) passes the answer down here. A tag the
+   * studio ships no dictionary for degrades to its base language and then to
+   * English — `de-AT` renders German, `is-IS` renders English.
+   *
+   * This also reaches the atoms rendered in the previews, via
+   * `UxmLocaleProvider`, so a calendar in the canvas formats in the same
+   * language the panel around it is labelled in. It does NOT translate the
+   * atoms' own label props in a consuming app — those stay that app's job.
+   *
+   * @see STUDIO_LOCALES for the shipped list.
+   */
+  locale?: string;
 }
 
-export function UxmApp({ embed = false, persistence, syncFavicon = false, headerActions }: UxmAppProps) {
+export function UxmApp({
+  embed = false, persistence, syncFavicon = false, headerActions, locale,
+}: UxmAppProps) {
   return (
-    <UxmProvider persistence={persistence}>
-      <BrandTokenStyles />
-      <BrandFontStyles />
-      {syncFavicon && <FaviconSync />}
-      {!embed && <ThemeSync />}
-      {/* Flex column so the read-only DemoNotice banner takes its own height and
-          the h-full shell fills the rest instead of overflowing the viewport. */}
-      <div className="flex flex-col h-full">
-        <DemoNotice />
-        <div className="flex-1 min-h-0">
-          <UxmAppShell embed={embed} headerActions={headerActions} />
+    <StudioI18nProvider locale={locale}>
+      <UxmAppInner embed={embed} persistence={persistence} syncFavicon={syncFavicon} headerActions={headerActions} />
+    </StudioI18nProvider>
+  );
+}
+
+type UxmAppInnerProps = Omit<UxmAppProps, 'locale' | 'embed' | 'syncFavicon'> & {
+  embed: boolean;
+  syncFavicon: boolean;
+};
+
+function UxmAppInner({ embed, persistence, syncFavicon, headerActions }: UxmAppInnerProps) {
+  // Resolved inside the provider: `locale` is what the host asked for, this is
+  // what the studio could actually honour.
+  const { locale: resolved, dir } = useStudioI18n();
+  return (
+    <UxmLocaleProvider locale={resolved}>
+      <UxmProvider persistence={persistence}>
+        <BrandTokenStyles />
+        <BrandFontStyles />
+        {syncFavicon && <FaviconSync />}
+        {!embed && <ThemeSync />}
+        {/* Flex column so the read-only DemoNotice banner takes its own height
+            and the h-full shell fills the rest instead of overflowing the
+            viewport. `dir` rides this root rather than <html>: the workbench may
+            be embedded in an LTR host, and flipping the whole document for it
+            would reverse chrome the library does not own. */}
+        <div className="flex flex-col h-full" dir={dir}>
+          <DemoNotice />
+          <div className="flex-1 min-h-0">
+            <UxmAppShell embed={embed} headerActions={headerActions} />
+          </div>
         </div>
-      </div>
-    </UxmProvider>
+      </UxmProvider>
+    </UxmLocaleProvider>
   );
 }
 
@@ -64,13 +109,14 @@ export function UxmApp({ embed = false, persistence, syncFavicon = false, header
  */
 function DemoNotice() {
   const { capabilities } = useUxm();
+  const t = useStudioT();
   if (capabilities.persist) return null;
   return (
     <div
       role="status"
       className="bg-accent-subtle text-accent-bold text-xs text-center px-4 py-1.5 border-b border-border"
     >
-      Demo mode — changes are preview-only and won&apos;t be saved.
+      {t('chrome', 'Demo mode — changes are preview-only and won’t be saved.')}
     </div>
   );
 }

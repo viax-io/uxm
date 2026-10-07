@@ -6,6 +6,10 @@ import { FormField } from '@/ui';
 import { TextInput } from '@/ui';
 
 export function LoginPagePreview({ styles, variants, shell }: PreviewProps) {
+  // Chrome only — the upload affordance a designer operates. The specimen login
+  // form below it ("Email", "Password", "Sign in") stays English on purpose:
+  // those words come from the host app in real use, never from the library.
+  const t = shell?.t ?? ((source: string) => source);
   const brand = shell?.brand ?? {};
   const theme = shell?.theme ?? 'light';
   const variant = (variants.background as string) ?? 'solid';
@@ -27,14 +31,14 @@ export function LoginPagePreview({ styles, variants, shell }: PreviewProps) {
     setUploadNotice(null);
     try {
       const data = await shell.uploadAsset(file, 'logo');
-      if (!data?.url) throw new Error('Upload failed');
+      if (!data?.url) throw new Error(t('Upload failed'));
       // Surface the new URL by copying it to the clipboard and showing an inline
       // notice — preview reads styles.imageUrl but has no direct setter here, so
       // the designer pastes the copied URL into the Image URL field.
       navigator.clipboard?.writeText(data.url).catch(() => {});
-      setUploadNotice('Uploaded — URL copied to clipboard');
+      setUploadNotice(t('Uploaded — URL copied to clipboard'));
     } catch (e) {
-      setUploadError(e instanceof Error ? e.message : 'Upload failed');
+      setUploadError(e instanceof Error ? e.message : t('Upload failed'));
     } finally {
       setUploading(false);
     }
@@ -101,7 +105,7 @@ export function LoginPagePreview({ styles, variants, shell }: PreviewProps) {
           borderRadius: 6,
           fontSize: 11, color: 'var(--color-text-muted)',
         }}>
-          No image set
+          {t('No image set')}
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
@@ -112,7 +116,7 @@ export function LoginPagePreview({ styles, variants, shell }: PreviewProps) {
               border: 'none', cursor: 'pointer',
             }}
           >
-            {uploading ? 'Uploading…' : 'Upload'}
+            {uploading ? t('Uploading…') : t('Upload')}
           </button>
           <input
             ref={fileRef}
@@ -144,7 +148,7 @@ export function LoginPagePreview({ styles, variants, shell }: PreviewProps) {
         {/* Logo */}
         <img
           src={logoSrc}
-          alt="Brand logo"
+          alt={t('Brand logo')}
           style={{ height: logoSize, maxWidth: '70%', objectFit: 'contain', display: 'block', marginBottom: 16 }}
           onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
         />

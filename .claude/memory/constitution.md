@@ -1,6 +1,32 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.4.1 → 1.5.0
+Bump rationale: MINOR — Principle VI is scoped and gains a carve-out. The
+"no message catalogue, ever" ban now reads explicitly as a ban on `/ui`
+shipping one, and a new sub-section governs the one place a catalogue is
+correct: `src/studio/i18n/`, the design workbench's own chrome, which lives
+inside the library and which no consumer can reach. The boundary itself is
+unchanged and is in fact sharpened — the app owns the words its USERS read,
+the library owns the words its DESIGNERS read. Ships with ten complete
+locales, a host-supplied `UxmApp locale` prop, and `check:studio-i18n` as a
+MUST gate — a locale is listed only once its dictionary is complete.
+
+Modified principles:
+  - VI. Localisation Boundary — "No i18n engine, ever" scoped to `/ui`;
+    "The studio is the exception" sub-section added with its four rules.
+  - V. Build Hygiene & Strict Typing — `check:studio-i18n` joins the gates
+    via `check:drift`.
+Added sections: none. Removed sections: none.
+
+Templates requiring updates:
+  ✅ CLAUDE.md (studio-i18n architecture note + the two new commands)
+  ✅ src/ui/locale/README.md (points at the studio carve-out so "never will"
+     is not read as covering the workbench)
+  ✅ skills/viax-uxm/SKILL.md (Unreleased bullet for the `locale` prop)
+  ✅ src/studio/i18n/README.md (new — the module's own rules)
+
+Previous report (1.4.0 → 1.4.1) — kept for history:
 Version change: 1.4.0 → 1.4.1
 Bump rationale: PATCH — wording only, after the GitLab → GitHub migration:
 the skills distribution repo is named as a GitHub repo, and "MR" reads "PR"
@@ -10,6 +36,20 @@ The release itself already moved (public npm, GitHub Actions, constitution
 
 Modified principles: none (path/wording in III; AI Skill & Agent Tooling;
 Development Workflow).
+
+Earlier report (1.3.0 → 1.4.0) — kept for history:
+Version change: 1.3.0 → 1.4.0
+Bump rationale: MINOR — Principle III gains a deprecation rule: replacement
+ships first (MINOR), the old surface is marked @deprecated everywhere it is
+described (JSDoc, README, studio registry, skill), stays painting for at least
+one MINOR, and is removed only in the next MAJOR. First application:
+`ButtonIcon` → `IconButton variant="filled"` (4.39). Also in this release
+train: `@viax/uxm/hooks` subpath (new export, MINOR) and Modal's sub-
+components moved from forwardRef to React 19 ref props (no API change).
+
+Modified principles:
+  - III. Component API Stability & Semver — "Deprecation precedes removal"
+    bullet added.
 Added sections: none. Removed sections: none.
 
 Templates requiring updates:
@@ -249,12 +289,16 @@ typecheck or build failure ships broken conventions/types/CSS to every consumer.
 
 ### VI. Localisation Boundary
 
-The library formats; the consumer translates. This split is a hard boundary.
+The library formats; the consumer translates. This split is a hard boundary —
+for **`/ui`**. The design workbench is the one carve-out, and it is one because
+it falls on the other side of the same line: see *The studio is the exception*
+below.
 
 - **No i18n engine, ever.** `@viax.io/uxm` MUST NOT depend on `i18next`,
-  `react-intl`, or any translation runtime, and MUST NOT ship a message
-  catalogue. A primitives library that owns translation forces its choice of
-  engine onto every consuming app.
+  `react-intl`, or any translation runtime — this one admits no exception,
+  `/studio` included. **`/ui` MUST NOT ship a message catalogue**: a primitives
+  library that owns translation forces its choice of engine, and its wording,
+  onto every consuming app.
 - **No user-visible string without an override prop.** Every string an atom can
   render or announce — visible copy, `aria-label`, `placeholder`, `title`,
   validation and error messages, empty states — MUST be reachable from props.
@@ -280,10 +324,52 @@ The library formats; the consumer translates. This split is a hard boundary.
 - Adding a string to an atom **MUST** add its prop and document the default in
   the component README's props table in the same change.
 
+#### The studio is the exception
+
+`src/studio/i18n/` ships dictionaries for the design workbench's own chrome.
+This does not weaken the boundary, it completes it: **the app owns
+the words its USERS read; the library owns the words its DESIGNERS read.** The
+sidebar, the properties panel, component display names and knob labels live
+inside the library, and no consumer can reach them through a prop — so a
+library that refuses to translate them is not being disciplined, it is shipping
+an English-only tool.
+
+- **The host supplies the locale; the library never resolves it.** `UxmApp`
+  takes `locale?: string` and maps it onto a dictionary it actually ships
+  (exact → base language → region sibling → English). The library MUST NOT
+  read storage, call a backend, consult `navigator`, or own a locale list that
+  anything outside it can configure. `STUDIO_LOCALES` is closed and
+  library-owned — the deliberate opposite of an app's realm-supplied list.
+- **Nothing leaks into `/ui`.** The dictionaries load only under the `/studio`
+  subpath, lazily, one chunk per locale. A consumer importing `@viax/uxm/ui`
+  MUST pay nothing for them.
+- **Keys are the English source strings**, namespaced — `t('label', 'Text Color')`,
+  never a dotted code. The registry carries its labels as data, so this leaves
+  the call sites untouched and makes a missing translation degrade to readable
+  English instead of `studio.panel.textColor` on screen.
+- **Every studio string change touches the dictionaries in the same commit**
+  (`i18n:extract` → `i18n:gen` → fill). `npm run check:studio-i18n` MUST pass.
+  Without the gate the failure is silent: an untranslated key renders its
+  English source in every locale and nothing reports it. For the same reason a
+  locale MUST NOT be listed in `STUDIO_LOCALES` until its dictionary is
+  complete: a partly-filled language is worse than an absent one, because the
+  fallback hides exactly the gaps the user is looking at. And a namespace that
+  IS translated MUST be gated — an ungated one rots one refactor at a time,
+  invisibly.
+- **Previews: editors are translated, demos are not.** A preview that is really
+  studio UI (brand-settings, the login-page upload) takes a translator DOWN
+  through `PreviewShellContext.t` — `src/previews` may not import `src/studio`,
+  so it never reaches up for one. Demo copy — `Save` on a sample button,
+  `$84,500` on a StatCard — stays English deliberately: translating a
+  placeholder implies the library chooses the word, when in a real app the host
+  passes it as a prop and the library has no opinion at all.
+
 *Rationale:* Consumers ship in multiple markets and cannot patch a hardcoded
 string out of a published `dist`. Keeping copy in props and locale in one
 context makes the whole library localisable without the library knowing what a
-translation is.
+translation is — and keeping the workbench's own copy in the library, where it
+is the only thing that can reach it, is the same principle read from the other
+end.
 
 ## Distribution & Consumer Contract
 
@@ -367,4 +453,4 @@ translation is.
   document end-to-end and file follow-up issues for drift.
 - **Deferred items.** None.
 
-**Version**: 1.4.1 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-09-09
+**Version**: 1.5.0 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-10-06

@@ -5,22 +5,17 @@ import { themeTokens, findToken, isTokenValue, resolveHex, type ThemeToken } fro
 import { Icon } from '@/ui';
 import { SectionHeader } from '@/ui';
 
+import { useStudioT } from '../i18n';
+import { COLOR_GROUP_LABELS, COLOR_GROUP_ORDER } from '../lib/color-group-labels';
+
 interface ColorPickerProps {
   label: string;
   value: string;
   onChange: (value: string | number | boolean) => void;
 }
 
-const groupLabels: Record<string, string> = {
-  surfaces: 'Surfaces',
-  text: 'Text',
-  borders: 'Borders',
-  accent: 'Accent',
-  highlights: 'Highlights',
-  semantic: 'Semantic',
-};
-
-const groupOrder = ['surfaces', 'text', 'borders', 'accent', 'highlights', 'semantic'];
+const groupLabels = COLOR_GROUP_LABELS;
+const groupOrder = COLOR_GROUP_ORDER;
 
 // SectionHeader override for the dropdown group labels — 10px font
 // (vs. 11px default) and zero margin-bottom because the parent's
@@ -32,8 +27,8 @@ const GROUP_HEADER_STYLE: CSSProperties = {
 
 function groupTokens(tokens: ThemeToken[]) {
   const groups: Record<string, ThemeToken[]> = {};
-  for (const t of tokens) {
-    (groups[t.group] ??= []).push(t);
+  for (const tok of tokens) {
+    (groups[tok.group] ??= []).push(tok);
   }
   return groupOrder.filter((g) => groups[g]).map((g) => ({ key: g, label: groupLabels[g], tokens: groups[g] }));
 }
@@ -59,6 +54,7 @@ function liveHex(value: string): string {
 }
 
 export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
+  const t = useStudioT();
   const [open, setOpen] = useState(false);
   const [customMode, setCustomMode] = useState(false);
   const [customHex, setCustomHex] = useState('');
@@ -76,7 +72,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   // so CSS resolves the applied brand value (and current theme); a raw hex
   // value passes through unchanged.
   const swatchColor = isNone ? 'transparent' : value;
-  const displayLabel = isNone ? 'None' : token ? token.name : value;
+  const displayLabel = isNone ? t('label', 'None') : token ? t('token', token.name) : value;
 
   // Sync custom hex field when value changes externally
   useEffect(() => {
@@ -189,15 +185,15 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
                         the dense dropdown context, and 0 margin-bottom
                         because the surrounding `pb-1` owns the spacing. */}
                     <SectionHeader style={GROUP_HEADER_STYLE}>
-                      {group.label}
+                      {t('label', group.label)}
                     </SectionHeader>
                   </div>
-                  {group.tokens.map((t) => {
-                    const isActive = value === t.variable;
+                  {group.tokens.map((tok) => {
+                    const isActive = value === tok.variable;
                     return (
                       <button
-                        key={t.variable}
-                        onClick={() => selectToken(t)}
+                        key={tok.variable}
+                        onClick={() => selectToken(tok)}
                         className={`flex w-full items-center gap-2.5 px-3 py-1.5 text-left text-[12px] transition-colors ${
                           isActive
                             ? 'bg-accent-subtle/50 text-text font-medium'
@@ -206,9 +202,9 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
                       >
                         <span
                           className="h-4 w-4 flex-shrink-0 rounded border border-border/60"
-                          style={{ backgroundColor: t.variable }}
+                          style={{ backgroundColor: tok.variable }}
                         />
-                        <span className="flex-1 truncate">{t.name}</span>
+                        <span className="flex-1 truncate">{t('token', tok.name)}</span>
                         {isActive && (
                           <Icon glyph="check" size={14} strokeWidth={2.5} className="flex-shrink-0 text-accent" />
                         )}

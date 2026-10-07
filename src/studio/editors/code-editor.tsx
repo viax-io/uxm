@@ -8,6 +8,7 @@ import {
 
 import { Icon } from '@/ui';
 
+import { useStudioT, useStudioTp } from '../i18n';
 import { useUxm } from '../lib/context';
 import { getComponentDef } from '../lib/registry';
 
@@ -214,6 +215,7 @@ function SearchBar({
   onPrev: () => void;
   onClose: () => void;
 }) {
+  const t = useStudioT();
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => { inputRef.current?.focus(); }, []);
 
@@ -234,7 +236,7 @@ function SearchBar({
         ref={inputRef}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Find..."
+        placeholder={t('chrome', 'Find…')}
         style={{
           flex: 1,
           background: '#1e1e1e',
@@ -256,13 +258,13 @@ function SearchBar({
           {matchCount > 0 ? `${currentMatch + 1}/${matchCount}` : '0/0'}
         </span>
       )}
-      <button aria-label="Previous match" onClick={onPrev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
+      <button aria-label={t('chrome', 'Previous match')} onClick={onPrev} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
         <Icon glyph="chevron-up" size={14} strokeWidth={2} />
       </button>
-      <button aria-label="Next match" onClick={onNext} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
+      <button aria-label={t('chrome', 'Next match')} onClick={onNext} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
         <Icon glyph="chevron-down" size={14} strokeWidth={2} />
       </button>
-      <button aria-label="Close search" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
+      <button aria-label={t('chrome', 'Close search')} onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d4d4d8', padding: 2, display: 'flex' }}>
         <Icon glyph="close" size={14} strokeWidth={2} />
       </button>
     </div>
@@ -272,6 +274,8 @@ function SearchBar({
 // ── Main editor ──
 
 export function CodeEditor() {
+  const t = useStudioT();
+  const tp = useStudioTp();
   const { selectedId, getOverrides, setOverride, resetOverride } = useUxm();
   const def = getComponentDef(selectedId);
   const overrides = getOverrides(selectedId);
@@ -574,14 +578,14 @@ export function CodeEditor() {
         }}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span>{lines.length} lines</span>
+          <span>{tp('chrome', { one: '{count} line', other: '{count} lines' }, lines.length)}</span>
           {errorCount > 0 && (
             <span
               style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: '#ef4444' }}
-              title="Lines that don't match a known property name or have an invalid value type. They won't be applied — the override stays unchanged. Hover the line in the editor to see the squiggle."
+              title={t('chrome', 'Lines that don’t match a known property name or have an invalid value type. They won’t be applied — the override stays unchanged. Hover the line in the editor to see the squiggle.')}
             >
               <Icon glyph="exclamation-triangle" size={10} strokeWidth={2} />
-              {errorCount} {errorCount === 1 ? 'error' : 'errors'}
+              {tp('chrome', { one: '{count} error', other: '{count} errors' }, errorCount)}
             </span>
           )}
         </span>

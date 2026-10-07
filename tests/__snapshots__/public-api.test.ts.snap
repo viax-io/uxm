@@ -296,6 +296,19 @@ exports[`@viax.io/uxm public surface > ./studio/generate-css exports the pinned 
 ]
 `;
 
+exports[`@viax.io/uxm public surface > ./studio/i18n exports the pinned names 1`] = `
+[
+  "STUDIO_LOCALES",
+  "STUDIO_SOURCE_LOCALE",
+  "StudioI18nProvider",
+  "getStudioLocaleMeta",
+  "resolveStudioLocale",
+  "useStudioI18n",
+  "useStudioT",
+  "useStudioTp",
+]
+`;
+
 exports[`@viax.io/uxm public surface > ./tokens exports the pinned names 1`] = `
 [
   "findToken",

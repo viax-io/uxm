@@ -160,6 +160,15 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`UxmApp` takes a `locale` prop** (unreleased) — translates the studio's own chrome (sidebar,
+  canvas, properties panel, component names, knob labels). Ten languages ship — de · es · fr · it · ja · nl · pl · pt-BR · tr · uk.
+  The host resolves
+  the user's language and passes the BCP-47 tag down; the library never resolves it itself. An
+  unshipped tag degrades to its base language and then to English. This does **not** translate
+  the atoms' label props in a consuming app — those stay that app's job, via
+  `UxmLocaleProvider` for formatting and each component's `*Label` props for copy.
+  `import { STUDIO_LOCALES } from '@viax.io/uxm/studio/i18n'` lists what ships.
+
 ## Workflow
 
 ### Where the documentation lives

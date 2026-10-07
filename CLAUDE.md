@@ -19,7 +19,9 @@ npm run build:cdn   # dist-cdn/ — self-contained <script>-tag bundles (esm, st
 npm run typecheck   # tsc --noEmit for src + portal/tsconfig.json
 npm run lint        # eslint .
 npm run lint:fix    # eslint . --fix
-npm run check:drift # registry-vs-CSS state-var drift + type-scale + tokens.css↔themeTokens parity gates (also run in CI's test job)
+npm run check:drift # registry-vs-CSS state-var drift + type-scale + tokens.css↔themeTokens parity + studio-i18n gates (also run in CI's test job)
+npm run i18n:extract # re-scan the registry + t() calls into src/studio/i18n/source-catalog.json
+npm run i18n:gen    # sync every studio dictionary to that catalog (new keys land as null)
 npm test            # Vitest smoke suite (tests/) — jsdom; `npm run test:watch` while iterating
 npm run test:coverage # coverage summary for orientation only — no thresholds, not a gate
 npm run audit:report # npm audit report; audit:ci gates CI at critical
@@ -65,6 +67,28 @@ background-color: var(--uxm-button-primary-background-color, var(--color-accent-
 - `--color-*` — the global, MODO-configurable brand layer from `tokens/index.css`.
 
 This is what lets the studio/brand-settings editor re-tint every consumer at once *and* lets a saved per-component override win locally. When adding CSS, always follow `var(--uxm-<comp>-<prop>, var(--color-<token>))` — never hardcode a color/spacing/radius.
+
+### Studio i18n — the library's own copy, not the atoms'
+
+The workbench's furniture (sidebar, canvas chrome, properties panel, component names, knob
+labels, token names) ships translated under `src/studio/i18n/` — ten locales today (German,
+Spanish, French, Italian, Japanese, Dutch, Polish, Brazilian Portuguese, Turkish, Ukrainian).
+A locale is listed in `STUDIO_LOCALES` only when its dictionary is **complete**; a half-filled
+one is worse than an absent one, because the English fallback hides the gaps. The **host passes
+the locale in** — `<UxmApp locale="de" />` — because the library has no backend and no business
+resolving a user's language; it only maps the requested tag onto a dictionary it actually ships
+(exact → base language → region sibling → English).
+
+This is the opposite of the atoms' rule and the two must not be confused: `src/ui/` ships **no**
+message catalogue and never will — a `DateInput`'s `clearLabel` is the consuming app's copy,
+passed as a prop. The library owns the words a *designer* reads; the app owns the words its
+*users* read.
+
+Keys are the English source strings (`t('label', 'Text Color')`), so the ~2 200 registry call
+sites were never touched and a missing translation degrades to readable English. Touching any
+studio string is a three-step change in one commit — `i18n:extract`, `i18n:gen`, fill the nulls —
+and `check:studio-i18n` fails the build otherwise, because an untranslated key is otherwise
+completely invisible. Full rules, and how to add a locale, in `src/studio/i18n/README.md`.
 
 ### The portal (`portal/`)
 

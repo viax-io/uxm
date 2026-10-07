@@ -11,6 +11,7 @@ import { Select, TextInput } from '@/ui';
 import { Tag, type TagType } from '@/ui';
 import { ToggleSwitch } from '@/ui';
 
+import { useStudioT, useStudioTp } from '../i18n';
 import { useUxm } from '../lib/context';
 import { getComponentDef, registry } from '../lib/registry';
 import { useGlobalTheme } from '../lib/use-global-theme';
@@ -544,6 +545,8 @@ function MiniTable() {
 // ── Success state ──
 
 function BuildSuccess({ onClose }: { onClose: () => void }) {
+  const t = useStudioT();
+  const tp = useStudioTp();
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -574,11 +577,13 @@ function BuildSuccess({ onClose }: { onClose: () => void }) {
           fontSize: scaled(22, 'page-title'),
           fontWeight: roleWeight('page-title', 700),
           color: 'var(--color-text)', margin: '0 0 6px',
-        }}>Design system ready</h2>
-        <p style={{ fontSize: scaled(14), color: 'var(--color-text-muted)', margin: 0 }}>{registry.length} components configured</p>
+        }}>{t('chrome', 'Design system ready')}</h2>
+        <p style={{ fontSize: scaled(14), color: 'var(--color-text-muted)', margin: 0 }}>
+          {tp('chrome', { one: '{count} component configured', other: '{count} components configured' }, registry.length)}
+        </p>
       </div>
       <ButtonPrimary onClick={onClose} style={{ marginTop: 8 }}>
-        Close
+        {t('chrome', 'Close')}
       </ButtonPrimary>
     </div>
   );
@@ -587,6 +592,7 @@ function BuildSuccess({ onClose }: { onClose: () => void }) {
 // ── Main modal ──
 
 export function PreviewModal({ onClose }: { onClose: () => void }) {
+  const t = useStudioT();
   const { getAllOverrides, brand, persistence, capabilities } = useUxm();
   const globalTheme = useGlobalTheme();
   const activeLogo = globalTheme === 'dark' ? (brand.logoUrlDark || brand.logoUrl) : brand.logoUrl;
@@ -613,11 +619,11 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
       await persistence.save({ overrides: getAllOverrides(), brand });
       setBuilt(true);
     } catch (err) {
-      setBuildError(err instanceof Error ? err.message : 'Build failed');
+      setBuildError(err instanceof Error ? err.message : t('chrome', 'Build failed'));
     } finally {
       setBuilding(false);
     }
-  }, [getAllOverrides, brand, persistence]);
+  }, [getAllOverrides, brand, persistence, t]);
 
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- modal backdrop click-to-dismiss; the close control inside is keyboard-accessible
@@ -711,7 +717,7 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                 </span>
               </div>
               <IconButton
-                aria-label="Close preview"
+                aria-label={t('chrome', 'Close preview')}
                 onClick={onClose}
                 style={{ marginLeft: 'auto', marginBottom: 6 }}
               >
@@ -827,7 +833,7 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
                 <p style={{ fontSize: scaled(13), color: buildError ? 'var(--color-danger-text)' : 'var(--color-text-muted)', margin: 0 }}>
-                  {buildError ?? 'Publish saves your changes to the environment'}
+                  {buildError ?? t('chrome', 'Publish saves your changes to the environment')}
                 </p>
                 <ButtonPrimary
                   onClick={handleBuild}
@@ -838,7 +844,7 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                   }}
                 >
                   <Icon glyph="cursor-arrow-rays" size={16} strokeWidth={2} />
-                  {building ? 'Publishing…' : 'Publish'}
+                  {building ? t('chrome', 'Publishing…') : t('chrome', 'Publish')}
                 </ButtonPrimary>
               </div>
             )}

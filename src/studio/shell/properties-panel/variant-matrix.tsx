@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 
 import { SectionHeader } from '@/ui';
 
+import { useStudioT } from '../../i18n';
 import { usePreviewShell } from '../../lib/preview-shell';
 import { previewMap } from '../canvas';
 
@@ -41,6 +42,7 @@ export function VariantMatrix({
 }) {
   const Preview = previewMap[def.id];
   const shell = usePreviewShell();
+  const t = useStudioT();
   if (!Preview) {
     return null;
   }
@@ -151,7 +153,7 @@ export function VariantMatrix({
 
   return (
     <div>
-      <SectionHeader>Variant Matrix</SectionHeader>
+      <SectionHeader>{t('chrome', 'Variant Matrix')}</SectionHeader>
       {/* Horizontal-scroll wrapper. Cells have a 120px minimum so they
           stay readable; if the panel is too narrow to show every column
           at that width, the matrix scrolls instead of crushing cells
@@ -180,13 +182,13 @@ export function VariantMatrix({
                 key={`xh-${x.value}`}
                 className="text-[10px] font-semibold uppercase tracking-wider text-text-subtle text-center truncate"
               >
-                {x.label}
+                {t('label', x.label)}
               </div>
             ))}
             {ys.map((y) => (
               <Fragment key={`row-${y.value}`}>
                 <div className="self-center pr-1 text-[10px] font-semibold uppercase tracking-wider text-text-subtle text-right truncate">
-                  {y.label}
+                  {t('label', y.label)}
                 </div>
                 {xs.map((x) => {
                   const cellV: Record<string, string> = {
@@ -194,7 +196,7 @@ export function VariantMatrix({
                     [axisX.key]: x.value,
                     [axisY.key]: y.value,
                   };
-                  return renderCell(cellV, `${x.label} / ${y.label}`);
+                  return renderCell(cellV, `${t('label', x.label)} / ${t('label', y.label)}`);
                 })}
               </Fragment>
             ))}
@@ -214,7 +216,7 @@ export function VariantMatrix({
                 ...baseVariants,
                 [axisX.key]: x.value,
               };
-              return renderCell(cellV, x.label);
+              return renderCell(cellV, t('label', x.label));
             })}
           </div>
         )}

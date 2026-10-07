@@ -8,8 +8,10 @@ import { Tabs } from '@/ui';
 
 import { CodeEditor } from '../../editors/code-editor';
 import { SelectInput } from '../../editors/select-input';
+import { useStudioT, useStudioTp } from '../../i18n';
 import { useUxm } from '../../lib/context';
 import { getComponentDef, registry } from '../../lib/registry';
+import { SECTION_LABELS } from '../../lib/section-labels';
 import { WcagPanel } from '../wcag-panel';
 
 import { DevTab } from './dev-tab';
@@ -45,6 +47,8 @@ export function PropertiesPanel({
     eventLog,
     clearEvents,
   } = useUxm();
+  const t = useStudioT();
+  const tp = useStudioTp();
   const def = getComponentDef(selectedId);
   const overrides = getOverrides(selectedId);
   const currentVariants = getCurrentVariants();
@@ -126,60 +130,31 @@ export function PropertiesPanel({
   // so any key here is a real style edit — no filtering needed.
   const hasOverrides = Object.keys(overrides).length > 0;
 
-  const SECTION_LABELS: Record<string, string> = {
-    colors: 'Colors',
-    states: 'States',
-    style: 'Style',
-    frame: 'Frame',
-    header: 'Header',
-    weekday: 'Weekday Row',
-    'shared-states': 'Shared States',
-    'day-cell': 'Date Cell',
-    'month-year-cells': 'Month & Year Cells',
-    text: 'Text',
-    uncheckedColors: 'Unchecked',
-    checkedColors: 'Checked',
-    offColors: 'Off',
-    onColors: 'On',
-    unselectedColors: 'Unselected',
-    selectedColors: 'Selected',
-    fieldColors: 'Field Colors',
-    dropAreaColors: 'Drop Area',
-    dropOutline: 'Drop Outline',
-    triggerColors: 'Trigger Colors',
-    popover: 'Popover',
-    option: 'Option',
-    focusState: 'Focus',
-    disabledState: 'Disabled',
-    errorState: 'Error Message',
-    rangeOptions: 'Range Options',
-    dragState: 'Drag Over',
-    fileList: 'File List',
-    fileListProgress: 'File List Progress',
-    fileListStatus: 'File List Status',
-    headerSlot: 'Header Slot',
-    footerSlot: 'Footer Slot',
-  };
   const allShowWhenKeys = Array.from(
     new Set(def.styleProperties.flatMap((p) => p.showWhen ? Object.keys(p.showWhen) : [])),
   );
-  const labelize = (vKey: string) =>
-    def.layoutVariants.find((v) => v.key === vKey)?.label ?? vKey;
+  const labelize = (vKey: string) => {
+    const label = def.layoutVariants.find((v) => v.key === vKey)?.label;
+    return label ? t('label', label) : vKey;
+  };
   const sectionScopeKeys = (props: ComponentDef['styleProperties']) =>
     Array.from(new Set(props.flatMap((p) => p.showWhen ? Object.keys(p.showWhen) : [])));
   const sectionTitleFor = (slug: string) =>
-    SECTION_LABELS[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1);
+    SECTION_LABELS[slug]
+      ? t('section', SECTION_LABELS[slug])
+      : slug.charAt(0).toUpperCase() + slug.slice(1);
   const sectionSubtitleFor = (props: ComponentDef['styleProperties']):
     | { scope: string; current: string | null }
     | null => {
     const keys = sectionScopeKeys(props);
     if (keys.length > 0) {
-      const scope = `Per ${keys.map(labelize).join(' × ')}`;
+      const scope = t('chrome', 'Per {scope}', { scope: keys.map(labelize).join(' × ') });
       const current = keys.map((vKey) => {
         const variant = def.layoutVariants.find((v) => v.key === vKey);
         if (!variant) return null;
         const v = resolve(vKey, variant.defaultValue) as string;
-        return variant.options.find((o) => o.value === v)?.label ?? v;
+        const optLabel = variant.options.find((o) => o.value === v)?.label;
+        return optLabel ? t('label', optLabel) : v;
       }).filter(Boolean).join(' / ');
       return { scope, current: current || null };
     }
@@ -187,7 +162,10 @@ export function PropertiesPanel({
       const variantNames = allShowWhenKeys
         .map((k) => labelize(k).toLowerCase() + 's')
         .join(' / ');
-      return { scope: `Shared across all ${variantNames}`, current: null };
+      return {
+        scope: t('chrome', 'Shared across all {variants}', { variants: variantNames }),
+        current: null,
+      };
     }
     return null;
   };
@@ -293,13 +271,13 @@ export function PropertiesPanel({
               )}
               {hasOverrides && (
                 <InlineAction onClick={() => resetOverrides(selectedId)}>
-                  Reset all
+                  {t('chrome', 'Reset all')}
                 </InlineAction>
               )}
             </div>
           }
         >
-          Properties
+          {t('chrome', 'Properties')}
         </SectionHeader>
 
 
@@ -318,17 +296,17 @@ export function PropertiesPanel({
           options={[
             {
               value: 'visual',
-              label: 'Visual',
+              label: t('chrome', 'Visual'),
               icon: <Icon glyph="list" size={12} />,
             },
             {
               value: 'dev',
-              label: 'Dev',
+              label: t('chrome', 'Dev'),
               icon: <Icon glyph="bolt" size={12} />,
             },
             {
               value: 'code',
-              label: 'CSS',
+              label: t('chrome', 'CSS'),
               icon: <Icon glyph="code" size={12} />,
             },
           ]}
@@ -356,7 +334,7 @@ export function PropertiesPanel({
           {visibleVariants.length > 0 && (
             <div className={orientation === 'vertical' ? 'min-w-0' : 'mb-6'}>
               <SectionHeader>
-                {visibleVariants.length === 1 ? 'Variant' : 'Variants'}
+                {tp('chrome', { one: 'Variant', other: 'Variants' }, visibleVariants.length)}
               </SectionHeader>
               <div className="space-y-3">
                 {visibleVariants.map((variant) => {
@@ -393,10 +371,10 @@ export function PropertiesPanel({
                   return (
                     <div key={variant.key} data-variant-key={variant.key}>
                       <SelectInput
-                        label={variant.label}
+                        label={t('label', variant.label)}
                         value={value}
                         onChange={handleChange(variant.key)}
-                        options={visibleOptions}
+                        options={visibleOptions.map((o) => ({ ...o, label: t('label', o.label) }))}
                       />
                     </div>
                   );
@@ -439,10 +417,13 @@ export function PropertiesPanel({
                           onClick={() => {
                             for (const p of overriddenInSection) resetOverride(selectedId, p.key);
                           }}
-                          title={`Reset ${overriddenInSection.length} field${overriddenInSection.length === 1 ? '' : 's'} in this section to default`}
+                          title={tp('chrome', {
+                            one: 'Reset {count} field in this section to default',
+                            other: 'Reset {count} fields in this section to default',
+                          }, overriddenInSection.length)}
                           icon={<Icon glyph="refresh" strokeWidth={2.25} aria-hidden />}
                         >
-                          Reset section
+                          {t('chrome', 'Reset section')}
                         </InlineAction>
                       ) : undefined
                     }
@@ -456,7 +437,7 @@ export function PropertiesPanel({
                   const value = resolve(prop.key, prop.defaultValue);
                   const onChange = handleChange(prop.key);
                   const editor = renderEditor(prop.control, {
-                    label: prop.label,
+                    label: t('label', prop.label),
                     value,
                     onChange,
                     prop,
@@ -471,7 +452,7 @@ export function PropertiesPanel({
                       cascadeCount={isOverridden ? peerCount : 0}
                       onCascade={() => cascadeKey(prop.key, value)}
                       category={def.category}
-                      propLabel={prop.label}
+                      propLabel={t('label', prop.label)}
                       synced={isSynced}
                       justMatched={isJustMatched}
                       isOverridden={isOverridden}

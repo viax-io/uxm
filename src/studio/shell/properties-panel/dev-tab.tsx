@@ -3,6 +3,8 @@ import { Icon } from '@/ui';
 import { InlineAction } from '@/ui';
 import { SectionHeader } from '@/ui';
 
+import { useStudioT } from '../../i18n';
+
 import { VariantMatrix } from './variant-matrix';
 
 import type { LoggedEvent } from '../../lib/context';
@@ -41,6 +43,7 @@ export function DevTab({
   currentVariants: Record<string, string | number | boolean>;
   overrides: StyleOverrides;
 }) {
+  const t = useStudioT();
   // Resolved styles for the variant matrix — overrides win over
   // defaults, same logic the canvas applies. Reused by every cell so
   // they all reflect the user's current theming, just with different
@@ -84,7 +87,7 @@ export function DevTab({
       )}
 
       <div className={orientation === 'vertical' ? 'min-w-0' : 'mb-6'}>
-        <SectionHeader>Emits</SectionHeader>
+        <SectionHeader>{t('chrome', 'Emits')}</SectionHeader>
         {events && events.length > 0 ? (
           <div className="space-y-2 text-[12px]">
             {events.map((ev) => (
@@ -116,8 +119,7 @@ export function DevTab({
           </div>
         ) : (
           <p className="text-[12px] text-text-muted leading-relaxed">
-            No event spec yet for this component. Interact with the canvas
-            to see the live activity log below.
+            {t('chrome', 'No event spec yet for this component. Interact with the canvas to see the live activity log below.')}
           </p>
         )}
       </div>
@@ -130,16 +132,16 @@ export function DevTab({
                 onClick={onClearLog}
                 icon={<Icon glyph="refresh" strokeWidth={2.25} aria-hidden />}
               >
-                Clear
+                {t('chrome', 'Clear')}
               </InlineAction>
             ) : undefined
           }
         >
-          Live Log
+          {t('chrome', 'Live Log')}
         </SectionHeader>
         {eventLog.length === 0 ? (
           <p className="text-[12px] text-text-muted leading-relaxed">
-            Interact with the preview to see events appear here.
+            {t('chrome', 'Interact with the preview to see events appear here.')}
           </p>
         ) : (
           // Dark-theme log surface — same hardcoded palette the CSS
@@ -241,16 +243,17 @@ function ApiSection({
   api: NonNullable<ComponentDef['api']>;
   currentVariants: Record<string, string | number | boolean>;
 }) {
+  const t = useStudioT();
   const importLine = formatImport(api);
   const usageSnippet = formatUsage(api, currentVariants);
   return (
     <div>
-      <SectionHeader>API</SectionHeader>
-      <CodeBlock label="Import" code={importLine} />
+      <SectionHeader>{t('chrome', 'API')}</SectionHeader>
+      <CodeBlock label={t('chrome', 'Import')} code={importLine} />
       {api.props.length > 0 && (
         <div className="mt-4">
           <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-text-subtle">
-            Props
+            {t('chrome', 'Props')}
           </div>
           <div className="space-y-2">
             {api.props.map((p) => (
@@ -287,7 +290,7 @@ function ApiSection({
         </div>
       )}
       <div className="mt-4">
-        <CodeBlock label="Usage" code={usageSnippet} />
+        <CodeBlock label={t('chrome', 'Usage')} code={usageSnippet} />
       </div>
     </div>
   );
