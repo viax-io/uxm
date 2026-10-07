@@ -51,15 +51,27 @@ into English's pair.
 
 ## Changing a string
 
-Any change to a registry label, a component name, a section heading or a `t()` call is a
-**three-step** change, in the same commit:
+New studio code is always translated. Any text a user can see in the studio — labels,
+headings, buttons, menu items, tooltips, `aria-label`, `title`, placeholders, empty and error
+messages — goes through `t()` (or `tp()` for counted strings). A string literal rendered
+directly is a bug even though the gate passes: the extractor only finds `t()` calls and registry
+data, so a raw literal is invisible to it.
+
+Any change to a registry label, a component name, a section heading or a `t()` call is done in
+the same commit as its translations:
 
 ```bash
 node scripts/extract-studio-i18n.mjs      # refresh source-catalog.json
 node scripts/gen-studio-locales.mjs       # add the new keys to every dictionary as null
-# …fill the new nulls…
+# …fill the new nulls in every locale…
 npm run check:studio-i18n                 # the gate
 ```
+
+**The AI agent making the change writes the translations.** It fills every new `null` in all
+shipped locales itself, in the same change. Translations are not deferred to a human translator
+and English is not left in place. Before translating, look up how the dictionary already
+translates the same or related terms (for example `Trailing` before translating `Leading`) and
+keep them consistent. Batch the work with `--from` (below): one JSON file per locale.
 
 The gate is not optional politeness. A knob added without this renders its English label in
 every locale and **nothing anywhere says so** — the fallback is doing its job, which is exactly

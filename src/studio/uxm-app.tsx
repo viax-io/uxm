@@ -15,6 +15,7 @@ import { Sidebar } from './shell/sidebar';
 import { ThemeSync } from './theme-sync';
 
 import type { StudioPersistence } from './persistence/types';
+import type { StudioAccount } from './shell/account-menu';
 import type { ReactNode } from 'react';
 
 const DESKTOP_QUERY = '(min-width: 1024px)';
@@ -59,14 +60,29 @@ export interface UxmAppProps {
    * @see STUDIO_LOCALES for the shipped list.
    */
   locale?: string;
+  /**
+   * The signed-in user. Pass it and the canvas top bar grows an avatar →
+   * account menu (identity header, Account settings, Log out) with a settings
+   * pane behind it; omit it and the header is unchanged.
+   *
+   * The studio has no session of its own and never fetches one — the host owns
+   * auth, so it owns this data and the sign-out handler.
+   */
+  account?: StudioAccount;
 }
 
 export function UxmApp({
-  embed = false, persistence, syncFavicon = false, headerActions, locale,
+  embed = false, persistence, syncFavicon = false, headerActions, account, locale,
 }: UxmAppProps) {
   return (
     <StudioI18nProvider locale={locale}>
-      <UxmAppInner embed={embed} persistence={persistence} syncFavicon={syncFavicon} headerActions={headerActions} />
+      <UxmAppInner
+        embed={embed}
+        persistence={persistence}
+        syncFavicon={syncFavicon}
+        headerActions={headerActions}
+        account={account}
+      />
     </StudioI18nProvider>
   );
 }
@@ -76,7 +92,7 @@ type UxmAppInnerProps = Omit<UxmAppProps, 'locale' | 'embed' | 'syncFavicon'> & 
   syncFavicon: boolean;
 };
 
-function UxmAppInner({ embed, persistence, syncFavicon, headerActions }: UxmAppInnerProps) {
+function UxmAppInner({ embed, persistence, syncFavicon, headerActions, account }: UxmAppInnerProps) {
   // Resolved inside the provider: `locale` is what the host asked for, this is
   // what the studio could actually honour.
   const { locale: resolved, dir } = useStudioI18n();
@@ -95,7 +111,7 @@ function UxmAppInner({ embed, persistence, syncFavicon, headerActions }: UxmAppI
         <div className="flex flex-col h-full" dir={dir}>
           <DemoNotice />
           <div className="flex-1 min-h-0">
-            <UxmAppShell embed={embed} headerActions={headerActions} />
+            <UxmAppShell embed={embed} headerActions={headerActions} account={account} />
           </div>
         </div>
       </UxmProvider>
@@ -121,7 +137,7 @@ function DemoNotice() {
   );
 }
 
-function UxmAppShell({ embed, headerActions }: { embed: boolean; headerActions?: ReactNode }) {
+function UxmAppShell({ embed, headerActions, account }: { embed: boolean; headerActions?: ReactNode; account?: StudioAccount }) {
   const [isDesktop, setIsDesktop] = useState(true);
 
   useEffect(() => {
@@ -138,12 +154,12 @@ function UxmAppShell({ embed, headerActions }: { embed: boolean; headerActions?:
     return <MobileGallery />;
   }
 
-  return <DesktopShell embed={embed} headerActions={headerActions} />;
+  return <DesktopShell embed={embed} headerActions={headerActions} account={account} />;
 }
 
 type Orientation = 'horizontal' | 'vertical';
 
-function DesktopShell({ embed, headerActions }: { embed: boolean; headerActions?: ReactNode }) {
+function DesktopShell({ embed, headerActions, account }: { embed: boolean; headerActions?: ReactNode; account?: StudioAccount }) {
   const { selectedId } = useUxm();
   const [orientation, setOrientation] = useState<Orientation>('horizontal');
   const [panelWidth, setPanelWidth] = useState(320);
@@ -216,7 +232,7 @@ function DesktopShell({ embed, headerActions }: { embed: boolean; headerActions?
         }`}
       >
         <div className="flex-1 min-w-0 min-h-0">
-          <Canvas embed={embed} headerActions={headerActions} />
+          <Canvas embed={embed} headerActions={headerActions} account={account} />
         </div>
         {showPropertiesPanel && (
           <div

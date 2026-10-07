@@ -85,10 +85,21 @@ passed as a prop. The library owns the words a *designer* reads; the app owns th
 *users* read.
 
 Keys are the English source strings (`t('label', 'Text Color')`), so the ~2 200 registry call
-sites were never touched and a missing translation degrades to readable English. Touching any
-studio string is a three-step change in one commit — `i18n:extract`, `i18n:gen`, fill the nulls —
-and `check:studio-i18n` fails the build otherwise, because an untranslated key is otherwise
-completely invisible. Full rules, and how to add a locale, in `src/studio/i18n/README.md`.
+sites were never touched and a missing translation degrades to readable English. Full rules, and
+how to add a locale, in `src/studio/i18n/README.md`.
+
+**Rule: every studio string ships translated, and you write the translations.** Any change under
+`src/studio/` or the registry that adds or edits text a user can see — labels, headings, buttons,
+menu items, tooltips, `aria-label`, `title`, placeholders, empty and error messages — must:
+
+1. Pass the text through `t(namespace, 'English text')` or `tp(...)` for counted strings. No
+   string literals in JSX or in props that render text. `check:studio-i18n` cannot see a raw
+   literal, so this part is on the author and the reviewer.
+2. Run `npm run i18n:extract` and `npm run i18n:gen`.
+3. Fill every new `null` in **all** shipped locales in the same change. The AI agent making the
+   change writes these translations itself; do not leave them for a human translator and do not
+   leave English in place. Match the terms the dictionary already uses for the same concept.
+4. Run `npm run check:studio-i18n`; it must pass before the change is done.
 
 ### The portal (`portal/`)
 

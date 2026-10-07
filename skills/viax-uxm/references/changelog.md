@@ -1615,3 +1615,16 @@ reached the published library; now shipped in 2.8.0.
   the SidebarNavTrigger caption) whose rationales are rewritten in the same change, and the
   lifecycle connector's idle and dashed strokes clear the 3:1 UI floor for the first time.
   Nothing changes shape or spacing; every affected surface is a colour.
+
+### New in 4.49.0
+
+- **Two canvas marks are deliberately below the 3:1 non-text floor in light, and one of them
+  is now the quietest thing in its own atom.** `LifecycleConnector`'s active stroke and
+  `TimelineEntry`'s dot both paint plain `--color-accent`: 1.93:1 on `--color-surface` and
+  2.06:1 on `--color-card`. Since the light-theme token repair raised `--color-text-subtle`
+  to 3.42 / 3.66, each is *quieter than its own idle state* — an active edge is told apart by
+  hue and by width (2px vs 1.5px), and a live dot by hue alone. This is a design call to keep
+  the brand green on the emphasised state, not an oversight. Where the mark is the only signal
+  of state, set `--uxm-lifecycle-connector-active-color` / `--uxm-timeline-entry-dot-color` to
+  `var(--color-accent-bold)` (5.56:1 / 5.94:1). Note the studio's TimelineEntry knob defaults
+  to `accent-bold`, so the editor shows a darker dot than a bare consumer render.

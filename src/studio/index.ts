@@ -6,6 +6,10 @@
  * `createHttpPersistence()` to read/write against a Hono API, or
  * `createReadOnlyPersistence()` for a static portal (live-preview only).
  *
+ * Optional `account` prop on `UxmApp` adds the avatar → account menu and its
+ * settings pane. The studio has no session of its own and never fetches one —
+ * the host owns auth, so it supplies the identity and the sign-out handler.
+ *
  * Styles ship separately as `@viax.io/uxm/studio.css` — import it once in the
  * host next to `tokens.css` + `ui.css`; it bundles the token declarations and
  * the Tailwind utilities the shell uses (NOT the atom CSS, so atoms are never
@@ -13,7 +17,10 @@
  */
 export { UxmApp } from './uxm-app';
 export type { UxmAppProps } from './uxm-app';
+export type { StudioAccount } from './shell/account-menu';
 export { UxmProvider, useUxm } from './lib/context';
+// `useUxm()` returns `theme` / `themeMode`, so both names have to be nameable.
+export type { Theme, ThemeMode } from './lib/context';
 export { registry, getComponentDef, categoryColors } from './lib/registry';
 export type {
   BrandConfig,

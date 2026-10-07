@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.51.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.52.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.51.0** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.52.0** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.51.0 — current API surface (overrides training data)
+## v4.52.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,19 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.49.0
-
-- **Two canvas marks are deliberately below the 3:1 non-text floor in light, and one of them
-  is now the quietest thing in its own atom.** `LifecycleConnector`'s active stroke and
-  `TimelineEntry`'s dot both paint plain `--color-accent`: 1.93:1 on `--color-surface` and
-  2.06:1 on `--color-card`. Since the light-theme token repair raised `--color-text-subtle`
-  to 3.42 / 3.66, each is *quieter than its own idle state* — an active edge is told apart by
-  hue and by width (2px vs 1.5px), and a live dot by hue alone. This is a design call to keep
-  the brand green on the emphasised state, not an oversight. Where the mark is the only signal
-  of state, set `--uxm-lifecycle-connector-active-color` / `--uxm-timeline-entry-dot-color` to
-  `var(--color-accent-bold)` (5.56:1 / 5.94:1). Note the studio's TimelineEntry knob defaults
-  to `accent-bold`, so the editor shows a darker dot than a bare consumer render.
 
 ### New in 4.49.1
 
@@ -145,6 +132,30 @@ catalog.
   the three boxes as equal, so the guarantee cannot quietly rot. Replaces the
   three-way `active ? (asc ? 'arrow-up' : 'arrow-down') : 'arrows-up-down'` conditional
   consumers were writing.
+
+### New in 4.52.0
+
+- **The studio takes an account menu, matching modo's.** New optional
+  **`UxmApp` prop `account`** (`StudioAccount`: `name`, `email`, `role?`, `realm?`,
+  `initials?`, `onSignOut?`). Pass it and the canvas top bar grows an avatar → menu
+  (non-actionable identity header, **Account settings**, **Log out**) plus an account
+  settings pane; omit it and the header is byte-for-byte what it was. The studio has no
+  session and never fetches one — the host owns auth, so it owns this data. `Log out`
+  renders only when `onSignOut` is given, and initials derive from `name` unless passed.
+  The pane is composed from shipped atoms exactly as modo composes its own —
+  `SideFlexpane` inside `Dialog` (which brings the backdrop, scroll lock, focus trap,
+  Escape and outside-click), sections as `Disclosure` — with **Profile** (name, copyable
+  email + `mailto:`, role, realm; optional rows omitted rather than rendered empty) and
+  **Appearance**.
+- **Studio theme gains an `auto` mode.** `useUxm()` now also returns **`themeMode`**
+  (`'light' | 'dark' | 'auto'`) and **`setThemeMode`**; `auto` resolves by time of day
+  (06:00–18:00 light, else dark), the same split modo uses. **`theme` is unchanged** and
+  still `'light' | 'dark'` — the resolved value, so nothing branching on it breaks. The
+  mode is what's stored, and a tab left open re-resolves on its own: a timer fires at the
+  next 06:00/18:00 boundary, re-armed on `visibilitychange` because a background tab's
+  timer can be throttled past it. The canvas keeps its light/dark `IconButton` as the
+  quick toggle. **Appearance is omitted when `embed` is set** — an embedded host mounts
+  no `ThemeSync`, so the control would change nothing.
 
 ### Unreleased
 

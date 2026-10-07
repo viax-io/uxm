@@ -31,6 +31,15 @@ createRoot(container).render(
     <UxmApp
       persistence={createClientPersistence({ brand: VIAX_BRAND_DEFAULTS })}
       syncFavicon
+      // A stand-in user so the account menu is exercisable in the dev portal.
+      // The portal has no auth, so sign-out has nothing to end and is omitted —
+      // which is also the case the menu has to handle (no Log out row).
+      account={{
+        name: 'Ada Lovelace',
+        email: 'ada@viax.io',
+        role: 'Designer',
+        realm: 'viax',
+      }}
     />
   </StrictMode>,
 );
