@@ -1,0 +1,53 @@
+/*
+ * Studio shell CSS that Tailwind utilities can't express — currently just
+ * docking the account settings pane.
+ *
+ * Its own file because the studio has TWO entry stylesheets that must stay in
+ * step: `src/studio/studio.css` (compiled to dist by `build:studio-css`) and
+ * `portal/studio.css` (compiled live by the Vite dev server). Both @import
+ * this, so a rule added here reaches the published bundle AND the dev portal.
+ * Appending to one of them alone is the trap: the portal keeps rendering the
+ * old look while the build is correct, or the reverse.
+ */
+
+/* Take the popover layer WHILE THE ACCOUNT PANE IS OPEN, and only then.
+   Popover defaults to `var(--uxm-popover-z-index, 50)`, which is UNDER the
+   Dialog at 60 — the Theme dropdown in the account pane is the studio's first
+   Select-inside-Dialog, and it rendered behind the pane until this landed.
+
+   Scoped to a body class rather than declared at `:root`, deliberately. The
+   library's own contract (tests/tokens.test.ts) is that raising the popover
+   tier globally is a major-release decision, and `studio.css` is imported by
+   hosts — a `:root` rule here would move THEIR popover stacking too, as a side
+   effect of embedding the workbench. Popovers portal to <body>, so they
+   inherit this; the pane adds the class on mount and drops it on unmount, so
+   nothing outside the studio's own modal is affected, and only while it is up. */
+body.uxm-studio-pane-open {
+  --uxm-popover-z-index: var(--z-popover);
+}
+
+/* Dock the account settings pane full-height against the right edge. Dialog
+   centres its child by default, so this is the one piece the composition can't
+   express through props — the same override modo applies to its own flexpanes.
+   Written against the shipped class names, not re-implemented: Dialog still
+   owns the backdrop, scroll lock, focus trap, Escape and outside-click. */
+.uxm-dialog__root:has(> .uxm-studio-account-dialog) {
+  padding: 0;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+/* Qualified with the panel class so this outranks `.uxm-dialog__panel`'s own
+   max-width/max-height. At equal specificity the winner is whichever sheet the
+   host happens to load last — fine in the portal, a 48px-short pane for a host
+   that imports studio.css before ui.css. */
+.uxm-dialog__panel.uxm-studio-account-dialog {
+  max-width: 100vw;
+  max-height: none;
+}
+.uxm-studio-account-dialog .uxm-side-flexpane {
+  height: 100%;
+  max-width: 100vw;
+  border-radius: 0;
+  border-width: 0 0 0 1px;
+  box-shadow: var(--shadow-xl);
+}

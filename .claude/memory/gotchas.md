@@ -462,3 +462,18 @@ the change, not follow-up:
 Related: "A per-state var whose fallback is the resting value ships a dead rule"
 is the same family — the workbench looking right while the shipped path is
 wrong.
+
+## A Select inside a Dialog: one Escape closes both
+
+The studio's account pane is the library's first `Select`-inside-`Dialog`. Two
+things bite there, both verified in the portal:
+
+1. **The panel renders *under* the dialog** unless the app opts in. `Popover`
+   defaults to `var(--uxm-popover-z-index, 50)`; `Dialog` is at 60. The studio
+   opts in under `body.uxm-studio-pane-open` (`src/studio/studio-shell.css`) so
+   the lift lasts only as long as its own modal — declaring it at `:root` would
+   move the stacking of every host that imports `studio.css`, which
+   `tests/tokens.test.ts` now rejects by allowlist.
+2. **One Escape dismisses the dropdown AND the dialog.** Both listen, and
+   neither stops the other. Not fixed — noted so the next person doesn't treat
+   it as a bug in their own composition.

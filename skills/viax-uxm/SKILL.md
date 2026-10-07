@@ -154,6 +154,28 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **The studio takes an account menu, matching modo's.** New optional
+  **`UxmApp` prop `account`** (`StudioAccount`: `name`, `email`, `role?`, `realm?`,
+  `initials?`, `onSignOut?`). Pass it and the canvas top bar grows an avatar → menu
+  (non-actionable identity header, **Account settings**, **Log out**) plus an account
+  settings pane; omit it and the header is byte-for-byte what it was. The studio has no
+  session and never fetches one — the host owns auth, so it owns this data. `Log out`
+  renders only when `onSignOut` is given, and initials derive from `name` unless passed.
+  The pane is composed from shipped atoms exactly as modo composes its own —
+  `SideFlexpane` inside `Dialog` (which brings the backdrop, scroll lock, focus trap,
+  Escape and outside-click), sections as `Disclosure` — with **Profile** (name, copyable
+  email + `mailto:`, role, realm; optional rows omitted rather than rendered empty) and
+  **Appearance**.
+- **Studio theme gains an `auto` mode.** `useUxm()` now also returns **`themeMode`**
+  (`'light' | 'dark' | 'auto'`) and **`setThemeMode`**; `auto` resolves by time of day
+  (06:00–18:00 light, else dark), the same split modo uses. **`theme` is unchanged** and
+  still `'light' | 'dark'` — the resolved value, so nothing branching on it breaks. The
+  mode is what's stored, and a tab left open re-resolves on its own: a timer fires at the
+  next 06:00/18:00 boundary, re-armed on `visibilitychange` because a background tab's
+  timer can be throttled past it. The canvas keeps its light/dark `IconButton` as the
+  quick toggle. **Appearance is omitted when `embed` is set** — an embedded host mounts
+  no `ThemeSync`, so the control would change nothing.
+
 ## Workflow
 
 ### Where the documentation lives

@@ -11,4 +11,5 @@
  */
 @import 'tailwindcss';
 @import '../tokens/index.css';
+@import './studio-shell.css';
 @source './**/*.{ts,tsx}';
