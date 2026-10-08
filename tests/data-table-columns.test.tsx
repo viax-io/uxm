@@ -370,3 +370,22 @@ describe('DataTable rowProps', () => {
     expect(rowProps).toHaveBeenCalledWith(ROWS[1]);
   });
 });
+
+describe('DataTable studio canvas placement', () => {
+  // `canvasFill` used to mean "fill the width AND top-align", so the table —
+  // which only needed the width — silently lost the vertical centring every
+  // other preview has. The two are separate flags now.
+  it('fills the canvas width and stays vertically centred', async () => {
+    const { dataTableDef } = await import('@/studio/lib/registry/composite/data-table');
+    expect(dataTableDef.canvasFill, 'a shrink-to-fit flex item collapses the table').toBe(true);
+    expect(dataTableDef.canvasAlign ?? 'center').toBe('center');
+  });
+
+  it('leaves the icon grid top-anchored, which it relies on', async () => {
+    // Its height changes as you filter; re-centring makes the whole block jump.
+    const { iconsDefs } = await import('@/studio/lib/registry/icons');
+    const grid = iconsDefs.find((d) => d.canvasFill);
+    expect(grid, 'no filling icon preview found').toBeDefined();
+    expect(grid!.canvasAlign).toBe('top');
+  });
+});

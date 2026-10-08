@@ -13,6 +13,8 @@ export const iconsDefs: ComponentDef[] = [
     // align so the grid filters in place — nothing re-centres as the result
     // count changes.
     canvasFill: true,
+    // The grid's height changes as you filter; re-centring makes it jump.
+    canvasAlign: 'top',
     styleProperties: [
       { key: 'color', label: 'Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
       { key: 'size', label: 'Size', control: 'number', defaultValue: 20, min: 10, max: 48, step: 1, unit: 'px' },

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-
+import { cn } from '@/helpers';
 import {
   BannerPreview,
   BulkActionBarPreview,
@@ -365,7 +365,17 @@ export function Canvas({
           backgroundSize: '20px 20px',
         }}
       >
-        <div className={def.canvasFill ? 'min-h-full' : 'min-h-full flex items-center justify-center'}>
+        <div
+          className={cn(
+            'min-h-full',
+            // Not filling: centre on both axes, the shrink-to-fit default.
+            !def.canvasFill && 'flex items-center justify-center',
+            // Filling: a column flex stretches the child to full width, and
+            // `justify-center` still places it where every other preview sits.
+            def.canvasFill && def.canvasAlign !== 'top' && 'flex flex-col justify-center',
+            // Filling, top-anchored: no flex at all (the Icon grid).
+          )}
+        >
           {Preview ? (
             // Wrap the preview in a capture-phase event listener so any
             // native event the rendered atom fires gets logged to the
