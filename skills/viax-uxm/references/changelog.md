@@ -1703,3 +1703,20 @@ reached the published library; now shipped in 2.8.0.
   title specifically — its subtitle already defaults to muted, so putting the title there
   too makes the two identical. Darkening the defaults is still open, and is a major-release
   decision because it shifts every listbox and settings panel.
+
+### New in 4.51.0
+
+- **A sort-state icon family that holds one box: `sort-none`, `sort-asc`, `sort-desc`.**
+  All three are the same frame — three bars left, one shaft right — with only the
+  arrowheads differing, so the path-geometry (centre-line) box is identical in every
+  state (x 3..21, y 4.5..19.5), and the stroke adds the same margin to each. A table
+  header toggling between them keeps one footprint and one visual weight. That is what the previous pattern could not do: swapping `arrow-up` (ink 15
+  wide) for `arrows-up-down` (18 wide) changed the mark's weight mid-column. Note the
+  *layout* box was never the problem — `<Icon>` always renders `width`/`height` = `size`
+  on a fixed 24×24 viewBox, so no glyph swap can reflow text; it is the ink that jumped.
+  The bars stay constant across the three deliberately: which bar order means "ascending"
+  is a convention icon sets disagree on, so the arrowhead carries the direction and the
+  bars only say "a list under a sort". `tests/icon.test.tsx` parses the paths and pins
+  the three boxes as equal, so the guarantee cannot quietly rot. Replaces the
+  three-way `active ? (asc ? 'arrow-up' : 'arrow-down') : 'arrows-up-down'` conditional
+  consumers were writing.

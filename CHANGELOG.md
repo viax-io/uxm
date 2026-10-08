@@ -1,3 +1,15 @@
+# [4.56.0](https://github.com/viax-io/uxm/compare/v4.55.0...v4.56.0) (2026-10-08)
+
+
+### Bug Fixes
+
+* **data-table:** review fixes for sticky columns and scroll affordances ([e56bc97](https://github.com/viax-io/uxm/commit/e56bc97d63a5e4c455bd63e8fd3f41f098553be6))
+
+
+### Features
+
+* **data-table:** horizontal scrolling, sticky columns and scroll affordances ([e7fea66](https://github.com/viax-io/uxm/commit/e7fea6663d08e333c97bd6f04768f3ec3bfe9756))
+
 # [4.55.0](https://github.com/viax-io/uxm/compare/v4.54.0...v4.55.0) (2026-10-08)
 
 
