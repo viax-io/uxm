@@ -154,6 +154,16 @@ export interface ComponentDef {
    * place.
    */
   canvasFill?: boolean;
+  /**
+   * Vertical placement when `canvasFill` is set. Defaults to `'center'`, so a
+   * full-width preview still sits where every other preview does.
+   *
+   * `'top'` is for galleries and long lists whose height changes as you filter
+   * — the Icon grid — where re-centring makes the whole block jump. Filling the
+   * width and top-aligning used to be the same flag, which quietly top-aligned
+   * anything that needed full width for other reasons.
+   */
+  canvasAlign?: 'top' | 'center';
   /** Optional event-API documentation, surfaced in the Events tab. */
   events?: EventSpec[];
   /** Optional dev-facing API documentation, surfaced in the Dev tab. */
