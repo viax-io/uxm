@@ -17,7 +17,7 @@ git checkout --no-track -b <name> master     # or origin/master
 git push -u origin <name>                     # explicit branch, first push
 ```
 
-Then open a PR. `master` is protected **by convention only** — and on GitHub it
+Then open a PR. (For Claude sessions this is also enforced by `.claude/hooks/guard-master.mjs` — see CLAUDE.md → "Branches & pull requests".) `master` is protected **by convention only** — and on GitHub it
 is deliberately left unprotected, because `@semantic-release/git` pushes its
 `chore(release)` commit with the default `GITHUB_TOKEN`, which cannot write to a
 protected branch. Nothing stops a mis-targeted push from landing there and
