@@ -1,3 +1,10 @@
+## [4.56.4](https://github.com/viax-io/uxm/compare/v4.56.3...v4.56.4) (2026-10-08)
+
+
+### Bug Fixes
+
+* **data-table:** pinned cells now fade with the row, not ahead of it ([ce8255d](https://github.com/viax-io/uxm/commit/ce8255d3dc9fb7ed7e209add37793bbd911a883e))
+
 ## [4.56.3](https://github.com/viax-io/uxm/compare/v4.56.2...v4.56.3) (2026-10-08)
 
 
