@@ -111,7 +111,7 @@ A Vite dev shell that mounts `UxmApp` with `createClientPersistence`. `portal/ma
 - `constitution.md` — the *rules* of this codebase (non-negotiable conventions, release flow).
 - `gotchas.md` — the *lessons*: non-obvious tooling traps that have cost time before (never bare-`git push`, the benign lint-staged "no matching files" no-op on docs-only commits, when **not** to write a `BREAKING CHANGE:` footer). Add an entry when something non-obvious bites you.
 
-Both are version-controlled here — update them in-repo, not in a per-session memory store. `.claude/commands/` holds the slash commands (`/code-review`, `/update-ai-skill`, …) and `.claude/agents/` the subagent definitions.
+Both are version-controlled here — update them in-repo, not in a per-session memory store. `.claude/commands/` holds the slash commands (`/code-review`, `/update-ai-skill`, `/update-readme`, …) and `.claude/agents/` the subagent definitions.
 
 **Authoritative style reference: `.claude/handbooks/react-style-guide.md`** — component/props/hooks/TS/a11y conventions matching the real code (`uxm-` prefix, canonical `--` BEM modifiers, `.scss` sources, named exports, `cn()` from `@/helpers`, controlled/uncontrolled pairs, extend native HTML attribute interfaces). The live token reference is `src/tokens/index.css` (+ the consumer-facing table in `skills/viax-uxm/references/design-tokens.md`).
 
