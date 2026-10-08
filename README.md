@@ -9,7 +9,7 @@ The package ships **no `"use client"` / `"use server"` directives** by design: c
 ## What's in this package
 
 - **UI primitives** (`@viax.io/uxm/ui`) — BEM-classed React 19 components.
-- **Icon registry** (`@viax.io/uxm/ui`) — `ICONS`, `ICON_IDS`, `ICON_OPTIONS`, `getIcon`, `registerIcons`, `IconDef`, `IconName` for tooling that enumerates the bundled icon set, and for adding your own glyphs to it.
+- **Icon registry** (`@viax.io/uxm/ui`) — `ICONS`, `ICON_IDS`, `ICON_OPTIONS`, `getIcon`, `registerIcons`, `matchesIconQuery`, `IconDef`, `IconName`, `IconOption` for tooling that enumerates or searches the bundled icon set, and for adding your own glyphs to it; see [`icon`](src/ui/icon/README.md).
 - **Design tokens** (`@viax.io/uxm/tokens`) — the canonical `themeTokens` array plus helpers (`findToken`, `resolveHex`, `isTokenValue`) and the `ThemeToken` type.
 - **Behaviour hooks** (`@viax.io/uxm/hooks`) — `useDismiss`, `useFocusTrap`, `useFocusOnMount`, `useRovingTabIndex`, `useScrollLock`, `usePortal`, `useToastStore` for hosts composing their own floating layers or keyboard widgets.
 - **Themable previews** (`@viax.io/uxm/previews`) — preview components (one per atom, plus composite previews) used by host shells like MODO's brand-settings editor to render live, knob-driven theme exploration.
@@ -105,7 +105,7 @@ import { ButtonPrimary, themeTokens } from '@viax.io/uxm';
 | `@viax.io/uxm/tokens.css` | `--color-*` declarations on `:root`. |
 | `@viax.io/uxm/hooks` | The behaviour hooks the atoms are built on — `useDismiss`, `useFocusTrap`, `useFocusOnMount`, `useRovingTabIndex`, `useScrollLock`, `usePortal`, `useToastStore` — for hosts composing their own floating layers or keyboard widgets. Pure React, no atom imports. |
 | `@viax.io/uxm/previews` | Preview components for host shells building theme editors. **No preview symbol leaks into `/ui`** — see the tree-shake guarantee below. |
-| `@viax.io/uxm/studio` | `UxmApp` + `UxmProvider` / `useUxm`, the component `registry`, the `StudioPersistence` contract and its three adapters (`createHttpPersistence`, `createClientPersistence`, `createReadOnlyPersistence`). |
+| `@viax.io/uxm/studio` | `UxmApp` (+ its `StudioAccount` type) + `UxmProvider` / `useUxm`, the component `registry`, the `StudioPersistence` contract and its three adapters (`createHttpPersistence`, `createClientPersistence`, `createReadOnlyPersistence`). |
 | `@viax.io/uxm/studio/i18n` | The studio's own translations — `STUDIO_LOCALES` (what ships), `resolveStudioLocale` / `getStudioLocaleMeta`, and `StudioI18nProvider` + `useStudioT` / `useStudioTp` / `useStudioI18n`. Translates the workbench chrome only, never the atoms; see [Studio localisation](#studio-localisation). |
 | `@viax.io/uxm/studio/generate-css` | `generateOverridesCss` + the CSS sanitizers — turn saved studio overrides and a `BrandConfig` into a stylesheet on the server, without pulling in the workbench UI. |
 | `@viax.io/uxm/studio.css` | Tailwind utilities for the studio shell + token declarations. Does **not** bundle the atom CSS — a studio host imports `ui.css` alongside it. |
@@ -355,6 +355,8 @@ import { UxmApp, createHttpPersistence } from '@viax.io/uxm/studio';
 
 <UxmApp persistence={createHttpPersistence('/api/uxm')} locale="de" />;
 ```
+
+The studio has no session of its own and never fetches one — **the host owns auth**. Pass the signed-in user as `account={{ name, email, role?, realm?, initials?, onSignOut? }}` and the canvas top bar grows an avatar → account menu with a settings pane; omit it and the header is unchanged. The "Log out" row renders only when `onSignOut` is given. Other optional props: `headerActions` (host nodes in the desktop top bar), `embed` (no full-page chrome) and `syncFavicon` (drive `<link rel="icon">` from the brand favicon).
 
 `@viax.io/uxm/studio/generate-css` exposes `generateOverridesCss` and the CSS sanitizers on their own, so a server can render the saved overrides into a stylesheet without loading the workbench. The studio is the only layer styled with Tailwind; `studio.css` bundles those utilities and the token declarations but not the atom CSS.
 
