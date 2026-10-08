@@ -1,3 +1,10 @@
+## [4.56.3](https://github.com/viax-io/uxm/compare/v4.56.2...v4.56.3) (2026-10-08)
+
+
+### Bug Fixes
+
+* **studio:** a full-width preview should still be vertically centred ([c6bd388](https://github.com/viax-io/uxm/commit/c6bd38807360cc770800c4db62e58956b18c92f0))
+
 ## [4.56.2](https://github.com/viax-io/uxm/compare/v4.56.1...v4.56.2) (2026-10-08)
 
 
