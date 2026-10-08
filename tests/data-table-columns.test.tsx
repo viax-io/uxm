@@ -219,22 +219,45 @@ describe('DataTable fixed layout — the cases CSS alone decides', () => {
   });
 
   it('declares card mode AFTER the table-mode rules it overrides', () => {
-    // Card mode targets the same classes at the SAME specificity, so source
-    // order is the only thing deciding the winner. Declared earlier — where it
-    // sat for a long time — the whole cell reset lost silently: measured in a
-    // browser, stacked cells kept 12px table padding instead of 4px 0, kept a
-    // border under every cell, and right/centre columns never reset to left.
-    const cardMode = scss.lastIndexOf('@container (max-width: 480px)');
-    const baseCell = scss.indexOf('\n.uxm-data-table__td {');
-    const alignMods = scss.indexOf('.uxm-data-table__td--right { text-align: right');
-    expect(baseCell, 'base cell rule missing').toBeGreaterThan(-1);
-    expect(alignMods, 'alignment modifiers missing').toBeGreaterThan(-1);
-    expect(cardMode, 'card mode must come after the base cell rule').toBeGreaterThan(baseCell);
-    expect(cardMode, 'card mode must come after the alignment modifiers').toBeGreaterThan(alignMods);
-    // And it must still contain the three declarations that were dead.
-    const block = scss.slice(cardMode);
+    // Card mode targets the same classes at the SAME specificity as the
+    // table-mode rules, so source order alone decides. Declared earlier the
+    // whole cell reset lost silently: measured in a browser, stacked cells kept
+    // 12px table padding instead of 4px 0, kept a border under every cell, and
+    // right/centre columns never reset to left.
+    //
+    // Found by CONTENT, not `lastIndexOf` — positional lookup is what made the
+    // sticky tests silently inspect a different block once this one moved.
+    const cardAt = scss.indexOf('attr(data-label)');
+    const blockAt = scss.lastIndexOf('@container (max-width: 480px)', cardAt);
+    const block = scss.slice(blockAt);
+    expect(cardAt, 'card-mode block not found').toBeGreaterThan(-1);
+
+    for (const [label, needle] of [
+      ['base cell rule', '\n.uxm-data-table__td {'],
+      ['alignment modifiers', '.uxm-data-table__td--right { text-align: right'],
+      ['actions cell', '.uxm-data-table__td--actions'],
+    ] as const) {
+      expect(scss.indexOf(needle), `${label} missing`).toBeGreaterThan(-1);
+      expect(blockAt, `card mode must come after the ${label}`).toBeGreaterThan(
+        scss.indexOf(needle),
+      );
+    }
+
+    // All THREE declarations that were dead, not just the one that was reported.
     expect(block).toMatch(/padding:\s*4px 0/);
+    expect(block).toMatch(/border-bottom:\s*none/);
     expect(block).toMatch(/__td--right,[\s\S]{0,80}?__td--center\s*\{\s*text-align:\s*left/);
+  });
+
+  it('beats the density presets, which order alone cannot', () => {
+    // `.uxm-data-table--compact .uxm-data-table__td` is (0,2,0) and beats card
+    // mode's (0,1,0) wherever the block sits. Moving the block fixed default
+    // density and left compact/relaxed exactly as broken — 6px and 16px cell
+    // padding stacked on the row's own. The reset has to match their shape.
+    const block = scss.slice(scss.lastIndexOf('@container (max-width: 480px)', scss.indexOf('attr(data-label)')));
+    expect(block).toMatch(
+      /--compact \.uxm-data-table__td,[\s\S]{0,120}?--relaxed \.uxm-data-table__td\s*\{\s*padding:\s*4px 0/,
+    );
   });
 
   it('renders a table with rowActions AND a width without throwing', () => {

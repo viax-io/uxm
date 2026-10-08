@@ -450,7 +450,6 @@
   .uxm-data-table__scroll-arrow { display: none; }
 }
 
-
 /* ── Card mode — LAST in this file, and that placement is load-bearing ────
    These rules target the same classes as the table-mode rules above at the
    SAME specificity, so source order alone decides the winner. Declared
@@ -527,5 +526,21 @@
   .uxm-data-table__td--right,
   .uxm-data-table__td--center {
     text-align: left;
+  }
+  /* Density presets are (0,2,0) — `.uxm-data-table--compact .uxm-data-table__td`
+     — so they beat the (0,1,0) reset above NO MATTER where this block sits.
+     Moving the block fixed default density and left these two exactly as
+     broken as before: compact cards kept 6px 12px, relaxed 16px 12px, stacking
+     cell padding on top of the row's own. Match their shape to beat them. */
+  .uxm-data-table--compact .uxm-data-table__td,
+  .uxm-data-table--relaxed .uxm-data-table__td {
+    padding: 4px 0;
+  }
+  /* The actions cell takes the stacked reset like any other cell — its
+     table-mode `width: 1%` made it a 28px sliver in a card — but keeps its
+     trailing alignment, so the kebab stays at the card's trailing edge rather
+     than jumping to the left margin under the first value. */
+  .uxm-data-table__td--actions {
+    text-align: right;
   }
 }

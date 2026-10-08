@@ -145,6 +145,9 @@ What you get, and what to know:
   belongs to the table, not the cell, so a pinned cell scrolls out from under its own rules
   in Chrome and Safari. Only scrollable tables switch; every other table keeps collapsed
   borders, and the two render identically.
+- **In card mode the actions cell follows the stacked reset** — it is a full-width block rather
+  than its table-mode 1% sliver — but keeps its trailing alignment, so the ⋮ stays at the card's
+  trailing edge.
 - **Nothing applies in stacked mode.** Below a 480px container there is no horizontal axis:
   cells un-pin, shadows clear and the arrows are hidden.
 - **`scrollable` alone will not scroll a table that already fits.** Auto layout wraps content
@@ -232,7 +235,7 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 | `--uxm-data-table-scroll-arrow-shadow` | `--shadow-sm` | – | Lift under the arrows, so they read above the rows. |
 | `--uxm-data-table-scroll-focus-color` | `--color-accent-bold` | – | Focus ring on the scroll region. Inset, because the root clips. |
 | `--uxm-data-table-row-bg` | `--color-card` | – | `<tr>` background. |
-| `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | Row hover fill. **Note this is the same token the header band uses**, so a hovered row currently reads as the same colour as the header. Set it to `var(--color-surface)` for a hover that is distinct from the header and a gentler step from the card-white row. The shipped default is unchanged on purpose: moving it is a visual change for every existing table, which is a major-release decision rather than something a patch should do silently. |
+| `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | Row hover fill. Defaults to the same token as the header band — see [Hover and the header band](#hover-and-the-header-band). |
 | `--uxm-data-table-cell-padding-x` | – | `12px` | Horizontal cell padding (default density). |
 | `--uxm-data-table-cell-padding-y` | – | `10px` (th) / `12px` (td) | Vertical cell padding (default density). |
 
@@ -253,12 +256,15 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 Light: rows are `--color-card` `#FFFFFF`, `--color-surface` is `#F8F7F6`, `--color-surface-alt`
 is `#F2F1F0`. Dark: `#1B1A18`, `#232220`, `#2A2927`.
 
-Either value clears AA for the text on top, in both themes — measured, worst case `4.76:1`
-(`--color-text-muted` on `--color-surface-alt`, light). So the choice is about whether hover
-should be distinguishable from the table's own chrome, not about contrast.
+Either value clears AA for `--color-text` and `--color-text-muted` in both themes — measured,
+worst case `4.76:1` (muted on `--color-surface-alt`, light). `--color-text-subtle` is 3.25–3.66:1
+on all three surfaces and is below AA as body text whichever hover you pick, so don't use it for
+cell content. The hover choice is about distinguishing hover from the table's own chrome, not
+about contrast.
 
-**The default is deliberately left alone.** Changing it would restyle every existing table,
-which is a major-release decision; the knob is how you take the new look today.
+**The default is deliberately left alone.** Changing it is a visible change for every existing
+table, so not something a patch should do silently; which release it belongs in is a
+maintainer call. The knob is how you take the new look today.
 
 ## Design tokens (MODO-configurable)
 
