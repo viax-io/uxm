@@ -106,6 +106,7 @@ import { ButtonPrimary, themeTokens } from '@viax.io/uxm';
 | `@viax.io/uxm/hooks` | The behaviour hooks the atoms are built on — `useDismiss`, `useFocusTrap`, `useFocusOnMount`, `useRovingTabIndex`, `useScrollLock`, `usePortal`, `useToastStore` — for hosts composing their own floating layers or keyboard widgets. Pure React, no atom imports. |
 | `@viax.io/uxm/previews` | Preview components for host shells building theme editors. **No preview symbol leaks into `/ui`** — see the tree-shake guarantee below. |
 | `@viax.io/uxm/studio` | `UxmApp` + `UxmProvider` / `useUxm`, the component `registry`, the `StudioPersistence` contract and its three adapters (`createHttpPersistence`, `createClientPersistence`, `createReadOnlyPersistence`). |
+| `@viax.io/uxm/studio/i18n` | The studio's own translations — `STUDIO_LOCALES` (what ships), `resolveStudioLocale` / `getStudioLocaleMeta`, and `StudioI18nProvider` + `useStudioT` / `useStudioTp` / `useStudioI18n`. Translates the workbench chrome only, never the atoms; see [Studio localisation](#studio-localisation). |
 | `@viax.io/uxm/studio/generate-css` | `generateOverridesCss` + the CSS sanitizers — turn saved studio overrides and a `BrandConfig` into a stylesheet on the server, without pulling in the workbench UI. |
 | `@viax.io/uxm/studio.css` | Tailwind utilities for the studio shell + token declarations. Does **not** bundle the atom CSS — a studio host imports `ui.css` alongside it. |
 
@@ -282,7 +283,7 @@ Each component README's **Design tokens (MODO-configurable)** section names ever
 
 ## Localisation
 
-**The library formats; you translate.** `@viax.io/uxm` ships no i18n engine — no message catalogue, no translation runtime — because a primitives library that owns translation forces its choice of engine onto every consuming app. Localisation splits in two:
+**The library formats; you translate.** The UI primitives ship no i18n engine — no message catalogue, no translation runtime — because a primitives library that owns translation forces its choice of engine onto every consuming app. (The one exception is the studio workbench's *own* chrome, which no consumer can reach — see [Studio localisation](#studio-localisation). Nothing there touches `/ui`.) Localisation splits in two:
 
 **Copy is yours, and arrives as props.** Every user-visible string a component can render or announce has a prop with an English default — `clearLabel`, `closeLabel`, `emptyState`, `requiredMessage`, `placeholder`, or a grouped `labels={{ … }}` object where a component owns several. Translate in your app and pass the result down. A string you cannot reach from props is a bug — [open an issue](#contributing).
 
@@ -352,10 +353,20 @@ import '@viax.io/uxm/ui.css';
 import '@viax.io/uxm/studio.css';
 import { UxmApp, createHttpPersistence } from '@viax.io/uxm/studio';
 
-<UxmApp persistence={createHttpPersistence('/api/uxm')} />;
+<UxmApp persistence={createHttpPersistence('/api/uxm')} locale="de" />;
 ```
 
 `@viax.io/uxm/studio/generate-css` exposes `generateOverridesCss` and the CSS sanitizers on their own, so a server can render the saved overrides into a stylesheet without loading the workbench. The studio is the only layer styled with Tailwind; `studio.css` bundles those utilities and the token declarations but not the atom CSS.
+
+### Studio localisation
+
+The workbench's own furniture — sidebar, canvas chrome, properties panel, component names, knob labels, section headings, brand-token names — ships translated. Pass the user's language as a BCP-47 tag through `locale`; **the host resolves it, the library never does** (no backend, no browser sniffing). Ten languages ship alongside the English source:
+
+`de` · `es` · `fr` · `it` · `ja` · `nl` · `pl` · `pt-BR` · `tr` · `uk`
+
+An unshipped tag resolves exact → base language (`de-AT` → `de`) → region sibling (`pt-PT` → `pt-BR`) → English, and never throws. The same tag reaches the atoms rendered in the canvas through `UxmLocaleProvider`, so a calendar formats in the language the panel around it is labelled in. `import { STUDIO_LOCALES } from '@viax.io/uxm/studio/i18n'` lists what ships, e.g. to build a language picker.
+
+This does **not** translate the atoms in a consuming app — their copy stays the app's job, via label props (see [Localisation](#localisation)). Preview demo text (a Button reading `Save`) stays English on purpose. The dictionaries have not yet been reviewed by native speakers. Architecture, the key scheme and how to add a locale: [`src/studio/i18n/README.md`](src/studio/i18n/README.md).
 
 ## Architecture
 
@@ -398,7 +409,10 @@ npm run build        # full dist/ (see the pipeline below)
 npm run typecheck    # tsc --noEmit for src + portal
 npm run lint         # eslint .
 npm run lint:fix     # eslint . --fix
-npm run check:drift  # state-var drift, type-scale and tokens.css ↔ themeTokens parity gates
+npm run check:drift  # state-var drift, type-scale, tokens.css ↔ themeTokens parity and studio-i18n gates
+npm run i18n:extract # re-scan the registry + t() calls into src/studio/i18n/source-catalog.json
+npm run i18n:gen     # sync every studio dictionary to that catalog (new keys land as null)
+npm run check:studio-i18n # every shipped studio locale is complete
 npm test             # Vitest smoke suite (tests/), jsdom — `npm run test:watch` while iterating
 npm run test:coverage # coverage summary for orientation only — no thresholds, not a gate
 npm run dev          # tsup --watch — only for local linked dev against a consumer
@@ -440,6 +454,7 @@ dist/
 └── studio/
     ├── index.{js,cjs,d.ts}
     ├── studio.css
+    ├── i18n/index.{js,cjs,d.ts}
     └── persistence/generate-css.{js,cjs,d.ts}
 ```
 
@@ -466,6 +481,7 @@ This makes commit types carry semver meaning: `fix` → PATCH, `feat` → MINOR,
 - **Add a component**: create `src/ui/{name}/` with `{name}.tsx`, `{name}.scss`, `index.ts`. Re-export from **both** the folder `index.ts` and `src/ui/index.ts`. Add the compiled stylesheet to `src/ui/styles.css` as `@import "./{name}/{name}.css";` in cascade order — the aggregator is hand-written, and a component whose `@import` is missing ships with no CSS. Add a `README.md` mirroring [`button/README.md`](src/ui/button/README.md) (simple) or [`data-table/README.md`](src/ui/data-table/README.md) (complex).
 - **Update the AI skill in the same change**: `skills/viax-uxm/` needs a catalog row, a cheatsheet row, and a bullet under `### Unreleased` in `SKILL.md`. Leave the version and component-count markers alone — CI stamps those at release via `scripts/stamp-skill-version.mjs`.
 - **Add a preview**: create `{name}-preview.tsx` next to the component — previews live beside their component, not in `src/previews/`. Use `PreviewProps` and project knob values as inline CSS vars so production CSS rules paint them. Never re-export a preview from a `src/ui/` barrel (see the tree-shake guarantee above).
+- **Change studio text**: any user-visible string under `src/studio/` or in the registry goes through `t()` / `tp()` — never a raw literal. Then `npm run i18n:extract && npm run i18n:gen`, fill every new `null` in **all** shipped locales in the same change, and `npm run check:studio-i18n` must pass. Details in [`src/studio/i18n/README.md`](src/studio/i18n/README.md#changing-a-string).
 - **Add a token**: add an entry to `themeTokens` in `src/tokens/index.ts` and declare the `--color-*` variable in `src/tokens/index.css` — `npm run check:drift` fails if only one side changes. Reference it from component SCSS via `var(--uxm-foo-bar, var(--color-new-token))` — never hardcode a colour, spacing, or radius.
 - Commits follow conventional-commit format (`commitizen` + `commitlint` enforced via `husky`); `npm run commit` walks you through it. Commit types drive the released version — see [Releases](#releases).
 - Run `npm run lint && npm run typecheck && npm run check:drift && npm test && npm run build` before opening a pull request — the same gates CI runs.
