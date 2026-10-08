@@ -1,3 +1,10 @@
+## [4.56.1](https://github.com/viax-io/uxm/compare/v4.56.0...v4.56.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* **data-table:** restore Density in the preview, and give rows a stable id ([3d766a5](https://github.com/viax-io/uxm/commit/3d766a5e3e211cf30666110b7413d76512b627fa))
+
 # [4.56.0](https://github.com/viax-io/uxm/compare/v4.55.0...v4.56.0) (2026-10-08)
 
 
