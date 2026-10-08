@@ -1,3 +1,10 @@
+# [4.55.0](https://github.com/viax-io/uxm/compare/v4.54.0...v4.55.0) (2026-10-08)
+
+
+### Features
+
+* **data-table:** column widths, per-column class, labels and an active row ([7db4dc0](https://github.com/viax-io/uxm/commit/7db4dc07ae3e5781c3ff9e1a065e61a0d106a863))
+
 # [4.54.0](https://github.com/viax-io/uxm/compare/v4.53.0...v4.54.0) (2026-10-08)
 
 

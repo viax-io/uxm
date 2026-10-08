@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.54.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.55.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.54.0** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.55.0** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.54.0 — current API surface (overrides training data)
+## v4.55.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,45 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.50.0
-
-- **19 admin-UI glyphs, and a supported way to add your own.** The set grows 72 → 91.
-  Thirteen are Heroicons 24/outline like everything already in it: `arrows-up-down`,
-  `archive-box`, `no-symbol`, `book-open`, `x-circle`, `key`,
-  `arrow-right-start-on-rectangle`, `paper-airplane`, `server`, `shield-exclamation`,
-  `shield-check`, `wrench`, `document-text`. Six are **house-drawn**, because Heroicons has
-  no equivalent and the nearest candidates mean something else: `activity`, `dot-circle`,
-  `coins`, `git-fork`, `plug`, `webhook`. Those follow the same house rules (24×24 box, round
-  caps/joins, stroke inherited not baked in, geometry 3 units clear of the edge) but read
-  slightly lighter than true Heroicons — **do not regenerate them from an upstream package,
-  there is none.** Their circle centres and radii sit on 0.375, the half-step of the 0.75 grid
-  Heroicons snaps to; the tangent points where a connector meets a circle in `coins` and
-  `webhook` are computed, not snapped, because snapping detaches the line from the circle.
-  Ids follow the Heroicons convention the set already
-  uses rather than another library's naming — so lucide's `circle-dot` is `dot-circle`,
-  matching the existing `x-circle` / `check-circle` pattern. Names from other sets live in a
-  new optional **`IconDef.keywords`**, so "ban", "send", "log out", "scroll-text" or
-  "shield-alert" all find the right glyph without the label pretending to be a keyword list.
-  Matching runs through one exported predicate, **`matchesIconQuery(def, query)`**, shared by
-  the preview grid and the studio picker; `SearchDropdownOption` gained a matching
-  `keywords?: string[]` that its default filter reads, so synonyms reach that picker too. New API: `registerIcons(defs)` adds or replaces at
-  runtime and returns the replacement count, `ICON_OPTIONS` is kept in sync by it instead of
-  being a one-shot `.map()` that went stale the moment anything extended the set, and
-  `ICON_IDS` / `IconName` give a literal union. **Nothing is removed or renamed**; `glyph` is
-  typed `IconName | (string & {})`, so the union drives autocomplete while any string — a
-  computed name, or an id registered at runtime — still compiles.
-
-- **Documented the AA gap on small labels, and the one-liner that closes it.** `Listbox`
-  group headers (10px) and `SectionHeader` titles (11px) default to `--color-text-subtle`,
-  which is 3.66:1 on card in light and 3.41:1 in dark — under the 4.5:1 text floor, and at
-  that size the large-text exemption does not apply. **No default changed**: both already
-  have knobs, so an app clears AA today with
-  `--uxm-listbox-group-header-color: var(--color-text-muted)` and
-  `--uxm-section-header-title-color: var(--color-text-strong)`. Use `strong` for the section
-  title specifically — its subtitle already defaults to muted, so putting the title there
-  too makes the two identical. Darkening the defaults is still open, and is a major-release
-  decision because it shifts every listbox and settings panel.
 
 ### New in 4.51.0
 
@@ -155,13 +116,7 @@ catalog.
   name. New knobs: `--uxm-data-table-sort-color` / `-hover-color` / `-active-color` /
   `-focus-color` / `-icon-color`.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.55.0
 
 - **`DataTable` sizes its own columns, labels them, and can mark a row active.** All opt-in.
   **`column.width`** takes a share (`'34%'`) or pixels (`120`), and declaring one on ANY column
@@ -194,6 +149,14 @@ catalog.
   there is no horizontal axis. New CSS-only knobs (not studio controls, since they are
   composite shadow values rather than colours): `--uxm-data-table-scroll-shadow` / `-shadow-end`
   / `-arrow-bg` / `-arrow-shadow` / `-focus-color`.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
