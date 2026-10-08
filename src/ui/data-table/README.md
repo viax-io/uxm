@@ -113,6 +113,41 @@ Worth knowing:
 />
 ```
 
+### Scrolling and sticky columns
+
+```tsx
+<DataTable
+  columns={[
+    { key: 'name', header: 'Name', width: 220, sticky: 'start' },  // identity stays put
+    { key: 'a', header: 'A', width: 160 },
+    { key: 'b', header: 'B', width: 160 },
+    { key: 'total', header: 'Total', width: 120, sticky: 'end', align: 'right' },
+  ]}
+  rows={rows}
+  rowKey={(r) => r.id}
+  scrollLabel="Orders"
+/>
+```
+
+`sticky` turns the scroller on by itself — pinning only means something against a scroll.
+Use `scrollable` on its own for a wide table that wants the affordances without pinning.
+
+What you get, and what to know:
+
+- **The scroller is a focusable `role="region"`.** A scroll container reachable only by
+  pointer fails 2.1.1, so it takes `tabIndex={0}` and is named by `scrollLabel`.
+- **Scroll shadows and arrows** appear only while there is somewhere to scroll, both driven
+  by the same measured state so they cannot disagree. The arrows move ~80% of a viewport and
+  respect `prefers-reduced-motion`.
+- **One sticky column per side.** Offsetting a second needs the first measured, and a wrong
+  offset overlaps two columns rather than degrading gracefully.
+- **Scrollable tables use `border-collapse: separate`.** With collapsed borders the border
+  belongs to the table, not the cell, so a pinned cell scrolls out from under its own rules
+  in Chrome and Safari. Only scrollable tables switch; every other table keeps collapsed
+  borders, and the two render identically.
+- **Nothing applies in stacked mode.** Below a 480px container there is no horizontal axis:
+  cells un-pin, shadows clear and the arrows are hidden.
+
 ## Props
 
 ### `DataTableProps<T>`
@@ -136,6 +171,8 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `renderSortLink` | `(args) => ReactNode` | – | Render link mode's anchor yourself, for a client-side router — the default `<a href>` means a full document load per sort click in a Next / React Router app. Receives `{ href, sort, className, children, 'aria-label' }`. Requires `sortHref`. |
 | `activeRowId` | `string \| null` | – | Marks one row active — the row whose detail is open in a pane beside the table. Compared against `rowKey(row)`. Sets `aria-current="true"` and a `--active` class. Distinct from hover and from `onRowClick`: the row stays active while the pointer is elsewhere. |
 | `rowProps` | `(row: T) => HTMLAttributes<HTMLTableRowElement>` | – | Extra attributes merged onto the `<tr>` — an `id` to deep-link to, a data attribute, a row-specific class. `className` merges with the library's; everything else wins over the defaults, including `aria-current`. |
+| `scrollable` | `boolean` | `false` | Puts the table in its own horizontal scroller instead of letting it push its container wide. Implied by any `sticky` column; set it alone for a wide table that wants the affordances without pinning. |
+| `scrollLabel` | `string` | `'Table'` | Accessible name for the scroll region and its arrows. Give it the table's subject when a page has more than one, or every region announces the same. |
 
 ### `DataTableColumn<T>`
 
@@ -151,6 +188,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `width` | `number \| string` | no | Column width — a share (`'34%'`) or pixels (`120` / `'120px'`). **Setting it on any column switches the table to `table-layout: fixed`**, which is what makes a declared width hold; columns without one split the remainder. A table where nobody declares a width keeps auto layout, exactly as before. Replaces reaching into `.uxm-data-table__th:nth-child(n)` from a consumer stylesheet. |
 | `className` | `string` | no | Applied to **both** the `<th>` and every `<td>` in the column — added to the library classes, not replacing them. A column is a vertical thing; styling one from outside otherwise takes two `nth-child` selectors that renumber the moment a column is inserted. |
 | `label` | `string` | no | The column's name as plain text, for places a `ReactNode` header cannot go: the `data-label` stacked mode shows on each cell, and the sort control's accessible name. Defaults to `header` when it's a string — so it only ever fills a gap. A JSX header previously rendered cells with **no** stacked-mode label at all. |
+| `sticky` | `'start' \| 'end'` | no | Pins the column to the leading or trailing edge while the table scrolls. Turns the scroller on by itself. **One column per side** — offsetting a second requires measuring the first, and a wrong offset overlaps columns rather than degrading. Give it a `width`. No effect in stacked mode. |
 
 ### `DataTableDensity`
 
@@ -178,6 +216,11 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 | `--uxm-data-table-row-active-bg` | `--color-accent-subtle` | – | Fill of the active row. |
 | `--uxm-data-table-row-active-rail` | `--color-accent-bold` | – | The 3px rail on the active row's first cell. Drawn with `box-shadow`, so it costs no layout and can't nudge a measured column width under fixed layout. |
 | `--uxm-data-table-row-active-hover-bg` | `--color-accent-subtle` | – | Active row while hovered — set it if you want hover to read differently there. |
+| `--uxm-data-table-scroll-shadow` | – | `6px 0 6px -6px rgb(0 0 0 / 35%)` | Shadow cast by a `sticky: 'start'` column once scrolled. A full `box-shadow` value, not a colour — CSS-only, deliberately not a studio knob. |
+| `--uxm-data-table-scroll-shadow-end` | – | `-6px 0 6px -6px rgb(0 0 0 / 35%)` | The same for a `sticky: 'end'` column. |
+| `--uxm-data-table-scroll-arrow-bg` | `--color-card` | – | Fill of the scroll arrow buttons. |
+| `--uxm-data-table-scroll-arrow-shadow` | – | `0 1px 4px rgb(0 0 0 / 18%)` | Lift under the arrows, so they read above the rows. |
+| `--uxm-data-table-scroll-focus-color` | `--color-accent-bold` | – | Focus ring on the scroll region. Inset, because the root clips. |
 | `--uxm-data-table-row-bg` | `--color-card` | – | `<tr>` background. |
 | `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | `<tr>:hover` background. |
 | `--uxm-data-table-cell-padding-x` | – | `12px` | Horizontal cell padding (default density). |

@@ -343,3 +343,125 @@
   padding-top: 0;
   padding-bottom: 0;
 }
+
+/* ── Horizontal scrolling, sticky columns and scroll affordances ───────────
+   All of it opt-in: a table that neither scrolls nor pins anything never sees
+   a rule in this block, and the root keeps `overflow: hidden`.
+
+   The root becomes the positioning context so the arrows can sit over the
+   scroller's edges; the scroller itself owns the overflow. */
+.uxm-data-table--scrollable {
+  position: relative;
+  /* The root's `overflow: hidden` is what clips the rounded corners, and it
+     has to stay — the SCROLLER inside takes the horizontal axis instead. */
+}
+.uxm-data-table__scroller {
+  overflow-x: auto;
+  /* A focusable region needs a visible focus ring, and `outline-offset` would
+     put it outside the clipped root. Inset it. */
+  &:focus-visible {
+    outline: 2px solid var(--uxm-data-table-scroll-focus-color, var(--color-accent-bold));
+    outline-offset: -2px;
+  }
+}
+
+/* Sticky columns need `border-collapse: separate`: with collapsed borders the
+   border belongs to the TABLE, not the cell, so a pinned cell scrolls out from
+   under its own rules in Chrome and Safari. Scoped here so every other table
+   keeps the collapsed borders it has always had. `border-spacing: 0` keeps the
+   separated model looking identical. */
+.uxm-data-table--scrollable .uxm-data-table__table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+/* Re-draw the per-cell rules the separated model no longer collapses for us. */
+.uxm-data-table--scrollable .uxm-data-table__th,
+.uxm-data-table--scrollable .uxm-data-table__td {
+  border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+}
+
+.uxm-data-table__th--sticky-start,
+.uxm-data-table__td--sticky-start,
+.uxm-data-table__th--sticky-end,
+.uxm-data-table__td--sticky-end {
+  position: sticky;
+  /* Above ordinary cells so scrolling content passes UNDER the pinned column.
+     A local stacking value, not a --z-* tier: this orders siblings inside one
+     component, it is not a layer of the app. */
+  z-index: 1;
+}
+.uxm-data-table__th--sticky-start,
+.uxm-data-table__td--sticky-start { inset-inline-start: 0; }
+.uxm-data-table__th--sticky-end,
+.uxm-data-table__td--sticky-end { inset-inline-end: 0; }
+
+/* A pinned cell MUST be opaque. Cells are transparent by default and the fill
+   lives on the row, so without this the scrolling content shows straight
+   through the pinned column. Each row state has to be restated for the same
+   reason. */
+.uxm-data-table__td--sticky-start,
+.uxm-data-table__td--sticky-end {
+  background-color: var(--uxm-data-table-row-bg, var(--color-card));
+}
+.uxm-data-table__th--sticky-start,
+.uxm-data-table__th--sticky-end {
+  background-color: var(--uxm-data-table-header-bg, var(--color-surface-alt));
+}
+.uxm-data-table__row:hover > .uxm-data-table__td--sticky-start,
+.uxm-data-table__row:hover > .uxm-data-table__td--sticky-end {
+  background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
+}
+.uxm-data-table__row--active > .uxm-data-table__td--sticky-start,
+.uxm-data-table__row--active > .uxm-data-table__td--sticky-end {
+  background-color: var(--uxm-data-table-row-active-bg, var(--color-accent-subtle));
+}
+
+/* Scroll shadows: the cue that there is more table past the edge. Drawn on the
+   pinned cells when a column is pinned (so the shadow reads as cast BY the
+   pinned column), and on the scroller's edges otherwise. Both are driven by
+   the same measured state as the arrows, so they cannot disagree. */
+.uxm-data-table--scrolled-start .uxm-data-table__th--sticky-start,
+.uxm-data-table--scrolled-start .uxm-data-table__td--sticky-start {
+  box-shadow: var(--uxm-data-table-scroll-shadow, 6px 0 6px -6px rgb(0 0 0 / 35%));
+}
+.uxm-data-table--scrolled-end .uxm-data-table__th--sticky-end,
+.uxm-data-table--scrolled-end .uxm-data-table__td--sticky-end {
+  box-shadow: var(--uxm-data-table-scroll-shadow-end, -6px 0 6px -6px rgb(0 0 0 / 35%));
+}
+
+/* The arrows. Centred on the scroller's edges, over the table rather than
+   beside it, so turning them on costs no layout. */
+.uxm-data-table__scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background-color: var(--uxm-data-table-scroll-arrow-bg, var(--color-card));
+  border: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+  border-radius: 50%;
+  box-shadow: var(--uxm-data-table-scroll-arrow-shadow, 0 1px 4px rgb(0 0 0 / 18%));
+}
+.uxm-data-table__scroll-arrow--start { inset-inline-start: 4px; }
+.uxm-data-table__scroll-arrow--end { inset-inline-end: 4px; }
+
+/* Stacked mode has no horizontal axis, so nothing here applies: the scroller
+   stops scrolling, pinned cells un-pin, and the arrows would point at nothing. */
+@container (max-width: 480px) {
+  .uxm-data-table__scroller { overflow-x: visible; }
+  /* The `--scrolled-*` shadow selectors are (0,2,0); a bare class reset here is
+     (0,1,0) and loses, so the shadows survived into the stacked cards. Match
+     their shape rather than reaching for !important. */
+  .uxm-data-table__th--sticky-start,
+  .uxm-data-table__td--sticky-start,
+  .uxm-data-table__th--sticky-end,
+  .uxm-data-table__td--sticky-end {
+    position: static;
+  }
+  .uxm-data-table--scrolled-start .uxm-data-table__th--sticky-start,
+  .uxm-data-table--scrolled-start .uxm-data-table__td--sticky-start,
+  .uxm-data-table--scrolled-end .uxm-data-table__th--sticky-end,
+  .uxm-data-table--scrolled-end .uxm-data-table__td--sticky-end {
+    box-shadow: none;
+  }
+  .uxm-data-table__scroll-arrow { display: none; }
+}

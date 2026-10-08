@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 import { cn } from '@/helpers';
 
 import { EditableCell, type EditableCellOption, type EditableCellType, type EditableCellValue } from '../editable-cell';
@@ -6,7 +8,7 @@ import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
 import { Menu, type MenuEntry } from '../menu';
 
-import type { CSSProperties, HTMLAttributes, MouseEvent, ReactNode } from 'react';
+import type { CSSProperties, HTMLAttributes, MouseEvent, ReactNode, RefObject } from 'react';
 
 export type DataTableDensity = 'compact' | 'default' | 'relaxed';
 
@@ -112,6 +114,20 @@ export interface DataTableColumn<T> {
    * consumer stylesheet, which is what people were doing.
    */
   width?: number | string;
+  /**
+   * Pin the column to the leading (`'start'`) or trailing (`'end'`) edge while
+   * the table scrolls horizontally — the identity column and the actions
+   * column being the two that earn it.
+   *
+   * Using it on any column turns the horizontal scroller on; see `scrollable`.
+   * **One column per side**: offsetting a second one requires measuring the
+   * first, and a wrong offset overlaps two columns rather than degrading. Give
+   * the sticky column a `width` so its size is known rather than content-led.
+   *
+   * No effect in stacked mode (below a 480px container) — there is no
+   * horizontal axis to pin against there.
+   */
+  sticky?: 'start' | 'end';
   /**
    * Class applied to BOTH this column's `<th>` and every `<td>` in it —
    * which is the point: a column is a vertical thing, and styling one from
@@ -221,6 +237,26 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * Sets `aria-current="true"` and a `--active` class. Separate from hover and
    * from `onRowClick`: a row stays active while the pointer is elsewhere.
    */
+  /**
+   * Put the table in its own horizontal scroller, rather than letting it push
+   * its container wide.
+   *
+   * Implied by any column with `sticky` — pinning only means something against
+   * a scroll. Set it on its own for a wide table that wants the scroll
+   * affordances without pinning anything.
+   *
+   * The scroller is a focusable `role="region"`, because a region you can only
+   * reach with a pointer fails 2.1.1. It also carries scroll shadows and a
+   * pair of arrow buttons, which appear only while there is somewhere to
+   * scroll.
+   */
+  scrollable?: boolean;
+  /**
+   * Accessible name for the scroll region and its arrows. Default
+   * `"Table"` — give it the table's subject ("Orders") when there is more than
+   * one on a page, or every region announces the same.
+   */
+  scrollLabel?: string;
   activeRowId?: string | null;
   /**
    * Extra attributes per row, merged onto the `<tr>`.
@@ -344,6 +380,122 @@ function SortHeader<T>({
   );
 }
 
+/**
+ * The horizontal scroller — rendered ONLY when the table scrolls, so a table
+ * that doesn't produces exactly the DOM it always did.
+ *
+ * Focusable and named: a scroll region reachable only by pointer fails 2.1.1,
+ * and an unnamed one tells a screen-reader user nothing about what they have
+ * landed in.
+ */
+function ScrollRegion({
+  enabled,
+  innerRef,
+  label,
+  children,
+}: {
+  enabled: boolean;
+  innerRef: RefObject<HTMLDivElement | null>;
+  label: string;
+  children: ReactNode;
+}) {
+  if (!enabled) return <>{children}</>;
+  return (
+    <div
+      ref={innerRef}
+      className="uxm-data-table__scroller"
+      role="region"
+      aria-label={label}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scroll container MUST be focusable or it is pointer-only (axe scrollable-region-focusable, WCAG 2.1.1); the rule only whitelists tabpanel
+      tabIndex={0}
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Tracks whether a scroller has anywhere left to go, in each direction.
+ *
+ * Drives both the shadows and the arrows' disabled state, so the two can never
+ * disagree — a shadow promising content that the arrow says isn't there is
+ * worse than neither. Re-measures on scroll AND on resize, because a container
+ * that grows past the table's width stops being scrollable without any scroll
+ * event firing.
+ */
+function useScrollEdges(ref: RefObject<HTMLDivElement | null>, enabled: boolean) {
+  const [edges, setEdges] = useState({ start: false, end: false });
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!enabled || !el) return undefined;
+    const measure = () => {
+      // 1px of slack: fractional layout means scrollLeft rarely lands exactly
+      // on the maximum, which would leave the end arrow enabled forever.
+      const max = el.scrollWidth - el.clientWidth;
+      setEdges({ start: el.scrollLeft > 1, end: el.scrollLeft < max - 1 });
+    };
+    measure();
+    el.addEventListener('scroll', measure, { passive: true });
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => {
+      el.removeEventListener('scroll', measure);
+      observer.disconnect();
+    };
+  }, [ref, enabled]);
+
+  return edges;
+}
+
+/**
+ * The arrow pair. Scrolls by most of a viewport rather than a fixed step, so
+ * one press moves a useful distance on any column layout, with a sliver of
+ * overlap to keep your place.
+ */
+function ScrollArrows({
+  scrollerRef,
+  edges,
+  label,
+}: {
+  scrollerRef: RefObject<HTMLDivElement | null>;
+  edges: { start: boolean; end: boolean };
+  label: string;
+}) {
+  const nudge = (direction: -1 | 1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    // Honour the OS setting: a smooth scroll is motion, and this is the only
+    // motion the component has.
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    el.scrollBy({ left: direction * el.clientWidth * 0.8, behavior: reduced ? 'auto' : 'smooth' });
+  };
+  return (
+    <>
+      {edges.start && (
+        <IconButton
+          className="uxm-data-table__scroll-arrow uxm-data-table__scroll-arrow--start"
+          aria-label={`Scroll ${label} left`}
+          onClick={() => nudge(-1)}
+        >
+          <Icon glyph="chevron-left" size={16} />
+        </IconButton>
+      )}
+      {edges.end && (
+        <IconButton
+          className="uxm-data-table__scroll-arrow uxm-data-table__scroll-arrow--end"
+          aria-label={`Scroll ${label} right`}
+          onClick={() => nudge(1)}
+        >
+          <Icon glyph="chevron-right" size={16} />
+        </IconButton>
+      )}
+    </>
+  );
+}
+
 export function DataTable<T>({
   columns,
   rows,
@@ -354,6 +506,8 @@ export function DataTable<T>({
   actionsColumnLabel = 'Actions',
   rowActionsLabel = 'Row actions',
   sort,
+  scrollable,
+  scrollLabel = 'Table',
   activeRowId,
   rowProps,
   onSortChange,
@@ -362,9 +516,23 @@ export function DataTable<T>({
   className,
   ...rest
 }: DataTableProps<T>) {
+  // Pinning only means something against a scroll, so a sticky column implies
+  // the scroller rather than quietly doing nothing.
+  const hasSticky = columns.some((c) => c.sticky);
+  const scrolls = Boolean(scrollable) || hasSticky;
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const edges = useScrollEdges(scrollerRef, scrolls);
+
   return (
     <div
-      className={cn('uxm-data-table', `uxm-data-table--${density}`, className)}
+      className={cn(
+        'uxm-data-table',
+        `uxm-data-table--${density}`,
+        scrolls && 'uxm-data-table--scrollable',
+        scrolls && edges.start && 'uxm-data-table--scrolled-start',
+        scrolls && edges.end && 'uxm-data-table--scrolled-end',
+        className,
+      )}
       {...rest}
     >
       {/* `table-layout: fixed` ONLY once a column declares a width. Under auto
@@ -372,6 +540,10 @@ export function DataTable<T>({
           content is wider, so the two go together — but switching every table
           to fixed would re-lay-out every existing consumer, which is a major
           decision, not a side effect of adding a prop. */}
+      {scrolls && (
+        <ScrollArrows scrollerRef={scrollerRef} edges={edges} label={scrollLabel} />
+      )}
+      <ScrollRegion enabled={scrolls} innerRef={scrollerRef} label={scrollLabel}>
       <table
         className={cn(
           'uxm-data-table__table',
@@ -396,6 +568,7 @@ export function DataTable<T>({
                     'uxm-data-table__th',
                     c.align && `uxm-data-table__th--${c.align}`,
                     sortable && 'uxm-data-table__th--sortable',
+                    c.sticky && `uxm-data-table__th--sticky-${c.sticky}`,
                     c.className,
                   )}
                   // Only a sortable column carries aria-sort, and only the
@@ -544,6 +717,7 @@ export function DataTable<T>({
                       'uxm-data-table__td',
                       c.align && `uxm-data-table__td--${c.align}`,
                       rowEditable && 'uxm-data-table__td--editable',
+                      c.sticky && `uxm-data-table__td--sticky-${c.sticky}`,
                       c.className,
                     )}
                     // Stop the row click from firing when the user clicks an
@@ -591,6 +765,7 @@ export function DataTable<T>({
           })}
         </tbody>
       </table>
+      </ScrollRegion>
     </div>
   );
 }
