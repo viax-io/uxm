@@ -1,3 +1,58 @@
+## [4.56.4](https://github.com/viax-io/uxm/compare/v4.56.3...v4.56.4) (2026-10-08)
+
+
+### Bug Fixes
+
+* **data-table:** pinned cells now fade with the row, not ahead of it ([ce8255d](https://github.com/viax-io/uxm/commit/ce8255d3dc9fb7ed7e209add37793bbd911a883e))
+
+## [4.56.3](https://github.com/viax-io/uxm/compare/v4.56.2...v4.56.3) (2026-10-08)
+
+
+### Bug Fixes
+
+* **studio:** a full-width preview should still be vertically centred ([c6bd388](https://github.com/viax-io/uxm/commit/c6bd38807360cc770800c4db62e58956b18c92f0))
+
+## [4.56.2](https://github.com/viax-io/uxm/compare/v4.56.1...v4.56.2) (2026-10-08)
+
+
+### Bug Fixes
+
+* **data-table:** beat the density presets in card mode, and keep the kebab trailing ([a7058a3](https://github.com/viax-io/uxm/commit/a7058a3dbe934a9184fa3f04a9e0e7b3905cc5a0))
+* **data-table:** card mode's cell reset was dead, not just its alignment rule ([8d41897](https://github.com/viax-io/uxm/commit/8d418976f561b1cb5c3117db5e60384148d795a6))
+
+## [4.56.1](https://github.com/viax-io/uxm/compare/v4.56.0...v4.56.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* **data-table:** restore Density in the preview, and give rows a stable id ([3d766a5](https://github.com/viax-io/uxm/commit/3d766a5e3e211cf30666110b7413d76512b627fa))
+
+# [4.56.0](https://github.com/viax-io/uxm/compare/v4.55.0...v4.56.0) (2026-10-08)
+
+
+### Bug Fixes
+
+* **data-table:** review fixes for sticky columns and scroll affordances ([e56bc97](https://github.com/viax-io/uxm/commit/e56bc97d63a5e4c455bd63e8fd3f41f098553be6))
+
+
+### Features
+
+* **data-table:** horizontal scrolling, sticky columns and scroll affordances ([e7fea66](https://github.com/viax-io/uxm/commit/e7fea6663d08e333c97bd6f04768f3ec3bfe9756))
+
+# [4.55.0](https://github.com/viax-io/uxm/compare/v4.54.0...v4.55.0) (2026-10-08)
+
+
+### Features
+
+* **data-table:** column widths, per-column class, labels and an active row ([7db4dc0](https://github.com/viax-io/uxm/commit/7db4dc07ae3e5781c3ff9e1a065e61a0d106a863))
+
+# [4.54.0](https://github.com/viax-io/uxm/compare/v4.53.0...v4.54.0) (2026-10-08)
+
+
+### Features
+
+* **data-table:** sortable columns, in both of the shapes consumers need ([d51e856](https://github.com/viax-io/uxm/commit/d51e856d78f4cc2b1086116b6b398cd3f4f914a5))
+
 # [4.53.0](https://github.com/viax-io/uxm/compare/v4.52.0...v4.53.0) (2026-10-07)
 
 

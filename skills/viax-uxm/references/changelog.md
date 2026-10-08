@@ -1642,3 +1642,105 @@ reached the published library; now shipped in 2.8.0.
 - **CDN `latest/` path** — every release now also syncs the CDN bundles to
   `https://uxm.viax.io/latest/…` (`no-cache`). Demos only; pin `https://uxm.viax.io/<version>/…`
   anywhere else, and never put SRI on a `latest/` URL. See `references/quick-recipes.md` → recipe 18.
+
+### New in 4.49.2
+
+- **A published stacking scale (`--z-*`), and a supported way to put a popover above a
+  dialog.** `Popover` defaults to `z-index: 50`, below `Dialog` (60), so a `Select` or
+  `Menu` opened inside a dialog painted behind the backdrop — both portal to `<body>`, so
+  nothing but `z-index` separates them. The tiers are now declared on `:where(:root)`:
+  `--z-panel` 40, `--z-drawer` 40, `--z-dialog` 60, `--z-toast` 80, `--z-popover` 90.
+  **Nothing changes by default** — every value is the fallback the components already
+  used, `Popover` still reads `var(--uxm-popover-z-index, 50)`, and zero specificity keeps
+  your own `--z-dialog` / `--z-toast` / `--z-drawer` declarations winning as before (an
+  `@layer` declaration is the exception — set these outside a layer). Opt in with
+  `:where(:root) { --uxm-popover-z-index: var(--z-popover); }`, which replaces a
+  hand-rolled `--uxm-popover-z-index: 120`. `--z-popover` sits above `--z-toast` on
+  purpose, so a toast cannot cover a list the user is reading; swapping 120 for it is
+  equivalent unless your app stacks something between 91 and 120. `--z-panel` is
+  reserved: nothing in the library reads it.
+
+- **CDN `latest/` — production stance clarified.** `latest/` is used in demos; production use
+  needs further research and a careful rollout (the CDN edge currently caches it ~5 min despite
+  `no-cache`). Until then pin `https://uxm.viax.io/<version>/…` in anything you hand to a
+  consumer. See `references/quick-recipes.md` → recipe 18.
+
+### New in 4.50.0
+
+- **19 admin-UI glyphs, and a supported way to add your own.** The set grows 72 → 91.
+  Thirteen are Heroicons 24/outline like everything already in it: `arrows-up-down`,
+  `archive-box`, `no-symbol`, `book-open`, `x-circle`, `key`,
+  `arrow-right-start-on-rectangle`, `paper-airplane`, `server`, `shield-exclamation`,
+  `shield-check`, `wrench`, `document-text`. Six are **house-drawn**, because Heroicons has
+  no equivalent and the nearest candidates mean something else: `activity`, `dot-circle`,
+  `coins`, `git-fork`, `plug`, `webhook`. Those follow the same house rules (24×24 box, round
+  caps/joins, stroke inherited not baked in, geometry 3 units clear of the edge) but read
+  slightly lighter than true Heroicons — **do not regenerate them from an upstream package,
+  there is none.** Their circle centres and radii sit on 0.375, the half-step of the 0.75 grid
+  Heroicons snaps to; the tangent points where a connector meets a circle in `coins` and
+  `webhook` are computed, not snapped, because snapping detaches the line from the circle.
+  Ids follow the Heroicons convention the set already
+  uses rather than another library's naming — so lucide's `circle-dot` is `dot-circle`,
+  matching the existing `x-circle` / `check-circle` pattern. Names from other sets live in a
+  new optional **`IconDef.keywords`**, so "ban", "send", "log out", "scroll-text" or
+  "shield-alert" all find the right glyph without the label pretending to be a keyword list.
+  Matching runs through one exported predicate, **`matchesIconQuery(def, query)`**, shared by
+  the preview grid and the studio picker; `SearchDropdownOption` gained a matching
+  `keywords?: string[]` that its default filter reads, so synonyms reach that picker too. New API: `registerIcons(defs)` adds or replaces at
+  runtime and returns the replacement count, `ICON_OPTIONS` is kept in sync by it instead of
+  being a one-shot `.map()` that went stale the moment anything extended the set, and
+  `ICON_IDS` / `IconName` give a literal union. **Nothing is removed or renamed**; `glyph` is
+  typed `IconName | (string & {})`, so the union drives autocomplete while any string — a
+  computed name, or an id registered at runtime — still compiles.
+
+- **Documented the AA gap on small labels, and the one-liner that closes it.** `Listbox`
+  group headers (10px) and `SectionHeader` titles (11px) default to `--color-text-subtle`,
+  which is 3.66:1 on card in light and 3.41:1 in dark — under the 4.5:1 text floor, and at
+  that size the large-text exemption does not apply. **No default changed**: both already
+  have knobs, so an app clears AA today with
+  `--uxm-listbox-group-header-color: var(--color-text-muted)` and
+  `--uxm-section-header-title-color: var(--color-text-strong)`. Use `strong` for the section
+  title specifically — its subtitle already defaults to muted, so putting the title there
+  too makes the two identical. Darkening the defaults is still open, and is a major-release
+  decision because it shifts every listbox and settings panel.
+
+### New in 4.51.0
+
+- **A sort-state icon family that holds one box: `sort-none`, `sort-asc`, `sort-desc`.**
+  All three are the same frame — three bars left, one shaft right — with only the
+  arrowheads differing, so the path-geometry (centre-line) box is identical in every
+  state (x 3..21, y 4.5..19.5), and the stroke adds the same margin to each. A table
+  header toggling between them keeps one footprint and one visual weight. That is what the previous pattern could not do: swapping `arrow-up` (ink 15
+  wide) for `arrows-up-down` (18 wide) changed the mark's weight mid-column. Note the
+  *layout* box was never the problem — `<Icon>` always renders `width`/`height` = `size`
+  on a fixed 24×24 viewBox, so no glyph swap can reflow text; it is the ink that jumped.
+  The bars stay constant across the three deliberately: which bar order means "ascending"
+  is a convention icon sets disagree on, so the arrowhead carries the direction and the
+  bars only say "a list under a sort". `tests/icon.test.tsx` parses the paths and pins
+  the three boxes as equal, so the guarantee cannot quietly rot. Replaces the
+  three-way `active ? (asc ? 'arrow-up' : 'arrow-down') : 'arrows-up-down'` conditional
+  consumers were writing.
+
+### New in 4.52.0
+
+- **The studio takes an account menu, matching modo's.** New optional
+  **`UxmApp` prop `account`** (`StudioAccount`: `name`, `email`, `role?`, `realm?`,
+  `initials?`, `onSignOut?`). Pass it and the canvas top bar grows an avatar → menu
+  (non-actionable identity header, **Account settings**, **Log out**) plus an account
+  settings pane; omit it and the header is byte-for-byte what it was. The studio has no
+  session and never fetches one — the host owns auth, so it owns this data. `Log out`
+  renders only when `onSignOut` is given, and initials derive from `name` unless passed.
+  The pane is composed from shipped atoms exactly as modo composes its own —
+  `SideFlexpane` inside `Dialog` (which brings the backdrop, scroll lock, focus trap,
+  Escape and outside-click), sections as `Disclosure` — with **Profile** (name, copyable
+  email + `mailto:`, role, realm; optional rows omitted rather than rendered empty) and
+  **Appearance**.
+- **Studio theme gains an `auto` mode.** `useUxm()` now also returns **`themeMode`**
+  (`'light' | 'dark' | 'auto'`) and **`setThemeMode`**; `auto` resolves by time of day
+  (06:00–18:00 light, else dark), the same split modo uses. **`theme` is unchanged** and
+  still `'light' | 'dark'` — the resolved value, so nothing branching on it breaks. The
+  mode is what's stored, and a tab left open re-resolves on its own: a timer fires at the
+  next 06:00/18:00 boundary, re-armed on `visibilitychange` because a background tab's
+  timer can be throttled past it. The canvas keeps its light/dark `IconButton` as the
+  quick toggle. **Appearance is omitted when `embed` is set** — an embedded host mounts
+  no `ThemeSync`, so the control would change nothing.

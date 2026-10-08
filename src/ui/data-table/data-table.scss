@@ -24,6 +24,452 @@
   border-radius: var(--uxm-data-table-border-radius, 8px);
   overflow: hidden;
 }
+.uxm-data-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: calc(var(--uxm-data-table-font-size, 13px) * var(--type-scale, 1));
+}
+.uxm-data-table__head tr {
+  background-color: var(--uxm-data-table-header-bg, var(--color-surface-alt));
+}
+/* Opt-in, set by the component only when a column declares a `width`. Auto
+   layout ignores a declared width as soon as content outgrows it, so the two
+   are one feature; applying it unconditionally would re-lay-out every table
+   that exists, which is a major decision rather than a prop's side effect. */
+.uxm-data-table__table--fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+/* A declared width should mean the COLUMN, not the content box. Without this,
+   `width: 92` is 92px in a border-box app and 116px in a content-box one (the
+   cell padding is added), so the same table measures differently depending on
+   the consumer's reset. */
+.uxm-data-table__table--fixed .uxm-data-table__th {
+  box-sizing: border-box;
+}
+
+/* `width: 1%` shrink-to-fit works under AUTO layout; under fixed it is a
+   literal 1% of the table, which collapses the kebab column to a few px and
+   clips the trigger. Give it the width it actually needs: the button plus the
+   cell's own gutters. */
+.uxm-data-table__table--fixed .uxm-data-table__th--actions,
+.uxm-data-table__table--fixed .uxm-data-table__td--actions {
+  width: calc(
+    var(--uxm-icon-button-size, 32px) + 2 * var(--uxm-data-table-cell-padding-x, 12px)
+  );
+}
+
+/* Under fixed layout a long unbroken value would otherwise push past its
+   column instead of being clipped by it. Only in fixed mode: auto-layout
+   tables keep today's behaviour, where the column grows to fit.
+
+   Scoped to the non-stacked width, and never applied to the actions cell. The
+   clip has no idea a focus ring is not content: a focused control inside a
+   clipped cell loses its outline, and the actions cell (zero vertical padding)
+   and every stacked cell (zero horizontal padding) have no room to spare. A
+   truncated value is a cosmetic problem; an invisible focus ring is 2.4.7. */
+@container (min-width: 481px) {
+  .uxm-data-table__table--fixed .uxm-data-table__td:not(.uxm-data-table__td--actions),
+  .uxm-data-table__table--fixed .uxm-data-table__th:not(.uxm-data-table__th--actions) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.uxm-data-table__th {
+  text-align: left;
+  padding: var(--uxm-data-table-cell-padding-y, 10px) var(--uxm-data-table-cell-padding-x, 12px);
+  font-weight: 600;
+  color: var(--uxm-data-table-header-text, var(--color-text-muted));
+  border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+  font-size: calc(12px * var(--type-scale, 1));
+}
+
+/* ── Sortable header ──────────────────────────────────────────────────────
+   Opt-in: only a column with `sortKey` renders this, so a table that does not
+   sort keeps exactly the markup and spacing it had.
+
+   The control is a button or an <a> depending on the table's mode; both get
+   the same look here, so a URL-driven list is visually identical to a
+   state-driven one. It stretches to the cell's width so the whole header row is
+   clickable rather than just the words.
+
+   On target size: the control sits INSIDE the th's padding, so its own box is
+   the line box (~16-18px at the 12px header type, tighter at compact density).
+   It meets WCAG 2.2 2.5.8 through the SPACING exception — nothing else is
+   within 24px of it — not by being 24px itself. Don't restate this as
+   "clears 24px"; it doesn't. */
+.uxm-data-table__sort {
+  display: inline-flex;
+  align-items: center;
+  /* 6px: the label-to-glyph gap the shipped icon-plus-text pairs use (Button
+     with-icon, MenuItem), so a sorted header reads like the rest of the set. */
+  gap: 6px;
+  width: 100%;
+  /* Reset the UA button/anchor chrome rather than restyling it: this has to
+     sit flush in the cell the th already padded. */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--uxm-data-table-sort-color, var(--uxm-data-table-header-text, var(--color-text-muted)));
+  text-align: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  /* A focus ring needs somewhere to sit; 3px keeps it inside the cell rather
+     than squaring off against the th's own edge. */
+  border-radius: 3px;
+  /* Colour only — nothing moves, so there is nothing for reduced motion to
+     suppress here; the guard below covers it anyway if this ever grows one. */
+  transition: color 0.1s;
+}
+/* `right`/`center` columns align the control the same way the cell is. On a
+   right-aligned column the glyph LEADS, so the label stays flush with the
+   right-aligned values under it — trailing it pushes the label ~18px off the
+   column's edge. */
+.uxm-data-table__th--right .uxm-data-table__sort {
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+.uxm-data-table__th--center .uxm-data-table__sort { justify-content: center; }
+
+.uxm-data-table__sort:hover {
+  color: var(--uxm-data-table-sort-hover-color, var(--color-text));
+}
+.uxm-data-table__sort:focus-visible {
+  outline: 2px solid var(--uxm-data-table-sort-focus-color, var(--color-accent-bold));
+  outline-offset: 2px;
+}
+/* The sorted column reads stronger than its neighbours — the glyph says which
+   way, this says which column, so the cue is never colour alone.
+
+   `:where()` keeps this at (0,1,0) so the :hover rule above — (0,2,0) — still
+   wins while the pointer is on a SORTED header. Written plainly the selector
+   is (0,3,0), which silently kills the hover knob on exactly the column most
+   likely to be hovered. */
+:where(
+    .uxm-data-table__th--sortable[aria-sort='ascending'],
+    .uxm-data-table__th--sortable[aria-sort='descending']
+  )
+  .uxm-data-table__sort {
+  color: var(--uxm-data-table-sort-active-color, var(--color-text));
+}
+
+.uxm-data-table__sort-label { min-width: 0; }
+/* The glyph never shrinks away when the label is long, and never grows the
+   row: the sort family is drawn in one box, so swapping members is static. */
+.uxm-data-table__sort-icon {
+  flex: none;
+  color: var(--uxm-data-table-sort-icon-color, currentColor);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uxm-data-table__sort { transition: none; }
+  /* The row fade and the pinned cells that match it. Cheap to honour, and
+     leaving the pinned cells transitioning while the row does not would
+     re-create the two-stage hover this block exists to avoid. */
+  .uxm-data-table__row,
+  .uxm-data-table__td--sticky-start,
+  .uxm-data-table__td--sticky-end {
+    transition: none;
+  }
+}
+
+.uxm-data-table__th--right { text-align: right; }
+.uxm-data-table__th--center { text-align: center; }
+.uxm-data-table__row {
+  background-color: var(--uxm-data-table-row-bg, var(--color-card));
+  transition: background-color 0.1s;
+}
+.uxm-data-table__row--interactive { cursor: pointer; }
+.uxm-data-table__row:hover {
+  background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
+}
+
+/* The active row — the one whose detail is open beside the table. Written
+   AFTER :hover so it holds while the pointer is on another row, which is the
+   whole point of the state: hover says "the pointer is here", active says
+   "this is what you are looking at".
+
+   The accent rail is what carries it, not the tint alone: at AA the tint
+   between two adjacent row fills is necessarily subtle, and colour alone is
+   not an acceptable sole cue (1.4.1). `box-shadow` draws the rail rather than
+   a border, so it costs no layout under `table-layout: fixed` and cannot
+   nudge a column's measured width. */
+.uxm-data-table__row--active {
+  background-color: var(--uxm-data-table-row-active-bg, var(--color-accent-subtle));
+}
+/* Matches the first cell whatever classes it carries — a <tr>'s only children
+   are cells, so this cannot select anything else, and it does not depend on a
+   class the cell might not have been given. */
+.uxm-data-table__row--active > :first-child {
+  box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
+}
+/* Stacked, the row IS the card, so the rail belongs on it. Left on the first
+   cell it marks one field and sits over its text, which reads as a highlight on
+   that value rather than on the record.
+
+   This has to come AFTER the base rail rule: both selectors are (0,1,0), so
+   source order decides, and declared earlier it simply lost — which is how the
+   first attempt ended up drawing BOTH rails at once. */
+@container (max-width: 480px) {
+  .uxm-data-table__row--active > :first-child {
+    box-shadow: none;
+  }
+  .uxm-data-table__row--active {
+    box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
+  }
+}
+
+/* Exists so `:hover` does not replace the active tint — without it, pointing at
+   the active row would make it look like any other hovered row. It defaults to
+   the same colour as the active fill, i.e. hover is a no-op on the active row;
+   set the knob if you want the two to differ. */
+.uxm-data-table__row--active:hover {
+  background-color: var(--uxm-data-table-row-active-hover-bg, var(--color-accent-subtle));
+}
+.uxm-data-table__td {
+  padding: var(--uxm-data-table-cell-padding-y, 12px) var(--uxm-data-table-cell-padding-x, 12px);
+  color: var(--color-text);
+  border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+}
+.uxm-data-table__td--right { text-align: right; }
+.uxm-data-table__td--center { text-align: center; }
+/* Per-column content clamp — a column's `maxWidth` truncates plain (non-
+   editable) cell content with an ellipsis. Editable cells route the same
+   cap through the EditableCell's own max-width var instead, so both cell
+   kinds share one column-width policy. */
+.uxm-data-table__clamp {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+.uxm-data-table__row:last-child .uxm-data-table__td {
+  border-bottom: none;
+}
+/* Density presets set their own padding DEFAULT via the same cell-padding
+   vars, so the cellPaddingX/Y knobs still win when set (they were previously
+   hard-overridden here and went dead in compact/relaxed). Unset → the density
+   default (6/16px) applies, so the shipped look is unchanged. */
+.uxm-data-table--compact .uxm-data-table__th,
+.uxm-data-table--compact .uxm-data-table__td {
+  padding: var(--uxm-data-table-cell-padding-y, 6px) var(--uxm-data-table-cell-padding-x, 12px);
+}
+.uxm-data-table--relaxed .uxm-data-table__th,
+.uxm-data-table--relaxed .uxm-data-table__td {
+  padding: var(--uxm-data-table-cell-padding-y, 16px) var(--uxm-data-table-cell-padding-x, 12px);
+}
+
+/* Trailing row-action column — `width: 1%` + `nowrap` is the table idiom
+   for "shrink to content", so the column hugs the ⋮ trigger and the data
+   columns keep the remaining width. Right-aligned so the affordance sits
+   at the row's trailing edge. */
+.uxm-data-table__th--actions,
+.uxm-data-table__td--actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+/* Trim vertical padding so the IconButton (not the cell box) drives row
+   height, keeping action rows the same height as data rows. */
+.uxm-data-table__td--actions {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* ── Horizontal scrolling, sticky columns and scroll affordances ───────────
+   All of it opt-in: a table that neither scrolls nor pins anything never sees
+   a rule in this block, and the root keeps `overflow: hidden`.
+
+   The root becomes the positioning context so the arrows can sit over the
+   scroller's edges; the scroller itself owns the overflow. */
+.uxm-data-table--scrollable {
+  position: relative;
+  /* The root's `overflow: hidden` is what clips the rounded corners, and it
+     has to stay — the SCROLLER inside takes the horizontal axis instead. */
+}
+.uxm-data-table__scroller {
+  overflow-x: auto;
+}
+/* The focus ring is drawn on the ROOT, not the scroller. An inset outline on
+   the scroller is painted underneath the `z-index: 1` pinned cells, so the
+   pinned columns hid its leading and trailing edges and all four corners —
+   leaving a ring visible only along the middle columns. */
+.uxm-data-table--scrollable:has(.uxm-data-table__scroller:focus-visible) {
+  outline: 2px solid var(--uxm-data-table-scroll-focus-color, var(--color-accent-bold));
+  outline-offset: -2px;
+}
+
+/* Sticky columns need `border-collapse: separate`: with collapsed borders the
+   border belongs to the TABLE, not the cell, so a pinned cell scrolls out from
+   under its own rules in Chrome and Safari. Scoped here so every other table
+   keeps the collapsed borders it has always had. `border-spacing: 0` keeps the
+   separated model looking identical. */
+.uxm-data-table--scrollable .uxm-data-table__table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.uxm-data-table__th--sticky-start,
+.uxm-data-table__td--sticky-start,
+.uxm-data-table__th--sticky-end,
+.uxm-data-table__td--sticky-end {
+  position: sticky;
+  /* Above ordinary cells so scrolling content passes UNDER the pinned column.
+     A local stacking value, not a --z-* tier: this orders siblings inside one
+     component, it is not a layer of the app. */
+  z-index: 1;
+}
+.uxm-data-table__th--sticky-start,
+.uxm-data-table__td--sticky-start { inset-inline-start: 0; }
+.uxm-data-table__th--sticky-end,
+.uxm-data-table__td--sticky-end { inset-inline-end: 0; }
+
+/* A pinned cell MUST be opaque. Cells are transparent by default and the fill
+   lives on the row, so without this the scrolling content shows straight
+   through the pinned column. Each row state has to be restated for the same
+   reason. */
+.uxm-data-table__td--sticky-start,
+.uxm-data-table__td--sticky-end {
+  background-color: var(--uxm-data-table-row-bg, var(--color-card));
+  /* The SAME transition the row uses. A pinned cell paints its own opaque
+     background (it has to, or the scrolling content shows through), so it does
+     not inherit the row's fade — it snapped while the unpinned columns eased
+     over 100ms, and one row visibly changed colour in two stages. */
+  transition: background-color 0.1s;
+}
+.uxm-data-table__th--sticky-start,
+.uxm-data-table__th--sticky-end {
+  background-color: var(--uxm-data-table-header-bg, var(--color-surface-alt));
+}
+.uxm-data-table__row:hover > .uxm-data-table__td--sticky-start,
+.uxm-data-table__row:hover > .uxm-data-table__td--sticky-end {
+  background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
+}
+.uxm-data-table__row--active > .uxm-data-table__td--sticky-start,
+.uxm-data-table__row--active > .uxm-data-table__td--sticky-end {
+  background-color: var(--uxm-data-table-row-active-bg, var(--color-accent-subtle));
+}
+/* Declared after the active rule, which is itself after :hover — otherwise a
+   hovered active row keeps the plain active fill in its pinned cells only, and
+   the knob reads as broken across the pinned/unpinned seam. */
+.uxm-data-table__row--active:hover > .uxm-data-table__td--sticky-start,
+.uxm-data-table__row--active:hover > .uxm-data-table__td--sticky-end {
+  background-color: var(--uxm-data-table-row-active-hover-bg, var(--color-accent-subtle));
+}
+
+/* Scroll shadows: the cue that there is more table past the edge, driven by
+   the same measured state as the arrows so the two cannot disagree.
+
+   Two shapes. When a column is pinned the shadow is cast BY it, drawn on the
+   pinned cells. When nothing is pinned there is no element to hang it on, so
+   the ROOT draws it as an inset — otherwise a `scrollable` table with no
+   sticky column got arrows and no shadows at all, which the docs promised. */
+.uxm-data-table--scrollable.uxm-data-table--scrolled-start:not(:has(.uxm-data-table__td--sticky-start))::before,
+.uxm-data-table--scrollable.uxm-data-table--scrolled-end:not(:has(.uxm-data-table__td--sticky-end))::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  pointer-events: none;
+  /* Above the cells (z-index 1) but below the arrows (2). */
+  z-index: 1;
+}
+.uxm-data-table--scrollable.uxm-data-table--scrolled-start:not(:has(.uxm-data-table__td--sticky-start))::before {
+  inset-inline-start: 0;
+  background: linear-gradient(to right, rgb(0 0 0 / 18%), transparent);
+}
+.uxm-data-table--scrollable.uxm-data-table--scrolled-end:not(:has(.uxm-data-table__td--sticky-end))::after {
+  inset-inline-end: 0;
+  background: linear-gradient(to left, rgb(0 0 0 / 18%), transparent);
+}
+
+/* No negative spread: `-6px` shortens each cell's shadow by 12px vertically,
+   so the band breaks into one dash per row with a gap at every seam. At zero
+   spread adjacent cells overlap into a continuous edge, and the root's
+   overflow clips the bleed past the first and last rows. */
+.uxm-data-table--scrolled-start .uxm-data-table__th--sticky-start,
+.uxm-data-table--scrolled-start .uxm-data-table__td--sticky-start {
+  box-shadow: var(--uxm-data-table-scroll-shadow, 6px 0 6px rgb(0 0 0 / 18%));
+}
+/* Both the active-row rail and the scroll shadow are box-shadows at (0,2,0) on
+   the SAME element when the first cell is pinned — the later one simply
+   erased the other, and the rail losing leaves colour as the only active-row
+   cue, which is the 1.4.1 problem the rail exists to prevent. List both. */
+.uxm-data-table--scrolled-start
+  .uxm-data-table__row--active
+  > .uxm-data-table__td--sticky-start:first-child {
+  box-shadow:
+    inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold)),
+    var(--uxm-data-table-scroll-shadow, 6px 0 6px rgb(0 0 0 / 18%));
+}
+.uxm-data-table--scrolled-end .uxm-data-table__th--sticky-end,
+.uxm-data-table--scrolled-end .uxm-data-table__td--sticky-end {
+  box-shadow: var(--uxm-data-table-scroll-shadow-end, -6px 0 6px rgb(0 0 0 / 18%));
+}
+
+/* The arrows. Centred on the scroller's edges, over the table rather than
+   beside it, so turning them on costs no layout. */
+/* Qualified with the root so this is (0,2,0). `styles.css` imports
+   icon-button.css AFTER data-table.css, so at equal specificity IconButton's
+   own `background: transparent`, `border: none` and `border-radius` win on
+   source order — which left the arrow a see-through square with its chevron
+   printing over the cell text underneath. */
+.uxm-data-table .uxm-data-table__scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background-color: var(--uxm-data-table-scroll-arrow-bg, var(--color-card));
+  border: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+  border-radius: 50%;
+  box-shadow: var(--uxm-data-table-scroll-arrow-shadow, var(--shadow-sm));
+}
+/* 4px clears the root's 1px border and its radius without floating free of
+   the edge; the arrows are an overlay, so this is pure geometry. */
+.uxm-data-table .uxm-data-table__scroll-arrow--start { inset-inline-start: 4px; }
+.uxm-data-table .uxm-data-table__scroll-arrow--end { inset-inline-end: 4px; }
+/* At an end: still present and still focusable (unmounting the button you are
+   pressing throws focus to <body>), but visibly inert. */
+.uxm-data-table .uxm-data-table__scroll-arrow--disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Stacked mode has no horizontal axis, so nothing here applies: the scroller
+   stops scrolling, pinned cells un-pin, and the arrows would point at nothing. */
+@container (max-width: 480px) {
+  .uxm-data-table__scroller { overflow-x: visible; }
+  /* The `--scrolled-*` shadow selectors are (0,2,0); a bare class reset here is
+     (0,1,0) and loses, so the shadows survived into the stacked cards. Match
+     their shape rather than reaching for !important. */
+  .uxm-data-table__th--sticky-start,
+  .uxm-data-table__td--sticky-start,
+  .uxm-data-table__th--sticky-end,
+  .uxm-data-table__td--sticky-end {
+    position: static;
+  }
+  .uxm-data-table--scrolled-start .uxm-data-table__th--sticky-start,
+  .uxm-data-table--scrolled-start .uxm-data-table__td--sticky-start,
+  .uxm-data-table--scrolled-end .uxm-data-table__th--sticky-end,
+  .uxm-data-table--scrolled-end .uxm-data-table__td--sticky-end {
+    box-shadow: none;
+  }
+  .uxm-data-table__scroll-arrow { display: none; }
+}
+
+/* ── Card mode — LAST in this file, and that placement is load-bearing ────
+   These rules target the same classes as the table-mode rules above at the
+   SAME specificity, so source order alone decides the winner. Declared
+   earlier (where this block used to sit) the cell reset lost outright: card
+   cells kept the full table padding instead of 4px 0, kept a border under
+   every cell, and right/centre columns never reset to left. Measured, not
+   theorised. Keep new card-mode rules here, at the end. */
 /* Card-list mode for narrow containers — a real HTML table starts to
    horizontal-scroll under ~480px, especially with multi-column data.
    At that width we reflow rows into stacked label/value pairs,
@@ -94,81 +540,20 @@
   .uxm-data-table__td--center {
     text-align: left;
   }
-}
-.uxm-data-table__table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: calc(var(--uxm-data-table-font-size, 13px) * var(--type-scale, 1));
-}
-.uxm-data-table__head tr {
-  background-color: var(--uxm-data-table-header-bg, var(--color-surface-alt));
-}
-.uxm-data-table__th {
-  text-align: left;
-  padding: var(--uxm-data-table-cell-padding-y, 10px) var(--uxm-data-table-cell-padding-x, 12px);
-  font-weight: 600;
-  color: var(--uxm-data-table-header-text, var(--color-text-muted));
-  border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
-  font-size: calc(12px * var(--type-scale, 1));
-}
-.uxm-data-table__th--right { text-align: right; }
-.uxm-data-table__th--center { text-align: center; }
-.uxm-data-table__row {
-  background-color: var(--uxm-data-table-row-bg, var(--color-card));
-  transition: background-color 0.1s;
-}
-.uxm-data-table__row--interactive { cursor: pointer; }
-.uxm-data-table__row:hover {
-  background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
-}
-.uxm-data-table__td {
-  padding: var(--uxm-data-table-cell-padding-y, 12px) var(--uxm-data-table-cell-padding-x, 12px);
-  color: var(--color-text);
-  border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
-}
-.uxm-data-table__td--right { text-align: right; }
-.uxm-data-table__td--center { text-align: center; }
-/* Per-column content clamp — a column's `maxWidth` truncates plain (non-
-   editable) cell content with an ellipsis. Editable cells route the same
-   cap through the EditableCell's own max-width var instead, so both cell
-   kinds share one column-width policy. */
-.uxm-data-table__clamp {
-  display: inline-block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  vertical-align: bottom;
-}
-.uxm-data-table__row:last-child .uxm-data-table__td {
-  border-bottom: none;
-}
-/* Density presets set their own padding DEFAULT via the same cell-padding
-   vars, so the cellPaddingX/Y knobs still win when set (they were previously
-   hard-overridden here and went dead in compact/relaxed). Unset → the density
-   default (6/16px) applies, so the shipped look is unchanged. */
-.uxm-data-table--compact .uxm-data-table__th,
-.uxm-data-table--compact .uxm-data-table__td {
-  padding: var(--uxm-data-table-cell-padding-y, 6px) var(--uxm-data-table-cell-padding-x, 12px);
-}
-.uxm-data-table--relaxed .uxm-data-table__th,
-.uxm-data-table--relaxed .uxm-data-table__td {
-  padding: var(--uxm-data-table-cell-padding-y, 16px) var(--uxm-data-table-cell-padding-x, 12px);
-}
-
-/* Trailing row-action column — `width: 1%` + `nowrap` is the table idiom
-   for "shrink to content", so the column hugs the ⋮ trigger and the data
-   columns keep the remaining width. Right-aligned so the affordance sits
-   at the row's trailing edge. */
-.uxm-data-table__th--actions,
-.uxm-data-table__td--actions {
-  width: 1%;
-  white-space: nowrap;
-  text-align: right;
-}
-/* Trim vertical padding so the IconButton (not the cell box) drives row
-   height, keeping action rows the same height as data rows. */
-.uxm-data-table__td--actions {
-  padding-top: 0;
-  padding-bottom: 0;
+  /* Density presets are (0,2,0) — `.uxm-data-table--compact .uxm-data-table__td`
+     — so they beat the (0,1,0) reset above NO MATTER where this block sits.
+     Moving the block fixed default density and left these two exactly as
+     broken as before: compact cards kept 6px 12px, relaxed 16px 12px, stacking
+     cell padding on top of the row's own. Match their shape to beat them. */
+  .uxm-data-table--compact .uxm-data-table__td,
+  .uxm-data-table--relaxed .uxm-data-table__td {
+    padding: 4px 0;
+  }
+  /* The actions cell takes the stacked reset like any other cell — its
+     table-mode `width: 1%` made it a 28px sliver in a card — but keeps its
+     trailing alignment, so the kebab stays at the card's trailing edge rather
+     than jumping to the left margin under the first value. */
+  .uxm-data-table__td--actions {
+    text-align: right;
+  }
 }

@@ -49,7 +49,13 @@ export type { ConfigSegmentItemProps } from './config-segment-item';
 export { ContentTooltip, Tooltip } from './tooltip';
 export type { ContentTooltipProps, TooltipPlacement, TooltipProps } from './tooltip';
 export { DataTable } from './data-table';
-export type { DataTableColumn, DataTableDensity, DataTableProps } from './data-table';
+export type {
+  DataTableColumn,
+  DataTableDensity,
+  DataTableProps,
+  DataTableSort,
+  DataTableSortDirection,
+} from './data-table';
 export { DateInput } from './date-input';
 export type { DateInputFormat, DateInputMode, DateInputProps } from './date-input';
 export { DetailSection } from './detail-section';

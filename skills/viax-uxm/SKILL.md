@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.53.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.56.4, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.53.0** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.56.4** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.53.0 — current API surface (overrides training data)
+## v4.56.4 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,108 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.49.2
-
-- **A published stacking scale (`--z-*`), and a supported way to put a popover above a
-  dialog.** `Popover` defaults to `z-index: 50`, below `Dialog` (60), so a `Select` or
-  `Menu` opened inside a dialog painted behind the backdrop — both portal to `<body>`, so
-  nothing but `z-index` separates them. The tiers are now declared on `:where(:root)`:
-  `--z-panel` 40, `--z-drawer` 40, `--z-dialog` 60, `--z-toast` 80, `--z-popover` 90.
-  **Nothing changes by default** — every value is the fallback the components already
-  used, `Popover` still reads `var(--uxm-popover-z-index, 50)`, and zero specificity keeps
-  your own `--z-dialog` / `--z-toast` / `--z-drawer` declarations winning as before (an
-  `@layer` declaration is the exception — set these outside a layer). Opt in with
-  `:where(:root) { --uxm-popover-z-index: var(--z-popover); }`, which replaces a
-  hand-rolled `--uxm-popover-z-index: 120`. `--z-popover` sits above `--z-toast` on
-  purpose, so a toast cannot cover a list the user is reading; swapping 120 for it is
-  equivalent unless your app stacks something between 91 and 120. `--z-panel` is
-  reserved: nothing in the library reads it.
-
-- **CDN `latest/` — production stance clarified.** `latest/` is used in demos; production use
-  needs further research and a careful rollout (the CDN edge currently caches it ~5 min despite
-  `no-cache`). Until then pin `https://uxm.viax.io/<version>/…` in anything you hand to a
-  consumer. See `references/quick-recipes.md` → recipe 18.
-
-### New in 4.50.0
-
-- **19 admin-UI glyphs, and a supported way to add your own.** The set grows 72 → 91.
-  Thirteen are Heroicons 24/outline like everything already in it: `arrows-up-down`,
-  `archive-box`, `no-symbol`, `book-open`, `x-circle`, `key`,
-  `arrow-right-start-on-rectangle`, `paper-airplane`, `server`, `shield-exclamation`,
-  `shield-check`, `wrench`, `document-text`. Six are **house-drawn**, because Heroicons has
-  no equivalent and the nearest candidates mean something else: `activity`, `dot-circle`,
-  `coins`, `git-fork`, `plug`, `webhook`. Those follow the same house rules (24×24 box, round
-  caps/joins, stroke inherited not baked in, geometry 3 units clear of the edge) but read
-  slightly lighter than true Heroicons — **do not regenerate them from an upstream package,
-  there is none.** Their circle centres and radii sit on 0.375, the half-step of the 0.75 grid
-  Heroicons snaps to; the tangent points where a connector meets a circle in `coins` and
-  `webhook` are computed, not snapped, because snapping detaches the line from the circle.
-  Ids follow the Heroicons convention the set already
-  uses rather than another library's naming — so lucide's `circle-dot` is `dot-circle`,
-  matching the existing `x-circle` / `check-circle` pattern. Names from other sets live in a
-  new optional **`IconDef.keywords`**, so "ban", "send", "log out", "scroll-text" or
-  "shield-alert" all find the right glyph without the label pretending to be a keyword list.
-  Matching runs through one exported predicate, **`matchesIconQuery(def, query)`**, shared by
-  the preview grid and the studio picker; `SearchDropdownOption` gained a matching
-  `keywords?: string[]` that its default filter reads, so synonyms reach that picker too. New API: `registerIcons(defs)` adds or replaces at
-  runtime and returns the replacement count, `ICON_OPTIONS` is kept in sync by it instead of
-  being a one-shot `.map()` that went stale the moment anything extended the set, and
-  `ICON_IDS` / `IconName` give a literal union. **Nothing is removed or renamed**; `glyph` is
-  typed `IconName | (string & {})`, so the union drives autocomplete while any string — a
-  computed name, or an id registered at runtime — still compiles.
-
-- **Documented the AA gap on small labels, and the one-liner that closes it.** `Listbox`
-  group headers (10px) and `SectionHeader` titles (11px) default to `--color-text-subtle`,
-  which is 3.66:1 on card in light and 3.41:1 in dark — under the 4.5:1 text floor, and at
-  that size the large-text exemption does not apply. **No default changed**: both already
-  have knobs, so an app clears AA today with
-  `--uxm-listbox-group-header-color: var(--color-text-muted)` and
-  `--uxm-section-header-title-color: var(--color-text-strong)`. Use `strong` for the section
-  title specifically — its subtitle already defaults to muted, so putting the title there
-  too makes the two identical. Darkening the defaults is still open, and is a major-release
-  decision because it shifts every listbox and settings panel.
-
-### New in 4.51.0
-
-- **A sort-state icon family that holds one box: `sort-none`, `sort-asc`, `sort-desc`.**
-  All three are the same frame — three bars left, one shaft right — with only the
-  arrowheads differing, so the path-geometry (centre-line) box is identical in every
-  state (x 3..21, y 4.5..19.5), and the stroke adds the same margin to each. A table
-  header toggling between them keeps one footprint and one visual weight. That is what the previous pattern could not do: swapping `arrow-up` (ink 15
-  wide) for `arrows-up-down` (18 wide) changed the mark's weight mid-column. Note the
-  *layout* box was never the problem — `<Icon>` always renders `width`/`height` = `size`
-  on a fixed 24×24 viewBox, so no glyph swap can reflow text; it is the ink that jumped.
-  The bars stay constant across the three deliberately: which bar order means "ascending"
-  is a convention icon sets disagree on, so the arrowhead carries the direction and the
-  bars only say "a list under a sort". `tests/icon.test.tsx` parses the paths and pins
-  the three boxes as equal, so the guarantee cannot quietly rot. Replaces the
-  three-way `active ? (asc ? 'arrow-up' : 'arrow-down') : 'arrows-up-down'` conditional
-  consumers were writing.
-
-### New in 4.52.0
-
-- **The studio takes an account menu, matching modo's.** New optional
-  **`UxmApp` prop `account`** (`StudioAccount`: `name`, `email`, `role?`, `realm?`,
-  `initials?`, `onSignOut?`). Pass it and the canvas top bar grows an avatar → menu
-  (non-actionable identity header, **Account settings**, **Log out**) plus an account
-  settings pane; omit it and the header is byte-for-byte what it was. The studio has no
-  session and never fetches one — the host owns auth, so it owns this data. `Log out`
-  renders only when `onSignOut` is given, and initials derive from `name` unless passed.
-  The pane is composed from shipped atoms exactly as modo composes its own —
-  `SideFlexpane` inside `Dialog` (which brings the backdrop, scroll lock, focus trap,
-  Escape and outside-click), sections as `Disclosure` — with **Profile** (name, copyable
-  email + `mailto:`, role, realm; optional rows omitted rather than rendered empty) and
-  **Appearance**.
-- **Studio theme gains an `auto` mode.** `useUxm()` now also returns **`themeMode`**
-  (`'light' | 'dark' | 'auto'`) and **`setThemeMode`**; `auto` resolves by time of day
-  (06:00–18:00 light, else dark), the same split modo uses. **`theme` is unchanged** and
-  still `'light' | 'dark'` — the resolved value, so nothing branching on it breaks. The
-  mode is what's stored, and a tab left open re-resolves on its own: a timer fires at the
-  next 06:00/18:00 boundary, re-armed on `visibilitychange` because a background tab's
-  timer can be throttled past it. The canvas keeps its light/dark `IconButton` as the
-  quick toggle. **Appearance is omitted when `embed` is set** — an embedded host mounts
-  no `ThemeSync`, so the control would change nothing.
 
 ### New in 4.53.0
 
@@ -153,6 +51,87 @@ catalog.
   the atoms' label props in a consuming app — those stay that app's job, via
   `UxmLocaleProvider` for formatting and each component's `*Label` props for copy.
   `import { STUDIO_LOCALES } from '@viax.io/uxm/studio/i18n'` lists what ships.
+
+### New in 4.54.0
+
+- **`DataTable` sorts, in either of the two shapes consumers actually need.** Opt in per column
+  with **`sortKey`** (separate from `key`, because the column you show and the field you sort by
+  often differ), then pick a mode on the table: **`onSortChange`** renders a `<button>` for
+  in-page state, or **`sortHref`** renders an `<a href>` for sort that lives in the URL — which
+  is what keeps a list linkable, the back button working and a server-paged table renderable on
+  the server. A `<button>` can do none of that, which is why both ship. `sortHref` wins if both
+  are passed. **`sort`** is controlled: the table never sorts `rows` and holds no sort state.
+  **`firstSortDirection`** (default `'asc'`) sets which way the first click goes — set `'desc'`
+  on dates and amounts, or the column opens on the oldest/smallest row. The `<th>` carries
+  `aria-sort` (`none` on the other sortable columns — valid and harmless, since `none` is ARIA's
+  default); the glyph is the 4.51.0 `sort-*` family, so the header keeps its weight as it
+  toggles. Fully opt-in — a column without `sortKey` renders exactly as before, no control and
+  no `aria-sort`.
+  **Two things to know.** `renderSortLink` lets a client-side router own link mode's anchor; the
+  default is a plain `<a href>`, which is a full document load per click in a Next / React Router
+  app. And **sorting disappears in stacked mode** — below a 480px container the `<thead>` is
+  hidden, taking the controls and `aria-sort` with it, so a phone-width list needs another way to
+  sort. Set `sortLabel` whenever `header` is not plain text, or the control has no accessible
+  name. New knobs: `--uxm-data-table-sort-color` / `-hover-color` / `-active-color` /
+  `-focus-color` / `-icon-color`.
+
+### New in 4.55.0
+
+- **`DataTable` sizes its own columns, labels them, and can mark a row active.** All opt-in.
+  **`column.width`** takes a share (`'34%'`) or pixels (`120`), and declaring one on ANY column
+  switches that table to `table-layout: fixed` — which is what makes a width hold, since auto
+  layout drops it the moment content is wider. A table where nobody declares a width keeps auto
+  layout exactly as before; this is deliberately not a default change. **`column.className`**
+  lands on the `<th>` AND every `<td>` in the column. Together these replace reaching into
+  `.uxm-data-table__th:nth-child(n)` from a consumer stylesheet, which is what viax-modo's
+  pricing breakdown was doing. **`column.label`** is the column's plain-text name for places a
+  `ReactNode` header cannot reach — the stacked-mode `data-label`, and the sort control's
+  accessible name whenever it says something the visible header does not (`header: 'Amt'`,
+  `label: 'Amount due'`) — defaulting to `header` when it is a string; a JSX header used to produce
+  cells with no stacked-mode label at all. **`activeRowId`** sets `aria-current="true"` plus an
+  accent rail and tint on the matching row (rail as well as tint, because colour alone is not a
+  sole cue), and **`rowProps`** merges arbitrary attributes onto the `<tr>` — the `id` a deep
+  link needs. New knobs: `--uxm-data-table-row-active-bg` / `-rail` / `-hover-bg`.
+
+### New in 4.56.0
+
+- **`DataTable` scrolls horizontally, pins columns, and shows where the edges are.** New
+  **`column.sticky`** (`'start'` | `'end'`) pins a data column and **`stickyActions`** pins the
+  generated `rowActions` column (which has no `column` object to carry `sticky`); **`scrollable`**
+  puts the table in its own horizontal scroller, and `sticky` implies it, because pinning only
+  means something against a scroll. The scroller is a **focusable `role="region"`** named by
+  **`scrollLabel`** — a scroll container reachable only by pointer fails 2.1.1. Scroll shadows
+  and a pair of arrow buttons appear only while there is somewhere to scroll, driven by the
+  same measured state so they cannot disagree; the arrows move ~80% of a viewport, respect
+  `prefers-reduced-motion`, flip direction in RTL, take their names from **`scrollArrowLabel`**,
+  and stay mounted as `aria-disabled` at the ends rather than unmounting under the user's focus.
+  **Three things that bite.** Scrollable tables switch to `border-collapse: separate` (with
+  collapsed borders the border belongs to the TABLE, so a pinned cell scrolls out from under
+  its own rules in Chrome and Safari) — scoped, so every other table keeps what it had. **One
+  sticky column per side**: offsetting a second needs the first measured, and a wrong offset
+  overlaps columns rather than degrading. And **none of it applies in stacked mode**, where
+  there is no horizontal axis. New CSS-only knobs (not studio controls, since they are
+  composite shadow values rather than colours): `--uxm-data-table-scroll-shadow` / `-shadow-end`
+  / `-arrow-bg` / `-arrow-shadow` / `-focus-color`.
+
+### New in 4.56.2
+
+- **`DataTable`'s card mode actually applies now.** Below a 480px container the cell reset was
+  declared BEFORE the table-mode rules it overrides, at the same specificity, so source order
+  killed it — silently, and for longer than the one line that was reported. Measured in a
+  browser: stacked cells kept the full 12px table padding instead of `4px 0`, kept a border
+  under every cell, and right/centre columns never reset to left. The card-mode block now sits
+  last in the stylesheet, where it wins; the density presets are `(0,2,0)` and beat it wherever
+  it sits, so compact and relaxed get their own matching reset. Tests pin both.
+  **Stacked rendering visibly changes** — tighter cells, no per-cell rules, left alignment, and
+  the actions cell is now a full-width block (trailing-aligned) rather than a 1% sliver. Table
+  mode is byte-for-byte unchanged (verified across 84 computed properties at 800px), but a
+  consumer who compensated with their own stacked CSS should re-check.
+  **Not changed:** `--uxm-data-table-row-hover-bg` still defaults to `--color-surface-alt`,
+  which is the same token the header band uses — so a hovered row reads as the header colour.
+  `var(--color-surface)` is the better value and the knob already offers it, but moving the
+  default is a visible change for every existing table, so not something a patch does silently.
+  Which release it belongs in is a maintainer call. Documented in the component README.
 
 ### Unreleased
 
