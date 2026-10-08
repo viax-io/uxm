@@ -147,6 +147,14 @@ What you get, and what to know:
   borders, and the two render identically.
 - **Nothing applies in stacked mode.** Below a 480px container there is no horizontal axis:
   cells un-pin, shadows clear and the arrows are hidden.
+- **`scrollable` alone will not scroll a table that already fits.** Auto layout wraps content
+  to the available width, so give columns a `width` (or `white-space: nowrap` content) if you
+  want a horizontal scroll at all.
+- **The arrows stay mounted and go `aria-disabled` at the ends**, rather than unmounting —
+  removing the button you are pressing throws focus to the document.
+- **The studio preview does not show any of this.** That preview is a hand-rolled replica that
+  never renders the real `<DataTable>`, so sticky and scrolling can only be seen in a real app
+  or the tests.
 
 ## Props
 
@@ -173,6 +181,8 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `rowProps` | `(row: T) => HTMLAttributes<HTMLTableRowElement>` | – | Extra attributes merged onto the `<tr>` — an `id` to deep-link to, a data attribute, a row-specific class. `className` merges with the library's; everything else wins over the defaults, including `aria-current`. |
 | `scrollable` | `boolean` | `false` | Puts the table in its own horizontal scroller instead of letting it push its container wide. Implied by any `sticky` column; set it alone for a wide table that wants the affordances without pinning. |
 | `scrollLabel` | `string` | `'Table'` | Accessible name for the scroll region and its arrows. Give it the table's subject when a page has more than one, or every region announces the same. |
+| `scrollArrowLabel` | `(direction, tableLabel) => string` | `Scroll {label} back` / `… forward` | Names the two arrows. A callback, not a prefix, so a translation can place the table's name where its grammar needs it. Not "left"/"right" by default — those are physical, and in RTL the start arrow sits on the right. |
+| `stickyActions` | `boolean` | `false` | Pins the generated `rowActions` column to the trailing edge. It needs its own prop because that column has no `column` object to carry `sticky`. Mutually exclusive with a data column that sets `sticky: 'end'`. |
 
 ### `DataTableColumn<T>`
 
@@ -216,10 +226,10 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 | `--uxm-data-table-row-active-bg` | `--color-accent-subtle` | – | Fill of the active row. |
 | `--uxm-data-table-row-active-rail` | `--color-accent-bold` | – | The 3px rail on the active row's first cell. Drawn with `box-shadow`, so it costs no layout and can't nudge a measured column width under fixed layout. |
 | `--uxm-data-table-row-active-hover-bg` | `--color-accent-subtle` | – | Active row while hovered — set it if you want hover to read differently there. |
-| `--uxm-data-table-scroll-shadow` | – | `6px 0 6px -6px rgb(0 0 0 / 35%)` | Shadow cast by a `sticky: 'start'` column once scrolled. A full `box-shadow` value, not a colour — CSS-only, deliberately not a studio knob. |
-| `--uxm-data-table-scroll-shadow-end` | – | `-6px 0 6px -6px rgb(0 0 0 / 35%)` | The same for a `sticky: 'end'` column. |
+| `--uxm-data-table-scroll-shadow` | – | `6px 0 6px rgb(0 0 0 / 18%)` | Shadow cast by a `sticky: 'start'` column once scrolled. A full `box-shadow` value, not a colour — CSS-only, deliberately not a studio knob. |
+| `--uxm-data-table-scroll-shadow-end` | – | `-6px 0 6px rgb(0 0 0 / 18%)` | The same for a `sticky: 'end'` column. |
 | `--uxm-data-table-scroll-arrow-bg` | `--color-card` | – | Fill of the scroll arrow buttons. |
-| `--uxm-data-table-scroll-arrow-shadow` | – | `0 1px 4px rgb(0 0 0 / 18%)` | Lift under the arrows, so they read above the rows. |
+| `--uxm-data-table-scroll-arrow-shadow` | `--shadow-sm` | – | Lift under the arrows, so they read above the rows. |
 | `--uxm-data-table-scroll-focus-color` | `--color-accent-bold` | – | Focus ring on the scroll region. Inset, because the root clips. |
 | `--uxm-data-table-row-bg` | `--color-card` | – | `<tr>` background. |
 | `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | `<tr>:hover` background. |

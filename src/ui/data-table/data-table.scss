@@ -357,12 +357,14 @@
 }
 .uxm-data-table__scroller {
   overflow-x: auto;
-  /* A focusable region needs a visible focus ring, and `outline-offset` would
-     put it outside the clipped root. Inset it. */
-  &:focus-visible {
-    outline: 2px solid var(--uxm-data-table-scroll-focus-color, var(--color-accent-bold));
-    outline-offset: -2px;
-  }
+}
+/* The focus ring is drawn on the ROOT, not the scroller. An inset outline on
+   the scroller is painted underneath the `z-index: 1` pinned cells, so the
+   pinned columns hid its leading and trailing edges and all four corners —
+   leaving a ring visible only along the middle columns. */
+.uxm-data-table--scrollable:has(.uxm-data-table__scroller:focus-visible) {
+  outline: 2px solid var(--uxm-data-table-scroll-focus-color, var(--color-accent-bold));
+  outline-offset: -2px;
 }
 
 /* Sticky columns need `border-collapse: separate`: with collapsed borders the
@@ -373,11 +375,6 @@
 .uxm-data-table--scrollable .uxm-data-table__table {
   border-collapse: separate;
   border-spacing: 0;
-}
-/* Re-draw the per-cell rules the separated model no longer collapses for us. */
-.uxm-data-table--scrollable .uxm-data-table__th,
-.uxm-data-table--scrollable .uxm-data-table__td {
-  border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
 }
 
 .uxm-data-table__th--sticky-start,
@@ -415,23 +412,73 @@
 .uxm-data-table__row--active > .uxm-data-table__td--sticky-end {
   background-color: var(--uxm-data-table-row-active-bg, var(--color-accent-subtle));
 }
+/* Declared after the active rule, which is itself after :hover — otherwise a
+   hovered active row keeps the plain active fill in its pinned cells only, and
+   the knob reads as broken across the pinned/unpinned seam. */
+.uxm-data-table__row--active:hover > .uxm-data-table__td--sticky-start,
+.uxm-data-table__row--active:hover > .uxm-data-table__td--sticky-end {
+  background-color: var(--uxm-data-table-row-active-hover-bg, var(--color-accent-subtle));
+}
 
-/* Scroll shadows: the cue that there is more table past the edge. Drawn on the
-   pinned cells when a column is pinned (so the shadow reads as cast BY the
-   pinned column), and on the scroller's edges otherwise. Both are driven by
-   the same measured state as the arrows, so they cannot disagree. */
+/* Scroll shadows: the cue that there is more table past the edge, driven by
+   the same measured state as the arrows so the two cannot disagree.
+
+   Two shapes. When a column is pinned the shadow is cast BY it, drawn on the
+   pinned cells. When nothing is pinned there is no element to hang it on, so
+   the ROOT draws it as an inset — otherwise a `scrollable` table with no
+   sticky column got arrows and no shadows at all, which the docs promised. */
+.uxm-data-table--scrollable.uxm-data-table--scrolled-start:not(:has(.uxm-data-table__td--sticky-start))::before,
+.uxm-data-table--scrollable.uxm-data-table--scrolled-end:not(:has(.uxm-data-table__td--sticky-end))::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  pointer-events: none;
+  /* Above the cells (z-index 1) but below the arrows (2). */
+  z-index: 1;
+}
+.uxm-data-table--scrollable.uxm-data-table--scrolled-start:not(:has(.uxm-data-table__td--sticky-start))::before {
+  inset-inline-start: 0;
+  background: linear-gradient(to right, rgb(0 0 0 / 18%), transparent);
+}
+.uxm-data-table--scrollable.uxm-data-table--scrolled-end:not(:has(.uxm-data-table__td--sticky-end))::after {
+  inset-inline-end: 0;
+  background: linear-gradient(to left, rgb(0 0 0 / 18%), transparent);
+}
+
+/* No negative spread: `-6px` shortens each cell's shadow by 12px vertically,
+   so the band breaks into one dash per row with a gap at every seam. At zero
+   spread adjacent cells overlap into a continuous edge, and the root's
+   overflow clips the bleed past the first and last rows. */
 .uxm-data-table--scrolled-start .uxm-data-table__th--sticky-start,
 .uxm-data-table--scrolled-start .uxm-data-table__td--sticky-start {
-  box-shadow: var(--uxm-data-table-scroll-shadow, 6px 0 6px -6px rgb(0 0 0 / 35%));
+  box-shadow: var(--uxm-data-table-scroll-shadow, 6px 0 6px rgb(0 0 0 / 18%));
+}
+/* Both the active-row rail and the scroll shadow are box-shadows at (0,2,0) on
+   the SAME element when the first cell is pinned — the later one simply
+   erased the other, and the rail losing leaves colour as the only active-row
+   cue, which is the 1.4.1 problem the rail exists to prevent. List both. */
+.uxm-data-table--scrolled-start
+  .uxm-data-table__row--active
+  > .uxm-data-table__td--sticky-start:first-child {
+  box-shadow:
+    inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold)),
+    var(--uxm-data-table-scroll-shadow, 6px 0 6px rgb(0 0 0 / 18%));
 }
 .uxm-data-table--scrolled-end .uxm-data-table__th--sticky-end,
 .uxm-data-table--scrolled-end .uxm-data-table__td--sticky-end {
-  box-shadow: var(--uxm-data-table-scroll-shadow-end, -6px 0 6px -6px rgb(0 0 0 / 35%));
+  box-shadow: var(--uxm-data-table-scroll-shadow-end, -6px 0 6px rgb(0 0 0 / 18%));
 }
 
 /* The arrows. Centred on the scroller's edges, over the table rather than
    beside it, so turning them on costs no layout. */
-.uxm-data-table__scroll-arrow {
+/* Qualified with the root so this is (0,2,0). `styles.css` imports
+   icon-button.css AFTER data-table.css, so at equal specificity IconButton's
+   own `background: transparent`, `border: none` and `border-radius` win on
+   source order — which left the arrow a see-through square with its chevron
+   printing over the cell text underneath. */
+.uxm-data-table .uxm-data-table__scroll-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -439,10 +486,18 @@
   background-color: var(--uxm-data-table-scroll-arrow-bg, var(--color-card));
   border: 1px solid var(--uxm-data-table-border-color, var(--color-border));
   border-radius: 50%;
-  box-shadow: var(--uxm-data-table-scroll-arrow-shadow, 0 1px 4px rgb(0 0 0 / 18%));
+  box-shadow: var(--uxm-data-table-scroll-arrow-shadow, var(--shadow-sm));
 }
-.uxm-data-table__scroll-arrow--start { inset-inline-start: 4px; }
-.uxm-data-table__scroll-arrow--end { inset-inline-end: 4px; }
+/* 4px clears the root's 1px border and its radius without floating free of
+   the edge; the arrows are an overlay, so this is pure geometry. */
+.uxm-data-table .uxm-data-table__scroll-arrow--start { inset-inline-start: 4px; }
+.uxm-data-table .uxm-data-table__scroll-arrow--end { inset-inline-end: 4px; }
+/* At an end: still present and still focusable (unmounting the button you are
+   pressing throws focus to <body>), but visibly inert. */
+.uxm-data-table .uxm-data-table__scroll-arrow--disabled {
+  opacity: 0.4;
+  cursor: default;
+}
 
 /* Stacked mode has no horizontal axis, so nothing here applies: the scroller
    stops scrolling, pinned cells un-pin, and the arrows would point at nothing. */

@@ -237,6 +237,7 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * Sets `aria-current="true"` and a `--active` class. Separate from hover and
    * from `onRowClick`: a row stays active while the pointer is elsewhere.
    */
+  activeRowId?: string | null;
   /**
    * Put the table in its own horizontal scroller, rather than letting it push
    * its container wide.
@@ -257,7 +258,24 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * one on a page, or every region announces the same.
    */
   scrollLabel?: string;
-  activeRowId?: string | null;
+  /**
+   * Names the two scroll arrows. Defaults to `Scroll {label} back` /
+   * `… forward` — a callback rather than a prefix, so a translation can put
+   * the table's name where its own grammar needs it instead of always in
+   * front, and so no announced string is unreachable English.
+   *
+   * Not "left"/"right" by default: those are physical, and in RTL the start
+   * arrow sits on the right.
+   */
+  scrollArrowLabel?: (direction: 'start' | 'end', tableLabel: string) => string;
+  /**
+   * Pin the generated `rowActions` column to the trailing edge while scrolling.
+   *
+   * It needs its own prop because that column is generated, so there is no
+   * `column` to put `sticky` on. Mutually exclusive with a data column that
+   * sets `sticky: 'end'` — both would pin to the same edge and overlap.
+   */
+  stickyActions?: boolean;
   /**
    * Extra attributes per row, merged onto the `<tr>`.
    *
@@ -390,11 +408,13 @@ function SortHeader<T>({
  */
 function ScrollRegion({
   enabled,
+  focusable,
   innerRef,
   label,
   children,
 }: {
   enabled: boolean;
+  focusable: boolean;
   innerRef: RefObject<HTMLDivElement | null>;
   label: string;
   children: ReactNode;
@@ -406,12 +426,25 @@ function ScrollRegion({
       className="uxm-data-table__scroller"
       role="region"
       aria-label={label}
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scroll container MUST be focusable or it is pointer-only (axe scrollable-region-focusable, WCAG 2.1.1); the rule only whitelists tabpanel
-      tabIndex={0}
+      // Only a tab stop while it can actually scroll: a region that fits its
+      // content (or is stacked into cards) is a no-op stop otherwise. It MUST
+      // be focusable when it does scroll, or it is pointer-only navigation
+      // (axe scrollable-region-focusable, WCAG 2.1.1).
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- see above; the rule only whitelists tabpanel
+      tabIndex={focusable ? 0 : undefined}
     >
       {children}
     </div>
   );
+}
+
+/**
+ * Default arrow names. Deliberately NOT "left"/"right": those are physical, and
+ * in RTL the start arrow is on the right, so the label would contradict what
+ * the button does. "back"/"forward" reads correctly in both directions.
+ */
+function defaultScrollArrowLabel(direction: 'start' | 'end', tableLabel: string): string {
+  return direction === 'start' ? `Scroll ${tableLabel} back` : `Scroll ${tableLabel} forward`;
 }
 
 /**
@@ -433,15 +466,30 @@ function useScrollEdges(ref: RefObject<HTMLDivElement | null>, enabled: boolean)
       // 1px of slack: fractional layout means scrollLeft rarely lands exactly
       // on the maximum, which would leave the end arrow enabled forever.
       const max = el.scrollWidth - el.clientWidth;
-      setEdges({ start: el.scrollLeft > 1, end: el.scrollLeft < max - 1 });
+      // `Math.abs`: in RTL browsers report scrollLeft as 0 at the start and
+      // NEGATIVE towards the end, so a raw `> 1` is never true there — the
+      // start arrow never appears and the end arrow never goes away.
+      const offset = Math.abs(el.scrollLeft);
+      const next = { start: offset > 1, end: offset < max - 1 };
+      // Bail out when nothing moved: a fresh object every scroll event
+      // re-renders every row and cell of the table, unthrottled.
+      setEdges((prev) => (prev.start === next.start && prev.end === next.end ? prev : next));
     };
     measure();
     el.addEventListener('scroll', measure, { passive: true });
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
+    // Guarded: jsdom has no ResizeObserver unless a host polyfills it, and a
+    // bare `new ResizeObserver` would throw for any consumer testing a
+    // scrollable table.
+    const observer =
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
+    observer?.observe(el);
+    // The TABLE too, not just the scroller: columns, rows or a font change can
+    // alter the table's width while the scroller's own box never changes, and
+    // nothing would fire.
+    if (el.firstElementChild) observer?.observe(el.firstElementChild);
     return () => {
       el.removeEventListener('scroll', measure);
-      observer.disconnect();
+      observer?.disconnect();
     };
   }, [ref, enabled]);
 
@@ -452,49 +500,63 @@ function useScrollEdges(ref: RefObject<HTMLDivElement | null>, enabled: boolean)
  * The arrow pair. Scrolls by most of a viewport rather than a fixed step, so
  * one press moves a useful distance on any column layout, with a sliver of
  * overlap to keep your place.
+ *
+ * Both arrows stay MOUNTED and go `aria-disabled` at the ends. Unmounting the
+ * one you are pressing destroys focus mid-interaction — press the end arrow
+ * until it reaches the end and focus lands on <body> — which is 2.4.3. Native
+ * `disabled` has the same problem in some browsers, hence `aria-disabled` plus
+ * a no-op handler.
  */
 function ScrollArrows({
   scrollerRef,
   edges,
   label,
+  arrowLabel,
 }: {
   scrollerRef: RefObject<HTMLDivElement | null>;
   edges: { start: boolean; end: boolean };
   label: string;
+  arrowLabel: (direction: 'start' | 'end', tableLabel: string) => string;
 }) {
-  const nudge = (direction: -1 | 1) => {
+  const nudge = (direction: 'start' | 'end') => {
     const el = scrollerRef.current;
     if (!el) return;
+    // `start`/`end` are logical, so the physical sign flips in RTL — without
+    // this the arrow on the trailing edge scrolls towards the leading one.
+    const rtl = getComputedStyle(el).direction === 'rtl';
+    const sign = (direction === 'start' ? -1 : 1) * (rtl ? -1 : 1);
     // Honour the OS setting: a smooth scroll is motion, and this is the only
     // motion the component has.
     const reduced =
       typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    el.scrollBy({ left: direction * el.clientWidth * 0.8, behavior: reduced ? 'auto' : 'smooth' });
+    el.scrollBy({ left: sign * el.clientWidth * 0.8, behavior: reduced ? 'auto' : 'smooth' });
   };
   return (
     <>
-      {edges.start && (
-        <IconButton
-          className="uxm-data-table__scroll-arrow uxm-data-table__scroll-arrow--start"
-          aria-label={`Scroll ${label} left`}
-          onClick={() => nudge(-1)}
-        >
-          <Icon glyph="chevron-left" size={16} />
-        </IconButton>
-      )}
-      {edges.end && (
-        <IconButton
-          className="uxm-data-table__scroll-arrow uxm-data-table__scroll-arrow--end"
-          aria-label={`Scroll ${label} right`}
-          onClick={() => nudge(1)}
-        >
-          <Icon glyph="chevron-right" size={16} />
-        </IconButton>
-      )}
+      {(['start', 'end'] as const).map((direction) => {
+        const active = edges[direction];
+        return (
+          <IconButton
+            key={direction}
+            className={cn(
+              'uxm-data-table__scroll-arrow',
+              `uxm-data-table__scroll-arrow--${direction}`,
+              !active && 'uxm-data-table__scroll-arrow--disabled',
+            )}
+            aria-label={arrowLabel(direction, label)}
+            aria-disabled={!active || undefined}
+            onClick={() => active && nudge(direction)}
+          >
+            <Icon glyph={direction === 'start' ? 'chevron-left' : 'chevron-right'} size={16} />
+          </IconButton>
+        );
+      })}
     </>
   );
 }
+
+
 
 export function DataTable<T>({
   columns,
@@ -508,6 +570,8 @@ export function DataTable<T>({
   sort,
   scrollable,
   scrollLabel = 'Table',
+  scrollArrowLabel = defaultScrollArrowLabel,
+  stickyActions,
   activeRowId,
   rowProps,
   onSortChange,
@@ -518,7 +582,7 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   // Pinning only means something against a scroll, so a sticky column implies
   // the scroller rather than quietly doing nothing.
-  const hasSticky = columns.some((c) => c.sticky);
+  const hasSticky = columns.some((c) => c.sticky) || Boolean(stickyActions);
   const scrolls = Boolean(scrollable) || hasSticky;
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const edges = useScrollEdges(scrollerRef, scrolls);
@@ -541,9 +605,19 @@ export function DataTable<T>({
           to fixed would re-lay-out every existing consumer, which is a major
           decision, not a side effect of adding a prop. */}
       {scrolls && (
-        <ScrollArrows scrollerRef={scrollerRef} edges={edges} label={scrollLabel} />
+        <ScrollArrows
+          scrollerRef={scrollerRef}
+          edges={edges}
+          label={scrollLabel}
+          arrowLabel={scrollArrowLabel}
+        />
       )}
-      <ScrollRegion enabled={scrolls} innerRef={scrollerRef} label={scrollLabel}>
+      <ScrollRegion
+        enabled={scrolls}
+        focusable={edges.start || edges.end}
+        innerRef={scrollerRef}
+        label={scrollLabel}
+      >
       <table
         className={cn(
           'uxm-data-table__table',
@@ -598,7 +672,10 @@ export function DataTable<T>({
               // affordance speaks for itself) but carries an accessible
               // name. `--actions` shrinks the column to the trigger width.
               <th
-                className="uxm-data-table__th uxm-data-table__th--actions"
+                className={cn(
+                  'uxm-data-table__th uxm-data-table__th--actions',
+                  stickyActions && 'uxm-data-table__th--sticky-end',
+                )}
                 aria-label={actionsColumnLabel}
               />
             )}
@@ -733,7 +810,10 @@ export function DataTable<T>({
                 const actions = rowActions(row);
                 return (
                   <td
-                    className="uxm-data-table__td uxm-data-table__td--actions"
+                    className={cn(
+                      'uxm-data-table__td uxm-data-table__td--actions',
+                      stickyActions && 'uxm-data-table__td--sticky-end',
+                    )}
                     data-label="Actions"
                     // Opening the menu must not also fire the row click —
                     // same guard the editable cells use.

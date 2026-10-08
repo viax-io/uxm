@@ -143,13 +143,15 @@ catalog.
      the markers, and never append notes under an already-stamped heading. -->
 
 - **`DataTable` scrolls horizontally, pins columns, and shows where the edges are.** New
-  **`column.sticky`** (`'start'` | `'end'`) pins the identity or actions column; **`scrollable`**
+  **`column.sticky`** (`'start'` | `'end'`) pins a data column and **`stickyActions`** pins the
+  generated `rowActions` column (which has no `column` object to carry `sticky`); **`scrollable`**
   puts the table in its own horizontal scroller, and `sticky` implies it, because pinning only
   means something against a scroll. The scroller is a **focusable `role="region"`** named by
   **`scrollLabel`** — a scroll container reachable only by pointer fails 2.1.1. Scroll shadows
   and a pair of arrow buttons appear only while there is somewhere to scroll, driven by the
-  same measured state so they cannot disagree; the arrows move ~80% of a viewport and respect
-  `prefers-reduced-motion`.
+  same measured state so they cannot disagree; the arrows move ~80% of a viewport, respect
+  `prefers-reduced-motion`, flip direction in RTL, take their names from **`scrollArrowLabel`**,
+  and stay mounted as `aria-disabled` at the ends rather than unmounting under the user's focus.
   **Three things that bite.** Scrollable tables switch to `border-collapse: separate` (with
   collapsed borders the border belongs to the TABLE, so a pinned cell scrolls out from under
   its own rules in Chrome and Safari) — scoped, so every other table keeps what it had. **One

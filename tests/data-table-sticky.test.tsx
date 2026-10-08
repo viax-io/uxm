@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { DataTable } from '@/ui';
@@ -53,13 +53,25 @@ describe('DataTable scroller — opt-in', () => {
 });
 
 describe('DataTable scroll region — accessibility', () => {
+  it('is only a tab stop while it can actually scroll', () => {
+    // A region that fits its content is a no-op stop; one that scrolls MUST be
+    // focusable or it is pointer-only navigation.
+    const { container } = render(table(PLAIN, { scrollable: true }));
+    expect(container.querySelector('.uxm-data-table__scroller')).not.toHaveAttribute('tabindex');
+  });
+
   it('is a focusable, named region', () => {
     // A scroll container reachable only by pointer fails 2.1.1 (axe
     // scrollable-region-focusable). An unnamed one says nothing about what you
     // have landed in.
-    render(table(PLAIN, { scrollable: true }));
-    const region = screen.getByRole('region', { name: 'Table' });
-    expect(region).toHaveAttribute('tabindex', '0');
+    const restore = withGeometry(1000, 400);
+    try {
+      render(table(PLAIN, { scrollable: true }));
+      const region = screen.getByRole('region', { name: 'Table' });
+      expect(region).toHaveAttribute('tabindex', '0');
+    } finally {
+      restore();
+    }
   });
 
   it('takes a caller-supplied name', () => {
@@ -91,12 +103,134 @@ describe('DataTable sticky columns', () => {
   });
 });
 
+/**
+ * jsdom does no layout, but it will honour geometry defined on the prototype —
+ * which is enough to drive the whole scroll-edge hook. The earlier claim that
+ * this was untestable was simply wrong, and it hid every bug below.
+ */
+function withGeometry(scrollWidth: number, clientWidth: number) {
+  const defs = ['scrollWidth', 'clientWidth'] as const;
+  const original = defs.map((k) => Object.getOwnPropertyDescriptor(HTMLElement.prototype, k));
+  Object.defineProperty(HTMLElement.prototype, 'scrollWidth', {
+    configurable: true,
+    get() { return scrollWidth; },
+  });
+  Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+    configurable: true,
+    get() { return clientWidth; },
+  });
+  return () => defs.forEach((k, i) => {
+    if (original[i]) Object.defineProperty(HTMLElement.prototype, k, original[i]!);
+    else delete (HTMLElement.prototype as unknown as Record<string, unknown>)[k];
+  });
+}
+
 describe('DataTable scroll arrows', () => {
-  it('shows none while there is nowhere to scroll', () => {
-    // jsdom reports zero scrollWidth/clientWidth, i.e. "no overflow" — which
-    // is exactly the state an arrow must not appear in.
+  it('renders both arrows, inert, when there is nowhere to scroll', () => {
     render(table(PLAIN, { scrollable: true }));
-    expect(screen.queryByRole('button', { name: /scroll/i })).not.toBeInTheDocument();
+    const back = screen.getByRole('button', { name: 'Scroll Table back' });
+    const forward = screen.getByRole('button', { name: 'Scroll Table forward' });
+    // Mounted but inert, NOT unmounted: removing the button under the pointer
+    // or the focus ring is the 2.4.3 problem this shape avoids.
+    expect(back).toHaveAttribute('aria-disabled', 'true');
+    expect(forward).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('enables the forward arrow once there is overflow', () => {
+    const restore = withGeometry(1000, 400);
+    try {
+      render(table(PLAIN, { scrollable: true }));
+      expect(screen.getByRole('button', { name: 'Scroll Table forward' })).not.toHaveAttribute(
+        'aria-disabled',
+      );
+      expect(screen.getByRole('button', { name: 'Scroll Table back' })).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+    } finally {
+      restore();
+    }
+  });
+
+  it('enables the back arrow once scrolled away from the start', () => {
+    const restore = withGeometry(1000, 400);
+    try {
+      const { container } = render(table(PLAIN, { scrollable: true }));
+      const scroller = container.querySelector('.uxm-data-table__scroller')!;
+      scroller.scrollLeft = 300;
+      fireEvent.scroll(scroller);
+      expect(screen.getByRole('button', { name: 'Scroll Table back' })).not.toHaveAttribute(
+        'aria-disabled',
+      );
+    } finally {
+      restore();
+    }
+  });
+
+  it('treats a NEGATIVE scrollLeft as scrolled — the RTL case', () => {
+    // RTL browsers report 0 at the start and negative towards the end, so a
+    // raw `> 1` never fires: the back arrow never appears and the forward one
+    // never goes away.
+    const restore = withGeometry(1000, 400);
+    try {
+      const { container } = render(table(PLAIN, { scrollable: true }));
+      const scroller = container.querySelector('.uxm-data-table__scroller')!;
+      scroller.scrollLeft = -300;
+      fireEvent.scroll(scroller);
+      expect(screen.getByRole('button', { name: 'Scroll Table back' })).not.toHaveAttribute(
+        'aria-disabled',
+      );
+    } finally {
+      restore();
+    }
+  });
+
+  it('marks the root with the measured edges', () => {
+    const restore = withGeometry(1000, 400);
+    try {
+      const { container } = render(table(PLAIN, { scrollable: true }));
+      expect(container.firstElementChild!.className).toContain('uxm-data-table--scrolled-end');
+      expect(container.firstElementChild!.className).not.toContain('--scrolled-start');
+    } finally {
+      restore();
+    }
+  });
+
+  it('takes a caller-supplied arrow label', () => {
+    render(
+      table(PLAIN, {
+        scrollable: true,
+        scrollLabel: 'Orders',
+        scrollArrowLabel: (d, l) => `${l}: ${d === 'start' ? 'previous' : 'next'}`,
+      }),
+    );
+    expect(screen.getByRole('button', { name: 'Orders: next' })).toBeInTheDocument();
+  });
+});
+
+describe('DataTable sticky actions column', () => {
+  it('does not pin the generated actions column by default', () => {
+    const { container } = render(
+      table(PLAIN, { scrollable: true, rowActions: () => [{ key: 'e', label: 'Edit', onSelect: () => {} }] }),
+    );
+    expect(container.querySelector('.uxm-data-table__th--actions')!.className).not.toContain(
+      'sticky',
+    );
+  });
+
+  it('pins it with stickyActions, and that alone turns the scroller on', () => {
+    // The generated column has no `column` object to put `sticky` on, which is
+    // why it needs its own prop.
+    const { container } = render(
+      table(PLAIN, { stickyActions: true, rowActions: () => [{ key: 'e', label: 'Edit', onSelect: () => {} }] }),
+    );
+    expect(container.querySelector('.uxm-data-table__scroller')).not.toBeNull();
+    expect(container.querySelector('.uxm-data-table__th--actions')!.className).toContain(
+      'uxm-data-table__th--sticky-end',
+    );
+    expect(container.querySelector('.uxm-data-table__td--actions')!.className).toContain(
+      'uxm-data-table__td--sticky-end',
+    );
   });
 });
 
@@ -148,8 +282,33 @@ describe('DataTable sticky/scroll — CSS contracts', () => {
     ).not.toMatch(/!important/);
   });
 
+  it('beats IconButton on the cascade for the arrow chrome', () => {
+    // styles.css imports icon-button.css AFTER data-table.css, so an arrow rule
+    // at (0,1,0) loses on source order and the button renders transparent with
+    // its chevron over the cell text. Qualify with the root.
+    expect(scss).toMatch(/\.uxm-data-table \.uxm-data-table__scroll-arrow\s*\{/);
+    expect(
+      scss,
+      'an unqualified arrow rule will be overridden by IconButton',
+    ).not.toMatch(/^\.uxm-data-table__scroll-arrow\s*\{/m);
+  });
+
+  it('composes the active rail WITH the scroll shadow instead of replacing it', () => {
+    // Both are box-shadows at (0,2,0) on the same element when the first cell
+    // is pinned; whichever came later simply erased the other, and the rail
+    // losing leaves colour as the only active-row cue (1.4.1).
+    expect(scss).toMatch(
+      /--scrolled-start[\s\S]{0,160}?__row--active[\s\S]{0,160}?__td--sticky-start:first-child\s*\{\s*box-shadow:\s*\n?\s*inset 3px[\s\S]{0,200}?var\(--uxm-data-table-scroll-shadow/,
+    );
+  });
+
   it('keeps a visible focus ring on the scroll region', () => {
     // The root clips, so an outward offset would be invisible.
-    expect(scss).toMatch(/__scroller[\s\S]{0,300}?:focus-visible[\s\S]{0,160}?outline-offset:\s*-2px/);
+    // On the ROOT, via :has — an inset outline on the scroller itself is
+    // painted under the z-index:1 pinned cells, so the pinned columns hid its
+    // leading/trailing edges and every corner.
+    expect(scss).toMatch(
+      /\.uxm-data-table--scrollable:has\(\.uxm-data-table__scroller:focus-visible\)[\s\S]{0,200}?outline-offset:\s*-2px/,
+    );
   });
 });
