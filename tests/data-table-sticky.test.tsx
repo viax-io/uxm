@@ -302,6 +302,24 @@ describe('DataTable sticky/scroll — CSS contracts', () => {
     );
   });
 
+  it('fades pinned cells in lockstep with the row', () => {
+    // A pinned cell paints its OWN opaque background (it must, or the
+    // scrolling content shows through), so it does not inherit the row's
+    // fade. Without a matching transition it snapped while the unpinned
+    // columns eased over 100ms, and one row changed colour in two stages —
+    // reported as the first and last columns lagging.
+    const rowFade = /\.uxm-data-table__row\s*\{[^}]*transition:\s*background-color\s*0\.1s/.exec(scss);
+    expect(rowFade, 'row fade missing').not.toBeNull();
+    expect(scss).toMatch(
+      /__td--sticky-start,\s*\n\.uxm-data-table__td--sticky-end\s*\{[\s\S]{0,400}?transition:\s*background-color\s*0\.1s/,
+    );
+  });
+
+  it('drops both fades under prefers-reduced-motion', () => {
+    const block = scss.slice(scss.indexOf('@media (prefers-reduced-motion: reduce)'));
+    expect(block).toMatch(/__row,[\s\S]{0,200}?__td--sticky-end\s*\{\s*transition:\s*none/);
+  });
+
   it('keeps a visible focus ring on the scroll region', () => {
     // The root clips, so an outward offset would be invisible.
     // On the ROOT, via :has — an inset outline on the scroller itself is
