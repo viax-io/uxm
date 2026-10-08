@@ -1,3 +1,11 @@
+## [4.56.2](https://github.com/viax-io/uxm/compare/v4.56.1...v4.56.2) (2026-10-08)
+
+
+### Bug Fixes
+
+* **data-table:** beat the density presets in card mode, and keep the kebab trailing ([a7058a3](https://github.com/viax-io/uxm/commit/a7058a3dbe934a9184fa3f04a9e0e7b3905cc5a0))
+* **data-table:** card mode's cell reset was dead, not just its alignment rule ([8d41897](https://github.com/viax-io/uxm/commit/8d418976f561b1cb5c3117db5e60384148d795a6))
+
 ## [4.56.1](https://github.com/viax-io/uxm/compare/v4.56.0...v4.56.1) (2026-10-08)
 
 
