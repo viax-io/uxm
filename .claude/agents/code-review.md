@@ -101,6 +101,7 @@ Apply the checklists below.
 - `npm run lint` (no `--workspace` flags — this is not a monorepo)
 - `npm run typecheck`
 - `npm test`
+- If anything under `src/studio/` changed: `npm run check:studio-i18n`
 - If build config, exports, or the barrel structure changed: `npm run build`
 
 ### 4. REPORT findings in structured format
@@ -215,6 +216,8 @@ discussions (e.g. "fix #3 and #7").
 - Backend access goes through the `StudioPersistence` contract (`src/studio/persistence/`) — no ad-hoc `fetch` calls scattered through components
 - `loading` / `error` / `data` states handled explicitly
 - Env variables read via `import.meta.env.VITE_*` — never `process.env`; library code (`src/ui`, `src/tokens`) must not read env at all
+- Every user-visible string goes through `t()` / `tp()` from `src/studio/i18n` — including `aria-label`, `title`, placeholders, menu items and error text. A string literal rendered directly is a **High** finding: `check:studio-i18n` cannot detect it
+- New or changed strings are translated in all shipped locales in the same change (no `null` left in `src/studio/i18n/locales/*.ts`); run `npm run check:studio-i18n`
 
 ---
 

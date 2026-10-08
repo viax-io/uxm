@@ -1628,3 +1628,17 @@ reached the published library; now shipped in 2.8.0.
   of state, set `--uxm-lifecycle-connector-active-color` / `--uxm-timeline-entry-dot-color` to
   `var(--color-accent-bold)` (5.56:1 / 5.94:1). Note the studio's TimelineEntry knob defaults
   to `accent-bold`, so the editor shows a darker dot than a bare consumer render.
+
+### New in 4.49.1
+
+- **The `sparkle` icon is two sparks.** It shipped as a single four-point star — only one of
+  Heroicons' three `sparkles` subpaths was ever copied in, leaving an empty lower-right. It is
+  now a large spark plus a smaller one (61%) in that corner. **Anything rendering
+  `glyph="sparkle"` changes appearance**; the id is unchanged and `strokeWidth` still drives
+  both sparks together. One caveat: `strokeWidth` does not scale with the shape, so at heavy
+  strokes on small sizes the smaller spark closes up — at 12px with `strokeWidth={2}` it reads
+  as a dot rather than a star. It is clear at 18–20px with the 1.5–1.75 range.
+
+- **CDN `latest/` path** — every release now also syncs the CDN bundles to
+  `https://uxm.viax.io/latest/…` (`no-cache`). Demos only; pin `https://uxm.viax.io/<version>/…`
+  anywhere else, and never put SRI on a `latest/` URL. See `references/quick-recipes.md` → recipe 18.

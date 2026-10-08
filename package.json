@@ -1,6 +1,6 @@
 {
   "name": "@viax.io/uxm",
-  "version": "4.52.0",
+  "version": "4.53.0",
   "description": "Viax UXM — React 19 UI primitives and design tokens.",
   "license": "MIT",
   "private": false,
@@ -46,6 +46,11 @@
       "import": "./dist/studio/index.js",
       "require": "./dist/studio/index.cjs"
     },
+    "./studio/i18n": {
+      "types": "./dist/studio/i18n/index.d.ts",
+      "import": "./dist/studio/i18n/index.js",
+      "require": "./dist/studio/i18n/index.cjs"
+    },
     "./studio/generate-css": {
       "types": "./dist/studio/persistence/generate-css.d.ts",
       "import": "./dist/studio/persistence/generate-css.js",
@@ -67,7 +72,7 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p portal/tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "check:drift": "node scripts/check-state-var-drift.mjs && npm run check:type-scale && npm run check:tokens",
+    "check:drift": "node scripts/check-state-var-drift.mjs && npm run check:type-scale && npm run check:tokens && npm run check:studio-i18n",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -78,6 +83,9 @@
     "prepare": "husky",
     "prepublishOnly": "npm run build",
     "check:type-scale": "node scripts/sweep-type-scale.mjs --check",
+    "i18n:extract": "node scripts/extract-studio-i18n.mjs",
+    "i18n:gen": "node scripts/gen-studio-locales.mjs",
+    "check:studio-i18n": "node scripts/extract-studio-i18n.mjs --check && node scripts/check-studio-i18n.mjs",
     "check:tokens": "node scripts/check-token-parity.mjs",
     "verify:type-scale": "node scripts/verify-type-scale.mjs origin/master"
   },

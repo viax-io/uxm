@@ -1,3 +1,16 @@
+# [4.53.0](https://github.com/viax-io/uxm/compare/v4.52.0...v4.53.0) (2026-10-07)
+
+
+### Bug Fixes
+
+* added translation to missed places ([cb62dc0](https://github.com/viax-io/uxm/commit/cb62dc0dbecc616e686f75dec87268d985078957))
+* merge branch 'master' into feat/studio-i18n ([35c548f](https://github.com/viax-io/uxm/commit/35c548f5951cc2148c386ebf299086067dd66755))
+
+
+### Features
+
+* add translations for the studio interface ([6dfbbdf](https://github.com/viax-io/uxm/commit/6dfbbdf8d17c0669f6dbd5143b08549bfc8cab65))
+
 # [4.52.0](https://github.com/viax-io/uxm/compare/v4.51.0...v4.52.0) (2026-10-07)
 
 

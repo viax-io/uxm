@@ -2,7 +2,7 @@ import { useId, useRef, useState, type CSSProperties } from 'react';
 
 import { hexToHsl, retintHue } from '@/lib/contrast';
 import type { BrandConfig } from '@/lib/types';
-import type { PreviewProps, PreviewShellContext } from '@/previews/types';
+import type { PreviewProps, PreviewShellContext, PreviewTranslate } from '@/previews/types';
 import { themeTokens, type ThemeToken } from '@/tokens';
 import {
   Badge, ButtonGroup, ButtonPrimary, ButtonSecondary, ButtonTertiary, Card, Cluster,
@@ -10,46 +10,9 @@ import {
   ResponsiveGrid, SectionHeader, Select, Stack, Tabs, TextInput,
 } from '@/ui';
 
-export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
-  { label: 'Inter (default)', value: 'Inter', stack: "'Inter', var(--font-inter), system-ui, sans-serif" },
-  { label: 'Geist', value: 'Geist', stack: "'Geist', system-ui, sans-serif" },
-  { label: 'Manrope', value: 'Manrope', stack: "'Manrope', system-ui, sans-serif" },
-  { label: 'Space Grotesk', value: 'Space Grotesk', stack: "'Space Grotesk', system-ui, sans-serif" },
-  { label: 'Plus Jakarta Sans', value: 'Plus Jakarta Sans', stack: "'Plus Jakarta Sans', system-ui, sans-serif" },
-  { label: 'DM Sans', value: 'DM Sans', stack: "'DM Sans', system-ui, sans-serif" },
-  { label: 'Figtree', value: 'Figtree', stack: "'Figtree', system-ui, sans-serif" },
-  { label: 'Roboto', value: 'Roboto', stack: "'Roboto', system-ui, sans-serif" },
-  { label: 'IBM Plex Sans', value: 'IBM Plex Sans', stack: "'IBM Plex Sans', system-ui, sans-serif" },
-  { label: 'JetBrains Mono', value: 'JetBrains Mono', stack: "'JetBrains Mono', ui-monospace, monospace" },
-];
-
-/** Shared by the base-size knob and each role's size knob.
- * Sub-100% values do NOT shrink AA-floor-reasoned small text: surfaces with a
- * documented minimum (Menu's 11px subtitle / 12px hint) floor themselves via
- * `max()` in their own SCSS, so "compact" compacts everything else. */
-const SCALE_OPTIONS = [
-  { value: '', label: 'Default (100%)' },
-  { value: '0.875', label: '87.5% — compact' },
-  { value: '1.125', label: '112.5% — large' },
-  { value: '1.25', label: '125% — larger' },
-  { value: '1.5', label: '150% — largest' },
-];
-
-/** Closed sets small enough to show as segments — every option visible, one
- *  click instead of open-then-pick. Labels stay short so the track fits. */
-const WEIGHT_OPTIONS = [
-  { value: '', label: 'Default' },
-  { value: '500', label: '500' },
-  { value: '600', label: '600' },
-  { value: '700', label: '700' },
-];
-const LINE_HEIGHT_OPTIONS = [
-  { value: '', label: 'Default' },
-  { value: '1.4', label: 'Tight' },
-  { value: '1.5', label: 'Normal' },
-  { value: '1.7', label: 'Relaxed' },
-  { value: '2', label: 'Loose' },
-];
+import {
+  ASSETS, FONT_OPTIONS, LINE_HEIGHT_OPTIONS, ROLES, SCALE_OPTIONS, WEIGHT_OPTIONS,
+} from './brand-settings-options';
 
 type TypeTab = 'body' | 'headings';
 
@@ -60,20 +23,6 @@ type TypeTab = 'body' | 'headings';
  *  both take phrasing content only. */
 const dirtyDot = (dirty: boolean) =>
   (dirty ? <Badge mode="dot" type="accent" aria-hidden /> : undefined);
-
-/**
- * The three heading roles, in visual order. `basePx` / `baseWeight` are the
- * representative surface's own values, used only to render the specimen at a
- * believable size — the atoms keep their individual literals.
- */
-const ROLES = [
-  { key: 'display', label: 'Display', short: 'Display', sample: '$48.2K', basePx: 28, baseWeight: 700,
-    familyKey: 'displayFontFamily', weightKey: 'displayFontWeight', scaleKey: 'displayScale' },
-  { key: 'pageTitle', label: 'Page titles', short: 'Page title', sample: 'Quarterly performance review', basePx: 22, baseWeight: 600,
-    familyKey: 'pageTitleFontFamily', weightKey: 'pageTitleFontWeight', scaleKey: 'pageTitleScale' },
-  { key: 'sectionTitle', label: 'Section titles', short: 'Section title', sample: 'Revenue motions', basePx: 16, baseWeight: 600,
-    familyKey: 'sectionTitleFontFamily', weightKey: 'sectionTitleFontWeight', scaleKey: 'sectionTitleScale' },
-] as const;
 
 type UploadKind = 'logo' | 'icon' | 'favicon';
 type IdentityTab = 'light' | 'dark';
@@ -89,28 +38,6 @@ const BRAND_FIELD = (k: UploadKind, tab: IdentityTab) =>
 const REMOTE_KIND = (k: UploadKind, tab: IdentityTab) =>
   `${k}${tab === 'dark' ? 'Dark' : ''}`;
 
-/**
- * The three brand assets, in render order. `box` sets only the frame's WIDTH —
- * the height stretches to the row, so a frame always matches the field beside
- * it even when the Base text size knob grows it. Width stays explicit because
- * `aspect-ratio` cannot derive it from a stretched height (flex resolves main
- * size from content first), so the square marks are square at the default
- * scale and grow a little taller than wide beyond it.
- * These keep the local `Preview` frame rather than the square `Thumbnail`
- * atom (see `Preview` below for why).
- */
-const ASSETS = [
-  { kind: 'logo' as const, title: 'Logo', defaultSrc: '/viax-logo.svg',
-    box: { width: 110 }, imgStyle: { maxWidth: '90%', maxHeight: '70%' },
-    hint: 'Shown in the expanded sidebar. Upload a file or paste a URL.' },
-  { kind: 'icon' as const, title: 'Sidebar Icon', defaultSrc: '/viax-icon.svg',
-    box: { width: 44 }, imgStyle: { maxWidth: '70%', maxHeight: '70%' },
-    hint: 'Shown in the collapsed sidebar.' },
-  { kind: 'favicon' as const, title: 'Favicon', defaultSrc: undefined,
-    box: { width: 44 }, imgStyle: { maxWidth: '60%', maxHeight: '60%' },
-    hint: 'Browser tab icon. Accepts .ico, .png, .svg.' },
-];
-
 type Asset = (typeof ASSETS)[number];
 
 /**
@@ -125,9 +52,11 @@ type Asset = (typeof ASSETS)[number];
  * the Cluster and stopped the label focusing the field.
  */
 function AssetRow({
-  asset, tab, value, fallbackSrc, hint, uploading, onUrlChange, onPick,
+  asset, tab, value, fallbackSrc, hint, uploading, onUrlChange, onPick, t,
 }: {
   asset: Asset;
+  /** Chrome translator, handed down from the shell — see PreviewTranslate. */
+  t: PreviewTranslate;
   tab: IdentityTab;
   value: string;
   fallbackSrc?: string;
@@ -144,11 +73,16 @@ function AssetRow({
   const fieldId = useId();
   const src = value || fallbackSrc;
   return (
-    <FormField label={asset.title} hint={hint} htmlFor={fieldId}>
+    <FormField label={t(asset.title)} hint={hint} htmlFor={fieldId}>
       <Cluster id={`${fieldId}-row`} gap={12} align="center">
         <Preview box={asset.box} dim={tab === 'dark'}>
           {src && (
-            <PreviewImg key={src} src={src} alt={`${asset.title} preview`} style={asset.imgStyle} />
+            <PreviewImg
+              key={src}
+              src={src}
+              alt={t('{asset} preview', { asset: t(asset.title) })}
+              style={asset.imgStyle}
+            />
           )}
         </Preview>
         {/* Stack, not `style` on TextInput: a clearable TextInput wraps itself
@@ -173,7 +107,7 @@ function AssetRow({
           onChange={(e) => e.target.files?.[0] && onPick(e.target.files[0])}
         />
         <ButtonSecondary onClick={() => fileRef.current?.click()} disabled={uploading}>
-          {uploading ? 'Uploading…' : 'Upload'}
+          {uploading ? t('Uploading…') : t('Upload')}
         </ButtonSecondary>
       </Cluster>
     </FormField>
@@ -199,10 +133,15 @@ const isValidHex = (v: string) => /^#[0-9A-Fa-f]{6}$/.test(v) || /^#[0-9A-Fa-f]{
  */
 function BrandColorRow({ shell }: { shell: PreviewShellContext }) {
   const { brand, setBrand } = shell;
+  // Chrome only. Specimen text (`$48.2K`, "Quarterly performance review") is
+  // deliberately NOT translated — it shows where copy lands and at what size,
+  // and a translated sample would imply the library picks a real app's wording.
+  const t = shell.t ?? ((source: string) => source);
+  const tToken = shell.tToken ?? ((name: string) => name);
   // Any `identity`-flagged token renders; only the accent one carries the ramp
   // retint. Silently requiring `group === 'accent'` here would make the catalog
   // flag a no-op with no signal for every other group.
-  const token = themeTokens.find((t) => t.identity);
+  const token = themeTokens.find((tok) => tok.identity);
   const fansOut = token?.group === 'accent';
   const fieldId = useId();
   const [draft, setDraft] = useState<string | null>(null);
@@ -246,10 +185,10 @@ function BrandColorRow({ shell }: { shell: PreviewShellContext }) {
 
   return (
     <FormField
-      label="Brand color"
+      label={t('Brand color')}
       hint={fansOut
-        ? 'Apply rebuilds the whole accent palette for light and dark — including any shades fine-tuned in Color below.'
-        : `Applies to ${token.name}. Fine-tune related tokens in Color below.`}
+        ? t('Apply rebuilds the whole accent palette for light and dark — including any shades fine-tuned in Color below.')
+        : t('Applies to {token}. Fine-tune related tokens in Color below.', { token: tToken(token.name) })}
       htmlFor={fieldId}
     >
       <Cluster id={`${fieldId}-row`} gap={12} align="center">
@@ -261,8 +200,8 @@ function BrandColorRow({ shell }: { shell: PreviewShellContext }) {
           outputFormat="hex"
           alpha={false}
           // ColorInputPopover appends the current value to this itself.
-          triggerLabel="Pick brand color"
-          title="Pick a color"
+          triggerLabel={t('Pick brand color')}
+          title={t('Pick a color')}
           style={{
             '--uxm-color-input-trigger-size': '44px',
             '--uxm-color-input-border-radius': '6px',
@@ -287,11 +226,11 @@ function BrandColorRow({ shell }: { shell: PreviewShellContext }) {
           />
         </Stack>
         <ButtonSecondary onClick={apply} disabled={!staged}>
-          Apply
+          {t('Apply')}
         </ButtonSecondary>
         {overridden && (
           <InlineAction onClick={reset} icon={<Icon glyph="refresh" size={11} />}>
-            {fansOut ? 'Reset palette' : `Reset ${token.name.toLowerCase()}`}
+            {fansOut ? t('Reset palette') : t('Reset {token}', { token: tToken(token.name) })}
           </InlineAction>
         )}
       </Cluster>
@@ -352,20 +291,24 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
   }
 
   const { brand, setBrand } = shell;
+  // Chrome only. Specimen text (`$48.2K`, "Quarterly performance review") is
+  // deliberately NOT translated — it shows where copy lands and at what size,
+  // and a translated sample would imply the library picks a real app's wording.
+  const t = shell.t ?? ((source: string) => source);
 
   const upload = async (file: File, kind: UploadKind, tab: IdentityTab) => {
     if (!shell.uploadAsset) {
-      setError('Upload is unavailable in this host.');
+      setError(t('Upload is unavailable in this host.'));
       return;
     }
     setUploading(kind);
     setError(null);
     try {
       const data = await shell.uploadAsset(file, REMOTE_KIND(kind, tab));
-      if (!data?.url) throw new Error('Upload failed');
+      if (!data?.url) throw new Error(t('Upload failed'));
       setBrand({ [BRAND_FIELD(kind, tab)]: data.url });
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Upload failed');
+      setError(e instanceof Error ? e.message : t('Upload failed'));
     } finally {
       setUploading(null);
     }
@@ -373,9 +316,9 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
 
   const inheritsHint = (kind: UploadKind, value: string, base: string) => {
     if (identityTab === 'dark' && !value) {
-      return `${base} Inherits the Light ${kind} when empty.`;
+      return `${t(base)} ${t('Inherits the Light {asset} when empty.', { asset: kind })}`;
     }
-    return base;
+    return t(base);
   };
   const fontFamily = brand.fontFamily ?? '';
   const headingFontFamily = brand.headingFontFamily ?? '';
@@ -399,14 +342,27 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
   return (
     <Stack gap={16} style={{ width: '100%', maxWidth: 640 }}>
       <Group
-        title="Identity"
-        description="Logos, marks and the brand color shown throughout Modo. Dark assets fall back to the light ones when empty."
+        title={t('Identity')}
+        description={t('Logos, marks and the brand color shown throughout Modo. Dark assets fall back to the light ones when empty.')}
       >
         <Cluster justify="between" align="center" gap={8}>
           <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-            Editing <strong style={{ color: 'var(--color-text)' }}>{identityTab}</strong> assets
+            {/* One key — "Editing <mode> assets" does not survive being three
+                fragments in a language that puts the mode elsewhere. */}
+            {(() => {
+              const [before, after] = t('Editing {mode} assets').split('{mode}');
+              return (
+                <>
+                  {before}
+                  <strong style={{ color: 'var(--color-text)' }}>
+                    {t(identityTab === 'dark' ? 'Dark' : 'Light')}
+                  </strong>
+                  {after}
+                </>
+              );
+            })()}
           </span>
-          <LightDarkTabs value={identityTab} onChange={setIdentityTab} />
+          <LightDarkTabs value={identityTab} onChange={setIdentityTab} t={t} />
         </Cluster>
 
         {ASSETS.map((a) => (
@@ -420,6 +376,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                 ? ((brand[`${a.kind}Url`] as string | undefined) || a.defaultSrc)
                 : a.defaultSrc
             }
+            t={t}
             hint={inheritsHint(a.kind, (brand[BRAND_FIELD(a.kind, identityTab)] as string | undefined) ?? '', a.hint)}
             uploading={uploading === a.kind}
             onUrlChange={(v) => setBrand({ [BRAND_FIELD(a.kind, identityTab)]: v || undefined })}
@@ -435,8 +392,8 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
       </Group>
 
       <Group
-        title="Typography"
-        description="Typefaces applied across Modo. Headings are optional — they inherit the body face unless you set one. Changes apply live and persist on Publish."
+        title={t('Typography')}
+        description={t('Typefaces applied across Modo. Headings are optional — they inherit the body face unless you set one. Changes apply live and persist on Publish.')}
       >
         <Stack gap={12}>
           {/* Body and Headings are independent decisions, so they get their own
@@ -447,40 +404,40 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
             value={typeTab}
             onChange={(v) => setTypeTab(v as TypeTab)}
             options={[
-              { value: 'body', label: 'Body', icon: dirtyDot(bodyDirty) },
-              { value: 'headings', label: 'Headings', icon: dirtyDot(headingsDirty) },
+              { value: 'body', label: t('Body'), icon: dirtyDot(bodyDirty) },
+              { value: 'headings', label: t('Headings'), icon: dirtyDot(headingsDirty) },
             ]}
           />
 
           {typeTab === 'body' ? (
             <Stack gap={10}>
-              <FormField label="Typeface" labelPosition="side">
+              <FormField label={t('Typeface')} labelPosition="side">
                 <Select
                   value={fontFamily}
                   onChange={(e) => setBrand({ fontFamily: e.target.value || undefined })}
-                  aria-label="Body typeface"
+                  aria-label={t('Body typeface')}
                   style={{ width: '100%' }}
                 >
-                  <option value="" disabled>Inter (default)</option>
+                  <option value="" disabled>{t('Inter (default)')}</option>
                   {FONT_OPTIONS.slice(1).map((f) => (
-                    <option key={f.value} value={f.value}>{f.label}</option>
+                    <option key={f.value} value={f.value}>{t(f.label)}</option>
                   ))}
                 </Select>
               </FormField>
 
               <FormField
-                label="Text size"
+                label={t('Text size')}
                 labelPosition="side"
-                hint="Scales every text size in the library, headings included."
+                hint={t('Scales every text size in the library, headings included.')}
               >
                 <Select
                   value={brand.typeScale ?? ''}
                   onChange={(e) => setBrand({ typeScale: e.target.value || undefined })}
-                  aria-label="Base text size"
+                  aria-label={t('Base text size')}
                   style={{ width: '100%' }}
                 >
                   {SCALE_OPTIONS.map((s) => (
-                    <option key={s.value} value={s.value} disabled={s.value === ''}>{s.label}</option>
+                    <option key={s.value} value={s.value} disabled={s.value === ''}>{t(s.label)}</option>
                   ))}
                 </Select>
               </FormField>
@@ -488,9 +445,9 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
               {/* A closed set of five reads better as segments than as a popup:
                   every option is visible and costs one click, not two. */}
               <FormField
-                label="Line height"
+                label={t('Line height')}
                 labelPosition="side"
-                hint="Applies to multi-line body copy, not compact chrome."
+                hint={t('Applies to multi-line body copy, not compact chrome.')}
               >
                 {/* `alignSelf` rather than a wrapper: FormField's control column
                     is a flex COLUMN whose default stretch would blow this
@@ -501,43 +458,43 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                   style={{ alignSelf: 'start' }}
                   value={brand.bodyLineHeight ?? ''}
                   onChange={(v) => setBrand({ bodyLineHeight: v || undefined })}
-                  aria-label="Body line height"
-                  options={LINE_HEIGHT_OPTIONS}
+                  aria-label={t('Body line height')}
+                  options={LINE_HEIGHT_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
                 />
               </FormField>
             </Stack>
           ) : (
             <Stack gap={10}>
-              <FormField label="Typeface" labelPosition="side">
+              <FormField label={t('Typeface')} labelPosition="side">
                 <Select
                   value={headingFontFamily}
                   onChange={(e) => setBrand({ headingFontFamily: e.target.value || undefined })}
-                  aria-label="Heading typeface"
+                  aria-label={t('Heading typeface')}
                   style={{ width: '100%' }}
                 >
-                  <option value="" disabled>Same as body</option>
+                  <option value="" disabled>{t('Same as body')}</option>
                   {/* All ten, including Inter — heading-Inter over a different
                       body face is a real choice, so it isn't labelled
                       "(default)" the way the body Select's first option is. */}
                   {FONT_OPTIONS.map((f) => (
                     <option key={f.value} value={f.value}>
-                      {f.value === 'Inter' ? 'Inter' : f.label}
+                      {f.value === 'Inter' ? 'Inter' : t(f.label)}
                     </option>
                   ))}
                 </Select>
               </FormField>
 
               <FormField
-                label="Weight"
+                label={t('Weight')}
                 labelPosition="side"
-                hint="Default keeps each component's own weight."
+                hint={t('Default keeps each component’s own weight.')}
               >
                 <ButtonGroup
                   style={{ alignSelf: 'start' }}
                   value={headingFontWeight}
                   onChange={(v) => setBrand({ headingFontWeight: v || undefined })}
-                  aria-label="Heading weight"
-                  options={WEIGHT_OPTIONS}
+                  aria-label={t('Heading weight')}
+                  options={WEIGHT_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
                 />
               </FormField>
 
@@ -545,18 +502,17 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                 id="uxm-typography-levels"
                 open={levelsOpen}
                 onOpenChange={setLevelsOpen}
-                label="Fine-tune levels"
+                label={t('Fine-tune levels')}
               />
               {levelsOpen && (
                 <Stack id="uxm-typography-levels-panel" gap={10}>
                   <p style={{ margin: 0, fontSize: 'calc(12px * var(--type-scale, 1))', color: 'var(--color-text-muted)', lineHeight: 'var(--type-body-line-height, 1.5)' }}>
-                    Each level inherits the settings above until you change it here.
-                    Display covers metric values and error codes.
+                    {t('Each level inherits the settings above until you change it here. Display covers metric values and error codes.')}
                   </p>
                   {/* Selects (not segments) in here: three controls share one
                       row, so the compact form is the one that fits. */}
                   {ROLES.map((r) => (
-                    <FormField key={r.key} label={r.label} labelPosition="side">
+                    <FormField key={r.key} label={t(r.label)} labelPosition="side">
                       {/* Grid, not Cluster: `Select` forwards `style` to its inner
                           combobox, not to the `.uxm-listbox` wrapper a flex row
                           would lay out — so flex sizing never reaches the flex
@@ -567,14 +523,14 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                           dangling association (each Select keeps its own name;
                           this FormField deliberately has no `hint`, which would
                           be unannounced on a composite — see FormField's README). */}
-                      <ResponsiveGrid min="112px" gap={6} role="group" aria-label={r.label}>
+                      <ResponsiveGrid min="112px" gap={6} role="group" aria-label={t(r.label)}>
                         <Select
                           value={(brand[r.familyKey] as string | undefined) ?? ''}
                           onChange={(e) => setBrand({ [r.familyKey]: e.target.value || undefined })}
-                          aria-label={`${r.short} typeface`}
+                          aria-label={t('{role} typeface', { role: t(r.short) })}
                           style={{ width: '100%' }}
                         >
-                          <option value="" disabled>Inherit typeface</option>
+                          <option value="" disabled>{t('Inherit typeface')}</option>
                           {FONT_OPTIONS.map((f) => (
                             <option key={f.value} value={f.value}>
                               {f.value === 'Inter' ? 'Inter' : f.label}
@@ -584,10 +540,10 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                         <Select
                           value={(brand[r.weightKey] as string | undefined) ?? ''}
                           onChange={(e) => setBrand({ [r.weightKey]: e.target.value || undefined })}
-                          aria-label={`${r.short} weight`}
+                          aria-label={t('{role} weight', { role: t(r.short) })}
                           style={{ width: '100%' }}
                         >
-                          <option value="" disabled>Weight</option>
+                          <option value="" disabled>{t('Weight')}</option>
                           <option value="500">500</option>
                           <option value="600">600</option>
                           <option value="700">700</option>
@@ -595,12 +551,12 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                         <Select
                           value={(brand[r.scaleKey] as string | undefined) ?? ''}
                           onChange={(e) => setBrand({ [r.scaleKey]: e.target.value || undefined })}
-                          aria-label={`${r.short} size`}
+                          aria-label={t('{role} size', { role: t(r.short) })}
                           style={{ width: '100%' }}
                         >
                           {SCALE_OPTIONS.map((s) => (
                             <option key={s.value} value={s.value} disabled={s.value === ''}>
-                              {s.value === '' ? 'Size' : s.label.replace(/ —.*$/, '')}
+                              {s.value === '' ? t('Size') : s.label.replace(/ —.*$/, '')}
                             </option>
                           ))}
                         </Select>
@@ -650,8 +606,8 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
       </Group>
 
       <Group
-        title="Color"
-        description="Palette overrides that cascade across Modo. Changes apply live and persist on Publish."
+        title={t('Color')}
+        description={t('Palette overrides that cascade across Modo. Changes apply live and persist on Publish.')}
       >
         <ThemeTokensEditor shell={shell} />
       </Group>
@@ -693,31 +649,36 @@ function Group({
   );
 }
 
-const GROUP_LABELS: Record<ThemeToken['group'], string> = {
-  surfaces: 'Surfaces',
-  text: 'Text',
-  borders: 'Borders',
-  accent: 'Accent',
-  highlights: 'Highlights',
-  categories: 'Categories',
-  semantic: 'Semantic',
-};
+// Built per render through `t` rather than held as module data: the extractor
+// harvests literal translator calls in previews, and a bare object would ship English.
+const groupLabels = (t: PreviewTranslate): Record<ThemeToken['group'], string> => ({
+  surfaces: t('Surfaces'),
+  text: t('Text'),
+  borders: t('Borders'),
+  accent: t('Accent'),
+  highlights: t('Highlights'),
+  categories: t('Categories'),
+  semantic: t('Semantic'),
+});
 
 const GROUP_ORDER: ThemeToken['group'][] = [
   'surfaces', 'text', 'borders', 'accent', 'highlights', 'categories', 'semantic',
 ];
 
-function groupTokens(): { group: ThemeToken['group']; label: string; tokens: ThemeToken[] }[] {
+function groupTokens(t: PreviewTranslate): { group: ThemeToken['group']; label: string; tokens: ThemeToken[] }[] {
+  const labels = groupLabels(t);
   const by: Record<string, ThemeToken[]> = {};
-  for (const t of themeTokens) (by[t.group] ??= []).push(t);
+  for (const tok of themeTokens) (by[tok.group] ??= []).push(tok);
   return GROUP_ORDER
     .filter((g) => by[g])
-    .map((g) => ({ group: g, label: GROUP_LABELS[g], tokens: by[g] }));
+    .map((g) => ({ group: g, label: labels[g], tokens: by[g] }));
 }
 
 function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
+  const t = shell.t ?? ((source: string) => source);
+  const tToken = shell.tToken ?? ((name: string) => name);
   const { theme, setTheme, brand, setBrand } = shell;
-  const grouped = groupTokens();
+  const grouped = groupTokens(t);
   const overrides = brand.tokens?.[theme] ?? {};
   // When non-null, the recalc modal is open; holds the just-changed accent token
   // (its cssVar + new hex) to use as the base for re-tinting the rest of the group.
@@ -770,17 +731,28 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
       <Cluster justify="between" align="center" gap={8} style={{ marginBottom: 14 }}>
         <Cluster gap={10} align="center">
           <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-            Editing <strong style={{ color: 'var(--color-text)' }}>{theme}</strong> values
+            {(() => {
+              const [before, after] = t('Editing {mode} values').split('{mode}');
+              return (
+                <>
+                  {before}
+                  <strong style={{ color: 'var(--color-text)' }}>
+                    {t(theme === 'dark' ? 'Dark' : 'Light')}
+                  </strong>
+                  {after}
+                </>
+              );
+            })()}
           </span>
           <InlineAction
             onClick={resetAll}
             disabled={!hasOverrides}
             icon={<Icon glyph="refresh" size={11} />}
           >
-            Reset {theme} values
+            {theme === 'dark' ? t('Reset dark values') : t('Reset light values')}
           </InlineAction>
         </Cluster>
-        <LightDarkTabs value={theme} onChange={setTheme} />
+        <LightDarkTabs value={theme} onChange={setTheme} t={t} />
       </Cluster>
 
       <Stack gap={14}>
@@ -790,19 +762,21 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
               {g.label}
             </div>
             <Stack gap={4}>
-              {g.tokens.map((t) => (
+              {g.tokens.map((tok) => (
                 <TokenRow
-                  key={t.cssVar}
-                  token={t}
+                  t={t}
+                  tToken={tToken}
+                  key={tok.cssVar}
+                  token={tok}
                   theme={theme}
-                  override={overrides[t.cssVar]}
-                  onChange={(hex) => setOverride(t.cssVar, hex)}
+                  override={overrides[tok.cssVar]}
+                  onChange={(hex) => setOverride(tok.cssVar, hex)}
                   onCommitColor={
                     // Accent tokens prompt (via modal) to re-tint the ramp to the
                     // new hue — but only once the pick is COMMITTED (popover close
                     // or hex entry), never mid-drag while onChange streams.
-                    t.group === 'accent'
-                      ? (hex) => setPendingAccent({ cssVar: t.cssVar, hex })
+                    tok.group === 'accent'
+                      ? (hex) => setPendingAccent({ cssVar: tok.cssVar, hex })
                       : undefined
                   }
                 />
@@ -817,22 +791,27 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
         onOpenChange={(open) => { if (!open) setPendingAccent(null); }}
       >
         <Modal size="sm" onClose={() => setPendingAccent(null)}>
-          <Modal.Header>Recalculate accent palette?</Modal.Header>
+          <Modal.Header>{t('Recalculate accent palette?')}</Modal.Header>
           <Modal.Body>
             <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text)', lineHeight: 1.5 }}>
-              You changed{' '}
-              <strong>
-                {themeTokens.find((t) => t.cssVar === pendingAccent?.cssVar)?.name ?? 'an accent color'}
-              </strong>
-. Re-tint the rest of the accent ramp — in both light and dark — to its hue?
-              Each shade keeps its own lightness and saturation; only the hue follows
-              the color you just set.
+              {(() => {
+                const found = themeTokens.find((tok) => tok.cssVar === pendingAccent?.cssVar);
+                const name = found ? tToken(found.name) : t('an accent color');
+                // One key, not three fragments: word order around the token name
+                // is language-specific and a concatenation cannot express it.
+                const [before, after] = t(
+                  'You changed {token}. Re-tint the rest of the accent ramp — in both light and '
+                  + 'dark — to its hue? Each shade keeps its own lightness and saturation; only '
+                  + 'the hue follows the color you just set.',
+                ).split('{token}');
+                return <>{before}<strong>{name}</strong>{after}</>;
+              })()}
             </p>
           </Modal.Body>
           <Modal.Footer>
-            <ButtonTertiary onClick={() => setPendingAccent(null)}>Keep as is</ButtonTertiary>
+            <ButtonTertiary onClick={() => setPendingAccent(null)}>{t('Keep as is')}</ButtonTertiary>
             <ButtonPrimary onClick={() => { if (pendingAccent) recalcAccents(pendingAccent.cssVar, pendingAccent.hex); }}>
-              Recalculate
+              {t('Recalculate')}
             </ButtonPrimary>
           </Modal.Footer>
         </Modal>
@@ -842,17 +821,22 @@ function ThemeTokensEditor({ shell }: { shell: PreviewShellContext }) {
 }
 
 function TokenRow({
-  token, theme, override, onChange, onCommitColor,
+  token, theme, override, onChange, onCommitColor, t, tToken,
 }: {
   token: ThemeToken;
   theme: 'light' | 'dark';
   override: string | undefined;
+  /** Chrome translator, handed down from the shell — see PreviewTranslate. */
+  t: PreviewTranslate;
+  /** Token display-name translator — see `PreviewShellContext.tToken`. */
+  tToken: (name: string) => string;
   /** Live update — streams during a drag in the picker. */
   onChange: (hex: string | undefined) => void;
   /** Fires once the pick is committed (popover close or hex entry), not mid-drag. */
   onCommitColor?: (hex: string) => void;
 }) {
   const defaultHex = theme === 'dark' ? token.darkHex : token.hex;
+  const name = tToken(token.name);
   const effective = (override ?? defaultHex).toUpperCase();
   const isOverridden = override !== undefined;
   const [draft, setDraft] = useState<string | null>(null);
@@ -903,15 +887,15 @@ function TokenRow({
         }}
         outputFormat="hex"
         alpha={false}
-        triggerLabel={`Pick colour for ${token.name}`}
-        title="Pick a color"
+        triggerLabel={t('Pick color for {token}', { token: name })}
+        title={t('Pick a color')}
         style={{
           '--uxm-color-input-trigger-size': '20px',
           '--uxm-color-input-border-radius': '4px',
         } as React.CSSProperties}
       />
       <span style={{ color: 'var(--color-text)', fontWeight: isOverridden ? 600 : 400, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {token.name}
+        {name}
         <span style={{ marginLeft: 6, color: 'var(--color-text-muted)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 11 }}>
           {token.cssVar}
         </span>
@@ -931,7 +915,7 @@ function TokenRow({
           textAlign: 'right',
           visibility: isOverridden ? 'visible' : 'hidden',
         }}
-        title={`Default: ${defaultHex}`}
+        title={t('Default: {hex}', { hex: defaultHex.toUpperCase() })}
       >
         {defaultHex.toUpperCase()}
       </span>
@@ -946,7 +930,7 @@ function TokenRow({
         onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
         spellCheck={false}
         clearable={false}
-        aria-label={`${token.name} hex value`}
+        aria-label={t('{token} hex value', { token: name })}
         style={{
           width: 84,
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
@@ -961,8 +945,8 @@ function TokenRow({
       <IconButton
         onClick={() => onChange(undefined)}
         disabled={!isOverridden}
-        title="Reset to default"
-        aria-label={`Reset ${token.name}`}
+        title={t('Reset to default')}
+        aria-label={t('Reset {token}', { token: name })}
         style={{
           '--uxm-icon-button-size': '18px',
           '--uxm-icon-button-radius': '4px',
@@ -1007,15 +991,22 @@ function PreviewImg({ src, alt, style }: { src: string; alt: string; style?: Rea
   return <img src={src} alt={alt} style={style} onError={() => setErrored(true)} />;
 }
 
-function LightDarkTabs({ value, onChange }: { value: 'light' | 'dark'; onChange: (v: 'light' | 'dark') => void }) {
+function LightDarkTabs({ value, onChange, t }: {
+  value: 'light' | 'dark';
+  onChange: (v: 'light' | 'dark') => void;
+  t: PreviewTranslate;
+}) {
   return (
     <Tabs
       value={value}
       onChange={(v) => onChange(v as 'light' | 'dark')}
       options={[
-        { value: 'light', label: 'Light' },
-        { value: 'dark', label: 'Dark' },
+        { value: 'light', label: t('Light') },
+        { value: 'dark', label: t('Dark') },
       ]}
     />
   );
 }
+
+// Re-exported: consumers and the registry import it from the preview barrel.
+export { FONT_OPTIONS } from './brand-settings-options';

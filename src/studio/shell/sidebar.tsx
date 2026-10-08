@@ -9,6 +9,7 @@ import { IconButton } from '@/ui';
 import { InlineAction } from '@/ui';
 import { InputWithIcon } from '@/ui';
 
+import { useStudioT, useStudioTp } from '../i18n';
 import { useUxm } from '../lib/context';
 import { categories, categoryColors, getComponentsByCategory, registry } from '../lib/registry';
 
@@ -18,6 +19,8 @@ const COLLAPSED_STORAGE_KEY = 'uxm:collapsed-categories';
 
 export function Sidebar({ embed = false }: { embed?: boolean }) {
   const { selectedId, selectComponent, brand, theme } = useUxm();
+  const t = useStudioT();
+  const tp = useStudioTp();
   // Brand mark shown left of the title — same asset as the Sidebar Icon
   // brand control, defaulting to the viax mark. Theme-aware to match the
   // rest of the brand surface.
@@ -78,13 +81,18 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
     return registry.filter((def) => {
       if (catActive && !activeCats.has(def.category)) return false;
       if (!q) return true;
-      return (
-        def.name.toLowerCase().includes(q) ||
-        def.category.toLowerCase().includes(q) ||
-        def.description.toLowerCase().includes(q)
-      );
+      // Both the translated text AND the English source are searchable. A
+      // designer types "Schaltfläche", a developer types "button" because that
+      // is what the id and the import are called — neither should come up empty.
+      return [
+        def.name,
+        t('component', def.name),
+        def.category,
+        t('category', def.category),
+        def.description,
+      ].some((field) => field.toLowerCase().includes(q));
     });
-  }, [query, activeCats]);
+  }, [query, activeCats, t]);
 
   const matchCount = filtered ? filtered.length : registry.length;
 
@@ -103,7 +111,7 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
             />
             <div className="flex flex-col justify-center">
               <h1 className="text-[38px] tracking-[-0.06em] text-text leading-none" style={{ fontFamily: 'var(--font-logo)' }}>uxm</h1>
-              <p className="text-xs text-text-muted mt-1">Component Explorer</p>
+              <p className="text-xs text-text-muted mt-1">{t('chrome', 'Component Explorer')}</p>
             </div>
           </div>
         )}
@@ -119,7 +127,7 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
             <div className="flex-1 min-w-0">
               <InputWithIcon
                 type="search"
-                placeholder="Search…"
+                placeholder={t('chrome', 'Search…')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onClear={() => setQuery('')}
@@ -128,8 +136,8 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
             </div>
             <IconButton
               onClick={() => setFiltersOpen((v) => !v)}
-              aria-label={filtersOpen ? 'Hide category filter' : 'Filter by category'}
-              title="Filter by category"
+              aria-label={filtersOpen ? t('chrome', 'Hide category filter') : t('chrome', 'Filter by category')}
+              title={t('chrome', 'Filter by category')}
               aria-expanded={filtersOpen}
               // Indicator dot is rendered as a pseudo-style positioned
               // overlay so the button keeps its uniform 32×32 footprint.
@@ -186,14 +194,14 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
                       />
                     }
                   >
-                    {cat}
+                    {t('category', cat)}
                   </Chip>
                 ))}
               </div>
               {activeCats.size > 0 && (
                 <div className="mt-2">
                   <InlineAction onClick={() => setActiveCats(new Set())}>
-                    Clear filter
+                    {t('chrome', 'Clear filter')}
                   </InlineAction>
                 </div>
               )}
@@ -201,7 +209,7 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
           )}
           {(query || activeCats.size > 0) && (
             <p className="text-[11px] text-text-subtle mt-1.5 px-1">
-              {matchCount} result{matchCount !== 1 ? 's' : ''}
+              {tp('chrome', { one: '{count} result', other: '{count} results' }, matchCount)}
             </p>
           )}
         </div>
@@ -216,8 +224,8 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
               {filtered.map((def) => (
                 <ExplorerListItem
                   key={def.id}
-                  name={def.name}
-                  trailing={def.category}
+                  name={t('component', def.name)}
+                  trailing={t('category', def.category)}
                   active={selectedId === def.id}
                   onClick={() => selectComponent(def.id)}
                 />
@@ -225,7 +233,7 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
             </div>
           ) : (
             <div className="px-3 py-8 text-center">
-              <p className="text-xs text-text-subtle">No components match &quot;{query}&quot;</p>
+              <p className="text-xs text-text-subtle">{t('chrome', 'No components match')} &quot;{query}&quot;</p>
             </div>
           )
         ) : (
@@ -252,12 +260,12 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
                   }
                   trailing={count}
                 >
-                  {cat}
+                  {t('category', cat)}
                 </ExplorerSection>
                 {!isCollapsed && grouped[cat].map((def) => (
                   <ExplorerListItem
                     key={def.id}
-                    name={def.name}
+                    name={t('component', def.name)}
                     active={selectedId === def.id}
                     onClick={() => selectComponent(def.id)}
                   />
