@@ -133,8 +133,6 @@ catalog.
   accent rail and tint on the matching row (rail as well as tint, because colour alone is not a
   sole cue), and **`rowProps`** merges arbitrary attributes onto the `<tr>` — the `id` a deep
   link needs. New knobs: `--uxm-data-table-row-active-bg` / `-rail` / `-hover-bg`.
-  Still missing, deliberately deferred: sticky columns and scroll affordances, which need the
-  table to own a horizontal scroller and so can't be additive the way these are.
 
 ### Unreleased
 
@@ -143,6 +141,26 @@ catalog.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
+
+- **`DataTable` scrolls horizontally, pins columns, and shows where the edges are.** New
+  **`column.sticky`** (`'start'` | `'end'`) pins a data column and **`stickyActions`** pins the
+  generated `rowActions` column (which has no `column` object to carry `sticky`); **`scrollable`**
+  puts the table in its own horizontal scroller, and `sticky` implies it, because pinning only
+  means something against a scroll. The scroller is a **focusable `role="region"`** named by
+  **`scrollLabel`** — a scroll container reachable only by pointer fails 2.1.1. Scroll shadows
+  and a pair of arrow buttons appear only while there is somewhere to scroll, driven by the
+  same measured state so they cannot disagree; the arrows move ~80% of a viewport, respect
+  `prefers-reduced-motion`, flip direction in RTL, take their names from **`scrollArrowLabel`**,
+  and stay mounted as `aria-disabled` at the ends rather than unmounting under the user's focus.
+  **Three things that bite.** Scrollable tables switch to `border-collapse: separate` (with
+  collapsed borders the border belongs to the TABLE, so a pinned cell scrolls out from under
+  its own rules in Chrome and Safari) — scoped, so every other table keeps what it had. **One
+  sticky column per side**: offsetting a second needs the first measured, and a wrong offset
+  overlaps columns rather than degrading. And **none of it applies in stacked mode**, where
+  there is no horizontal axis. New CSS-only knobs (not studio controls, since they are
+  composite shadow values rather than colours): `--uxm-data-table-scroll-shadow` / `-shadow-end`
+  / `-arrow-bg` / `-arrow-shadow` / `-focus-color`.
+
 
 ## Workflow
 
