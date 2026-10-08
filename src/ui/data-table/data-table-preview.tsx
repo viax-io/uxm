@@ -124,6 +124,9 @@ const HEADERS: { label: string; sortKey?: string; firstSortDirection?: DataTable
 function sortVars(styles: Styles): CSSProperties {
   return {
     '--uxm-data-table-header-text': styles.headerText as string,
+    '--uxm-data-table-row-active-bg': styles.rowActiveBg as string,
+    '--uxm-data-table-row-active-rail': styles.rowActiveRail as string,
+    '--uxm-data-table-row-active-hover-bg': styles.rowActiveHoverBg as string,
     '--uxm-data-table-sort-color': styles.sortColor as string,
     '--uxm-data-table-sort-hover-color': styles.sortHoverColor as string,
     '--uxm-data-table-sort-active-color': styles.sortActiveColor as string,
@@ -134,6 +137,9 @@ function sortVars(styles: Styles): CSSProperties {
 
 export function DataTablePreview({ styles, variants }: PreviewProps & { componentId: string }) {
   const [hovered, setHovered] = useState<number | null>(null);
+  // Row 1 is active so the state is visible without interaction; clicking a
+  // row moves it, which is how a consumer drives `activeRowId`.
+  const [activeRow, setActiveRow] = useState<number | null>(1);
   const [sort, setSort] = useState<DataTableSort>({ key: 'name', direction: 'asc' });
   // Owning the rows in state lets every editable column round-trip its
   // commits back into the table — designers see the new value persist
@@ -268,10 +274,21 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
           {rows.map((row, i) => (
             <tr
               key={i}
+              className={activeRow === i ? 'uxm-data-table__row--active' : undefined}
+              aria-current={activeRow === i ? 'true' : undefined}
+              onClick={() => setActiveRow(i)}
               onMouseEnter={() => setHovered(i)}
               onMouseLeave={() => setHovered(null)}
               style={{
-                backgroundColor: hovered === i ? (styles.rowHoverBg as string) : (styles.rowBg as string),
+                // The active row's fill comes from the shipped class, so the
+                // knob drives it; the replica's inline fill would win otherwise.
+                backgroundColor:
+                  activeRow === i
+                    ? undefined
+                    : hovered === i
+                      ? (styles.rowHoverBg as string)
+                      : (styles.rowBg as string),
+                cursor: 'pointer',
                 transition: 'background-color 0.1s',
               }}
             >

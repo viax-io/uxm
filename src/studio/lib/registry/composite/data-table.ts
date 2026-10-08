@@ -10,6 +10,11 @@ export const dataTableDef: ComponentDef = {
     { key: 'headerText', label: 'Header Text', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'rowBg', label: 'Row Bg', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
     { key: 'rowHoverBg', label: 'Row Hover Bg', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'colors' },
+    // Active row — the row whose detail is open beside the table. Only paints
+    // when the consumer passes `activeRowId`.
+    { key: 'rowActiveBg', label: 'Row Active Bg', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
+    { key: 'rowActiveRail', label: 'Row Active Rail', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
+    { key: 'rowActiveHoverBg', label: 'Row Active Hover Bg', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
     { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
     // Sortable-header colours. Only visible on a column with `sortKey`; a
     // table without sorting never paints these.
