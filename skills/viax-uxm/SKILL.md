@@ -163,6 +163,24 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable` sizes its own columns, labels them, and can mark a row active.** All opt-in.
+  **`column.width`** takes a share (`'34%'`) or pixels (`120`), and declaring one on ANY column
+  switches that table to `table-layout: fixed` — which is what makes a width hold, since auto
+  layout drops it the moment content is wider. A table where nobody declares a width keeps auto
+  layout exactly as before; this is deliberately not a default change. **`column.className`**
+  lands on the `<th>` AND every `<td>` in the column. Together these replace reaching into
+  `.uxm-data-table__th:nth-child(n)` from a consumer stylesheet, which is what viax-modo's
+  pricing breakdown was doing. **`column.label`** is the column's plain-text name for places a
+  `ReactNode` header cannot reach — the stacked-mode `data-label`, and the sort control's
+  accessible name whenever it says something the visible header does not (`header: 'Amt'`,
+  `label: 'Amount due'`) — defaulting to `header` when it is a string; a JSX header used to produce
+  cells with no stacked-mode label at all. **`activeRowId`** sets `aria-current="true"` plus an
+  accent rail and tint on the matching row (rail as well as tint, because colour alone is not a
+  sole cue), and **`rowProps`** merges arbitrary attributes onto the `<tr>` — the `id` a deep
+  link needs. New knobs: `--uxm-data-table-row-active-bg` / `-rail` / `-hover-bg`.
+  Still missing, deliberately deferred: sticky columns and scroll affordances, which need the
+  table to own a horizontal scroller and so can't be additive the way these are.
+
 ## Workflow
 
 ### Where the documentation lives

@@ -6,7 +6,7 @@ import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
 import { Menu, type MenuEntry } from '../menu';
 
-import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
+import type { CSSProperties, HTMLAttributes, MouseEvent, ReactNode } from 'react';
 
 export type DataTableDensity = 'compact' | 'default' | 'relaxed';
 
@@ -39,6 +39,18 @@ export function nextSort(
     key: sortKey,
     direction: active === null ? firstSortDirection : active === 'asc' ? 'desc' : 'asc',
   };
+}
+
+/**
+ * A column's name as plain text, or `undefined` when it has none.
+ *
+ * Falls back to `header` when it is a string, which is what `data-label` has
+ * always used — so adding `label` only ever fills a gap. A `ReactNode` header
+ * previously meant the cell rendered with no label at all in stacked mode,
+ * silently; `label` is how that gets fixed without stringifying JSX.
+ */
+export function columnLabel<T>(column: DataTableColumn<T>): string | undefined {
+  return column.label ?? (typeof column.header === 'string' ? column.header : undefined);
 }
 
 /** The glyph for a column in the given state. One source for all renderers. */
@@ -86,6 +98,36 @@ export interface DataTableColumn<T> {
    * not plain text.
    */
   sortLabel?: string;
+  /**
+   * Column width — a share (`'34%'`, `'1fr'` is NOT supported: this is a
+   * table) or pixels (`120` or `'120px'`).
+   *
+   * Setting it on ANY column switches the table to `table-layout: fixed`,
+   * which is what makes a declared width actually hold instead of being a
+   * hint the browser may ignore once content is wide. Columns without a width
+   * split what is left. A table where no column declares one is untouched —
+   * auto layout, exactly as before.
+   *
+   * This replaces reaching into `.uxm-data-table__th:nth-child(n)` from a
+   * consumer stylesheet, which is what people were doing.
+   */
+  width?: number | string;
+  /**
+   * Class applied to BOTH this column's `<th>` and every `<td>` in it —
+   * which is the point: a column is a vertical thing, and styling one from
+   * the outside otherwise means two `nth-child` selectors that renumber the
+   * moment a column is inserted.
+   */
+  className?: string;
+  /**
+   * The column's name as plain text, for places a `ReactNode` header cannot
+   * go: the `data-label` that stacked mode shows on each cell, and the
+   * accessible name of the sort control.
+   *
+   * Defaults to `header` when it is a string, which is exactly today's
+   * behaviour — so this only ever adds a label where there was none.
+   */
+  label?: string;
   /**
    * When true, every row's cell in this column renders an EditableCell —
    * click to enter edit mode, Enter commits, Esc cancels, blur commits.
@@ -173,6 +215,34 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    */
   onSortChange?: (next: DataTableSort) => void;
   /**
+   * Marks one row as the active one — the row whose detail is open in a pane
+   * beside the table, typically. Compared against `rowKey(row)`.
+   *
+   * Sets `aria-current="true"` and a `--active` class. Separate from hover and
+   * from `onRowClick`: a row stays active while the pointer is elsewhere.
+   */
+  activeRowId?: string | null;
+  /**
+   * Extra attributes per row, merged onto the `<tr>`.
+   *
+   * The escape hatch for everything `activeRowId` does not cover — an `id` to
+   * deep-link to, a data attribute, a row-specific class.
+   *
+   * Merge rules, because they differ per key and silence here would be a trap:
+   * - `className` is merged with the table's own classes, not replacing them.
+   * - `onClick` is COMPOSED with `onRowClick`: yours runs first, then the row
+   *   click, unless you call `preventDefault()`. Letting either one simply win
+   *   would silently drop the other, which is what the first version did.
+   * - everything else wins over the default, `aria-current` included — a
+   *   consumer may have its own idea of what "current" means.
+   * - `children` and `dangerouslySetInnerHTML` are not accepted; they would
+   *   fight the cells. A runtime `key` is ignored.
+   */
+  rowProps?: (row: T) => Omit<
+    HTMLAttributes<HTMLTableRowElement>,
+    'children' | 'dangerouslySetInnerHTML'
+  >;
+  /**
    * Sort as a LINK: the header renders an `<a href>` instead, built from the
    * sort a click should produce.
    *
@@ -236,9 +306,17 @@ function SortHeader<T>({
       <Icon glyph={sortGlyph(active)} size={12} className="uxm-data-table__sort-icon" />
     </>
   );
-  // Only set when the consumer asked for it: an aria-label would otherwise
-  // override the visible header text, which is the name we want by default.
-  const label = column.sortLabel;
+  // `sortLabel` is the sort-specific override; `label` is the column's general
+  // plain-text name. Either beats nothing, and nothing is the right answer for
+  // a string header — an aria-label there would merely restate the visible
+  // text, and a redundant one is worse than none.
+  // `sortLabel` is the sort-specific override; otherwise the column's plain
+  // name, but ONLY when it says something the visible header does not. A label
+  // identical to a string header would just restate it, and a redundant
+  // accessible name replaces the visible text rather than adding to it.
+  const columnName = columnLabel(column);
+  const label =
+    column.sortLabel ?? (columnName && columnName !== column.header ? columnName : undefined);
 
   // Link mode wins when both are supplied: an href is a stronger statement of
   // intent than a handler, and silently preferring the button would strand a
@@ -276,6 +354,8 @@ export function DataTable<T>({
   actionsColumnLabel = 'Actions',
   rowActionsLabel = 'Row actions',
   sort,
+  activeRowId,
+  rowProps,
   onSortChange,
   sortHref,
   renderSortLink,
@@ -287,7 +367,17 @@ export function DataTable<T>({
       className={cn('uxm-data-table', `uxm-data-table--${density}`, className)}
       {...rest}
     >
-      <table className="uxm-data-table__table">
+      {/* `table-layout: fixed` ONLY once a column declares a width. Under auto
+          layout a declared width is a suggestion the browser drops as soon as
+          content is wider, so the two go together — but switching every table
+          to fixed would re-lay-out every existing consumer, which is a major
+          decision, not a side effect of adding a prop. */}
+      <table
+        className={cn(
+          'uxm-data-table__table',
+          columns.some((c) => c.width != null) && 'uxm-data-table__table--fixed',
+        )}
+      >
         <thead className="uxm-data-table__head">
           <tr>
             {columns.map((c) => {
@@ -298,10 +388,15 @@ export function DataTable<T>({
               return (
                 <th
                   key={c.key}
+                  // The width lands on the <th> only: under fixed layout the
+                  // first row decides every column, so repeating it on each
+                  // <td> is noise that can only disagree with itself.
+                  style={c.width != null ? { width: c.width } : undefined}
                   className={cn(
                     'uxm-data-table__th',
                     c.align && `uxm-data-table__th--${c.align}`,
                     sortable && 'uxm-data-table__th--sortable',
+                    c.className,
                   )}
                   // Only a sortable column carries aria-sort, and only the
                   // active one carries a direction — "none" on every other
@@ -337,14 +432,37 @@ export function DataTable<T>({
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
+          {rows.map((row) => {
+            const id = rowKey(row);
+            const isActive = activeRowId != null && activeRowId === id;
+            // Spread BEFORE the table's own attributes for className (merged,
+            // not replaced) and AFTER for everything else, so a consumer can
+            // override `aria-current` — it may well have its own idea of what
+            // "current" means — without having to fight the defaults.
+            const extra = rowProps?.(row);
+            const { className: rowClassName, onClick: rowOnClick, ...restRowProps } = extra ?? {};
+            // Compose rather than let one win: `onClick` sitting after the
+            // spread meant a consumer's handler was dropped every time, and
+            // `onClick={undefined}` clobbered it even with no `onRowClick`.
+            const handleClick =
+              rowOnClick || onRowClick
+                ? (event: MouseEvent<HTMLTableRowElement>) => {
+                    rowOnClick?.(event);
+                    if (!event.defaultPrevented) onRowClick?.(row);
+                  }
+                : undefined;
+            return (
             <tr
-              key={rowKey(row)}
+              key={id}
+              aria-current={isActive ? 'true' : undefined}
+              {...restRowProps}
               className={cn(
                 'uxm-data-table__row',
                 onRowClick && 'uxm-data-table__row--interactive',
+                isActive && 'uxm-data-table__row--active',
+                rowClassName,
               )}
-              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              onClick={handleClick}
             >
               {columns.map((c) => {
                 // Cells fall into three rendering paths:
@@ -421,11 +539,12 @@ export function DataTable<T>({
                     // pseudo-element via `attr()`, so those cells fall back
                     // to value-only rendering, which is the existing
                     // behaviour at normal widths.
-                    data-label={typeof c.header === 'string' ? c.header : undefined}
+                    data-label={columnLabel(c)}
                     className={cn(
                       'uxm-data-table__td',
                       c.align && `uxm-data-table__td--${c.align}`,
                       rowEditable && 'uxm-data-table__td--editable',
+                      c.className,
                     )}
                     // Stop the row click from firing when the user clicks an
                     // editable cell — otherwise both onRowClick and the
@@ -468,7 +587,8 @@ export function DataTable<T>({
                 );
               })()}
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>

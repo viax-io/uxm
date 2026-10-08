@@ -103,6 +103,50 @@
 .uxm-data-table__head tr {
   background-color: var(--uxm-data-table-header-bg, var(--color-surface-alt));
 }
+/* Opt-in, set by the component only when a column declares a `width`. Auto
+   layout ignores a declared width as soon as content outgrows it, so the two
+   are one feature; applying it unconditionally would re-lay-out every table
+   that exists, which is a major decision rather than a prop's side effect. */
+.uxm-data-table__table--fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+/* A declared width should mean the COLUMN, not the content box. Without this,
+   `width: 92` is 92px in a border-box app and 116px in a content-box one (the
+   cell padding is added), so the same table measures differently depending on
+   the consumer's reset. */
+.uxm-data-table__table--fixed .uxm-data-table__th {
+  box-sizing: border-box;
+}
+
+/* `width: 1%` shrink-to-fit works under AUTO layout; under fixed it is a
+   literal 1% of the table, which collapses the kebab column to a few px and
+   clips the trigger. Give it the width it actually needs: the button plus the
+   cell's own gutters. */
+.uxm-data-table__table--fixed .uxm-data-table__th--actions,
+.uxm-data-table__table--fixed .uxm-data-table__td--actions {
+  width: calc(
+    var(--uxm-icon-button-size, 32px) + 2 * var(--uxm-data-table-cell-padding-x, 12px)
+  );
+}
+
+/* Under fixed layout a long unbroken value would otherwise push past its
+   column instead of being clipped by it. Only in fixed mode: auto-layout
+   tables keep today's behaviour, where the column grows to fit.
+
+   Scoped to the non-stacked width, and never applied to the actions cell. The
+   clip has no idea a focus ring is not content: a focused control inside a
+   clipped cell loses its outline, and the actions cell (zero vertical padding)
+   and every stacked cell (zero horizontal padding) have no room to spare. A
+   truncated value is a cosmetic problem; an invisible focus ring is 2.4.7. */
+@container (min-width: 481px) {
+  .uxm-data-table__table--fixed .uxm-data-table__td:not(.uxm-data-table__td--actions),
+  .uxm-data-table__table--fixed .uxm-data-table__th:not(.uxm-data-table__th--actions) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .uxm-data-table__th {
   text-align: left;
   padding: var(--uxm-data-table-cell-padding-y, 10px) var(--uxm-data-table-cell-padding-x, 12px);
@@ -204,6 +248,49 @@
 .uxm-data-table__row--interactive { cursor: pointer; }
 .uxm-data-table__row:hover {
   background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
+}
+
+/* The active row — the one whose detail is open beside the table. Written
+   AFTER :hover so it holds while the pointer is on another row, which is the
+   whole point of the state: hover says "the pointer is here", active says
+   "this is what you are looking at".
+
+   The accent rail is what carries it, not the tint alone: at AA the tint
+   between two adjacent row fills is necessarily subtle, and colour alone is
+   not an acceptable sole cue (1.4.1). `box-shadow` draws the rail rather than
+   a border, so it costs no layout under `table-layout: fixed` and cannot
+   nudge a column's measured width. */
+.uxm-data-table__row--active {
+  background-color: var(--uxm-data-table-row-active-bg, var(--color-accent-subtle));
+}
+/* Matches the first cell whatever classes it carries — a <tr>'s only children
+   are cells, so this cannot select anything else, and it does not depend on a
+   class the cell might not have been given. */
+.uxm-data-table__row--active > :first-child {
+  box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
+}
+/* Stacked, the row IS the card, so the rail belongs on it. Left on the first
+   cell it marks one field and sits over its text, which reads as a highlight on
+   that value rather than on the record.
+
+   This has to come AFTER the base rail rule: both selectors are (0,1,0), so
+   source order decides, and declared earlier it simply lost — which is how the
+   first attempt ended up drawing BOTH rails at once. */
+@container (max-width: 480px) {
+  .uxm-data-table__row--active > :first-child {
+    box-shadow: none;
+  }
+  .uxm-data-table__row--active {
+    box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
+  }
+}
+
+/* Exists so `:hover` does not replace the active tint — without it, pointing at
+   the active row would make it look like any other hovered row. It defaults to
+   the same colour as the active fill, i.e. hover is a no-op on the active row;
+   set the knob if you want the two to differ. */
+.uxm-data-table__row--active:hover {
+  background-color: var(--uxm-data-table-row-active-hover-bg, var(--color-accent-subtle));
 }
 .uxm-data-table__td {
   padding: var(--uxm-data-table-cell-padding-y, 12px) var(--uxm-data-table-cell-padding-x, 12px);
