@@ -146,6 +146,19 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable`'s card mode actually applies now.** Below a 480px container the cell reset was
+  declared BEFORE the table-mode rules it overrides, at the same specificity, so source order
+  killed it — silently, and for longer than the one line that was reported. Measured in a
+  browser: stacked cells kept the full 12px table padding instead of `4px 0`, kept a border
+  under every cell, and right/centre columns never reset to left. The card-mode block now sits
+  last in the stylesheet, where it wins, and a test pins that ordering. Pure bug fix: table
+  mode is byte-for-byte unchanged.
+  **Not changed:** `--uxm-data-table-row-hover-bg` still defaults to `--color-surface-alt`,
+  which is the same token the header band uses — so a hovered row reads as the header colour.
+  `var(--color-surface)` is the better value and the knob already offers it, but moving the
+  default restyles every existing table, which is a major-release decision rather than
+  something a patch does silently. Documented in the component README.
+
 ## Workflow
 
 ### Where the documentation lives

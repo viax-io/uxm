@@ -232,13 +232,33 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 | `--uxm-data-table-scroll-arrow-shadow` | `--shadow-sm` | – | Lift under the arrows, so they read above the rows. |
 | `--uxm-data-table-scroll-focus-color` | `--color-accent-bold` | – | Focus ring on the scroll region. Inset, because the root clips. |
 | `--uxm-data-table-row-bg` | `--color-card` | – | `<tr>` background. |
-| `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | `<tr>:hover` background. |
+| `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | Row hover fill. **Note this is the same token the header band uses**, so a hovered row currently reads as the same colour as the header. Set it to `var(--color-surface)` for a hover that is distinct from the header and a gentler step from the card-white row. The shipped default is unchanged on purpose: moving it is a visual change for every existing table, which is a major-release decision rather than something a patch should do silently. |
 | `--uxm-data-table-cell-padding-x` | – | `12px` | Horizontal cell padding (default density). |
 | `--uxm-data-table-cell-padding-y` | – | `10px` (th) / `12px` (td) | Vertical cell padding (default density). |
 
 > **Density override:** the `--compact` and `--relaxed` density modifiers override `padding` directly with fixed values (`6px 12px` and `16px 12px` respectively); the `--uxm-data-table-cell-padding-*` vars only take effect in the `default` density.
 
 > **The root re-asserts two [`EditableCell`](../editable-cell/README.md) composition knobs** — `--uxm-editable-cell-editing-track-floor: max-content` and `--uxm-editable-cell-outdent: 0`. Both are inherited custom properties that a host may set on a wrapper to lay out a *single* cell ([`FormField`](../form-field/README.md) does), and a table dropped inside such a wrapper would inherit them and lose what its own cells depend on: the `max-content` floor is what stops an auto-sized column jumping when editing starts, and the outdent would pull the leading column's text off the header grid. These are the defaults everywhere else, so the reset is a no-op outside that composition. Setting either on a `DataTable` instance still works — the reset is on the root, so an inline style or a more specific rule wins.
+
+### Hover and the header band
+
+`--uxm-data-table-row-hover-bg` and `--uxm-data-table-header-bg` both default to
+`--color-surface-alt`, so a hovered row paints the same colour as the header band.
+
+```css
+/* A hover distinct from the header, and a smaller step from the card-white row. */
+.my-table { --uxm-data-table-row-hover-bg: var(--color-surface); }
+```
+
+Light: rows are `--color-card` `#FFFFFF`, `--color-surface` is `#F8F7F6`, `--color-surface-alt`
+is `#F2F1F0`. Dark: `#1B1A18`, `#232220`, `#2A2927`.
+
+Either value clears AA for the text on top, in both themes — measured, worst case `4.76:1`
+(`--color-text-muted` on `--color-surface-alt`, light). So the choice is about whether hover
+should be distinguishable from the table's own chrome, not about contrast.
+
+**The default is deliberately left alone.** Changing it would restyle every existing table,
+which is a major-release decision; the knob is how you take the new look today.
 
 ## Design tokens (MODO-configurable)
 

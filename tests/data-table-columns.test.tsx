@@ -218,6 +218,25 @@ describe('DataTable fixed layout — the cases CSS alone decides', () => {
     );
   });
 
+  it('declares card mode AFTER the table-mode rules it overrides', () => {
+    // Card mode targets the same classes at the SAME specificity, so source
+    // order is the only thing deciding the winner. Declared earlier — where it
+    // sat for a long time — the whole cell reset lost silently: measured in a
+    // browser, stacked cells kept 12px table padding instead of 4px 0, kept a
+    // border under every cell, and right/centre columns never reset to left.
+    const cardMode = scss.lastIndexOf('@container (max-width: 480px)');
+    const baseCell = scss.indexOf('\n.uxm-data-table__td {');
+    const alignMods = scss.indexOf('.uxm-data-table__td--right { text-align: right');
+    expect(baseCell, 'base cell rule missing').toBeGreaterThan(-1);
+    expect(alignMods, 'alignment modifiers missing').toBeGreaterThan(-1);
+    expect(cardMode, 'card mode must come after the base cell rule').toBeGreaterThan(baseCell);
+    expect(cardMode, 'card mode must come after the alignment modifiers').toBeGreaterThan(alignMods);
+    // And it must still contain the three declarations that were dead.
+    const block = scss.slice(cardMode);
+    expect(block).toMatch(/padding:\s*4px 0/);
+    expect(block).toMatch(/__td--right,[\s\S]{0,80}?__td--center\s*\{\s*text-align:\s*left/);
+  });
+
   it('renders a table with rowActions AND a width without throwing', () => {
     const { container } = render(
       table([{ ...PLAIN[0], width: '50%' }, PLAIN[1]], {

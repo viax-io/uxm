@@ -234,6 +234,21 @@ describe('DataTable sticky actions column', () => {
   });
 });
 
+/**
+ * The stacked block that neutralises sticky/scroll — found by CONTENT, not by
+ * position. These tests used `lastIndexOf('@container …')`, which silently
+ * meant a different block the moment another was appended (and it was: card
+ * mode moved to the end of the file).
+ */
+function stackedStickyBlock(): string {
+  const marks = [...scss.matchAll(/@container \(max-width: 480px\)/g)].map((m) => m.index!);
+  for (const at of marks) {
+    const body = scss.slice(at, scss.indexOf('\n}', at));
+    if (body.includes('__scroll-arrow') || body.includes('--sticky-start')) return body;
+  }
+  throw new Error('no stacked block neutralising sticky/scroll found');
+}
+
 describe('DataTable sticky/scroll — CSS contracts', () => {
   // jsdom applies no CSS, so these guard the stylesheet directly. Without them
   // every class-name assertion above passes against rules that do not exist.
@@ -257,8 +272,7 @@ describe('DataTable sticky/scroll — CSS contracts', () => {
   it('un-pins and stops scrolling in stacked mode', () => {
     // There is no horizontal axis below 480px: a pinned cell would pin against
     // nothing and the arrows would point at nothing.
-    const stacked = scss.lastIndexOf('@container (max-width: 480px)');
-    const tail = scss.slice(stacked);
+    const tail = stackedStickyBlock();
     expect(tail).toMatch(/position:\s*static/);
     expect(tail).toMatch(/__scroll-arrow\s*\{\s*display:\s*none/);
     expect(tail).toMatch(/__scroller\s*\{\s*overflow-x:\s*visible/);
@@ -269,7 +283,7 @@ describe('DataTable sticky/scroll — CSS contracts', () => {
     // A bare class reset in the stacked block is (0,1,0) and loses, so the
     // shadows survived onto the stacked cards — which is what shipped until a
     // browser probe caught it. The reset must mirror their shape.
-    const stacked = scss.slice(scss.lastIndexOf('@container (max-width: 480px)'));
+    const stacked = stackedStickyBlock();
     expect(stacked).toMatch(
       /\.uxm-data-table--scrolled-start \.uxm-data-table__td--sticky-start[\s\S]{0,300}?box-shadow:\s*none/,
     );
