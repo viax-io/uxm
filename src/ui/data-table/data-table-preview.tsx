@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import type { PreviewProps } from '@/previews/types';
 import {
@@ -17,6 +17,10 @@ import type { CSSProperties } from 'react';
 type Styles = PreviewProps['styles'];
 
 interface Row {
+  /** Stable identity. `name` is editable and Duplicate repeats it, so keying
+   *  by name gives duplicate React keys and a stale `activeRowId` the moment
+   *  either happens. */
+  id: string;
   name: string;
   /** Long free text — demonstrates the cell's max-width clip + hover tooltip. */
   description: string;
@@ -32,6 +36,7 @@ interface Row {
 
 const initialData: Row[] = [
   {
+    id: 'r1',
     name: 'Enterprise SaaS',
     description: 'Annual enterprise agreement with committed seat expansion across every business unit',
     status: 'Active',
@@ -40,6 +45,7 @@ const initialData: Row[] = [
     closeDate: '2026-03-28',
   },
   {
+    id: 'r2',
     name: 'Product-Led Growth',
     description: 'Self-serve',
     status: 'Active',
@@ -48,6 +54,7 @@ const initialData: Row[] = [
     closeDate: '2026-03-25',
   },
   {
+    id: 'r3',
     name: 'Channel Partner',
     description: 'Reseller agreement covering the EMEA territory with quarterly rebate tiers and co-marketing funds',
     status: 'Draft',
@@ -56,6 +63,7 @@ const initialData: Row[] = [
     closeDate: '2026-03-30',
   },
   {
+    id: 'r4',
     name: 'Usage-Based Pricing',
     description: 'Metered API',
     status: 'Active',
@@ -64,6 +72,7 @@ const initialData: Row[] = [
     closeDate: '2026-03-20',
   },
   {
+    id: 'r5',
     name: 'Marketplace Listing',
     description: 'Cloud marketplace private offer with a custom EULA and a multi-year ramp schedule',
     status: 'Archived',
@@ -105,6 +114,9 @@ const STATUS_TO_TAG_TYPE: Record<string, TagType> = {
  * knob here reaches the atom through the same custom property a consumer would
  * set.
  */
+/** Must match `cellPaddingX`/`cellPaddingY` in the studio registry. */
+const CELL_PADDING_DEFAULT = 12;
+
 function tableVars(styles: Styles): CSSProperties {
   return {
     '--uxm-data-table-header-bg': styles.headerBg as string,
@@ -117,8 +129,18 @@ function tableVars(styles: Styles): CSSProperties {
     '--uxm-data-table-border-color': styles.borderColor as string,
     '--uxm-data-table-border-radius': `${styles.borderRadius as number}px`,
     '--uxm-data-table-font-size': `${styles.fontSize as number}px`,
-    '--uxm-data-table-cell-padding-x': `${styles.cellPaddingX as number}px`,
-    '--uxm-data-table-cell-padding-y': `${styles.cellPaddingY as number}px`,
+    // Padding is projected ONLY when the user has moved it off the registry
+    // default. The density presets set their padding through the SAME vars as
+    // a FALLBACK (`var(--…-cell-padding-y, 6px)`), so projecting the default
+    // 12px silently kills compact and relaxed — the exact
+    // "studio never runs the fallback path" trap in .claude/memory/gotchas.md
+    // that killed ToggleSwitch's hover state.
+    ...(styles.cellPaddingX !== CELL_PADDING_DEFAULT && {
+      '--uxm-data-table-cell-padding-x': `${styles.cellPaddingX as number}px`,
+    }),
+    ...(styles.cellPaddingY !== CELL_PADDING_DEFAULT && {
+      '--uxm-data-table-cell-padding-y': `${styles.cellPaddingY as number}px`,
+    }),
     '--uxm-data-table-sort-color': styles.sortColor as string,
     '--uxm-data-table-sort-hover-color': styles.sortHoverColor as string,
     '--uxm-data-table-sort-active-color': styles.sortActiveColor as string,
@@ -131,11 +153,13 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
   // Owning the rows lets every editable column round-trip its commits, so a
   // designer sees the new value persist after an edit.
   const [rows, setRows] = useState<Row[]>(initialData);
+  // Duplicate must mint a NEW id, or the copy collides with its source.
+  const copies = useRef(0);
   // Sorted and active state are real, not painted: clicking a header sorts and
   // clicking a row moves the active marker, which is how a consumer drives
   // `sort` / `onSortChange` and `activeRowId`.
   const [sort, setSort] = useState<DataTableSort | null>({ key: 'name', direction: 'asc' });
-  const [activeRowId, setActiveRowId] = useState<string | null>('Product-Led Growth');
+  const [activeRowId, setActiveRowId] = useState<string | null>('r2');
 
   const sorted = [...rows].sort((a, b) => {
     if (!sort) return 0;
@@ -153,7 +177,7 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
   // per column.
   const commit = (row: Row, key: keyof Row) => async (next: EditableCellValue) => {
     await new Promise((r) => setTimeout(r, 300));
-    setRows((prev) => prev.map((r) => (r.name === row.name ? ({ ...r, [key]: next } as Row) : r)));
+    setRows((prev) => prev.map((r) => (r.id === row.id ? ({ ...r, [key]: next } as Row) : r)));
   };
 
   const columns: DataTableColumn<Row>[] = [
@@ -214,6 +238,7 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
       editable: true,
       editor: 'number',
       formatValue: formatAmount,
+      validate: (v) => (Number(v) < 0 ? 'Must be ≥ 0' : null),
       onCommit: (row, v) => commit(row, 'amount')(v),
     },
     {
@@ -236,9 +261,9 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
       icon: 'copy',
       onSelect: () =>
         setRows((prev) => {
-          const at = prev.findIndex((r) => r.name === row.name);
+          const at = prev.findIndex((r) => r.id === row.id);
           const next = [...prev];
-          next.splice(at + 1, 0, { ...row, name: `${row.name} (copy)` });
+          next.splice(at + 1, 0, { ...row, id: `${row.id}-copy-${copies.current++}`, name: `${row.name} (copy)` });
           return next;
         }),
     },
@@ -248,7 +273,7 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
       icon: 'archive-x',
       disabled: row.status === 'Archived',
       onSelect: () =>
-        setRows((prev) => prev.map((r) => (r.name === row.name ? { ...r, status: 'Archived' } : r))),
+        setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, status: 'Archived' } : r))),
     },
     { separator: true, key: 'sep' },
     {
@@ -256,7 +281,7 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
       label: 'Delete',
       icon: 'trash',
       danger: true,
-      onSelect: () => setRows((prev) => prev.filter((r) => r.name !== row.name)),
+      onSelect: () => setRows((prev) => prev.filter((r) => r.id !== row.id)),
     },
   ];
 
@@ -266,11 +291,11 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
       density={(variants.density as 'compact' | 'default' | 'relaxed') ?? 'default'}
       columns={columns}
       rows={sorted}
-      rowKey={(r) => r.name}
+      rowKey={(r) => r.id}
       sort={sort}
       onSortChange={setSort}
       activeRowId={activeRowId}
-      onRowClick={(r) => setActiveRowId(r.name)}
+      onRowClick={(r) => setActiveRowId(r.id)}
       rowActions={rowActions}
       stickyActions
       scrollLabel="Opportunities"
