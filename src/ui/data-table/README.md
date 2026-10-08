@@ -36,6 +36,42 @@ function UsersTable({ users }: { users: User[] }) {
 }
 ```
 
+### Sorting
+
+Opt in per column with `sortKey`, then pick a mode. The table never sorts `rows` — it reports
+what a click means and you apply it, which is what lets the same component back an in-page
+sort and a server-paged one.
+
+```tsx
+// Callback mode — sort in component state.
+const [sort, setSort] = useState<DataTableSort | null>(null);
+const sorted = useMemo(() => applySort(users, sort), [users, sort]);
+
+<DataTable columns={columns} rows={sorted} rowKey={(u) => u.id} sort={sort} onSortChange={setSort} />
+```
+
+```tsx
+// Link mode — sort in the URL, so the list is linkable and the back button works.
+// The server reads the query and renders the page already sorted.
+<DataTable
+  columns={columns}
+  rows={page.rows}
+  rowKey={(u) => u.id}
+  sort={{ key: params.sort, direction: params.dir }}
+  sortHref={(next) => `/users?sort=${next.key}&dir=${next.direction}`}
+/>
+```
+
+```tsx
+const columns: DataTableColumn<User>[] = [
+  { key: 'name', header: 'Name', sortKey: 'name' },
+  // Sort by a field the column does not render.
+  { key: 'customer', header: 'Customer', sortKey: 'customer.lastName' },
+  // First click opens on the newest / largest, not the oldest / smallest.
+  { key: 'signups', header: 'Signups', align: 'right', sortKey: 'signups', firstSortDirection: 'desc' },
+];
+```
+
 ## Props
 
 ### `DataTableProps<T>`
@@ -53,6 +89,10 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | _(any native div attribute)_ | – | – | Spread onto the root `<div className="uxm-data-table">`. |
 | `actionsColumnLabel` | `string` | `'Actions'` | Accessible name for the visually-empty actions column header. |
 | `rowActionsLabel` | `string` | `'Row actions'` | Accessible name for each row's ⋮ trigger and menu. Repeats on every row — override where the row has a name. |
+| `sort` | `DataTableSort \| null` | – | The current sort (`{ key, direction }`). **Controlled** — the table never sorts `rows` itself and holds no sort state; it renders what you pass and reports intent, which is the only way a server-paged list can work. |
+| `onSortChange` | `(next: DataTableSort) => void` | – | Sort as a **callback**: the header renders a `<button>`. Never called with `null` — a sorted column flips rather than cycling back to unsorted. |
+| `sortHref` | `(next: DataTableSort) => string` | – | Sort as a **link**: the header renders an `<a href>` instead. Use when sort lives in the URL, so the list is linkable, the back button works and the table can render on the server. Takes precedence over `onSortChange`. |
+| `renderSortLink` | `(args) => ReactNode` | – | Render link mode's anchor yourself, for a client-side router — the default `<a href>` means a full document load per sort click in a Next / React Router app. Receives `{ href, sort, className, children, 'aria-label' }`. Requires `sortHref`. |
 
 ### `DataTableColumn<T>`
 
@@ -62,6 +102,9 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `header` | `ReactNode` | yes | Rendered into the `<th>` cell. Accepts text, icons, or composite nodes. |
 | `render` | `(row: T) => ReactNode` | no | Custom cell renderer. When absent, the table falls back to `(row as Record<string, ReactNode>)[key]`. |
 | `align` | `'left' \| 'right' \| 'center'` | no | Applies `uxm-data-table__{th,td}--{align}` modifier classes; left is the implicit default. |
+| `sortKey` | `string` | no | Makes the column sortable and is the value reported back in `DataTableSort.key`. Separate from `key` on purpose — the column you show and the field you sort by are often different (a "Customer" column sorted by `customer.lastName`). A column without it renders its header exactly as before: no control, no `aria-sort`. |
+| `firstSortDirection` | `'asc' \| 'desc'` | no | Which way the **first** click sorts. Defaults to `'asc'`. Set `'desc'` on dates and amounts — ascending-first opens a date column on the oldest row, which is almost never wanted. |
+| `sortLabel` | `string` | no | Accessible name for the sort control. Normally unnecessary (the header text names it), but **required when `header` is not plain text** — an icon-only header otherwise produces a control with no accessible name. |
 
 ### `DataTableDensity`
 
@@ -81,6 +124,11 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 | `--uxm-data-table-font-size` | – | `13px` | Base table font size (cells, header). |
 | `--uxm-data-table-header-bg` | `--color-surface-alt` | – | `<thead>` row background. |
 | `--uxm-data-table-header-text` | `--color-text-muted` | – | `<th>` text colour. |
+| `--uxm-data-table-sort-color` | `--uxm-data-table-header-text` → `--color-text-muted` | – | Sortable header control, at rest. |
+| `--uxm-data-table-sort-hover-color` | `--color-text` | – | Sortable header on hover. |
+| `--uxm-data-table-sort-active-color` | `--color-text` | – | The header of the column currently sorted — so the sorted column reads stronger than its neighbours without relying on colour alone (the glyph says which way). |
+| `--uxm-data-table-sort-focus-color` | `--color-accent-bold` | – | Focus ring on the sortable header control. |
+| `--uxm-data-table-sort-icon-color` | `currentColor` | – | The sort glyph, if you want it to diverge from the label. |
 | `--uxm-data-table-row-bg` | `--color-card` | – | `<tr>` background. |
 | `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | `<tr>:hover` background. |
 | `--uxm-data-table-cell-padding-x` | – | `12px` | Horizontal cell padding (default density). |
@@ -122,7 +170,14 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Row clicks: when `onRowClick` is provided, the click handler is attached to `<tr>`, **not** to a focusable element. For full keyboard support, consumers should:
   - render an interactive control (link or button) inside the row, or
   - wrap row content in a `<button>`/`<a>` to retain native focus and `Enter` activation.
-- Column headers (`<th>`) currently have no `scope` attribute and no sort affordances; if you need sortable columns, render an interactive control inside `column.header` and manage sort state externally.
+- Column headers (`<th>`) have no `scope` attribute.
+- **Sorting** follows the APG sortable-table pattern. A column with `sortKey` renders a `<button>` (or an `<a>` with `sortHref`) inside its `<th>`, and the `<th>` carries `aria-sort`: `ascending` / `descending` on the sorted column, and `none` on every other sortable column. (`none` is ARIA's default, so screen readers announce nothing for it — emitting it explicitly is valid and harmless, and makes the sortable set visible in the DOM. The APG example sets the attribute only on the sorted header.) Non-sortable columns carry no `aria-sort` at all.
+  - The control's accessible name is just the column header text. State lives in `aria-sort`, so the control does not also narrate it — and `header` is a `ReactNode`, so there is no string to build "sort by X descending" from.
+  - The glyph is the `sort-none` / `sort-asc` / `sort-desc` family, whose three members share one ink box, so the header keeps its weight as the column toggles.
+  - The control stretches to the cell's width, so the whole header row is clickable. On **target size** it meets WCAG 2.2 2.5.8 through the *spacing* exception (nothing else sits within 24px), not by being 24px itself — its own box is the line box, ~16–18px at the 12px header type and tighter at `compact` density.
+  - **Sorting disappears in stacked mode.** Below a 480px container the `<thead>` is `display: none` (each cell labels itself as a card), which takes the sort controls and `aria-sort` with it. Provide another way to sort at that width — a `Select` above the table — if sorting matters on phones.
+  - `sortLabel` sets the control's `aria-label`. Needed whenever `header` is not plain text: an icon-only header otherwise leaves the button or link with **no accessible name at all**, which axe reports as `button-name` / `link-name`.
+  - In link mode the anchor carries no `aria-current` or disabled cue; state is on the `<th>` via `aria-sort`, which is where assistive tech looks for it.
 - Density modifiers preserve a minimum touch target of `~32px` in `compact`; verify against your specific row content if you add custom row controls.
 - In stacked mode (`@container (max-width: 480px)`) the table, its `tbody`, the rows and the cells all become blocks so each row fills the container as a card. The `tbody` is part of that list on purpose: it carries no class, and left as a `table-row-group` inside a block table it gets wrapped in an anonymous `table` box that shrinks to min-content — which made rows render at a fraction of their container (measured: 318px table, 81px row). If you ever restyle this block, keep the `tbody` in it.
 - The root container is a `<div>` with `overflow: hidden` and a rounded border — for tables wider than the viewport, wrap the component in a scroll container with `overflow-x: auto` and an explicit `tabIndex={0}` for keyboard scrolling.
