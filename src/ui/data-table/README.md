@@ -152,9 +152,9 @@ What you get, and what to know:
   want a horizontal scroll at all.
 - **The arrows stay mounted and go `aria-disabled` at the ends**, rather than unmounting —
   removing the button you are pressing throws focus to the document.
-- **The studio preview does not show any of this.** That preview is a hand-rolled replica that
-  never renders the real `<DataTable>`, so sticky and scrolling can only be seen in a real app
-  or the tests.
+- **The studio preview demonstrates all of it.** It renders the real `<DataTable>` with column
+  widths that overflow the canvas, a sticky identity column and `stickyActions`, so the
+  scroller, the pinned columns and the arrows are visible and every knob is live.
 
 ## Props
 

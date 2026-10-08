@@ -1,6 +1,9 @@
 import type { ComponentDef } from '../../types';
 
 export const dataTableDef: ComponentDef = {
+  // The preview renders the real full-width <DataTable>, so the canvas must not
+  // centre it in a shrink-to-fit flex box — that collapsed the table to 2px.
+  canvasFill: true,
   id: 'data-table',
   name: 'Data Table',
   category: 'Composite',
