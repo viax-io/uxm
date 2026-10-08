@@ -1642,3 +1642,25 @@ reached the published library; now shipped in 2.8.0.
 - **CDN `latest/` path** — every release now also syncs the CDN bundles to
   `https://uxm.viax.io/latest/…` (`no-cache`). Demos only; pin `https://uxm.viax.io/<version>/…`
   anywhere else, and never put SRI on a `latest/` URL. See `references/quick-recipes.md` → recipe 18.
+
+### New in 4.49.2
+
+- **A published stacking scale (`--z-*`), and a supported way to put a popover above a
+  dialog.** `Popover` defaults to `z-index: 50`, below `Dialog` (60), so a `Select` or
+  `Menu` opened inside a dialog painted behind the backdrop — both portal to `<body>`, so
+  nothing but `z-index` separates them. The tiers are now declared on `:where(:root)`:
+  `--z-panel` 40, `--z-drawer` 40, `--z-dialog` 60, `--z-toast` 80, `--z-popover` 90.
+  **Nothing changes by default** — every value is the fallback the components already
+  used, `Popover` still reads `var(--uxm-popover-z-index, 50)`, and zero specificity keeps
+  your own `--z-dialog` / `--z-toast` / `--z-drawer` declarations winning as before (an
+  `@layer` declaration is the exception — set these outside a layer). Opt in with
+  `:where(:root) { --uxm-popover-z-index: var(--z-popover); }`, which replaces a
+  hand-rolled `--uxm-popover-z-index: 120`. `--z-popover` sits above `--z-toast` on
+  purpose, so a toast cannot cover a list the user is reading; swapping 120 for it is
+  equivalent unless your app stacks something between 91 and 120. `--z-panel` is
+  reserved: nothing in the library reads it.
+
+- **CDN `latest/` — production stance clarified.** `latest/` is used in demos; production use
+  needs further research and a careful rollout (the CDN edge currently caches it ~5 min despite
+  `no-cache`). Until then pin `https://uxm.viax.io/<version>/…` in anything you hand to a
+  consumer. See `references/quick-recipes.md` → recipe 18.

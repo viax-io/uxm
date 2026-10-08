@@ -1,3 +1,10 @@
+# [4.54.0](https://github.com/viax-io/uxm/compare/v4.53.0...v4.54.0) (2026-10-08)
+
+
+### Features
+
+* **data-table:** sortable columns, in both of the shapes consumers need ([d51e856](https://github.com/viax-io/uxm/commit/d51e856d78f4cc2b1086116b6b398cd3f4f914a5))
+
 # [4.53.0](https://github.com/viax-io/uxm/compare/v4.52.0...v4.53.0) (2026-10-07)
 
 
