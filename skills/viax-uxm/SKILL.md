@@ -43,7 +43,7 @@ catalog.
 
 ### New in 4.53.0
 
-- **`UxmApp` takes a `locale` prop** (unreleased) — translates the studio's own chrome (sidebar,
+- **`UxmApp` takes a `locale` prop** — translates the studio's own chrome (sidebar,
   canvas, properties panel, component names, knob labels). Ten languages ship — de · es · fr · it · ja · nl · pl · pt-BR · tr · uk.
   The host resolves
   the user's language and passes the BCP-47 tag down; the library never resolves it itself. An
