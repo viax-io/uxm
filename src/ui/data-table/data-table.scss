@@ -166,6 +166,14 @@
 
 @media (prefers-reduced-motion: reduce) {
   .uxm-data-table__sort { transition: none; }
+  /* The row fade and the pinned cells that match it. Cheap to honour, and
+     leaving the pinned cells transitioning while the row does not would
+     re-create the two-stage hover this block exists to avoid. */
+  .uxm-data-table__row,
+  .uxm-data-table__td--sticky-start,
+  .uxm-data-table__td--sticky-end {
+    transition: none;
+  }
 }
 
 .uxm-data-table__th--right { text-align: right; }
@@ -328,6 +336,11 @@
 .uxm-data-table__td--sticky-start,
 .uxm-data-table__td--sticky-end {
   background-color: var(--uxm-data-table-row-bg, var(--color-card));
+  /* The SAME transition the row uses. A pinned cell paints its own opaque
+     background (it has to, or the scrolling content shows through), so it does
+     not inherit the row's fade — it snapped while the unpinned columns eased
+     over 100ms, and one row visibly changed colour in two stages. */
+  transition: background-color 0.1s;
 }
 .uxm-data-table__th--sticky-start,
 .uxm-data-table__th--sticky-end {
