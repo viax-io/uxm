@@ -146,6 +146,23 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable`'s card mode actually applies now.** Below a 480px container the cell reset was
+  declared BEFORE the table-mode rules it overrides, at the same specificity, so source order
+  killed it — silently, and for longer than the one line that was reported. Measured in a
+  browser: stacked cells kept the full 12px table padding instead of `4px 0`, kept a border
+  under every cell, and right/centre columns never reset to left. The card-mode block now sits
+  last in the stylesheet, where it wins; the density presets are `(0,2,0)` and beat it wherever
+  it sits, so compact and relaxed get their own matching reset. Tests pin both.
+  **Stacked rendering visibly changes** — tighter cells, no per-cell rules, left alignment, and
+  the actions cell is now a full-width block (trailing-aligned) rather than a 1% sliver. Table
+  mode is byte-for-byte unchanged (verified across 84 computed properties at 800px), but a
+  consumer who compensated with their own stacked CSS should re-check.
+  **Not changed:** `--uxm-data-table-row-hover-bg` still defaults to `--color-surface-alt`,
+  which is the same token the header band uses — so a hovered row reads as the header colour.
+  `var(--color-surface)` is the better value and the knob already offers it, but moving the
+  default is a visible change for every existing table, so not something a patch does silently.
+  Which release it belongs in is a maintainer call. Documented in the component README.
+
 ## Workflow
 
 ### Where the documentation lives

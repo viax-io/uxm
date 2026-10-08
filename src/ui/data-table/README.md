@@ -145,6 +145,9 @@ What you get, and what to know:
   belongs to the table, not the cell, so a pinned cell scrolls out from under its own rules
   in Chrome and Safari. Only scrollable tables switch; every other table keeps collapsed
   borders, and the two render identically.
+- **In card mode the actions cell follows the stacked reset** — it is a full-width block rather
+  than its table-mode 1% sliver — but keeps its trailing alignment, so the ⋮ stays at the card's
+  trailing edge.
 - **Nothing applies in stacked mode.** Below a 480px container there is no horizontal axis:
   cells un-pin, shadows clear and the arrows are hidden.
 - **`scrollable` alone will not scroll a table that already fits.** Auto layout wraps content
@@ -232,13 +235,36 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 | `--uxm-data-table-scroll-arrow-shadow` | `--shadow-sm` | – | Lift under the arrows, so they read above the rows. |
 | `--uxm-data-table-scroll-focus-color` | `--color-accent-bold` | – | Focus ring on the scroll region. Inset, because the root clips. |
 | `--uxm-data-table-row-bg` | `--color-card` | – | `<tr>` background. |
-| `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | `<tr>:hover` background. |
+| `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | Row hover fill. Defaults to the same token as the header band — see [Hover and the header band](#hover-and-the-header-band). |
 | `--uxm-data-table-cell-padding-x` | – | `12px` | Horizontal cell padding (default density). |
 | `--uxm-data-table-cell-padding-y` | – | `10px` (th) / `12px` (td) | Vertical cell padding (default density). |
 
 > **Density override:** the `--compact` and `--relaxed` density modifiers override `padding` directly with fixed values (`6px 12px` and `16px 12px` respectively); the `--uxm-data-table-cell-padding-*` vars only take effect in the `default` density.
 
 > **The root re-asserts two [`EditableCell`](../editable-cell/README.md) composition knobs** — `--uxm-editable-cell-editing-track-floor: max-content` and `--uxm-editable-cell-outdent: 0`. Both are inherited custom properties that a host may set on a wrapper to lay out a *single* cell ([`FormField`](../form-field/README.md) does), and a table dropped inside such a wrapper would inherit them and lose what its own cells depend on: the `max-content` floor is what stops an auto-sized column jumping when editing starts, and the outdent would pull the leading column's text off the header grid. These are the defaults everywhere else, so the reset is a no-op outside that composition. Setting either on a `DataTable` instance still works — the reset is on the root, so an inline style or a more specific rule wins.
+
+### Hover and the header band
+
+`--uxm-data-table-row-hover-bg` and `--uxm-data-table-header-bg` both default to
+`--color-surface-alt`, so a hovered row paints the same colour as the header band.
+
+```css
+/* A hover distinct from the header, and a smaller step from the card-white row. */
+.my-table { --uxm-data-table-row-hover-bg: var(--color-surface); }
+```
+
+Light: rows are `--color-card` `#FFFFFF`, `--color-surface` is `#F8F7F6`, `--color-surface-alt`
+is `#F2F1F0`. Dark: `#1B1A18`, `#232220`, `#2A2927`.
+
+Either value clears AA for `--color-text` and `--color-text-muted` in both themes — measured,
+worst case `4.76:1` (muted on `--color-surface-alt`, light). `--color-text-subtle` is 3.25–3.66:1
+on all three surfaces and is below AA as body text whichever hover you pick, so don't use it for
+cell content. The hover choice is about distinguishing hover from the table's own chrome, not
+about contrast.
+
+**The default is deliberately left alone.** Changing it is a visible change for every existing
+table, so not something a patch should do silently; which release it belongs in is a
+maintainer call. The knob is how you take the new look today.
 
 ## Design tokens (MODO-configurable)
 
