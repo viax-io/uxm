@@ -7,11 +7,19 @@ import {
   IconButton,
   Menu,
   Tag,
+  type DataTableSort,
+  type DataTableSortDirection,
   type EditableCellOption,
   type EditableCellValue,
   type MenuEntry,
   type TagType,
 } from '@/ui';
+
+import { nextSort, resolveSortDirection, sortGlyph } from './data-table';
+
+import type { CSSProperties } from 'react';
+
+type Styles = PreviewProps['styles'];
 
 interface Row {
   name: string;
@@ -91,8 +99,42 @@ const STATUS_TO_TAG_TYPE: Record<string, TagType> = {
   Archived: 'neutral',
 };
 
+/**
+ * Which header columns demonstrate sorting. Name and Close date are sortable
+ * so both first-click directions are visible: a name opens A-Z, a date opens
+ * newest-first, which is the reason `firstSortDirection` exists.
+ */
+const HEADERS: { label: string; sortKey?: string; firstSortDirection?: DataTableSortDirection }[] = [
+  { label: 'Name', sortKey: 'name' },
+  { label: 'Description' },
+  { label: 'Status' },
+  { label: 'Regions' },
+  { label: 'Amount', sortKey: 'amount', firstSortDirection: 'desc' },
+  { label: 'Close date', sortKey: 'closeDate', firstSortDirection: 'desc' },
+];
+
+/**
+ * The sortable header is the one piece of this replica that uses the SHIPPED
+ * CSS rather than inline styles, so its colours come from `--uxm-data-table-*`
+ * — which this replica otherwise never sets. Project them, or the three sort
+ * knobs do nothing AND the existing Header Text knob stops reaching the
+ * sortable headers (they'd fall through to the raw token instead of the
+ * inline `color` the other `<th>`s get).
+ */
+function sortVars(styles: Styles): CSSProperties {
+  return {
+    '--uxm-data-table-header-text': styles.headerText as string,
+    '--uxm-data-table-sort-color': styles.sortColor as string,
+    '--uxm-data-table-sort-hover-color': styles.sortHoverColor as string,
+    '--uxm-data-table-sort-active-color': styles.sortActiveColor as string,
+    '--uxm-data-table-sort-focus-color': styles.sortFocusColor as string,
+    '--uxm-data-table-sort-icon-color': styles.sortIconColor as string,
+  } as CSSProperties;
+}
+
 export function DataTablePreview({ styles, variants }: PreviewProps & { componentId: string }) {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [sort, setSort] = useState<DataTableSort>({ key: 'name', direction: 'asc' });
   // Owning the rows in state lets every editable column round-trip its
   // commits back into the table — designers see the new value persist
   // after the edit.
@@ -169,19 +211,49 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
       borderRadius: styles.borderRadius as number,
       overflow: 'hidden',
     }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: styles.fontSize as number }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: styles.fontSize as number, ...sortVars(styles) }}>
         <thead>
           <tr style={{ backgroundColor: styles.headerBg as string }}>
-            {['Name', 'Description', 'Status', 'Regions', 'Amount', 'Close date'].map((h) => (
-              <th key={h} style={{
-                textAlign: 'left',
-                padding: `${cellPy}px ${styles.cellPaddingX}px`,
-                fontWeight: 600,
-                color: styles.headerText as string,
-                borderBottom: `1px solid ${styles.borderColor}`,
-                fontSize: (styles.fontSize as number) - 1,
-              }}>{h}</th>
-            ))}
+            {HEADERS.map(({ label, sortKey, firstSortDirection }) => {
+              // Sortable headers use the SHIPPED class names and the real sort
+              // glyphs, so what the panel tunes here is the CSS consumers get —
+              // the surrounding replica keeps its inline styles, which is how
+              // the rest of this preview already works.
+              // The component's own helpers — not a third copy of this logic,
+              // which would let the preview drift from what ships.
+              const active = resolveSortDirection(sort, sortKey);
+              const next = sortKey ? nextSort(sortKey, active, firstSortDirection) : null;
+              return (
+                <th
+                  key={label}
+                  className={sortKey ? 'uxm-data-table__th uxm-data-table__th--sortable' : undefined}
+                  aria-sort={
+                    !sortKey ? undefined : active === 'asc' ? 'ascending' : active === 'desc' ? 'descending' : 'none'
+                  }
+                  style={{
+                    textAlign: 'left',
+                    padding: `${cellPy}px ${styles.cellPaddingX}px`,
+                    fontWeight: 600,
+                    color: styles.headerText as string,
+                    borderBottom: `1px solid ${styles.borderColor}`,
+                    fontSize: (styles.fontSize as number) - 1,
+                  }}
+                >
+                  {sortKey ? (
+                    <button
+                      type="button"
+                      className="uxm-data-table__sort"
+                      onClick={() => next && setSort(next)}
+                    >
+                      <span className="uxm-data-table__sort-label">{label}</span>
+                      <Icon glyph={sortGlyph(active)} size={12} className="uxm-data-table__sort-icon" />
+                    </button>
+                  ) : (
+                    label
+                  )}
+                </th>
+              );
+            })}
             {/* Trailing actions column header — empty, narrow (1% + nowrap
                 shrinks it to the ⋮ trigger). */}
             <th aria-label="Actions" style={{

@@ -111,6 +111,90 @@
   border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
   font-size: calc(12px * var(--type-scale, 1));
 }
+
+/* ── Sortable header ──────────────────────────────────────────────────────
+   Opt-in: only a column with `sortKey` renders this, so a table that does not
+   sort keeps exactly the markup and spacing it had.
+
+   The control is a button or an <a> depending on the table's mode; both get
+   the same look here, so a URL-driven list is visually identical to a
+   state-driven one. It stretches to the cell's width so the whole header row is
+   clickable rather than just the words.
+
+   On target size: the control sits INSIDE the th's padding, so its own box is
+   the line box (~16-18px at the 12px header type, tighter at compact density).
+   It meets WCAG 2.2 2.5.8 through the SPACING exception — nothing else is
+   within 24px of it — not by being 24px itself. Don't restate this as
+   "clears 24px"; it doesn't. */
+.uxm-data-table__sort {
+  display: inline-flex;
+  align-items: center;
+  /* 6px: the label-to-glyph gap the shipped icon-plus-text pairs use (Button
+     with-icon, MenuItem), so a sorted header reads like the rest of the set. */
+  gap: 6px;
+  width: 100%;
+  /* Reset the UA button/anchor chrome rather than restyling it: this has to
+     sit flush in the cell the th already padded. */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--uxm-data-table-sort-color, var(--uxm-data-table-header-text, var(--color-text-muted)));
+  text-align: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  /* A focus ring needs somewhere to sit; 3px keeps it inside the cell rather
+     than squaring off against the th's own edge. */
+  border-radius: 3px;
+  /* Colour only — nothing moves, so there is nothing for reduced motion to
+     suppress here; the guard below covers it anyway if this ever grows one. */
+  transition: color 0.1s;
+}
+/* `right`/`center` columns align the control the same way the cell is. On a
+   right-aligned column the glyph LEADS, so the label stays flush with the
+   right-aligned values under it — trailing it pushes the label ~18px off the
+   column's edge. */
+.uxm-data-table__th--right .uxm-data-table__sort {
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+.uxm-data-table__th--center .uxm-data-table__sort { justify-content: center; }
+
+.uxm-data-table__sort:hover {
+  color: var(--uxm-data-table-sort-hover-color, var(--color-text));
+}
+.uxm-data-table__sort:focus-visible {
+  outline: 2px solid var(--uxm-data-table-sort-focus-color, var(--color-accent-bold));
+  outline-offset: 2px;
+}
+/* The sorted column reads stronger than its neighbours — the glyph says which
+   way, this says which column, so the cue is never colour alone.
+
+   `:where()` keeps this at (0,1,0) so the :hover rule above — (0,2,0) — still
+   wins while the pointer is on a SORTED header. Written plainly the selector
+   is (0,3,0), which silently kills the hover knob on exactly the column most
+   likely to be hovered. */
+:where(
+    .uxm-data-table__th--sortable[aria-sort='ascending'],
+    .uxm-data-table__th--sortable[aria-sort='descending']
+  )
+  .uxm-data-table__sort {
+  color: var(--uxm-data-table-sort-active-color, var(--color-text));
+}
+
+.uxm-data-table__sort-label { min-width: 0; }
+/* The glyph never shrinks away when the label is long, and never grows the
+   row: the sort family is drawn in one box, so swapping members is static. */
+.uxm-data-table__sort-icon {
+  flex: none;
+  color: var(--uxm-data-table-sort-icon-color, currentColor);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uxm-data-table__sort { transition: none; }
+}
+
 .uxm-data-table__th--right { text-align: right; }
 .uxm-data-table__th--center { text-align: center; }
 .uxm-data-table__row {

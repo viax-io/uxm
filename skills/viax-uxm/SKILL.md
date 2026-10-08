@@ -162,6 +162,27 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable` sorts, in either of the two shapes consumers actually need.** Opt in per column
+  with **`sortKey`** (separate from `key`, because the column you show and the field you sort by
+  often differ), then pick a mode on the table: **`onSortChange`** renders a `<button>` for
+  in-page state, or **`sortHref`** renders an `<a href>` for sort that lives in the URL — which
+  is what keeps a list linkable, the back button working and a server-paged table renderable on
+  the server. A `<button>` can do none of that, which is why both ship. `sortHref` wins if both
+  are passed. **`sort`** is controlled: the table never sorts `rows` and holds no sort state.
+  **`firstSortDirection`** (default `'asc'`) sets which way the first click goes — set `'desc'`
+  on dates and amounts, or the column opens on the oldest/smallest row. The `<th>` carries
+  `aria-sort` (`none` on the other sortable columns — valid and harmless, since `none` is ARIA's
+  default); the glyph is the 4.51.0 `sort-*` family, so the header keeps its weight as it
+  toggles. Fully opt-in — a column without `sortKey` renders exactly as before, no control and
+  no `aria-sort`.
+  **Two things to know.** `renderSortLink` lets a client-side router own link mode's anchor; the
+  default is a plain `<a href>`, which is a full document load per click in a Next / React Router
+  app. And **sorting disappears in stacked mode** — below a 480px container the `<thead>` is
+  hidden, taking the controls and `aria-sort` with it, so a phone-width list needs another way to
+  sort. Set `sortLabel` whenever `header` is not plain text, or the control has no accessible
+  name. New knobs: `--uxm-data-table-sort-color` / `-hover-color` / `-active-color` /
+  `-focus-color` / `-icon-color`.
+
 ## Workflow
 
 ### Where the documentation lives
