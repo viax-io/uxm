@@ -133,6 +133,15 @@ catalog.
   accent rail and tint on the matching row (rail as well as tint, because colour alone is not a
   sole cue), and **`rowProps`** merges arbitrary attributes onto the `<tr>` — the `id` a deep
   link needs. New knobs: `--uxm-data-table-row-active-bg` / `-rail` / `-hover-bg`.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
+
 - **`DataTable` scrolls horizontally, pins columns, and shows where the edges are.** New
   **`column.sticky`** (`'start'` | `'end'`) pins the identity or actions column; **`scrollable`**
   puts the table in its own horizontal scroller, and `sticky` implies it, because pinning only
@@ -150,13 +159,6 @@ catalog.
   composite shadow values rather than colours): `--uxm-data-table-scroll-shadow` / `-shadow-end`
   / `-arrow-bg` / `-arrow-shadow` / `-focus-color`.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
