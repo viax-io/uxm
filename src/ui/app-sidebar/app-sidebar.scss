@@ -205,6 +205,33 @@
   }
 }
 
+/* ── Collapsed-rail flyout (`collapsedFlyout`) ─────────────────────────────
+   A fixed wrapper, portalled to <body> and pinned beside the hovered or
+   focused row (x/y are that row's right edge and vertical centre, set inline
+   as custom properties), holding the shipped Tooltip. It inherits every `--uxm-tooltip-*` knob; the rail
+   only re-defaults the radius to a pill and adds its own gap / layer knobs.
+   ──────────────────────────────────────────────────────────────────────────── */
+.uxm-app-sidebar__flyout {
+  /* Pill geometry: a radius far past half the body's height rounds the ends
+     fully at any font size — intrinsic shape, not a spacing value. */
+  --uxm-tooltip-border-radius: var(--uxm-app-sidebar-flyout-border-radius, 999px);
+  left: calc(var(--uxm-app-sidebar-flyout-x, 0px) + var(--uxm-app-sidebar-flyout-offset, 8px));
+  pointer-events: none;
+  position: fixed;
+  top: var(--uxm-app-sidebar-flyout-y, 0px);
+  transform: translateY(-50%);
+  /* Stacks with Popover (and so HoverTooltip): wherever an app has put its
+     popovers — 50 by default, `--z-popover` once it opts in. */
+  z-index: var(--uxm-app-sidebar-flyout-z-index, var(--uxm-popover-z-index, 50));
+
+  /* The Tooltip and its body are inline; as blocks they drop the line-box
+     gap under the pill so it centres exactly on the row. */
+  .uxm-tooltip,
+  .uxm-tooltip__body {
+    display: block;
+  }
+}
+
 /* ── Mobile drawer ──────────────────────────────────────────────────────────
    The 768px line is `AppTopBar`'s: its `__menu` hamburger is hidden at
    min-width 768px, so below that a hamburger is on screen driving `mobileOpen`.

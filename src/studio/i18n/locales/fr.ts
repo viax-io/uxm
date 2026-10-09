@@ -432,6 +432,7 @@ export const messages: StudioMessages = {
     'Cog (6 Tooth)': 'Engrenage (6 dents)',
     'Coins': 'Pièces',
     'Collapsed': 'Replié',
+    'Collapsed Flyout': 'Infobulle en mode replié',
     'Collapsed Width': 'Largeur replié',
     'Color': 'Couleur',
     'Column Gap': 'Écart entre colonnes',

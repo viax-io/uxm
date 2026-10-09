@@ -438,6 +438,7 @@ export const messages: StudioMessages = {
     'Cog (6 Tooth)': 'Koło zębate (6 zębów)',
     'Coins': 'Monety',
     'Collapsed': 'Zwinięte',
+    'Collapsed Flyout': 'Podpowiedź po zwinięciu',
     'Collapsed Width': 'Szerokość zwiniętego',
     'Color': 'Kolor',
     'Column Gap': 'Odstęp między kolumnami',

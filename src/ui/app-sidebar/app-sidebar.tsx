@@ -1,9 +1,13 @@
+import { useCallback, useState } from 'react';
+import { createPortal } from 'react-dom';
+
 import { cn } from '@/helpers';
 
 import { Icon } from '../icon';
 import { SidebarNavItem } from '../sidebar-nav-item';
+import { Tooltip } from '../tooltip';
 
-import type { ElementType, HTMLAttributes, ReactNode } from 'react';
+import type { CSSProperties, ElementType, HTMLAttributes, ReactNode, SyntheticEvent } from 'react';
 
 export interface AppSidebarBrand {
   /** Wide logo (shown when expanded). */
@@ -134,6 +138,16 @@ export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
   onMobileClose?: () => void;
   /** Accessible name for the mobile drawer's close button. Default `"Close navigation"`. */
   closeLabel?: string;
+  /**
+   * Collapsed rail only: show each item's label in a pill-shaped flyout to the
+   * right of its icon on hover AND keyboard focus, instead of the native
+   * `title` tooltip (which only appears after a long delay, never on focus,
+   * and can't be themed). The flyout is the shipped `Tooltip` atom, portalled
+   * to `<body>` so the scrolling nav can't clip it, and `aria-hidden` — the
+   * row already announces its (visually clipped) label. Off by default so
+   * existing rails keep their `title` tooltips until they opt in.
+   */
+  collapsedFlyout?: boolean;
   /** Accessible name for the collapse toggle while collapsed. Default `"Expand sidebar"`. */
   expandLabel?: string;
   /** Accessible name for the collapse toggle while expanded. Default `"Collapse sidebar"`. */
@@ -149,6 +163,7 @@ export function AppSidebar({
   footer,
   linkAs,
   autoIconColors = false,
+  collapsedFlyout = false,
   mobileOpen = false,
   onMobileClose,
   closeLabel = 'Close navigation',
@@ -172,6 +187,16 @@ export function AppSidebar({
     sectionOffset[i] = n;
     return n + section.items.length;
   }, 0);
+
+  // The one flyout on screen: its label and the hovered/focused row's anchor
+  // point (right edge, vertical centre) in viewport coordinates.
+  const [flyout, setFlyout] = useState<{ label: string; x: number; y: number } | null>(null);
+  const showFlyout = collapsed && collapsedFlyout;
+  const openFlyout = useCallback((label: string, e: SyntheticEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setFlyout({ label, x: rect.right, y: rect.top + rect.height / 2 });
+  }, []);
+  const closeFlyout = useCallback(() => setFlyout(null), []);
 
   return (
     <>
@@ -232,7 +257,8 @@ export function AppSidebar({
 
       {header && <div className="uxm-app-sidebar__lead">{header}</div>}
 
-      <nav className="uxm-app-sidebar__nav">
+      {/* A scroll would leave the fixed flyout pointing at the wrong row. */}
+      <nav className="uxm-app-sidebar__nav" onScroll={flyout ? closeFlyout : undefined}>
         {sections.map((section, idx) => (
           <div key={idx} className="uxm-app-sidebar__section">
             {section.heading && !collapsed && (
@@ -268,7 +294,15 @@ export function AppSidebar({
                 badge={item.badge}
                 statusDot={collapsed && item.badge != null}
                 trailing={collapsed ? undefined : item.trailing}
-                title={collapsed ? item.label : undefined}
+                title={collapsed && !collapsedFlyout ? item.label : undefined}
+                {...(showFlyout
+                  ? {
+                      onMouseEnter: (e: SyntheticEvent<HTMLElement>) => openFlyout(item.label, e),
+                      onMouseLeave: closeFlyout,
+                      onFocus: (e: SyntheticEvent<HTMLElement>) => openFlyout(item.label, e),
+                      onBlur: closeFlyout,
+                    }
+                  : null)}
                 className={cn(
                   'uxm-app-sidebar__item',
                   collapsed && 'uxm-app-sidebar__item--collapsed',
@@ -300,6 +334,30 @@ export function AppSidebar({
         </div>
       )}
     </aside>
+      {showFlyout &&
+        flyout &&
+        createPortal(
+          // The wrapper owns the fixed positioning: `.uxm-tooltip` sets its own
+          // `position: relative`, which would tie with a modifier on the same
+          // node and win or lose on stylesheet order.
+          <div
+            aria-hidden
+            className="uxm-app-sidebar__flyout"
+            // Dynamic geometry, not theming — flows through custom properties
+            // the stylesheet reads (constitution II).
+            style={
+              {
+                '--uxm-app-sidebar-flyout-x': `${flyout.x}px`,
+                '--uxm-app-sidebar-flyout-y': `${flyout.y}px`,
+              } as CSSProperties
+            }
+          >
+            <Tooltip placement="right" showArrow={false}>
+              {flyout.label}
+            </Tooltip>
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

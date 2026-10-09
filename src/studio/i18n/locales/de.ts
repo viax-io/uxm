@@ -426,6 +426,7 @@ export const messages: StudioMessages = {
     'Cog (6 Tooth)': 'Zahnrad (6 Zähne)',
     'Coins': 'Münzen',
     'Collapsed': 'Eingeklappt',
+    'Collapsed Flyout': 'Flyout eingeklappt',
     'Collapsed Width': 'Breite eingeklappt',
     'Color': 'Farbe',
     'Column Gap': 'Spaltenabstand',

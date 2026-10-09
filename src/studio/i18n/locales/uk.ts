@@ -438,6 +438,7 @@ export const messages: StudioMessages = {
     'Cog (6 Tooth)': 'Шестерня (6 зубців)',
     'Coins': 'Монети',
     'Collapsed': 'Згорнуто',
+    'Collapsed Flyout': 'Підказка у згорнутому стані',
     'Collapsed Width': 'Ширина згорнутого',
     'Color': 'Колір',
     'Column Gap': 'Відступ між колонками',
