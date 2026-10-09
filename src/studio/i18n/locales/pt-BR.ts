@@ -432,6 +432,7 @@ export const messages: StudioMessages = {
     'Cog (6 Tooth)': 'Engrenagem (6 dentes)',
     'Coins': 'Moedas',
     'Collapsed': 'Recolhido',
+    'Collapsed Flyout': 'Rótulo flutuante recolhido',
     'Collapsed Width': 'Largura recolhido',
     'Color': 'Cor',
     'Column Gap': 'Espaço entre colunas',
