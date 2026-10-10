@@ -42,7 +42,7 @@
 
     &--active {
       color: var(--uxm-tabs-underline-active-text, var(--color-text));
-      font-weight: 600;
+      font-weight: var(--font-weight-strong, 600);
 
       &::after {
         background-color: var(--uxm-tabs-underline-bar-color, var(--color-accent));

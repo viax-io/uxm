@@ -54,7 +54,7 @@
   &__title {
     margin: 0;
     font-size: calc(var(--uxm-modal-title-size, 16px) * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
     color: var(--uxm-modal-title-color, var(--color-text));
     /* Long titles truncate rather than push the close button off-edge. */
     white-space: nowrap;

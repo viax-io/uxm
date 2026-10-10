@@ -72,7 +72,7 @@
 
 .uxm-file-upload__title {
   font-size: calc(var(--uxm-file-upload-title-size, 15px) * var(--type-scale, 1));
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
   color: var(--uxm-file-upload-color, var(--color-text-strong));
 }
 

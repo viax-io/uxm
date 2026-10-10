@@ -23,7 +23,7 @@
     var(--uxm-bulk-action-bar-shadow-color, rgba(0, 0, 0, 0.16));
 }
 .uxm-bulk-action-bar__count {
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
   white-space: nowrap;
   padding-inline: 4px;
 }

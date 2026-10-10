@@ -141,6 +141,13 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`--font-weight-strong` (unreleased)** — one global knob for the library's "strong" weight
+  (default `600`, unchanged). The atoms that hard-coded `font-weight: 600` now read
+  `var(--font-weight-strong, 600)`, and the 600-default weight knobs (buttons, avatar, badge
+  count, breadcrumb current, explorer section, form-field overline, menu current row, section
+  header) fall back to it. Set `:root { --font-weight-strong: 500; }` to cap the UI at medium.
+  Heading roles keep `--brand-heading-weight`. See `references/design-tokens.md` → Typography.
+
 ## Workflow
 
 ### Where the documentation lives

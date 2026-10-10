@@ -65,7 +65,7 @@
    order above means hover still covers it. */
 .uxm-menu__item--current {
   background-color: var(--uxm-menu-item-current-bg, transparent);
-  font-weight: var(--uxm-menu-item-current-font-weight, 600);
+  font-weight: var(--uxm-menu-item-current-font-weight, var(--font-weight-strong, 600));
 }
 
 /* Active = keyboard-highlighted via arrow nav OR pointer hover. The

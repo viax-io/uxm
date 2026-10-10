@@ -81,7 +81,7 @@
   &__group-header {
     padding: 8px 10px 4px 10px;
     font-size: calc(var(--uxm-listbox-group-header-font-size, 10px) * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--uxm-listbox-group-header-color, var(--color-text-subtle));
@@ -121,7 +121,7 @@
     &--selected {
       background-color: var(--uxm-listbox-option-selected-bg, var(--color-accent-subtle));
       color: var(--uxm-listbox-option-selected-color, var(--color-accent-bold));
-      font-weight: 600;
+      font-weight: var(--font-weight-strong, 600);
     }
   }
   /* Active = keyboard-highlighted via arrow nav OR pointer hover. The

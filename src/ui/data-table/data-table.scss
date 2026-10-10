@@ -79,7 +79,7 @@
 .uxm-data-table__th {
   text-align: left;
   padding: var(--uxm-data-table-cell-padding-y, 10px) var(--uxm-data-table-cell-padding-x, 12px);
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
   color: var(--uxm-data-table-header-text, var(--color-text-muted));
   border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
   font-size: calc(12px * var(--type-scale, 1));
@@ -529,7 +529,7 @@
     content: attr(data-label);
     display: block;
     font-size: calc(11px * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
     color: var(--uxm-data-table-header-text, var(--color-text-muted));
     text-transform: uppercase;
     letter-spacing: 0.04em;

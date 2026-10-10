@@ -86,7 +86,7 @@ export function ModalPreview({ styles, variants }: PreviewProps) {
             style={{
               margin: 0,
               fontSize: styles.titleSize as number,
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-strong, 600)',
               color: styles.titleColor as string,
             }}
           >
