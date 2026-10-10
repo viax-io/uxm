@@ -42,7 +42,7 @@ export function StatCardPreview({ styles }: PreviewProps) {
             </span>
             <span style={{
               fontSize: 12,
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-strong, 600)',
               color: stat.up ? (styles.trendUpColor as string) : (styles.trendDownColor as string),
               display: 'inline-flex',
               alignItems: 'center',

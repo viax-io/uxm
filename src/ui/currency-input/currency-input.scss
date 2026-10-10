@@ -86,7 +86,7 @@
   cursor: not-allowed;
 }
 .uxm-currency-input__symbol {
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
   color: var(--uxm-currency-input-symbol-color, var(--color-text));
   font-variant-numeric: tabular-nums;
 }
@@ -152,7 +152,7 @@
   flex-shrink: 0;
   width: 24px;
   text-align: center;
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
   font-variant-numeric: tabular-nums;
 }
 .uxm-currency-input__row-name {

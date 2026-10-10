@@ -17,7 +17,7 @@ export function DividerPreview({ styles }: PreviewProps) {
           <div style={{ flex: 1, height: thickness, backgroundColor: styles.color as string }} />
           <span style={{
             fontSize: styles.labelSize as number,
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-strong, 600)',
             color: styles.labelColor as string,
             textTransform: 'uppercase',
             letterSpacing: '0.08em',

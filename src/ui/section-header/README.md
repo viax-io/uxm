@@ -45,7 +45,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | `--uxm-section-header-margin-bottom` | – | `12px` | Spacing between the header and the following content. |
 | `--uxm-section-header-title-color` | `--color-text-subtle` | – | Heading text colour. |
 | `--uxm-section-header-title-size` | – | `11px` | Heading font size. |
-| `--uxm-section-header-title-weight` | – | `600` | Heading font weight. |
+| `--uxm-section-header-title-weight` | `--font-weight-strong` | `600` | Heading font weight. |
 | `--uxm-section-header-subtitle-color` | `--color-text-muted` | – | Subtitle text colour. |
 | `--uxm-section-header-subtitle-size` | – | `10px` | Subtitle font size. |
 

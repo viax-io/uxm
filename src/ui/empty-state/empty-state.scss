@@ -22,7 +22,7 @@
   &__title {
     color: var(--uxm-empty-state-title-color, var(--color-text));
     font-size: calc(16px * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
   }
 
   &__description {

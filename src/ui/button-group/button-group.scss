@@ -46,7 +46,7 @@
     &--active {
       background-color: var(--uxm-button-group-active-bg, var(--color-accent-subtle));
       color: var(--uxm-button-group-active-text, var(--color-accent-bold));
-      font-weight: 600;
+      font-weight: var(--font-weight-strong, 600);
     }
   }
 }

@@ -40,7 +40,7 @@
   margin-top: 1px;
 }
 .uxm-banner__title {
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
   margin: 0 0 4px;
 }
 .uxm-banner__content {

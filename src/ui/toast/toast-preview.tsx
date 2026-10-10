@@ -112,7 +112,7 @@ export function ToastPreview({ styles, variants }: PreviewProps & { componentId:
               border: 'none',
               color: accent,
               font: 'inherit',
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-strong, 600)',
               textDecoration: 'underline',
               textUnderlineOffset: 2,
               cursor: 'pointer',

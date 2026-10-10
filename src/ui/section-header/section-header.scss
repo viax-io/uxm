@@ -21,7 +21,7 @@
   &__title {
     color: var(--uxm-section-header-title-color, var(--color-text-subtle));
     font-size: calc(var(--uxm-section-header-title-size, 11px) * var(--type-scale, 1));
-    font-weight: var(--uxm-section-header-title-weight, 600);
+    font-weight: var(--uxm-section-header-title-weight, var(--font-weight-strong, 600));
     letter-spacing: 0.06em;
     margin: 0;
     text-transform: uppercase;
