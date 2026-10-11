@@ -62,7 +62,7 @@
   &__label {
     flex: 1;
     font-size: calc(var(--uxm-explorer-section-font-size, 11px) * var(--type-scale, 1));
-    font-weight: var(--uxm-explorer-section-font-weight, 600);
+    font-weight: var(--uxm-explorer-section-font-weight, var(--font-weight-strong, 600));
     letter-spacing: 0.06em;
     min-width: 0;
     overflow: hidden;

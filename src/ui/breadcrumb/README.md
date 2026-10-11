@@ -56,7 +56,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `--uxm-breadcrumb-underline-offset` | – | `3px` | Link underline offset. |
 | `--uxm-breadcrumb-gap` | – | `6px` | Gap between crumbs in the list, and between label + separator inside an item. |
 | `--uxm-breadcrumb-current-color` | `--color-text` | – | Current-page (last crumb) text colour. |
-| `--uxm-breadcrumb-current-weight` | – | `600` | Current-page font weight. |
+| `--uxm-breadcrumb-current-weight` | `--font-weight-strong` | `600` | Current-page font weight. |
 | `--uxm-breadcrumb-separator-color` | `--color-text-subtle` | – | Separator colour. |
 | `--uxm-breadcrumb-separator-size` | – | `13px` | Separator font size + icon dimensions. |
 

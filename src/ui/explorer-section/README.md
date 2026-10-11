@@ -69,7 +69,7 @@ Extends `Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>` — `childre
 | `--uxm-explorer-section-chevron-color` | `--color-text-muted` | – | Chevron stroke color. |
 | `--uxm-explorer-section-chevron-size` | – | `12px` | Chevron width/height. |
 | `--uxm-explorer-section-font-size` | – | `11px` | Label font size. |
-| `--uxm-explorer-section-font-weight` | – | `600` | Label font weight. |
+| `--uxm-explorer-section-font-weight` | `--font-weight-strong` | `600` | Label font weight. |
 | `--uxm-explorer-section-trailing-color` | `--color-text-subtle` | – | Trailing-slot text color. |
 | `--uxm-explorer-section-trailing-size` | – | `10px` | Trailing-slot font size. |
 

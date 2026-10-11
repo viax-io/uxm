@@ -223,7 +223,7 @@ span.uxm-time-input__icon {
   padding: 6px 8px;
   text-align: center;
   font-size: calc(12px * var(--type-scale, 1));
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
   color: var(--uxm-time-input-color, var(--color-text));
   background-color: var(--uxm-time-input-popover-head-bg, var(--color-surface-alt));
   border-bottom: 1px solid var(--uxm-time-input-popover-border, var(--color-border));
@@ -262,7 +262,7 @@ span.uxm-time-input__icon {
 .uxm-time-input__row--selected {
   background-color: var(--uxm-time-input-popover-row-selected-bg, var(--color-accent-subtle));
   color: var(--uxm-time-input-popover-row-selected-color, var(--color-accent-bold));
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
 }
 .uxm-time-input__row--selected:hover {
   background-color: var(--uxm-time-input-popover-row-selected-bg, var(--color-accent-subtle));

@@ -74,7 +74,7 @@ export function TimelineEntryPreview({ styles, variants }: PreviewProps) {
           <p style={{
             fontSize: styles.titleSize as number,
             color: styles.titleColor as string,
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-strong, 600)',
             margin: 0,
             flex: '0 1 auto',
             overflow: 'hidden',

@@ -55,12 +55,14 @@ for (const { cid, key, def } of knobs) {
   // fallback of `2px` against a registry default of `2` is agreement, not drift.
   // Legacy-alias chains — var(--uxm-x-new, var(--uxm-x-old, <token>)) — are
   // agreement too when the INNERMOST token matches the registry default: the
-  // middle var is an unset alias hook, so the final token is what paints.
+  // middle var is an unset alias hook, so the final token is what paints. The
+  // global `--font-weight-strong` is the same kind of hook (undeclared by the
+  // library), so it may sit in the chain too.
   const defs = [squash(def)];
   if (/^[\d.]+$/.test(def)) defs.push(`${def}px`);
   const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(
-    `var\\(${escape(cssVar)}, (?:var\\(--uxm-[\\w-]+, )*(?:${defs.map(escape).join('|')})\\)+`,
+    `var\\(${escape(cssVar)}, (?:var\\(--(?:uxm-[\\w-]+|font-weight-strong), )*(?:${defs.map(escape).join('|')})\\)+`,
   );
   if (!reads.some(({ text }) => pattern.test(text))) {
     drift += 1;

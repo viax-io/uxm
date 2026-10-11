@@ -61,7 +61,7 @@
   &__title {
     color: var(--uxm-timeline-entry-title-color, var(--color-text));
     font-size: calc(var(--uxm-timeline-entry-title-size, 13px) * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
   }
 
   &__trailing {

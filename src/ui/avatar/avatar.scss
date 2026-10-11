@@ -12,7 +12,7 @@
   display: inline-flex;
   flex-shrink: 0;
   font-size: calc(var(--uxm-avatar-font-size, 16px) * var(--type-scale, 1));
-  font-weight: var(--uxm-avatar-font-weight, 600);
+  font-weight: var(--uxm-avatar-font-weight, var(--font-weight-strong, 600));
   height: var(--uxm-avatar-size, 40px);
   justify-content: center;
   /* Image mode fills the frame; overflow hides anything past the radius. */

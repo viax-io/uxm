@@ -34,7 +34,7 @@
 .uxm-progress-bar__value {
   font-size: calc(var(--uxm-progress-bar-value-size, 13px) * var(--type-scale, 1));
   color: var(--uxm-progress-bar-value-color, var(--color-text));
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
   font-variant-numeric: tabular-nums;
 }
 .uxm-progress-bar__track {

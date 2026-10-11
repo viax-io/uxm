@@ -62,7 +62,7 @@
   &__eyebrow {
     color: var(--uxm-side-flexpane-label-color, var(--color-text-muted));
     font-size: calc(11px * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
     letter-spacing: 0.06em;
     margin: 0;
     text-transform: uppercase;
@@ -71,7 +71,7 @@
   &__title {
     color: var(--color-text);
     font-size: calc(var(--uxm-side-flexpane-title-size, 15px) * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
     margin: 2px 0 0;
     /* Title wraps (its original behaviour) rather than truncating — the
        heading flexes, so a long title grows the header height instead of

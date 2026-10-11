@@ -27,7 +27,7 @@
   &__label {
     color: var(--uxm-property-field-label-color, var(--color-text-muted));
     font-size: calc(var(--uxm-property-field-label-size, 11px) * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
     /* Case + tracking are knobs so the atom can drop its uppercase "eyebrow"
        look for sentence-case prose grids. Defaults reproduce today exactly. */
     letter-spacing: var(--uxm-property-field-label-tracking, 0.06em);

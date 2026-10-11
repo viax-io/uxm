@@ -42,7 +42,7 @@ In `dot` mode the root receives `role="status"` only when no children are passed
 |----------|----------------|---------|---------|
 | `--uxm-badge-count-border-radius` | – | `999px` | Pill radius (`count` mode). |
 | `--uxm-badge-count-font-size` | – | `11px` | Pill font size. |
-| `--uxm-badge-count-font-weight` | – | `600` | Pill font weight. |
+| `--uxm-badge-count-font-weight` | `--font-weight-strong` | `600` | Pill font weight. |
 | `--uxm-badge-count-min-width` | – | `18px` | Pill min-width + height. |
 | `--uxm-badge-count-padding-y` | – | `1px` | Pill vertical padding. |
 | `--uxm-badge-count-padding-x` | – | `6px` | Pill horizontal padding. |

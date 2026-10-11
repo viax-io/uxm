@@ -27,7 +27,7 @@
     border-radius: var(--uxm-badge-count-border-radius, 999px);
     box-sizing: border-box;
     font-size: calc(var(--uxm-badge-count-font-size, 11px) * var(--type-scale, 1));
-    font-weight: var(--uxm-badge-count-font-weight, 600);
+    font-weight: var(--uxm-badge-count-font-weight, var(--font-weight-strong, 600));
     height: var(--uxm-badge-count-min-width, 18px);
     justify-content: center;
     min-width: var(--uxm-badge-count-min-width, 18px);

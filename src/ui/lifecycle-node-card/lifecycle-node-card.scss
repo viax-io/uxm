@@ -84,7 +84,7 @@
   &__title {
     color: var(--color-text);
     font-size: calc(var(--uxm-lifecycle-node-card-title-size, 14px) * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;

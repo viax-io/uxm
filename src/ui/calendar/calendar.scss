@@ -46,7 +46,7 @@
     cursor: pointer;
     font-family: inherit;
     font-size: calc(var(--uxm-calendar-title-size, 14px) * var(--type-scale, 1));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
     padding: 4px 8px;
     transition: background-color 0.12s;
 
@@ -153,7 +153,7 @@
     &--today {
       border-color: var(--uxm-calendar-today-border-color, var(--color-accent-bold));
       color: var(--uxm-calendar-today-color, var(--color-accent-bold));
-      font-weight: 600;
+      font-weight: var(--font-weight-strong, 600);
     }
 
     &--selected {
@@ -206,7 +206,7 @@
   &__year--today {
     border-color: var(--uxm-calendar-today-border-color, var(--color-accent-bold));
     color: var(--uxm-calendar-today-color, var(--color-accent-bold));
-    font-weight: 600;
+    font-weight: var(--font-weight-strong, 600);
   }
 
   &__month--selected,
