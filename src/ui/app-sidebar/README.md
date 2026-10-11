@@ -52,6 +52,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `footer` | `ReactNode` | – | Slot at the foot of the rail. Rendered into `uxm-app-sidebar__footer`. Renders in **both** rail states — this changed, see the note at the top. |
 | `linkAs` | `ElementType` | `'a'` | Element type used for each nav item's outer link (e.g. `next/link`'s `Link`). |
 | `autoIconColors` | `boolean \| AppSidebarIconColor[]` | `false` | Auto-assign a distinct icon colour to each item from a palette, **cycling by position** — a categorical scheme for scannability instead of a wall of same-coloured icons. `true` uses the exported `DEFAULT_SIDEBAR_ICON_COLORS` (four DS hue pairs — warm / cool / accent / indigo — each clearing 3:1 non-text contrast in **both** themes, lowest 3.64:1); an array supplies your own `{ bg, color }`. Replacing the palette means measuring both themes: a tile and its ink are separate tokens that flip independently, so a pair can pass in one and fail in the other. An item that sets either `iconColor` or `iconBg` opts out of auto entirely (the unset half falls to the component default), so a pinned colour is never paired with an auto half chosen for a different tile — one item can pin its colour while the rest auto-fill. The cycle runs unbroken across section boundaries. |
+| `collapsedFlyout` | `boolean` | `false` | Collapsed rail only: hovering **or focusing** an item shows its label in a pill-shaped flyout to the right of the icon — the shipped `Tooltip` (no arrow, pill radius), portalled to `<body>` so the scrolling nav can't clip it, and `aria-hidden` (the row already announces its clipped label). Replaces the native `title` tooltip, which only appears after a delay, never on keyboard focus, and can't be themed. Closes on leave / blur and when the nav scrolls. Off by default — existing rails keep `title` until they opt in. See [Collapsed flyout](#collapsed-flyout). |
 | `mobileOpen` | `boolean` | `false` | Controls the mobile drawer state. Adds `--mobile-open` modifier and renders the backdrop. |
 | `onMobileClose` | `() => void` | – | Backdrop click handler. |
 | `className` | `string` | – | Merged with the `<aside>` root class via `cn`. |
@@ -79,7 +80,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `href` | `string` | yes | Target URL — passed through to `SidebarNavItem` (and the rendered `linkAs` element). Also used as the React key. |
-| `label` | `string` | yes | Visible label; falls back to `title` tooltip in collapsed mode. |
+| `label` | `string` | yes | Visible label. Collapsed, it shows as a `title` tooltip — or in the pill flyout when `collapsedFlyout` is on. |
 | `icon` | `ReactNode` | no | Leading icon node. |
 | `active` | `boolean` | no | Marks the item as the current page (forwarded to `SidebarNavItem`). |
 | `iconBg` | `string` | no | Per-item icon-tile background colour (e.g. model-type accent). |
@@ -148,6 +149,14 @@ The footer used to carry a 24px caption inset. That was fine while the slot only
 
 Unlike the footer, `__lead` imposes **no** `font-size` or `color` — the footer sets both, having been built for an 11px caption, and drops the `font-size` when collapsed.
 
+## Collapsed flyout
+
+```tsx
+<AppSidebar brand={brand} sections={sections} collapsed={collapsed} collapsedFlyout />
+```
+
+With the rail collapsed, hovering or tabbing to an icon shows its label in a pill beside it. It is the shipped `Tooltip` atom inside a fixed wrapper (`uxm-app-sidebar__flyout`) portalled to `<body>` — the nav scrolls, so an in-place flyout would be clipped by it. Only one shows at a time; it closes on mouse leave, blur, and nav scroll (a scrolled row would leave it pointing at the wrong item). Expanded, the prop does nothing.
+
 ## CSS variables
 
 | Variable | Fallback token | Default | Affects |
@@ -161,6 +170,10 @@ Unlike the footer, `__lead` imposes **no** `font-size` or `color` — the footer
 | `--uxm-app-sidebar-footer-padding` | – | `8px` | Footer padding, in both rail states. Was `12px 24px`; see [Alignment](#alignment). |
 | `--uxm-app-sidebar-lead-gap` | – | `8px` | Row gap between controls in the header slot. |
 | `--uxm-app-sidebar-footer-gap` | – | `8px` | Row gap between controls in the footer slot. |
+| `--uxm-app-sidebar-flyout-offset` | – | `8px` | Gap between a collapsed row's icon and its flyout (`collapsedFlyout`). |
+| `--uxm-app-sidebar-flyout-border-radius` | – | `999px` | Flyout corner radius — a pill by default. Set on the flyout wrapper as `--uxm-tooltip-border-radius`, so every other `--uxm-tooltip-*` knob (colour, padding, font size) themes the flyout too. |
+| `--uxm-app-sidebar-flyout-x` / `-y` | – | – | **Internal** — the hovered row's right edge / vertical centre, written inline on the flyout each time it opens. Not a theming knob; don't set them. |
+| `--uxm-app-sidebar-flyout-z-index` | `--uxm-popover-z-index` | `50` | Flyout stacking order — the same layer as `Popover` / `HoverTooltip`, so it follows an app's `--uxm-popover-z-index` opt-in. |
 | `--uxm-app-sidebar-drawer-shadow` | `--shadow-lg` | – | Drawer elevation below 768px. |
 | `--z-drawer` | – | `40` | Drawer stacking order; the backdrop sits at `calc(--z-drawer - 1)`. Deliberately under `--z-dialog` (60) and `--z-toast` (80). |
 | `--backdrop-color` | – | `rgba(0,0,0,0.5)` | Drawer scrim. **Shared with `Dialog`** — retinting one retints both. |
@@ -186,6 +199,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 |-----------------|---------|--------|
 | Expanded | `collapsed={false}` | Full width (`--expanded-width`), labels + headings + footer visible. |
 | Collapsed | `collapsed={true}` | Narrow width (`--collapsed-width`); brand swaps to icon button, labels & headings hide, `trailing` hides, `badge` collapses to a corner status dot on the icon tile, item width clamps to 32×32. **Both slots still render**; the footer stops imposing its caption `font-size`. |
+| Collapsed flyout | `collapsed` + `collapsedFlyout`, item hovered or focused | Pill with the item's label, 8px right of the icon, vertically centred on the row. No `title` attribute is set. |
 | Mobile drawer open | `mobileOpen={true}` | Adds `--mobile-open` modifier and renders the backdrop button as a sibling. Below 768px this slides the fixed rail in over the page behind a scrim; at wider widths the flag is inert and the backdrop is hidden. |
 | Toggle button | `onCollapseToggle` provided | Chevron-left icon rendered in the header; clickable to flip state. |
 | Heading hidden | `collapsed` truthy or `section.heading` undefined | Section heading paragraph is not rendered. |
@@ -195,6 +209,6 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Root is a semantic `<aside>` with an interior `<nav>` — screen readers announce a landmark.
 - Collapse toggle is a real `<button>` with `aria-label="Collapse sidebar"`; the collapsed brand button doubles as expand control with `aria-label="Expand sidebar"`.
 - Mobile backdrop is a real `<button type="button">` with `aria-label="Close navigation"` — focusable and keyboard-activatable; click forwards to `onMobileClose`.
-- Each nav item announces **identically collapsed and expanded**: the label and the inline `badge` stay in the accessibility tree when collapsed (visually clipped, not removed), so "Inbox 3" reads the same in both states. The corner status dot that visually stands in for the badge is `aria-hidden` — a sighted-only cue backed by the clipped badge text. `title={item.label}` is additionally set when collapsed for the pointer-hover tooltip; it is not the accessible name (the clipped content is). The interactive `trailing` slot IS dropped when collapsed — a clipped focusable control would be an invisible tab stop.
+- Each nav item announces **identically collapsed and expanded**: the label and the inline `badge` stay in the accessibility tree when collapsed (visually clipped, not removed), so "Inbox 3" reads the same in both states. The corner status dot that visually stands in for the badge is `aria-hidden` — a sighted-only cue backed by the clipped badge text. `title={item.label}` is additionally set when collapsed for the pointer-hover tooltip; it is not the accessible name (the clipped content is). With `collapsedFlyout` the `title` is dropped and the pill flyout takes its place on hover **and keyboard focus** (WCAG 1.4.13 — the native tooltip never shows on focus); the flyout is `aria-hidden` so the label isn't announced twice. The interactive `trailing` slot IS dropped when collapsed — a clipped focusable control would be an invisible tab stop.
 - The component does not manage focus when toggling collapsed / mobile state; consumers should move focus to the drawer on open if needed.
 - **The drawer CSS ships.** Below 768px — the same line `AppTopBar` uses to show its hamburger — the rail leaves the flow (`position: fixed`, full height, `--z-drawer`) and sits closed at `translateX(-100%)` **and `visibility: hidden`** — so the closed drawer is not a keyboard tab stop, is not announced, and paints nothing (its shadow would otherwise bleed past the viewport edge); `--mobile-open` slides it in and the backdrop covers the viewport just beneath it. At `min-width: 768px` the backdrop is hidden and the rail is in flow as before, so a consumer holding `mobileOpen` true across a resize is not left with a scrim over its page. Consumers need no responsive rules of their own; wiring `mobileOpen` / `onMobileClose` is enough. The slide honours `prefers-reduced-motion: reduce`.

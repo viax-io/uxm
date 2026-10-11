@@ -432,6 +432,7 @@ export const messages: StudioMessages = {
     'Cog (6 Tooth)': 'Ingranaggio (6 denti)',
     'Coins': 'Monete',
     'Collapsed': 'Compresso',
+    'Collapsed Flyout': 'Etichetta a comparsa compresso',
     'Collapsed Width': 'Larghezza compresso',
     'Color': 'Colore',
     'Column Gap': 'Spazio tra le colonne',

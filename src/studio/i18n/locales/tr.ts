@@ -426,6 +426,7 @@ export const messages: StudioMessages = {
     'Cog (6 Tooth)': 'Dişli (6 diş)',
     'Coins': 'Madeni paralar',
     'Collapsed': 'Daraltılmış',
+    'Collapsed Flyout': 'Daraltılmış açılır etiket',
     'Collapsed Width': 'Daraltılmış genişlik',
     'Color': 'Renk',
     'Column Gap': 'Sütun aralığı',

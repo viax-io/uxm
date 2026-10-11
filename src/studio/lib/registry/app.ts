@@ -86,6 +86,17 @@ export const appDefs: ComponentDef[] = [
         ],
         defaultValue: 'off',
       },
+      {
+        // `collapsedFlyout`: hover or focus a collapsed-rail icon to see its
+        // label in a pill beside it. Only visible with State = Collapsed.
+        key: 'collapsedFlyout',
+        label: 'Collapsed Flyout',
+        options: [
+          { value: 'off', label: 'Off' },
+          { value: 'on', label: 'On' },
+        ],
+        defaultValue: 'on',
+      },
     ],
   },
   {

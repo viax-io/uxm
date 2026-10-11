@@ -420,6 +420,7 @@ export const messages: StudioMessages = {
     'Cog (6 Tooth)': '歯車（6歯）',
     'Coins': 'コイン',
     'Collapsed': '折りたたみ',
+    'Collapsed Flyout': '折りたたみ時のフライアウト',
     'Collapsed Width': '折りたたみ時の幅',
     'Color': 'カラー',
     'Column Gap': '列の間隔',

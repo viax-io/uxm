@@ -141,6 +141,8 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`AppSidebar` `collapsedFlyout` (unreleased)** — opt-in: in the collapsed rail, hovering or focusing an icon shows its label in a pill flyout (the shipped `Tooltip`, portalled, `aria-hidden`) instead of the native `title`. Knobs: `--uxm-app-sidebar-flyout-{offset,border-radius,z-index}`.
+
 ## Workflow
 
 ### Where the documentation lives

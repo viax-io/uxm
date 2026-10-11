@@ -65,6 +65,7 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
   const theme = shell?.theme ?? 'light';
   const collapsed = variants.state === 'collapsed';
   const autoIconColors = variants.autoIconColors === 'on';
+  const collapsedFlyout = (variants.collapsedFlyout ?? 'on') === 'on';
   const withHeader = (variants.headerSlot ?? 'on') === 'on';
   const withFooter = (variants.footerSlot ?? 'on') === 'on';
 
@@ -148,6 +149,7 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
       brand={{ logoUrl, iconUrl, alt: 'Brand' }}
       sections={SAMPLE_SECTIONS}
       autoIconColors={autoIconColors}
+      collapsedFlyout={collapsedFlyout}
       collapsed={collapsed}
       onCollapseToggle={() => {}}
       header={withHeader ? switchers : undefined}
