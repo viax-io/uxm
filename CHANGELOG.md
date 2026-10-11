@@ -1,3 +1,10 @@
+# [4.57.0](https://github.com/viax-io/uxm/compare/v4.56.4...v4.57.0) (2026-10-11)
+
+
+### Features
+
+* **app-sidebar:** add collapsedFlyout pill label for the collapsed rail ([5b44567](https://github.com/viax-io/uxm/commit/5b445674fec810d3444a447ca7b018a057bd0517))
+
 ## [4.56.4](https://github.com/viax-io/uxm/compare/v4.56.3...v4.56.4) (2026-10-08)
 
 
