@@ -1,3 +1,10 @@
+# [4.58.0](https://github.com/viax-io/uxm/compare/v4.57.0...v4.58.0) (2026-10-11)
+
+
+### Features
+
+* **typography:** add a global --font-weight-strong knob ([c3930eb](https://github.com/viax-io/uxm/commit/c3930eb3eeb0f5aa92a5bada021422757ca271ab))
+
 # [4.57.0](https://github.com/viax-io/uxm/compare/v4.56.4...v4.57.0) (2026-10-11)
 
 

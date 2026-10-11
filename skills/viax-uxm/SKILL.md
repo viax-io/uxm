@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.57.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.58.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.57.0** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.58.0** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.57.0 — current API surface (overrides training data)
+## v4.58.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,29 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.54.0
-
-- **`DataTable` sorts, in either of the two shapes consumers actually need.** Opt in per column
-  with **`sortKey`** (separate from `key`, because the column you show and the field you sort by
-  often differ), then pick a mode on the table: **`onSortChange`** renders a `<button>` for
-  in-page state, or **`sortHref`** renders an `<a href>` for sort that lives in the URL — which
-  is what keeps a list linkable, the back button working and a server-paged table renderable on
-  the server. A `<button>` can do none of that, which is why both ship. `sortHref` wins if both
-  are passed. **`sort`** is controlled: the table never sorts `rows` and holds no sort state.
-  **`firstSortDirection`** (default `'asc'`) sets which way the first click goes — set `'desc'`
-  on dates and amounts, or the column opens on the oldest/smallest row. The `<th>` carries
-  `aria-sort` (`none` on the other sortable columns — valid and harmless, since `none` is ARIA's
-  default); the glyph is the 4.51.0 `sort-*` family, so the header keeps its weight as it
-  toggles. Fully opt-in — a column without `sortKey` renders exactly as before, no control and
-  no `aria-sort`.
-  **Two things to know.** `renderSortLink` lets a client-side router own link mode's anchor; the
-  default is a plain `<a href>`, which is a full document load per click in a Next / React Router
-  app. And **sorting disappears in stacked mode** — below a 480px container the `<thead>` is
-  hidden, taking the controls and `aria-sort` with it, so a phone-width list needs another way to
-  sort. Set `sortLabel` whenever `header` is not plain text, or the control has no accessible
-  name. New knobs: `--uxm-data-table-sort-color` / `-hover-color` / `-active-color` /
-  `-focus-color` / `-icon-color`.
 
 ### New in 4.55.0
 
@@ -126,13 +103,7 @@ catalog.
 
 - **`AppSidebar` `collapsedFlyout` (unreleased)** — opt-in: in the collapsed rail, hovering or focusing an icon shows its label in a pill flyout (the shipped `Tooltip`, portalled, `aria-hidden`) instead of the native `title`. Knobs: `--uxm-app-sidebar-flyout-{offset,border-radius,z-index}`.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.58.0
 
 - **`--font-weight-strong` (unreleased)** — one global knob for the library's "strong" weight
   (default `600`, unchanged). The atoms that hard-coded `font-weight: 600` now read
@@ -140,6 +111,14 @@ catalog.
   count, breadcrumb current, explorer section, form-field overline, menu current row, section
   header) fall back to it. Set `:root { --font-weight-strong: 500; }` to cap the UI at medium.
   Heading roles keep `--brand-heading-weight`. See `references/design-tokens.md` → Typography.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
