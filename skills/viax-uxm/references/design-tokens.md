@@ -2,9 +2,11 @@
 
 The canonical token catalogue. Source of truth: `src/tokens/index.ts` in the uxm repo
 (`https://github.com/viax-io/uxm`), exported as the `themeTokens` array from
-`uxm/tokens`. These tokens declare `--color-*` CSS custom properties on `:root` (via It also declares the `--shadow-*`, `--font-*` and `--z-*` globals (see **Layering** below).
+`uxm/tokens`. These tokens declare `--color-*` CSS custom properties on `:root` (via
 `uxm/tokens.css`) and are the **MODO-configurable layer** — brand-settings UIs edit them
-centrally, and every component re-tints instantly.
+centrally, and every component re-tints instantly. The same stylesheet also declares the
+`--shadow-*` (see **Elevation** below), `--font-*` (see **Typography**) and `--z-*` (see
+**Layering**) globals.
 
 ## Theming flow
 
@@ -246,6 +248,26 @@ title is currently **fainter than its own subtitle** in both themes. Moving the 
 muted would clear AA but make the two identical; `strong` clears AA and restores the order.
 Both tokens are theme-aware, so one declaration covers light and dark.
 
+## Elevation (`--shadow-*`)
+
+Declared in `tokens.css` alongside the colours, not in `themeTokens`. Each has a dark-mode value
+too — darker, denser shadows so elevation still reads on a dark surface.
+
+| Variable | Light value |
+|---|---|
+| `--shadow-xs` | `0 1px 2px rgba(0,0,0,0.06)` |
+| `--shadow-sm` | `0 1px 3px rgba(0,0,0,0.10)` |
+| `--shadow-md` | `0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)` |
+| `--shadow-lg` | `0 6px 20px rgba(0,0,0,0.10)` |
+| `--shadow-xl` | `0 8px 24px rgba(0,0,0,0.12)` |
+| `--shadow-2xl` | `0 24px 48px rgba(0,0,0,0.18)` |
+| `--shadow-card` | `0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)` |
+| `--shadow-modal` | `var(--shadow-2xl)` — follows `--shadow-2xl` in both themes |
+
+Like the colours they are the global fallback layer: components read them through their own
+knob (e.g. `--uxm-app-sidebar-drawer-shadow` → `--shadow-lg`), so override the component
+variable for one atom and the `--shadow-*` one to change every atom at that elevation.
+
 ## Layering (`--z-*`)
 
 Stacking tiers for portaled and fixed-position layers, declared on `:where(:root)` in
@@ -339,8 +361,8 @@ import type { ThemeToken } from 'uxm/tokens';
 // All tokens, grouped
 themeTokens.filter((t) => t.group === 'accent');
 
-// Look up by cssVar
-findToken('--color-accent-bold');
+// Look up by the full var(...) reference (it matches `variable`, not `cssVar`)
+findToken('var(--color-accent-bold)');
 // → { name: 'Accent Bold', cssVar: '--color-accent-bold', hex: '#1E7150', darkHex: '#8AE6B4', group: 'accent', variable: 'var(--color-accent-bold)' }
 
 // Test if a string is a token reference (var(--color-foo))
@@ -355,11 +377,20 @@ resolveHex('var(--color-accent-bold)'); // '#1E7150'
 For audit tooling, the package also exports contrast helpers from `@viax.io/uxm`:
 
 ```ts
-import { contrastRatio, wcagLevel, suggestAccessibleToken } from 'uxm';
+import { contrastRatio, parseColor, suggestAccessibleToken, wcagLevel } from 'uxm';
+import { themeTokens } from 'uxm/tokens';
 
-contrastRatio('#1E7150', '#FFFFFF');          // → 4.79
-wcagLevel('#1E7150', '#FFFFFF');              // → 'AA'
-suggestAccessibleToken('#1E7150', themeTokens); // → nearest token that passes AA
+// The maths takes RGB objects, not strings — parse first (null if unparseable).
+const fg = parseColor('#1E7150')!;
+const bg = parseColor('#FFFFFF')!;
+
+const ratio = contrastRatio(fg, bg); // → 5.94
+wcagLevel(ratio);                    // → 'AA'  (takes the ratio, not two colours)
+
+// Nearest token (by colour distance to `fg`) that reaches the target ratio on `bg`.
+const candidates = themeTokens.map((t) => ({ variable: t.variable, name: t.name, rgb: parseColor(t.hex)! }));
+suggestAccessibleToken(parseColor('#3ECC87')!, bg, 4.5, candidates);
+// → { variable: 'var(--color-accent-bold)', name: 'Accent Bold', rgb: … } — null if none passes
 ```
 
 Use these when building MODO brand-settings UIs that need to warn designers about poor contrast
@@ -374,8 +405,8 @@ that derives a palette from a single brand colour (e.g. recomputing the accent r
 import { rgbToHsl, hslToRgb, hexToHsl, hslToHex, retintHue } from 'uxm';
 import type { HSL } from 'uxm'; // { h: 0–360, s: 0–100, l: 0–100 }
 
-hexToHsl('#3ECC87');            // → { h: 152, s: 58.7, l: 52.5 } (null if unparseable)
-hslToHex({ h: 152, s: 59, l: 52 }); // → '#3ECC86'
+hexToHsl('#3ECC87');            // → { h: 150.8, s: 58.2, l: 52.2 } (unrounded; null if unparseable)
+hslToHex({ h: 152, s: 59, l: 52 }); // → '#3ccd89'
 rgbToHsl({ r: 62, g: 204, b: 135 });
 hslToRgb({ h: 152, s: 59, l: 52 });
 
