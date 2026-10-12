@@ -19,7 +19,7 @@
     cursor: pointer;
     display: inline-flex;
     font-size: calc(var(--uxm-filter-tabs-font-size, 12px) * var(--type-scale, 1));
-    font-weight: var(--uxm-filter-tabs-font-weight, 500);
+    font-weight: var(--uxm-filter-tabs-font-weight, var(--font-weight-medium, 500));
     justify-content: center;
     padding: var(--uxm-filter-tabs-padding-y, 6px) var(--uxm-filter-tabs-padding-x, 12px);
     transition: background-color 0.15s, color 0.15s;

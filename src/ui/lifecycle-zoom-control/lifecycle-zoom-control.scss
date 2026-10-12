@@ -42,7 +42,7 @@
   }
 
   &__num {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
     min-width: 26px;
     text-align: center;
   }

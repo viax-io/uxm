@@ -43,7 +43,7 @@ The `TagType` and `TagSize` unions are exported for consumer-side helpers.
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-tag-border-radius` | – | `999px` | Pill radius (both sizes). |
-| `--uxm-tag-font-weight` | – | `500` | Label font weight (both sizes). |
+| `--uxm-tag-font-weight` | `--font-weight-medium` | `500` | Label font weight (both sizes). |
 
 ### Per type
 

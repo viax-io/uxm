@@ -138,7 +138,7 @@ export function LoaderPreview({ styles, variants }: PreviewProps) {
           style={{
             fontSize: messageSize,
             color: messageColor,
-            fontWeight: 500,
+            fontWeight: 'var(--font-weight-medium, 500)',
             display: 'inline-block',
             minHeight: messageSize * 1.2,
           }}

@@ -27,7 +27,7 @@ export function StatCardPreview({ styles }: PreviewProps) {
             minWidth: 160,
           } as CSSProperties}
         >
-          <p style={{ fontSize: styles.labelSize as number, color: 'var(--color-text-muted)', fontWeight: 500, margin: 0 }}>
+          <p style={{ fontSize: styles.labelSize as number, color: 'var(--color-text-muted)', fontWeight: 'var(--font-weight-medium, 500)', margin: 0 }}>
             {stat.label}
           </p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>

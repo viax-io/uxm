@@ -140,7 +140,7 @@
   cursor: pointer;
   display: inline-flex;
   font-size: calc(var(--uxm-button-ghost-font-size, 14px) * var(--type-scale, 1));
-  font-weight: var(--uxm-button-ghost-font-weight, 500);
+  font-weight: var(--uxm-button-ghost-font-weight, var(--font-weight-medium, 500));
   gap: var(--uxm-button-ghost-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-ghost-padding-y, 10px) var(--uxm-button-ghost-padding-x, 20px);

@@ -75,7 +75,7 @@
   &__kind {
     color: var(--color-text-muted);
     font-size: calc(var(--uxm-lifecycle-node-card-kind-size, 11px) * var(--type-scale, 1));
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
     /* No text-transform / letter-spacing — registry doesn't expose those, so
        adding them here would override the editor's font-style intent. */
     margin: 0;
@@ -99,7 +99,7 @@
     display: inline-flex;
     flex-shrink: 0;
     font-size: calc(11px * var(--type-scale, 1));
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
     justify-content: center;
     max-width: 140px;
     overflow: hidden;

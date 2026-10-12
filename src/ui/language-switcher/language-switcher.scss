@@ -36,7 +36,7 @@
     cursor: pointer;
     display: inline-flex;
     font-size: calc(var(--uxm-language-switcher-font-size, 13px) * var(--type-scale, 1));
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
     gap: var(--uxm-language-switcher-gap, 6px);
     line-height: 1.2;
     padding: var(--uxm-language-switcher-padding-y, 7px)

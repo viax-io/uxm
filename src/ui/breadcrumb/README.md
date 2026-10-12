@@ -51,7 +51,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `--uxm-breadcrumb-font-size` | – | `13px` | Root font size + per-link font size. |
 | `--uxm-breadcrumb-link-color` | `--color-text-muted` | – | Resting link colour. |
 | `--uxm-breadcrumb-link-hover-color` | `--color-text` | – | Link hover colour. |
-| `--uxm-breadcrumb-link-weight` | – | `500` | Link font weight. |
+| `--uxm-breadcrumb-link-weight` | `--font-weight-medium` | `500` | Link font weight. |
 | `--uxm-breadcrumb-underline-thickness` | – | `1px` | Link underline thickness. |
 | `--uxm-breadcrumb-underline-offset` | – | `3px` | Link underline offset. |
 | `--uxm-breadcrumb-gap` | – | `6px` | Gap between crumbs in the list, and between label + separator inside an item. |

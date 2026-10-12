@@ -29,7 +29,7 @@
   margin-right: auto;
   font-size: calc(var(--uxm-progress-bar-label-size, 13px) * var(--type-scale, 1));
   color: var(--uxm-progress-bar-label-color, var(--color-text-muted));
-  font-weight: 500;
+  font-weight: var(--font-weight-medium, 500);
 }
 .uxm-progress-bar__value {
   font-size: calc(var(--uxm-progress-bar-value-size, 13px) * var(--type-scale, 1));

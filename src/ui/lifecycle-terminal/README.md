@@ -40,7 +40,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | `--uxm-lifecycle-terminal-radius` | – | `4px` | Border radius. |
 | `--uxm-lifecycle-terminal-color` | `--color-text-muted` | – | Label colour. |
 | `--uxm-lifecycle-terminal-font-size` | – | `13px` | Label font size. |
-| `--uxm-lifecycle-terminal-font-weight` | – | `500` | Label font weight. |
+| `--uxm-lifecycle-terminal-font-weight` | `--font-weight-medium` | `500` | Label font weight. |
 | `--uxm-lifecycle-terminal-height` | – | `32px` | Pill height. |
 | `--uxm-lifecycle-terminal-width` | – | `60px` | Pill width. |
 

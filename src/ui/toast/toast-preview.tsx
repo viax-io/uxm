@@ -68,7 +68,7 @@ export function ToastPreview({ styles, variants }: PreviewProps & { componentId:
           paddingInline: styles.paddingX as number,
           paddingBlock: styles.paddingY as number,
           fontSize: styles.fontSize as number,
-          fontWeight: 500,
+          fontWeight: 'var(--font-weight-medium, 500)',
           boxShadow: 'var(--shadow-xl)',
           animation: 'none',
           // CSS custom property that `.uxm-toast__icon svg { width:

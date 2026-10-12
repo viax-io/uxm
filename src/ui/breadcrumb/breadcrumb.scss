@@ -17,7 +17,7 @@
   & .uxm-link {
     color: var(--uxm-breadcrumb-inactive-text, var(--uxm-breadcrumb-link-color, var(--color-text-muted)));
     font-size: calc(var(--uxm-breadcrumb-font-size, 13px) * var(--type-scale, 1));
-    font-weight: var(--uxm-breadcrumb-link-weight, 500);
+    font-weight: var(--uxm-breadcrumb-link-weight, var(--font-weight-medium, 500));
     text-decoration-thickness: var(--uxm-breadcrumb-underline-thickness, 1px);
     text-underline-offset: var(--uxm-breadcrumb-underline-offset, 3px);
   }

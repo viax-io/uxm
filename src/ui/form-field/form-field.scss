@@ -63,7 +63,7 @@
 
 .uxm-form-field__label {
   font-size: calc(var(--uxm-form-field-label-size, 13px) * var(--type-scale, 1));
-  font-weight: var(--uxm-form-field-label-weight, 500);
+  font-weight: var(--uxm-form-field-label-weight, var(--font-weight-medium, 500));
   color: var(--uxm-form-field-label-color, var(--color-text-strong));
   /* Owns label ↔ control distance in top layout. Side layout overrides
      to 0 above. Fallback (8px) must match the registry default so that

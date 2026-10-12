@@ -20,7 +20,7 @@
     display: inline-flex;
     flex: 1;
     font-size: calc(var(--uxm-tabs-font-size, 12px) * var(--type-scale, 1));
-    font-weight: var(--uxm-tabs-font-weight, 500);
+    font-weight: var(--uxm-tabs-font-weight, var(--font-weight-medium, 500));
     gap: var(--uxm-tabs-icon-gap, 6px);
     justify-content: center;
     padding: var(--uxm-tabs-padding-y, 6px) var(--uxm-tabs-padding-x, 12px);

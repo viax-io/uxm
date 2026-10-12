@@ -190,7 +190,7 @@
 }
 .uxm-file-upload__row-name {
   font-size: calc(13px * var(--type-scale, 1));
-  font-weight: 500;
+  font-weight: var(--font-weight-medium, 500);
   color: var(--uxm-file-upload-row-name-color, var(--color-text-strong));
   white-space: nowrap;
   overflow: hidden;

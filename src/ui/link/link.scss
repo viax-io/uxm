@@ -11,7 +11,7 @@
   cursor: pointer;
   display: inline-flex;
   font-size: calc(var(--uxm-link-font-size, 14px) * var(--type-scale, 1));
-  font-weight: var(--uxm-link-font-weight, 500);
+  font-weight: var(--uxm-link-font-weight, var(--font-weight-medium, 500));
   gap: var(--uxm-link-external-icon-gap, 4px);
   text-decoration-color: currentColor;
   text-decoration-thickness: var(--uxm-link-underline-thickness, 1px);

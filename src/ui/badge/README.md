@@ -50,7 +50,7 @@ In `dot` mode the root receives `role="status"` only when no children are passed
 | `--uxm-badge-label-gap` | – | `8px` | Gap between dot and label (`dot` mode). |
 | `--uxm-badge-label-color` | `--color-text` | – | Label text colour. |
 | `--uxm-badge-label-font-size` | – | `13px` | Label font size. |
-| `--uxm-badge-label-font-weight` | – | `500` | Label font weight. |
+| `--uxm-badge-label-font-weight` | `--font-weight-medium` | `500` | Label font weight. |
 | `--uxm-badge-accent-bg` | `--color-accent-subtle` | – | `count` background for `accent` tone. |
 | `--uxm-badge-accent-text` | `--color-accent-bold` | – | `count` text for `accent` tone. |
 | `--uxm-badge-accent-dot-color` | `--color-accent-bold` | – | `dot` colour for `accent` tone. |
