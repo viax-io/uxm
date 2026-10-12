@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AppSidebar } from '@/ui';
 import type { AppSidebarProps } from '@/ui';
@@ -16,27 +16,68 @@ function renderRail(props: Partial<AppSidebarProps> = {}) {
   return screen.getByRole('link', { name: 'Inbox' });
 }
 
+// jsdom never matches `:focus-visible`, so every focus would read as a
+// pointer focus. Model keyboard focus: the focused element is focus-visible
+// unless a test flips `pointerFocus` to mimic the focus a tap leaves behind.
+let pointerFocus = false;
+const nativeMatches = Element.prototype.matches;
+
 describe('AppSidebar collapsedFlyout', () => {
+  beforeEach(() => {
+    pointerFocus = false;
+    vi.spyOn(Element.prototype, 'matches').mockImplementation(function (this: Element, selector: string) {
+      if (selector === ':focus-visible') return !pointerFocus && this === document.activeElement;
+      return nativeMatches.call(this, selector);
+    });
+  });
+  afterEach(() => vi.restoreAllMocks());
+
   it('opens a hidden-from-AT flyout in <body> on focus and closes it on blur', () => {
     const item = renderRail();
     expect(flyout()).toBeNull();
 
-    fireEvent.focus(item);
+    act(() => item.focus());
     const el = flyout();
     expect(el).not.toBeNull();
     expect(el).toHaveAttribute('aria-hidden', 'true');
     expect(el?.parentElement).toBe(document.body);
     expect(el).toHaveTextContent('Inbox');
 
-    fireEvent.blur(item);
+    act(() => item.blur());
     expect(flyout()).toBeNull();
   });
 
-  it('opens on hover and closes on mouse leave', () => {
+  it('opens on mouse hover and closes on leave', () => {
     const item = renderRail();
-    fireEvent.mouseEnter(item);
+    fireEvent.pointerEnter(item, { pointerType: 'mouse' });
     expect(flyout()).toHaveTextContent('Inbox');
-    fireEvent.mouseLeave(item);
+    fireEvent.pointerLeave(item, { pointerType: 'mouse' });
+    expect(flyout()).toBeNull();
+  });
+
+  it('ignores touch hover, which never gets a matching leave', () => {
+    const item = renderRail();
+    fireEvent.pointerEnter(item, { pointerType: 'touch' });
+    expect(flyout()).toBeNull();
+  });
+
+  it('ignores a focus that is not :focus-visible (the one a tap or click leaves)', () => {
+    const item = renderRail();
+    pointerFocus = true;
+    act(() => item.focus());
+    expect(flyout()).toBeNull();
+  });
+
+  it('drops an open flyout when the rail expands, so it cannot resurface on re-collapse', () => {
+    const { rerender } = render(<AppSidebar brand={{}} sections={sections} collapsed collapsedFlyout />);
+    const item = screen.getByRole('link', { name: 'Inbox' });
+    act(() => item.focus());
+    expect(flyout()).not.toBeNull();
+
+    // Focus stays on the row (no blur) — e.g. a shortcut toggled `collapsed`.
+    rerender(<AppSidebar brand={{}} sections={sections} collapsed={false} collapsedFlyout />);
+    expect(flyout()).toBeNull();
+    rerender(<AppSidebar brand={{}} sections={sections} collapsed collapsedFlyout />);
     expect(flyout()).toBeNull();
   });
 
@@ -58,7 +99,7 @@ describe('AppSidebar collapsedFlyout', () => {
 
   it('does nothing while expanded', () => {
     const item = renderRail({ collapsed: false });
-    fireEvent.focus(item);
+    act(() => item.focus());
     expect(flyout()).toBeNull();
   });
 });

@@ -109,6 +109,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`AppSidebar` `collapsedFlyout`: no flyout on touch, no stale pill (unreleased).** Hover is
+  now read from pointer events and touch is ignored; focus opens the flyout only when it is
+  `:focus-visible` (keyboard), so a tap no longer leaves the pill stuck on screen. Expanding the
+  rail drops an open flyout, so it can't reappear at the old position on the next collapse.
+
 ## Workflow
 
 ### Where the documentation lives
