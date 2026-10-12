@@ -35,6 +35,11 @@ export interface BrandConfig {
   typeScale?: string;
   /** Line height for multi-line body copy. Unset = each surface's own value. */
   bodyLineHeight?: string;
+  /** The library's "strong" UI weight ('500' | '600' | '700') → `--font-weight-strong`:
+   *  buttons, active tabs, table headers, panel titles, badge counts. Unset = 600.
+   *  Headings are separate (`headingFontWeight`); a per-component weight knob
+   *  still wins locally. */
+  strongFontWeight?: string;
   tokens?: BrandTokens;
 }
 

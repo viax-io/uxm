@@ -55,6 +55,12 @@ describe('generateOverridesCss', () => {
     expect(css).not.toContain('[data-theme="dark"] {');
   });
 
+  it('emits the strong weight on :root and drops anything but 500/600/700', () => {
+    expect(generateOverridesCss({}, { strongFontWeight: '500' })).toContain('--font-weight-strong: 500;');
+    expect(generateOverridesCss({}, { strongFontWeight: '900; color: red' })).not.toContain('--font-weight-strong');
+    expect(generateOverridesCss({}, {})).not.toContain('--font-weight-strong');
+  });
+
   it('drops unsafe brand urls instead of emitting them', () => {
     const css = generateOverridesCss({}, { logoUrl: 'javascript:alert(1)', iconUrl: '/icon.svg' } as BrandConfig);
     expect(css).not.toContain('javascript:');

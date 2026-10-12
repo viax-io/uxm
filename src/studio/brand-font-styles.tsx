@@ -42,6 +42,7 @@ export function BrandFontStyles() {
   const roles = resolveTypeRoles(brand);
   const typeScale = safeTypeScale(brand.typeScale);
   const bodyLineHeight = safeLineHeight(brand.bodyLineHeight);
+  const strongFontWeight = safeFontWeight(brand.strongFontWeight);
 
   // One <link> per distinct family; React 19 also dedupes by href.
   const families = [...new Set(
@@ -68,7 +69,8 @@ export function BrandFontStyles() {
   --brand-heading-weight: ${headingFontWeight ?? 'initial'};
 ${roleVars}
   --type-scale: ${typeScale ?? 'initial'};
-  --type-body-line-height: ${bodyLineHeight ?? 'initial'}; }
+  --type-body-line-height: ${bodyLineHeight ?? 'initial'};
+  --font-weight-strong: ${strongFontWeight ?? 'initial'}; }
 body { font-family: var(--brand-font); }${bodyLineHeight ? `
 body { line-height: var(--type-body-line-height, normal); }` : ''}`}</style>
     </>
