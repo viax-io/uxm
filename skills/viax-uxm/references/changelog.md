@@ -1836,3 +1836,7 @@ reached the published library; now shipped in 2.8.0.
   `var(--color-surface)` is the better value and the knob already offers it, but moving the
   default is a visible change for every existing table, so not something a patch does silently.
   Which release it belongs in is a maintainer call. Documented in the component README.
+
+### New in 4.57.0
+
+- **`AppSidebar` `collapsedFlyout` (unreleased)** — opt-in: in the collapsed rail, hovering or focusing an icon shows its label in a pill flyout (the shipped `Tooltip`, portalled, `aria-hidden`) instead of the native `title`. Knobs: `--uxm-app-sidebar-flyout-{offset,border-radius,z-index}`.

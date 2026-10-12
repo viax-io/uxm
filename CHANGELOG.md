@@ -1,3 +1,10 @@
+# [4.60.0](https://github.com/viax-io/uxm/compare/v4.59.0...v4.60.0) (2026-10-12)
+
+
+### Features
+
+* **typography:** add a global --font-weight-medium knob ([4619253](https://github.com/viax-io/uxm/commit/461925342e85ac80735849127bf9bd4df7f5b51c))
+
 # [4.59.0](https://github.com/viax-io/uxm/compare/v4.58.2...v4.59.0) (2026-10-12)
 
 
