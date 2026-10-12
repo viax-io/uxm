@@ -1,3 +1,10 @@
+## [4.58.1](https://github.com/viax-io/uxm/compare/v4.58.0...v4.58.1) (2026-10-12)
+
+
+### Bug Fixes
+
+* **app-sidebar:** dismiss the collapsed flyout on Escape ([5f18164](https://github.com/viax-io/uxm/commit/5f181641359fc34012dca37788edb1e091979941))
+
 # [4.58.0](https://github.com/viax-io/uxm/compare/v4.57.0...v4.58.0) (2026-10-11)
 
 

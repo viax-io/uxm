@@ -1778,3 +1778,21 @@ reached the published library; now shipped in 2.8.0.
   sort. Set `sortLabel` whenever `header` is not plain text, or the control has no accessible
   name. New knobs: `--uxm-data-table-sort-color` / `-hover-color` / `-active-color` /
   `-focus-color` / `-icon-color`.
+
+### New in 4.55.0
+
+- **`DataTable` sizes its own columns, labels them, and can mark a row active.** All opt-in.
+  **`column.width`** takes a share (`'34%'`) or pixels (`120`), and declaring one on ANY column
+  switches that table to `table-layout: fixed` — which is what makes a width hold, since auto
+  layout drops it the moment content is wider. A table where nobody declares a width keeps auto
+  layout exactly as before; this is deliberately not a default change. **`column.className`**
+  lands on the `<th>` AND every `<td>` in the column. Together these replace reaching into
+  `.uxm-data-table__th:nth-child(n)` from a consumer stylesheet, which is what viax-modo's
+  pricing breakdown was doing. **`column.label`** is the column's plain-text name for places a
+  `ReactNode` header cannot reach — the stacked-mode `data-label`, and the sort control's
+  accessible name whenever it says something the visible header does not (`header: 'Amt'`,
+  `label: 'Amount due'`) — defaulting to `header` when it is a string; a JSX header used to produce
+  cells with no stacked-mode label at all. **`activeRowId`** sets `aria-current="true"` plus an
+  accent rail and tint on the matching row (rail as well as tint, because colour alone is not a
+  sole cue), and **`rowProps`** merges arbitrary attributes onto the `<tr>` — the `id` a deep
+  link needs. New knobs: `--uxm-data-table-row-active-bg` / `-rail` / `-hover-bg`.
