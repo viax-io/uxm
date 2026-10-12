@@ -1,3 +1,10 @@
+# [4.61.0](https://github.com/viax-io/uxm/compare/v4.60.0...v4.61.0) (2026-10-12)
+
+
+### Features
+
+* **studio:** set --font-weight-medium from Brand Settings ([8e54a79](https://github.com/viax-io/uxm/commit/8e54a79728990c336a47263f2902580f6319c7b6))
+
 # [4.60.0](https://github.com/viax-io/uxm/compare/v4.59.0...v4.60.0) (2026-10-12)
 
 

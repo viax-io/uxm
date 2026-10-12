@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (97 BEM-classed React components as of v4.60.0, design tokens, per-component/per-state themable
+  (97 BEM-classed React components as of v4.61.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.60.0** (97 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.61.0** (97 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.60.0 — current API surface (overrides training data)
+## v4.61.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,15 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.58.0
-
-- **`--font-weight-strong` (unreleased)** — one global knob for the library's "strong" weight
-  (default `600`, unchanged). The atoms that hard-coded `font-weight: 600` now read
-  `var(--font-weight-strong, 600)`, and the 600-default weight knobs (buttons, avatar, badge
-  count, breadcrumb current, explorer section, form-field overline, menu current row, section
-  header) fall back to it. Set `:root { --font-weight-strong: 500; }` to cap the UI at medium.
-  Heading roles keep `--brand-heading-weight`. See `references/design-tokens.md` → Typography.
 
 ### New in 4.58.1
 
@@ -82,13 +73,7 @@ catalog.
   while keeping its two-step hierarchy: `:root { --font-weight-strong: 500; --font-weight-medium: 400; }`.
   See `references/design-tokens.md` → Typography.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.61.0
 
 - **Studio: `--font-weight-medium` gets a Brand Settings control (unreleased).** Typography →
   Body → **Medium weight** (Default / 400 / 500 / 600), right under Strong weight, saves
@@ -96,6 +81,14 @@ catalog.
   `:root`. Its set is one step lower than strong's (no 700, which would invert the hierarchy
   against the default 600). Lighten the whole UI from the studio with Strong 500 + Medium 400.
   Unset emits nothing; the atoms keep `500`.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
