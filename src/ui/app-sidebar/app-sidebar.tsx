@@ -7,7 +7,14 @@ import { Icon } from '../icon';
 import { SidebarNavItem } from '../sidebar-nav-item';
 import { Tooltip } from '../tooltip';
 
-import type { CSSProperties, ElementType, HTMLAttributes, ReactNode, SyntheticEvent } from 'react';
+import type {
+  CSSProperties,
+  ElementType,
+  HTMLAttributes,
+  PointerEvent,
+  ReactNode,
+  SyntheticEvent,
+} from 'react';
 
 export interface AppSidebarBrand {
   /** Wide logo (shown when expanded). */
@@ -197,6 +204,29 @@ export function AppSidebar({
     setFlyout({ label, x: rect.right, y: rect.top + rect.height / 2 });
   }, []);
   const closeFlyout = useCallback(() => setFlyout(null), []);
+  // Leaving the collapsed-flyout state drops any open flyout outright. Hiding
+  // it behind `showFlyout` was not enough: a row that kept focus while the
+  // rail expanded (a keyboard shortcut toggling `collapsed`) held its stale
+  // anchor, and the pill came back at the old geometry on the next collapse.
+  // Adjusting state during render (not in an effect) so it never paints.
+  if (!showFlyout && flyout) setFlyout(null);
+  // Touch has no hover: a tap fires emulated mouseenter + focus with no
+  // matching leave, so the pill would stick until the next tap elsewhere.
+  // Hover goes through pointer events filtered by `pointerType` (mouse and pen
+  // keep it), and focus opens the flyout only when it is `:focus-visible` —
+  // keyboard focus, never the focus a tap or click leaves behind.
+  const onRowPointerEnter = useCallback(
+    (label: string, e: PointerEvent<HTMLElement>) => {
+      if (e.pointerType !== 'touch') openFlyout(label, e);
+    },
+    [openFlyout],
+  );
+  const onRowFocus = useCallback(
+    (label: string, e: SyntheticEvent<HTMLElement>) => {
+      if (e.currentTarget.matches(':focus-visible')) openFlyout(label, e);
+    },
+    [openFlyout],
+  );
   // WCAG 1.4.13 (Dismissible): Escape hides the flyout without moving the
   // pointer or focus. Listened on the document, not the nav, so it also works
   // while only the pointer hovers a row and focus sits elsewhere. Not
@@ -310,9 +340,9 @@ export function AppSidebar({
                 title={collapsed && !collapsedFlyout ? item.label : undefined}
                 {...(showFlyout
                   ? {
-                      onMouseEnter: (e: SyntheticEvent<HTMLElement>) => openFlyout(item.label, e),
-                      onMouseLeave: closeFlyout,
-                      onFocus: (e: SyntheticEvent<HTMLElement>) => openFlyout(item.label, e),
+                      onPointerEnter: (e: PointerEvent<HTMLElement>) => onRowPointerEnter(item.label, e),
+                      onPointerLeave: closeFlyout,
+                      onFocus: (e: SyntheticEvent<HTMLElement>) => onRowFocus(item.label, e),
                       onBlur: closeFlyout,
                     }
                   : null)}
