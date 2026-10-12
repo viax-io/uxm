@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   safeFontFamily,
   safeFontWeight,
+  safeMediumFontWeight,
   safeLineHeight,
   safeTokenKey,
   safeTokenValue,
@@ -32,6 +33,13 @@ describe('css sanitizers', () => {
     expect(safeFontWeight('700')).toBe('700');
     expect(safeFontWeight('900')).toBeUndefined();
     expect(safeFontWeight('bold')).toBeUndefined();
+  });
+
+  it('safeMediumFontWeight is the closed set one step lower', () => {
+    expect(safeMediumFontWeight(400)).toBe('400');
+    expect(safeMediumFontWeight(' 500 ')).toBe('500');
+    expect(safeMediumFontWeight('700')).toBeUndefined();
+    expect(safeMediumFontWeight('400; color: red')).toBeUndefined();
   });
 
   it('scales and line height are ranged plain numbers', () => {

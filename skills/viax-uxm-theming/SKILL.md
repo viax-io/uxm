@@ -132,6 +132,7 @@ the store getter. Importing the wrong one fails silently.
       "typeScale": "1.125",                  // → --type-scale, multiplies every size
       "bodyLineHeight": "1.7",               // → --type-body-line-height + a body rule
       "strongFontWeight": "500",             // → --font-weight-strong ('500'|'600'|'700'), non-heading UI weight
+      "mediumFontWeight": "400",             // → --font-weight-medium ('400'|'500'|'600'), one step under strong
       "tokens": { "light": { "--color-accent": "#15895F" }, "dark": { … } }
     },
     // v2 multi-theme. The top-level overrides/brand REMAIN the default theme —

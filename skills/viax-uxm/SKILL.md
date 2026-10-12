@@ -90,6 +90,13 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Studio: `--font-weight-medium` gets a Brand Settings control (unreleased).** Typography →
+  Body → **Medium weight** (Default / 400 / 500 / 600), right under Strong weight, saves
+  `brand.mediumFontWeight`, and `generateOverridesCss` emits it as `--font-weight-medium` on
+  `:root`. Its set is one step lower than strong's (no 700, which would invert the hierarchy
+  against the default 600). Lighten the whole UI from the studio with Strong 500 + Medium 400.
+  Unset emits nothing; the atoms keep `500`.
+
 ## Workflow
 
 ### Where the documentation lives

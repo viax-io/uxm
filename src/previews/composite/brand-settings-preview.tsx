@@ -11,7 +11,7 @@ import {
 } from '@/ui';
 
 import {
-  ASSETS, FONT_OPTIONS, LINE_HEIGHT_OPTIONS, ROLES, SCALE_OPTIONS, WEIGHT_OPTIONS,
+  ASSETS, FONT_OPTIONS, LINE_HEIGHT_OPTIONS, MEDIUM_WEIGHT_OPTIONS, ROLES, SCALE_OPTIONS, WEIGHT_OPTIONS,
 } from './brand-settings-options';
 
 type TypeTab = 'body' | 'headings';
@@ -334,7 +334,8 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
 
   // Which tab carries a non-default value, for the dot on the tab label.
   const bodyDirty = Boolean(
-    brand.fontFamily || brand.typeScale || brand.bodyLineHeight || brand.strongFontWeight,
+    brand.fontFamily || brand.typeScale || brand.bodyLineHeight
+      || brand.strongFontWeight || brand.mediumFontWeight,
   );
   const headingsDirty = Boolean(
     brand.headingFontFamily || brand.headingFontWeight
@@ -479,6 +480,23 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                   onChange={(v) => setBrand({ strongFontWeight: v || undefined })}
                   aria-label={t('Strong text weight')}
                   options={WEIGHT_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
+                />
+              </FormField>
+
+              {/* One step under Strong. Kept next to it because the two only
+                  read as a hierarchy together: lowering Strong alone to 500
+                  makes both levels identical. */}
+              <FormField
+                label={t('Medium weight')}
+                labelPosition="side"
+                hint={t('Inactive tabs, links, form labels, tags and nav items. Default is 500 — keep it below Strong.')}
+              >
+                <ButtonGroup
+                  style={{ alignSelf: 'start' }}
+                  value={brand.mediumFontWeight ?? ''}
+                  onChange={(v) => setBrand({ mediumFontWeight: v || undefined })}
+                  aria-label={t('Medium text weight')}
+                  options={MEDIUM_WEIGHT_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
                 />
               </FormField>
             </Stack>
