@@ -70,7 +70,7 @@ export const messages: StudioMessages = {
     'Default: {hex}': 'Standard: {hex}',
     'Demo mode — changes are preview-only and won’t be saved.': 'Demomodus — Änderungen dienen nur der Vorschau und werden nicht gespeichert.',
     'Design system ready': 'Designsystem bereit',
-    'Dev': 'Dev',
+    'Dev': 'Entwickler',
     'Display': 'Display',
     'Each level inherits the settings above until you change it here. Display covers metric values and error codes.': 'Jede Ebene übernimmt die Einstellungen oben, bis Sie sie hier ändern. „Display“ umfasst Kennzahlen und Fehlercodes.',
     'Editing {mode} assets': 'Bearbeitet werden die {mode}-Assets',
