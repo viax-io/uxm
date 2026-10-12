@@ -1,3 +1,10 @@
+# [4.59.0](https://github.com/viax-io/uxm/compare/v4.58.2...v4.59.0) (2026-10-12)
+
+
+### Features
+
+* **studio:** set --font-weight-strong from Brand Settings ([e6f372a](https://github.com/viax-io/uxm/commit/e6f372a9c41bd873bd046cbf8232f614d3dc1f54))
+
 ## [4.58.2](https://github.com/viax-io/uxm/compare/v4.58.1...v4.58.2) (2026-10-12)
 
 

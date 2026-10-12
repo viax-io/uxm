@@ -112,6 +112,7 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   const roles = resolveTypeRoles(brand);
   const typeScale = safeTypeScale(brand.typeScale);
   const bodyLineHeight = safeLineHeight(brand.bodyLineHeight);
+  const strongFontWeight = safeFontWeight(brand.strongFontWeight);
   const logoUrl = safeUrl(brand.logoUrl);
   const iconUrl = safeUrl(brand.iconUrl);
   const logoUrlDark = safeUrl(brand.logoUrlDark);
@@ -162,6 +163,8 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   }
   if (typeScale) brandRules.push(`  --type-scale: ${typeScale};`);
   if (bodyLineHeight) brandRules.push(`  --type-body-line-height: ${bodyLineHeight};`);
+  // Read by every atom as `var(--font-weight-strong, 600)` — unset keeps 600.
+  if (strongFontWeight) brandRules.push(`  --font-weight-strong: ${strongFontWeight};`);
   if (logoUrl) brandRules.push(`  --brand-logo-url: url("${logoUrl}");`);
   if (iconUrl) brandRules.push(`  --brand-icon-url: url("${iconUrl}");`);
 

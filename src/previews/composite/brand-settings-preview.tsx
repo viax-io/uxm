@@ -333,7 +333,9 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
     Math.round(basePx * Number(roleScale || 1) * Number(baseScale || 1) * 10) / 10;
 
   // Which tab carries a non-default value, for the dot on the tab label.
-  const bodyDirty = Boolean(brand.fontFamily || brand.typeScale || brand.bodyLineHeight);
+  const bodyDirty = Boolean(
+    brand.fontFamily || brand.typeScale || brand.bodyLineHeight || brand.strongFontWeight,
+  );
   const headingsDirty = Boolean(
     brand.headingFontFamily || brand.headingFontWeight
     || ROLES.some((r) => brand[r.familyKey] || brand[r.weightKey] || brand[r.scaleKey]),
@@ -460,6 +462,23 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                   onChange={(v) => setBrand({ bodyLineHeight: v || undefined })}
                   aria-label={t('Body line height')}
                   options={LINE_HEIGHT_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
+                />
+              </FormField>
+
+              {/* The non-heading weight: buttons, active tabs, table headers,
+                  panel titles. Lives on Body because headings have their own
+                  Weight on the other tab and ignore this one. */}
+              <FormField
+                label={t('Strong weight')}
+                labelPosition="side"
+                hint={t('Buttons, active tabs, table headers and panel titles. Default is 600.')}
+              >
+                <ButtonGroup
+                  style={{ alignSelf: 'start' }}
+                  value={brand.strongFontWeight ?? ''}
+                  onChange={(v) => setBrand({ strongFontWeight: v || undefined })}
+                  aria-label={t('Strong text weight')}
+                  options={WEIGHT_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
                 />
               </FormField>
             </Stack>
