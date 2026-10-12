@@ -120,6 +120,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`AppSidebar` `collapsedFlyout`: `Escape` dismisses the flyout (unreleased)** (WCAG 1.4.13),
+  even when only the pointer is hovering. Also documented: the flyout is portalled to `<body>`,
+  so its `--uxm-app-sidebar-flyout-*` / `--uxm-tooltip-*` knobs must be set at `:root`/`body` —
+  declared on the sidebar element they never reach it.
+
 ## Workflow
 
 ### Where the documentation lives
