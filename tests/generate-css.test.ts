@@ -61,6 +61,12 @@ describe('generateOverridesCss', () => {
     expect(generateOverridesCss({}, {})).not.toContain('--font-weight-strong');
   });
 
+  it('emits the medium weight on :root from its own lower set', () => {
+    expect(generateOverridesCss({}, { mediumFontWeight: '400' })).toContain('--font-weight-medium: 400;');
+    expect(generateOverridesCss({}, { mediumFontWeight: '700' })).not.toContain('--font-weight-medium');
+    expect(generateOverridesCss({}, {})).not.toContain('--font-weight-medium');
+  });
+
   it('drops unsafe brand urls instead of emitting them', () => {
     const css = generateOverridesCss({}, { logoUrl: 'javascript:alert(1)', iconUrl: '/icon.svg' } as BrandConfig);
     expect(css).not.toContain('javascript:');

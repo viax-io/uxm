@@ -1,4 +1,5 @@
 import { useUxm } from './lib/context';
+import { safeMediumFontWeight } from './persistence/css-sanitizers';
 import { fontFileUrl, resolveTypeRoles, safeFontFamily, safeFontWeight, safeLineHeight, safeTypeScale } from './persistence/generate-css';
 
 /**
@@ -43,6 +44,7 @@ export function BrandFontStyles() {
   const typeScale = safeTypeScale(brand.typeScale);
   const bodyLineHeight = safeLineHeight(brand.bodyLineHeight);
   const strongFontWeight = safeFontWeight(brand.strongFontWeight);
+  const mediumFontWeight = safeMediumFontWeight(brand.mediumFontWeight);
 
   // One <link> per distinct family; React 19 also dedupes by href.
   const families = [...new Set(
@@ -70,7 +72,8 @@ export function BrandFontStyles() {
 ${roleVars}
   --type-scale: ${typeScale ?? 'initial'};
   --type-body-line-height: ${bodyLineHeight ?? 'initial'};
-  --font-weight-strong: ${strongFontWeight ?? 'initial'}; }
+  --font-weight-strong: ${strongFontWeight ?? 'initial'};
+  --font-weight-medium: ${mediumFontWeight ?? 'initial'}; }
 body { font-family: var(--brand-font); }${bodyLineHeight ? `
 body { line-height: var(--type-body-line-height, normal); }` : ''}`}</style>
     </>

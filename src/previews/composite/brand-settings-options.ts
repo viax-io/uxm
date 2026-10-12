@@ -59,6 +59,15 @@ export const WEIGHT_OPTIONS = [
   { value: '700', label: '700' },
 ];
 
+/** The medium weight's set, one step lower than WEIGHT_OPTIONS — see
+ *  `safeMediumFontWeight` for why 700 is out and 400 is in. */
+export const MEDIUM_WEIGHT_OPTIONS = [
+  { value: '', label: 'Default' },
+  { value: '400', label: '400' },
+  { value: '500', label: '500' },
+  { value: '600', label: '600' },
+];
+
 export const LINE_HEIGHT_OPTIONS = [
   { value: '', label: 'Default' },
   { value: '1.4', label: 'Tight' },

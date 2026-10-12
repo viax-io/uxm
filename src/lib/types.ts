@@ -40,7 +40,10 @@ export interface BrandConfig {
    *  Headings are separate (`headingFontWeight`); a per-component weight knob
    *  still wins locally. */
   strongFontWeight?: string;
-  tokens?: BrandTokens;
+  /** The library's "medium" UI weight ('400' | '500' | '600') → `--font-weight-medium`:
+   *  inactive tabs, links, form labels, tags, chips, nav items. Unset = 500.
+   *  One step under `strongFontWeight` — move both to keep the hierarchy. */
+  mediumFontWeight?: string;  tokens?: BrandTokens;
 }
 
 export type EditorControlType = 'color' | 'number' | 'select' | 'toggle' | 'slider' | 'text';

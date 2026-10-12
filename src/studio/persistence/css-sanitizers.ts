@@ -27,6 +27,13 @@ export function safeFontWeight(v: unknown): string | undefined {
   const s = typeof v === 'number' ? String(v) : typeof v === 'string' ? v.trim() : undefined;
   return s !== undefined && /^(500|600|700)$/.test(s) ? s : undefined;
 }
+// The medium weight sits one step BELOW strong, so its closed set is shifted
+// down: 400 is the useful choice (lighten the UI while keeping two levels),
+// and 700 would invert the hierarchy against the default strong of 600.
+export function safeMediumFontWeight(v: unknown): string | undefined {
+  const s = typeof v === 'number' ? String(v) : typeof v === 'string' ? v.trim() : undefined;
+  return s !== undefined && /^(400|500|600)$/.test(s) ? s : undefined;
+}
 // Scales multiply a length inside calc(), which makes a bad value far worse
 // than a dropped declaration: `abc` or `1.2px` (length × length) is invalid at
 // computed-value time, so `font-size` resolves to `unset` and INHERITS — one
