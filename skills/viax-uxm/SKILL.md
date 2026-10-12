@@ -109,6 +109,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Studio: `--font-weight-strong` gets a Brand Settings control (unreleased).** Typography → Body
+  → **Strong weight** (Default / 500 / 600 / 700) saves `brand.strongFontWeight`, and
+  `generateOverridesCss` emits it as `--font-weight-strong` on `:root` — so the library's
+  non-heading "strong" weight (buttons, active tabs, table headers, panel titles) can now be
+  set from the studio instead of only in host CSS. Unset emits nothing; the atoms keep `600`.
+
 ## Workflow
 
 ### Where the documentation lives
