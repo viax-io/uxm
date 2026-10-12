@@ -1,3 +1,11 @@
+## [4.58.2](https://github.com/viax-io/uxm/compare/v4.58.1...v4.58.2) (2026-10-12)
+
+
+### Bug Fixes
+
+* **app-sidebar:** no stuck flyout on touch, no stale flyout on re-collapse ([edd1c16](https://github.com/viax-io/uxm/commit/edd1c1604e4c3f320ccf7540628d195d4d45b2b8))
+* **studio-i18n:** polish a few studio translations ([b00b40a](https://github.com/viax-io/uxm/commit/b00b40a0c89aef4c5064e8c8990588fca8897abc))
+
 ## [4.58.1](https://github.com/viax-io/uxm/compare/v4.58.0...v4.58.1) (2026-10-12)
 
 
