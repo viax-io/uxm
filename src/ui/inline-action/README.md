@@ -43,7 +43,7 @@ Extends `ButtonHTMLAttributes<HTMLButtonElement>` — any standard button attrib
 | `--uxm-inline-action-color` | `--color-text-muted` | – | Resting label + icon colour. |
 | `--uxm-inline-action-hover-color` | `--color-accent-bold` | – | Hover label + icon colour. |
 | `--uxm-inline-action-font-size` | – | `10px` | Label font size. |
-| `--uxm-inline-action-font-weight` | – | `500` | Label font weight. |
+| `--uxm-inline-action-font-weight` | `--font-weight-medium` | `500` | Label font weight. |
 | `--uxm-inline-action-gap` | – | `4px` | Gap between icon and label. |
 | `--uxm-inline-action-icon-size` | – | `10px` | Inner SVG width/height (CSS overrides SVG attributes). |
 

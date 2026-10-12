@@ -38,7 +38,7 @@ The component does not accept an `as` / `linkAs` prop — wrap it in your router
 |----------|----------------|---------|---------|
 | `--uxm-back-link-color` | `--color-text-muted` | – | Resting text + icon colour. |
 | `--uxm-back-link-font-size` | – | `13px` | Label font size. |
-| `--uxm-back-link-font-weight` | – | `500` | Label font weight. |
+| `--uxm-back-link-font-weight` | `--font-weight-medium` | `500` | Label font weight. |
 | `--uxm-back-link-gap` | – | `6px` | Gap between the arrow icon and the label. |
 
 The hover colour is hardcoded to `--color-text` — there is no `--uxm-back-link-hover-color` knob.

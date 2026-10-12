@@ -36,7 +36,7 @@
 
   &__name {
     font-size: calc(var(--uxm-config-segment-item-name-size, 14px) * var(--type-scale, 1));
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
   }
 
   &__meta {

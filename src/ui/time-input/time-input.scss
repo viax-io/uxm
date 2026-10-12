@@ -105,7 +105,7 @@ span.uxm-time-input__icon {
      that ratio as the scale grows (at 150% it is 18px against the field's 21px).
      Scaling only the field size would shrink the gap away as text got larger. */
   font-size: calc((var(--uxm-time-input-font-size, 14px) - 2px) * var(--type-scale, 1));
-  font-weight: 500;
+  font-weight: var(--font-weight-medium, 500);
   line-height: 1;
   letter-spacing: 0.06em;
   pointer-events: none;

@@ -51,7 +51,7 @@ type LinkUnderline = 'none' | 'hover' | 'always';
 | `--uxm-link-color` | `--color-accent` | – | Default text colour. |
 | `--uxm-link-hover-color` | `--color-accent-bold` | – | Hover text colour. |
 | `--uxm-link-font-size` | – | `14px` | Font size. |
-| `--uxm-link-font-weight` | – | `500` | Font weight. |
+| `--uxm-link-font-weight` | `--font-weight-medium` | `500` | Font weight. |
 | `--uxm-link-underline-thickness` | – | `1px` | Underline thickness. |
 | `--uxm-link-underline-offset` | – | `3px` | Underline offset from baseline. |
 | `--uxm-link-external-icon-size` | – | `12px` | External arrow glyph size. |

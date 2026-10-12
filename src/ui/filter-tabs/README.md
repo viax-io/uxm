@@ -62,7 +62,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `--uxm-filter-tabs-padding-x` | – | `12px` | Horizontal tab padding. |
 | `--uxm-filter-tabs-padding-y` | – | `6px` | Vertical tab padding. |
 | `--uxm-filter-tabs-font-size` | – | `12px` | Tab label font size. |
-| `--uxm-filter-tabs-font-weight` | – | `500` | Inactive tab font weight (active forced to `600`). |
+| `--uxm-filter-tabs-font-weight` | `--font-weight-medium` | `500` | Inactive tab font weight (active forced to `600`). |
 | `--uxm-filter-tabs-inactive-text` | `--color-text-muted` | – | Inactive tab label colour. |
 | `--uxm-filter-tabs-active-bg` | `--color-card` | – | Active tab background. |
 | `--uxm-filter-tabs-active-text` | `--color-text` | – | Active tab label colour. |

@@ -130,7 +130,7 @@
     color: var(--uxm-loader-message-color, var(--color-text-muted));
     display: inline-block;
     font-size: calc(var(--uxm-loader-message-size, 13px) * var(--type-scale, 1));
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
     min-height: 1.2em;
   }
 

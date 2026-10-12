@@ -84,6 +84,14 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`--font-weight-medium` (unreleased)** — the companion of `--font-weight-strong` for the
+  library's medium (`500`) weight. Every atom that hard-coded `font-weight: 500` now reads
+  `var(--font-weight-medium, 500)`, and the 500-default weight knobs (links, tabs, filter tabs,
+  tags, chips, form-field label, breadcrumb links, sidebar nav item, ghost button, …) fall back to
+  it. Undeclared by the library, so nothing changes until a host sets it. To lighten the whole UI
+  while keeping its two-step hierarchy: `:root { --font-weight-strong: 500; --font-weight-medium: 400; }`.
+  See `references/design-tokens.md` → Typography.
+
 ## Workflow
 
 ### Where the documentation lives

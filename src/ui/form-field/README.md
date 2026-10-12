@@ -62,7 +62,7 @@ Exported as string unions so consumers can build toggle controls without re-decl
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-form-field-label-size` | – | `13px` | Label font size. |
-| `--uxm-form-field-label-weight` | – | `500` | Label font weight. |
+| `--uxm-form-field-label-weight` | `--font-weight-medium` | `500` | Label font weight. |
 | `--uxm-form-field-label-color` | `--color-text-strong` | – | Label colour. |
 | `--uxm-form-field-gap` | – | `8px` | Label↔control vertical distance in `top` layout (zero in `side`). |
 | `--uxm-form-field-hint-size` | – | `12px` | Hint font size. |

@@ -42,7 +42,7 @@ type LifecycleEdgeLabelVariant = 'true' | 'false' | 'neutral';
 | `--uxm-lifecycle-edge-label-radius` | – | `999px` | Border radius (pill shape by default). |
 | `--uxm-lifecycle-edge-label-border-width` | – | `1px` | Border thickness. |
 | `--uxm-lifecycle-edge-label-font-size` | – | `12px` | Label font size. |
-| `--uxm-lifecycle-edge-label-font-weight` | – | `500` | Label font weight. |
+| `--uxm-lifecycle-edge-label-font-weight` | `--font-weight-medium` | `500` | Label font weight. |
 | `--uxm-lifecycle-edge-label-padding-x` | – | `12px` | Horizontal padding. |
 | `--uxm-lifecycle-edge-label-padding-y` | – | `3px` | Vertical padding. |
 

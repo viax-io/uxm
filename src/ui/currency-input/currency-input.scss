@@ -91,7 +91,7 @@
   font-variant-numeric: tabular-nums;
 }
 .uxm-currency-input__code {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium, 500);
   letter-spacing: 0.02em;
   color: var(--uxm-currency-input-color, var(--color-text));
 }

@@ -43,7 +43,7 @@
   &__label {
     color: var(--uxm-typeoverview-label-color, var(--color-text-strong));
     font-size: calc(var(--uxm-typeoverview-label-size, 14px) * var(--type-scale, 1));
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
     margin: 0;
   }
 
@@ -60,7 +60,7 @@
     color: var(--color-accent-bold);
     display: inline-flex;
     font-size: calc(12px * var(--type-scale, 1));
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
     gap: 4px;
     margin-top: auto;
     opacity: 0;

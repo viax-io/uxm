@@ -13,7 +13,7 @@
   cursor: pointer;
   display: inline-flex;
   font-size: calc(var(--uxm-inline-action-font-size, 10px) * var(--type-scale, 1));
-  font-weight: var(--uxm-inline-action-font-weight, 500);
+  font-weight: var(--uxm-inline-action-font-weight, var(--font-weight-medium, 500));
   gap: var(--uxm-inline-action-gap, 4px);
   padding: 0;
   transition: color 0.15s ease;

@@ -8,7 +8,7 @@
   border-width: 1px;
   display: inline-flex;
   font: inherit;
-  font-weight: var(--uxm-tag-font-weight, 500);
+  font-weight: var(--uxm-tag-font-weight, var(--font-weight-medium, 500));
   line-height: 1;
   user-select: none;
   white-space: nowrap;

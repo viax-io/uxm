@@ -57,7 +57,7 @@
   &__label {
     color: var(--uxm-disclosure-inactive-text, var(--uxm-disclosure-color, var(--color-text)));
     font-size: calc(var(--uxm-disclosure-font-size, 14px) * var(--type-scale, 1));
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
   }
 
   &:hover &__label {

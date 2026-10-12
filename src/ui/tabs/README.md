@@ -61,7 +61,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `--uxm-tabs-padding-x` | – | `12px` | Tab horizontal padding. |
 | `--uxm-tabs-padding-y` | – | `6px` | Tab vertical padding. |
 | `--uxm-tabs-font-size` | – | `12px` | Tab label font size. |
-| `--uxm-tabs-font-weight` | – | `500` | Inactive tab font weight (active is bumped to `600`). |
+| `--uxm-tabs-font-weight` | `--font-weight-medium` | `500` | Inactive tab font weight (active is bumped to `600`). |
 | `--uxm-tabs-icon-gap` | – | `6px` | Gap between icon and label. |
 | `--uxm-tabs-icon-size` | – | `12px` | Icon box dimensions. |
 | `--uxm-tabs-inactive-text` | `--color-text-muted` | – | Inactive tab text colour. |

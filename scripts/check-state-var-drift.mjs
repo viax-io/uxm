@@ -56,13 +56,13 @@ for (const { cid, key, def } of knobs) {
   // Legacy-alias chains — var(--uxm-x-new, var(--uxm-x-old, <token>)) — are
   // agreement too when the INNERMOST token matches the registry default: the
   // middle var is an unset alias hook, so the final token is what paints. The
-  // global `--font-weight-strong` is the same kind of hook (undeclared by the
-  // library), so it may sit in the chain too.
+  // global `--font-weight-strong` / `--font-weight-medium` are the same kind of
+  // hook (undeclared by the library), so they may sit in the chain too.
   const defs = [squash(def)];
   if (/^[\d.]+$/.test(def)) defs.push(`${def}px`);
   const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(
-    `var\\(${escape(cssVar)}, (?:var\\(--(?:uxm-[\\w-]+|font-weight-strong), )*(?:${defs.map(escape).join('|')})\\)+`,
+    `var\\(${escape(cssVar)}, (?:var\\(--(?:uxm-[\\w-]+|font-weight-(?:strong|medium)), )*(?:${defs.map(escape).join('|')})\\)+`,
   );
   if (!reads.some(({ text }) => pattern.test(text))) {
     drift += 1;

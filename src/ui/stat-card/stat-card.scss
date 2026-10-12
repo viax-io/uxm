@@ -15,7 +15,7 @@
   &__label {
     color: var(--color-text-muted);
     font-size: calc(var(--uxm-stat-card-label-size, 13px) * var(--type-scale, 1));
-    font-weight: 500;
+    font-weight: var(--font-weight-medium, 500);
     margin: 0;
   }
 

@@ -16,7 +16,7 @@
   cursor: pointer;
   display: flex;
   font-size: calc(var(--uxm-explorer-list-item-font-size, 13px) * var(--type-scale, 1));
-  font-weight: var(--uxm-explorer-list-item-font-weight, 500);
+  font-weight: var(--uxm-explorer-list-item-font-weight, var(--font-weight-medium, 500));
   gap: var(--uxm-explorer-list-item-gap, 8px);
   padding-block: var(--uxm-explorer-list-item-padding-y, 8px);
   padding-inline: var(--uxm-explorer-list-item-padding-x, 12px);

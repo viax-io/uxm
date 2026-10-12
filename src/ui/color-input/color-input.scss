@@ -221,7 +221,7 @@
 }
 .uxm-color-input__channel-label {
   font-size: calc(10px * var(--type-scale, 1));
-  font-weight: 500;
+  font-weight: var(--font-weight-medium, 500);
   text-align: center;
   color: var(--color-text-muted);
 }

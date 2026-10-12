@@ -9,7 +9,7 @@
   cursor: pointer;
   display: inline-flex;
   font-size: calc(13px * var(--type-scale, 1));
-  font-weight: 500;
+  font-weight: var(--font-weight-medium, 500);
   gap: var(--uxm-button-with-icon-gap, 8px);
   padding: 8px 12px;
   transition: background-color 0.15s, border-color 0.15s, color 0.15s;

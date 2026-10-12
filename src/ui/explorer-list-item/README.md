@@ -44,7 +44,7 @@ Extends `Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'name'>` — the native `
 | `--uxm-explorer-list-item-border-radius` | – | `8px` | Row corner radius. |
 | `--uxm-explorer-list-item-inactive-color` | `--color-text-strong` | – | Label color (idle). |
 | `--uxm-explorer-list-item-font-size` | – | `13px` | Row font size. |
-| `--uxm-explorer-list-item-font-weight` | – | `500` | Row font weight. |
+| `--uxm-explorer-list-item-font-weight` | `--font-weight-medium` | `500` | Row font weight. |
 | `--uxm-explorer-list-item-gap` | – | `8px` | Gap between rail, label, and trailing slot. |
 | `--uxm-explorer-list-item-padding-y` | – | `8px` | Vertical padding. |
 | `--uxm-explorer-list-item-padding-x` | – | `12px` | Horizontal padding. |
