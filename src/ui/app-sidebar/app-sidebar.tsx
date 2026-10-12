@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { cn } from '@/helpers';
@@ -197,6 +197,19 @@ export function AppSidebar({
     setFlyout({ label, x: rect.right, y: rect.top + rect.height / 2 });
   }, []);
   const closeFlyout = useCallback(() => setFlyout(null), []);
+  // WCAG 1.4.13 (Dismissible): Escape hides the flyout without moving the
+  // pointer or focus. Listened on the document, not the nav, so it also works
+  // while only the pointer hovers a row and focus sits elsewhere. Not
+  // swallowed — an enclosing dialog still gets its Escape.
+  const flyoutOpen = showFlyout && flyout !== null;
+  useEffect(() => {
+    if (!flyoutOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeFlyout();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [flyoutOpen, closeFlyout]);
 
   return (
     <>
