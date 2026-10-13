@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 import { cn, rendersSomething } from '@/helpers';
 import { Icon } from '@/ui/icon';
@@ -29,11 +29,20 @@ export interface LifecycleZoomControlProps extends HTMLAttributes<HTMLDivElement
    * back through `value`: the field drops its draft on commit, so it re-renders
    * from `value` even when your clamp leaves `value` unchanged.
    *
-   * Omit and the percentage stays the read-only span it has always been.
+   * Feed the clamped result back synchronously: the field renders from `value`
+   * the moment it commits, so a host that debounces or animates zoom will show
+   * the old number until its own update lands.
+   *
+   * Omit and the percentage stays the read-only span it has always been — and
+   * `presets` renders nothing, since picking one would have nothing to call.
    */
   onValueChange?: (percent: number) => void;
-  /** Preset percentages offered behind a ▾ menu. Omit (or pass none) to hide it. */
-  presets?: number[];
+  /**
+   * Preset percentages offered behind a ▾ menu. Omit (or pass none) to hide it.
+   * Requires `onValueChange` — without it there is nothing for a preset to do,
+   * so the rows are not rendered.
+   */
+  presets?: readonly number[];
   /** Adds a "Fit to screen" row at the foot of the preset menu. */
   onFit?: () => void;
   /**
@@ -54,6 +63,124 @@ export interface LifecycleZoomControlProps extends HTMLAttributes<HTMLDivElement
    * Default ``(percent) => `${percent}%` ``.
    */
   formatPreset?: (percent: number) => string;
+}
+
+/**
+ * Reads the percentage out of whatever the user typed.
+ *
+ * Not a digit filter. Stripping every non-digit changes the MAGNITUDE of the
+ * number — `1.5` becomes 15 and `62.5` becomes 625 — and deletes a minus sign
+ * rather than letting the host's clamp reject it. It also loses fullwidth
+ * digits entirely (`１２５` → empty), which is what a Japanese IME produces, in
+ * a library that ships a Japanese studio locale.
+ *
+ * So: normalise fullwidth to ASCII, take the first number in the string, and
+ * accept either decimal separator. A trailing unit or a stray leading
+ * character still parses; nonsense returns `null` and the entry reverts.
+ * Rounding is the host's business — it owns the range.
+ */
+function parsePercent(raw: string): number | null {
+  const match = raw.normalize('NFKC').match(/-?\d+(?:[.,]\d+)?/);
+  if (!match) return null;
+  const parsed = Number(match[0].replace(',', '.'));
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+/**
+ * The editable percentage.
+ *
+ * Its own component so the draft unmounts with the input: held on the parent, a
+ * draft outlives a host toggling `onValueChange` off and back on, and the field
+ * returns showing a number the user abandoned.
+ */
+function ZoomField({
+  id,
+  value,
+  label,
+  onCommit,
+}: {
+  id: string;
+  value: number;
+  label: string;
+  onCommit: (percent: number) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  /**
+   * Re-select after a commit, once React has written the new text.
+   *
+   * Calling `select()` straight from the key handler selects the PRE-commit
+   * string, and the re-render that follows rewrites `value` and collapses the
+   * caret to the end — so the next entry appends (100, then 5, is 1005), which
+   * is the bug this is here to stop. An effect runs after the DOM is updated,
+   * which is the only point where selecting means anything.
+   */
+  const selectAfterRender = useRef(false);
+  useEffect(() => {
+    if (!selectAfterRender.current) return;
+    selectAfterRender.current = false;
+    inputRef.current?.select();
+  });
+
+  /**
+   * What has been typed but not committed. `null` means "nothing in flight,
+   * render `value`" — which is also what makes a rejected entry snap back:
+   * committing clears the draft, so the field falls to `value` whether or not
+   * the host's clamp actually changed it.
+   */
+  const [draft, setDraft] = useState<string | null>(null);
+
+  const commit = () => {
+    setDraft(null);
+    if (draft == null) return;
+    const parsed = parsePercent(draft);
+    // Re-entering the number already shown is not a change. Hosts act on this
+    // callback — recentring the canvas, dropping a zoom anchor — and should not
+    // be made to do that for a no-op.
+    if (parsed != null && parsed !== value) onCommit(parsed);
+  };
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      autoComplete="off"
+      spellCheck={false}
+      ref={inputRef}
+      id={id}
+      className="uxm-lifecycle-zoom-control__field"
+      aria-label={label}
+      value={draft ?? String(value)}
+      onFocus={(event) => event.currentTarget.select()}
+      onChange={(event) => setDraft(event.currentTarget.value)}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        // Mid-composition, Enter COMMITS the IME candidate and Escape cancels
+        // it — both belong to the IME, not to us. Claiming them would commit a
+        // half-composed entry. `keyCode === 229` is the legacy signal some
+        // engines still send instead of `isComposing`.
+        if (event.nativeEvent.isComposing || event.keyCode === 229) return;
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          commit();
+          selectAfterRender.current = true;
+        } else if (event.key === 'Escape') {
+          if (draft != null) {
+            // One layer at a time. `useDismiss` listens for Escape on the
+            // DOCUMENT, so an un-stopped Escape cancels this edit AND closes
+            // the dialog or popover the canvas sits in. With nothing in flight
+            // there is nothing to cancel, so it passes through as usual.
+            event.stopPropagation();
+            setDraft(null);
+          }
+          // Reverting in place rather than blurring: a keyboard user keeps
+          // their position, and commit-on-blur can no longer race the revert,
+          // which is what forced the draft into a ref before.
+          event.currentTarget.select();
+        }
+      }}
+    />
+  );
 }
 
 /**
@@ -84,38 +211,15 @@ export function LifecycleZoomControl({
   style,
   ...rest
 }: LifecycleZoomControlProps) {
+  const fieldId = useId();
   const sizeStyle = buttonSize ? { ['--uxm-lifecycle-zoom-button-size' as string]: `${buttonSize}px` } : undefined;
 
-  /**
-   * What the user has typed but not yet committed. `null` means "nothing in
-   * flight, render `value`" — which is also what makes a rejected entry snap
-   * back: committing clears the draft, so the field falls to `value` whether or
-   * not the consumer's clamp actually changed it.
-   *
-   * Mirrored in a ref because Escape has to cancel the draft and then blur, and
-   * blur commits. A `setDraft(null)` is not visible to the blur handler that
-   * runs in the same tick — it would still read the pre-Escape draft from its
-   * closure and commit the value the user just cancelled.
-   */
-  const [draft, setDraft] = useState<string | null>(null);
-  const draftRef = useRef<string | null>(null);
-  const putDraft = (next: string | null) => {
-    draftRef.current = next;
-    setDraft(next);
-  };
-
-  const commit = () => {
-    const raw = draftRef.current;
-    putDraft(null);
-    if (raw == null) return;
-    // Digits only: a stray `%`, a space or a thousands separator should not
-    // turn a perfectly clear "125 %" into a reverted entry.
-    const parsed = Number.parseInt(raw.replace(/[^0-9]/g, ''), 10);
-    if (Number.isFinite(parsed)) onValueChange?.(parsed);
-  };
-
+  // Presets are only rows if something happens when you pick one. Without
+  // `onValueChange` their `onSelect` is a no-op, and a menu of live-looking
+  // entries that close without doing anything is worse than no menu.
+  const presetRows = onValueChange ? (presets ?? []) : [];
   const presetItems: MenuEntry[] = [
-    ...(presets ?? []).map((percent) => ({
+    ...presetRows.map((percent) => ({
       key: `zoom-${percent}`,
       label: formatPreset(percent),
       // Marks where the user already is, which Menu renders as aria-current.
@@ -124,7 +228,7 @@ export function LifecycleZoomControl({
     })),
     ...(onFit
       ? ([
-          ...(presets?.length ? [{ separator: true as const, key: 'zoom-fit-sep' }] : []),
+          ...(presetRows.length ? [{ separator: true as const, key: 'zoom-fit-sep' }] : []),
           { key: 'zoom-fit', label: fitLabel, onSelect: onFit },
         ] satisfies MenuEntry[])
       : []),
@@ -145,32 +249,22 @@ export function LifecycleZoomControl({
       >
         <Icon glyph="minus" size={14} strokeWidth={2.5} />
       </button>
-      <div className="uxm-lifecycle-zoom-control__value">
-        {onValueChange ? (
-          <input
-            type="text"
-            inputMode="numeric"
-            className="uxm-lifecycle-zoom-control__field"
-            aria-label={valueLabel}
-            value={draft ?? String(value)}
-            onFocus={(event) => event.currentTarget.select()}
-            onChange={(event) => putDraft(event.currentTarget.value)}
-            onBlur={commit}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                commit();
-              } else if (event.key === 'Escape') {
-                putDraft(null);
-                event.currentTarget.blur();
-              }
-            }}
-          />
-        ) : (
+      {/* A <label> when editable, so clicking anywhere in the segment — the `%`
+          beside the number included — puts the caret in the field. Padding
+          alone only widens the input; the unit is a sibling and swallows its
+          own clicks. A plain <div> otherwise: a label with nothing to label is
+          a lie to assistive tech. */}
+      {onValueChange ? (
+        <label className="uxm-lifecycle-zoom-control__value" htmlFor={fieldId}>
+          <ZoomField id={fieldId} value={value} label={valueLabel} onCommit={onValueChange} />
+          <span className="uxm-lifecycle-zoom-control__unit">%</span>
+        </label>
+      ) : (
+        <div className="uxm-lifecycle-zoom-control__value">
           <span className="uxm-lifecycle-zoom-control__num">{value}</span>
-        )}
-        <span className="uxm-lifecycle-zoom-control__unit">%</span>
-      </div>
+          <span className="uxm-lifecycle-zoom-control__unit">%</span>
+        </div>
+      )}
       {presetItems.length > 0 && (
         <Menu
           items={presetItems}

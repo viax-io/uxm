@@ -57,6 +57,14 @@ somewhere. Clamp in the handler and feed the result back through `value`.
 The field is controlled by `value` and drops its draft the moment it commits, so a rejected
 entry snaps back to the clamped number **even when your clamp leaves `value` unchanged** and
 nothing re-renders from the prop. You do not need to force a re-render to correct the field.
+Feed the result back synchronously, though: a host that debounces or animates zoom will show
+the old number until its own update lands.
+
+The entry is parsed, not filtered: `62.5` and `62,5` are both 62.5, `~150 %` is 150, a minus
+survives for your clamp to reject rather than being flipped to a positive, and fullwidth
+digits (`１２５`, what a Japanese IME produces) are normalised first. Rounding is yours — the
+control has no range to round to. Re-entering the number already shown is not a change and
+reports nothing.
 
 ## Props
 
@@ -73,7 +81,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | `zoomOutLabel` | `string` | `'Zoom out'` | Accessible name for the − button. |
 | `zoomInLabel` | `string` | `'Zoom in'` | Accessible name for the + button. |
 | `onValueChange` | `(percent: number) => void` | – | Makes the percentage a typed field. Called on commit (Enter or blur) with the **unclamped** number entered. Omit and the value stays a read-only span. |
-| `presets` | `number[]` | – | Preset percentages behind a `▾`. Omit (or pass none) and no trigger renders. Choosing one calls `onValueChange`. |
+| `presets` | `readonly number[]` | – | Preset percentages behind a `▾`. Omit (or pass none) and no trigger renders. Choosing one calls `onValueChange` — and **without `onValueChange` the rows are not rendered at all**, since picking one would have nothing to call. |
 | `onFit` | `() => void` | – | Adds a "Fit to screen" row at the foot of the preset menu, separated from the presets. With no `presets`, the menu is that row alone. |
 | `trailing` | `ReactNode` | – | Content after a divider — a minimap toggle, usually. Nothing renders (divider included) when it would render nothing, so `trailing={open && <X/>}` is safe. |
 | `valueLabel` | `string` | `'Zoom percentage'` | Accessible name for the editable field. |
@@ -117,7 +125,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Button disabled | Handler not provided | Native `disabled`, `opacity: 0.6`, default cursor. |
 | Custom button size | `buttonSize` prop | Inline `--uxm-lifecycle-zoom-button-size` override; value cell height tracks it. |
 | Editable value | `onValueChange` given | The number becomes an `<input>` with tabular figures; the `%` stays beside it, never inside the editable text. |
-| Field focused | `:focus-visible` on the field | Accent ring drawn on the whole value cell, not the 26px text box inside it. |
+| Field focused | `:focus-visible` on the field | Accent ring drawn on the whole value cell. The field fills that cell, so clicking anywhere in the segment — the `%` included — puts the caret in it. |
 | Preset menu | `presets` and/or `onFit` given | `▾` button between the value and `+`; the preset matching `value` is marked `aria-current`. |
 | Trailing slot | `trailing` renders something | Hairline divider, then the slot content. |
 
@@ -127,6 +135,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Disabled state uses the native `disabled` attribute, removing the button from the tab order and announcing "dimmed" / "unavailable" to assistive tech.
 - The value display is a plain `<div>` containing two `<span>`s (number + `%` unit); it is not a live region. If you need screen-reader announcements when zoom changes, wrap the value or expose it via `aria-live` at the consumer level.
 - Focus styling falls back to the browser default — pair with a global focus-ring rule in the consumer app for visible focus indication on light backgrounds. The editable field is the exception: it draws its own ring on the value cell.
-- The editable field is a real `<input>` named by `valueLabel`. Enter commits, Escape reverts and leaves the field, blur commits, and focusing selects the text so typing replaces the number rather than appending to it.
+- The editable field is a real `<input>` named by `valueLabel`. Enter commits and re-selects, Escape reverts **in place** (focus stays put), blur commits, and focusing selects the text so typing replaces the number rather than appending to it.
+- Escape is stopped only while an edit is in flight. `useDismiss` listens for Escape on the document, so an un-stopped one would cancel the edit *and* close the dialog or popover the canvas sits in; with nothing to cancel it passes through, so a user is never trapped.
+- Enter and Escape are left to the IME while a composition is in progress — they confirm and cancel the candidate, and claiming them would commit a half-composed entry.
 - The `▾` trigger is a native `<button>`; the menu is the shipped `Menu`, so roles, arrow-key navigation and dismissal come from it. The preset matching `value` carries `aria-current="true"` — the active zoom is conveyed to assistive tech, not only by the checkmark.
 - `trailing` is yours to make accessible. A toggle belongs there as a button with `aria-pressed`, not a `div`.

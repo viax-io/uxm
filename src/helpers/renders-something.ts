@@ -14,9 +14,14 @@ import type { ReactNode } from 'react';
  * and a zero is exactly the value a numeric slot exists to show — excluding
  * everything falsy is the trap on the other side of this one.
  *
+ * Arrays recurse, because `items.map(…)` over an empty list is the other way a
+ * slot arrives empty: `[]`, `[false]` and `[null]` all render nothing, and a
+ * shallow check would call each of them content and paint the wrapper anyway.
+ *
  * Shared rather than re-derived per component: the `!= null` version shipped in
  * `LifecycleNodeCard` (4.62.0) and had to be fixed in 4.62.1.
  */
 export function rendersSomething(node: ReactNode): boolean {
+  if (Array.isArray(node)) return node.some(rendersSomething);
   return node != null && typeof node !== 'boolean' && node !== '';
 }
