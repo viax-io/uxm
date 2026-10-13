@@ -1839,11 +1839,11 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.57.0
 
-- **`AppSidebar` `collapsedFlyout` (unreleased)** — opt-in: in the collapsed rail, hovering or focusing an icon shows its label in a pill flyout (the shipped `Tooltip`, portalled, `aria-hidden`) instead of the native `title`. Knobs: `--uxm-app-sidebar-flyout-{offset,border-radius,z-index}`.
+- **`AppSidebar` `collapsedFlyout`** — opt-in: in the collapsed rail, hovering or focusing an icon shows its label in a pill flyout (the shipped `Tooltip`, portalled, `aria-hidden`) instead of the native `title`. Knobs: `--uxm-app-sidebar-flyout-{offset,border-radius,z-index}`.
 
 ### New in 4.58.0
 
-- **`--font-weight-strong` (unreleased)** — one global knob for the library's "strong" weight
+- **`--font-weight-strong`** — one global knob for the library's "strong" weight
   (default `600`, unchanged). The atoms that hard-coded `font-weight: 600` now read
   `var(--font-weight-strong, 600)`, and the 600-default weight knobs (buttons, avatar, badge
   count, breadcrumb current, explorer section, form-field overline, menu current row, section

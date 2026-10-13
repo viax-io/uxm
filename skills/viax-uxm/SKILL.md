@@ -43,21 +43,21 @@ catalog.
 
 ### New in 4.58.1
 
-- **`AppSidebar` `collapsedFlyout`: `Escape` dismisses the flyout (unreleased)** (WCAG 1.4.13),
+- **`AppSidebar` `collapsedFlyout`: `Escape` dismisses the flyout** (WCAG 1.4.13),
   even when only the pointer is hovering. Also documented: the flyout is portalled to `<body>`,
   so its `--uxm-app-sidebar-flyout-*` / `--uxm-tooltip-*` knobs must be set at `:root`/`body` —
   declared on the sidebar element they never reach it.
 
 ### New in 4.58.2
 
-- **`AppSidebar` `collapsedFlyout`: no flyout on touch, no stale pill (unreleased).** Hover is
+- **`AppSidebar` `collapsedFlyout`: no flyout on touch, no stale pill.** Hover is
   now read from pointer events and touch is ignored; focus opens the flyout only when it is
   `:focus-visible` (keyboard), so a tap no longer leaves the pill stuck on screen. Expanding the
   rail drops an open flyout, so it can't reappear at the old position on the next collapse.
 
 ### New in 4.59.0
 
-- **Studio: `--font-weight-strong` gets a Brand Settings control (unreleased).** Typography → Body
+- **Studio: `--font-weight-strong` gets a Brand Settings control.** Typography → Body
   → **Strong weight** (Default / 500 / 600 / 700) saves `brand.strongFontWeight`, and
   `generateOverridesCss` emits it as `--font-weight-strong` on `:root` — so the library's
   non-heading "strong" weight (buttons, active tabs, table headers, panel titles) can now be
@@ -65,7 +65,7 @@ catalog.
 
 ### New in 4.60.0
 
-- **`--font-weight-medium` (unreleased)** — the companion of `--font-weight-strong` for the
+- **`--font-weight-medium`** — the companion of `--font-weight-strong` for the
   library's medium (`500`) weight. Every atom that hard-coded `font-weight: 500` now reads
   `var(--font-weight-medium, 500)`, and the 500-default weight knobs (links, tabs, filter tabs,
   tags, chips, form-field label, breadcrumb links, sidebar nav item, ghost button, …) fall back to
@@ -75,7 +75,7 @@ catalog.
 
 ### New in 4.61.0
 
-- **Studio: `--font-weight-medium` gets a Brand Settings control (unreleased).** Typography →
+- **Studio: `--font-weight-medium` gets a Brand Settings control.** Typography →
   Body → **Medium weight** (Default / 400 / 500 / 600), right under Strong weight, saves
   `brand.mediumFontWeight`, and `generateOverridesCss` emits it as `--font-weight-medium` on
   `:root`. Its set is one step lower than strong's (no 700, which would invert the hierarchy
