@@ -33,6 +33,16 @@ export interface LifecycleNodeCardProps extends Omit<HTMLAttributes<HTMLDivEleme
   badge?: ReactNode;
   /** Override the kind label sub-text shown above the title. Defaults to humanised `kind`. */
   kindLabel?: ReactNode;
+  /**
+   * Secondary content under the title — participants, counts, a short status
+   * line. Renders as its own flex row inside the card body, aligned with the
+   * title, in a muted meta treatment. Unlike `title` it is NOT clamped to one
+   * line: content wraps and the card grows.
+   *
+   * Hidden if not provided, so a card without it renders exactly as before the
+   * slot existed.
+   */
+  meta?: ReactNode;
   /** Render the active/selected state. */
   active?: boolean;
 }
@@ -86,6 +96,7 @@ export function LifecycleNodeCard({
   title,
   badge,
   kindLabel,
+  meta,
   active,
   className,
   ...rest
@@ -108,6 +119,12 @@ export function LifecycleNodeCard({
       <div className="uxm-lifecycle-node-card__body">
         <p className="uxm-lifecycle-node-card__kind">{kindLabel ?? KIND_LABEL[kind]}</p>
         <p className="uxm-lifecycle-node-card__title">{title}</p>
+        {/* Outside the title <p> on purpose: a meta row folded into `title`
+            inherits the title's typography and its one-line overflow clip, and
+            puts non-title content inside the title paragraph. Same `!= null`
+            gate as `badge`, so a card without `meta` renders the DOM it always
+            did. */}
+        {meta != null && <div className="uxm-lifecycle-node-card__meta">{meta}</div>}
       </div>
       {badge != null && <span className="uxm-lifecycle-node-card__badge">{badge}</span>}
     </div>

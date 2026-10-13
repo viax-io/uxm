@@ -18,6 +18,8 @@ export const diagramDefs: ComponentDef[] = [
       { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 32, min: 24, max: 48, step: 2, unit: 'px' },
       { key: 'titleSize', label: 'Title Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px' },
       { key: 'kindSize', label: 'Kind Label Size', control: 'number', defaultValue: 11, min: 9, max: 14, step: 1, unit: 'px' },
+      { key: 'metaSize', label: 'Meta Size', control: 'number', defaultValue: 12, min: 9, max: 16, step: 1, unit: 'px' },
+      { key: 'metaGap', label: 'Meta Gap', control: 'number', defaultValue: 4, min: 0, max: 16, step: 1, unit: 'px' },
     ],
     layoutVariants: [
       {
@@ -30,6 +32,20 @@ export const diagramDefs: ComponentDef[] = [
           { value: 'interaction', label: 'Business Interaction' },
         ],
         defaultValue: 'state',
+      },
+      // Off by default so the shipped preview is unchanged — the slot is opt-in
+      // content a consumer passes, not part of the card's default look. Turning
+      // it on is what makes the two Meta knobs do anything visible. Named
+      // 'Meta Content', not 'Meta Row' — `MetaRow` is a shipped component and the
+      // panel would read as a reference to it.
+      {
+        key: 'meta',
+        label: 'Meta Content',
+        options: [
+          { value: 'none', label: 'None' },
+          { value: 'participants', label: 'Participants' },
+        ],
+        defaultValue: 'none',
       },
     ],
     events: [

@@ -1,6 +1,8 @@
 import type { PreviewProps } from '@/previews/types';
 import {
+  Avatar,
   LifecycleNodeCard,
+  Tag,
   type LifecycleNodeKind,
 } from '@/ui';
 
@@ -15,6 +17,25 @@ const SAMPLE: Record<LifecycleNodeKind, { title: string; badge?: string }> = {
   // studio, so a tenant or vendor name has no business in it.
   interaction: { title: 'SalesOrder' },
 };
+
+/**
+ * What the `meta` slot is for, shown with the content that motivated it: a
+ * participant row under the node name. Composed from shipped atoms, as a
+ * consumer would — the card styles the region, not what goes in it. Demo copy
+ * stays English and generic on purpose (this renders in every consumer's
+ * studio).
+ */
+function ParticipantsSample() {
+  return (
+    <>
+      <Tag type="accent" size="small" iconLeft={<Avatar size="small" initials="BU" aria-hidden />}>
+        Buyer
+      </Tag>
+      <Avatar size="small" initials="SE" />
+      <span>+2</span>
+    </>
+  );
+}
 
 export function LifecycleNodeCardPreview({ styles, variants }: PreviewProps) {
   const kind = (variants.type as LifecycleNodeKind) ?? 'state';
@@ -32,6 +53,8 @@ export function LifecycleNodeCardPreview({ styles, variants }: PreviewProps) {
     '--uxm-lifecycle-node-card-icon-size': `${styles.iconSize}px`,
     '--uxm-lifecycle-node-card-kind-size': `${styles.kindSize}px`,
     '--uxm-lifecycle-node-card-title-size': `${styles.titleSize}px`,
+    '--uxm-lifecycle-node-card-meta-size': `${styles.metaSize}px`,
+    '--uxm-lifecycle-node-card-meta-gap': `${styles.metaGap}px`,
     '--uxm-lifecycle-node-card-bg': styles.backgroundColor as string,
     '--uxm-lifecycle-node-card-border-color': styles.borderColor as string,
   } as CSSProperties;
@@ -41,6 +64,7 @@ export function LifecycleNodeCardPreview({ styles, variants }: PreviewProps) {
       kind={kind}
       title={sample.title}
       badge={sample.badge}
+      meta={variants.meta === 'participants' ? <ParticipantsSample /> : undefined}
       style={cssVars}
     />
   );
