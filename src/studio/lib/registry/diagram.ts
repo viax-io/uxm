@@ -18,6 +18,14 @@ export const diagramDefs: ComponentDef[] = [
       { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 32, min: 24, max: 48, step: 2, unit: 'px' },
       { key: 'titleSize', label: 'Title Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px' },
       { key: 'kindSize', label: 'Kind Label Size', control: 'number', defaultValue: 11, min: 9, max: 14, step: 1, unit: 'px' },
+      // Deliberately NOT `showWhen: { meta: 'participants' }`, tempting as it is
+      // (both paint nothing while the slot is empty, which is the default).
+      // Nothing else here is scoped, so adding one `showWhen` makes `meta` the
+      // panel's only scope key — and the panel builds its SECTION subtitles out
+      // of those keys, so Colors and Style would be subtitled "Shared across all
+      // meta contents". That is both ungrammatical and wrong about what matters:
+      // those knobs are shared across node TYPES. Same trap as the drop-slot
+      // variant below, and the subtitle is the more visible of the two.
       { key: 'metaSize', label: 'Meta Size', control: 'number', defaultValue: 12, min: 9, max: 16, step: 1, unit: 'px' },
       { key: 'metaGap', label: 'Meta Gap', control: 'number', defaultValue: 4, min: 0, max: 16, step: 1, unit: 'px' },
     ],
