@@ -1,3 +1,10 @@
+# [4.62.0](https://github.com/viax-io/uxm/compare/v4.61.0...v4.62.0) (2026-10-13)
+
+
+### Features
+
+* **lifecycle-node-card:** add a meta slot under the title ([be9e77e](https://github.com/viax-io/uxm/commit/be9e77e0419535b868b6d4e8a38be1f34452d152))
+
 # [4.61.0](https://github.com/viax-io/uxm/compare/v4.60.0...v4.61.0) (2026-10-12)
 
 

@@ -1849,3 +1849,10 @@ reached the published library; now shipped in 2.8.0.
   count, breadcrumb current, explorer section, form-field overline, menu current row, section
   header) fall back to it. Set `:root { --font-weight-strong: 500; }` to cap the UI at medium.
   Heading roles keep `--brand-heading-weight`. See `references/design-tokens.md` → Typography.
+
+### New in 4.58.1
+
+- **`AppSidebar` `collapsedFlyout`: `Escape` dismisses the flyout** (WCAG 1.4.13),
+  even when only the pointer is hovering. Also documented: the flyout is portalled to `<body>`,
+  so its `--uxm-app-sidebar-flyout-*` / `--uxm-tooltip-*` knobs must be set at `:root`/`body` —
+  declared on the sidebar element they never reach it.
