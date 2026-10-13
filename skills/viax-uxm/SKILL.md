@@ -90,6 +90,17 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`LifecycleNodeCard` gained a `meta` slot** (unreleased) — optional `ReactNode`
+  rendered as its own muted flex row under the title, inside the card body, so a
+  canvas node can carry participants / counts / a status line without folding
+  them into `title` (where they inherit the title's typography and its one-line
+  overflow clip). Knobs: `--uxm-lifecycle-node-card-meta-size` (`12px`) and
+  `--uxm-lifecycle-node-card-meta-gap` (`4px`, the space above the row — the only
+  part that changes card height, so account for it when keying connector geometry
+  off `min-height`). The region is deliberately never `overflow: hidden`, so ring
+  shadows and focus rings inside it are not clipped. Omitting `meta` renders the
+  DOM the card always had.
+
 ## Workflow
 
 ### Where the documentation lives

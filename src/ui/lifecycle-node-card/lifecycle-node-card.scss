@@ -91,6 +91,22 @@
     white-space: nowrap;
   }
 
+  /* Secondary content under the title (participants, counts, a status line).
+     Deliberately NOT clipped: a consumer's avatar stack draws ring shadows that
+     an `overflow: hidden` here would cut, which is the exact clipping this slot
+     exists to get content out of — it wraps and grows the card instead. The row
+     geometry (`gap`, `min-width`) is intrinsic, like the card's own `gap: 12px`,
+     so it carries no knob. */
+  &__meta {
+    align-items: center;
+    color: var(--color-text-muted);
+    display: flex;
+    font-size: calc(var(--uxm-lifecycle-node-card-meta-size, 12px) * var(--type-scale, 1));
+    gap: 6px;
+    margin-top: var(--uxm-lifecycle-node-card-meta-gap, 4px);
+    min-width: 0;
+  }
+
   &__badge {
     align-items: center;
     background-color: var(--kind-badge-bg);

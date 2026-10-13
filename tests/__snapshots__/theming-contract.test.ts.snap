@@ -933,6 +933,8 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-lifecycle-node-card-bg",
   "--uxm-lifecycle-node-card-border-color",
   "--uxm-lifecycle-node-card-kind-size",
+  "--uxm-lifecycle-node-card-meta-gap",
+  "--uxm-lifecycle-node-card-meta-size",
   "--uxm-lifecycle-node-card-min-height",
   "--uxm-lifecycle-node-card-padding-x",
   "--uxm-lifecycle-node-card-padding-y",
