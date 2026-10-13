@@ -102,6 +102,18 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`LifecycleZoomControl` grew the editing shape** (unreleased) — all opt-in behind
+  handlers, so a read-only canvas keeps the DOM and the look it had: `onValueChange`
+  turns the percentage into a typed field (Enter commits, Escape reverts, blur
+  commits, focus selects), `presets` + `onFit` add a `▾` menu whose current preset
+  carries `aria-current`, and `trailing` adds a hairline plus a slot for the minimap
+  toggle. Strings are props; `formatPreset(percent)` is a callback, not a suffix.
+  New knobs: `--uxm-lifecycle-zoom-divider-height` (`18px`) and
+  `--uxm-lifecycle-zoom-focus-ring` (`--color-accent`). **The control clamps
+  nothing**: `onValueChange` reports what was typed, you clamp and feed `value`
+  back, and the field snaps to your clamped number even when `value` itself did not
+  change.
+
 ## Workflow
 
 ### Where the documentation lives

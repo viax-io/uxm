@@ -47,6 +47,46 @@
     text-align: center;
   }
 
+  /* The editable percentage. A bare input rather than a composed TextInput:
+     this is a CELL of a segmented control, whose background, border and height
+     come from the cluster around it, so an atom with a surface of its own would
+     have to have all of it switched back off. Tabular figures keep the cell
+     from twitching as the number changes while dragging. */
+  &__field {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-medium, 500);
+    min-width: 0;
+    padding: 0;
+    text-align: center;
+    width: 26px;
+
+    /* The segment is the hit target, so the ring belongs on it, not on the
+       text box inside — a 26px outline reads as a stray artefact. */
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  /* Drawn on the cell, so the editable and read-only shapes focus alike. */
+  &__value:has(&__field:focus-visible) {
+    outline: 2px solid var(--uxm-lifecycle-zoom-focus-ring, var(--color-accent));
+    outline-offset: -2px;
+  }
+
+  /* Separates the trailing slot (a minimap toggle, usually) from the cluster.
+     Same hairline the value cell is bounded by, so it reads as one control. */
+  &__divider {
+    align-self: center;
+    background-color: var(--uxm-lifecycle-zoom-border-color, var(--color-border));
+    height: var(--uxm-lifecycle-zoom-divider-height, 18px);
+    width: 1px;
+  }
+
   &__unit {
     color: var(--color-text-muted);
     margin-left: 2px;
