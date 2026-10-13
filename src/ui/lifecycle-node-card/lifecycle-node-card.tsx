@@ -1,4 +1,4 @@
-import { cn } from '@/helpers';
+import { cn, rendersSomething } from '@/helpers';
 import { Icon } from '@/ui/icon';
 import { IconTile } from '@/ui/icon-tile';
 
@@ -70,22 +70,6 @@ const KIND_GLYPH: Record<LifecycleNodeKind, string> = {
   task: 'cog-6-tooth',
   interaction: 'business-interaction',
 };
-
-/**
- * Does this node actually render anything?
- *
- * `node != null` is not enough. `cond && <X/>` — the idiomatic React
- * conditional — evaluates to `false`, and `false != null`, so a slot gated on
- * `!= null` alone paints an EMPTY region that still carries its own margin and
- * padding. React itself renders nothing for booleans, `null`, `undefined` and
- * the empty string, so the gate has to agree with React about what "nothing" is.
- *
- * `0` is deliberately NOT treated as nothing: `badge={0}` is a real action
- * count, and `0` is exactly the value a numeric slot most wants to show.
- */
-function rendersSomething(node: ReactNode): boolean {
-  return node != null && typeof node !== 'boolean' && node !== '';
-}
 
 function NodeIcon({ kind }: { kind: LifecycleNodeKind }) {
   return <Icon glyph={KIND_GLYPH[kind]} size={14} strokeWidth={1.5} />;
