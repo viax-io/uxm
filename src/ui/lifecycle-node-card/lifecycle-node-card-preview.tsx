@@ -31,7 +31,7 @@ function ParticipantsSample() {
       <Tag type="accent" size="small" iconLeft={<Avatar size="small" initials="BU" aria-hidden />}>
         Buyer
       </Tag>
-      <Avatar size="small" initials="SE" />
+      <Avatar size="small" initials="SE" aria-hidden />
       <span>+2</span>
     </>
   );

@@ -94,17 +94,31 @@
   /* Secondary content under the title (participants, counts, a status line).
      Deliberately NOT clipped: a consumer's avatar stack draws ring shadows that
      an `overflow: hidden` here would cut, which is the exact clipping this slot
-     exists to get content out of — it wraps and grows the card instead. The row
-     geometry (`gap`, `min-width`) is intrinsic, like the card's own `gap: 12px`,
-     so it carries no knob. */
+     exists to get content out of.
+
+     `flex-wrap: wrap` is what makes "not clipped" safe. Without it, content that
+     does not shrink — avatars are `flex-shrink: 0` — simply leaves the card
+     through the visible overflow and runs under the trailing badge. Wrapping is
+     the half that makes the card GROW instead, which is what the slot promises.
+     `gap` is both axes, so wrapped lines are spaced by the same 6px.
+
+     That 6px is intrinsic row geometry, like the card's own `gap: 12px`, so it
+     carries no knob. */
   &__meta {
     align-items: center;
     color: var(--color-text-muted);
     display: flex;
+    flex-wrap: wrap;
     font-size: calc(var(--uxm-lifecycle-node-card-meta-size, 12px) * var(--type-scale, 1));
     gap: 6px;
     margin-top: var(--uxm-lifecycle-node-card-meta-gap, 4px);
-    min-width: 0;
+    /* A nested MetaRow — the composition the README recommends — declares its
+       own font size, so the card's knob would stop at the boundary and the
+       studio's "Meta Size" slider would silently do nothing to it. Forward it:
+       inside this card, the card's knob owns the meta type size. A consumer who
+       wants otherwise sets `--uxm-meta-row-font-size` on the MetaRow itself,
+       which is closer and still wins. */
+    --uxm-meta-row-font-size: var(--uxm-lifecycle-node-card-meta-size, 12px);
   }
 
   &__badge {

@@ -1,6 +1,6 @@
 # LifecycleNodeCard
 
-The pill card used for each node on a BI lifecycle canvas — a fixed-width row with a kind-coloured `IconTile`, a kind label, a title, an optional meta row under the title, and an optional trailing badge.
+The pill card used for each node on a BI lifecycle canvas — a fixed-width row with a kind-coloured `IconTile`, a kind label, a title, an optional wrapping meta row under the title, and an optional trailing badge.
 
 `LifecycleNodeCard` composes the shared `Icon` + `IconTile` primitives and carries four semantic kinds: `state` (green accent, checkmark, optional action-count badge), `condition` (warm accent, question mark, optional expression badge), `task` (cool accent, gear), and `interaction` (green accent, exchange arrows). The first three describe **steps** in a lifecycle; `interaction` describes the **object** the lifecycle runs on — a Business Interaction — which is why it is its own kind rather than a `state` card with a substituted `kindLabel`. It keeps `state`'s green on purpose — a BI is marked green everywhere else in the product, and the glyph plus the label carry the distinction. Kind selection drives both the glyph and the colour scheme via `--kind-icon-*` and `--kind-badge-*` CSS variables defined on the kind modifier class — these bridge to the underlying `IconTile`'s own `--uxm-icon-tile-*` surface so the kind-aware tint flows down without re-declaring colours per consumer. Sibling of `LifecycleConnector`, `LifecycleEdgeLabel`, `LifecycleMinimap`, `LifecycleTerminal`, and `LifecycleZoomControl`.
 
@@ -22,7 +22,15 @@ function CanvasNodes() {
       <LifecycleNodeCard
         kind="interaction"
         title="SalesOrder"
-        meta={<ParticipantStack roles={roles} />}
+        meta={
+          <>
+            <Tag type="accent" size="small" iconLeft={<Avatar size="small" initials="BU" aria-hidden />}>
+              Buyer
+            </Tag>
+            <Avatar size="small" initials="SE" aria-hidden />
+            <span>+2</span>
+          </>
+        }
       />
     </>
   );
@@ -36,10 +44,16 @@ row primitive — pass it straight in:
 <LifecycleNodeCard kind="state" title="In Cart" meta={<MetaRow>{['v1.2', '3 days ago']}</MetaRow>} />
 ```
 
-The card styles the region (muted, 12px, a flex row); what goes in it is the
-consumer's. Keeping the two separate is deliberate — `MetaRow` puts a dot
+The card styles the region (muted, 12px, a wrapping flex row); what goes in it
+is the consumer's. Keeping the two separate is deliberate — `MetaRow` puts a dot
 between every pair of children, which is right for a metadata strip and wrong
 for something like an overlapping avatar stack.
+
+A nested `MetaRow` inherits this card's `--uxm-lifecycle-node-card-meta-size`:
+the card forwards it into `--uxm-meta-row-font-size`, so the one knob (and the
+studio's "Meta Size" slider) governs the row either way. To size a `MetaRow`
+inside a card differently, set `--uxm-meta-row-font-size` on the `MetaRow`
+itself, which is closer and still wins.
 
 ## Props
 
@@ -51,7 +65,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — the native `title` a
 | `title` | `ReactNode` | – | **Required.** Primary text — typically the node name. |
 | `badge` | `ReactNode` | – | Trailing pill content — e.g. action count or truncated expression. Hidden if not provided. |
 | `kindLabel` | `ReactNode` | humanised `kind` (`interaction` → `Business Interaction`) | Override for the sub-text shown above the title. |
-| `meta` | `ReactNode` | – | Secondary content under the title — participants, counts, a short status line. Renders as its own flex row inside the card body, in a muted meta treatment. Not clamped: content wraps and the card grows. Hidden if not provided. |
+| `meta` | `ReactNode` | – | Secondary content under the title — participants, counts, a short status line. Renders as its own **wrapping** flex row inside the card body, in a muted meta treatment. Not clamped: the row wraps onto further lines and the card grows. Hidden when it would render nothing (`null`, `undefined`, `false`, `''`) — so `meta={cond && <X/>}` paints no region — while `meta={0}` still renders. |
 | `active` | `boolean` | `false` | Render the active/selected state. Adds the `--active` modifier class. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute except `title`)_ | – | – | Spread onto the root `<div>`. |
@@ -86,7 +100,7 @@ The card sets `box-sizing: border-box` on itself rather than inheriting it from 
 | `--uxm-lifecycle-node-card-kind-size` | – | `11px` | Kind sub-label font size. |
 | `--uxm-lifecycle-node-card-title-size` | – | `14px` | Title font size. |
 | `--uxm-lifecycle-node-card-meta-size` | – | `12px` | Meta row font size. |
-| `--uxm-lifecycle-node-card-meta-gap` | – | `4px` | Space between the title and the meta row. The only part of the slot that changes card height, so a canvas keying connector geometry off `min-height` should account for it. |
+| `--uxm-lifecycle-node-card-meta-gap` | – | `4px` | Space between the title and the meta row. Note that adding `meta` grows the card by the **row's own height plus this gap** (and by a further line each time the row wraps), so a canvas keying connector geometry off `min-height` must allow for all of it, not just the gap. |
 | `--kind-icon-bg` | per-kind | – | IconTile background (bridged to `--uxm-icon-tile-bg`). |
 | `--kind-icon-color` | per-kind | – | IconTile foreground (bridged to `--uxm-icon-tile-color`). |
 | `--kind-badge-bg` | per-kind | – | Trailing badge background. |
@@ -123,7 +137,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Active | `active` prop true | Border switches to `--color-accent` with a 3px accent-mixed glow. |
 | Custom kind label | `kindLabel` prop set | Sub-text replaces the default humanised kind. |
 | Meta row | `meta` prop set | A muted flex row under the title, inside the card body. |
-| No meta row | `meta` omitted / null | Region not rendered — the card's DOM is identical to a card from before the slot existed. |
+| Meta row wraps | `meta` content wider than the row | Wraps onto further lines, 6px apart, and the card grows. A single item wider than the row still overflows — wrapping is between items, not inside them. |
+| No meta row | `meta` renders nothing (`null`, `undefined`, `false`, `''`) | Region not rendered — the card's DOM is identical to a card from before the slot existed. |
 | No badge | `badge` omitted / null | Trailing pill not rendered. |
 | Title overflow | Structural | Title clamped to one line with ellipsis. |
 
@@ -133,6 +148,6 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - The icon tile is marked `aria-hidden="true"` — the kind is conveyed through the textual sub-label (`State` / `Condition` / `Task`), so the icon never duplicates that announcement.
 - Title clamps with `text-overflow: ellipsis`; truncated names are not surfaced as `title` attributes. If full titles are important to consumers, pass an `aria-label` via the spread props.
 - The active state communicates selection visually (border + glow) only — if used in a selection list, also forward `aria-current="true"` or `aria-selected="true"` via the spread props.
-- The meta region is a plain `<div>` with no role: the card neither names nor announces it. When its content repeats something the card already conveys, mark the content `aria-hidden` and put the real text on the card's `aria-label` — a participant stack of avatars is the usual case.
-- Meta content is **not** clamped, unlike the title. Long content wraps and grows the card rather than being silently cut, and the region is never `overflow: hidden` — so ring shadows, focus rings and popovers inside it are not clipped.
+- The meta region is a plain `<div>` with no role: the card neither names nor announces it. Content that is visual-only — a stack of initials avatars, say — still has to reach assistive tech **as text**: put a visually hidden `<span>Participants: Buyer, Seller, +2</span>` in the slot beside the `aria-hidden` visuals. Do **not** reach for `aria-label` on the card root instead: the root is a role-less `<div>`, naming a generic element is prohibited by ARIA and dropped by most screen readers, so the label would be lost along with the content it replaced. If the card is interactive in your app, the wrapper you already give it (a `button`, a link, a `role="listitem"`) is the element that can carry a name.
+- Meta content is **not** clamped, unlike the title. The row wraps and grows the card rather than being silently cut, and the region is never `overflow: hidden` — so ring shadows, focus rings and popovers inside it are not clipped.
 - The trailing badge is rendered as a `<span>` with no role; for richer semantics (e.g. action count badges that link out), the consumer should provide an interactive element inside `badge`.

@@ -35,12 +35,15 @@ export interface LifecycleNodeCardProps extends Omit<HTMLAttributes<HTMLDivEleme
   kindLabel?: ReactNode;
   /**
    * Secondary content under the title — participants, counts, a short status
-   * line. Renders as its own flex row inside the card body, aligned with the
-   * title, in a muted meta treatment. Unlike `title` it is NOT clamped to one
-   * line: content wraps and the card grows.
+   * line. Renders as its own wrapping flex row inside the card body, aligned
+   * with the title, in a muted meta treatment. Unlike `title` it is NOT clamped
+   * to one line: the row wraps and the card grows to fit it.
    *
-   * Hidden if not provided, so a card without it renders exactly as before the
-   * slot existed.
+   * A single item wider than the row (one long unbreakable chip) still
+   * overflows — wrapping happens between items, not inside them.
+   *
+   * Hidden when it would render nothing (`null`, `undefined`, `false`, `''`),
+   * so a card without it renders exactly as before the slot existed.
    */
   meta?: ReactNode;
   /** Render the active/selected state. */
@@ -67,6 +70,22 @@ const KIND_GLYPH: Record<LifecycleNodeKind, string> = {
   task: 'cog-6-tooth',
   interaction: 'business-interaction',
 };
+
+/**
+ * Does this node actually render anything?
+ *
+ * `node != null` is not enough. `cond && <X/>` — the idiomatic React
+ * conditional — evaluates to `false`, and `false != null`, so a slot gated on
+ * `!= null` alone paints an EMPTY region that still carries its own margin and
+ * padding. React itself renders nothing for booleans, `null`, `undefined` and
+ * the empty string, so the gate has to agree with React about what "nothing" is.
+ *
+ * `0` is deliberately NOT treated as nothing: `badge={0}` is a real action
+ * count, and `0` is exactly the value a numeric slot most wants to show.
+ */
+function rendersSomething(node: ReactNode): boolean {
+  return node != null && typeof node !== 'boolean' && node !== '';
+}
 
 function NodeIcon({ kind }: { kind: LifecycleNodeKind }) {
   return <Icon glyph={KIND_GLYPH[kind]} size={14} strokeWidth={1.5} />;
@@ -121,12 +140,12 @@ export function LifecycleNodeCard({
         <p className="uxm-lifecycle-node-card__title">{title}</p>
         {/* Outside the title <p> on purpose: a meta row folded into `title`
             inherits the title's typography and its one-line overflow clip, and
-            puts non-title content inside the title paragraph. Same `!= null`
-            gate as `badge`, so a card without `meta` renders the DOM it always
-            did. */}
-        {meta != null && <div className="uxm-lifecycle-node-card__meta">{meta}</div>}
+            puts non-title content inside the title paragraph. */}
+        {rendersSomething(meta) && (
+          <div className="uxm-lifecycle-node-card__meta">{meta}</div>
+        )}
       </div>
-      {badge != null && <span className="uxm-lifecycle-node-card__badge">{badge}</span>}
+      {rendersSomething(badge) && <span className="uxm-lifecycle-node-card__badge">{badge}</span>}
     </div>
   );
 }
