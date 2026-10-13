@@ -1,3 +1,10 @@
+## [4.62.1](https://github.com/viax-io/uxm/compare/v4.62.0...v4.62.1) (2026-10-13)
+
+
+### Bug Fixes
+
+* **lifecycle-node-card:** wrap the meta row, and don't paint an empty one ([4b76b1d](https://github.com/viax-io/uxm/commit/4b76b1d40cf8c78e943fed18faaf156d4d01dcfa))
+
 # [4.62.0](https://github.com/viax-io/uxm/compare/v4.61.0...v4.62.0) (2026-10-13)
 
 

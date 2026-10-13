@@ -1856,3 +1856,10 @@ reached the published library; now shipped in 2.8.0.
   even when only the pointer is hovering. Also documented: the flyout is portalled to `<body>`,
   so its `--uxm-app-sidebar-flyout-*` / `--uxm-tooltip-*` knobs must be set at `:root`/`body` —
   declared on the sidebar element they never reach it.
+
+### New in 4.58.2
+
+- **`AppSidebar` `collapsedFlyout`: no flyout on touch, no stale pill.** Hover is
+  now read from pointer events and touch is ignored; focus opens the flyout only when it is
+  `:focus-visible` (keyboard), so a tap no longer leaves the pill stuck on screen. Expanding the
+  rail drops an open flyout, so it can't reappear at the old position on the next collapse.
