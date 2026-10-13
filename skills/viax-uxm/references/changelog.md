@@ -1863,3 +1863,11 @@ reached the published library; now shipped in 2.8.0.
   now read from pointer events and touch is ignored; focus opens the flyout only when it is
   `:focus-visible` (keyboard), so a tap no longer leaves the pill stuck on screen. Expanding the
   rail drops an open flyout, so it can't reappear at the old position on the next collapse.
+
+### New in 4.59.0
+
+- **Studio: `--font-weight-strong` gets a Brand Settings control.** Typography → Body
+  → **Strong weight** (Default / 500 / 600 / 700) saves `brand.strongFontWeight`, and
+  `generateOverridesCss` emits it as `--font-weight-strong` on `:root` — so the library's
+  non-heading "strong" weight (buttons, active tabs, table headers, panel titles) can now be
+  set from the studio instead of only in host CSS. Unset emits nothing; the atoms keep `600`.
