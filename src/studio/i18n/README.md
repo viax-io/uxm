@@ -25,6 +25,17 @@ hardcode one.
 The same tag also reaches the atoms rendered inside the previews via `UxmLocaleProvider`, so a
 calendar in the canvas formats in the language the panel around it is labelled in.
 
+### No `locale` → the studio's own switcher
+
+A host that passes nothing gets English plus a `LanguageSwitcher` in the canvas top bar, next to
+the light/dark toggle, listing every `STUDIO_LOCALES` entry by its endonym. The pick lives in
+`StudioI18nProvider`'s state **for the session only** — no storage, no `navigator`, no backend —
+so a reload is English again. That is a user's explicit choice, not the library guessing; a host
+that wants it remembered passes `locale` and owns it, and the switcher disappears.
+
+Switching keeps the workbench mounted: the previous dictionary stays on screen until the next one
+has loaded. Only the boot locale holds the tree back (see `context.tsx`).
+
 ## Resolution — three links, then English
 
 The shipped list is **closed and library-owned** ([`catalog.ts`](./catalog.ts)), which is why

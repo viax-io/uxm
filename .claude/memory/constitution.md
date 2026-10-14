@@ -1,6 +1,24 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.5.0 → 1.5.1
+Bump rationale: PATCH — clarifies Principle VI's "the host supplies the
+locale" rule: with no host `locale`, the studio may offer its own switcher
+and keep the user's explicit pick in memory for the session. No storage,
+backend or `navigator` — the ban is unchanged; a host-passed `locale` still
+wins and hides the switcher.
+
+Modified principles:
+  - VI. Localisation Boundary — "The host supplies the locale" bullet gains
+    the no-host-locale clarification.
+Added sections: none. Removed sections: none.
+
+Templates requiring updates:
+  ✅ src/studio/i18n/README.md ("No `locale` → the studio's own switcher")
+  ✅ skills/viax-uxm/SKILL.md (Unreleased bullet)
+  — CLAUDE.md, commands, agents: no change needed
+
+Previous report (1.4.1 → 1.5.0) — kept for history:
 Version change: 1.4.1 → 1.5.0
 Bump rationale: MINOR — Principle VI is scoped and gains a carve-out. The
 "no message catalogue, ever" ban now reads explicitly as a ban on `/ui`
@@ -340,6 +358,11 @@ an English-only tool.
   read storage, call a backend, consult `navigator`, or own a locale list that
   anything outside it can configure. `STUDIO_LOCALES` is closed and
   library-owned — the deliberate opposite of an app's realm-supplied list.
+  When the host passes **no** `locale`, the studio MAY offer its own switcher
+  over `STUDIO_LOCALES`, starting at English, and hold the user's explicit pick
+  in memory for the session. That is a choice, not resolution: the storage /
+  backend / `navigator` ban still applies, and a host that passes `locale`
+  owns it outright — the switcher MUST NOT render then.
 - **Nothing leaks into `/ui`.** The dictionaries load only under the `/studio`
   subpath, lazily, one chunk per locale. A consumer importing `@viax/uxm/ui`
   MUST pay nothing for them.
@@ -453,4 +476,4 @@ end.
   document end-to-end and file follow-up issues for drift.
 - **Deferred items.** None.
 
-**Version**: 1.5.0 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-10-06
+**Version**: 1.5.1 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-10-13

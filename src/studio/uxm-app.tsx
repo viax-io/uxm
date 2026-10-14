@@ -52,6 +52,11 @@ export interface UxmAppProps {
    * studio ships no dictionary for degrades to its base language and then to
    * English — `de-AT` renders German, `is-IS` renders English.
    *
+   * Omit it and the studio starts in English and shows its own language
+   * switcher in the canvas top bar; the pick lasts for the session only
+   * (held in memory — never storage, never `navigator`). Pass it and the host
+   * owns the language, so that switcher is not rendered.
+   *
    * This also reaches the atoms rendered in the previews, via
    * `UxmLocaleProvider`, so a calendar in the canvas formats in the same
    * language the panel around it is labelled in. It does NOT translate the

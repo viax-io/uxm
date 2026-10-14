@@ -7,6 +7,7 @@ import { editableCellDef } from './editable-cell';
 import { fileUploadDef } from './file-upload';
 import { inputTextDef } from './input-text';
 import { inputWithIconDef } from './input-with-icon';
+import { languageSwitcherDef } from './language-switcher';
 import { listboxDef } from './listbox';
 import { menuDef } from './menu';
 import { numberInputDef } from './number-input';
@@ -46,6 +47,7 @@ export const inputsDefs: ComponentDef[] = [
   selectDropdownDef,
   searchDropdownDef,
   listboxDef,
+  languageSwitcherDef,
   menuDef,
   checkboxDef,
   toggleSwitchDef,
