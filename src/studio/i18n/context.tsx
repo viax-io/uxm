@@ -15,7 +15,12 @@ import type {
 import type { ReactNode } from 'react';
 
 export interface StudioI18nValue {
-  /** The tag actually in use — always one the studio ships a dictionary for. */
+  /**
+   * The tag whose dictionary is on screen — always one the studio ships.
+   * This is the *displayed* language, not the requested one: while a switch
+   * is loading it still names the previous language, and after a dictionary
+   * fails to load it is `en`, which is what the user then actually reads.
+   */
   locale: string;
   meta: StudioLocaleMeta;
   /** Writing direction for the resolved locale. */
@@ -67,7 +72,9 @@ export interface StudioI18nProviderProps {
    * language or to English.
    *
    * Omitted → the studio starts in English and exposes `setLocale` so its
-   * own switcher can change it for the session, in memory only.
+   * own switcher can change it for the session, in memory only. Dropping a
+   * previously passed `locale` hands the language back to that switcher,
+   * which starts again from English rather than inheriting the host's tag.
    */
   locale?: string;
   children: ReactNode;
@@ -76,12 +83,15 @@ export interface StudioI18nProviderProps {
 /**
  * Carries one studio dictionary to the workbench chrome below it.
  *
- * Mounted by `UxmApp` from its `locale` prop — a consumer never mounts this
- * directly. Non-English dictionaries load lazily, and the tree is held back
- * until the dictionary is in: rendering English first and swapping a tick
- * later is the one failure mode worth avoiding, since it is visible on every
- * single boot. English resolves synchronously, so the default path never
- * waits.
+ * Mounted by `UxmApp` with its `locale` prop — a consumer never mounts this
+ * directly. The language comes from that prop when the host passes one, and
+ * otherwise from the studio's own switcher via `setLocale`.
+ *
+ * Non-English dictionaries load lazily. Only the **boot** dictionary holds the
+ * tree back: rendering English first and swapping a tick later is visible on
+ * every single boot. A later switch keeps the previous dictionary on screen
+ * until the next one is in, so the workbench never remounts. English resolves
+ * synchronously, so the default path never waits.
  */
 export function StudioI18nProvider({ locale, children }: StudioI18nProviderProps) {
   // Used only when the host passes nothing: the user's explicit pick from the

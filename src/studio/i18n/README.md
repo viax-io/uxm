@@ -31,10 +31,13 @@ A host that passes nothing gets English plus a `LanguageSwitcher` in the canvas 
 the light/dark toggle, listing every `STUDIO_LOCALES` entry by its endonym. The pick lives in
 `StudioI18nProvider`'s state **for the session only** — no storage, no `navigator`, no backend —
 so a reload is English again. That is a user's explicit choice, not the library guessing; a host
-that wants it remembered passes `locale` and owns it, and the switcher disappears.
+that wants it remembered passes `locale` and owns it, and the switcher disappears. A host that
+stops passing `locale` hands the language back to the switcher, which starts again from English.
 
 Switching keeps the workbench mounted: the previous dictionary stays on screen until the next one
-has loaded. Only the boot locale holds the tree back (see `context.tsx`).
+has loaded. Only the boot locale holds the tree back (see `context.tsx`). So `useStudioI18n().locale`
+is the language **on screen**, not the one just requested — during a switch it still names the
+previous language, and if a dictionary fails to load it is `en`.
 
 ## Resolution — three links, then English
 
