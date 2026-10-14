@@ -1871,3 +1871,13 @@ reached the published library; now shipped in 2.8.0.
   `generateOverridesCss` emits it as `--font-weight-strong` on `:root` — so the library's
   non-heading "strong" weight (buttons, active tabs, table headers, panel titles) can now be
   set from the studio instead of only in host CSS. Unset emits nothing; the atoms keep `600`.
+
+### New in 4.60.0
+
+- **`--font-weight-medium`** — the companion of `--font-weight-strong` for the
+  library's medium (`500`) weight. Every atom that hard-coded `font-weight: 500` now reads
+  `var(--font-weight-medium, 500)`, and the 500-default weight knobs (links, tabs, filter tabs,
+  tags, chips, form-field label, breadcrumb links, sidebar nav item, ghost button, …) fall back to
+  it. Undeclared by the library, so nothing changes until a host sets it. To lighten the whole UI
+  while keeping its two-step hierarchy: `:root { --font-weight-strong: 500; --font-weight-medium: 400; }`.
+  See `references/design-tokens.md` → Typography.

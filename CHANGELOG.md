@@ -1,3 +1,15 @@
+# [4.64.0](https://github.com/viax-io/uxm/compare/v4.63.0...v4.64.0) (2026-10-14)
+
+
+### Bug Fixes
+
+* **range-bar:** correct the studio mapping, the maths guards and the a11y rule ([e13ccdf](https://github.com/viax-io/uxm/commit/e13ccdf90aee262932616ce3ac2765471aef8ad5))
+
+
+### Features
+
+* **range-bar:** add a display-only interval bar ([02aa28e](https://github.com/viax-io/uxm/commit/02aa28ea4634dbda0fb68b85448ec04c4f79e244))
+
 # [4.63.0](https://github.com/viax-io/uxm/compare/v4.62.1...v4.63.0) (2026-10-13)
 
 
