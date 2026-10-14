@@ -1,3 +1,10 @@
+# [4.65.0](https://github.com/viax-io/uxm/compare/v4.64.0...v4.65.0) (2026-10-14)
+
+
+### Features
+
+* **studio:** built-in language switcher when the host passes no locale ([53fdb09](https://github.com/viax-io/uxm/commit/53fdb09c72b414bc31835cdf7218dc5a70f529b2))
+
 # [4.64.0](https://github.com/viax-io/uxm/compare/v4.63.0...v4.64.0) (2026-10-14)
 
 

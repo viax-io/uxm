@@ -1881,3 +1881,12 @@ reached the published library; now shipped in 2.8.0.
   it. Undeclared by the library, so nothing changes until a host sets it. To lighten the whole UI
   while keeping its two-step hierarchy: `:root { --font-weight-strong: 500; --font-weight-medium: 400; }`.
   See `references/design-tokens.md` → Typography.
+
+### New in 4.61.0
+
+- **Studio: `--font-weight-medium` gets a Brand Settings control.** Typography →
+  Body → **Medium weight** (Default / 400 / 500 / 600), right under Strong weight, saves
+  `brand.mediumFontWeight`, and `generateOverridesCss` emits it as `--font-weight-medium` on
+  `:root`. Its set is one step lower than strong's (no 700, which would invert the hierarchy
+  against the default 600). Lighten the whole UI from the studio with Strong 500 + Medium 400.
+  Unset emits nothing; the atoms keep `500`.
