@@ -953,6 +953,8 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-lifecycle-zoom-border-color",
   "--uxm-lifecycle-zoom-button-size",
   "--uxm-lifecycle-zoom-color",
+  "--uxm-lifecycle-zoom-divider-height",
+  "--uxm-lifecycle-zoom-focus-ring",
   "--uxm-lifecycle-zoom-font-size",
   "--uxm-lifecycle-zoom-icon-color",
   "--uxm-lifecycle-zoom-radius",

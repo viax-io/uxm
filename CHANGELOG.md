@@ -1,3 +1,15 @@
+# [4.63.0](https://github.com/viax-io/uxm/compare/v4.62.1...v4.63.0) (2026-10-13)
+
+
+### Bug Fixes
+
+* **lifecycle-zoom-control:** harden the editable field before it ships ([29616d9](https://github.com/viax-io/uxm/commit/29616d982438e3360f766a113c5f085fc7a8c09d))
+
+
+### Features
+
+* **lifecycle-zoom-control:** editable value, presets and a trailing slot ([6680cc5](https://github.com/viax-io/uxm/commit/6680cc5608cfe064110b88075c5f7cb9cf98ac65))
+
 ## [4.62.1](https://github.com/viax-io/uxm/compare/v4.62.0...v4.62.1) (2026-10-13)
 
 

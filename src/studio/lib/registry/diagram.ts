@@ -409,8 +409,28 @@ export const diagramDefs: ComponentDef[] = [
       { key: 'fontSize', label: 'Value Size', control: 'number', defaultValue: 13, min: 10, max: 18, step: 1, unit: 'px' },
       { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
       { key: 'iconColor', label: 'Icon Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
+      { key: 'dividerHeight', label: 'Divider Height', control: 'number', defaultValue: 18, min: 10, max: 32, step: 2, unit: 'px' },
     ],
-    layoutVariants: [],
+    layoutVariants: [
+      // Reaches the editing shape, which is otherwise invisible here: every one
+      // of its affordances is opt-in behind a handler prop, so the workbench
+      // would only ever show the read-only cluster.
+      //
+      // No `showWhen` on any knob above, tempting as it is for Divider Height:
+      // one scope key would make `mode` the panel's only one, and the panel
+      // builds its SECTION subtitles from those — Colors and Style would read
+      // "Shared across all modes", which is wrong about what they are shared
+      // across. Same trap as lifecycle-drop-slot further down.
+      {
+        key: 'mode',
+        label: 'Mode',
+        options: [
+          { value: 'display', label: 'Display' },
+          { value: 'editing', label: 'Editing' },
+        ],
+        defaultValue: 'display',
+      },
+    ],
   },
   {
     id: 'lifecycle-minimap',

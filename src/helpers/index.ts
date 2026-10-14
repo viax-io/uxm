@@ -4,3 +4,4 @@
 export * from './cn';
 export * from './merge-described-by';
 export * from './merge-refs';
+export * from './renders-something';

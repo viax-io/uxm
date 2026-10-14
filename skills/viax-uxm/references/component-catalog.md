@@ -1,6 +1,6 @@
 # @viax.io/uxm — Component Catalog
 
-All 97 components exported from `@viax.io/uxm/ui` (as of v4.62.1) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
+All 97 components exported from `@viax.io/uxm/ui` (as of v4.63.0) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
 
 ## Deprecated (removed in the next major — do not use in new code)
 
@@ -257,7 +257,7 @@ positioning and a11y.
 | **LifecycleMinimap** | `LifecycleMinimap`, `LifecycleMinimapProps`, `LifecycleMinimapNode`, `LifecycleMinimapViewport` | Birds-eye 0–1 canvas overview + optional viewport overlay. |
 | **LifecycleNodeCard** | `LifecycleNodeCard`, `LifecycleNodeCardProps`, `LifecycleNodeKind` | Kind-aware pill (`state` / `condition` / `task` / `interaction` — the first three are steps, the last is the BI object). `--uxm-lifecycle-node-card-min-height` knob (default `0` = content-driven) sets an opt-in uniform-height floor for canvas layouts; the card sets `box-sizing: border-box` itself, so the value **is** the rendered height and connector geometry can key off it. Same box model applies to `--uxm-lifecycle-node-card-width` (default `280px` total, padding and border included). **`meta`** is a slot under the title, inside the body — participants, counts, a status line — rendered as a muted 12px **wrapping** flex row (`--uxm-lifecycle-node-card-meta-size` / `-meta-gap`); never clipped, so avatar ring shadows survive, and it wraps rather than escaping the card, growing it by the row's height plus the gap (allow for BOTH when keying connector geometry off `min-height`). Gated on what React renders, so `meta={cond && <X/>}` paints nothing while `meta={0}` still shows. For a dot-separated strip pass `<MetaRow>` into it — it inherits the card's `meta-size`. |
 | **LifecycleTerminal** | `LifecycleTerminal`, `LifecycleTerminalProps` | Start/End marker pill. |
-| **LifecycleZoomControl** | `LifecycleZoomControl`, `LifecycleZoomControlProps` | `−` / value / `+` cluster. |
+| **LifecycleZoomControl** | `LifecycleZoomControl`, `LifecycleZoomControlProps` | `−` / value / `+` cluster, read-only by default. Editing affordances are opt-in behind handlers (unreleased): `onValueChange` makes the percentage a typed field, `presets` + `onFit` add a `▾` menu (the preset matching `value` gets `aria-current`), `trailing` adds a divider plus a slot for a minimap toggle. Labels are props and `formatPreset` is a callback. **The control owns no zoom range** — `onValueChange` reports the unclamped entry; clamp in the handler and feed `value` back, and the field snaps to it even when your clamp leaves `value` unchanged. |
 
 ## Localisation & formatting
 
