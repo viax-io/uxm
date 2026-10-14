@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { getStudioLocaleMeta, STUDIO_SOURCE_LOCALE } from './catalog';
 import { STUDIO_LOCALE_LOADERS } from './loaders';
@@ -92,8 +92,9 @@ export function StudioI18nProvider({ locale, children }: StudioI18nProviderProps
   const { tag } = resolveStudioLocale(hostOwned ? locale : ownLocale);
   const [loaded, setLoaded] = useState<{ tag: string; messages: StudioMessages } | null>(null);
   // A chunk that will not load must not wedge the workbench. Recorded rather
-  // than retried: the same import would fail the same way, and English is a
-  // worse experience than German but it is an experience.
+  // than retried on its own: the same import would most likely fail the same
+  // way, and English is a worse experience than German but it is an
+  // experience. An explicit pick from the switcher clears it — see `pickLocale`.
   const [failedTag, setFailedTag] = useState<string | null>(null);
   // The tag the workbench booted with — the only one worth holding the tree for.
   const [bootTag] = useState(tag);
@@ -115,7 +116,14 @@ export function StudioI18nProvider({ locale, children }: StudioI18nProviderProps
     };
   }, [tag, loaded?.tag, failedTag]);
 
-  const setLocale = hostOwned ? undefined : setOwnLocale;
+  // The user picking a language is a request to try it again, even when it is
+  // the one that just failed (a flaky network, a deploy that rotated chunks):
+  // without clearing the record, re-picking it would be a silent no-op.
+  const pickLocale = useCallback((next: string) => {
+    setFailedTag(null);
+    setOwnLocale(next);
+  }, []);
+  const setLocale = hostOwned ? undefined : pickLocale;
 
   const value = useMemo<StudioI18nValue>(() => {
     // While a switch is in flight `loaded` still holds the previous
