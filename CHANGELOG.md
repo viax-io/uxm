@@ -1,3 +1,10 @@
+## [4.65.1](https://github.com/viax-io/uxm/compare/v4.65.0...v4.65.1) (2026-10-14)
+
+
+### Bug Fixes
+
+* **studio:** retry a failed locale dictionary when the user picks it again ([ce16fdb](https://github.com/viax-io/uxm/commit/ce16fdb98b5b1cb058ff83a08dfd93b4dff04189))
+
 # [4.65.0](https://github.com/viax-io/uxm/compare/v4.64.0...v4.65.0) (2026-10-14)
 
 

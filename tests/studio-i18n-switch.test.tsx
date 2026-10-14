@@ -54,6 +54,28 @@ describe('StudioI18nProvider locale ownership', () => {
     expect(onMount).toHaveBeenCalledTimes(1);
   });
 
+  it('retries a dictionary that failed once the user picks it again', async () => {
+    const load = vi
+      .spyOn(STUDIO_LOCALE_LOADERS, 'fr')
+      .mockRejectedValueOnce(new Error('chunk failed'));
+    try {
+      render(
+        <StudioI18nProvider>
+          <Probe />
+        </StudioI18nProvider>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'fr' }));
+      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+      expect(screen.getByTestId('locale').textContent).toBe('en');
+
+      fireEvent.click(screen.getByRole('button', { name: 'fr' }));
+      await waitFor(() => expect(screen.getByTestId('locale').textContent).toBe('fr'));
+      expect(load).toHaveBeenCalledTimes(2);
+    } finally {
+      load.mockRestore();
+    }
+  });
+
   it('offers no setter when the host owns the locale', async () => {
     render(
       <StudioI18nProvider locale="uk">
