@@ -113,6 +113,18 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **New atom: `RangeBar`** (unreleased) — a display-only interval on a shared
+  track: one segment at an arbitrary offset, optionally open-ended at either end.
+  It is what to reach for when a range does not start at 0, where `ProgressBar`
+  cannot help and `RangeSlider` is the wrong thing entirely (an input, with a
+  thumb and `role="slider"`). `value: [number, number]` over a `[min, max]`
+  domain, `openStart`/`openEnd` to fade an unbounded edge, `type` from the `Tag`
+  vocabulary. It clamps both ends, normalises an inverted interval and survives a
+  degenerate domain rather than emitting `NaN%`. It renders no text — pass
+  `title`/`aria-label` — and takes `role="img"` only when named, since a name on
+  a role-less div is dropped by screen readers. Knobs:
+  `--uxm-range-bar-{height,radius,track-color,fill-color,min-width}`.
+
 ## Workflow
 
 ### Where the documentation lives
