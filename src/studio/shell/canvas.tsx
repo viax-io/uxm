@@ -105,10 +105,10 @@ import {
   TypeOverviewCardPreview,
   ViewSwitcherPreview,
 } from '@/previews';
-import { ButtonGhost, ButtonPrimary, IconButton } from '@/ui';
+import { ButtonGhost, ButtonPrimary, IconButton, LanguageSwitcher } from '@/ui';
 import { Icon } from '@/ui';
 
-import { useStudioT } from '../i18n';
+import { STUDIO_LOCALES, getStudioLocaleMeta, useStudioI18n, useStudioT } from '../i18n';
 import { useUxm } from '../lib/context';
 import { usePreviewShell } from '../lib/preview-shell';
 import { getComponentDef } from '../lib/registry';
@@ -121,6 +121,9 @@ import type { ReactNode } from 'react';
 
 
 type PreviewComponent = React.ComponentType<PreviewProps>;
+
+const STUDIO_LOCALE_TAGS = STUDIO_LOCALES.map((l) => l.tag);
+const studioEndonym = (tag: string) => getStudioLocaleMeta(tag)?.endonym ?? tag;
 
 /**
  * Text-entry surfaces (typeable inputs + textarea + contenteditable) where
@@ -279,6 +282,7 @@ export function Canvas({
   const [previewOpen, setPreviewOpen] = useState(false);
   const { selectedId, getOverrides, resetOverrides, getCurrentVariants, pushEvent, capabilities, theme, setTheme } = useUxm();
   const t = useStudioT();
+  const { locale, setLocale } = useStudioI18n();
   const shell = usePreviewShell();
   const def = getComponentDef(selectedId);
   const overrides = getOverrides(selectedId);
@@ -335,6 +339,19 @@ export function Canvas({
               <Icon glyph="refresh" size={14} />
               <span className="hidden @[480px]:inline">{t('chrome', 'Reset')}</span>
             </ButtonGhost>
+          )}
+          {/* Language — only when the host passed no `locale` (then the studio
+              owns the pick for the session). A host that passes one owns it
+              and renders its own control, so nothing shows here. */}
+          {setLocale && (
+            <LanguageSwitcher
+              locales={STUDIO_LOCALE_TAGS}
+              value={locale}
+              onChange={setLocale}
+              getLabel={studioEndonym}
+              label={t('chrome', 'Language')}
+              searchLabel={t('chrome', 'Search languages')}
+            />
           )}
           {/* Light/dark toggle — only in the standalone portal (the studio
               owns the theme here; ThemeSync mirrors it onto data-theme). An

@@ -102,6 +102,13 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Studio: built-in language switcher when the host passes no `locale`** (unreleased).
+  `<UxmApp />` without `locale` starts in English and shows a `LanguageSwitcher` in the canvas
+  top bar listing every shipped studio locale; the pick is kept in memory for the session only.
+  Pass `locale` to own the language yourself — the switcher then does not render. Switching no
+  longer remounts the workbench (selection and unsaved edits survive). In the sidebar,
+  **Language Switcher** moved from the App category to Inputs.
+
 ## Workflow
 
 ### Where the documentation lives

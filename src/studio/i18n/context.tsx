@@ -22,6 +22,13 @@ export interface StudioI18nValue {
   dir: 'ltr' | 'rtl';
   t: StudioTranslate;
   tp: StudioTranslatePlural;
+  /**
+   * Switch the workbench language. Present only when the host passed no
+   * `locale` — then the studio offers its own switcher and keeps the pick in
+   * memory (never storage, never `navigator`). A host that passes `locale`
+   * owns it, and this is `undefined`.
+   */
+  setLocale?: (tag: string) => void;
 }
 
 /** Substitute `{name}` placeholders. Unknown names are left as written. */
@@ -58,6 +65,9 @@ export interface StudioI18nProviderProps {
    * guessing. The host resolves that however it resolves it and passes the
    * answer down; anything the studio doesn't ship degrades to the base
    * language or to English.
+   *
+   * Omitted → the studio starts in English and exposes `setLocale` so its
+   * own switcher can change it for the session, in memory only.
    */
   locale?: string;
   children: ReactNode;
@@ -74,12 +84,19 @@ export interface StudioI18nProviderProps {
  * waits.
  */
 export function StudioI18nProvider({ locale, children }: StudioI18nProviderProps) {
-  const { tag } = resolveStudioLocale(locale);
+  // Used only when the host passes nothing: the user's explicit pick from the
+  // studio's own switcher, held for the session. Not detection — the library
+  // still never reads storage or `navigator` to guess it.
+  const [ownLocale, setOwnLocale] = useState<string>(STUDIO_SOURCE_LOCALE);
+  const hostOwned = locale !== undefined;
+  const { tag } = resolveStudioLocale(hostOwned ? locale : ownLocale);
   const [loaded, setLoaded] = useState<{ tag: string; messages: StudioMessages } | null>(null);
   // A chunk that will not load must not wedge the workbench. Recorded rather
   // than retried: the same import would fail the same way, and English is a
   // worse experience than German but it is an experience.
   const [failedTag, setFailedTag] = useState<string | null>(null);
+  // The tag the workbench booted with — the only one worth holding the tree for.
+  const [bootTag] = useState(tag);
 
   useEffect(() => {
     if (tag === STUDIO_SOURCE_LOCALE) return;
@@ -98,12 +115,21 @@ export function StudioI18nProvider({ locale, children }: StudioI18nProviderProps
     };
   }, [tag, loaded?.tag, failedTag]);
 
+  const setLocale = hostOwned ? undefined : setOwnLocale;
+
   const value = useMemo<StudioI18nValue>(() => {
-    if (!loaded || loaded.tag !== tag) return SOURCE_VALUE;
-    const meta = getStudioLocaleMeta(tag) ?? SOURCE_META;
+    // While a switch is in flight `loaded` still holds the previous
+    // dictionary — keep showing it rather than flashing English. Switching
+    // to English, or a dictionary that failed, renders the source.
+    if (!loaded || tag === STUDIO_SOURCE_LOCALE || failedTag === tag) {
+      return setLocale ? { ...SOURCE_VALUE, setLocale } : SOURCE_VALUE;
+    }
+    const shown = loaded.tag;
+    const meta = getStudioLocaleMeta(shown) ?? SOURCE_META;
     const { messages } = loaded;
     return {
-      locale: tag,
+      locale: shown,
+      setLocale,
       meta,
       dir: meta.dir,
       // `null` ("not translated here") and `''` both fall through to the
@@ -111,24 +137,27 @@ export function StudioI18nProvider({ locale, children }: StudioI18nProviderProps
       // why the dictionaries are keyed by it rather than by dotted codes.
       t: (ns, source, vars) => interpolate(messages[ns]?.[source] || source, vars),
       tp: (ns, forms, count) => {
-        const category = new Intl.PluralRules(tag).select(count);
+        const category = new Intl.PluralRules(shown).select(count);
         const bucket = messages[ns];
         const picked =
           bucket?.[`${forms.other}#${category}`] ||
           bucket?.[`${forms.other}#other`] ||
           (count === 1 ? forms.one : forms.other);
-        return withCount(picked, count, tag);
+        return withCount(picked, count, shown);
       },
     };
-  }, [loaded, tag]);
+  }, [loaded, tag, failedTag, setLocale]);
 
-  // Hold the tree only while a real dictionary is still in flight. Rendering
+  // Hold the tree only while the boot dictionary is in flight. Rendering
   // English first and swapping a tick later is the one failure mode worth
-  // avoiding, because it is visible on every single boot.
+  // avoiding on boot. A later switch keeps the previous dictionary on screen
+  // instead: returning null then would unmount the whole workbench and drop
+  // its state (the selected component, unsaved edits).
   const pending =
-    tag !== STUDIO_SOURCE_LOCALE
+    !loaded
+    && tag === bootTag
+    && tag !== STUDIO_SOURCE_LOCALE
     && !!STUDIO_LOCALE_LOADERS[tag]
-    && loaded?.tag !== tag
     && failedTag !== tag;
   if (pending) return null;
 
