@@ -17,11 +17,14 @@ function RangeLadder({ rows, max }: { rows: Row[]; max: number }) {
       {rows.map((row) => (
         <RangeBar
           key={row.id}
+          // `[500, Infinity]` opens its own end — no second flag to keep in step.
           value={row.span}
           max={max}
-          openEnd={!Number.isFinite(row.span[1])}
           type={row.clashes ? 'danger' : 'accent'}
-          title={`${row.span[0]} – ${Number.isFinite(row.span[1]) ? row.span[1] : '∞'}`}
+          // `aria-label`, not `title` alone: a title is a tooltip, and the bar
+          // only claims a role — and so only gets announced — when it is named.
+          aria-label={`${row.result}: ${row.span[0]} to ${label(row.span[1])}`}
+          title={`${row.span[0]} – ${label(row.span[1])}`}
         />
       ))}
     </>
@@ -33,6 +36,8 @@ function RangeLadder({ rows, max }: { rows: Row[]; max: number }) {
 
 The atom renders **no text at all** and never composes a label like `500 – ∞`. How an interval reads — the dash, the infinity sign, whether the unit leads or trails — is the app's copy, not the library's. Pass `title` for a tooltip, `aria-label` for an accessible name, or both; they go through `...rest` untouched.
 
+`title` alone does **not** name the bar. A `title` is a tooltip, and the bar only takes a role — and so is only announced — when it carries `aria-label` or `aria-labelledby` (see *Accessibility*). Pass both if you want the hover text and the name.
+
 ### It owns no domain either
 
 `value` is clamped into `[min, max]`, and the atom is deliberately forgiving about what it is handed, because a ladder computes its domain from live data:
@@ -43,6 +48,8 @@ The atom renders **no text at all** and never composes a label like `500 – ∞
 | an inverted `[80, 20]` | normalised to `[20, 80]`, not a negative width |
 | a degenerate domain (`min === max`) | fills the track, rather than dividing by zero and resolving to `NaN%` — which paints nothing and reports no error |
 | a point interval `[50, 50]` | a zero-width fill, floored by `--uxm-range-bar-min-width` so it stays visible |
+| a non-finite domain (an infinite `max`, which is what `Math.max(...spans)` gives you when a span is unbounded) | treated like the degenerate one — the full track — rather than mapping every finite value to 0% |
+| an infinite bound in `value` | that edge opens itself; there is no second flag to keep in step with the number |
 
 ## Props
 
@@ -50,11 +57,11 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'color'>` — any standard div att
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `[number, number]` | – | **Required.** The interval, in domain units. Clamped and normalised (see above). |
+| `value` | `readonly [number, number]` | – | **Required.** The interval, in domain units. Clamped and normalised (see above). |
 | `min` | `number` | `0` | Low end of the track's domain. |
 | `max` | `number` | `100` | High end of the track's domain. |
-| `openStart` | `boolean` | `false` | Fade the fill out at the low edge — an interval with no lower bound ("under 120"). |
-| `openEnd` | `boolean` | `false` | Fade the fill out at the high edge — an interval with no upper bound ("500 – ∞"). |
+| `openStart` | `boolean` | `value[0] === -Infinity` | Fade the fill out at the low edge — an interval with no lower bound ("under 120"). |
+| `openEnd` | `boolean` | `value[1] === Infinity` | Fade the fill out at the high edge — an interval with no upper bound ("500 – ∞"). |
 | `type` | `'accent' \| 'success' \| 'warning' \| 'danger' \| 'info' \| 'neutral'` | `'accent'` | Semantic colour of the fill. Same vocabulary as `Tag` and `Badge`. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute except `color`)_ | – | – | Spread onto the root `<div>`. |
@@ -65,7 +72,7 @@ type RangeBarType = 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'neut
 
 ## CSS variables
 
-The root **is** the track — there is no label row above it to lay out — and every themeable property reads a `--uxm-range-bar-*` variable, so editor saves route through the kebab-fallback path with no `PER_COMPONENT_MAPPING` entry. `--uxm-range-bar-start` / `-end` are unitless and set inline from `value`, so the runtime position always wins over a saved rule.
+The root **is** the track — there is no label row above it to lay out — and every themeable property reads a `--uxm-range-bar-*` variable. Three of the knob names (`height`, `borderRadius`, `minWidth`) are real CSS properties, so this atom is mapped explicitly in `PER_COMPONENT_MAPPING`; without that, the studio would publish `min-width` onto the track while the knob is meant to floor the fill. `--uxm-range-bar-start` / `-end` are unitless and set inline from `value`, so the runtime position always wins over a saved rule.
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
@@ -106,6 +113,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 The fades use a `color-mix` of the fill at 15% rather than the `transparent` keyword: in some engines `transparent` interpolates through transparent *black*, which greys the ramp on its way out.
 
+The gradients are physical (`90deg`, and the fill is positioned from `left`), so the axis does not mirror under `direction: rtl`. That is usually right for a numeric axis — the low end stays on the left — but it is worth knowing if your ladder's labels do mirror.
+
 There is no transition. `ProgressBar` animates its width because progress moves; a range ladder is static data, and animating offsets on first paint would be noise — so there is nothing here to gate behind `prefers-reduced-motion`.
 
 ## Accessibility
@@ -114,4 +123,5 @@ There is no transition. `ProgressBar` animates its width because progress moves;
 - This is not a stylistic choice: a name on a role-less (generic) element is prohibited by ARIA and dropped by most screen readers, so an atom that quietly relied on `aria-label` alone would ship a label nobody hears. A nameless `role="img"` is the opposite failure — it announces an image and then has nothing to say about it.
 - A `role` you pass yourself is never overwritten. `role="presentation"` on a decorative bar inside an already-labelled row is a reasonable thing to want.
 - **Every `type` clears SC 1.4.11's 3:1 against the track.** The fill is not decoration here — it *is* the content — so the accent default is `--color-accent-bold` (5.08:1 on the light track) rather than `--color-accent`, which measures 1.76:1 and would leave the bar barely distinguishable from the track it sits in. The five semantic types are text tokens and clear it comfortably (4.6–7.5:1). If you override `--uxm-range-bar-fill-color`, check it the same way.
+- **State open-endedness in the name.** The fade is visual only — `aria-label="500 and above"` says what `openEnd` draws.
 - The bar conveys its interval through position and length alone, so **do not let colour be the only carrier of meaning**. If `type="danger"` marks a clashing entry, say so in the row's text too — the `type` prop changes a hue and nothing else.

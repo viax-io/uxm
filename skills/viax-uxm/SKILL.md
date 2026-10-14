@@ -123,7 +123,9 @@ catalog.
   degenerate domain rather than emitting `NaN%`. It renders no text — pass
   `title`/`aria-label` — and takes `role="img"` only when named, since a name on
   a role-less div is dropped by screen readers. Knobs:
-  `--uxm-range-bar-{height,radius,track-color,fill-color,min-width}`.
+  `--uxm-range-bar-{height,radius,track-color,fill-color,min-width}` — three of
+  those knob names are real CSS properties, so the atom carries a
+  PER_COMPONENT_MAPPING entry rather than relying on the kebab fallback.
 
 ## Workflow
 

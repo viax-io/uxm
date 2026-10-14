@@ -1,9 +1,10 @@
 /* ── Range Bar ──
    A read-only interval on a shared track. The root IS the track (there is
    nothing above it to lay out, unlike ProgressBar's label row), and every
-   themeable property reads a `--uxm-range-bar-*` custom property, so editor
-   saves route through the kebab-fallback path with no PER_COMPONENT_MAPPING
-   entry. `--uxm-range-bar-start` / `-end` are unitless and set inline from the
+   themeable property reads a `--uxm-range-bar-*` custom property. Three of the
+   knob names (height, border radius, min width) collide with real CSS
+   properties, so this atom DOES need a PER_COMPONENT_MAPPING entry to publish
+   them as vars — see `generate-css-mapping.ts`. `--uxm-range-bar-start` / `-end` are unitless and set inline from the
    `value` prop, so the runtime position always wins over a saved rule. */
 .uxm-range-bar {
   background-color: var(--uxm-range-bar-track-color, color-mix(in srgb, var(--color-text) 8%, transparent));
@@ -52,7 +53,17 @@
     background-color: var(--uxm-range-bar-fill-color, var(--range-bar-tint));
     border-radius: inherit;
     bottom: 0;
-    left: calc(var(--uxm-range-bar-start, 0) * 1%);
+    /* `min-width` raises the used width but the box still grows RIGHTWARD from
+       `left`, so a floored interval at the high end runs past the track and the
+       root's `overflow: hidden` eats it — `[100, 100]` would show nothing at
+       all, which is the one case the floor exists for. Capping `left` keeps the
+       whole floor inside the track. The cost is that a tiny interval at the
+       very end is nudged left to stay visible; being slightly off is the point
+       of a floor. */
+    left: min(
+      calc(var(--uxm-range-bar-start, 0) * 1%),
+      calc(100% - var(--uxm-range-bar-min-width, 4px))
+    );
     /* A point interval (`[5, 5]`) is a real value and has to be visible rather
        than a 0px nothing. */
     min-width: var(--uxm-range-bar-min-width, 4px);

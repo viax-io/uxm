@@ -8,20 +8,26 @@ import type { CSSProperties } from 'react';
  * intervals share a track geometry, and a single centred bar would show the
  * fill but not the thing it is for.
  */
-const ROWS: { value: [number, number]; openEnd?: boolean }[] = [
-  { value: [0, 20] },
-  { value: [20, 55] },
-  { value: [55, 80] },
-  { value: [80, 100], openEnd: true },
+const ROWS: [number, number][] = [
+  [0, 20],
+  [20, 55],
+  [55, 80],
+  [80, 100],
 ];
+/**
+ * The row the Open Ends picker acts on. A middle one, so both fades are visible
+ * at once — an open start on a bar already sitting at 0 shows nothing.
+ */
+const DEMO_ROW = 1;
 
 export function RangeBarPreview({ styles, variants }: PreviewProps) {
   const type = (variants.type as RangeBarType) ?? 'accent';
   const open = variants.open ?? 'end';
 
   // Every registry knob maps to a CSS custom property — the same surface a
-  // production consumer re-themes through, so what the editor saves is what
-  // ships.
+  // production consumer re-themes through. Note the preview feeds these vars
+  // DIRECTLY, so it cannot tell you whether a save publishes them correctly;
+  // that is what the generate-css mapping and its test are for.
   const cssVars = {
     '--uxm-range-bar-height': `${styles.height}px`,
     '--uxm-range-bar-radius': `${styles.borderRadius}px`,
@@ -32,16 +38,17 @@ export function RangeBarPreview({ styles, variants }: PreviewProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: 280 }}>
-      {ROWS.map((row, i) => (
+      {ROWS.map((value, i) => (
         <RangeBar
           key={i}
-          value={row.value}
+          value={value}
           type={type}
           style={cssVars}
-          // The open-ended variant applies to the last row only, which is where
-          // an unbounded interval actually sits in a ladder.
-          openEnd={row.openEnd && (open === 'end' || open === 'both')}
-          openStart={i === 0 && (open === 'start' || open === 'both')}
+          // The picker drives one row, so each option looks different from the
+          // others — `both` included, whose combined gradient has a selector of
+          // its own and would otherwise never be seen.
+          openStart={i === DEMO_ROW && (open === 'start' || open === 'both')}
+          openEnd={i === DEMO_ROW && (open === 'end' || open === 'both')}
         />
       ))}
     </div>

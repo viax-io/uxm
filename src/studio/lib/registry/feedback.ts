@@ -133,7 +133,7 @@ export const feedbackDefs: ComponentDef[] = [
     name: 'Range Bar',
     category: 'Feedback',
     description:
-      'A read-only interval on a shared track — one segment at an arbitrary offset, optionally open-ended. The display-only counterpart to Progress Bar, which always fills from 0, and the semantic alternative to Range Slider, which is an INPUT and announces itself as one; using a slider as a static chart ships a fake-disabled thumb and the wrong role. Built for ladders: several bars sharing one [min, max] domain, as a determination model draws the numeric range each entry matches. The atom owns the track, the offset maths and the open-ended fade; labels, axis ticks and what the intervals mean stay with the consumer. It renders no text of its own — pass `title` or `aria-label` and the words are yours. Root theming routes through `--uxm-range-bar-*`, so saves need no PER_COMPONENT_MAPPING entry.',
+      'A read-only interval on a shared track — one segment at an arbitrary offset, optionally open-ended. The display-only counterpart to Progress Bar, which always fills from 0, and the semantic alternative to Range Slider, which is an INPUT and announces itself as one; using a slider as a static chart ships a fake-disabled thumb and the wrong role. Built for ladders: several bars sharing one [min, max] domain, as a determination model draws the numeric range each entry matches. The atom owns the track, the offset maths and the open-ended fade; labels, axis ticks and what the intervals mean stay with the consumer. It renders no text of its own — pass `title` or `aria-label` and the words are yours. Root theming routes through `--uxm-range-bar-*`; three knob names collide with real CSS properties, so this atom is mapped explicitly in PER_COMPONENT_MAPPING. Fill Color overrides whatever the Type picker chose — leave it empty and the fill follows Type.',
     styleProperties: [
       { key: 'height', label: 'Height', control: 'number', defaultValue: 14, min: 4, max: 40, step: 1, unit: 'px' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 999, min: 0, max: 999, step: 1, unit: 'px' },
@@ -142,7 +142,8 @@ export const feedbackDefs: ComponentDef[] = [
       { key: 'minWidth', label: 'Minimum Fill', control: 'number', defaultValue: 4, min: 0, max: 20, step: 1, unit: 'px' },
       { key: 'trackColor', label: 'Track Color', control: 'color', defaultValue: 'color-mix(in srgb, var(--color-text) 8%, transparent)', section: 'colors' },
       // Overrides whichever token the Type picker selected. Left empty it
-      // follows the type, which is the usual case.
+      // follows the type, which is the usual case — but note that once a colour
+      // IS picked, Type stops affecting the fill until it is reset.
       { key: 'fillColor', label: 'Fill Color', control: 'color', defaultValue: '', section: 'colors' },
     ],
     layoutVariants: [
