@@ -243,6 +243,17 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     width: '--uxm-toggle-switch-width',
     height: '--uxm-toggle-switch-height',
   },
+  // `height`, `borderRadius` and `minWidth` are all REAL_CSS_PROPS, so without
+  // this they publish as `height` / `border-radius` / `min-width` on the root.
+  // Height and radius would happen to tie on specificity, but `min-width` lands
+  // on the TRACK while the knob is meant to floor the FILL — a Minimum Fill that
+  // does nothing in the published sheet while looking right in the workbench,
+  // which feeds the vars directly.
+  'range-bar': {
+    height: '--uxm-range-bar-height',
+    borderRadius: '--uxm-range-bar-radius',
+    minWidth: '--uxm-range-bar-min-width',
+  },
   'radio-group': {
     gap: '--uxm-radio-group-gap',
   },

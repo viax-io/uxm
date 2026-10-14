@@ -73,3 +73,31 @@ describe('generateOverridesCss', () => {
     expect(css).toContain('--brand-icon-url: url("/icon.svg");');
   });
 });
+
+describe('range-bar knob mapping', () => {
+  // Three of this atom's knob names are REAL_CSS_PROPS, so without an explicit
+  // PER_COMPONENT_MAPPING entry the generator publishes `height`,
+  // `border-radius` and `min-width` on the root. The last one is the real
+  // break: it floors the TRACK, while the knob exists to floor the FILL — so
+  // Minimum Fill silently does nothing in a published sheet while looking
+  // correct in the workbench, which feeds the vars directly.
+  const css = () =>
+    generateOverridesCss(
+      { 'range-bar': { height: 20, borderRadius: 4, minWidth: 8 } } as never,
+      brand,
+    );
+
+  it('publishes the documented custom properties', () => {
+    expect(css()).toContain('--uxm-range-bar-height: 20px;');
+    expect(css()).toContain('--uxm-range-bar-radius: 4px;');
+    expect(css()).toContain('--uxm-range-bar-min-width: 8px;');
+  });
+
+  it('publishes no bare CSS property that would land on the track', () => {
+    const out = css();
+    const block = out.slice(out.indexOf('.uxm-range-bar'), out.indexOf('}', out.indexOf('.uxm-range-bar')));
+    expect(block).not.toMatch(/^\s*min-width:/m);
+    expect(block).not.toMatch(/^\s*height:/m);
+    expect(block).not.toMatch(/^\s*border-radius:/m);
+  });
+});

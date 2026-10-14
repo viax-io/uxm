@@ -79,6 +79,7 @@ export { ProgressBarPreview } from '@/ui/progress-bar/progress-bar-preview';
 export { PropertyFieldPreview } from '@/ui/property-field/property-field-preview';
 export { PropertyGridPreview } from '@/ui/property-field/property-grid-preview';
 export { RadioGroupPreview } from '@/ui/radio-group/radio-group-preview';
+export { RangeBarPreview } from '@/ui/range-bar/range-bar-preview';
 export { ResponsiveGridPreview } from '@/ui/responsive-grid/responsive-grid-preview';
 export { SearchDropdownPreview } from '@/ui/search-dropdown/search-dropdown-preview';
 export { SectionHeaderPreview } from '@/ui/section-header/section-header-preview';

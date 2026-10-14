@@ -200,6 +200,8 @@ export { PropertyField, PropertyGrid } from './property-field';
 export type { PropertyFieldProps, PropertyGridProps } from './property-field';
 export { RadioGroup, RadioOption } from './radio-group';
 export type { RadioGroupDirection, RadioGroupProps, RadioOptionProps } from './radio-group';
+export { RangeBar } from './range-bar';
+export type { RangeBarProps, RangeBarType } from './range-bar';
 export { RangeSlider } from './range-slider';
 export type { RangeSliderProps } from './range-slider';
 export { ResponsiveGrid } from './responsive-grid';

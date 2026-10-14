@@ -1,0 +1,109 @@
+/* ── Range Bar ──
+   A read-only interval on a shared track. The root IS the track (there is
+   nothing above it to lay out, unlike ProgressBar's label row), and every
+   themeable property reads a `--uxm-range-bar-*` custom property. Three of the
+   knob names (height, border radius, min width) collide with real CSS
+   properties, so this atom DOES need a PER_COMPONENT_MAPPING entry to publish
+   them as vars — see `generate-css-mapping.ts`. `--uxm-range-bar-start` / `-end` are unitless and set inline from the
+   `value` prop, so the runtime position always wins over a saved rule. */
+.uxm-range-bar {
+  background-color: var(--uxm-range-bar-track-color, color-mix(in srgb, var(--color-text) 8%, transparent));
+  border-radius: var(--uxm-range-bar-radius, 999px);
+  /* Declared rather than inherited: `ui.css` ships no reset, so in a host
+     without one the height below would mean "plus padding and border". */
+  box-sizing: border-box;
+  height: var(--uxm-range-bar-height, 14px);
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+
+  /* Each type sets the one token the fill paints with. Kept as a variable
+     rather than six fill rules so the open-ended gradients below stay single
+     declarations that work for every type. */
+  /* `--color-accent-bold`, not `--color-accent`: the fill IS the content here,
+     so SC 1.4.11's 3:1 applies to it against its own track — and measured on the
+     light theme, accent manages 1.76:1 while accent-bold gives 5.08:1. The five
+     semantic tints below are text tokens and already clear it (4.6–7.5). This is
+     the same token ProgressBar fills with, for the same reason. */
+  &--accent {
+    --range-bar-tint: var(--color-accent-bold);
+  }
+
+  &--success {
+    --range-bar-tint: var(--color-success-text);
+  }
+
+  &--warning {
+    --range-bar-tint: var(--color-warning-text);
+  }
+
+  &--danger {
+    --range-bar-tint: var(--color-danger-text);
+  }
+
+  &--info {
+    --range-bar-tint: var(--color-info-text);
+  }
+
+  &--neutral {
+    --range-bar-tint: var(--color-text-muted);
+  }
+
+  &__fill {
+    background-color: var(--uxm-range-bar-fill-color, var(--range-bar-tint));
+    border-radius: inherit;
+    bottom: 0;
+    /* `min-width` raises the used width but the box still grows RIGHTWARD from
+       `left`, so a floored interval at the high end runs past the track and the
+       root's `overflow: hidden` eats it — `[100, 100]` would show nothing at
+       all, which is the one case the floor exists for. Capping `left` keeps the
+       whole floor inside the track. The cost is that a tiny interval at the
+       very end is nudged left to stay visible; being slightly off is the point
+       of a floor. */
+    left: min(
+      calc(var(--uxm-range-bar-start, 0) * 1%),
+      calc(100% - var(--uxm-range-bar-min-width, 4px))
+    );
+    /* A point interval (`[5, 5]`) is a real value and has to be visible rather
+       than a 0px nothing. */
+    min-width: var(--uxm-range-bar-min-width, 4px);
+    /* Absolutely positioned so the percentages resolve against the positioned
+       track's USED width. An in-flow percentage width collapses to 0 inside a
+       `flex: 1` row item — where the item's width is definite for layout but
+       indefinite for percentage descendants — and a row item is exactly where a
+       ladder puts this. Same reason ProgressBar's fill is absolute. */
+    position: absolute;
+    top: 0;
+    width: calc((var(--uxm-range-bar-end, 100) - var(--uxm-range-bar-start, 0)) * 1%);
+
+    /* An unbounded end fades out instead of stopping, so "500 – ∞" does not
+       read as "500 – 640". `transparent` is deliberately a colour-mix of the
+       tint, not the keyword: in some engines `transparent` interpolates through
+       transparent BLACK, which greys the ramp before it disappears. */
+    &[data-open-end] {
+      background: linear-gradient(
+        90deg,
+        var(--uxm-range-bar-fill-color, var(--range-bar-tint)),
+        color-mix(in srgb, var(--uxm-range-bar-fill-color, var(--range-bar-tint)) 15%, transparent)
+      );
+    }
+
+    &[data-open-start] {
+      background: linear-gradient(
+        270deg,
+        var(--uxm-range-bar-fill-color, var(--range-bar-tint)),
+        color-mix(in srgb, var(--uxm-range-bar-fill-color, var(--range-bar-tint)) 15%, transparent)
+      );
+    }
+
+    /* Open at both ends: solid in the middle, fading either way. */
+    &[data-open-start][data-open-end] {
+      background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--uxm-range-bar-fill-color, var(--range-bar-tint)) 15%, transparent),
+        var(--uxm-range-bar-fill-color, var(--range-bar-tint)) 50%,
+        color-mix(in srgb, var(--uxm-range-bar-fill-color, var(--range-bar-tint)) 15%, transparent)
+      );
+    }
+  }
+}
