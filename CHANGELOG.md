@@ -1,3 +1,10 @@
+# [4.66.0](https://github.com/viax-io/uxm/compare/v4.65.1...v4.66.0) (2026-10-15)
+
+
+### Features
+
+* **lifecycle-node-card:** add an icon prop to replace the kind's glyph ([1462d1c](https://github.com/viax-io/uxm/commit/1462d1cad406064461e1f9621c9c477b908d0f22))
+
 ## [4.65.1](https://github.com/viax-io/uxm/compare/v4.65.0...v4.65.1) (2026-10-14)
 
 

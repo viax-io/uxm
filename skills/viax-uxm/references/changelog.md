@@ -1890,3 +1890,16 @@ reached the published library; now shipped in 2.8.0.
   `:root`. Its set is one step lower than strong's (no 700, which would invert the hierarchy
   against the default 600). Lighten the whole UI from the studio with Strong 500 + Medium 400.
   Unset emits nothing; the atoms keep `500`.
+
+### New in 4.62.0
+
+- **`LifecycleNodeCard` gained a `meta` slot** — optional `ReactNode` rendered as
+  its own muted, wrapping flex row under the title, inside the card body, so a
+  canvas node can carry participants / counts / a status line without folding
+  them into `title` (where they inherit the title's typography and its one-line
+  overflow clip). Knobs: `--uxm-lifecycle-node-card-meta-size` (`12px`) and
+  `--uxm-lifecycle-node-card-meta-gap` (`4px`, the space above the row). Adding
+  `meta` grows the card by the row's own height **plus** that gap, so a canvas
+  keying connector geometry off `min-height` must allow for both. The region is
+  never `overflow: hidden`, so ring and focus shadows inside it are not clipped.
+  Omitting `meta` renders the DOM the card always had.
