@@ -34,6 +34,15 @@ export interface LifecycleNodeCardProps extends Omit<HTMLAttributes<HTMLDivEleme
   /** Override the kind label sub-text shown above the title. Defaults to humanised `kind`. */
   kindLabel?: ReactNode;
   /**
+   * Replaces the kind's glyph inside the icon tile — for a node that stands for
+   * something the four kinds don't name (an execution model on a model canvas,
+   * say). The tile keeps the kind's colours (`--kind-icon-*`), so recolour it
+   * there if the node needs its own accent. Pass an `Icon` at the tile's glyph
+   * size to match the built-in ones: `<Icon glyph="…" size={14} strokeWidth={1.5} />`.
+   * Defaults to the kind's glyph.
+   */
+  icon?: ReactNode;
+  /**
    * Secondary content under the title — participants, counts, a short status
    * line. Renders as its own wrapping flex row inside the card body, aligned
    * with the title, in a muted meta treatment. Unlike `title` it is NOT clamped
@@ -99,6 +108,7 @@ export function LifecycleNodeCard({
   title,
   badge,
   kindLabel,
+  icon,
   meta,
   active,
   className,
@@ -117,7 +127,7 @@ export function LifecycleNodeCard({
       style={containerStyle}
     >
       <IconTile style={ICON_TILE_STYLE} aria-hidden="true">
-        <NodeIcon kind={kind} />
+        {rendersSomething(icon) ? icon : <NodeIcon kind={kind} />}
       </IconTile>
       <div className="uxm-lifecycle-node-card__body">
         <p className="uxm-lifecycle-node-card__kind">{kindLabel ?? KIND_LABEL[kind]}</p>

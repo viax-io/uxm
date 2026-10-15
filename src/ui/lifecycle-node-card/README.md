@@ -65,6 +65,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — the native `title` a
 | `title` | `ReactNode` | – | **Required.** Primary text — typically the node name. |
 | `badge` | `ReactNode` | – | Trailing pill content — e.g. action count or truncated expression. Hidden if not provided. |
 | `kindLabel` | `ReactNode` | humanised `kind` (`interaction` → `Business Interaction`) | Override for the sub-text shown above the title. |
+| `icon` | `ReactNode` | the kind's glyph | Replaces the glyph inside the icon tile — for a node the four kinds don't name (e.g. an execution model on a model canvas). The tile keeps the kind's colours; recolour it with `--kind-icon-bg` / `--kind-icon-color`. Pass `<Icon glyph="…" size={14} strokeWidth={1.5} />` to match the built-in glyphs. Ignored when it renders nothing. |
 | `meta` | `ReactNode` | – | Secondary content under the title — participants, counts, a short status line. Renders as its own **wrapping** flex row inside the card body, in a muted meta treatment. Not clamped: the row wraps onto further lines and the card grows. Hidden when it would render nothing (`null`, `undefined`, `false`, `''`) — so `meta={cond && <X/>}` paints no region — while `meta={0}` still renders. |
 | `active` | `boolean` | `false` | Render the active/selected state. Adds the `--active` modifier class. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
@@ -82,6 +83,8 @@ Kind → glyph mapping (centralised so other lifecycle UI shares the same contra
 | `condition` | `question-mark-circle` |
 | `task` | `cog-6-tooth` |
 | `interaction` | `business-interaction` (exchange arrows) |
+
+`icon` replaces the glyph for one card without changing its kind, label or colours.
 
 ## CSS variables
 

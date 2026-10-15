@@ -119,6 +119,13 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`LifecycleNodeCard` gained an `icon` prop** (unreleased) — optional `ReactNode` that
+  replaces the kind's glyph inside the icon tile, for a node the four kinds don't name
+  (an execution model on a model canvas). Kind, label and colours are unchanged; recolour
+  the tile with `--kind-icon-bg` / `--kind-icon-color`. Pass
+  `<Icon glyph="…" size={14} strokeWidth={1.5} />` to match the built-in glyphs. Unset (or
+  rendering nothing) keeps the kind's glyph, so existing cards are untouched.
+
 ## Workflow
 
 ### Where the documentation lives
