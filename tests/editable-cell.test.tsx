@@ -244,3 +244,190 @@ describe('EditableCell — a disabled option', () => {
     await waitFor(() => expect(onCommit).toHaveBeenCalledWith('pl'));
   });
 });
+
+describe('EditableCell — a value the option list does not contain', () => {
+  // The designed-for situation once `editorOptions` is a row function: the
+  // function omits whatever another row has claimed, which sooner or later is
+  // this row's own value. Dropping it silently is the data-loss shape.
+  it('multiselect keeps it through a commit instead of dropping it', async () => {
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <EditableCell
+        type="multiselect"
+        value={['p', 'gone']}
+        options={[{ value: 'p', label: 'P' }, { value: 'q', label: 'Q' }]}
+        onCommit={onCommit}
+        searchable={false}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    await userEvent.click(screen.getByRole('option', { name: 'Q' }));
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(onCommit).toHaveBeenCalled());
+    expect(onCommit.mock.calls[0][0], 'the absent value was destroyed by an unrelated edit').toEqual([
+      'p',
+      'gone',
+      'q',
+    ]);
+  });
+
+  it('shows it as a selected, removable row — not a disabled one', async () => {
+    // Deliberately not disabled: a disabled row cannot be toggled off, which
+    // would leave "Clear all" as the only way out of a value the user can see.
+    render(
+      <EditableCell
+        type="multiselect"
+        value={['p', 'gone']}
+        options={[{ value: 'p', label: 'P' }]}
+        onCommit={vi.fn()}
+        searchable={false}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    const row = screen.getByRole('option', { name: 'gone' });
+    expect(row).toHaveAttribute('aria-selected', 'true');
+    expect(row).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('single select displays it rather than an empty cell', async () => {
+    render(
+      <EditableCell type="select" value="acct_123" options={[{ value: 'p', label: 'P' }]} onCommit={vi.fn()} searchable={false} />,
+    );
+    expect(screen.getByRole('button', { name: /Edit/ })).toHaveTextContent('acct_123');
+  });
+});
+
+describe('EditableCell — a panel with nothing pickable', () => {
+  it('still shows its disabled options', async () => {
+    // "Shown but refused" has to hold in the case it exists for: a mapping row
+    // where every source is claimed or incompatible. Keyed on SELECTABLE rows,
+    // the empty state swallowed the whole list.
+    render(
+      <EditableCell
+        type="select"
+        value=""
+        options={[
+          { value: 'a', label: 'Acct — already mapped', disabled: true },
+          { value: 'b', label: 'Amt — already mapped', disabled: true },
+        ]}
+        onCommit={vi.fn()}
+        searchable={false}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    expect(screen.getAllByRole('option')).toHaveLength(2);
+    expect(screen.queryByText('No matches'), 'the options were hidden behind the empty state').toBeNull();
+  });
+
+  it('keeps the empty state for a list that really is empty', async () => {
+    // An empty committed value synthesizes nothing, so the panel is genuinely
+    // empty — which is the one case the empty state should still claim.
+    render(<EditableCell type="select" value="" options={[]} onCommit={vi.fn()} searchable={false} />);
+    await userEvent.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    expect(screen.getByText('No matches')).toBeInTheDocument();
+  });
+
+  it('survives arrow keys with no active row', async () => {
+    const onCommit = vi.fn();
+    render(
+      <EditableCell type="select" value="" options={[{ value: 'a', label: 'A', disabled: true }]} onCommit={onCommit} searchable={false} />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    await userEvent.keyboard('{ArrowDown}{ArrowUp}{Home}{End}');
+    expect(screen.getAllByRole('option')).toHaveLength(1);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  it('a search narrowed to only disabled matches still shows them', async () => {
+    // The filtered list rebuilds the selectable index, so this hit the same
+    // empty-state condition from the other direction: type a query that only a
+    // claimed field matches, and the panel claimed there were no matches at all.
+    const user = userEvent.setup();
+    render(
+      <EditableCell
+        type="select"
+        value=""
+        options={[
+          { value: 'x', label: 'Xray' },
+          { value: 'a', label: 'Acct — already mapped', disabled: true },
+        ]}
+        onCommit={vi.fn()}
+        searchable
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    await user.type(screen.getByPlaceholderText('Search…'), 'acc');
+    expect(screen.getByRole('option', { name: 'Acct — already mapped' })).toBeInTheDocument();
+    expect(screen.queryByText('No matches')).toBeNull();
+  });
+
+  it('a search matching nothing at all still says so', async () => {
+    const user = userEvent.setup();
+    render(
+      <EditableCell
+        type="select"
+        value=""
+        options={[{ value: 'x', label: 'Xray' }]}
+        onCommit={vi.fn()}
+        searchable
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    await user.type(screen.getByPlaceholderText('Search…'), 'zzzz');
+    expect(screen.getByText('No matches')).toBeInTheDocument();
+  });
+
+  it('a selected option the consumer disabled stays put — Clear is the way out', async () => {
+    // Documented semantics rather than a bug: Listbox's disabled row is inert
+    // to the pointer, so an individually-disabled pick cannot be toggled off.
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <EditableCell
+        type="multiselect"
+        value={['p']}
+        options={[{ value: 'p', label: 'P — now incompatible', disabled: true }, { value: 'q', label: 'Q' }]}
+        onCommit={onCommit}
+        searchable={false}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    const row = screen.getByRole('option', { name: 'P — now incompatible' });
+    await userEvent.click(row);
+    expect(row).toHaveAttribute('aria-selected', 'true');
+  });
+});
+
+describe('EditableCell — the stand-in does not duplicate', () => {
+  it('adds nothing when the committed value is already an option', async () => {
+    // The synthesis has to be a gap-filler, not a second copy of every value.
+    render(
+      <EditableCell
+        type="select"
+        value="a"
+        options={[{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }]}
+        onCommit={vi.fn()}
+        searchable={false}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    expect(screen.getAllByRole('option')).toHaveLength(2);
+  });
+
+  it('adds nothing for an empty committed value', async () => {
+    render(
+      <EditableCell type="select" value="" options={[{ value: 'a', label: 'A' }]} onCommit={vi.fn()} searchable={false} />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: /Edit/ }));
+    await screen.findByRole('listbox');
+    expect(screen.getAllByRole('option')).toHaveLength(1);
+  });
+});

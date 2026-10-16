@@ -140,17 +140,31 @@ const columns: DataTableColumn<Mapping>[] = [
 
 Two things worth knowing before reaching for it:
 
-- **It runs on every render of every row**, not only the row being edited — a closed cell
-  needs the list too, to turn its stored value into a label. So a function that scans the
-  other rows is O(rows) inside an O(rows) loop. That is nothing for a mapping table and
-  something to think about for a long one.
-- **The table does not cache it.** The function closes over state the table cannot see, so
-  a cache would hand back options that are no longer true. If the work is genuinely heavy,
-  memoise it on your side, where the dependencies are known.
+- **It runs on every render, for every row whose cell is editable** — including rows
+  nobody is editing, because a closed cell needs the list too, to turn its stored value
+  into a label. (A row that `isEditable` excludes never calls it.) So a function that scans
+  the other rows is O(rows) inside an O(rows) loop: nothing for a mapping table, something
+  to think about for a long one.
+- **The table does not cache it.** A correct cache key would have to include everything the
+  function closes over, which the table cannot see; anything less serves options that are
+  no longer true. Memoise on your side, where the dependencies are known.
+- **The list is a mutable `EditableCellOption[]`**, not `readonly`. Widening it would
+  cascade into `Listbox`'s own `items` and `filterItems` types, and `filterItems` cannot
+  widen without breaking anyone who implemented it — so an `as const` list needs a spread
+  on the way in.
+- **Always include the row's own current value**, even when the rule would exclude it —
+  disable it rather than omit it. A value missing from its row's list still survives
+  (`EditableCell` keeps it as a stand-in row so it round-trips and stays removable), but it
+  then shows as its raw id, which is rarely what you want on screen.
 
 `disabled` on an option shows it greyed out instead of offering it — see
 [`EditableCell`](../editable-cell/README.md#options) for when to disable an option rather
 than leave it out.
+
+One thing to watch when a reason lives in the label: the label is also the **closed cell's
+display text** and its tooltip, and the search box matches against it. If the row's own
+committed value is the disabled one, the cell reads "Account id — already mapped" when it
+is not being edited. `formatValue` is the escape hatch for the closed state.
 
 ### Scrolling and sticky columns
 

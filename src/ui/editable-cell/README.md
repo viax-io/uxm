@@ -111,6 +111,24 @@ unavailable, put it in the `label` — `"Account id — already mapped"`. The wo
 app's, and a second line inside the panel would change option rendering for every
 `Listbox` consumer, which is a wider change than this is worth.
 
+A disabled option that is **already selected** stays selected: `Listbox` makes the row inert
+to the pointer, so it cannot be individually toggled off. In a multiselect the way out is
+"Clear all" or the trigger's ✕; in a single select, picking anything else replaces it. So
+disabling a value a row might already hold makes that value sticky — if the user needs to
+remove it, leave it enabled and say so in the label instead.
+
+### A committed value the list does not contain
+
+The cell keeps it. A value absent from `options` is given a plain stand-in row labelled with
+the raw value, so it renders, stays selected, round-trips through the next commit and can
+still be removed. Without that, a multiselect filtered its unknown values out of the draft
+and the next unrelated toggle committed an array they were never in — silent data loss, and
+the likely shape once a `DataTable` column computes options per row.
+
+The stand-in is deliberately *not* disabled, since a disabled row cannot be toggled off.
+Prefer not to rely on it: keep the row's own value in its list, disabled if the rule would
+otherwise exclude it, so it shows a real label rather than an id.
+
 ### Reading a disabled option
 
 A disabled row inherits the shared `--uxm-listbox-option-disabled-opacity`, whose default

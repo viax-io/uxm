@@ -162,12 +162,19 @@ export interface DataTableColumn<T> {
    * row — only the source fields of a compatible type, or only the ones no
    * other row has claimed.
    *
-   * It runs on every render of every row, including rows that are not being
-   * edited: a closed cell needs the list too, to turn its value into a label.
-   * So a function that scans the other rows is O(rows) inside an O(rows) loop —
-   * fine for a mapping table, worth knowing for a long one. The library
-   * deliberately does not cache it: the function closes over state the table
-   * cannot see, and a cache would hand back options that are no longer true.
+   * It runs on every render, for every row whose cell is editable — including
+   * rows nobody is editing, because a closed cell needs the list too, to turn
+   * its stored value into a label. (A row that `isEditable` excludes never
+   * calls it.) So a function that scans the other rows is O(rows) inside an
+   * O(rows) loop — fine for a mapping table, worth knowing for a long one.
+   *
+   * The library deliberately does not cache it. A correct cache key would have
+   * to include everything the function closes over, which the table cannot see;
+   * anything less hands back options that are no longer true. Memoise on your
+   * side, where the dependencies are known.
+   *
+   * It must return an array. A function that throws takes the table down with
+   * it, the same way a throwing `render` does.
    */
   editorOptions?: EditableCellOption[] | ((row: T) => EditableCellOption[]);
   /** Whether the select panel includes a search box. */
