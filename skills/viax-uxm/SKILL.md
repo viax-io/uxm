@@ -118,6 +118,30 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **The AA fix for small labels is now reachable everywhere** (unreleased). Seven
+  atoms default a 10–11px label to `--color-text-subtle`, a **3:1** token, which
+  misses 1.4.3 in both themes. The defaults stay put — darkening them moves every
+  listbox and settings panel, a major-release decision — but two of the seven had
+  no knob at all, so an app could not fix them without overriding the global token
+  and dragging every separator and disabled mark with it. They have one now:
+  `--uxm-search-dropdown-option-meta-color` and
+  `--uxm-timeline-entry-trailing-color`, both defaulting to exactly what they
+  painted before, so nothing moves until a consumer opts in. The copy-paste fix is
+  in `references/design-tokens.md` → "Small labels that fail AA".
+  `--uxm-calendar-today-button-disabled-color` went in with them: WCAG exempts an
+  inactive control, but Constitution I wants the knob anyway, and with it there
+  is no bare subtle-token text declaration left — which let the gate below drop
+  its exemption list entirely.
+
+  `tests/subtle-text-reachable.test.ts` now enforces the promise: any `color` or
+  `-webkit-text-fill-color` reading the subtle token without a knob fails the
+  suite, with no selector classifier to get wrong. It also snapshots the 25
+  declarations that default to the token, sorted and whitespace-normalised, so
+  moving a rule is not a diff and a flipped default is. Worth knowing when
+  reading the AA table: its headline figures are on `--color-card`; dark on
+  `--color-surface-alt` is 2.85:1, below even the 3:1 floor the token exists
+  for.
+
 ## Workflow
 
 ### Where the documentation lives

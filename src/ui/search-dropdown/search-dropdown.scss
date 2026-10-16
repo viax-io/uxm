@@ -115,5 +115,12 @@
 .uxm-search-dropdown__option-meta {
   flex-shrink: 0;
   font-size: calc(var(--uxm-search-dropdown-option-meta-size, 10px) * var(--type-scale, 1));
-  color: var(--color-text-subtle);
+  /* Knobbed, unlike the size beside it, which already was. `--color-text-subtle`
+     is a 3:1 token by design — separators and idle strokes — and at 10px the
+     large-text exemption does not apply, so this default misses 1.4.3 (3.66:1
+     light, 3.41:1 dark). The default is left alone because darkening it moves
+     every dropdown, which is a major-release call; the knob is what lets an app
+     clear AA today without overriding the global token and dragging every
+     separator with it. */
+  color: var(--uxm-search-dropdown-option-meta-color, var(--color-text-subtle));
 }

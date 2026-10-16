@@ -65,7 +65,9 @@
   }
 
   &__trailing {
-    color: var(--color-text-subtle);
+    /* See the note on SearchDropdown's option meta: a 3:1 token on 11px text
+       misses 1.4.3, the default stays put, and the knob is the way out. */
+    color: var(--uxm-timeline-entry-trailing-color, var(--color-text-subtle));
     flex-shrink: 0;
     font-size: calc(11px * var(--type-scale, 1));
     margin-left: auto;

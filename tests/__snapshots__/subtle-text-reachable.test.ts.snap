@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`--color-text-subtle used as text > pins which declarations default to the subtle token 1`] = `
+[
+  "breadcrumb/breadcrumb.scss — .uxm-breadcrumb .uxm-link[aria-disabled=true] { color }",
+  "breadcrumb/breadcrumb.scss — .uxm-breadcrumb__separator { color }",
+  "calendar/calendar.scss — .uxm-calendar__day--disabled { color }",
+  "calendar/calendar.scss — .uxm-calendar__day--outside { color }",
+  "calendar/calendar.scss — .uxm-calendar__today-button:disabled { color }",
+  "chip/chip.scss — .uxm-chip--assist:disabled { color }",
+  "chip/chip.scss — .uxm-chip--filter:disabled { color }",
+  "chip/chip.scss — .uxm-chip--input:disabled { color }",
+  "chip/chip.scss — .uxm-chip--suggestion:disabled { color }",
+  "component-row/component-row.scss — .uxm-component-row__drag { color }",
+  "editable-cell/editable-cell.scss — .uxm-editable-cell--empty, .uxm-editable-cell--empty .uxm-editable-cell__select-trigger { color }",
+  "error-page/error-page.scss — .uxm-error-page__code { color }",
+  "explorer-list-item/explorer-list-item.scss — .uxm-explorer-list-item__trailing { color }",
+  "explorer-section/explorer-section.scss — .uxm-explorer-section:disabled, .uxm-explorer-section[aria-disabled=true] { color }",
+  "explorer-section/explorer-section.scss — .uxm-explorer-section__trailing { color }",
+  "file-upload/file-upload.scss — .uxm-file-upload__allowed-types { color }",
+  "lifecycle-connector/lifecycle-connector.scss — .uxm-lifecycle-connector { --uxm-lifecycle-connector-color }",
+  "listbox/listbox.scss — .uxm-listbox__group-header { color }",
+  "listbox/listbox.scss — .uxm-listbox__search-icon { color }",
+  "listbox/listbox.scss — .uxm-listbox__search-input::placeholder { color }",
+  "number-stepper/number-stepper.scss — .uxm-number-stepper__unit { color }",
+  "search-dropdown/search-dropdown.scss — .uxm-search-dropdown__option-meta { color }",
+  "section-header/section-header.scss — .uxm-section-header__title { color }",
+  "segment-row/segment-row.scss — .uxm-segment-row__drag { color }",
+  "thumbnail/thumbnail.scss — .uxm-thumbnail__placeholder { color }",
+  "timeline-entry/timeline-entry.scss — .uxm-timeline-entry--idle .uxm-timeline-entry__dot { background-color }",
+  "timeline-entry/timeline-entry.scss — .uxm-timeline-entry__trailing { color }",
+]
+`;
