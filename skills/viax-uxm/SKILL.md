@@ -115,6 +115,17 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`AppSidebar`: `--uxm-app-sidebar-nav-padding-top`** (default `8px`, so nothing moves) — the
+  space above the first nav section. Set it to start the sections level with the page content's
+  first line, e.g. `24px` under a `32px` content padding (less the heading's own `8px`). Sides and
+  bottom stay `8px` so the header/footer slots still align with the nav rows. Studio knob: Nav Top
+  Padding. Replaces a consumer reaching into `.uxm-app-sidebar__nav`.
+- **`AppSidebar`: `--uxm-app-sidebar-header-height`** — the brand (logo) row's height (the
+  `__header` element, not the `header` prop's slot). It now **follows `--uxm-app-top-bar-height`**
+  when unset (default `64px`), so a shell that thins its top bar at `:root` keeps the logo level
+  with the bar — ⚠️ if you set `--uxm-app-top-bar-height` at `:root`, the logo row now matches it.
+  Studio knob: Logo Row Height.
+
 ## Workflow
 
 ### Where the documentation lives
