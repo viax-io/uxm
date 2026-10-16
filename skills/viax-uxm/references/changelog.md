@@ -1935,3 +1935,19 @@ reached the published library; now shipped in 2.8.0.
   by surprise, an IME composition keeps its own Enter and Escape, and `presets`
   renders nothing without `onValueChange` — rows that close the menu and do
   nothing are worse than no menu.
+
+### New in 4.64.0
+
+- **New atom: `RangeBar`** (unreleased) — a display-only interval on a shared
+  track: one segment at an arbitrary offset, optionally open-ended at either end.
+  It is what to reach for when a range does not start at 0, where `ProgressBar`
+  cannot help and `RangeSlider` is the wrong thing entirely (an input, with a
+  thumb and `role="slider"`). `value: [number, number]` over a `[min, max]`
+  domain, `openStart`/`openEnd` to fade an unbounded edge, `type` from the `Tag`
+  vocabulary. It clamps both ends, normalises an inverted interval and survives a
+  degenerate domain rather than emitting `NaN%`. It renders no text — pass
+  `title`/`aria-label` — and takes `role="img"` only when named, since a name on
+  a role-less div is dropped by screen readers. Knobs:
+  `--uxm-range-bar-{height,radius,track-color,fill-color,min-width}` — three of
+  those knob names are real CSS properties, so the atom carries a
+  PER_COMPONENT_MAPPING entry rather than relying on the kebab fallback.

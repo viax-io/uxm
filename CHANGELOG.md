@@ -1,3 +1,12 @@
+## [4.68.1](https://github.com/viax-io/uxm/compare/v4.68.0...v4.68.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* **lifecycle-zoom-control:** a narrower value field ([0647ccb](https://github.com/viax-io/uxm/commit/0647ccbd92be54175d4d04e4c3dd86413e9f7181))
+* **lifecycle-zoom-control:** keep the % beside the number ([4b63af4](https://github.com/viax-io/uxm/commit/4b63af4f9d2f29deff3e4ec3fe04d91b7bca301d))
+* **lifecycle-zoom-control:** size the value field for three digits ([15c8821](https://github.com/viax-io/uxm/commit/15c8821f83efdd2097cfd94fb4fdd41f3c4329cd))
+
 # [4.68.0](https://github.com/viax-io/uxm/compare/v4.67.0...v4.68.0) (2026-10-16)
 
 
