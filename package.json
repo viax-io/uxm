@@ -1,7 +1,7 @@
 {
   "name": "@viax.io/uxm",
   "version": "4.68.1",
-  "description": "Viax UXM \u2014 React 19 UI primitives and design tokens.",
+  "description": "Viax UXM — React 19 UI primitives and design tokens.",
   "license": "MIT",
   "private": false,
   "type": "module",
