@@ -138,11 +138,14 @@ showing the option at all, and doubly so if the label carries a reason the user 
 read. Raise the knob on the cell, or anywhere above it, when readability matters more than
 the greyed-out signal:
 
-| `--uxm-listbox-option-disabled-opacity` | contrast on a light panel |
-|---|---|
-| `0.4` (default) | 2.46:1 |
-| `0.55` | 3.78:1 |
-| `0.65` | 5.19:1 |
+| `--uxm-listbox-option-disabled-opacity` | light panel | dark panel |
+|---|---|---|
+| `0.4` (default) | 2.46:1 | 3.60:1 |
+| `0.55` | 3.78:1 | — |
+| `0.65` | 5.19:1 | — |
+
+Dark already clears 3:1 at the default, so this is a light-theme concern: the same opacity
+over a dark panel lands further from its background than over a white one.
 
 The default is left alone here on purpose: it is shared by every `Listbox` in the library,
 and changing it would restyle every disabled option everywhere.
