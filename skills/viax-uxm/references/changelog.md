@@ -1951,3 +1951,12 @@ reached the published library; now shipped in 2.8.0.
   `--uxm-range-bar-{height,radius,track-color,fill-color,min-width}` — three of
   those knob names are real CSS properties, so the atom carries a
   PER_COMPONENT_MAPPING entry rather than relying on the kebab fallback.
+
+### New in 4.65.0
+
+- **Studio: built-in language switcher when the host passes no `locale`** (unreleased).
+  `<UxmApp />` without `locale` starts in English and shows a `LanguageSwitcher` in the canvas
+  top bar listing every shipped studio locale; the pick is kept in memory for the session only.
+  Pass `locale` to own the language yourself — the switcher then does not render. Switching no
+  longer remounts the workbench (selection and unsaved edits survive). In the sidebar,
+  **Language Switcher** moved from the App category to Inputs.

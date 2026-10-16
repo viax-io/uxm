@@ -1,3 +1,16 @@
+# [4.69.0](https://github.com/viax-io/uxm/compare/v4.68.1...v4.69.0) (2026-10-16)
+
+
+### Bug Fixes
+
+* **a11y:** drop the gate's exemption list, and correct four doc claims ([4ed361e](https://github.com/viax-io/uxm/commit/4ed361e070f27ce60cc429fb52f435e448c03227))
+* **build:** restore the em-dash in the package description ([e5973c2](https://github.com/viax-io/uxm/commit/e5973c2e2c86839cbd3a92a1ce02b684b79904ba))
+
+
+### Features
+
+* **tokens:** make the small-label AA fix reachable everywhere ([2a36c6a](https://github.com/viax-io/uxm/commit/2a36c6adc29ae36a7f495c51705219f3c3d34bdc))
+
 ## [4.68.1](https://github.com/viax-io/uxm/compare/v4.68.0...v4.68.1) (2026-10-16)
 
 
