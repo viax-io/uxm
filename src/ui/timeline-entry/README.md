@@ -54,22 +54,26 @@ The `TimelineDotState` union (`'active' \| 'idle'`) is exported.
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
-| `--uxm-timeline-entry-gap` | – | – | Space between the rail and the content column. |
+| `--uxm-timeline-entry-gap` | – | 12px | Space between the rail and the content column. |
 | `--uxm-timeline-entry-line-color` | `--color-border` | – | Rail connector lines. |
-| `--uxm-timeline-entry-line-width` | – | – | Rail connector thickness. |
+| `--uxm-timeline-entry-line-width` | – | 2px | Rail connector thickness. |
 | `--uxm-timeline-entry-dot-color` | `--color-accent` | – | Active dot fill. |
 | `--uxm-timeline-entry-dot-idle-color` | `--color-text-subtle` | – | Idle dot fill (non-text, so the 3:1 token is correct here). |
 | `--uxm-timeline-entry-dot-ring-color` | `--color-card` | – | The halo separating the dot from the line behind it. |
-| `--uxm-timeline-entry-dot-size` | – | – | Dot diameter. |
+| `--uxm-timeline-entry-dot-size` | – | 12px | Dot diameter. |
 | `--uxm-timeline-entry-content-bg` | `--color-card` | – | Content card background. |
 | `--uxm-timeline-entry-content-border-color` | `--color-border` | – | Content card border. |
-| `--uxm-timeline-entry-content-padding` | – | – | Content card padding. |
-| `--uxm-timeline-entry-content-radius` | – | – | Content card radius. |
+| `--uxm-timeline-entry-content-padding` | – | `6px 12px` | Content card padding. |
+| `--uxm-timeline-entry-content-radius` | – | 6px | Content card radius. |
 | `--uxm-timeline-entry-title-color` | `--color-text` | – | Title text. |
 | `--uxm-timeline-entry-title-size` | – | `13px` | Title font size. |
 | `--uxm-timeline-entry-meta-color` | `--color-text-muted` | – | Meta caption. |
-| `--uxm-timeline-entry-meta-size` | – | – | Meta caption font size. |
+| `--uxm-timeline-entry-meta-size` | – | 11px | Meta caption font size. |
 | `--uxm-timeline-entry-trailing-color` | `--color-text-subtle` | – | Trailing element text. The default is a **3:1** token on 11px text, which misses WCAG 1.4.3 (3.66:1 light, 3.41:1 dark); set this to `var(--color-text-muted)` to clear AA without moving the idle dot, which shares the token and is non-text. |
+
+> The defaults above are the stylesheet's own fallbacks. The studio registry's
+> preview defaults differ for some of them (gap 10 vs 12, dot size 8 vs 12) — the
+> registry drives the workbench preview, the fallbacks are what a bare consumer gets.
 
 ## Design tokens (MODO-configurable)
 

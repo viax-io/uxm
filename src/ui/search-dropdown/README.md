@@ -61,7 +61,7 @@ function CountryPicker() {
 
 ## CSS variables
 
-All `--uxm-search-dropdown-*` knobs live on the wrapper and cascade to descendants. Trigger / popover / option / search-input groups are themable independently.
+Most `--uxm-search-dropdown-*` knobs live on the wrapper and cascade to descendants; trigger / popover / option / search-input groups are themable independently. **The panel is the exception.** `Popover` portals it to `document.body`, so it is not a DOM descendant of the wrapper and `SearchDropdown` forwards no panel class or style — any knob read inside the panel (the option rows and their meta) has to be set on `:root` or another ancestor of `<body>`, not on the component.
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
@@ -83,7 +83,7 @@ All `--uxm-search-dropdown-*` knobs live on the wrapper and cascade to descendan
 | `--uxm-search-dropdown-option-padding-y` | – | `6px` | Option row vertical padding. |
 | `--uxm-search-dropdown-option-font-size` | – | `13px` | Option label font size. |
 | `--uxm-search-dropdown-option-meta-size` | – | `10px` | Meta text font size. |
-| `--uxm-search-dropdown-option-meta-color` | `--color-text-subtle` | – | Meta text colour. The default is a **3:1** token on 10px text, which misses WCAG 1.4.3 (3.66:1 light, 3.41:1 dark); set this to `var(--color-text-muted)` to clear AA without moving every separator the token also paints. |
+| `--uxm-search-dropdown-option-meta-color` | `--color-text-subtle` | – | Meta text colour. The default is a **3:1** token on 10px text, which misses WCAG 1.4.3 (3.66:1 light, 3.41:1 dark); set it to `var(--color-text-muted)` to clear AA without moving every separator the token also paints. **Set it on `:root`** — the option row lives in the portaled panel, so a value on the wrapper never reaches it. |
 | `--uxm-search-dropdown-option-hover-bg` | `--color-surface-alt` | – | Highlighted option background (keyboard or mouse hover). |
 | `--uxm-search-dropdown-option-active-bg` | `--color-accent-subtle` | – | Selected option background. |
 | `--uxm-search-dropdown-option-active-color` | `--color-accent-bold` | – | Selected option text colour. |

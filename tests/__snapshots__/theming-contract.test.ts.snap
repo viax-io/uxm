@@ -288,6 +288,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-calendar-title-size",
   "--uxm-calendar-today-border-color",
   "--uxm-calendar-today-button-color",
+  "--uxm-calendar-today-button-disabled-color",
   "--uxm-calendar-today-button-hover-bg",
   "--uxm-calendar-today-button-size",
   "--uxm-calendar-today-color",

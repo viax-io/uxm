@@ -226,12 +226,20 @@ real 1.4.3 failures in both themes:
 | `ExplorerSection` / `ExplorerListItem` trailing | `--uxm-explorer-section-trailing-color`, `--uxm-explorer-list-item-trailing-color` | same |
 | `TimelineEntry` trailing (11px) | `--uxm-timeline-entry-trailing-color` **(unreleased)** | same |
 | `NumberStepper` unit suffix | `--uxm-number-stepper-unit-color` | same |
+| `FileUpload` allowed types (11px) | `--uxm-file-upload-allowed-types-color` | same |
+| `Calendar` outside-month day (13px, clickable) | `--uxm-calendar-outside-color` | same |
 
-31 declarations read `--color-text-subtle` as a `color`, but most are **not** 1.4.3 failures:
+25 declarations read `--color-text-subtle` as a `color` (the figure the snapshot in
+`tests/subtle-text-reachable.test.ts` pins), but most are **not** 1.4.3 failures:
 WCAG exempts inactive controls, which covers the `:disabled` states (`Chip` ×4, `Breadcrumb`,
-`ExplorerSection`, `Calendar`), and the rest are non-text — icons, drag handles, the
-breadcrumb separator, the timeline dot, outside-month days. Placeholders sit in between.
-The seven rows above are the ones painting real content text.
+`ExplorerSection`, `Calendar`), and several are genuinely non-text — icons, drag handles, the
+breadcrumb separator, the timeline dot.
+
+Two things this list used to get wrong. **Outside-month days are not decoration**: they are
+13px numerals in a cell that navigates on click (`calendar.tsx` → `handleDayClick`), so they
+are readable, actionable text and belong with the failures. And **placeholders are text** —
+WCAG grants them no exemption — which covers the listbox search placeholder and
+`EditableCell`'s empty state.
 
 The figures above are on `--color-card`, the most forgiving ground. The token is worse
 elsewhere, and worst in dark:
@@ -239,14 +247,13 @@ elsewhere, and worst in dark:
 | | on `--color-card` | on `--color-surface` | on `--color-surface-alt` |
 |---|---|---|---|
 | light `#8A857D` | 3.66:1 | 3.42:1 | 3.25:1 |
-| dark `#6E6E6E` | 3.41:1 | 3.03:1 | **2.85:1** |
+| dark `#6E6E6E` | 3.41:1 | 3.12:1 | **2.85:1** |
 
 The last cell misses even the 3:1 non-text floor, so on a dark alt ground the token is below
 its own stated purpose — worth knowing before reaching for it as a separator there either.
 
 The defaults are unchanged — darkening them shifts every listbox and settings panel, which
-is a major-release decision. **Every one is now a knob** (the last two landed unreleased),
-so an app can clear AA today:
+is a major-release decision. **Every one is a knob**, so an app can clear AA today:
 
 ```css
 :where(:root) {

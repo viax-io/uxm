@@ -241,7 +241,12 @@
     }
 
     &:disabled {
-      color: var(--color-text-subtle);
+      /* Knobbed although WCAG exempts an inactive control's text: Constitution I
+         wants a themable property behind a knob regardless, every sibling
+         disabled state already has one, and it is what lets the subtle-token
+         gate drop its exemption list — a classifier that had to decide whether
+         `:hover:not(:disabled)` counts as disabled, and got it wrong. */
+      color: var(--uxm-calendar-today-button-disabled-color, var(--color-text-subtle));
       cursor: default;
     }
   }
