@@ -43,10 +43,12 @@
     /* The editable cell is a <label> and carries its padding on the FIELD, so
        the segment is clickable end to end. With the padding here the input was
        26×19.5 inside a 60.6×32 cell — three quarters of the segment did nothing
-       when clicked. The label is what covers the last quarter, the `%`. */
+       when clicked. The label is what covers the last quarter, the `%`. Its
+       right padding is the read-only cell's 10px, so the `%` keeps off the
+       divider (still part of the label, so a click there focuses the field). */
     &:is(label) {
       cursor: text;
-      padding: 0;
+      padding: 0 10px 0 0;
     }
   }
 
@@ -71,12 +73,15 @@
     font-variant-numeric: tabular-nums;
     font-weight: var(--font-weight-medium, 500);
     min-width: 0;
-    /* The cell's own padding, moved here — see `&__value:is(label)` above. */
-    padding: 0 8px;
-    text-align: center;
-    /* 40px of content once the 8px sides are taken off — enough for four
-       tabular digits. At 26px a typed `9999` scrolled inside the field and the
-       user could not read what they had entered. */
+    /* The cell's leading padding, moved here — see `&__value:is(label)` above.
+       Right-aligned with next to no trailing padding, so the number sits
+       against its `%` rather than centred in the box with the `%` adrift on
+       the divider. */
+    padding: 0 2px 0 8px;
+    text-align: right;
+    /* 46px of content once the padding is taken off — enough for four tabular
+       digits. At 26px a typed `9999` scrolled inside the field and the user
+       could not read what they had entered. */
     width: 56px;
 
     /* The segment is the hit target, so the ring belongs on it, not on the

@@ -127,6 +127,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`LifecycleZoomControl`: the `%` sits beside the number.** The editable value is right-aligned
+  against its `%`, and the cell keeps the read-only shape's 10px end padding, so the `%` no longer
+  sits on the divider. Visual only — no API or knob change.
+
 ## Workflow
 
 ### Where the documentation lives
