@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (98 BEM-classed React components as of v4.67.0, design tokens, per-component/per-state themable
+  (98 BEM-classed React components as of v4.68.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.67.0** (98 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.68.0** (98 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.67.0 — current API surface (overrides training data)
+## v4.68.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,25 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.63.0
-
-- **`LifecycleZoomControl` grew the editing shape** (unreleased) — all opt-in behind
-  handlers, so a read-only canvas keeps the DOM and the look it had: `onValueChange`
-  turns the percentage into a typed field (Enter commits, Escape reverts, blur
-  commits, focus selects), `presets` + `onFit` add a `▾` menu whose current preset
-  carries `aria-current`, and `trailing` adds a hairline plus a slot for the minimap
-  toggle. Strings are props; `formatPreset(percent)` is a callback, not a suffix.
-  New knobs: `--uxm-lifecycle-zoom-divider-height` (`18px`) and
-  `--uxm-lifecycle-zoom-focus-ring` (`--color-accent`). **The control clamps
-  nothing**: `onValueChange` reports what was typed, you clamp and feed `value`
-  back, and the field snaps to your clamped number even when `value` itself did not
-  change. The entry is parsed rather than digit-filtered (`62.5` and `62,5` are
-  62.5, fullwidth `１２５` is 125, a minus survives for your clamp), Escape is
-  stopped only while an edit is in flight so it never closes an enclosing dialog
-  by surprise, an IME composition keeps its own Enter and Escape, and `presets`
-  renders nothing without `onValueChange` — rows that close the menu and do
-  nothing are worse than no menu.
 
 ### New in 4.64.0
 
@@ -107,13 +88,7 @@ catalog.
   with the bar — ⚠️ if you set `--uxm-app-top-bar-height` at `:root`, the logo row now matches it.
   Studio knob: Logo Row Height.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.68.0
 
 - **Editable columns: per-row options, and options that show but refuse** (unreleased).
   Two additive gaps closed for field-mapping grids. `DataTable`'s
@@ -143,6 +118,14 @@ catalog.
   select/multiselect cell keeps a committed value its option list does not
   contain, as a plain stand-in row, instead of silently dropping it on the next
   commit.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 

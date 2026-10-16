@@ -1,3 +1,15 @@
+# [4.68.0](https://github.com/viax-io/uxm/compare/v4.67.0...v4.68.0) (2026-10-16)
+
+
+### Bug Fixes
+
+* **listbox:** show disabled options when nothing is pickable, and keep a value the list lost ([cadb276](https://github.com/viax-io/uxm/commit/cadb276dfe7e7479c492b118506c21131757e665))
+
+
+### Features
+
+* **editable-cell:** per-row editor options and options that show but refuse ([73d73d0](https://github.com/viax-io/uxm/commit/73d73d09ee512ef3bb2fc598c7187223269492cb))
+
 # [4.67.0](https://github.com/viax-io/uxm/compare/v4.66.0...v4.67.0) (2026-10-16)
 
 

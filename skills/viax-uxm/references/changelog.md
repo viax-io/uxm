@@ -1916,3 +1916,22 @@ reached the published library; now shipped in 2.8.0.
   (which evaluates to `false`) no longer emits an empty region carrying its own
   margin; `0` still renders, since `badge={0}` is an action count. A nested
   `MetaRow` now also inherits the card's `meta-size` knob.
+
+### New in 4.63.0
+
+- **`LifecycleZoomControl` grew the editing shape** (unreleased) — all opt-in behind
+  handlers, so a read-only canvas keeps the DOM and the look it had: `onValueChange`
+  turns the percentage into a typed field (Enter commits, Escape reverts, blur
+  commits, focus selects), `presets` + `onFit` add a `▾` menu whose current preset
+  carries `aria-current`, and `trailing` adds a hairline plus a slot for the minimap
+  toggle. Strings are props; `formatPreset(percent)` is a callback, not a suffix.
+  New knobs: `--uxm-lifecycle-zoom-divider-height` (`18px`) and
+  `--uxm-lifecycle-zoom-focus-ring` (`--color-accent`). **The control clamps
+  nothing**: `onValueChange` reports what was typed, you clamp and feed `value`
+  back, and the field snaps to your clamped number even when `value` itself did not
+  change. The entry is parsed rather than digit-filtered (`62.5` and `62,5` are
+  62.5, fullwidth `１２５` is 125, a minus survives for your clamp), Escape is
+  stopped only while an edit is in flight so it never closes an enclosing dialog
+  by surprise, an IME composition keeps its own Enter and Escape, and `presets`
+  renders nothing without `onValueChange` — rows that close the menu and do
+  nothing are worse than no menu.
