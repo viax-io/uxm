@@ -77,12 +77,12 @@
        Right-aligned with next to no trailing padding, so the number sits
        against its `%` rather than centred in the box with the `%` adrift on
        the divider. */
-    padding: 0 2px 0 8px;
+    padding: 0 2px 0 6px;
     text-align: right;
-    /* 46px of content once the padding is taken off — enough for four tabular
-       digits. At 26px a typed `9999` scrolled inside the field and the user
-       could not read what they had entered. */
-    width: 56px;
+    /* 34px of content once the padding is taken off — four tabular digits at
+       the 13px default take about 31px, so a typed `9999` still reads whole.
+       (At 26px it scrolled inside the field and could not be read.) */
+    width: 42px;
 
     /* The segment is the hit target, so the ring belongs on it, not on the
        text box inside — a 26px outline reads as a stray artefact. */
