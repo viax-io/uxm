@@ -1,3 +1,11 @@
+# [4.67.0](https://github.com/viax-io/uxm/compare/v4.66.0...v4.67.0) (2026-10-16)
+
+
+### Features
+
+* **app-sidebar:** --uxm-app-sidebar-header-height, following the top bar ([4af3367](https://github.com/viax-io/uxm/commit/4af3367c6e10e4da004115601f8a65fa954a778e))
+* **app-sidebar:** --uxm-app-sidebar-nav-padding-top knob ([599ebf1](https://github.com/viax-io/uxm/commit/599ebf12cee8bf854238d79f5f3e8b298450c8ec))
+
 # [4.66.0](https://github.com/viax-io/uxm/compare/v4.65.1...v4.66.0) (2026-10-15)
 
 

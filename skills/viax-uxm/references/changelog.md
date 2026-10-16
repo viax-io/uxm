@@ -1903,3 +1903,16 @@ reached the published library; now shipped in 2.8.0.
   keying connector geometry off `min-height` must allow for both. The region is
   never `overflow: hidden`, so ring and focus shadows inside it are not clipped.
   Omitting `meta` renders the DOM the card always had.
+
+### New in 4.62.1
+
+- **`LifecycleNodeCard` `meta`: wraps, and an empty conditional no longer paints** (unreleased).
+  Two fixes to the 4.62.0 slot. (1) The row is `flex-wrap: wrap`: non-shrinking
+  content (an avatar stack — avatars are `flex-shrink: 0`) used to leave the card
+  through the visible overflow and run under the trailing badge; it now wraps and
+  grows the card, which is what the slot always claimed. A single item wider than
+  the row still overflows — wrapping is between items, not inside them. (2) `meta`
+  and `badge` are gated on what React actually renders, so `meta={cond && <X/>}`
+  (which evaluates to `false`) no longer emits an empty region carrying its own
+  margin; `0` still renders, since `badge={0}` is an action count. A nested
+  `MetaRow` now also inherits the card's `meta-size` knob.
