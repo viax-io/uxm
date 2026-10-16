@@ -46,6 +46,11 @@ export function EditableCellSelectView({ props, cell }: EditableCellViewProps) {
     const optionItems = options ?? [];
     const getKey = (o: EditableCellOption) => o.value;
     const getLabel = (o: EditableCellOption) => o.label;
+    // Listbox already owns every consequence of a disabled row — native
+    // `disabled`, `aria-disabled`, a suppressed hover, a short-circuited
+    // mouseDown and an arrow-key index that skips it — so this is the whole
+    // wiring, for single and multi alike.
+    const isItemDisabled = (o: EditableCellOption) => o.disabled === true;
 
     if (type === 'select') {
       const selectedItem = Array.isArray(value)
@@ -77,6 +82,7 @@ export function EditableCellSelectView({ props, cell }: EditableCellViewProps) {
               if (next) await commitValue(next.value);
             }}
             disabled={disabled}
+            isItemDisabled={isItemDisabled}
             searchable={searchable}
             matchAnchorWidth
             onOpenChange={setOpen}
@@ -206,6 +212,7 @@ export function EditableCellSelectView({ props, cell }: EditableCellViewProps) {
           // picker); route its violation into this cell's error Banner.
           onRequiredViolation={(message) => setError({ message, severity: 'warning' })}
           disabled={disabled}
+          isItemDisabled={isItemDisabled}
           searchable={searchable}
           matchAnchorWidth
           // Clear a stale required warning when the panel reopens for a fresh edit.

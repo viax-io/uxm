@@ -389,3 +389,110 @@ describe('DataTable studio canvas placement', () => {
     expect(grid!.canvasAlign).toBe('top');
   });
 });
+
+/** One row per target field, a select of source fields — the mapping shape. */
+interface MapRow {
+  id: string;
+  target: string;
+  source: string;
+}
+
+const MAP_ROWS: MapRow[] = [
+  { id: 'm1', target: 'Account id', source: 'acct' },
+  { id: 'm2', target: 'Amount', source: 'amt' },
+];
+
+describe('DataTable — per-row editor options', () => {
+  const columns = (
+    editorOptions: DataTableColumn<MapRow>['editorOptions'],
+  ): DataTableColumn<MapRow>[] => [
+    { key: 'target', header: 'Target' },
+    { key: 'source', header: 'Source', editable: true, editor: 'select', editorOptions, editorSearchable: false },
+  ];
+
+  it('calls the function with the row and offers what it returns', async () => {
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <DataTable
+        rows={MAP_ROWS}
+        columns={columns((row) => [
+          { value: row.source, label: `current: ${row.source}` },
+          { value: 'other', label: 'other' },
+        ]).map((c) => (c.key === 'source' ? { ...c, onCommit } : c))}
+        rowKey={(r) => r.id}
+      />,
+    );
+    await userEvent.click(screen.getAllByRole('button', { name: 'Edit acct' })[0]);
+    await screen.findByRole('listbox');
+    expect(screen.getByRole('option', { name: 'current: acct' })).toBeInTheDocument();
+  });
+
+  it('gives DIFFERENT rows different lists', async () => {
+    // The assertion that matters: checking one row would pass just as well
+    // against a column that ignored its argument and returned one array.
+    render(
+      <DataTable
+        rows={MAP_ROWS}
+        columns={columns((row) => [{ value: row.source, label: `only for ${row.target}` }])}
+        rowKey={(r) => r.id}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit acct' }));
+    await screen.findByRole('listbox');
+    expect(screen.getByRole('option', { name: 'only for Account id' })).toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: 'only for Amount' })).toBeNull();
+  });
+
+  it('runs for a CLOSED cell too, so the display resolves to a label', () => {
+    // A function called only on open would leave every unedited cell showing
+    // its raw value.
+    render(
+      <DataTable
+        rows={MAP_ROWS}
+        columns={columns((row) => [{ value: row.source, label: `Label of ${row.source}` }])}
+        rowKey={(r) => r.id}
+      />,
+    );
+    expect(screen.getByText('Label of acct')).toBeInTheDocument();
+    expect(screen.getByText('Label of amt')).toBeInTheDocument();
+  });
+
+  it('still accepts a plain array, unchanged', async () => {
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <DataTable
+        rows={MAP_ROWS}
+        columns={columns([
+          { value: 'acct', label: 'Account' },
+          { value: 'amt', label: 'Amount field' },
+        ]).map((c) => (c.key === 'source' ? { ...c, onCommit } : c))}
+        rowKey={(r) => r.id}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit acct' }));
+    await screen.findByRole('listbox');
+    await userEvent.click(screen.getByRole('option', { name: 'Amount field' }));
+    expect(onCommit).toHaveBeenCalledWith(MAP_ROWS[0], 'amt');
+  });
+
+  it('carries a per-row disabled option through to the panel', async () => {
+    // The two halves together — the motivating case is a row function that
+    // greys out what another row has already claimed.
+    render(
+      <DataTable
+        rows={MAP_ROWS}
+        columns={columns((row) => [
+          { value: row.source, label: row.source },
+          { value: 'taken', label: 'taken — mapped elsewhere', disabled: true },
+        ])}
+        rowKey={(r) => r.id}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit acct' }));
+    await screen.findByRole('listbox');
+    expect(screen.getByRole('option', { name: 'taken — mapped elsewhere' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+  });
+});

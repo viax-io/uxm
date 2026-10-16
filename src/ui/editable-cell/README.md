@@ -60,7 +60,7 @@ Inside a `DataTable`, don't compose this by hand — mark the column `editable` 
 | `type` | `'text' \| 'number' \| 'date' \| 'select' \| 'multiselect'` | `'text'` | Editor type. `number` commits a `Number` (emptied → `''`); `date` commits ISO regardless of `dateFormat`; pickers commit an option `value` / `string[]`. |
 | `size` | `'small' \| 'medium'` | `'small'` | Preset density. `small` = the dense DataTable scale (font inherits via `1em` until pinned, width capped at 320px); `medium` = the input-family scale (12/6px padding, 14px font, **no width cap** — fills its container) for standalone use in side panels / detail views. There is **no height knob** — height always derives from font-size + padding (a `1lh` floor keeps empty cells one line tall and clickable). |
 | `dateFormat` | `'mdy' \| 'dmy' \| 'ymd'` | `'ymd'` | Date cells only — drives the rendered value, the empty-cell hint, the input mask, and parsing. Presentation only; storage stays ISO. |
-| `options` | `{ value: string; label: string }[]` | – | Required for `select` / `multiselect`. Display shows the label(s) unless `format` overrides. |
+| `options` | `{ value: string; label: string; disabled?: boolean }[]` | – | Required for `select` / `multiselect`. Display shows the label(s) unless `format` overrides. See [Options](#options) for `disabled`. |
 | `searchable` | `boolean \| 'auto'` | `'auto'` | Pickers only — search box in the panel. `'auto'` reveals it past the shared Listbox threshold (6 options), matching the `Select` atom. |
 | `clearable` | `boolean` | `true` | Clear affordance (see below). Pass `false` to opt out. |
 | `required` | `boolean` | `false` | Empty commit is blocked with a warning, checked BEFORE `validate`. Uniform emptiness rule per type: `[]`, `NaN`, blank string. Never hides the clear affordance — it guards the outcome instead. |
@@ -95,6 +95,42 @@ Exports: `EditableCell`, `EditableCellProps`, `EditableCellType`, `EditableCellS
 - **pickers additionally clear from the field**: a ✕ on the trigger itself, inboard of the chevron, revealed **while the panel is open** and kept out of the tab order; it commits `''` / `[]` directly. The open panel is a picker's editing surface, so its ✕ lives there exactly as the text/number/date ✕ lives inside the editing input — hover keeps surfacing the chevron alone, so a table at rest never offers a one-click destroy.
 
 `required` never hides a clear affordance — it guards the outcome: clearing a required cell surfaces the required warning (the value stays); clearing an optional one empties it back to the `placeholder`. text/number/date cells never show a ✕ in display mode — the pencil owns that gutter, and clearing them is an editing action (enter the cell, then ✕).
+
+## Options
+
+An option is `{ value, label }`, plus an optional `disabled`.
+
+A **disabled** option renders in the panel and refuses to be picked: greyed out, skipped by
+arrow-key navigation, and inert under the pointer. Reach for it when the option's *absence*
+would be confusing — "that field exists, but it can't fill this one". When the option is
+simply irrelevant to this cell, leave it out of the list; a long list of unavailable rows is
+worse than a short list of usable ones.
+
+The atom renders no reason of its own. If the user needs to know **why** an option is
+unavailable, put it in the `label` — `"Account id — already mapped"`. The words are the
+app's, and a second line inside the panel would change option rendering for every
+`Listbox` consumer, which is a wider change than this is worth.
+
+### Reading a disabled option
+
+A disabled row inherits the shared `--uxm-listbox-option-disabled-opacity`, whose default
+of `0.4` measures **2.46:1** against a light panel. WCAG 1.4.3 exempts inactive controls
+from the contrast minimum, so that is allowed — but it works against the reason for
+showing the option at all, and doubly so if the label carries a reason the user is meant to
+read. Raise the knob on the cell, or anywhere above it, when readability matters more than
+the greyed-out signal:
+
+| `--uxm-listbox-option-disabled-opacity` | contrast on a light panel |
+|---|---|
+| `0.4` (default) | 2.46:1 |
+| `0.55` | 3.78:1 |
+| `0.65` | 5.19:1 |
+
+The default is left alone here on purpose: it is shared by every `Listbox` in the library,
+and changing it would restyle every disabled option everywhere.
+
+In a `DataTable` column the same options arrive through `editorOptions`, which also accepts
+a function of the row — see [Per-row editor options](../data-table/README.md#per-row-editor-options).
 
 ## CSS variables
 

@@ -156,3 +156,91 @@ describe('EditableCell — date', () => {
     expect(screen.getByRole('button', { name: 'Add date' })).toHaveTextContent('YYYY-MM-DD');
   });
 });
+
+const withDisabled = [
+  { value: 'ua', label: 'Ukraine' },
+  { value: 'pl', label: 'Poland' },
+  { value: 'de', label: 'Germany — already mapped', disabled: true },
+];
+
+describe('EditableCell — a disabled option', () => {
+  it('select: renders it, marks it, and commits nothing when it is clicked', async () => {
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <EditableCell type="select" value="ua" options={withDisabled} onCommit={onCommit} searchable={false} />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit ua' }));
+    await screen.findByRole('listbox');
+
+    const row = screen.getByRole('option', { name: 'Germany — already mapped' });
+    expect(row, 'a disabled option is SHOWN — hiding it is what the list already does').toBeInTheDocument();
+    expect(row).toHaveAttribute('aria-disabled', 'true');
+
+    await userEvent.click(row);
+    expect(onCommit, 'clicking a disabled option committed it').not.toHaveBeenCalled();
+  });
+
+  it('select: arrow-key navigation never lands on it', async () => {
+    // The keyboard path is separate code from the mouse path, so a click-only
+    // assertion leaves half the feature untested — and the half that would
+    // silently commit a value nobody can click.
+    //
+    // Asserted as "never active, however far you walk" rather than by counting
+    // keypresses: the panel swallows the first arrows while it takes focus, so
+    // a fixed count tests the choreography instead of the contract.
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <EditableCell type="select" value="ua" options={withDisabled} onCommit={onCommit} searchable={false} />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit ua' }));
+    await screen.findByRole('listbox');
+
+    const disabledRow = () => screen.getByRole('option', { name: 'Germany — already mapped' });
+    for (let i = 0; i < 6; i++) {
+      await userEvent.keyboard('{ArrowDown}');
+      expect(
+        disabledRow().className,
+        `the disabled option became active after ${i + 1} ArrowDown(s)`,
+      ).not.toContain('--active');
+    }
+
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(onCommit).toHaveBeenCalled());
+    expect(onCommit, 'Enter committed the disabled option').not.toHaveBeenCalledWith('de');
+  });
+
+  it('multiselect: honours it too', async () => {
+    // Same wiring, a different listbox — exactly where a one-line omission hides.
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <EditableCell
+        type="multiselect"
+        value={['ua']}
+        options={withDisabled}
+        onCommit={onCommit}
+        searchable={false}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit ua' }));
+    await screen.findByRole('listbox');
+    const row = screen.getByRole('option', { name: 'Germany — already mapped' });
+    expect(row).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(row);
+    await userEvent.keyboard('{Escape}');
+    // Nothing toggled, so the close commits nothing at all.
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  it('leaves an option without the flag exactly as it was', async () => {
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <EditableCell type="select" value="ua" options={withDisabled} onCommit={onCommit} searchable={false} />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit ua' }));
+    await screen.findByRole('listbox');
+    const row = screen.getByRole('option', { name: 'Poland' });
+    expect(row).not.toHaveAttribute('aria-disabled');
+    await userEvent.click(row);
+    await waitFor(() => expect(onCommit).toHaveBeenCalledWith('pl'));
+  });
+});

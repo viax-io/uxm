@@ -115,6 +115,25 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Editable columns: per-row options, and options that show but refuse** (unreleased).
+  Two additive gaps closed for field-mapping grids. `DataTable`'s
+  `column.editorOptions` now takes `EditableCellOption[]` **or** `(row) => EditableCellOption[]`,
+  for a column whose choices differ row to row (type-compatible sources only, or
+  nothing another row has claimed). It runs on every render of every row — a
+  closed cell needs the list to resolve its label — and is deliberately NOT
+  cached, because the function closes over state the table cannot see.
+  `EditableCellOption` gained `disabled?: boolean`: the option renders greyed
+  out, is skipped by arrow-key navigation and commits nothing on click, in both
+  the select and multiselect panels. Use it where the option's absence would
+  confuse, and leave the option out otherwise; the reason goes in `label`, since
+  the atom ships no words of its own. `Listbox` needed no change — `isItemDisabled`
+  already covered both panels. One caveat worth passing on: a disabled row
+  inherits the shared `--uxm-listbox-option-disabled-opacity` (0.4), which
+  measures 2.46:1 on a light panel — allowed (1.4.3 exempts inactive controls)
+  but hard to read, so raise that knob when the label carries a reason the user
+  is meant to read (0.55 → 3.78:1, 0.65 → 5.19:1). The default is shared
+  library-wide and deliberately untouched.
+
 ## Workflow
 
 ### Where the documentation lives
