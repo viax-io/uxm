@@ -576,7 +576,16 @@ function ListboxCore<T>({
           tabIndex={showSearch ? undefined : -1}
           onKeyDown={showSearch ? undefined : onPanelKeyDown}
         >
-          {selectableIndices.length === 0 ? (
+          {/* "Nothing to show", not "nothing pickable". Keyed on selectable rows,
+              a list whose every option is disabled rendered the empty state and
+              hid them all — which defeats the point of a disabled option, since
+              the user is meant to SEE that the choice exists and why it is
+              unavailable. Searching down to only disabled matches did the same.
+              Rendering them is safe: every key handler already guards an empty
+              `selectableIndices` (ArrowUp/Down return, End guards, Enter checks
+              `rowIdx != null`), so an all-disabled panel simply has no active
+              row. */}
+          {!rows.some((r) => r.kind === 'item') ? (
             <div className="uxm-listbox__empty">
               {emptyState ?? 'No matches'}
             </div>

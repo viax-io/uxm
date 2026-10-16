@@ -13,6 +13,20 @@ export type EditableCellValue = string | number | string[];
 export interface EditableCellOption {
   value: string;
   label: string;
+  /**
+   * Render the option but refuse it: shown greyed out, not arrow-navigable,
+   * and it commits nothing on click.
+   *
+   * This is for an option whose ABSENCE would be confusing — "that field
+   * exists, but it can't fill this one". When the option is simply irrelevant
+   * to this row, leave it out of the list instead; a long list of unavailable
+   * rows is worse than a short list of usable ones.
+   *
+   * The atom renders no reason of its own. If the user needs to know WHY, put
+   * it in `label` ("Account id — already mapped") — the words belong to the
+   * app.
+   */
+  disabled?: boolean;
 }
 
 /**

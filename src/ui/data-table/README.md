@@ -113,6 +113,59 @@ Worth knowing:
 />
 ```
 
+### Per-row editor options
+
+`editorOptions` on an editable `select` / `multiselect` column takes an array — the same
+choices for every row — or **a function of the row**, for a column whose choices differ
+row to row:
+
+```tsx
+const columns: DataTableColumn<Mapping>[] = [
+  { key: 'target', header: 'Target field' },
+  {
+    key: 'source',
+    header: 'Source field',
+    editable: true,
+    editor: 'select',
+    // Only type-compatible sources, and nothing another row has claimed.
+    editorOptions: (row) => sources.map((s) => ({
+      value: s.id,
+      label: claimedElsewhere(s, row) ? `${s.name} — already mapped` : s.name,
+      disabled: !compatible(s, row) || claimedElsewhere(s, row),
+    })),
+    onCommit: (row, next) => save(row, next),
+  },
+];
+```
+
+Two things worth knowing before reaching for it:
+
+- **It runs on every render, for every row whose cell is editable** — including rows
+  nobody is editing, because a closed cell needs the list too, to turn its stored value
+  into a label. (A row that `isEditable` excludes never calls it.) So a function that scans
+  the other rows is O(rows) inside an O(rows) loop: nothing for a mapping table, something
+  to think about for a long one.
+- **The table does not cache it.** A correct cache key would have to include everything the
+  function closes over, which the table cannot see; anything less serves options that are
+  no longer true. Memoise on your side, where the dependencies are known.
+- **The list is a mutable `EditableCellOption[]`**, not `readonly`. Widening it would
+  cascade into `Listbox`'s own `items` and `filterItems` types, and `filterItems` cannot
+  widen without breaking anyone who implemented it — so an `as const` list needs a spread
+  on the way in.
+- **Always include the row's own current value**, even when the rule would exclude it —
+  disable it rather than omit it. A value missing from its row's list still survives
+  (`EditableCell` keeps it as a stand-in row so it round-trips and stays removable), but it
+  then shows as its raw id, which is rarely what you want on screen.
+
+`disabled` on an option shows it greyed out instead of offering it — see
+[`EditableCell`](../editable-cell/README.md#options) for when to disable an option rather
+than leave it out.
+
+One thing to watch when a reason lives in the label: the label is also the **closed cell's
+display text** and its tooltip, and the search box matches against it. If the row's own
+committed value is the disabled one, the cell reads "Account id — already mapped" when it
+is not being edited. `formatValue` is the escape hatch for the closed state.
+
 ### Scrolling and sticky columns
 
 ```tsx
@@ -201,6 +254,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `width` | `number \| string` | no | Column width — a share (`'34%'`) or pixels (`120` / `'120px'`). **Setting it on any column switches the table to `table-layout: fixed`**, which is what makes a declared width hold; columns without one split the remainder. A table where nobody declares a width keeps auto layout, exactly as before. Replaces reaching into `.uxm-data-table__th:nth-child(n)` from a consumer stylesheet. |
 | `className` | `string` | no | Applied to **both** the `<th>` and every `<td>` in the column — added to the library classes, not replacing them. A column is a vertical thing; styling one from outside otherwise takes two `nth-child` selectors that renumber the moment a column is inserted. |
 | `label` | `string` | no | The column's name as plain text, for places a `ReactNode` header cannot go: the `data-label` stacked mode shows on each cell, and the sort control's accessible name. Defaults to `header` when it's a string — so it only ever fills a gap. A JSX header previously rendered cells with **no** stacked-mode label at all. |
+| `editorOptions` | `EditableCellOption[] \| ((row: T) => EditableCellOption[])` | no | Choices for an editable `select` / `multiselect` column. A function is called per row — see [Per-row editor options](#per-row-editor-options) for the call-frequency caveat. |
 | `sticky` | `'start' \| 'end'` | no | Pins the column to the leading or trailing edge while the table scrolls. Turns the scroller on by itself. **One column per side** — offsetting a second requires measuring the first, and a wrong offset overlaps columns rather than degrading. Give it a `width`. No effect in stacked mode. |
 
 ### `DataTableDensity`

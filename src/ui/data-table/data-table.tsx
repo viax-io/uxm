@@ -155,8 +155,28 @@ export interface DataTableColumn<T> {
   editor?: EditableCellType;
   /** Date format — only used when `editor="date"`. */
   dateFormat?: 'mdy' | 'dmy' | 'ymd';
-  /** Options for `editor="select"` or `editor="multiselect"`. */
-  editorOptions?: EditableCellOption[];
+  /**
+   * Options for `editor="select"` or `editor="multiselect"`.
+   *
+   * A function is called **per row**, for a column whose choices differ row to
+   * row — only the source fields of a compatible type, or only the ones no
+   * other row has claimed.
+   *
+   * It runs on every render, for every row whose cell is editable — including
+   * rows nobody is editing, because a closed cell needs the list too, to turn
+   * its stored value into a label. (A row that `isEditable` excludes never
+   * calls it.) So a function that scans the other rows is O(rows) inside an
+   * O(rows) loop — fine for a mapping table, worth knowing for a long one.
+   *
+   * The library deliberately does not cache it. A correct cache key would have
+   * to include everything the function closes over, which the table cannot see;
+   * anything less hands back options that are no longer true. Memoise on your
+   * side, where the dependencies are known.
+   *
+   * It must return an array. A function that throws takes the table down with
+   * it, the same way a throwing `render` does.
+   */
+  editorOptions?: EditableCellOption[] | ((row: T) => EditableCellOption[]);
   /** Whether the select panel includes a search box. */
   editorSearchable?: boolean | 'auto';
   /** Clear affordance, per editor type: select/multiselect get a "Clear" footer action in the dropdown; text/number/date get a ✕ inside the editing input (draft-only — commit still via Enter/blur). `editorRequired` never hides it — clearing a required column surfaces the required warning; clearing an optional one empties to the placeholder. Defaults to `true` (EditableCell's own default, mirroring the input family) — pass `false` to opt a column out. */
@@ -736,7 +756,11 @@ export function DataTable<T>({
                     onCommit={(next) => c.onCommit?.(row, next)}
                     type={c.editor ?? 'text'}
                     dateFormat={c.dateFormat}
-                    options={c.editorOptions}
+                    options={
+                      typeof c.editorOptions === 'function'
+                        ? c.editorOptions(row)
+                        : c.editorOptions
+                    }
                     searchable={c.editorSearchable}
                     clearable={c.editorClearable}
                     required={c.editorRequired}

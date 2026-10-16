@@ -43,9 +43,40 @@ export function EditableCellSelectView({ props, cell }: EditableCellViewProps) {
 
   // For select/multiselect in open state, we render a Listbox-driven UI
   if (type === 'select' || type === 'multiselect') {
-    const optionItems = options ?? [];
+    /**
+     * The options, plus a stand-in for any committed value the list does not
+     * contain.
+     *
+     * Without this, a value absent from the list is silently destroyed:
+     * `selectedItems` filters it out, the draft seeds from that filtered set,
+     * and the next toggle commits an array it was never in. With a static
+     * column that was an edge case. With a per-row `editorOptions` it is the
+     * designed-for situation — the function leaves out whatever another row has
+     * claimed, including, sooner or later, this row's own value.
+     *
+     * The stand-in is a plain option, deliberately not a disabled one: a
+     * disabled row cannot be toggled off, so marking it would leave "Clear all"
+     * as the only way out of a value the user can see. Its label is the raw
+     * value, because the atom has no better words for a value the consumer
+     * declined to describe.
+     */
+    const optionItems = (() => {
+      const given = options ?? [];
+      const committed = Array.isArray(value)
+        ? value
+        : value === '' || value == null
+          ? []
+          : [String(value)];
+      const missing = committed.filter((v) => !given.some((o) => o.value === v));
+      return missing.length ? [...given, ...missing.map((v) => ({ value: v, label: v }))] : given;
+    })();
     const getKey = (o: EditableCellOption) => o.value;
     const getLabel = (o: EditableCellOption) => o.label;
+    // Listbox already owns every consequence of a disabled row — native
+    // `disabled`, `aria-disabled`, a suppressed hover, a short-circuited
+    // mouseDown and an arrow-key index that skips it — so this is the whole
+    // wiring, for single and multi alike.
+    const isItemDisabled = (o: EditableCellOption) => o.disabled === true;
 
     if (type === 'select') {
       const selectedItem = Array.isArray(value)
@@ -77,6 +108,7 @@ export function EditableCellSelectView({ props, cell }: EditableCellViewProps) {
               if (next) await commitValue(next.value);
             }}
             disabled={disabled}
+            isItemDisabled={isItemDisabled}
             searchable={searchable}
             matchAnchorWidth
             onOpenChange={setOpen}
@@ -206,6 +238,7 @@ export function EditableCellSelectView({ props, cell }: EditableCellViewProps) {
           // picker); route its violation into this cell's error Banner.
           onRequiredViolation={(message) => setError({ message, severity: 'warning' })}
           disabled={disabled}
+          isItemDisabled={isItemDisabled}
           searchable={searchable}
           matchAnchorWidth
           // Clear a stale required warning when the panel reopens for a fresh edit.
