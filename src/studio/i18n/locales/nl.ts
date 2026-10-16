@@ -693,6 +693,7 @@ export const messages: StudioMessages = {
     'Name Size': 'Naamgrootte',
     'Name Weight': 'Naamdikte',
     'Nav Button Color': 'Kleur van de navigatieknop',
+    'Nav Top Padding': 'Opvulling boven navigatie',
     'Neutral': 'Neutraal',
     'No Symbol': 'Verbodsteken',
     'No wrap': 'Niet afbreken',

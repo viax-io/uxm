@@ -170,6 +170,7 @@ With the rail collapsed, hovering or tabbing to an icon shows its label in a pil
 | `--uxm-app-sidebar-border-color` | `--color-border` | – | Right-edge border + footer top border. |
 | `--uxm-app-sidebar-heading-color` | `--color-text-muted` | – | Section heading colour. |
 | `--uxm-app-sidebar-footer-color` | `--color-text-muted` | – | Footer text colour. |
+| `--uxm-app-sidebar-nav-padding-top` | – | `8px` | Space above the first nav section. Set it to start the sections level with the page content's first line (e.g. `24px` under a `32px` content padding, less the heading's own `8px`). Sides and bottom stay `8px`. |
 | `--uxm-app-sidebar-lead-padding` | – | `8px` | Header-slot padding. Matches `__nav` so a control aligns with the nav rows. |
 | `--uxm-app-sidebar-footer-padding` | – | `8px` | Footer padding, in both rail states. Was `12px 24px`; see [Alignment](#alignment). |
 | `--uxm-app-sidebar-lead-gap` | – | `8px` | Row gap between controls in the header slot. |

@@ -687,6 +687,7 @@ export const messages: StudioMessages = {
     'Name Size': '名前のサイズ',
     'Name Weight': '名前の太さ',
     'Nav Button Color': 'ナビボタンのカラー',
+    'Nav Top Padding': 'ナビの上側内側余白',
     'Neutral': 'ニュートラル',
     'No Symbol': '禁止記号',
     'No wrap': '折り返しなし',

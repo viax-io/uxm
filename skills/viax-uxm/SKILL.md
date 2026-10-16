@@ -115,6 +115,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`AppSidebar`: `--uxm-app-sidebar-nav-padding-top`** (default `8px`, so nothing moves) — the
+  space above the first nav section. Set it to start the sections level with the page content's
+  first line, e.g. `24px` under a `32px` content padding (less the heading's own `8px`). Sides and
+  bottom stay `8px` so the header/footer slots still align with the nav rows. Studio knob: Nav Top
+  Padding. Replaces a consumer reaching into `.uxm-app-sidebar__nav`.
+
 ## Workflow
 
 ### Where the documentation lives

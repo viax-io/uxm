@@ -92,6 +92,7 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
     // does not project only dies once a brand is SAVED.
     ['--uxm-app-sidebar-lead-padding' as string]: `${styles.leadPadding as number}px`,
     ['--uxm-app-sidebar-footer-padding' as string]: `${styles.footerPadding as number}px`,
+    ['--uxm-app-sidebar-nav-padding-top' as string]: `${styles.navPaddingTop as number}px`,
     width: collapsed ? (styles.collapsedWidth as number) : (styles.expandedWidth as number),
     height: 480,
   };

@@ -705,6 +705,7 @@ export const messages: StudioMessages = {
     'Name Size': 'Розмір назви',
     'Name Weight': 'Насиченість назви',
     'Nav Button Color': 'Колір кнопки навігації',
+    'Nav Top Padding': 'Верхній внутрішній відступ навігації',
     'Neutral': 'Нейтральний',
     'No Symbol': 'Знак заборони',
     'No wrap': 'Без перенесення',

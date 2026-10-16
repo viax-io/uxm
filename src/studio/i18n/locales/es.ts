@@ -699,6 +699,7 @@ export const messages: StudioMessages = {
     'Name Size': 'Tamaño del nombre',
     'Name Weight': 'Grosor del nombre',
     'Nav Button Color': 'Color del botón de navegación',
+    'Nav Top Padding': 'Relleno superior de la navegación',
     'Neutral': 'Neutro',
     'No Symbol': 'Símbolo de prohibido',
     'No wrap': 'Sin ajuste',

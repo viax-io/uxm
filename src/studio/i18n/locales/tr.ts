@@ -693,6 +693,7 @@ export const messages: StudioMessages = {
     'Name Size': 'Ad boyutu',
     'Name Weight': 'Ad kalınlığı',
     'Nav Button Color': 'Gezinme düğmesi rengi',
+    'Nav Top Padding': 'Gezinme üst iç boşluğu',
     'Neutral': 'Nötr',
     'No Symbol': 'Yasak işareti',
     'No wrap': 'Kaydırma yok',
