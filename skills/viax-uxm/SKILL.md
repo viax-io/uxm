@@ -132,7 +132,7 @@ catalog.
   the atom ships no words of its own. `Listbox` needed no change — `isItemDisabled`
   already covered both panels. One caveat worth passing on: a disabled row
   inherits the shared `--uxm-listbox-option-disabled-opacity` (0.4), which
-  measures 2.46:1 on a light panel — allowed (1.4.3 exempts inactive controls)
+  measures 2.46:1 on a LIGHT panel (dark clears 3:1 at 3.60:1) — allowed (1.4.3 exempts inactive controls)
   but hard to read, so raise that knob when the label carries a reason the user
   is meant to read (0.55 → 3.78:1, 0.65 → 5.19:1). The default is shared
   library-wide and deliberately untouched.
