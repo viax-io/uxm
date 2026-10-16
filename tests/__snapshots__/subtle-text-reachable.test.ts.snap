@@ -1,0 +1,32 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`--color-text-subtle used as text > pins which declarations default to the subtle token 1`] = `
+[
+  "breadcrumb/breadcrumb.scss — .uxm-breadcrumb .uxm-link[aria-disabled=true]",
+  "breadcrumb/breadcrumb.scss — .uxm-breadcrumb__separator",
+  "calendar/calendar.scss — .uxm-calendar__day--outside",
+  "calendar/calendar.scss — .uxm-calendar__day--disabled",
+  "calendar/calendar.scss — .uxm-calendar__today-button:disabled  [NO KNOB]",
+  "chip/chip.scss — .uxm-chip--assist:disabled",
+  "chip/chip.scss — .uxm-chip--filter:disabled",
+  "chip/chip.scss — .uxm-chip--input:disabled",
+  "chip/chip.scss — .uxm-chip--suggestion:disabled",
+  "component-row/component-row.scss — .uxm-component-row__drag",
+  "editable-cell/editable-cell.scss — .uxm-editable-cell--empty,
+.uxm-editable-cell--empty .uxm-editable-cell__select-trigger",
+  "error-page/error-page.scss — .uxm-error-page__code",
+  "explorer-list-item/explorer-list-item.scss — .uxm-explorer-list-item__trailing",
+  "explorer-section/explorer-section.scss — .uxm-explorer-section:disabled, .uxm-explorer-section[aria-disabled=true]",
+  "explorer-section/explorer-section.scss — .uxm-explorer-section__trailing",
+  "file-upload/file-upload.scss — .uxm-file-upload__allowed-types",
+  "listbox/listbox.scss — .uxm-listbox__search-icon",
+  "listbox/listbox.scss — .uxm-listbox__search-input::placeholder",
+  "listbox/listbox.scss — .uxm-listbox__group-header",
+  "number-stepper/number-stepper.scss — .uxm-number-stepper__unit",
+  "search-dropdown/search-dropdown.scss — .uxm-search-dropdown__option-meta",
+  "section-header/section-header.scss — .uxm-section-header__title",
+  "segment-row/segment-row.scss — .uxm-segment-row__drag",
+  "thumbnail/thumbnail.scss — .uxm-thumbnail__placeholder",
+  "timeline-entry/timeline-entry.scss — .uxm-timeline-entry__trailing",
+]
+`;

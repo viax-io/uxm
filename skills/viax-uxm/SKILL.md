@@ -118,6 +118,21 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **The AA fix for small labels is now reachable everywhere** (unreleased). Seven
+  atoms default a 10–11px label to `--color-text-subtle`, a **3:1** token, which
+  misses 1.4.3 in both themes. The defaults stay put — darkening them moves every
+  listbox and settings panel, a major-release decision — but two of the seven had
+  no knob at all, so an app could not fix them without overriding the global token
+  and dragging every separator and disabled mark with it. They have one now:
+  `--uxm-search-dropdown-option-meta-color` and
+  `--uxm-timeline-entry-trailing-color`, both defaulting to exactly what they
+  painted before, so nothing moves until a consumer opts in. The copy-paste fix is
+  in `references/design-tokens.md` → "Small labels that fail AA".
+  `tests/subtle-text-reachable.test.ts` now enforces the promise: a new label on
+  the subtle token with no knob fails the suite. Worth knowing when reading that
+  table: its figures are on `--color-card`; dark on `--color-surface-alt` is
+  2.85:1, below even the 3:1 floor the token exists for.
+
 ## Workflow
 
 ### Where the documentation lives

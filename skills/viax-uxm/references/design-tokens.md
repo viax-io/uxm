@@ -222,9 +222,9 @@ real 1.4.3 failures in both themes:
 |---|---|---|
 | `Listbox` group header (10px) | `--uxm-listbox-group-header-color` | 3.66:1 light / 3.41:1 dark |
 | `SectionHeader` title (11px) | `--uxm-section-header-title-color` | same |
-| `SearchDropdown` option meta (10px) | `--uxm-search-dropdown-option-meta-size` sets the size; colour is not knobbed | same |
+| `SearchDropdown` option meta (10px) | `--uxm-search-dropdown-option-meta-color` **(unreleased)** | same |
 | `ExplorerSection` / `ExplorerListItem` trailing | `--uxm-explorer-section-trailing-color`, `--uxm-explorer-list-item-trailing-color` | same |
-| `TimelineEntry` trailing | not knobbed | same |
+| `TimelineEntry` trailing (11px) | `--uxm-timeline-entry-trailing-color` **(unreleased)** | same |
 | `NumberStepper` unit suffix | `--uxm-number-stepper-unit-color` | same |
 
 31 declarations read `--color-text-subtle` as a `color`, but most are **not** 1.4.3 failures:
@@ -233,8 +233,20 @@ WCAG exempts inactive controls, which covers the `:disabled` states (`Chip` ×4,
 breadcrumb separator, the timeline dot, outside-month days. Placeholders sit in between.
 The seven rows above are the ones painting real content text.
 
+The figures above are on `--color-card`, the most forgiving ground. The token is worse
+elsewhere, and worst in dark:
+
+| | on `--color-card` | on `--color-surface` | on `--color-surface-alt` |
+|---|---|---|---|
+| light `#8A857D` | 3.66:1 | 3.42:1 | 3.25:1 |
+| dark `#6E6E6E` | 3.41:1 | 3.03:1 | **2.85:1** |
+
+The last cell misses even the 3:1 non-text floor, so on a dark alt ground the token is below
+its own stated purpose — worth knowing before reaching for it as a separator there either.
+
 The defaults are unchanged — darkening them shifts every listbox and settings panel, which
-is a major-release decision. Every one is a knob, so an app can clear AA today:
+is a major-release decision. **Every one is now a knob** (the last two landed unreleased),
+so an app can clear AA today:
 
 ```css
 :where(:root) {
@@ -242,6 +254,12 @@ is a major-release decision. Every one is a knob, so an app can clear AA today:
   --uxm-section-header-title-color: var(--color-text-strong);  /* 8.86:1 */
 }
 ```
+
+`tests/subtle-text-reachable.test.ts` keeps this true: it compiles every `src/ui` stylesheet
+and fails if a declaration paints label text with the subtle token and exposes no `--uxm-*`
+knob, so the "an app can fix it today" promise cannot quietly stop being true. It also
+snapshots which declarations default to the token — a minus line is a default that moved,
+which is the major-release decision this table is deferring.
 
 `SectionHeader` wants `strong` rather than `muted`, for a reason beyond contrast: its
 subtitle already defaults to muted (5.37:1) while the title sits on subtle (3.66:1), so the

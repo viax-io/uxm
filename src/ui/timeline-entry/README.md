@@ -50,9 +50,28 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — `title` is reclaimed
 
 The `TimelineDotState` union (`'active' \| 'idle'`) is exported.
 
-## Design tokens (MODO-configurable)
+## CSS variables
 
-The component has no `--uxm-timeline-entry-*` overrides — colours and surfaces wire directly to the global token layer.
+| Variable | Fallback token | Default | Affects |
+|----------|----------------|---------|---------|
+| `--uxm-timeline-entry-gap` | – | – | Space between the rail and the content column. |
+| `--uxm-timeline-entry-line-color` | `--color-border` | – | Rail connector lines. |
+| `--uxm-timeline-entry-line-width` | – | – | Rail connector thickness. |
+| `--uxm-timeline-entry-dot-color` | `--color-accent` | – | Active dot fill. |
+| `--uxm-timeline-entry-dot-idle-color` | `--color-text-subtle` | – | Idle dot fill (non-text, so the 3:1 token is correct here). |
+| `--uxm-timeline-entry-dot-ring-color` | `--color-card` | – | The halo separating the dot from the line behind it. |
+| `--uxm-timeline-entry-dot-size` | – | – | Dot diameter. |
+| `--uxm-timeline-entry-content-bg` | `--color-card` | – | Content card background. |
+| `--uxm-timeline-entry-content-border-color` | `--color-border` | – | Content card border. |
+| `--uxm-timeline-entry-content-padding` | – | – | Content card padding. |
+| `--uxm-timeline-entry-content-radius` | – | – | Content card radius. |
+| `--uxm-timeline-entry-title-color` | `--color-text` | – | Title text. |
+| `--uxm-timeline-entry-title-size` | – | `13px` | Title font size. |
+| `--uxm-timeline-entry-meta-color` | `--color-text-muted` | – | Meta caption. |
+| `--uxm-timeline-entry-meta-size` | – | – | Meta caption font size. |
+| `--uxm-timeline-entry-trailing-color` | `--color-text-subtle` | – | Trailing element text. The default is a **3:1** token on 11px text, which misses WCAG 1.4.3 (3.66:1 light, 3.41:1 dark); set this to `var(--color-text-muted)` to clear AA without moving the idle dot, which shares the token and is non-text. |
+
+## Design tokens (MODO-configurable)
 
 | Token | Group / name | Used for |
 |-------|--------------|----------|
