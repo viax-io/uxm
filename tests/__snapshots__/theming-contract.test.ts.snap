@@ -15,6 +15,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-app-sidebar-footer-color",
   "--uxm-app-sidebar-footer-gap",
   "--uxm-app-sidebar-footer-padding",
+  "--uxm-app-sidebar-header-height",
   "--uxm-app-sidebar-heading-color",
   "--uxm-app-sidebar-lead-gap",
   "--uxm-app-sidebar-lead-padding",

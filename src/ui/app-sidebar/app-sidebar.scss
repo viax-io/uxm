@@ -23,7 +23,10 @@
     align-items: center;
     display: flex;
     flex-shrink: 0;
-    height: 64px;
+    /* The brand (logo) row sits beside AppTopBar, so it follows the top bar's
+       height unless set on its own: a shell that thins its top bar at :root
+       keeps the logo level with the bar's contents. */
+    height: var(--uxm-app-sidebar-header-height, var(--uxm-app-top-bar-height, 64px));
     justify-content: space-between;
     padding: 0 16px;
   }

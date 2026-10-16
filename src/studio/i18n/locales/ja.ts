@@ -651,6 +651,7 @@ export const messages: StudioMessages = {
     'Link Weight': 'リンクの太さ',
     'List': 'リスト',
     'List (Lines Only)': 'リスト（線のみ）',
+    'Logo Row Height': 'ロゴ行の高さ',
     'Logo Size': 'ロゴのサイズ',
     'Margin Bottom': '下の外側余白',
     'Mark': 'マーク',

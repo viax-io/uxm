@@ -669,6 +669,7 @@ export const messages: StudioMessages = {
     'Link Weight': 'Насиченість посилання',
     'List': 'Список',
     'List (Lines Only)': 'Список (лише лінії)',
+    'Logo Row Height': 'Висота рядка логотипа',
     'Logo Size': 'Розмір логотипа',
     'Margin Bottom': 'Зовнішній відступ знизу',
     'Mark': 'Маркер',

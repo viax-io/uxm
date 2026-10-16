@@ -657,6 +657,7 @@ export const messages: StudioMessages = {
     'Link Weight': 'Linkdikte',
     'List': 'Lijst',
     'List (Lines Only)': 'Lijst (alleen lijnen)',
+    'Logo Row Height': 'Hoogte van de logorij',
     'Logo Size': 'Logogrootte',
     'Margin Bottom': 'Ondermarge',
     'Mark': 'Markering',

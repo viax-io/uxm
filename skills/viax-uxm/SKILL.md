@@ -120,6 +120,11 @@ catalog.
   first line, e.g. `24px` under a `32px` content padding (less the heading's own `8px`). Sides and
   bottom stay `8px` so the header/footer slots still align with the nav rows. Studio knob: Nav Top
   Padding. Replaces a consumer reaching into `.uxm-app-sidebar__nav`.
+- **`AppSidebar`: `--uxm-app-sidebar-header-height`** — the brand (logo) row's height (the
+  `__header` element, not the `header` prop's slot). It now **follows `--uxm-app-top-bar-height`**
+  when unset (default `64px`), so a shell that thins its top bar at `:root` keeps the logo level
+  with the bar — ⚠️ if you set `--uxm-app-top-bar-height` at `:root`, the logo row now matches it.
+  Studio knob: Logo Row Height.
 
 ## Workflow
 

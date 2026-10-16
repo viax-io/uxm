@@ -657,6 +657,7 @@ export const messages: StudioMessages = {
     'Link Weight': 'Bağlantı kalınlığı',
     'List': 'Liste',
     'List (Lines Only)': 'Liste (yalnızca çizgiler)',
+    'Logo Row Height': 'Logo satırı yüksekliği',
     'Logo Size': 'Logo boyutu',
     'Margin Bottom': 'Alt dış boşluk',
     'Mark': 'İşaret',

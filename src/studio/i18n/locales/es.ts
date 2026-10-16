@@ -663,6 +663,7 @@ export const messages: StudioMessages = {
     'Link Weight': 'Grosor del enlace',
     'List': 'Lista',
     'List (Lines Only)': 'Lista (solo líneas)',
+    'Logo Row Height': 'Altura de la fila del logotipo',
     'Logo Size': 'Tamaño del logotipo',
     'Margin Bottom': 'Margen inferior',
     'Mark': 'Marca',

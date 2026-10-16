@@ -26,6 +26,9 @@ export const appDefs: ComponentDef[] = [
       // content's first line. Sides stay 8px so the lead/footer slots keep
       // aligning with the nav rows.
       { key: 'navPaddingTop', label: 'Nav Top Padding', control: 'number', defaultValue: 8, min: 0, max: 48, step: 1, unit: 'px' },
+      // The brand (logo) row — `__header`, not the `header` prop's slot below it.
+      // Unset, it follows `--uxm-app-top-bar-height` so it lines up with the bar.
+      { key: 'headerHeight', label: 'Logo Row Height', control: 'number', defaultValue: 64, min: 40, max: 96, step: 2, unit: 'px' },
       { key: 'headingColor', label: 'Section Heading', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
       { key: 'footerColor', label: 'Footer Text', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
       // Both slots align to `__nav`'s 8px, so a control in either lines its text
