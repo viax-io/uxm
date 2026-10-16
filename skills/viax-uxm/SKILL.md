@@ -129,7 +129,7 @@ catalog.
 
 - **`LifecycleZoomControl`: the `%` sits beside the number.** The editable value is right-aligned
   against its `%`, and the cell keeps the read-only shape's 10px end padding, so the `%` no longer
-  sits on the divider; the field is narrower (42px, still four digits). Visual only — no API or knob
+  sits on the divider; the field is sized for three digits (34px). Visual only — no API or knob
   change.
 
 ## Workflow

@@ -79,10 +79,11 @@
        the divider. */
     padding: 0 2px 0 6px;
     text-align: right;
-    /* 34px of content once the padding is taken off — four tabular digits at
-       the 13px default take about 31px, so a typed `9999` still reads whole.
-       (At 26px it scrolled inside the field and could not be read.) */
-    width: 42px;
+    /* Sized for three digits — zoom runs to a few hundred percent at most.
+       26px of content once the padding is taken off; three tabular digits at
+       the 13px default take about 24px. A fourth typed digit scrolls rather
+       than clips, and the consumer clamps the value on commit anyway. */
+    width: 34px;
 
     /* The segment is the hit target, so the ring belongs on it, not on the
        text box inside — a 26px outline reads as a stray artefact. */
