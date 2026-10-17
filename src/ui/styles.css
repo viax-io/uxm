@@ -34,6 +34,7 @@
 @import "./editable-cell/editable-cell.css";
 @import "./empty-state/empty-state.css";
 @import "./error-page/error-page.css";
+@import "./expandable-text/expandable-text.css";
 @import "./explorer-list-item/explorer-list-item.css";
 @import "./explorer-section/explorer-section.css";
 @import "./field-error/field-error.css";

@@ -39,6 +39,7 @@ export { DividerPreview } from '@/ui/divider/divider-preview';
 export { EditableCellPreview } from '@/ui/editable-cell/editable-cell-preview';
 export { EmptyStatePreview } from '@/ui/empty-state/empty-state-preview';
 export { ErrorPagePreview } from '@/ui/error-page/error-page-preview';
+export { ExpandableTextPreview } from '@/ui/expandable-text/expandable-text-preview';
 export { ExplorerListItemPreview } from '@/ui/explorer-list-item/explorer-list-item-preview';
 export { ExplorerSectionPreview } from '@/ui/explorer-section/explorer-section-preview';
 export { FileUploadPreview } from '@/ui/file-upload/file-upload-preview';

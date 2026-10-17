@@ -101,3 +101,29 @@ describe('range-bar knob mapping', () => {
     expect(block).not.toMatch(/^\s*border-radius:/m);
   });
 });
+
+describe('expandable-text knob mapping', () => {
+  // `color`, `fontSize`, `lineHeight` and `gap` are all REAL_CSS_PROPS. Without
+  // the PER_COMPONENT_MAPPING entry they publish as bare properties on the root,
+  // which the toggle link (it declares its own size and colour) never inherits —
+  // a saved brand would change nothing while the workbench, feeding the vars
+  // directly, looked right.
+  const css = () =>
+    generateOverridesCss(
+      { 'expandable-text': { color: '#123456', fontSize: 15, lineHeight: 1.6, gap: 6 } } as never,
+      brand,
+    );
+
+  it('publishes the documented custom properties', () => {
+    expect(css()).toContain('--uxm-expandable-text-color: #123456;');
+    expect(css()).toContain('--uxm-expandable-text-font-size: 15px;');
+    expect(css()).toContain('--uxm-expandable-text-line-height: 1.6;');
+    expect(css()).toContain('--uxm-expandable-text-gap: 6px;');
+  });
+
+  it('publishes no bare CSS property on the root', () => {
+    const out = css();
+    const block = out.slice(out.indexOf('.uxm-expandable-text'), out.indexOf('}', out.indexOf('.uxm-expandable-text')));
+    expect(block).not.toMatch(/^\s*(color|font-size|line-height|gap):/m);
+  });
+});

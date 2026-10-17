@@ -1,0 +1,85 @@
+/* ── Expandable Text ──
+   Display-only long text: wraps in full up to N lines, then clamps behind a
+   "Show more" link. The line count is NOT a variable — it is set inline as a
+   bare `-webkit-line-clamp` number by the component, because the clamp does not
+   reliably take a `var()` in every engine. Everything else themes through
+   `--uxm-expandable-text-*`. Several knob names (color, font size, line
+   height, gap) collide with real CSS properties, so this atom is mapped
+   explicitly in `PER_COMPONENT_MAPPING`. */
+.uxm-expandable-text {
+  align-items: flex-start;
+  box-sizing: border-box;
+  color: var(--uxm-expandable-text-color, var(--color-text));
+  display: flex;
+  flex-direction: column;
+  font-size: calc(var(--uxm-expandable-text-font-size, 14px) * var(--type-scale, 1));
+  gap: var(--uxm-expandable-text-gap, 4px);
+  /* The global body line-height knob reaches it, like every multi-line body
+     surface; the 1.5 is that token's own fallback. */
+  line-height: var(--uxm-expandable-text-line-height, var(--type-body-line-height, 1.5));
+  min-width: 0;
+
+  &__content {
+    align-self: stretch;
+    margin: 0;
+    min-width: 0;
+    /* Paragraph breaks in the source survive; long unbroken tokens (URLs, ids)
+       wrap instead of widening the pane. */
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+
+    /* The clamp sits on this block, never on the toggle: Chrome will not
+       line-clamp a <button>. `-webkit-line-clamp` itself is inline (see header). */
+    &--clamped {
+      -webkit-box-orient: vertical;
+      display: -webkit-box;
+      overflow: hidden;
+    }
+  }
+
+  /* A link under the text, not a bordered button: borderless, left edge flush
+     with the text, accent colour. `--color-accent-bold`, not `--color-accent`,
+     because this is TEXT — accent measures well under 4.5:1 on a light surface,
+     accent-bold clears it (5.16:1). */
+  &__toggle {
+    align-items: center;
+    align-self: flex-start;
+    background: none;
+    border: 0;
+    border-radius: var(--uxm-expandable-text-toggle-radius, 4px);
+    box-sizing: border-box;
+    color: var(--uxm-expandable-text-toggle-color, var(--color-accent-bold));
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: calc(var(--uxm-expandable-text-toggle-font-size, 13px) * var(--type-scale, 1));
+    font-weight: var(--uxm-expandable-text-toggle-font-weight, var(--font-weight-medium, 500));
+    gap: var(--uxm-expandable-text-toggle-gap, 4px);
+    margin: 0;
+    /* Vertical room for a comfortable hit area; no inline padding, so the label
+       lines up with the text's left edge. */
+    padding: var(--uxm-expandable-text-toggle-padding-y, 2px) 0;
+    transition: color 0.12s ease;
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    /* Hover = the link firms up and underlines. The fallback is the HOVER
+       default, which must differ from the resting colour above (gotchas.md →
+       "A per-state var whose fallback is the resting value ships a dead rule"):
+       the resting accent-bold pulled toward the text colour reads stronger on
+       both themes. */
+    &:hover,
+    .uxm-expandable-text--state-hover & {
+      color: var(--uxm-expandable-text-toggle-hover-color, color-mix(in srgb, var(--color-accent-bold) 70%, var(--color-text)));
+      text-decoration: underline;
+    }
+
+    &:focus-visible,
+    .uxm-expandable-text--state-focus & {
+      outline: 2px solid var(--uxm-expandable-text-focus-ring, var(--color-accent));
+      outline-offset: 2px;
+    }
+  }
+}

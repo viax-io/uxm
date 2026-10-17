@@ -135,6 +135,17 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **New atom: `ExpandableText`** (unreleased) — display-only long text for side
+  panes and detail views: wraps in full up to `lines` lines (default 4), then
+  clamps behind a "Show more" / "Show less" link. The link renders only when the
+  collapsed text actually overflows (measured, `ResizeObserver`-re-measured) or
+  while expanded, so short text shows nothing extra. `expanded` /
+  `defaultExpanded` / `onExpandedChange`, and `moreLabel` / `lessLabel` — the
+  atom ships no message catalogue, so the two labels are the app's copy (English
+  defaults). `white-space: pre-wrap` keeps paragraph breaks. The toggle reads as
+  an accent link flush with the text, not a bordered button. Knobs:
+  `--uxm-expandable-text-{color,font-size,line-height,gap,toggle-color,toggle-hover-color,toggle-font-size,toggle-font-weight,toggle-gap}`.
+
 ## Workflow
 
 ### Where the documentation lives

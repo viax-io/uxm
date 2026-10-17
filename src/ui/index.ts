@@ -72,6 +72,8 @@ export { EmptyState } from './empty-state';
 export type { EmptyStateProps } from './empty-state';
 export { ErrorPage } from './error-page';
 export type { ErrorPageProps } from './error-page';
+export { ExpandableText } from './expandable-text';
+export type { ExpandableTextProps } from './expandable-text';
 export { ExplorerListItem } from './explorer-list-item';
 export type { ExplorerListItemProps } from './explorer-list-item';
 export { ExplorerSection } from './explorer-section';
