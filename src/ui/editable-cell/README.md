@@ -1,6 +1,6 @@
 # EditableCell
 
-An inline-editable cell: renders as plain text until clicked, then swaps in the matching editor in place. Five editor types (`text` / `number` / `date` / `select` / `multiselect`), two size presets (`small` / `medium`), async commit with inline warning/error surfacing. Designed primarily for `DataTable` columns, but works anywhere an edit-in-place semantic fits (PageHeader rename, StatCard label, detail side panels).
+An inline-editable cell: renders as plain text until clicked, then swaps in the matching editor in place. Six editor types (`text` / `number` / `date` / `select` / `multiselect` / `textarea`), two size presets (`small` / `medium`), async commit with inline warning/error surfacing. Designed primarily for `DataTable` columns, but works anywhere an edit-in-place semantic fits (PageHeader rename, StatCard label, detail side panels).
 
 Three modes:
 
@@ -19,11 +19,12 @@ The folder is split by responsibility — all of it is private to the barrel, wh
 | `editable-cell.tsx` | Applies the prop defaults once, runs the hook, picks the view by `type`. |
 | `use-editable-cell.ts` | Every hook: state, effects, the commit paths (`commitValue` / `commitDate` / `handleCommit`), cancel/clear/keyboard handlers and the derived display values. Hook order is fixed here regardless of the view. |
 | `editable-cell-text.tsx` | `text` / `number` — display button ↔ editing input. |
+| `editable-cell-textarea.tsx` | `textarea` — wrapper holding the edit button and the Show more toggle as siblings ↔ `Textarea` over an auto-sizing ghost. Reuses the clamp / measure / toggle from `../expandable-text/` (`use-expandable-text.ts`, `expandable-text-toggle.tsx`). |
 | `editable-cell-date.tsx` | `date` — display button ↔ masked input + calendar popover. |
 | `editable-cell-select.tsx` | `select` / `multiselect` — Listbox-driven trigger. |
 | `editable-cell.types.ts`, `editable-cell-utils.ts` | Public prop types; pure ISO/mask helpers. |
 
-The views are hook-free and read one `{ props, cell }` pair, so a behaviour change goes in the hook and a markup change in exactly one view. `tests/editable-cell.test.tsx` is the behavioural baseline for the split.
+The four views are hook-free and read one `{ props, cell }` pair, so a behaviour change goes in the hook and a markup change in exactly one view. `tests/editable-cell.test.tsx` is the behavioural baseline for the split.
 
 ## Usage
 
@@ -45,6 +46,12 @@ import { EditableCell } from '@viax.io/uxm';
   format={(v) => <Tag type={toTagType(v)} size="small">{String(v)}</Tag>} />
 <EditableCell type="multiselect" value={regions} options={REGION_OPTIONS} onCommit={saveRegions} />
 
+// Textarea — a paragraph in a form or side-pane row: wrapped, clamped to `lines`
+// behind Show more, edited in a Textarea (Cmd/Ctrl+Enter commits)
+<EditableCell type="textarea" size="medium" value={description} lines={3}
+  placeholder="Add a description" onCommit={saveDescription}
+  moreLabel={t('showMore')} lessLabel={t('showLess')} />
+
 // Side panel / detail view — step up to the input-family scale
 <EditableCell size="medium" value={title} onCommit={saveTitle} />
 ```
@@ -57,7 +64,8 @@ Inside a `DataTable`, don't compose this by hand — mark the column `editable` 
 |------|------|---------|-------------|
 | `value` | `string \| number \| string[]` | – | **Required.** Current committed value (`string[]` for multiselect). The atom keeps its own draft while editing. |
 | `onCommit` | `(next) => void \| Promise<void>` | – | **Required.** Fires on commit. Resolve → exit edit mode; reject → red error Banner, cell stays editing for retry. |
-| `type` | `'text' \| 'number' \| 'date' \| 'select' \| 'multiselect'` | `'text'` | Editor type. `number` commits a `Number` (emptied → `''`); `date` commits ISO regardless of `dateFormat`; pickers commit an option `value` / `string[]`. |
+| `type` | `'text' \| 'number' \| 'date' \| 'select' \| 'multiselect' \| 'textarea'` | `'text'` | Editor type. `number` commits a `Number` (emptied → `''`); `date` commits ISO regardless of `dateFormat`; pickers commit an option `value` / `string[]`; `textarea` is the multi-line text editor — see [Textarea](#textarea). |
+| `lines` | `number` | `4` | `textarea` only — lines the display shows before it clamps behind Show more. The editor is unaffected. |
 | `size` | `'small' \| 'medium'` | `'small'` | Preset density. `small` = the dense DataTable scale (font inherits via `1em` until pinned, width capped at 320px); `medium` = the input-family scale (12/6px padding, 14px font, **no width cap** — fills its container) for standalone use in side panels / detail views. There is **no height knob** — height always derives from font-size + padding (a `1lh` floor keeps empty cells one line tall and clickable). |
 | `dateFormat` | `'mdy' \| 'dmy' \| 'ymd'` | `'ymd'` | Date cells only — drives the rendered value, the empty-cell hint, the input mask, and parsing. Presentation only; storage stays ISO. |
 | `options` | `{ value: string; label: string; disabled?: boolean }[]` | – | Required for `select` / `multiselect`. Display shows the label(s) unless `format` overrides. See [Options](#options) for `disabled`. |
@@ -82,6 +90,8 @@ Inside a `DataTable`, don't compose this by hand — mark the column `editable` 
 | `openCalendarLabel` | `string` | `'Open calendar'` | Calendar trigger — date editor. |
 | `calendarDialogLabel` | `string` | `'Choose date'` | Calendar popover dialog — date editor. |
 | `addDateLabel` | `string` | `'Add date'` | Trigger name when the date editor is empty. |
+| `moreLabel` | `string` | `'Show more'` | Toggle label while a `textarea` display is clamped. |
+| `lessLabel` | `string` | `'Show less'` | Toggle label while a `textarea` display is expanded. |
 
 Exports: `EditableCell`, `EditableCellProps`, `EditableCellType`, `EditableCellSize`, `EditableCellAlign`, `EditableCellValue`, `EditableCellOption`.
 
@@ -89,12 +99,33 @@ Exports: `EditableCell`, `EditableCellProps`, `EditableCellType`, `EditableCellS
 
 `clearable` (default `true`, the input-family convention) surfaces a per-type clear affordance:
 
-- **text / number / date** — a ✕ inside the *editing* input (mirrors `TextInput`; date's ✕ sits inboard of the calendar toggle). It empties the **draft** only and keeps focus — nothing commits until Enter/blur, and Esc still restores the committed value. Works on `required` cells too: "wipe it and type the right value".
+- **text / number / date / textarea** — a ✕ inside the *editing* input (mirrors `TextInput`; date's ✕ sits inboard of the calendar toggle). It empties the **draft** only and keeps focus — nothing commits until Enter/blur, and Esc still restores the committed value. Works on `required` cells too: "wipe it and type the right value".
 - **select** — a "Clear" action in the dropdown footer that commits `''` immediately.
 - **multiselect** — a "Clear all" footer action that empties the *staged draft* and keeps the panel open ("clear all → pick one" never trips the required rule; the one commit happens on panel close).
 - **pickers additionally clear from the field**: a ✕ on the trigger itself, inboard of the chevron, revealed **while the panel is open** and kept out of the tab order; it commits `''` / `[]` directly. The open panel is a picker's editing surface, so its ✕ lives there exactly as the text/number/date ✕ lives inside the editing input — hover keeps surfacing the chevron alone, so a table at rest never offers a one-click destroy.
 
 `required` never hides a clear affordance — it guards the outcome: clearing a required cell surfaces the required warning (the value stays); clearing an optional one empties it back to the `placeholder`. text/number/date cells never show a ✕ in display mode — the pencil owns that gutter, and clearing them is an editing action (enter the cell, then ✕).
+
+## Textarea
+
+`type="textarea"` is the multi-line sibling of `text`, for a description or note in a **form or side-pane row**. It is not meant for a `DataTable` cell: a table row must not grow, so tables keep the single-line types. (`DataTableColumn.editor` is typed `EditableCellType`, so it will accept `'textarea'`, but the column has no `lines` / label options and the row would grow with the text — keep it out of tables.)
+
+**Display.** The value wraps in full — no ellipsis — and clamps to `lines` lines (default `4`). A `Show more` / `Show less` toggle (labels: `moreLabel` / `lessLabel`) appears **only when the clamped text actually overflows**, or while expanded so it can collapse again; short text shows none. The toggle expands in place and does not enter edit mode. There is no `HoverTooltip` here — the toggle is how the rest is read. `placeholder`, `disabled`, `size`, `align` and the `aria-label` default (`"Edit {value}"`) behave as for `text`.
+
+**Markup.** A button cannot nest inside a button, so the root is a wrapper holding two **siblings**: the click-to-edit button (`.uxm-editable-cell__textarea-trigger`) and the toggle (`.uxm-editable-cell__toggle`, the shared `ExpandableText` link). The clamp sits on a span *inside* the button (`.uxm-editable-cell__textarea-text`) because Chrome will not `-webkit-line-clamp` a `<button>`; the toggle's `aria-controls` points at that span. The padding, hover tint, focus halo and pencil that the single-line cell paints on its root are painted on the trigger instead, so hovering the toggle does not tint the text above it.
+
+**Editing.** The library's own `Textarea`, sized to its content between 3 and 10 lines (taller scrolls inside) by an invisible ghost in the same grid cell — pure CSS, no height is written from JS. The caret lands at the **end** of the text rather than select-all: a paragraph is too easy to wipe with one stray keystroke.
+
+| Key | Effect |
+|---|---|
+| `Enter` | Inserts a newline. **Does not commit.** |
+| `Cmd+Enter` / `Ctrl+Enter` | Commits. |
+| `Escape` | Cancels and restores the committed value. Also stops propagating, so cancelling an edit does not dismiss the pane or dialog the cell sits in. |
+| blur | Commits, as for every type. |
+
+`validate`, `required`, async `onCommit` and the warning / error banner work exactly as for `text`. The committed value is the draft verbatim — it is **not trimmed**, so trim in `onCommit` if you want that. The textarea is `disabled` while an async commit is pending, which the `Textarea` atom paints with its own disabled look.
+
+The editor is re-chromed from the cell's own knobs (`--uxm-editable-cell-input-*`, `-focus-ring`, `-radius`, `-warning-border`, `-error-border`) by feeding the atom's `--uxm-textarea-*` variables on the element itself, so a saved override of the standalone `Textarea` does not out-rank the cell's colours.
 
 ## Options
 
@@ -201,6 +232,12 @@ In the studio both sizes expose the same control for the same property (Font Siz
 | `--uxm-editable-cell-date-icon-hover-color` | `--color-text` | – | Hovered calendar toggle (its resting color is `--uxm-editable-cell-pencil-color`). |
 | `--uxm-editable-cell-warning-border` | `--color-warning-text` | – | Input border while a warning shows. |
 | `--uxm-editable-cell-error-border` | `--color-danger-text` | – | Input border while an error shows. |
+| `--uxm-editable-cell-textarea-line-height` | – | `1.5` | `textarea` only — line-height ratio of the display and the editor (the clamp, the one-line floor and the editor bounds all derive from it). |
+| `--uxm-editable-cell-textarea-min-lines` | – | `3` | `textarea` only — the editor's minimum height, in lines. |
+| `--uxm-editable-cell-textarea-max-lines` | – | `10` | `textarea` only — the editor's maximum height, in lines; taller text scrolls inside. |
+| `--uxm-editable-cell-textarea-gap` | – | `2px` | `textarea` only — space between the text and the Show more toggle. |
+
+The toggle itself is the shared `ExpandableText` link, so its colour, size and weight are the `--uxm-expandable-text-toggle-*` knobs (see [ExpandableText](../expandable-text/README.md)).
 
 ## States & variants
 
@@ -215,6 +252,7 @@ In the studio both sizes expose the same control for the same property (Font Siz
 | Disabled | `disabled` | Dimmed, no affordance. |
 | Size `small` / `medium` | `size` | Dense table scale / input-family scale. |
 | Type × Align | `type`, `align` | Editor per type; alignment applies to both modes (right-aligned cells mirror the gutters). |
+| Textarea · collapsed / expanded | `type="textarea"` | Wrapped text clamped to `lines`, Show more / Show less link beneath (only when it overflows). |
 
 ## Implementation notes
 
@@ -227,6 +265,7 @@ In the studio both sizes expose the same control for the same property (Font Siz
 ## Accessibility
 
 - Display mode is a real `<button>` (or the picker's trigger button) — keyboard reachable, `aria-label` defaults to `"Edit {value}"` / `"Add date"` for empty date cells.
+- A `textarea` display holds the Show more toggle as a **sibling** of the edit button (never nested), with `aria-expanded` and `aria-controls` pointing at the clamped text; plain `Enter` in its editor is a newline, so commit is `Cmd/Ctrl+Enter` or blur.
 - The editing input carries `aria-invalid` and `aria-describedby` pointing at the Banner message while a problem shows.
 - The date calendar popover is `role="dialog"` with an accessible name, deliberately non-modal: focus stays in the typed input (the calendar augments typing; its mousedown is swallowed so a pick never blur-commits a stale draft).
 - The clear ✕ buttons have explicit `aria-label`s (`"Clear value"` / `"Clear date"`) and swallow mousedown to keep focus in the field.

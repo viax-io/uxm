@@ -2,7 +2,7 @@ import { type CSSProperties, type ReactNode } from 'react';
 
 import type { DateInputFormat } from '../date-input';
 
-export type EditableCellType = 'text' | 'number' | 'date' | 'select' | 'multiselect';
+export type EditableCellType = 'text' | 'number' | 'date' | 'select' | 'multiselect' | 'textarea';
 
 export type EditableCellAlign = 'left' | 'right' | 'center';
 
@@ -51,8 +51,16 @@ export interface EditableCellProps {
    * surfaced inline so the user can correct.
    */
   onCommit: (next: EditableCellValue) => void | Promise<void>;
-  /** Editor type. Text uses a string input; number coerces to Number on commit (an emptied draft commits `""` — the uniform "cleared" value). Defaults to "text". */
+  /**
+   * Editor type. Text uses a string input; number coerces to Number on commit (an emptied draft commits `""` — the uniform "cleared" value). `textarea` is the multi-line sibling of `text`: the display wraps (no ellipsis) and clamps to `lines` behind a Show more toggle, the editor is the library's `Textarea` — Enter inserts a newline, Cmd/Ctrl+Enter commits, Esc cancels, blur commits. Meant for form / side-pane rows, not DataTable cells (a table row must not grow). Defaults to "text".
+   */
   type?: EditableCellType;
+  /**
+   * `type="textarea"` only — lines the display shows before it clamps behind
+   * the Show more toggle. Defaults to `4`. The editor is unaffected: it sizes
+   * to its content within fixed bounds.
+   */
+  lines?: number;
   /** Date format — only used when `type="date"`. Defaults to `"mdy"`. */
   dateFormat?: DateInputFormat;
   /** Options — required for `type="select"` and `type="multiselect"`. */
@@ -165,6 +173,10 @@ export interface EditableCellProps {
   calendarDialogLabel?: string;
   /** Trigger name when the date editor is empty. Default `"Add date"`. */
   addDateLabel?: string;
+  /** Toggle label while a `textarea` display is clamped. Default `"Show more"`. */
+  moreLabel?: string;
+  /** Toggle label while a `textarea` display is expanded. Default `"Show less"`. */
+  lessLabel?: string;
   /**
    * Preview-only branch override. UXM's canvas passes this to render the
    * input branch without a real click — `editing` shows the input, `warning`

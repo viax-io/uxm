@@ -146,6 +146,21 @@ catalog.
   an accent link flush with the text, not a bordered button. Knobs:
   `--uxm-expandable-text-{color,font-size,line-height,gap,toggle-color,toggle-hover-color,toggle-font-size,toggle-font-weight,toggle-gap}`.
 
+- **`EditableCell type="textarea"`** (unreleased) — the multi-line sibling of
+  `text`, for a description or note in a form / side-pane row (not a `DataTable`
+  cell: a table row must not grow). The display wraps in full and clamps to
+  `lines` (default 4) behind the same Show more / Show less toggle as
+  `ExpandableText` — `lines`, `moreLabel`, `lessLabel` are the new props, the
+  labels English by default like every other label on the cell. The editor is the
+  library's `Textarea`, sized to its content (3–10 lines, then it scrolls):
+  `Enter` inserts a newline, `Cmd/Ctrl+Enter` commits, `Escape` cancels (and does
+  not also dismiss a surrounding pane), blur commits; `validate`, `required`,
+  async `onCommit` and the error banner are unchanged. The caret lands at the end,
+  not select-all. The toggle is a sibling of the edit button — a button cannot
+  nest in a button. Also: `Textarea` now keeps a caller-supplied `aria-invalid`
+  when it has no `error` message (it used to overwrite it with `undefined`).
+  New knobs: `--uxm-editable-cell-textarea-{line-height,min-lines,max-lines,gap}`.
+
 ## Workflow
 
 ### Where the documentation lives
