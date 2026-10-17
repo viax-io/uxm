@@ -254,6 +254,19 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     borderRadius: '--uxm-range-bar-radius',
     minWidth: '--uxm-range-bar-min-width',
   },
+  // Every key here collides with REAL_CSS_PROPS, where the generic fallback
+  // would emit a literal property on `.uxm-expandable-text` instead of the var.
+  // For `fontSize` / `lineHeight` / `color` that is a silent no-op in a saved
+  // brand rather than a detour: the toggle link declares its own font size and
+  // colour, and the workbench cannot show it because the preview feeds the vars
+  // directly. `gap` would land as a real `gap`, which the root does paint, but it
+  // is mapped with the rest so the whole set routes the same way.
+  'expandable-text': {
+    color: '--uxm-expandable-text-color',
+    fontSize: '--uxm-expandable-text-font-size',
+    lineHeight: '--uxm-expandable-text-line-height',
+    gap: '--uxm-expandable-text-gap',
+  },
   'radio-group': {
     gap: '--uxm-radio-group-gap',
   },

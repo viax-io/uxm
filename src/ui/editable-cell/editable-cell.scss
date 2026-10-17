@@ -136,11 +136,11 @@
    opposite side gains room — so display→edit causes no text shift. The
    editing branch is excluded; the input fills the cell with its own
    padding. */
-.uxm-editable-cell:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--align-right):not(.uxm-editable-cell--type-select):not(.uxm-editable-cell--type-multiselect) {
+.uxm-editable-cell:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--align-right):not(.uxm-editable-cell--type-select):not(.uxm-editable-cell--type-multiselect):not(.uxm-editable-cell--type-textarea) {
   /* 20px = the fixed 16px pencil glyph + 4px breathing room. */
   padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
 }
-.uxm-editable-cell--align-right:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--type-select):not(.uxm-editable-cell--type-multiselect) {
+.uxm-editable-cell--align-right:not(.uxm-editable-cell--editing):not(.uxm-editable-cell--type-select):not(.uxm-editable-cell--type-multiselect):not(.uxm-editable-cell--type-textarea) {
   padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
 }
 /* Date cells reserve the ISO editing width up front. */
@@ -152,7 +152,10 @@
    is only a positioning context for the Listbox + error popover. Strip the
    wrapper's own box (it's excluded from the gutter rules above too) so the
    value aligns at the same inset as text/number/date cells instead of sitting
-   double-indented, and so hover/focus tints paint on the trigger alone. */
+   double-indented, and so hover/focus tints paint on the trigger alone.
+   (`textarea` is excluded from the gutter rules above for the same reason: its
+   padded surface is the inner click-to-edit button, see the textarea section
+   at the bottom.) */
 .uxm-editable-cell--type-select,
 .uxm-editable-cell--type-multiselect {
   cursor: pointer;
@@ -628,4 +631,218 @@
   --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-medium-padding-x, 12px);
   --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-medium-padding-y, 6px);
   font-size: calc(var(--uxm-editable-cell-medium-font-size, 14px) * var(--type-scale, 1));
+}
+
+/* ── type="textarea" ──
+   The multi-line sibling of `text`. Display: a WRAPPER (this root) holding two
+   siblings — the click-to-edit button (`__textarea-trigger`, which takes over
+   the padding, border, hover tint, focus halo and pencil gutter the single-line
+   root carries itself) and the Show more toggle, because a button cannot nest
+   inside a button. Edit: the library's `Textarea`, stretched over an invisible
+   ghost that sizes the track.
+
+   Meant for form / side-pane rows. A DataTable row must not grow, so a table
+   keeps the single-line types.
+
+   The hook for every height below is one pipe, `--_uxm-editable-cell-textarea-lh`
+   (the line-height RATIO): `em` multiples of it give a line count in px without
+   the `lh` unit, so the display, the clamp's one-line floor and the editor's
+   min / max bounds all agree. */
+.uxm-editable-cell--type-textarea {
+  --_uxm-editable-cell-textarea-lh: var(--uxm-editable-cell-textarea-line-height, 1.5);
+  /* Editor height bounds, in lines. Not a DataTable concern; a form row wants
+     room to type without the pane jumping a line at a time. */
+  --_uxm-editable-cell-textarea-min-lines: var(--uxm-editable-cell-textarea-min-lines, 3);
+  --_uxm-editable-cell-textarea-max-lines: var(--uxm-editable-cell-textarea-max-lines, 10);
+  /* Own the box: the click-to-edit button and the editor carry the padding,
+     the wrapper carries none. */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--uxm-editable-cell-textarea-gap, 2px);
+  padding: 0;
+  border: none;
+  cursor: default;
+}
+/* The root is not the interactive surface — neutralise the single-line
+   root's hover tint, forced focus halo and pencil reveal, and re-apply them to
+   the trigger below. Without this, hovering the Show more toggle would tint
+   (and reveal a pencil on) the text above it. */
+.uxm-editable-cell--type-textarea:hover:not(:disabled),
+.uxm-editable-cell--type-textarea.uxm-editable-cell--state-hover:not(:disabled) {
+  background-color: transparent;
+}
+.uxm-editable-cell--type-textarea.uxm-editable-cell--state-focus {
+  border-color: transparent;
+  outline: none;
+}
+.uxm-editable-cell--type-textarea:hover:not(:disabled) .uxm-editable-cell__pencil {
+  opacity: 0;
+}
+.uxm-editable-cell__textarea-trigger {
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--_uxm-editable-cell-padding-y, 4px) var(--_uxm-editable-cell-padding-x, 8px);
+  /* The pencil gutter, on the side away from the aligned text. */
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
+  font: inherit;
+  line-height: var(--_uxm-editable-cell-textarea-lh);
+  color: inherit;
+  text-align: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--uxm-editable-cell-radius, 4px);
+  cursor: text;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+.uxm-editable-cell--align-right .uxm-editable-cell__textarea-trigger {
+  padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
+  padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 20px);
+}
+.uxm-editable-cell--disabled .uxm-editable-cell__textarea-trigger {
+  cursor: default;
+}
+.uxm-editable-cell__textarea-trigger:hover:not(:disabled),
+.uxm-editable-cell--type-textarea.uxm-editable-cell--state-hover .uxm-editable-cell__textarea-trigger:not(:disabled) {
+  background-color: var(--uxm-editable-cell-hover-bg, var(--color-surface-alt));
+}
+.uxm-editable-cell__textarea-trigger:focus-visible,
+.uxm-editable-cell--type-textarea.uxm-editable-cell--state-focus .uxm-editable-cell__textarea-trigger {
+  border-color: var(--uxm-editable-cell-focus-border, var(--color-accent));
+  outline: 2px solid var(--uxm-editable-cell-focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+/* Pencil: pinned to the FIRST line (the single-line cell centres it, which
+   would float it mid-paragraph) and revealed by the trigger, not the root. */
+.uxm-editable-cell__textarea-trigger .uxm-editable-cell__pencil {
+  top: var(--_uxm-editable-cell-padding-y, 4px);
+  height: calc(var(--_uxm-editable-cell-textarea-lh) * 1em);
+  align-items: center;
+  transform: none;
+}
+.uxm-editable-cell__textarea-trigger:hover:not(:disabled) .uxm-editable-cell__pencil,
+.uxm-editable-cell__textarea-trigger:focus-visible .uxm-editable-cell__pencil,
+.uxm-editable-cell--type-textarea.uxm-editable-cell--state-hover:not(:disabled) .uxm-editable-cell__pencil,
+.uxm-editable-cell--type-textarea.uxm-editable-cell--state-focus .uxm-editable-cell__pencil {
+  opacity: 1;
+}
+/* The value wraps in full (pre-wrap keeps the author's line breaks, `anywhere`
+   keeps a long URL from widening the pane). `min-height` is one line, so an
+   empty value — which renders no line box — still leaves a click target. */
+.uxm-editable-cell__textarea-text {
+  display: block;
+  min-width: 0;
+  min-height: calc(var(--_uxm-editable-cell-textarea-lh) * 1em);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+/* The clamp sits on this span, never on the button: Chrome will not
+   line-clamp a <button>. The line count is set inline by the component. */
+.uxm-editable-cell__textarea-text--clamped {
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+}
+/* Show more / less — the shared ExpandableText link, lined up under the text
+   (the text sits one padding + the 1px border in from the box edge). Doubled
+   selector because expandable-text.css loads after this file. */
+.uxm-editable-cell--type-textarea .uxm-editable-cell__toggle {
+  margin-inline-start: var(--uxm-editable-cell-text-inset);
+}
+.uxm-editable-cell--type-textarea.uxm-editable-cell--align-right .uxm-editable-cell__toggle {
+  align-self: flex-end;
+  margin-inline-start: 0;
+  margin-inline-end: var(--uxm-editable-cell-text-inset);
+}
+.uxm-editable-cell--type-textarea.uxm-editable-cell--align-center .uxm-editable-cell__toggle {
+  align-self: center;
+  margin-inline-start: 0;
+}
+
+/* Editing. A plain grid with one column — the single-line `max-content` floor
+   exists to stop a table column jumping on enter-edit, which a form row has no
+   column for. */
+.uxm-editable-cell--type-textarea.uxm-editable-cell--editing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+/* Auto-sizer. Mirrors the editor's box so the draft wraps identically, then
+   bounds the track between the min and max line counts; past the max the
+   textarea scrolls inside. The two `2 * padding + 2px` terms are the vertical
+   padding and the 1px borders the box-sizing includes. */
+.uxm-editable-cell__ghost--textarea {
+  box-sizing: border-box;
+  max-width: none;
+  line-height: var(--_uxm-editable-cell-textarea-lh);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  /* 1px borders (intrinsic geometry, as on the input). */
+  min-height: calc(var(--_uxm-editable-cell-textarea-min-lines) * var(--_uxm-editable-cell-textarea-lh) * 1em + 2 * var(--_uxm-editable-cell-padding-y, 4px) + 2px);
+  max-height: calc(var(--_uxm-editable-cell-textarea-max-lines) * var(--_uxm-editable-cell-textarea-lh) * 1em + 2 * var(--_uxm-editable-cell-padding-y, 4px) + 2px);
+  padding-inline: var(--_uxm-editable-cell-padding-x, 8px);
+}
+.uxm-editable-cell--clearable .uxm-editable-cell__ghost--textarea {
+  padding-inline-end: calc(var(--_uxm-editable-cell-padding-x, 8px) + 18px);
+}
+.uxm-editable-cell--clearable.uxm-editable-cell--align-right .uxm-editable-cell__ghost--textarea {
+  padding-inline-end: var(--_uxm-editable-cell-padding-x, 8px);
+  padding-inline-start: calc(var(--_uxm-editable-cell-padding-x, 8px) + 18px);
+}
+/* The editor is the library's Textarea atom, re-chromed from the CELL's own
+   knobs by feeding the atom's variables on the element itself — the same
+   two-layer theming, one level down. Set on the element (not inherited from
+   the root) so a saved override of the standalone Textarea, which the studio
+   emits directly on `.uxm-textarea`, cannot out-rank the cell's input colours.
+   Every colour is therefore the cell's `--uxm-editable-cell-input-*` family, and
+   a severity re-points them below. */
+.uxm-editable-cell--type-textarea .uxm-editable-cell__input {
+  --uxm-textarea-bg: var(--uxm-editable-cell-input-bg, var(--color-card));
+  --uxm-textarea-hover-bg: var(--uxm-editable-cell-input-bg, var(--color-card));
+  --uxm-textarea-color: var(--uxm-editable-cell-input-color, var(--color-text));
+  --uxm-textarea-border-color: var(--uxm-editable-cell-input-border, var(--color-border));
+  --uxm-textarea-hover-border: var(--uxm-editable-cell-input-border, var(--color-border));
+  --uxm-textarea-focus-border: var(--uxm-editable-cell-input-focus-border, var(--color-accent));
+  --uxm-textarea-focus-ring: var(--uxm-editable-cell-focus-ring, var(--color-accent));
+  --uxm-textarea-border-radius: var(--uxm-editable-cell-radius, 4px);
+  --uxm-textarea-padding-x: var(--_uxm-editable-cell-padding-x, 8px);
+  --uxm-textarea-padding-y: var(--_uxm-editable-cell-padding-y, 4px);
+  /* The atom's 100px floor — the ghost owns the height bounds here. */
+  --uxm-textarea-min-height: 0;
+  /* `font: inherit`, not the atom's own 14px: the cell reads at the scale of
+     whatever surrounds it (small) or pins its own (medium), exactly like the
+     single-line editor. The type scale is already inside that size. */
+  font: inherit;
+  line-height: var(--_uxm-editable-cell-textarea-lh);
+  display: block;
+  /* Fills the track the ghost sized; scrolls past the max. */
+  height: auto;
+  resize: none;
+}
+/* A severity re-points the same variables, so hover and focus can't repaint
+   the border back to the accent the way the atom's own state rules would. No
+   halo while a problem shows — the banner carries the signal. */
+.uxm-editable-cell--error.uxm-editable-cell--type-textarea .uxm-editable-cell__input {
+  --uxm-textarea-border-color: var(--uxm-editable-cell-error-border, var(--color-danger-text));
+  --uxm-textarea-hover-border: var(--uxm-editable-cell-error-border, var(--color-danger-text));
+  --uxm-textarea-focus-border: var(--uxm-editable-cell-error-border, var(--color-danger-text));
+  --uxm-textarea-focus-ring: transparent;
+}
+.uxm-editable-cell--warning.uxm-editable-cell--type-textarea .uxm-editable-cell__input {
+  --uxm-textarea-border-color: var(--uxm-editable-cell-warning-border, var(--color-warning-text));
+  --uxm-textarea-hover-border: var(--uxm-editable-cell-warning-border, var(--color-warning-text));
+  --uxm-textarea-focus-border: var(--uxm-editable-cell-warning-border, var(--color-warning-text));
+  --uxm-textarea-focus-ring: transparent;
+}
+/* The ✕ pins to the first line, not the vertical middle, and the editor
+   reserves its gutter exactly as the single-line input does (the base
+   `--clearable` rule already pads the input; align-right mirrors it). */
+.uxm-editable-cell--type-textarea .uxm-editable-cell__clear {
+  top: var(--_uxm-editable-cell-padding-y, 4px);
+  height: calc(var(--_uxm-editable-cell-textarea-lh) * 1em);
+  box-sizing: border-box;
+  font: inherit;
+  transform: none;
 }

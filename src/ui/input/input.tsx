@@ -240,7 +240,11 @@ export function Textarea({
         clearable && 'uxm-textarea--clearable',
         className,
       )}
-      aria-invalid={error ? true : undefined}
+      // A caller's own `aria-invalid` survives when there is no `error` message:
+      // a host that surfaces the problem elsewhere (EditableCell's popover banner)
+      // still needs the control marked invalid, and the explicit prop below used
+      // to overwrite it with `undefined`.
+      aria-invalid={error ? true : rest['aria-invalid']}
       aria-describedby={mergeDescribedBy(rest['aria-describedby'], error ? errorId : undefined)}
     />
   );

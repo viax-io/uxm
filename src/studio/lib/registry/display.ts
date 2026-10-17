@@ -459,6 +459,69 @@ export const displayDefs: ComponentDef[] = [
     ],
   },
 
+  {
+    id: 'expandable-text',
+    name: 'Expandable Text',
+    category: 'Display',
+    description:
+      'Display-only long text: wraps in full up to a chosen number of lines, then clamps behind a "Show more" / "Show less" link. The link appears only when the text actually overflows (or while expanded, so it can collapse again) — short text shows nothing extra. Paragraph breaks survive and long unbroken tokens wrap instead of widening the pane. Built for side panes and detail views; the same clamp and link power Editable Cell\'s textarea type when the text is editable. The atom ships no message catalogue — the two link labels are props (`moreLabel`, `lessLabel`) with English defaults. Root theming routes through `--uxm-expandable-text-*`; the line count is the `lines` prop, not a knob.',
+    styleProperties: [
+      { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
+      { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px' },
+      { key: 'lineHeight', label: 'Line Height', control: 'number', defaultValue: 1.5, min: 1.1, max: 2, step: 0.05 },
+      { key: 'gap', label: 'Gap', control: 'number', defaultValue: 4, min: 0, max: 16, step: 1, unit: 'px' },
+      // The link under the text. Colour is per state like the rest of the
+      // family; size / weight / gap are shared across states.
+      { key: 'toggleColor', label: 'Toggle Color', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors', showWhen: { state: 'default' } },
+      { key: 'toggleHoverColor', label: 'Toggle Color', control: 'color', defaultValue: 'color-mix(in srgb, var(--color-accent-bold) 70%, var(--color-text))', section: 'colors', showWhen: { state: 'hover' } },
+      { key: 'focusRing', label: 'Focus Ring', control: 'color', defaultValue: 'var(--color-accent)', section: 'colors', showWhen: { state: 'focus' } },
+      { key: 'toggleFontSize', label: 'Toggle Font Size', control: 'number', defaultValue: 13, min: 11, max: 18, step: 1, unit: 'px' },
+      { key: 'toggleFontWeight', label: 'Toggle Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600'] },
+      { key: 'toggleGap', label: 'Toggle Gap', control: 'number', defaultValue: 4, min: 0, max: 12, step: 1, unit: 'px' },
+    ],
+    layoutVariants: [
+      {
+        // Editor-only state switcher for the toggle link, which is only
+        // reachable by pointer / keyboard. The preview forces each state with
+        // a modifier class that shares its selector with the real rule.
+        key: 'state',
+        label: 'State',
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'hover', label: 'Hover' },
+          { value: 'focus', label: 'Focus' },
+        ],
+        defaultValue: 'default',
+      },
+      {
+        key: 'expanded',
+        label: 'Expanded',
+        options: [
+          { value: 'collapsed', label: 'Collapsed' },
+          { value: 'expanded', label: 'Expanded' },
+        ],
+        defaultValue: 'collapsed',
+      },
+    ],
+    events: [
+      { name: 'onExpandedChange', description: 'Fires when the user presses the Show more / Show less link.', payload: '(expanded: boolean) => void' },
+    ],
+    api: {
+      importPath: '@viax.io/uxm/ui',
+      importNames: 'ExpandableText',
+      props: [
+        { name: 'children', type: 'ReactNode', required: true, description: 'The text. Paragraph breaks (`\\n`) survive — the content is `white-space: pre-wrap`.' },
+        { name: 'lines', type: 'number', defaultValue: '4', description: 'Lines shown before the text clamps behind the toggle.' },
+        { name: 'expanded', type: 'boolean', description: 'Controlled expanded state. Pair with `onExpandedChange`.' },
+        { name: 'defaultExpanded', type: 'boolean', defaultValue: 'false', description: 'Initial expanded state when uncontrolled.' },
+        { name: 'onExpandedChange', type: '(expanded: boolean) => void', description: 'Fires with the next state when the toggle is pressed, controlled or not.' },
+        { name: 'moreLabel', type: 'string', defaultValue: '"Show more"', description: 'Toggle label while collapsed. The atom ships no message catalogue — pass your own copy.' },
+        { name: 'lessLabel', type: 'string', defaultValue: '"Show less"', description: 'Toggle label while expanded.' },
+        { name: '...rest', type: 'HTMLAttributes<HTMLDivElement>', description: 'Native div attributes pass through to the root.' },
+      ],
+    },
+  },
+
   // ── Configuration model ──
   // Two pieces specific to the Configuration template's three-pane editor:
   // a clickable segment row (left list) and a clickable component card row

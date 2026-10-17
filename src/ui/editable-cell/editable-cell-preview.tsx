@@ -76,6 +76,12 @@ const SAMPLE_OPTIONS: EditableCellOption[] = [
   { value: 'winback', label: 'Win-back' },
 ];
 
+// Long enough to wrap past the default four-line clamp at the canvas width, so
+// the textarea showcase exercises Show more rather than a text that fits.
+const SAMPLE_DESCRIPTION =
+  'Quarterly renewals are quoted from the contract anniversary, not the invoice date, so a mid-term amendment never restarts the notice window.\n\n' +
+  'Discounts above the approval threshold route to the regional director; anything beyond that goes to finance. Until the approval lands the quote stays in draft.';
+
 const commitDelay = () => new Promise((r) => setTimeout(r, 400));
 
 // One independent bundle of per-type state + async commit handlers. Called
@@ -89,15 +95,21 @@ function useCellState() {
   const [date, setDate] = useState('2026-03-14');
   const [select, setSelect] = useState('growth');
   const [multi, setMulti] = useState<string[]>(['growth', 'expansion']);
+  const [description, setDescription] = useState(SAMPLE_DESCRIPTION);
   return {
     text,
     num,
     date,
     select,
     multi,
+    description,
     commitText: async (n: EditableCellValue) => {
       await commitDelay();
       setText(String(Array.isArray(n) ? n.join(', ') : n));
+    },
+    commitDescription: async (n: EditableCellValue) => {
+      await commitDelay();
+      setDescription(String(Array.isArray(n) ? n.join(', ') : n));
     },
     commitNumber: async (n: EditableCellValue) => {
       await commitDelay();
@@ -198,6 +210,16 @@ export function EditableCellPreview({ styles, variants }: PreviewProps & { compo
             value={c.date}
             dateFormat={dateFormat}
             onCommit={c.commitDate}
+          />
+        );
+      case 'textarea':
+        return (
+          <EditableCell
+            {...chrome}
+            type="textarea"
+            value={c.description}
+            onCommit={c.commitDescription}
+            placeholder="Add a description…"
           />
         );
       case 'select':

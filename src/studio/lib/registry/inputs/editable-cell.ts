@@ -4,7 +4,7 @@ export const editableCellDef: ComponentDef = {
   id: 'editable-cell',
   name: 'Editable Cell',
   category: 'Inputs',
-  description: 'Inline-editable cell. Text / number swap the display for an input (Enter or blur commits, Esc cancels); date pairs the input with a Calendar popover — type a date or pick a day, either commits an ISO date string; select is pick-only — clicking opens a Listbox dropdown and picking an option commits its value immediately (display can still be a custom Tag/Badge via `format`); multiselect is select\'s array sibling — a MultiListbox toggles options with the panel open, the value is a string[] of picked option values shown as joined labels. Problems surface in a popover Banner under the cell — warning (yellow) for sync validate failures, error (red) for a rejected async `onCommit` — so the table row never changes height. Designed for DataTable cells but works anywhere an inline-edit pattern fits (PageHeader rename, StatCard label, etc.) — 2 sizes: small (dense table scale, default) / medium (input-family scale for side panels and detail views), each with its own dimension knobs.',
+  description: 'Inline-editable cell. Text / number swap the display for an input (Enter or blur commits, Esc cancels); date pairs the input with a Calendar popover — type a date or pick a day, either commits an ISO date string; select is pick-only — clicking opens a Listbox dropdown and picking an option commits its value immediately (display can still be a custom Tag/Badge via `format`); multiselect is select\'s array sibling — a MultiListbox toggles options with the panel open, the value is a string[] of picked option values shown as joined labels; textarea is text\'s multi-line sibling — the display wraps (no ellipsis) and clamps to `lines` behind a Show more / Show less toggle, the editor is the library\'s Textarea (Enter inserts a newline, Cmd/Ctrl+Enter commits, Esc cancels, blur commits), and it is meant for form and side-pane rows, not table cells. Problems surface in a popover Banner under the cell — warning (yellow) for sync validate failures, error (red) for a rejected async `onCommit` — so the table row never changes height. Designed for DataTable cells but works anywhere an inline-edit pattern fits (PageHeader rename, StatCard label, etc.) — 2 sizes: small (dense table scale, default) / medium (input-family scale for side panels and detail views), each with its own dimension knobs.',
   styleProperties: [
     // Layout — maxWidth and radius are shared across both sizes; the
     // padding/font trio is per-size (gated by the Size variant), one
@@ -49,7 +49,7 @@ export const editableCellDef: ComponentDef = {
     // The hover affordance differs by type: text / number / date reveal a pencil,
     // the pickers (select / multiselect) reveal a chevron. Gate each so only the
     // relevant one shows under Hover.
-    { key: 'pencilColor', label: 'Pencil Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover', type: ['text', 'number', 'date'] } },
+    { key: 'pencilColor', label: 'Pencil Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover', type: ['text', 'number', 'date', 'textarea'] } },
     { key: 'chevronColor', label: 'Chevron Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'cellColors', showWhen: { state: 'hover', type: ['select', 'multiselect'] } },
     { key: 'focusBorder', label: 'Focus Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'cellColors', showWhen: { state: 'focus' } },
     { key: 'focusRing', label: 'Focus Ring', control: 'color', defaultValue: 'var(--color-accent)', section: 'cellColors', showWhen: { state: 'focus' } },
@@ -96,7 +96,7 @@ export const editableCellDef: ComponentDef = {
         // Editing is an input-only state — pickers (select/multiselect) have
         // no text-edit mode, so the knob is hidden for them (a stale
         // `editing` selection auto-repairs to Default on type switch).
-        { value: 'editing', label: 'Editing', showWhen: { type: ['text', 'number', 'date'] } },
+        { value: 'editing', label: 'Editing', showWhen: { type: ['text', 'number', 'date', 'textarea'] } },
         // A picker's editing surface is its OPEN panel, so `open` is the
         // pickers' counterpart to `editing`: it forces the open chrome and
         // reveals the trigger ✕ so both are tunable without live clicking.
@@ -115,6 +115,7 @@ export const editableCellDef: ComponentDef = {
         { value: 'date', label: 'Date' },
         { value: 'select', label: 'Select' },
         { value: 'multiselect', label: 'Multi-select' },
+        { value: 'textarea', label: 'Textarea' },
       ],
       defaultValue: 'text',
     },
@@ -164,7 +165,10 @@ export const editableCellDef: ComponentDef = {
     props: [
       { name: 'value', type: 'string | number | string[]', required: true, description: 'Current committed value (a string[] of picked option values for multiselect). The atom keeps a draft internally during edit.' },
       { name: 'onCommit', type: '(next: string | number | string[]) => void | Promise<void>', required: true, description: "Called when the user commits a change. Async — reject the promise to surface a red error Banner in the cell's popover and keep the cell in edit mode for retry (multiselect reverts its optimistic toggle)." },
-      { name: 'type', type: '"text" | "number" | "date" | "select" | "multiselect"', defaultValue: '"text"', description: 'Editor type. Number coerces to Number on commit; date pairs a masked input with a Calendar popover — typing and picking both commit a normalized ISO date string; select is pick-only — a Listbox dropdown whose chosen option\'s value commits immediately; multiselect toggles options in a MultiListbox and commits a string[].' },
+      { name: 'type', type: '"text" | "number" | "date" | "select" | "multiselect" | "textarea"', defaultValue: '"text"', description: 'Editor type. Number coerces to Number on commit; date pairs a masked input with a Calendar popover — typing and picking both commit a normalized ISO date string; select is pick-only — a Listbox dropdown whose chosen option\'s value commits immediately; multiselect toggles options in a MultiListbox and commits a string[]; textarea is the multi-line text editor — the display wraps and clamps to `lines` behind a Show more toggle, Enter inserts a newline and Cmd/Ctrl+Enter commits. Meant for form / side-pane rows, not DataTable cells (a table row must not grow).' },
+      { name: 'lines', type: 'number', defaultValue: '4', description: '`type="textarea"` only — lines the display shows before it clamps behind the Show more toggle. The editor is unaffected: it sizes to its content within fixed bounds.' },
+      { name: 'moreLabel', type: 'string', defaultValue: '"Show more"', description: '`type="textarea"` only — toggle label while the display is clamped. The atom ships no message catalogue; pass your own copy.' },
+      { name: 'lessLabel', type: 'string', defaultValue: '"Show less"', description: '`type="textarea"` only — toggle label while the display is expanded.' },
       { name: 'dateFormat', type: '"mdy" | "dmy" | "ymd"', defaultValue: '"ymd"', description: 'Display / typing format for date cells (same options as DateInput): one format drives the rendered value, the empty-cell hint, the input mask, and parsing. Committed values stay ISO regardless — presentation, not storage.' },
       { name: 'options', type: '{ value: string; label: string }[]', description: 'Options for `type="select"` / `"multiselect"`. Picking one commits its `value` (or toggles it into the array); display shows the `label`(s) unless `format` overrides it.' },
       { name: 'searchable', type: 'boolean', description: 'Show a search box in the dropdown. Defaults to auto — shown only when there are more than 6 options.' },

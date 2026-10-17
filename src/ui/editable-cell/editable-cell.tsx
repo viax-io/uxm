@@ -1,6 +1,9 @@
+import { DEFAULT_EXPANDABLE_LINES } from '../expandable-text/use-expandable-text';
+
 import { EditableCellDateView } from './editable-cell-date';
 import { EditableCellSelectView } from './editable-cell-select';
 import { EditableCellTextView } from './editable-cell-text';
+import { EditableCellTextareaView } from './editable-cell-textarea';
 import { useEditableCell, type EditableCellResolvedProps } from './use-editable-cell';
 
 import type { EditableCellProps } from './editable-cell.types';
@@ -21,7 +24,8 @@ export type {
  *   - **Display** (default) — renders the formatted value as a button-styled
  *     text run. Click (or Enter/Space when focused) to enter edit mode.
  *   - **Editing** — replaces the display with a focused, select-all'd input.
- *     Enter commits, Esc cancels, blur commits.
+ *     Enter commits, Esc cancels, blur commits. (`type="textarea"` is the
+ *     multi-line variant: Enter inserts a newline, Cmd/Ctrl+Enter commits.)
  *   - **Submitting** — input disabled while an async `onCommit` is pending.
  *
  * Problems surface in a Popover anchored under the cell (never inline — a
@@ -50,6 +54,9 @@ export function EditableCell({
   openCalendarLabel = 'Open calendar',
   calendarDialogLabel = 'Choose date',
   addDateLabel = 'Add date',
+  lines = DEFAULT_EXPANDABLE_LINES,
+  moreLabel = 'Show more',
+  lessLabel = 'Show less',
   ...rest
 }: EditableCellProps) {
   // Defaults are applied once, here, so the hook and every view read one
@@ -72,6 +79,9 @@ export function EditableCell({
     openCalendarLabel,
     calendarDialogLabel,
     addDateLabel,
+    lines,
+    moreLabel,
+    lessLabel,
   };
   const cell = useEditableCell(props);
 
@@ -80,6 +90,9 @@ export function EditableCell({
   }
   if (props.type === 'date') {
     return <EditableCellDateView props={props} cell={cell} />;
+  }
+  if (props.type === 'textarea') {
+    return <EditableCellTextareaView props={props} cell={cell} />;
   }
   return <EditableCellTextView props={props} cell={cell} />;
 }

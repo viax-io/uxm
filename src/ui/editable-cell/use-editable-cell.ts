@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FORMAT_SPEC, formatDate as formatDateAs, invalidDateMessage, parseDate as parseFormattedDate } from '../date-input';
+import { useExpandableText } from '../expandable-text/use-expandable-text';
 
 import { isEmptyValue, isoToFormatted, parseISODate, toISODate } from './editable-cell-utils';
 
@@ -8,7 +9,7 @@ import type { CalendarValue } from '../calendar';
 import type { CellError, EditableCellProps, EditableCellValue } from './editable-cell.types';
 
 /** Keys `EditableCell` defaults before handing the props to the hook and the views. */
-export type EditableCellDefaultedKey = 'type' | 'dateFormat' | 'searchable' | 'clearable' | 'align' | 'size' | 'required' | 'saveErrorMessage' | 'invalidNumberMessage' | 'invalidValueMessage' | 'clearSelectionLabel' | 'clearDateLabel' | 'clearValueLabel' | 'openCalendarLabel' | 'calendarDialogLabel' | 'addDateLabel';
+export type EditableCellDefaultedKey = 'type' | 'dateFormat' | 'searchable' | 'clearable' | 'align' | 'size' | 'required' | 'saveErrorMessage' | 'invalidNumberMessage' | 'invalidValueMessage' | 'clearSelectionLabel' | 'clearDateLabel' | 'clearValueLabel' | 'openCalendarLabel' | 'calendarDialogLabel' | 'addDateLabel' | 'lines' | 'moreLabel' | 'lessLabel';
 
 /** `EditableCellProps` with every default applied — what the hook and the views see. */
 export type EditableCellResolvedProps = Omit<EditableCellProps, EditableCellDefaultedKey> &
@@ -23,8 +24,8 @@ export type EditableCellState = ReturnType<typeof useEditableCell>;
 
 /**
  * All of EditableCell's state, effects, commit paths and derived display
- * values — everything that is NOT per-type JSX. The three views
- * (`editable-cell-{text,date,select}.tsx`) are hook-free and read this
+ * values — everything that is NOT per-type JSX. The four views
+ * (`editable-cell-{text,textarea,date,select}.tsx`) are hook-free and read this
  * object, so the hook order is fixed here regardless of which view renders.
  */
 export function useEditableCell(props: EditableCellResolvedProps) {
@@ -44,6 +45,7 @@ export function useEditableCell(props: EditableCellResolvedProps) {
     saveErrorMessage,
     invalidNumberMessage,
     invalidValueMessage,
+    lines,
   } = props;
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<string>(() => {
@@ -55,6 +57,11 @@ export function useEditableCell(props: EditableCellResolvedProps) {
   const [error, setError] = useState<CellError | null>(null);
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  // `type="textarea"` edits in a <textarea>, which a ref typed for the input
+  // can't hold (and `RefObject<A | B>` is not assignable to either element's
+  // `ref` prop), so it gets its own handle; `focusEditor` below picks whichever
+  // is mounted.
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   // Anchor for the error popover — the editing wrapper, so the banner hangs
   // under the cell without affecting the table row's layout.
   const wrapRef = useRef<HTMLSpanElement | null>(null);
@@ -90,15 +97,45 @@ export function useEditableCell(props: EditableCellResolvedProps) {
     }
   }, [value, isEditing, type, displayFormatted]);
 
-  // Focus + select-all when entering edit mode. Select-all means typing
+  // Clamp + measure + Show more toggle for the `textarea` display. Called for
+  // every type (hook order is fixed) but `enabled` only for `textarea`, so the
+  // other types never measure or observe anything. `value` is the re-measure
+  // key: a clamped box already at its limit does not resize when its text grows.
+  const expandable = useExpandableText<HTMLSpanElement>({
+    lines,
+    enabled: type === 'textarea',
+    measureKey: value,
+  });
+
+  // Focus whichever editor is mounted. Reads the refs at call time, so it is
+  // safe from effects and from the post-rejection retry below.
+  const focusEditor = useCallback(() => {
+    (inputRef.current ?? textareaRef.current)?.focus();
+  }, []);
+
+  // Focus when entering edit mode. Text / number / date SELECT ALL: typing
   // immediately replaces the value — the most common edit intent — while
-  // keyboard navigation (Home/End/arrows) still works to refine.
+  // keyboard navigation (Home/End/arrows) still works to refine. A textarea
+  // puts the caret at the END instead: it holds a paragraph, where an
+  // accidental keystroke over a select-all would wipe the lot.
   useEffect(() => {
-    if (isEditing && inputRef.current) {
+    if (!isEditing) return;
+    if (type === 'textarea') {
+      const el = textareaRef.current;
+      if (!el) return;
+      el.focus();
+      const end = el.value.length;
+      el.setSelectionRange(end, end);
+      // `setSelectionRange` doesn't scroll — bring the caret into view when the
+      // text is taller than the editor's bounds.
+      el.scrollTop = el.scrollHeight;
+      return;
+    }
+    if (inputRef.current) {
       inputRef.current.focus();
       inputRef.current.select();
     }
-  }, [isEditing]);
+  }, [isEditing, type]);
 
   // A surfaced problem and the date calendar can't share the anchor, so the
   // calendar is hidden while an error shows. Close it outright (not just via
@@ -159,13 +196,13 @@ export function useEditableCell(props: EditableCellResolvedProps) {
           severity: 'error',
         });
         // Refocus the input so the user can retry without re-entering edit mode.
-        requestAnimationFrame(() => inputRef.current?.focus());
+        requestAnimationFrame(focusEditor);
         return false;
       } finally {
         setSubmitting(false);
       }
     },
-    [submitting, required, requiredMsg, saveErrorMessage, validate, onCommit],
+    [submitting, required, requiredMsg, saveErrorMessage, validate, onCommit, focusEditor],
   );
 
   // Shared commit path for both the typed input (handleCommit) and the calendar
@@ -305,7 +342,25 @@ export function useEditableCell(props: EditableCellResolvedProps) {
   }, [value, type, displayFormatted]);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
+    (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (type === 'textarea') {
+        // A textarea's Enter is a newline — it must NOT commit, or a paragraph
+        // could never be typed. Commit is Cmd/Ctrl+Enter (or blur). Plain Enter
+        // is deliberately left alone: no preventDefault, so the browser inserts
+        // the line break.
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          handleCommit();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          // Cancelling an edit must not also dismiss the pane or dialog the
+          // cell sits in. The single-line types leave Escape to bubble; this
+          // one is new, so it can start out right.
+          e.stopPropagation();
+          handleCancel();
+        }
+        return;
+      }
       if (e.key === 'Enter') {
         e.preventDefault();
         handleCommit();
@@ -314,7 +369,7 @@ export function useEditableCell(props: EditableCellResolvedProps) {
         handleCancel();
       }
     },
-    [handleCommit, handleCancel],
+    [type, handleCommit, handleCancel],
   );
 
   // `forceMode` (preview-only) renders the input branch without a real
@@ -396,6 +451,8 @@ export function useEditableCell(props: EditableCellResolvedProps) {
     open,
     setOpen,
     inputRef,
+    textareaRef,
+    expandable,
     wrapRef,
     parsedValue,
     displayFormatted,
