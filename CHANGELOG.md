@@ -1,3 +1,11 @@
+# [4.70.0](https://github.com/viax-io/uxm/compare/v4.69.0...v4.70.0) (2026-10-17)
+
+
+### Features
+
+* **editable-cell:** add a multi-line textarea type with a Show more toggle ([1b66601](https://github.com/viax-io/uxm/commit/1b66601c11639e8811240d7d2ac30a483d80f29c))
+* **expandable-text:** add a clamped long-text atom with a Show more toggle ([2a4ba84](https://github.com/viax-io/uxm/commit/2a4ba84e80394e6883e2801ec2c30c322077d3b1))
+
 # [4.69.0](https://github.com/viax-io/uxm/compare/v4.68.1...v4.69.0) (2026-10-16)
 
 

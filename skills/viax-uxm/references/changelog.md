@@ -1960,3 +1960,12 @@ reached the published library; now shipped in 2.8.0.
   Pass `locale` to own the language yourself — the switcher then does not render. Switching no
   longer remounts the workbench (selection and unsaved edits survive). In the sidebar,
   **Language Switcher** moved from the App category to Inputs.
+
+### New in 4.66.0
+
+- **`LifecycleNodeCard` gained an `icon` prop** (unreleased) — optional `ReactNode` that
+  replaces the kind's glyph inside the icon tile, for a node the four kinds don't name
+  (an execution model on a model canvas). Kind, label and colours are unchanged; recolour
+  the tile with `--kind-icon-bg` / `--kind-icon-color`. Pass
+  `<Icon glyph="…" size={14} strokeWidth={1.5} />` to match the built-in glyphs. Unset (or
+  rendering nothing) keeps the kind's glyph, so existing cards are untouched.
