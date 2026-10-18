@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -35,6 +35,17 @@ describe('EditableCell — text', () => {
     await userEvent.keyboard('Nope{Escape}');
     expect(onCommit).not.toHaveBeenCalled();
     expect(screen.getByRole('button')).toHaveTextContent('Ada');
+  });
+
+  it('does not commit or cancel on Enter / Escape that belong to an IME composition', async () => {
+    const onCommit = vi.fn();
+    render(<EditableCell value="Ada" onCommit={onCommit} />);
+    await userEvent.click(screen.getByRole('button'));
+    const input = await screen.findByRole('textbox');
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
+    fireEvent.keyDown(input, { key: 'Escape', keyCode: 229 });
+    expect(onCommit).not.toHaveBeenCalled();
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('treats an unchanged blur as a pure exit (no onCommit)', async () => {
@@ -492,6 +503,20 @@ describe('EditableCell — textarea', () => {
     await userEvent.keyboard('Nope{Escape}');
     expect(onCommit).not.toHaveBeenCalled();
     expect(screen.getByRole('button', { name: 'Edit Ada' })).toHaveTextContent('Ada');
+  });
+
+  it.each([
+    ['isComposing', { isComposing: true }],
+    ['keyCode 229', { keyCode: 229 }],
+  ])('leaves Escape and Ctrl+Enter to the IME while composing (%s)', async (_name, composing) => {
+    const onCommit = vi.fn();
+    render(<EditableCell type="textarea" value="Ada" onCommit={onCommit} />);
+    await userEvent.click(screen.getByRole('button'));
+    const box = await screen.findByRole('textbox');
+    fireEvent.keyDown(box, { key: 'Escape', ...composing });
+    fireEvent.keyDown(box, { key: 'Enter', ctrlKey: true, ...composing });
+    expect(onCommit).not.toHaveBeenCalled();
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('keeps Escape to itself so it cannot also dismiss a surrounding pane', async () => {
