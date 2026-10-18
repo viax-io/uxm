@@ -67,4 +67,39 @@ describe('Listbox', () => {
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     expect(onChange).not.toHaveBeenCalled();
   });
+
+  describe('empty state means "nothing to show", not "nothing pickable"', () => {
+    function EmptyHost({ list, disabled }: { list: Item[]; disabled?: boolean }) {
+      return (
+        <Listbox<Item>
+          items={list}
+          value={null}
+          onChange={vi.fn()}
+          getKey={(c) => c.code}
+          getLabel={(c) => c.name}
+          isItemDisabled={disabled ? () => true : undefined}
+          searchable={false}
+          emptyState="Nothing here"
+          aria-label="Country"
+          renderTrigger={({ triggerProps }) => <button {...triggerProps}>Pick</button>}
+          renderItem={(c) => c.name}
+        />
+      );
+    }
+
+    it('renders every option of an all-disabled list, with no empty state', async () => {
+      render(<EmptyHost list={items} disabled />);
+      await userEvent.click(screen.getByRole('button', { name: 'Pick' }));
+      const options = await screen.findAllByRole('option');
+      expect(options).toHaveLength(items.length);
+      expect(screen.queryByText('Nothing here')).not.toBeInTheDocument();
+    });
+
+    it('shows the empty state when there are no options at all', async () => {
+      render(<EmptyHost list={[]} />);
+      await userEvent.click(screen.getByRole('button', { name: 'Pick' }));
+      expect(await screen.findByText('Nothing here')).toBeInTheDocument();
+      expect(screen.queryAllByRole('option')).toHaveLength(0);
+    });
+  });
 });

@@ -127,18 +127,19 @@ const columns: DataTableColumn<Mapping>[] = [
     header: 'Source field',
     editable: true,
     editor: 'select',
-    // Only type-compatible sources, and nothing another row has claimed.
+    // Only type-compatible sources, and nothing another row has claimed —
+    // except the row's own value, which stays pickable (see below).
     editorOptions: (row) => sources.map((s) => ({
       value: s.id,
       label: claimedElsewhere(s, row) ? `${s.name} — already mapped` : s.name,
-      disabled: !compatible(s, row) || claimedElsewhere(s, row),
+      disabled: s.id !== row.source && (!compatible(s, row) || claimedElsewhere(s, row)),
     })),
     onCommit: (row, next) => save(row, next),
   },
 ];
 ```
 
-Two things worth knowing before reaching for it:
+A few things worth knowing before reaching for it:
 
 - **It runs on every render, for every row whose cell is editable** — including rows
   nobody is editing, because a closed cell needs the list too, to turn its stored value
@@ -152,10 +153,12 @@ Two things worth knowing before reaching for it:
   cascade into `Listbox`'s own `items` and `filterItems` types, and `filterItems` cannot
   widen without breaking anyone who implemented it — so an `as const` list needs a spread
   on the way in.
-- **Always include the row's own current value**, even when the rule would exclude it —
-  disable it rather than omit it. A value missing from its row's list still survives
-  (`EditableCell` keeps it as a stand-in row so it round-trips and stays removable), but it
-  then shows as its raw id, which is rarely what you want on screen.
+- **Always include the row's own current value, and leave it enabled**, even when the rule
+  would exclude it — put the reason in its label instead. Omitted, it still survives
+  (`EditableCell` keeps it as a stand-in row so it round-trips and stays removable) but shows
+  as its raw id. Disabled, it is worse: a disabled row is inert to the pointer, so a
+  multiselect can only shed it through "Clear all" — every other value goes with it — and
+  on a required column even that cannot commit.
 
 `disabled` on an option shows it greyed out instead of offering it — see
 [`EditableCell`](../editable-cell/README.md#options) for when to disable an option rather
@@ -163,7 +166,7 @@ than leave it out.
 
 One thing to watch when a reason lives in the label: the label is also the **closed cell's
 display text** and its tooltip, and the search box matches against it. If the row's own
-committed value is the disabled one, the cell reads "Account id — already mapped" when it
+committed value carries a reason, the cell reads "Account id — incompatible type" when it
 is not being edited. `formatValue` is the escape hatch for the closed state.
 
 ### Scrolling and sticky columns

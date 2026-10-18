@@ -72,9 +72,9 @@ import { MultiListbox } from '@viax.io/uxm/ui';
 | `filterItems` | `(items, query) => T[]` | substring on `getLabel` | Override the filter. |
 | `groupBy` | `(item: T) => string` | – | Emit section headers. |
 | `renderGroupHeader` | `(group: string) => ReactNode` | – | Override header rendering. |
-| `emptyState` | `ReactNode` | – | Shown when the filter returns nothing. |
+| `emptyState` | `ReactNode` | – | Shown when there are no options to show — none passed, or the search matches nothing. Disabled options still count: an all-disabled list renders its rows, not this. |
 | `columns` | `1 \| 2` | `1` | Wrap a long list into up to two balanced columns to roughly halve the panel height (20 rows → two columns of ~10). Rows keep source order top-to-bottom down column one, then continue in column two, so `ArrowDown` / `ArrowUp` still read naturally. A **maximum**, not a fixed count: each column keeps a minimum width (`--uxm-listbox-list-column-min-width`), so a too-narrow panel falls back to one column instead of cramping — widen the panel (a wider anchor, or `matchAnchorWidth={false}` + `minPanelWidth`) to reveal the second. Works with `groupBy`: each header spans full width above its group, whose rows wrap into the columns below. |
-| `isItemDisabled` | `(item: T) => boolean` | – | Disabled rows are neither selectable nor arrow-navigable. |
+| `isItemDisabled` | `(item: T) => boolean` | – | Disabled rows are neither selectable nor arrow-navigable, so keyboard and screen-reader users in focus mode never land on one — a reason in the label is read only in browse mode. |
 | `placement` | `PopoverPlacement` | `'bottom-start'` | Forwarded to Popover. |
 | `matchAnchorWidth` | `boolean` | `true` | Panel width follows the anchor. |
 | `minPanelWidth` / `maxPanelWidth` | `number` | – | Bounds in px. |
@@ -211,7 +211,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Row selected | in `value` | Accent-subtle background, accent-bold text, semibold; ✓ at the right edge (single-select, `showCheckmark`). |
 | Row active | arrow keys or hover | Surface-alt background — **never on the selected row**. |
 | Row disabled | `isItemDisabled` | 0.4 opacity, `not-allowed`, unreachable by arrows. |
-| Empty | filter matches nothing | `emptyState` in place of the list. |
+| Empty | no options, or the filter matches nothing | `emptyState` in place of the list. A list (or search result) of only disabled rows is **not** empty — the rows render, with no active row. |
 | Multi checkbox | `MultiListbox`, `showCheckbox` | Leading 18px indicator column on every row. |
 
 ## Accessibility
