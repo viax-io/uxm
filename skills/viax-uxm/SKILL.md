@@ -154,6 +154,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`LifecycleZoomControl`: the value field grows with the font** (unreleased) — its width
+  is now `calc(3ch + 10px)` instead of a fixed 34px, so "150" no longer clips once
+  `--uxm-lifecycle-zoom-font-size` or `--type-scale` is raised (it did from 16px). About
+  35px at the 13px default; no API or knob change.
+
 ## Workflow
 
 ### Where the documentation lives
