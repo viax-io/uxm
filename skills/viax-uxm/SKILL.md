@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.70.3, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.70.4, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.70.3** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.70.4** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.70.3 — current API surface (overrides training data)
+## v4.70.4 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,32 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.69.0
-
-- **The AA fix for small labels is now reachable everywhere** (unreleased). Seven
-  atoms default a 10–11px label to `--color-text-subtle`, a **3:1** token, which
-  misses 1.4.3 in both themes. The defaults stay put — darkening them moves every
-  listbox and settings panel, a major-release decision — but two of the seven had
-  no knob at all, so an app could not fix them without overriding the global token
-  and dragging every separator and disabled mark with it. They have one now:
-  `--uxm-search-dropdown-option-meta-color` and
-  `--uxm-timeline-entry-trailing-color`, both defaulting to exactly what they
-  painted before, so nothing moves until a consumer opts in. The copy-paste fix is
-  in `references/design-tokens.md` → "Small labels that fail AA".
-  `--uxm-calendar-today-button-disabled-color` went in with them: WCAG exempts an
-  inactive control, but Constitution I wants the knob anyway, and with it there
-  is no bare subtle-token text declaration left — which let the gate below drop
-  its exemption list entirely.
-
-  `tests/subtle-text-reachable.test.ts` now enforces the promise: any `color` or
-  `-webkit-text-fill-color` reading the subtle token without a knob fails the
-  suite, with no selector classifier to get wrong. It also snapshots the 25
-  declarations that default to the token, sorted and whitespace-normalised, so
-  moving a rule is not a diff and a flipped default is. Worth knowing when
-  reading the AA table: its headline figures are on `--color-card`; dark on
-  `--color-surface-alt` is 2.85:1, below even the 3:1 floor the token exists
-  for.
 
 ### New in 4.70.0
 
@@ -123,6 +97,14 @@ catalog.
   fallback to `--uxm-app-top-bar-height` never ran in the workbench. It is now projected
   only once the knob is moved off its default. Studio-only; the atom is unchanged.
 
+### New in 4.70.4
+
+- **`EditableCell type="textarea"`: keyboard and screen-reader fixes** (unreleased) — the
+  cell's `aria-label` now also names the edit-mode textarea (it had no accessible name), and
+  ending an edit with Cmd/Ctrl+Enter or Escape returns focus to the cell's edit button
+  instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
+  No API change.
+
 ### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
@@ -130,12 +112,6 @@ catalog.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
-
-- **`EditableCell type="textarea"`: keyboard and screen-reader fixes** (unreleased) — the
-  cell's `aria-label` now also names the edit-mode textarea (it had no accessible name), and
-  ending an edit with Cmd/Ctrl+Enter or Escape returns focus to the cell's edit button
-  instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
-  No API change.
 
 ## Workflow
 
