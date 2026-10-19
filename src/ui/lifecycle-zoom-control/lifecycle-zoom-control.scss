@@ -80,10 +80,12 @@
     padding: 0 2px 0 6px;
     text-align: right;
     /* Sized for three digits — zoom runs to a few hundred percent at most.
-       26px of content once the padding is taken off; three tabular digits at
-       the 13px default take about 24px. A fourth typed digit scrolls rather
-       than clips, and the consumer clamps the value on commit anyway. */
-    width: 34px;
+       In `ch` (tabular digits are one `0` wide each) so the box grows with the
+       font-size knob and `--type-scale`; a px width clipped "150" once either
+       was raised. The 10px is the 8px of padding plus a hair of slack: about
+       35px at the 13px default (34px before). A fourth typed digit scrolls
+       rather than clips, and the consumer clamps the value on commit anyway. */
+    width: calc(3ch + 10px);
 
     /* The segment is the hit target, so the ring belongs on it, not on the
        text box inside — a 26px outline reads as a stray artefact. */
