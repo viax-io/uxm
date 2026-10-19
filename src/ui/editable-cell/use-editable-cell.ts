@@ -65,6 +65,13 @@ export function useEditableCell(props: EditableCellResolvedProps) {
   // Anchor for the error popover — the editing wrapper, so the banner hangs
   // under the cell without affecting the table row's layout.
   const wrapRef = useRef<HTMLSpanElement | null>(null);
+  // `type="textarea"` only: the display-mode edit button, and whether the edit
+  // just ended from the keyboard. Cmd/Ctrl+Enter and Escape unmount the
+  // focused textarea, which drops focus to <body> — a keyboard user loses their
+  // place in the form. Ended that way, focus goes back to the button. Ended by
+  // blur, it stays wherever the user moved it.
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const returnFocusRef = useRef(false);
 
   // Committed date as a Date and in the cell's mask, memoized so the display,
   // tooltip, aria-label, calendar highlight, draft sync, and cancel-reset all
@@ -119,7 +126,14 @@ export function useEditableCell(props: EditableCellResolvedProps) {
   // puts the caret at the END instead: it holds a paragraph, where an
   // accidental keystroke over a select-all would wipe the lot.
   useEffect(() => {
-    if (!isEditing) return;
+    if (!isEditing) {
+      if (returnFocusRef.current) {
+        returnFocusRef.current = false;
+        triggerRef.current?.focus();
+      }
+      return;
+    }
+    returnFocusRef.current = false;
     if (type === 'textarea') {
       const el = textareaRef.current;
       if (!el) return;
@@ -356,6 +370,7 @@ export function useEditableCell(props: EditableCellResolvedProps) {
         // the line break.
         if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
           e.preventDefault();
+          returnFocusRef.current = true;
           handleCommit();
         } else if (e.key === 'Escape') {
           e.preventDefault();
@@ -363,6 +378,7 @@ export function useEditableCell(props: EditableCellResolvedProps) {
           // cell sits in. The single-line types leave Escape to bubble; this
           // one is new, so it can start out right.
           e.stopPropagation();
+          returnFocusRef.current = true;
           handleCancel();
         }
         return;
@@ -460,6 +476,8 @@ export function useEditableCell(props: EditableCellResolvedProps) {
     textareaRef,
     expandable,
     wrapRef,
+    triggerRef,
+    returnFocusRef,
     parsedValue,
     displayFormatted,
     parseDraft,

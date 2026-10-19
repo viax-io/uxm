@@ -119,9 +119,11 @@ Exports: `EditableCell`, `EditableCellProps`, `EditableCellType`, `EditableCellS
 | Key | Effect |
 |---|---|
 | `Enter` | Inserts a newline. **Does not commit.** |
-| `Cmd+Enter` / `Ctrl+Enter` | Commits. |
-| `Escape` | Cancels and restores the committed value. Also stops propagating, so cancelling an edit does not dismiss the pane or dialog the cell sits in. |
-| blur | Commits, as for every type. |
+| `Cmd+Enter` / `Ctrl+Enter` | Commits, then returns focus to the cell's edit button. |
+| `Escape` | Cancels and restores the committed value, then returns focus to the edit button. Also stops propagating, so cancelling an edit does not dismiss the pane or dialog the cell sits in. |
+| blur | Commits, as for every type. Focus stays where the user moved it. |
+
+The cell's `aria-label` names the textarea in edit mode as well as the button in display mode — pass one, or the editor is announced by its placeholder at best.
 
 `validate`, `required`, async `onCommit` and the warning / error banner work exactly as for `text`. The committed value is the draft verbatim — it is **not trimmed**, so trim in `onCommit` if you want that. The textarea is `disabled` while an async commit is pending, which the `Textarea` atom paints with its own disabled look.
 
