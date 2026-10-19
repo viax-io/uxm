@@ -65,11 +65,12 @@ export function useEditableCell(props: EditableCellResolvedProps) {
   // Anchor for the error popover — the editing wrapper, so the banner hangs
   // under the cell without affecting the table row's layout.
   const wrapRef = useRef<HTMLSpanElement | null>(null);
-  // `type="textarea"` only: the display-mode edit button, and whether the edit
-  // just ended from the keyboard. Cmd/Ctrl+Enter and Escape unmount the
-  // focused textarea, which drops focus to <body> — a keyboard user loses their
-  // place in the form. Ended that way, focus goes back to the button. Ended by
-  // blur, it stays wherever the user moved it.
+  // The display-mode edit button, and whether the edit just ended from the
+  // keyboard. Committing or cancelling from the keyboard unmounts the focused
+  // editor, which drops focus to <body> — a keyboard user loses their place in
+  // the form. Ended that way, focus goes back to the button. Ended by blur, it
+  // stays wherever the user moved it. Wired by the views whose editor replaces
+  // their button: `text` / `number` and `textarea`.
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const returnFocusRef = useRef(false);
 
@@ -385,9 +386,11 @@ export function useEditableCell(props: EditableCellResolvedProps) {
       }
       if (e.key === 'Enter') {
         e.preventDefault();
+        returnFocusRef.current = true;
         handleCommit();
       } else if (e.key === 'Escape') {
         e.preventDefault();
+        returnFocusRef.current = true;
         handleCancel();
       }
     },

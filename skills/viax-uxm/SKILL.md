@@ -113,6 +113,13 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`EditableCell` `text` / `number`: the same keyboard and screen-reader fixes as
+  `textarea`** (unreleased) — the cell's `aria-label` now also names the edit-mode input,
+  and committing with Enter or cancelling with Escape returns focus to the cell's button
+  instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
+  `select` / `multiselect` already behaved (the `Listbox` trigger stays mounted). No API
+  change.
+
 ## Workflow
 
 ### Where the documentation lives

@@ -48,6 +48,53 @@ describe('EditableCell — text', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
+  it('names the edit-mode input with the cell\'s aria-label', async () => {
+    render(<EditableCell value="Ada" aria-label="First name" onCommit={vi.fn()} />);
+    await userEvent.click(screen.getByRole('button', { name: 'First name' }));
+    expect(await screen.findByRole('textbox', { name: 'First name' })).toBeInTheDocument();
+  });
+
+  it('returns focus to the cell after Escape', async () => {
+    render(<EditableCell value="Ada" onCommit={vi.fn()} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Ada' }));
+    await screen.findByRole('textbox');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Edit Ada' })));
+  });
+
+  it.each([
+    ['text', 'Ada', 'Grace', 'Grace'],
+    ['number', 7, '8', 8],
+  ] as const)('returns focus to the cell after an Enter commit (%s)', async (type, value, typed, committed) => {
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    const { rerender } = render(<EditableCell type={type} value={value} onCommit={onCommit} />);
+    await userEvent.click(screen.getByRole('button', { name: `Edit ${value}` }));
+    await screen.findByRole('textbox');
+    await userEvent.keyboard(`${typed}{Enter}`);
+    await waitFor(() => expect(onCommit).toHaveBeenCalledWith(committed));
+    rerender(<EditableCell type={type} value={committed} onCommit={onCommit} />);
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: `Edit ${committed}` })));
+  });
+
+  it('leaves focus where the user moved it when the edit ends by blur', async () => {
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <>
+        <EditableCell value="Ada" onCommit={onCommit} />
+        <button type="button">Next field</button>
+      </>,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Ada' }));
+    await screen.findByRole('textbox');
+    // Entering edit selects all, so move to the end before typing.
+    await userEvent.keyboard('{End}!');
+    await userEvent.tab();
+    await waitFor(() => expect(onCommit).toHaveBeenCalledWith('Ada!'));
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Next field' }));
+  });
+
   it('treats an unchanged blur as a pure exit (no onCommit)', async () => {
     const onCommit = vi.fn();
     render(<><EditableCell value="Ada" onCommit={onCommit} /><button type="button">Elsewhere</button></>);
