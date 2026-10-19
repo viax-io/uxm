@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.70.1, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.70.2, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.70.1** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.70.2** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.70.1 — current API surface (overrides training data)
+## v4.70.2 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,38 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.68.0
-
-- **Editable columns: per-row options, and options that show but refuse** (unreleased).
-  Two additive gaps closed for field-mapping grids. `DataTable`'s
-  `column.editorOptions` now takes `EditableCellOption[]` **or** `(row) => EditableCellOption[]`,
-  for a column whose choices differ row to row (type-compatible sources only, or
-  nothing another row has claimed). It runs on every render for every
-  EDITABLE row — a closed cell needs the list to resolve its label, and a row
-  `isEditable` excludes never calls it — and is deliberately NOT cached, since a
-  correct key would have to cover everything the function closes over. Keep the
-  row's own current value in its list and ENABLED (reason in the label): a value
-  missing from its list survives as a stand-in row but shows as its raw id, and a
-  disabled one cannot be unticked in a multiselect.
-  `EditableCellOption` gained `disabled?: boolean`: the option renders greyed
-  out, is skipped by arrow-key navigation and commits nothing on click, in both
-  the select and multiselect panels. Use it where the option's absence would
-  confuse, and leave the option out otherwise; the reason goes in `label`, since
-  the atom ships no words of its own. `isItemDisabled` already covered both
-  `Listbox` panels; the one `Listbox` change is the empty-state fix below. One caveat worth passing on: a disabled row
-  inherits the shared `--uxm-listbox-option-disabled-opacity` (0.4), which
-  measures 2.46:1 on a LIGHT panel (dark clears 3:1 at 3.60:1) — allowed (1.4.3 exempts inactive controls)
-  but hard to read, so raise that knob when the label carries a reason the user
-  is meant to read (0.55 → 3.78:1, 0.65 → 5.19:1). The default is shared
-  library-wide and deliberately untouched.
-  Two fixes came out of reviewing this: `Listbox`'s empty state now means
-  "nothing to show" rather than "nothing pickable" (an all-disabled list, or a
-  search narrowed to only disabled matches, used to render `No matches` and hide
-  every option — which defeats the point of a disabled option), and a
-  select/multiselect cell keeps a committed value its option list does not
-  contain, as a plain stand-in row, instead of silently dropping it on the next
-  commit.
 
 ### New in 4.68.1
 
@@ -141,13 +109,7 @@ catalog.
   commit or cancel the cell. Most visible on `type="textarea"`, where Escape used to
   discard the whole draft; no API change.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.70.2
 
 - **Docs: keep a row's own value enabled** (unreleased) — the 4.68.0 notes, the `DataTable`
   README and its catalog row told per-row `editorOptions` to *disable* a row's own current
@@ -160,6 +122,14 @@ catalog.
   is now `calc(3ch + 10px)` instead of a fixed 34px, so "150" no longer clips once
   `--uxm-lifecycle-zoom-font-size` or `--type-scale` is raised (it did from 16px). About
   35px at the 13px default; no API or knob change.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 

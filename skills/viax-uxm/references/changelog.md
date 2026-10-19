@@ -1982,3 +1982,35 @@ reached the published library; now shipped in 2.8.0.
   when unset (default `64px`), so a shell that thins its top bar at `:root` keeps the logo level
   with the bar — ⚠️ if you set `--uxm-app-top-bar-height` at `:root`, the logo row now matches it.
   Studio knob: Logo Row Height.
+
+### New in 4.68.0
+
+- **Editable columns: per-row options, and options that show but refuse** (unreleased).
+  Two additive gaps closed for field-mapping grids. `DataTable`'s
+  `column.editorOptions` now takes `EditableCellOption[]` **or** `(row) => EditableCellOption[]`,
+  for a column whose choices differ row to row (type-compatible sources only, or
+  nothing another row has claimed). It runs on every render for every
+  EDITABLE row — a closed cell needs the list to resolve its label, and a row
+  `isEditable` excludes never calls it — and is deliberately NOT cached, since a
+  correct key would have to cover everything the function closes over. Keep the
+  row's own current value in its list and ENABLED (reason in the label): a value
+  missing from its list survives as a stand-in row but shows as its raw id, and a
+  disabled one cannot be unticked in a multiselect.
+  `EditableCellOption` gained `disabled?: boolean`: the option renders greyed
+  out, is skipped by arrow-key navigation and commits nothing on click, in both
+  the select and multiselect panels. Use it where the option's absence would
+  confuse, and leave the option out otherwise; the reason goes in `label`, since
+  the atom ships no words of its own. `isItemDisabled` already covered both
+  `Listbox` panels; the one `Listbox` change is the empty-state fix below. One caveat worth passing on: a disabled row
+  inherits the shared `--uxm-listbox-option-disabled-opacity` (0.4), which
+  measures 2.46:1 on a LIGHT panel (dark clears 3:1 at 3.60:1) — allowed (1.4.3 exempts inactive controls)
+  but hard to read, so raise that knob when the label carries a reason the user
+  is meant to read (0.55 → 3.78:1, 0.65 → 5.19:1). The default is shared
+  library-wide and deliberately untouched.
+  Two fixes came out of reviewing this: `Listbox`'s empty state now means
+  "nothing to show" rather than "nothing pickable" (an all-disabled list, or a
+  search narrowed to only disabled matches, used to render `No matches` and hide
+  every option — which defeats the point of a disabled option), and a
+  select/multiselect cell keeps a committed value its option list does not
+  contain, as a plain stand-in row, instead of silently dropping it on the next
+  commit.

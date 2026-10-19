@@ -1,3 +1,10 @@
+## [4.70.2](https://github.com/viax-io/uxm/compare/v4.70.1...v4.70.2) (2026-10-19)
+
+
+### Bug Fixes
+
+* **lifecycle-zoom-control:** size the value field in ch so it grows with the font ([26e8255](https://github.com/viax-io/uxm/commit/26e8255e41ae95e3f13f5ae1de7457eeb19d0fcd))
+
 ## [4.70.1](https://github.com/viax-io/uxm/compare/v4.70.0...v4.70.1) (2026-10-19)
 
 
