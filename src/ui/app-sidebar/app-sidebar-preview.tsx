@@ -60,6 +60,9 @@ const SAMPLE_SECTIONS = [
   },
 ];
 
+// Mirrors the `headerHeight` knob's registry default — see the projection below.
+const HEADER_HEIGHT_DEFAULT = 64;
+
 export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
   const brand = shell?.brand ?? {};
   const theme = shell?.theme ?? 'light';
@@ -93,7 +96,14 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
     ['--uxm-app-sidebar-lead-padding' as string]: `${styles.leadPadding as number}px`,
     ['--uxm-app-sidebar-footer-padding' as string]: `${styles.footerPadding as number}px`,
     ['--uxm-app-sidebar-nav-padding-top' as string]: `${styles.navPaddingTop as number}px`,
-    ['--uxm-app-sidebar-header-height' as string]: `${styles.headerHeight as number}px`,
+    // Projected ONLY once moved off the registry default. Unset, the logo row
+    // follows `--uxm-app-top-bar-height`; projecting the default 64px would
+    // pin it and hide that fallback — the "studio never runs the fallback
+    // path" trap in .claude/memory/gotchas.md (DataTable's cell padding is
+    // handled the same way).
+    ...(styles.headerHeight !== HEADER_HEIGHT_DEFAULT && {
+      ['--uxm-app-sidebar-header-height' as string]: `${styles.headerHeight as number}px`,
+    }),
     width: collapsed ? (styles.collapsedWidth as number) : (styles.expandedWidth as number),
     height: 480,
   };

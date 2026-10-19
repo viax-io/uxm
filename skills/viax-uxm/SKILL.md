@@ -131,6 +131,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Studio: the AppSidebar logo row follows the top bar in the preview too** (unreleased) —
+  the preview always projected `--uxm-app-sidebar-header-height` (64px), so the documented
+  fallback to `--uxm-app-top-bar-height` never ran in the workbench. It is now projected
+  only once the knob is moved off its default. Studio-only; the atom is unchanged.
+
 ## Workflow
 
 ### Where the documentation lives
