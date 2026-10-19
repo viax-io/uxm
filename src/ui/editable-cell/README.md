@@ -157,8 +157,9 @@ and the next unrelated toggle committed an array they were never in — silent d
 the likely shape once a `DataTable` column computes options per row.
 
 The stand-in is deliberately *not* disabled, since a disabled row cannot be toggled off.
-Prefer not to rely on it: keep the row's own value in its list, disabled if the rule would
-otherwise exclude it, so it shows a real label rather than an id.
+Prefer not to rely on it: keep the row's own value in its list — **enabled**, with the
+reason in its label if the rule would otherwise exclude it — so it shows a real label rather
+than an id and stays removable (see the sticky-value note above).
 
 ### Reading a disabled option
 
