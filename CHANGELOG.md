@@ -1,3 +1,10 @@
+## [4.70.4](https://github.com/viax-io/uxm/compare/v4.70.3...v4.70.4) (2026-10-19)
+
+
+### Bug Fixes
+
+* **editable-cell:** name the textarea editor and return focus after a keyboard exit ([6b7bd20](https://github.com/viax-io/uxm/commit/6b7bd20379fe63fe36b653ebfa7dad50221d46c5))
+
 ## [4.70.3](https://github.com/viax-io/uxm/compare/v4.70.2...v4.70.3) (2026-10-19)
 
 
