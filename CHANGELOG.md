@@ -1,3 +1,10 @@
+## [4.70.1](https://github.com/viax-io/uxm/compare/v4.70.0...v4.70.1) (2026-10-19)
+
+
+### Bug Fixes
+
+* **editable-cell:** leave Enter and Escape to an active IME composition ([051c816](https://github.com/viax-io/uxm/commit/051c8169a7e0f00959454ed1842f7b5488b1573f))
+
 # [4.70.0](https://github.com/viax-io/uxm/compare/v4.69.0...v4.70.0) (2026-10-17)
 
 
