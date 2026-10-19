@@ -2014,3 +2014,10 @@ reached the published library; now shipped in 2.8.0.
   select/multiselect cell keeps a committed value its option list does not
   contain, as a plain stand-in row, instead of silently dropping it on the next
   commit.
+
+### New in 4.68.1
+
+- **`LifecycleZoomControl`: the `%` sits beside the number.** The editable value is right-aligned
+  against its `%`, and the cell keeps the read-only shape's 10px end padding, so the `%` no longer
+  sits on the divider; the field is sized for three digits (34px). Visual only — no API or knob
+  change.

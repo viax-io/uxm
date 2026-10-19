@@ -1,3 +1,10 @@
+## [4.70.3](https://github.com/viax-io/uxm/compare/v4.70.2...v4.70.3) (2026-10-19)
+
+
+### Bug Fixes
+
+* **app-sidebar:** let the preview's logo row fall back to the top-bar height ([6fa149e](https://github.com/viax-io/uxm/commit/6fa149e0d535fb935ff400a6444489a422b4cf68))
+
 ## [4.70.2](https://github.com/viax-io/uxm/compare/v4.70.1...v4.70.2) (2026-10-19)
 
 
