@@ -131,6 +131,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`EditableCell type="textarea"`: keyboard and screen-reader fixes** (unreleased) — the
+  cell's `aria-label` now also names the edit-mode textarea (it had no accessible name), and
+  ending an edit with Cmd/Ctrl+Enter or Escape returns focus to the cell's edit button
+  instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
+  No API change.
+
 ## Workflow
 
 ### Where the documentation lives

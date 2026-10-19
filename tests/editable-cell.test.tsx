@@ -519,6 +519,49 @@ describe('EditableCell — textarea', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
+  it('names the edit-mode textarea with the cell\'s aria-label', async () => {
+    render(<EditableCell type="textarea" value="Ada" aria-label="Description" onCommit={vi.fn()} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Description' }));
+    expect(await screen.findByRole('textbox', { name: 'Description' })).toBeInTheDocument();
+  });
+
+  it('returns focus to the cell after Escape', async () => {
+    render(<EditableCell type="textarea" value="Ada" onCommit={vi.fn()} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Ada' }));
+    await screen.findByRole('textbox');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Edit Ada' })));
+  });
+
+  it('returns focus to the cell after a Ctrl+Enter commit', async () => {
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    const { rerender } = render(<EditableCell type="textarea" value="Ada" onCommit={onCommit} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Ada' }));
+    await screen.findByRole('textbox');
+    await userEvent.keyboard('!{Control>}{Enter}{/Control}');
+    await waitFor(() => expect(onCommit).toHaveBeenCalledWith('Ada!'));
+    rerender(<EditableCell type="textarea" value="Ada!" onCommit={onCommit} />);
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Edit Ada!' })));
+  });
+
+  it('leaves focus where the user moved it when the edit ends by blur', async () => {
+    const onCommit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <>
+        <EditableCell type="textarea" value="Ada" onCommit={onCommit} />
+        <button type="button">Next field</button>
+      </>,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Ada' }));
+    await screen.findByRole('textbox');
+    await userEvent.keyboard('!');
+    await userEvent.tab();
+    await waitFor(() => expect(onCommit).toHaveBeenCalledWith('Ada!'));
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Next field' }));
+  });
+
   it('keeps Escape to itself so it cannot also dismiss a surrounding pane', async () => {
     const outer = vi.fn();
     render(
