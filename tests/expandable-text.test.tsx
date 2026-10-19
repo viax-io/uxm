@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -135,5 +135,75 @@ describe('ExpandableText', () => {
     const root = screen.getByTestId('root');
     expect(root).toHaveClass('uxm-expandable-text', 'mine');
     expect(root).toHaveAttribute('aria-label', 'Description');
+  });
+
+  it.each([
+    [0, '4'],
+    [-2, '4'],
+    [Number.NaN, '4'],
+    [Number.POSITIVE_INFINITY, '4'],
+    [2.7, '2'],
+  ])('falls back or floors an unusable lines=%s (clamp %s)', (lines, expected) => {
+    stubLayout(200, 80);
+    const { container } = render(<ExpandableText lines={lines}>Long text.</ExpandableText>);
+    expect(content(container).style.webkitLineClamp).toBe(expected);
+  });
+
+  it('re-measures when the text changes, even with no resize to observe', () => {
+    stubLayout(60, 60);
+    const { rerender } = render(<ExpandableText>Short.</ExpandableText>);
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+
+    // A clamped box already at its limit keeps its height as the text grows,
+    // so only the content change can reveal the new overflow.
+    stubLayout(200, 80);
+    rerender(<ExpandableText>Now a much longer text.</ExpandableText>);
+    expect(screen.getByRole('button', { name: 'Show more' })).toBeInTheDocument();
+  });
+
+  describe('with a ResizeObserver', () => {
+    const observers: { callback: ResizeObserverCallback; observe: ReturnType<typeof vi.fn>; disconnect: ReturnType<typeof vi.fn> }[] = [];
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      observers.length = 0;
+    });
+
+    function stubResizeObserver() {
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          observe = vi.fn();
+          unobserve = vi.fn();
+          disconnect = vi.fn();
+          constructor(callback: ResizeObserverCallback) {
+            observers.push({ callback, observe: this.observe, disconnect: this.disconnect });
+          }
+        },
+      );
+    }
+
+    it('shows the toggle once a resize makes the text overflow', () => {
+      stubResizeObserver();
+      stubLayout(60, 60);
+      render(<ExpandableText>Text that will wrap.</ExpandableText>);
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      const live = observers.at(-1)!;
+      expect(live.observe).toHaveBeenCalledTimes(1);
+
+      stubLayout(200, 80);
+      act(() => live.callback([], {} as ResizeObserver));
+      expect(screen.getByRole('button', { name: 'Show more' })).toBeInTheDocument();
+    });
+
+    it('disconnects its observer on unmount', () => {
+      stubResizeObserver();
+      stubLayout(200, 80);
+      const { unmount } = render(<ExpandableText>Long text.</ExpandableText>);
+      const live = observers.at(-1)!;
+      expect(live.disconnect).not.toHaveBeenCalled();
+      unmount();
+      expect(live.disconnect).toHaveBeenCalledTimes(1);
+    });
   });
 });

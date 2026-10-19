@@ -60,8 +60,8 @@ catalog.
 
   `tests/subtle-text-reachable.test.ts` now enforces the promise: any `color` or
   `-webkit-text-fill-color` reading the subtle token without a knob fails the
-  suite, with no selector classifier to get wrong. It also snapshots the 25
-  declarations that default to the token, sorted and whitespace-normalised, so
+  suite, with no selector classifier to get wrong. It also snapshots the 27
+  declarations that default to the token (25 text `color`s, 2 non-text), sorted and whitespace-normalised, so
   moving a rule is not a diff and a flipped default is. Worth knowing when
   reading the AA table: its headline figures are on `--color-card`; dark on
   `--color-surface-alt` is 2.85:1, below even the 3:1 floor the token exists
@@ -78,7 +78,7 @@ catalog.
   atom ships no message catalogue, so the two labels are the app's copy (English
   defaults). `white-space: pre-wrap` keeps paragraph breaks. The toggle reads as
   an accent link flush with the text, not a bordered button. Knobs:
-  `--uxm-expandable-text-{color,font-size,line-height,gap,toggle-color,toggle-hover-color,toggle-font-size,toggle-font-weight,toggle-gap}`.
+  `--uxm-expandable-text-{color,font-size,line-height,gap,toggle-color,toggle-hover-color,toggle-font-size,toggle-font-weight,toggle-gap,toggle-padding-y,toggle-radius,focus-ring}`.
 
 - **`EditableCell type="textarea"`** (unreleased) — the multi-line sibling of
   `text`, for a description or note in a form / side-pane row (not a `DataTable`
@@ -130,6 +130,13 @@ catalog.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
+
+- **Docs corrections from the 4.68–4.70 review** (unreleased) — no code change.
+  `EditableCell`'s disabled-option contrast table now has its dark figures (0.55 → 5.62:1,
+  0.65 → 7.35:1) and a second table for a disabled row that is also **selected** (1.74:1 in
+  light at the default, 2.64:1 even at 0.65). The 4.69.0 note and `design-tokens.md` said
+  the subtle-text snapshot pins 25 declarations; it pins 27 (25 text, 2 non-text). The 4.70.0
+  `ExpandableText` knob list was missing `toggle-padding-y`, `toggle-radius` and `focus-ring`.
 
 - **`EditableCell type="textarea"`: keyboard and screen-reader fixes** (unreleased) — the
   cell's `aria-label` now also names the edit-mode textarea (it had no accessible name), and

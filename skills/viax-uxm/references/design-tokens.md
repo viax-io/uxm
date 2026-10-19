@@ -229,8 +229,10 @@ real 1.4.3 failures in both themes:
 | `FileUpload` allowed types (11px) | `--uxm-file-upload-allowed-types-color` | same |
 | `Calendar` outside-month day (13px, clickable) | `--uxm-calendar-outside-color` | same |
 
-25 declarations read `--color-text-subtle` as a `color` (the figure the snapshot in
-`tests/subtle-text-reachable.test.ts` pins), but most are **not** 1.4.3 failures:
+27 declarations default to `--color-text-subtle` — the set the snapshot in
+`tests/subtle-text-reachable.test.ts` pins: 25 read it as a `color`, plus the
+`LifecycleConnector` stroke's custom property and the idle `TimelineEntry` dot's
+`background-color`. Most are **not** 1.4.3 failures:
 WCAG exempts inactive controls, which covers the `:disabled` states (`Chip` ×4, `Breadcrumb`,
 `ExplorerSection`, `Calendar`), and several are genuinely non-text — icons, drag handles, the
 breadcrumb separator, the timeline dot.
