@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.70.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.70.1, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.70.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.70.1** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.70.0 — current API surface (overrides training data)
+## v4.70.1 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,19 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.67.0
-
-- **`AppSidebar`: `--uxm-app-sidebar-nav-padding-top`** (default `8px`, so nothing moves) — the
-  space above the first nav section. Set it to start the sections level with the page content's
-  first line, e.g. `24px` under a `32px` content padding (less the heading's own `8px`). Sides and
-  bottom stay `8px` so the header/footer slots still align with the nav rows. Studio knob: Nav Top
-  Padding. Replaces a consumer reaching into `.uxm-app-sidebar__nav`.
-- **`AppSidebar`: `--uxm-app-sidebar-header-height`** — the brand (logo) row's height (the
-  `__header` element, not the `header` prop's slot). It now **follows `--uxm-app-top-bar-height`**
-  when unset (default `64px`), so a shell that thins its top bar at `:root` keeps the logo level
-  with the bar — ⚠️ if you set `--uxm-app-top-bar-height` at `:root`, the logo row now matches it.
-  Studio knob: Logo Row Height.
 
 ### New in 4.68.0
 
@@ -145,6 +132,13 @@ catalog.
   nest in a button. Also: `Textarea` now keeps a caller-supplied `aria-invalid`
   when it has no `error` message (it used to overwrite it with `undefined`).
   New knobs: `--uxm-editable-cell-textarea-{line-height,min-lines,max-lines,gap}`.
+
+### New in 4.70.1
+
+- **`EditableCell` leaves IME keys alone** (unreleased) — while an IME is composing,
+  Enter (confirm the candidate) and Escape (dismiss the candidate window) no longer
+  commit or cancel the cell. Most visible on `type="textarea"`, where Escape used to
+  discard the whole draft; no API change.
 
 ### Unreleased
 

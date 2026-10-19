@@ -343,6 +343,12 @@ export function useEditableCell(props: EditableCellResolvedProps) {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      // Mid-composition, Enter confirms the IME candidate and Escape dismisses
+      // the candidate window — both belong to the IME, not to the cell.
+      // Claiming them would commit half-composed text, or cancel the whole
+      // draft. `keyCode === 229` is the legacy signal some engines still send
+      // instead of `isComposing`.
+      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
       if (type === 'textarea') {
         // A textarea's Enter is a newline — it must NOT commit, or a paragraph
         // could never be typed. Commit is Cmd/Ctrl+Enter (or blur). Plain Enter
