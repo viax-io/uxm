@@ -155,6 +155,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`EditableCell` leaves IME keys alone** (unreleased) — while an IME is composing,
+  Enter (confirm the candidate) and Escape (dismiss the candidate window) no longer
+  commit or cancel the cell. Most visible on `type="textarea"`, where Escape used to
+  discard the whole draft; no API change.
+
 - **Docs: keep a row's own value enabled** (unreleased) — the 4.68.0 notes, the `DataTable`
   README and its catalog row told per-row `editorOptions` to *disable* a row's own current
   value when the rule excludes it. That makes it sticky: a disabled row is inert, so a
