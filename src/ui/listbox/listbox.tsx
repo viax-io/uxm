@@ -118,7 +118,11 @@ interface ListboxCommonProps<T> {
   /** Optional footer slot below the list (e.g. ColorPicker's "Custom hex" panel). Pass a function to receive `{ close }`. */
   footer?: ReactNode | ((api: { close: () => void }) => ReactNode);
 
-  /** Disable an individual item — it won't be selectable or arrow-navigable. */
+  /**
+   * Disable an individual item. It stays reachable — arrows land on it and
+   * `aria-activedescendant` announces it — but Enter and click refuse it. Put
+   * the reason it is unavailable in its label.
+   */
   isItemDisabled?: (item: T) => boolean;
 
   // Layout — forwarded to Popover.
@@ -343,9 +347,13 @@ function ListboxCore<T>({
   }, [items, search, filterItems, getLabel]);
 
   // Build the render plan — group headers interleaved between items.
-  // We also keep a parallel `selectableIndices` list so arrow nav skips
-  // headers and disabled items cleanly.
-  const { rows, selectableIndices } = useMemo(() => {
+  // We also keep a parallel `navIndices` list — every OPTION row, headers
+  // skipped — for arrow nav. Disabled options are in it on purpose: they are
+  // reachable but inert (WAI-ARIA APG keeps disabled options focusable), so a
+  // keyboard or screen-reader user can arrow onto one and hear its label —
+  // which is where a consumer puts the reason it is unavailable. Enter and
+  // click refuse them; see `onPanelKeyDown` and the option's `onMouseDown`.
+  const { rows, navIndices } = useMemo(() => {
     type Row =
       | { kind: 'header'; group: string; key: string }
       | { kind: 'item'; item: T; key: string; disabled: boolean };
@@ -368,32 +376,32 @@ function ListboxCore<T>({
           if (groupBy(it) !== g) continue;
           const disabled = isItemDisabled?.(it) ?? false;
           out.push({ kind: 'item', item: it, key: getKey(it), disabled });
-          if (!disabled) idx.push(out.length - 1);
+          idx.push(out.length - 1);
         }
       }
     } else {
       for (const it of filtered) {
         const disabled = isItemDisabled?.(it) ?? false;
         out.push({ kind: 'item', item: it, key: getKey(it), disabled });
-        if (!disabled) idx.push(out.length - 1);
+        idx.push(out.length - 1);
       }
     }
-    return { rows: out, selectableIndices: idx };
+    return { rows: out, navIndices: idx };
   }, [filtered, groupBy, getKey, isItemDisabled]);
 
   // Clamp active when the selectable set shrinks under us (typing in
   // the filter, items prop changes). Cascade is bounded — one extra
   // render then settled. No derivable-from-props alternative.
   useEffect(() => {
-    if (selectableIndices.length === 0) {
+    if (navIndices.length === 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- clamp on shrinkage
       setActive(0);
       return;
     }
-    if (active >= selectableIndices.length) {
-      setActive(selectableIndices.length - 1);
+    if (active >= navIndices.length) {
+      setActive(navIndices.length - 1);
     }
-  }, [selectableIndices.length, active]);
+  }, [navIndices.length, active]);
 
   // Reset search + active on open. Default active to the currently
   // selected item if any, so Enter on first keystroke re-selects it.
@@ -404,14 +412,14 @@ function ListboxCore<T>({
     setSearch('');
     if (selectedKeys.size === 1) {
       const sel = [...selectedKeys][0];
-      const flatIndex = selectableIndices.findIndex(
+      const flatIndex = navIndices.findIndex(
         (i) => rows[i].kind === 'item' && (rows[i] as { key: string }).key === sel,
       );
       setActive(flatIndex >= 0 ? flatIndex : 0);
     } else {
       setActive(0);
     }
-    // Only on open — selectableIndices / rows recompute as search runs,
+    // Only on open — navIndices / rows recompute as search runs,
     // and we don't want to reset active on every keystroke.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deliberately keyed on `open` only (see above)
   }, [open]);
@@ -420,13 +428,13 @@ function ListboxCore<T>({
   // avoids jumping the page when the list is already fully visible.
   useEffect(() => {
     if (!open) return;
-    const rowIdx = selectableIndices[active];
+    const rowIdx = navIndices[active];
     if (rowIdx == null) return;
     const row = rows[rowIdx];
     if (!row || row.kind !== 'item') return;
     const el = optionRefs.current.get(row.key);
     el?.scrollIntoView({ block: 'nearest' });
-  }, [active, open, rows, selectableIndices]);
+  }, [active, open, rows, navIndices]);
 
   const commitSelection = useCallback(
     (item: T) => {
@@ -443,27 +451,28 @@ function ListboxCore<T>({
     (e: React.KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        if (selectableIndices.length === 0) return;
-        setActive((i) => (i + 1) % selectableIndices.length);
+        if (navIndices.length === 0) return;
+        setActive((i) => (i + 1) % navIndices.length);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        if (selectableIndices.length === 0) return;
-        setActive((i) => (i - 1 + selectableIndices.length) % selectableIndices.length);
+        if (navIndices.length === 0) return;
+        setActive((i) => (i - 1 + navIndices.length) % navIndices.length);
       } else if (e.key === 'Home') {
         e.preventDefault();
         setActive(0);
       } else if (e.key === 'End') {
         e.preventDefault();
-        if (selectableIndices.length > 0) setActive(selectableIndices.length - 1);
+        if (navIndices.length > 0) setActive(navIndices.length - 1);
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        const rowIdx = selectableIndices[active];
+        const rowIdx = navIndices[active];
         const row = rowIdx != null ? rows[rowIdx] : undefined;
-        if (row && row.kind === 'item') commitSelection(row.item);
+        // Reachable, not pickable: Enter on a disabled option does nothing.
+        if (row && row.kind === 'item' && !row.disabled) commitSelection(row.item);
       }
       // Escape is handled globally by Popover.
     },
-    [active, rows, selectableIndices, commitSelection],
+    [active, rows, navIndices, commitSelection],
   );
 
   // Trigger keyboard — Enter/Space toggles, ArrowDown opens + jumps to
@@ -511,7 +520,7 @@ function ListboxCore<T>({
   // focus stays pinned in the search box and AT announces nothing as the user
   // arrows through the list.
   const optionId = (rowIdx: number) => `${panelId}-opt-${rowIdx}`;
-  const activeRowIdx = selectableIndices[active];
+  const activeRowIdx = navIndices[active];
   const activeDescendantId =
     open && activeRowIdx != null && rows[activeRowIdx]?.kind === 'item'
       ? optionId(activeRowIdx)
@@ -534,9 +543,10 @@ function ListboxCore<T>({
         maxWidth={maxPanelWidth}
         portal={portal}
         initialFocus={showSearch ? (searchRef as React.RefObject<HTMLElement | null>) : (listRef as React.RefObject<HTMLElement | null>)}
-        role="listbox"
-        aria-label={ariaLabel}
-        id={panelId}
+        // The LIST below is the listbox, not this panel: a listbox may only
+        // own options, and the panel also holds the search row (axe:
+        // aria-required-children). The panel is just the floating layer.
+        role="presentation"
         className={cn('uxm-listbox__panel', panelClassName)}
         style={panelStyle}
       >
@@ -571,20 +581,27 @@ function ListboxCore<T>({
           // single-column default (var fallback = 1) stays plain block flow
           // and one property does the whole job. Only set inline when > 1.
           style={columns > 1 ? ({ '--uxm-listbox-list-columns': columns } as CSSProperties) : undefined}
-          // When not searchable, the panel itself is focusable so keyboard
-          // nav works without a search input.
-          tabIndex={showSearch ? undefined : -1}
-          onKeyDown={showSearch ? undefined : onPanelKeyDown}
+          // The listbox. Searchable, focus stays in the search input, which
+          // points in here with aria-controls + aria-activedescendant. Not
+          // searchable, the list itself takes focus — so the active descendant
+          // has to sit here too, on the focused element, or AT announces
+          // nothing as the user arrows. Focusable (-1: never a Tab stop) in
+          // both modes, so a click that lands on it still navigates.
+          role="listbox"
+          aria-label={ariaLabel}
+          id={panelId}
+          tabIndex={-1}
+          onKeyDown={onPanelKeyDown}
+          aria-activedescendant={activeDescendantId}
         >
           {/* "Nothing to show", not "nothing pickable". Keyed on selectable rows,
               a list whose every option is disabled rendered the empty state and
               hid them all — which defeats the point of a disabled option, since
               the user is meant to SEE that the choice exists and why it is
               unavailable. Searching down to only disabled matches did the same.
-              Rendering them is safe: every key handler already guards an empty
-              `selectableIndices` (ArrowUp/Down return, End guards, Enter checks
-              `rowIdx != null`), so an all-disabled panel simply has no active
-              row. */}
+              Rendering them is safe: arrows walk them like any option and Enter
+              refuses a disabled row, so an all-disabled panel can be read but
+              commits nothing. */}
           {!rows.some((r) => r.kind === 'item') ? (
             <div className="uxm-listbox__empty">
               {emptyState ?? 'No matches'}
@@ -598,7 +615,7 @@ function ListboxCore<T>({
                   </div>
                 );
               }
-              const isActive = selectableIndices[active] === rowIdx;
+              const isActive = navIndices[active] === rowIdx;
               const isSelected = selectedKeys.has(row.key);
               return (
                 <button
@@ -622,7 +639,7 @@ function ListboxCore<T>({
                   }}
                   onMouseEnter={() => {
                     if (row.disabled) return;
-                    const flatIdx = selectableIndices.indexOf(rowIdx);
+                    const flatIdx = navIndices.indexOf(rowIdx);
                     if (flatIdx >= 0) setActive(flatIdx);
                   }}
                   className={cn(

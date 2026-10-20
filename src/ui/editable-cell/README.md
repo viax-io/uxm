@@ -133,8 +133,9 @@ The editor is re-chromed from the cell's own knobs (`--uxm-editable-cell-input-*
 
 An option is `{ value, label }`, plus an optional `disabled`.
 
-A **disabled** option renders in the panel and refuses to be picked: greyed out, skipped by
-arrow-key navigation, and inert under the pointer. Reach for it when the option's *absence*
+A **disabled** option renders in the panel and refuses to be picked: greyed out, inert under
+the pointer, and inert to Enter — but still reachable with the arrow keys, so a keyboard or
+screen-reader user lands on it and hears its label. Reach for it when the option's *absence*
 would be confusing — "that field exists, but it can't fill this one". When the option is
 simply irrelevant to this cell, leave it out of the list; a long list of unavailable rows is
 worse than a short list of usable ones.

@@ -238,33 +238,34 @@ describe('EditableCell — a disabled option', () => {
     expect(onCommit, 'clicking a disabled option committed it').not.toHaveBeenCalled();
   });
 
-  it('select: arrow-key navigation never lands on it', async () => {
-    // The keyboard path is separate code from the mouse path, so a click-only
-    // assertion leaves half the feature untested — and the half that would
-    // silently commit a value nobody can click.
+  it('select: arrow keys reach it, but Enter does not pick it', async () => {
+    // Reachable but inert (WAI-ARIA APG keeps disabled options focusable): a
+    // keyboard or screen-reader user has to be able to land on the row to hear
+    // its label — which is where the reason it is unavailable lives.
     //
-    // Asserted as "never active, however far you walk" rather than by counting
-    // keypresses: the panel swallows the first arrows while it takes focus, so
-    // a fixed count tests the choreography instead of the contract.
+    // Walked "until active" rather than by a fixed count: the panel swallows the
+    // first arrows while it takes focus, so a count would test the choreography
+    // instead of the contract.
     const onCommit = vi.fn().mockResolvedValue(undefined);
     render(
       <EditableCell type="select" value="ua" options={withDisabled} onCommit={onCommit} searchable={false} />,
     );
     await userEvent.click(screen.getByRole('button', { name: 'Edit ua' }));
-    await screen.findByRole('listbox');
+    const listbox = await screen.findByRole('listbox');
 
     const disabledRow = () => screen.getByRole('option', { name: 'Germany — already mapped' });
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 6 && !disabledRow().className.includes('--active'); i++) {
       await userEvent.keyboard('{ArrowDown}');
-      expect(
-        disabledRow().className,
-        `the disabled option became active after ${i + 1} ArrowDown(s)`,
-      ).not.toContain('--active');
     }
+    expect(disabledRow().className, 'arrows never reached the disabled option').toContain('--active');
+    const owner = listbox.hasAttribute('aria-activedescendant')
+      ? listbox
+      : document.querySelector('[aria-activedescendant]');
+    expect(owner).toHaveAttribute('aria-activedescendant', disabledRow().id);
 
     await userEvent.keyboard('{Enter}');
-    await waitFor(() => expect(onCommit).toHaveBeenCalled());
-    expect(onCommit, 'Enter committed the disabled option').not.toHaveBeenCalledWith('de');
+    expect(onCommit, 'Enter committed the disabled option').not.toHaveBeenCalled();
+    expect(screen.getByRole('listbox'), 'Enter on a disabled option closed the panel').toBeInTheDocument();
   });
 
   it('multiselect: honours it too', async () => {
@@ -284,6 +285,12 @@ describe('EditableCell — a disabled option', () => {
     const row = screen.getByRole('option', { name: 'Germany — already mapped' });
     expect(row).toHaveAttribute('aria-disabled', 'true');
     await userEvent.click(row);
+    // And from the keyboard: walk onto it, press Enter — still nothing toggles.
+    for (let i = 0; i < 6 && !row.className.includes('--active'); i++) {
+      await userEvent.keyboard('{ArrowDown}');
+    }
+    expect(row.className).toContain('--active');
+    await userEvent.keyboard('{Enter}');
     await userEvent.keyboard('{Escape}');
     // Nothing toggled, so the close commits nothing at all.
     expect(onCommit).not.toHaveBeenCalled();
