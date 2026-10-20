@@ -222,9 +222,9 @@ real 1.4.3 failures in both themes:
 |---|---|---|
 | `Listbox` group header (10px) | `--uxm-listbox-group-header-color` | 3.66:1 light / 3.41:1 dark |
 | `SectionHeader` title (11px) | `--uxm-section-header-title-color` | same |
-| `SearchDropdown` option meta (10px) | `--uxm-search-dropdown-option-meta-color` **(unreleased)** | same |
+| `SearchDropdown` option meta (10px) | `--uxm-search-dropdown-option-meta-color` | same |
 | `ExplorerSection` / `ExplorerListItem` trailing | `--uxm-explorer-section-trailing-color`, `--uxm-explorer-list-item-trailing-color` | same |
-| `TimelineEntry` trailing (11px) | `--uxm-timeline-entry-trailing-color` **(unreleased)** | same |
+| `TimelineEntry` trailing (11px) | `--uxm-timeline-entry-trailing-color` | same |
 | `NumberStepper` unit suffix | `--uxm-number-stepper-unit-color` | same |
 | `FileUpload` allowed types (11px) | `--uxm-file-upload-allowed-types-color` | same |
 | `Calendar` outside-month day (13px, clickable) | `--uxm-calendar-outside-color` | same |
