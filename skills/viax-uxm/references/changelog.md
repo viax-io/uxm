@@ -2041,8 +2041,8 @@ reached the published library; now shipped in 2.8.0.
 
   `tests/subtle-text-reachable.test.ts` now enforces the promise: any `color` or
   `-webkit-text-fill-color` reading the subtle token without a knob fails the
-  suite, with no selector classifier to get wrong. It also snapshots the 25
-  declarations that default to the token, sorted and whitespace-normalised, so
+  suite, with no selector classifier to get wrong. It also snapshots the 27
+  declarations that default to the token (25 text `color`s, 2 non-text), sorted and whitespace-normalised, so
   moving a rule is not a diff and a flipped default is. Worth knowing when
   reading the AA table: its headline figures are on `--color-card`; dark on
   `--color-surface-alt` is 2.85:1, below even the 3:1 floor the token exists

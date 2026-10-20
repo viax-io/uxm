@@ -175,11 +175,25 @@ the greyed-out signal:
 | `--uxm-listbox-option-disabled-opacity` | light panel | dark panel |
 |---|---|---|
 | `0.4` (default) | 2.46:1 | 3.60:1 |
-| `0.55` | 3.78:1 | — |
-| `0.65` | 5.19:1 | — |
+| `0.55` | 3.78:1 | 5.62:1 |
+| `0.65` | 5.19:1 | 7.35:1 |
 
-Dark already clears 3:1 at the default, so this is a light-theme concern: the same opacity
-over a dark panel lands further from its background than over a white one.
+Measured as `--color-text` blended at that opacity over `--color-card`, against
+`--color-card`. Dark already clears 3:1 at the default, so for an unselected row this is a
+light-theme concern: the same opacity over a dark panel lands further from its background
+than over a white one.
+
+A disabled row that is also **selected** is a different pair — `--color-accent-bold` on
+`--color-accent-subtle`, both faded by the same opacity — and much lower:
+
+| `--uxm-listbox-option-disabled-opacity` | light panel | dark panel |
+|---|---|---|
+| `0.4` (default) | 1.74:1 | 2.45:1 |
+| `0.55` | 2.22:1 | 3.37:1 |
+| `0.65` | 2.64:1 | 4.07:1 |
+
+Raising the opacity barely helps it in light. One more reason to keep a value a row may
+already hold **enabled** (see above) rather than disabled.
 
 The default is left alone here on purpose: it is shared by every `Listbox` in the library,
 and changing it would restyle every disabled option everywhere.
