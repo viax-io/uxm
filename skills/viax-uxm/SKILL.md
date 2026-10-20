@@ -120,6 +120,13 @@ catalog.
   the subtle-text snapshot pins 25 declarations; it pins 27 (25 text, 2 non-text). The 4.70.0
   `ExpandableText` knob list was missing `toggle-padding-y`, `toggle-radius` and `focus-ring`.
 
+- **`EditableCell` `text` / `number`: the same keyboard and screen-reader fixes as
+  `textarea`** (unreleased) — the cell's `aria-label` now also names the edit-mode input,
+  and committing with Enter or cancelling with Escape returns focus to the cell's button
+  instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
+  `select` / `multiselect` already behaved (the `Listbox` trigger stays mounted). No API
+  change.
+
 ## Workflow
 
 ### Where the documentation lives

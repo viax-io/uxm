@@ -32,6 +32,8 @@ export function EditableCellTextView({ props, cell }: EditableCellViewProps) {
     setError,
     inputRef,
     wrapRef,
+    triggerRef,
+    returnFocusRef,
     handleCommit,
     handleClearDraft,
     handleKeyDown,
@@ -46,6 +48,7 @@ export function EditableCellTextView({ props, cell }: EditableCellViewProps) {
   if (!editing) {
     return (
       <button
+        ref={triggerRef}
         type="button"
         className={cn(
           'uxm-editable-cell',
@@ -134,13 +137,19 @@ export function EditableCellTextView({ props, cell }: EditableCellViewProps) {
           // see a new one on the next commit attempt if it still fails.
           if (error) setError(null);
         }}
-        onBlur={() => {
+        onBlur={(e) => {
+          // Focus moved somewhere real (Tab, a click on another control): that
+          // is where it belongs, so don't pull it back to the cell afterwards.
+          if (e.relatedTarget) returnFocusRef.current = false;
           // Don't double-commit while a previous commit is still pending.
           if (!submitting) handleCommit();
         }}
         onKeyDown={handleKeyDown}
         disabled={submitting}
         placeholder={placeholder}
+        // The display button's name, carried into edit mode: without it the
+        // input is announced by its placeholder at best, and often by nothing.
+        aria-label={ariaLabel}
         aria-invalid={Boolean(shownError)}
         aria-describedby={shownError ? 'uxm-editable-cell__error' : undefined}
       />
