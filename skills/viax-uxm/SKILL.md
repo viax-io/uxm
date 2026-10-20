@@ -43,35 +43,35 @@ catalog.
 
 ### New in 4.70.1
 
-- **`EditableCell` leaves IME keys alone** (unreleased) — while an IME is composing,
+- **`EditableCell` leaves IME keys alone** — while an IME is composing,
   Enter (confirm the candidate) and Escape (dismiss the candidate window) no longer
   commit or cancel the cell. Most visible on `type="textarea"`, where Escape used to
   discard the whole draft; no API change.
 
 ### New in 4.70.2
 
-- **Docs: keep a row's own value enabled** (unreleased) — the 4.68.0 notes, the `DataTable`
+- **Docs: keep a row's own value enabled** — the 4.68.0 notes, the `DataTable`
   README and its catalog row told per-row `editorOptions` to *disable* a row's own current
   value when the rule excludes it. That makes it sticky: a disabled row is inert, so a
   multiselect can only drop it via "Clear all". Corrected everywhere to "keep it enabled,
   reason in the label". Also documented on `Listbox`: a panel whose options are all disabled
   shows them rather than `emptyState` (the 4.68.0 fix). No code change.
 
-- **`LifecycleZoomControl`: the value field grows with the font** (unreleased) — its width
+- **`LifecycleZoomControl`: the value field grows with the font** — its width
   is now `calc(3ch + 10px)` instead of a fixed 34px, so "150" no longer clips once
   `--uxm-lifecycle-zoom-font-size` or `--type-scale` is raised (it did from 16px). About
   35px at the 13px default; no API or knob change.
 
 ### New in 4.70.3
 
-- **Studio: the AppSidebar logo row follows the top bar in the preview too** (unreleased) —
+- **Studio: the AppSidebar logo row follows the top bar in the preview too** —
   the preview always projected `--uxm-app-sidebar-header-height` (64px), so the documented
   fallback to `--uxm-app-top-bar-height` never ran in the workbench. It is now projected
   only once the knob is moved off its default. Studio-only; the atom is unchanged.
 
 ### New in 4.70.4
 
-- **`EditableCell type="textarea"`: keyboard and screen-reader fixes** (unreleased) — the
+- **`EditableCell type="textarea"`: keyboard and screen-reader fixes** — the
   cell's `aria-label` now also names the edit-mode textarea (it had no accessible name), and
   ending an edit with Cmd/Ctrl+Enter or Escape returns focus to the cell's edit button
   instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
@@ -79,7 +79,7 @@ catalog.
 
 ### New in 4.70.5
 
-- **Docs corrections from the 4.68–4.70 review** (unreleased) — no code change.
+- **Docs corrections from the 4.68–4.70 review** — no code change.
   `EditableCell`'s disabled-option contrast table now has its dark figures (0.55 → 5.62:1,
   0.65 → 7.35:1) and a second table for a disabled row that is also **selected** (1.74:1 in
   light at the default, 2.64:1 even at 0.65). The 4.69.0 note and `design-tokens.md` said
@@ -87,7 +87,7 @@ catalog.
   `ExpandableText` knob list was missing `toggle-padding-y`, `toggle-radius` and `focus-ring`.
 
 - **`EditableCell` `text` / `number`: the same keyboard and screen-reader fixes as
-  `textarea`** (unreleased) — the cell's `aria-label` now also names the edit-mode input,
+  `textarea`** — the cell's `aria-label` now also names the edit-mode input,
   and committing with Enter or cancelling with Escape returns focus to the cell's button
   instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
   `select` / `multiselect` already behaved (the `Listbox` trigger stays mounted). No API

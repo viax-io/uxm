@@ -1906,7 +1906,7 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.62.1
 
-- **`LifecycleNodeCard` `meta`: wraps, and an empty conditional no longer paints** (unreleased).
+- **`LifecycleNodeCard` `meta`: wraps, and an empty conditional no longer paints**.
   Two fixes to the 4.62.0 slot. (1) The row is `flex-wrap: wrap`: non-shrinking
   content (an avatar stack — avatars are `flex-shrink: 0`) used to leave the card
   through the visible overflow and run under the trailing badge; it now wraps and
@@ -1919,7 +1919,7 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.63.0
 
-- **`LifecycleZoomControl` grew the editing shape** (unreleased) — all opt-in behind
+- **`LifecycleZoomControl` grew the editing shape** — all opt-in behind
   handlers, so a read-only canvas keeps the DOM and the look it had: `onValueChange`
   turns the percentage into a typed field (Enter commits, Escape reverts, blur
   commits, focus selects), `presets` + `onFit` add a `▾` menu whose current preset
@@ -1938,7 +1938,7 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.64.0
 
-- **New atom: `RangeBar`** (unreleased) — a display-only interval on a shared
+- **New atom: `RangeBar`** — a display-only interval on a shared
   track: one segment at an arbitrary offset, optionally open-ended at either end.
   It is what to reach for when a range does not start at 0, where `ProgressBar`
   cannot help and `RangeSlider` is the wrong thing entirely (an input, with a
@@ -1954,7 +1954,7 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.65.0
 
-- **Studio: built-in language switcher when the host passes no `locale`** (unreleased).
+- **Studio: built-in language switcher when the host passes no `locale`**.
   `<UxmApp />` without `locale` starts in English and shows a `LanguageSwitcher` in the canvas
   top bar listing every shipped studio locale; the pick is kept in memory for the session only.
   Pass `locale` to own the language yourself — the switcher then does not render. Switching no
@@ -1963,7 +1963,7 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.66.0
 
-- **`LifecycleNodeCard` gained an `icon` prop** (unreleased) — optional `ReactNode` that
+- **`LifecycleNodeCard` gained an `icon` prop** — optional `ReactNode` that
   replaces the kind's glyph inside the icon tile, for a node the four kinds don't name
   (an execution model on a model canvas). Kind, label and colours are unchanged; recolour
   the tile with `--kind-icon-bg` / `--kind-icon-color`. Pass
@@ -1985,7 +1985,7 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.68.0
 
-- **Editable columns: per-row options, and options that show but refuse** (unreleased).
+- **Editable columns: per-row options, and options that show but refuse**.
   Two additive gaps closed for field-mapping grids. `DataTable`'s
   `column.editorOptions` now takes `EditableCellOption[]` **or** `(row) => EditableCellOption[]`,
   for a column whose choices differ row to row (type-compatible sources only, or
@@ -2024,7 +2024,7 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.69.0
 
-- **The AA fix for small labels is now reachable everywhere** (unreleased). Seven
+- **The AA fix for small labels is now reachable everywhere**. Seven
   atoms default a 10–11px label to `--color-text-subtle`, a **3:1** token, which
   misses 1.4.3 in both themes. The defaults stay put — darkening them moves every
   listbox and settings panel, a major-release decision — but two of the seven had
@@ -2050,7 +2050,7 @@ reached the published library; now shipped in 2.8.0.
 
 ### New in 4.70.0
 
-- **New atom: `ExpandableText`** (unreleased) — display-only long text for side
+- **New atom: `ExpandableText`** — display-only long text for side
   panes and detail views: wraps in full up to `lines` lines (default 4), then
   clamps behind a "Show more" / "Show less" link. The link renders only when the
   collapsed text actually overflows (measured, `ResizeObserver`-re-measured) or
@@ -2061,7 +2061,7 @@ reached the published library; now shipped in 2.8.0.
   an accent link flush with the text, not a bordered button. Knobs:
   `--uxm-expandable-text-{color,font-size,line-height,gap,toggle-color,toggle-hover-color,toggle-font-size,toggle-font-weight,toggle-gap,toggle-padding-y,toggle-radius,focus-ring}`.
 
-- **`EditableCell type="textarea"`** (unreleased) — the multi-line sibling of
+- **`EditableCell type="textarea"`** — the multi-line sibling of
   `text`, for a description or note in a form / side-pane row (not a `DataTable`
   cell: a table row must not grow). The display wraps in full and clamps to
   `lines` (default 4) behind the same Show more / Show less toggle as
