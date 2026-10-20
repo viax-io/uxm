@@ -72,7 +72,7 @@ The `TimelineDotState` union (`'active' \| 'idle'`) is exported.
 | `--uxm-timeline-entry-trailing-color` | `--color-text-subtle` | – | Trailing element text. The default is a **3:1** token on 11px text, which misses WCAG 1.4.3 (3.66:1 light, 3.41:1 dark); set this to `var(--color-text-muted)` to clear AA without moving the idle dot, which shares the token and is non-text. |
 
 > The defaults above are the stylesheet's own fallbacks. The studio registry's
-> preview defaults differ for some of them (gap 10 vs 12, dot size 8 vs 12) — the
+> preview defaults differ for several of them (gap 10 vs 12, dot size 8 vs 12, among others) — the
 > registry drives the workbench preview, the fallbacks are what a bare consumer gets.
 
 ## Design tokens (MODO-configurable)
