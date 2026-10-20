@@ -2047,3 +2047,31 @@ reached the published library; now shipped in 2.8.0.
   reading the AA table: its headline figures are on `--color-card`; dark on
   `--color-surface-alt` is 2.85:1, below even the 3:1 floor the token exists
   for.
+
+### New in 4.70.0
+
+- **New atom: `ExpandableText`** (unreleased) — display-only long text for side
+  panes and detail views: wraps in full up to `lines` lines (default 4), then
+  clamps behind a "Show more" / "Show less" link. The link renders only when the
+  collapsed text actually overflows (measured, `ResizeObserver`-re-measured) or
+  while expanded, so short text shows nothing extra. `expanded` /
+  `defaultExpanded` / `onExpandedChange`, and `moreLabel` / `lessLabel` — the
+  atom ships no message catalogue, so the two labels are the app's copy (English
+  defaults). `white-space: pre-wrap` keeps paragraph breaks. The toggle reads as
+  an accent link flush with the text, not a bordered button. Knobs:
+  `--uxm-expandable-text-{color,font-size,line-height,gap,toggle-color,toggle-hover-color,toggle-font-size,toggle-font-weight,toggle-gap,toggle-padding-y,toggle-radius,focus-ring}`.
+
+- **`EditableCell type="textarea"`** (unreleased) — the multi-line sibling of
+  `text`, for a description or note in a form / side-pane row (not a `DataTable`
+  cell: a table row must not grow). The display wraps in full and clamps to
+  `lines` (default 4) behind the same Show more / Show less toggle as
+  `ExpandableText` — `lines`, `moreLabel`, `lessLabel` are the new props, the
+  labels English by default like every other label on the cell. The editor is the
+  library's `Textarea`, sized to its content (3–10 lines, then it scrolls):
+  `Enter` inserts a newline, `Cmd/Ctrl+Enter` commits, `Escape` cancels (and does
+  not also dismiss a surrounding pane), blur commits; `validate`, `required`,
+  async `onCommit` and the error banner are unchanged. The caret lands at the end,
+  not select-all. The toggle is a sibling of the edit button — a button cannot
+  nest in a button. Also: `Textarea` now keeps a caller-supplied `aria-invalid`
+  when it has no `error` message (it used to overwrite it with `undefined`).
+  New knobs: `--uxm-editable-cell-textarea-{line-height,min-lines,max-lines,gap}`.

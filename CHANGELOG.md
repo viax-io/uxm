@@ -1,3 +1,10 @@
+## [4.70.5](https://github.com/viax-io/uxm/compare/v4.70.4...v4.70.5) (2026-10-20)
+
+
+### Bug Fixes
+
+* **editable-cell:** name the text/number editor and return focus after a keyboard exit ([8f23a35](https://github.com/viax-io/uxm/commit/8f23a35605e758391b7e6e388faf26d2863fbddd))
+
 ## [4.70.4](https://github.com/viax-io/uxm/compare/v4.70.3...v4.70.4) (2026-10-19)
 
 
