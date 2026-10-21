@@ -2075,3 +2075,10 @@ reached the published library; now shipped in 2.8.0.
   nest in a button. Also: `Textarea` now keeps a caller-supplied `aria-invalid`
   when it has no `error` message (it used to overwrite it with `undefined`).
   New knobs: `--uxm-editable-cell-textarea-{line-height,min-lines,max-lines,gap}`.
+
+### New in 4.70.1
+
+- **`EditableCell` leaves IME keys alone** — while an IME is composing,
+  Enter (confirm the candidate) and Escape (dismiss the candidate window) no longer
+  commit or cancel the cell. Most visible on `type="textarea"`, where Escape used to
+  discard the whole draft; no API change.

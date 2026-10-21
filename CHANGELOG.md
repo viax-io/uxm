@@ -1,3 +1,10 @@
+## [4.70.6](https://github.com/viax-io/uxm/compare/v4.70.5...v4.70.6) (2026-10-21)
+
+
+### Bug Fixes
+
+* **listbox:** make disabled options reachable by keyboard, fix listbox ARIA ownership ([43d6e68](https://github.com/viax-io/uxm/commit/43d6e68d38bdcb8169bb62325b761120c8229743))
+
 ## [4.70.5](https://github.com/viax-io/uxm/compare/v4.70.4...v4.70.5) (2026-10-20)
 
 
