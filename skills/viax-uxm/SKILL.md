@@ -88,7 +88,7 @@ catalog.
 
 ### New in 4.70.6
 
-- **`Listbox` / `MultiListbox`: disabled options are reachable by keyboard** (unreleased) —
+- **`Listbox` / `MultiListbox`: disabled options are reachable by keyboard** —
   arrows, Home and End now land on a disabled row (WAI-ARIA APG keeps disabled options
   focusable), so keyboard and screen-reader users hear it and the reason in its label; Enter
   and click still refuse it. Reaches every picker built on `Listbox`, `EditableCell`
