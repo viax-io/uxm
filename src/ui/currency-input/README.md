@@ -128,7 +128,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 ## Accessibility
 
 - Picker button carries `aria-label="Currency: {name}"`, `aria-expanded`, and `aria-haspopup="listbox"`.
-- The picker panel is the shared `Listbox`: the portaled panel is `role="listbox"` with `aria-label="Choose currency"`, and each row is a `role="option"` button with `aria-selected` reflecting the active currency. The search input carries `aria-label="Search currencies"` and points `aria-activedescendant` at the arrow-highlighted row.
+- The picker panel is the shared `Listbox`: the list in the portaled panel is `role="listbox"` with `aria-label="Choose currency"`, and each row is a `role="option"` button with `aria-selected` reflecting the active currency. The search input carries `aria-label="Search currencies"` and points `aria-activedescendant` at the arrow-highlighted row.
 - The amount input uses `type="text"` + `inputMode="decimal"` (or `"numeric"` for zero-decimal currencies) and `autoComplete="off"` — same rationale as `PhoneInput`: native `type="number"` ships browser spinners and autofill heuristics that fight the mask.
 - Outside-click and `Escape` close the popover; on open, focus moves to the search input via `requestAnimationFrame`.
 - Clear button: `<button aria-label="Clear">`; `onMouseDown` is prevented so the click doesn't blur-clamp the input before the reset lands.

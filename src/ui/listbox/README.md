@@ -74,7 +74,7 @@ import { MultiListbox } from '@viax.io/uxm/ui';
 | `renderGroupHeader` | `(group: string) => ReactNode` | – | Override header rendering. |
 | `emptyState` | `ReactNode` | – | Shown when there are no options to show — none passed, or the search matches nothing. Disabled options still count: an all-disabled list renders its rows, not this. |
 | `columns` | `1 \| 2` | `1` | Wrap a long list into up to two balanced columns to roughly halve the panel height (20 rows → two columns of ~10). Rows keep source order top-to-bottom down column one, then continue in column two, so `ArrowDown` / `ArrowUp` still read naturally. A **maximum**, not a fixed count: each column keeps a minimum width (`--uxm-listbox-list-column-min-width`), so a too-narrow panel falls back to one column instead of cramping — widen the panel (a wider anchor, or `matchAnchorWidth={false}` + `minPanelWidth`) to reveal the second. Works with `groupBy`: each header spans full width above its group, whose rows wrap into the columns below. |
-| `isItemDisabled` | `(item: T) => boolean` | – | Disabled rows are neither selectable nor arrow-navigable, so keyboard and screen-reader users in focus mode never land on one — a reason in the label is read only in browse mode. |
+| `isItemDisabled` | `(item: T) => boolean` | – | Disabled rows are reachable but not selectable: arrows, Home and End land on them (and `aria-activedescendant` announces them, label and all), while Enter and click do nothing. Put the reason in the label — it is read when the user lands on the row. |
 | `placement` | `PopoverPlacement` | `'bottom-start'` | Forwarded to Popover. |
 | `matchAnchorWidth` | `boolean` | `true` | Panel width follows the anchor. |
 | `minPanelWidth` / `maxPanelWidth` | `number` | – | Bounds in px. |
@@ -210,13 +210,13 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Two-column | `columns={2}` | List balanced into up to two columns (panel height roughly halves); rows keep source order down column one, then column two. Falls back to one column when the panel is too narrow. With `groupBy`, headers span full width above each group. |
 | Row selected | in `value` | Accent-subtle background, accent-bold text, semibold; ✓ at the right edge (single-select, `showCheckmark`). |
 | Row active | arrow keys or hover | Surface-alt background — **never on the selected row**. |
-| Row disabled | `isItemDisabled` | 0.4 opacity, `not-allowed`, unreachable by arrows. |
+| Row disabled | `isItemDisabled` | 0.4 opacity, `not-allowed`; reachable by arrows (it can be the active row) but Enter and click refuse it. |
 | Empty | no options, or the filter matches nothing | `emptyState` in place of the list. A list (or search result) of only disabled rows is **not** empty — the rows render, with no active row. |
 | Multi checkbox | `MultiListbox`, `showCheckbox` | Leading 18px indicator column on every row. |
 
 ## Accessibility
 
-- The panel is `role="listbox"` with rows as `role="option"` carrying `aria-selected` and `aria-disabled`. Group headers are `role="presentation"` so they are not announced as options.
+- The **list** inside the floating panel is `role="listbox"` (the panel itself is `presentation`, since it also holds the search row and a listbox may only own options), with rows as `role="option"` carrying `aria-selected` and `aria-disabled`. Group headers are `role="presentation"` so they are not announced as options.
 - **Group headers do not meet AA, and the fix is a one-liner.** The default
   `--color-text-subtle` measures **3.66:1** on `--color-card` in light and **3.41:1** in dark,
   against the 4.5:1 floor for normal text. At 10px the large-text exemption (18pt, or 14pt
@@ -233,11 +233,11 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
   Use `--color-text-strong` (8.86:1) if you want the header to read as a heading rather than
   a quiet label. Both are theme-aware, so one declaration covers light and dark.
 - The trigger receives `aria-haspopup="listbox"`, `aria-expanded`, and `aria-controls` (only while open) through `triggerProps`. **Do not override these** — the wiring is what makes the pattern announce correctly.
-- Focus stays on the **search input** (or the panel) while `aria-activedescendant` points at the arrow-highlighted option — the standard combobox pattern, so arrow keys move the highlight without moving DOM focus. The search input also carries `aria-autocomplete="list"`.
+- Focus stays on the **search input** (or, with no search, on the listbox itself) while `aria-activedescendant` — set on whichever of the two holds focus — points at the arrow-highlighted option — the standard combobox pattern, so arrow keys move the highlight without moving DOM focus. The search input also carries `aria-autocomplete="list"`.
 - **Pass `searchAriaLabel` for a domain-specific picker.** A placeholder is not a reliable accessible name: it disappears once the field has a value, and AT support for placeholder-as-name is inconsistent. `searchAriaLabel` falls back to the placeholder, but "Search countries" beats "Search…".
 - **Pass `aria-label`** so the listbox itself has a name.
 - Selection indicators are `aria-hidden="true"` — both the ✓ and the checkbox marker. `aria-selected` on the row already conveys state, so announcing the glyph would double it.
-- Arrow navigation wraps at both ends and skips disabled rows, so keyboard users never land on an unselectable row.
+- Arrow navigation wraps at both ends and **lands on disabled rows too** — reachable but inert, as WAI-ARIA APG recommends for listbox options — so a keyboard or screen-reader user hears that the option exists, and why it is unavailable if the label says so. Enter on a disabled row does nothing; the panel stays open.
 - **`columns` changes visual layout only — keyboard order stays DOM/source order.** In a two-column panel, `ArrowDown` at the bottom of column one continues at the top of column two (source order), not to the visually adjacent row, and there is no `ArrowLeft`/`ArrowRight` column jump. This is deliberate: source order is what the screen reader announces, and a spatial grid would require `role="grid"` semantics this pattern doesn't have. Keep visually-paired options adjacent in source order if that pairing matters.
 - `Escape` closes via Popover; focus returns to whatever was focused when the panel opened.
 - The row is a `<button>`, so it is operable by Enter and Space natively even outside the managed active-descendant flow.
