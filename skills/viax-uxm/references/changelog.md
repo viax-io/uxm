@@ -2096,3 +2096,10 @@ reached the published library; now shipped in 2.8.0.
   is now `calc(3ch + 10px)` instead of a fixed 34px, so "150" no longer clips once
   `--uxm-lifecycle-zoom-font-size` or `--type-scale` is raised (it did from 16px). About
   35px at the 13px default; no API or knob change.
+
+### New in 4.70.3
+
+- **Studio: the AppSidebar logo row follows the top bar in the preview too** —
+  the preview always projected `--uxm-app-sidebar-header-height` (64px), so the documented
+  fallback to `--uxm-app-top-bar-height` never ran in the workbench. It is now projected
+  only once the knob is moved off its default. Studio-only; the atom is unchanged.

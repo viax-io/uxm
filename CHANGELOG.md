@@ -1,3 +1,10 @@
+# [4.71.0](https://github.com/viax-io/uxm/compare/v4.70.7...v4.71.0) (2026-10-23)
+
+
+### Features
+
+* **page-header:** own the title line height, and size the tile's glyph ([ecfb93f](https://github.com/viax-io/uxm/commit/ecfb93f3454b184fc3a4a744e78a98016120e8a5))
+
 ## [4.70.7](https://github.com/viax-io/uxm/compare/v4.70.6...v4.70.7) (2026-10-23)
 
 
