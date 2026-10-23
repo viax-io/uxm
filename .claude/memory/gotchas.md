@@ -316,6 +316,17 @@ only ever verified outside the studio: in the portal with nothing saved, or in
 `tests/checkbox-knobs.test.ts`, which compiles the SCSS and resolves the chains
 the way a browser would. Don't "fix" a chain to match what Studio paints.
 
+**A third way the preview hides a gap: it does the knob's job itself.**
+InputWithIcon's Icon Size emitted `--uxm-input-with-icon-icon-size`, which fed
+only the left padding; nothing sized the glyph. The preview passed
+`size={iconSize}` to the `<Icon>` it rendered, so the knob looked live in Studio,
+while the README's `icon={<Icon glyph="search" />}` drew `Icon`'s 24px default in a
+16px slot in every app — and every app passed `size={16}` by hand instead of
+reporting it. **How to apply:** a preview should hand the atom what a consumer
+hands it (the README's usage) and let the knob arrive as a var, never re-apply a
+knob value through a prop. `tests/input-icon-size.test.ts` now pins the
+slot-and-glyph pairing for every `iconSize` knob that feeds a padding.
+
 ---
 
 ## A styled class nobody renders is invisible in review

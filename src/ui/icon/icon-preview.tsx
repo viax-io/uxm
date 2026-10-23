@@ -41,7 +41,7 @@ export function IconPreview({ styles }: PreviewProps) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <InputWithIcon
           type="search"
-          icon={<Icon glyph="search" size={16} />}
+          icon={<Icon glyph="search" />}
           placeholder="Search icons…"
           aria-label="Search icons"
           value={query}

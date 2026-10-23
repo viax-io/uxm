@@ -2,7 +2,7 @@
 
 A text input with a leading icon slot and (optionally) a trailing clear button. The standard "search field" shape, but generalised — any icon can lead, and clearability is opt-in for non-search inputs.
 
-`InputWithIcon` composes three elements: a positioned icon span (`aria-hidden`), a native `<input>`, and an optional clear button (the shared `.uxm-field-clear` `IconButton`, same as TextInput / NumberInput / Textarea). Left padding is computed from `iconOffset + iconSize + 8px` so the input text can never overlap the leading glyph. The browser's native search-clear button is suppressed via `::-webkit-search-cancel-button` so `type="search"` doesn't render two clear affordances.
+`InputWithIcon` composes three elements: a positioned icon span (`aria-hidden`), a native `<input>`, and an optional clear button (the shared `.uxm-field-clear` `IconButton`, same as TextInput / NumberInput / Textarea). The Icon Size knob (`--uxm-input-with-icon-icon-size`, 16px) sizes the leading glyph and the room kept for it: left padding is computed from `iconOffset + iconSize + 8px`, so the input text can never overlap the glyph. The browser's native search-clear button is suppressed via `::-webkit-search-cancel-button` so `type="search"` doesn't render two clear affordances.
 
 ## Usage
 
@@ -25,6 +25,10 @@ function SearchField() {
 }
 ```
 
+Pass the `Icon` without a `size`. The slot sizes any `<svg>` inside it to `--uxm-input-with-icon-icon-size`, so a `size` prop (or a raw svg's `width` / `height`) has no effect there — those are presentation attributes, and a stylesheet rule beats them. To change the glyph, set the variable or the Studio knob: the padding follows it, so the glyph and the room kept for it stay in step.
+
+The glyph and its slot are coupled on purpose. An inline `style` on the svg, or a consumer rule of higher specificity, still wins — but the padding will **not** follow, so the gap before the text goes wrong and you own the alignment from then on. Prefer the variable.
+
 ## Props
 
 ### `InputWithIconProps`
@@ -33,7 +37,7 @@ Extends `InputHTMLAttributes<HTMLInputElement>` — any standard input attribute
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `icon` | `ReactNode` | – | **Required.** Leading icon — typically `<Icon glyph="…" />` or a raw `<svg>`. |
+| `icon` | `ReactNode` | – | **Required.** Leading icon — typically `<Icon glyph="…" />` or a raw `<svg>`. Any svg inside it is sized to `--uxm-input-with-icon-icon-size`, so leave `size` off. |
 | `type` | `string` | `'text'` | Overridden default. For `'search'`, `clearable` defaults to `true` and the native webkit clear button is suppressed. |
 | `clearable` | `boolean` | `type === 'search'` | Reserve trailing space for a clear button and render it when the input has a non-empty `value` and an `onClear` handler. |
 | `onClear` | `() => void` | – | Required for the clear button to render. Typically `() => setValue('')`. Only fires when the input has a string `value` — uncontrolled inputs can't be reset from the outside. |
@@ -53,9 +57,9 @@ Extends `InputHTMLAttributes<HTMLInputElement>` — any standard input attribute
 | `--uxm-input-with-icon-color` | `--color-text` | – | Input text colour. |
 | `--uxm-input-with-icon-font-size` | – | `14px` | Input font size. |
 | `--uxm-input-with-icon-padding-y` | – | `8px` | Input vertical padding. |
-| `--uxm-input-with-icon-padding-x` | – | `12px` | Input horizontal padding (also drives leading icon room). |
+| `--uxm-input-with-icon-padding-x` | – | `12px` | Input right padding when not clearable. The left padding is computed from the icon (see the note below). |
 | `--uxm-input-with-icon-icon-color` | `--color-text-muted` | – | Leading icon colour. |
-| `--uxm-input-with-icon-icon-size` | – | `16px` | Leading icon SVG sizing (used in the left-padding computation). |
+| `--uxm-input-with-icon-icon-size` | – | `16px` | Leading glyph width and height (any `<svg>` in the slot, whatever its `size`), and the room the left padding keeps for it. |
 | `--uxm-input-with-icon-icon-offset` | – | `12px` | Leading and trailing icon offsets from the edge. |
 | `--uxm-input-with-icon-error-bg` | `--color-card` | – | Input background in the error state. |
 | `--uxm-input-with-icon-error-border` | `--color-danger-text` | – | Input border in the error state. |
@@ -82,7 +86,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 | State / variant | Trigger | Visual |
 |-----------------|---------|--------|
-| Default | – | Leading icon, surface background, border, 8px radius. |
+| Default | – | Leading 16px icon, surface background, border, 8px radius. |
 | Focus | `:focus` on `<input>` | Border colour transitions (0.15s) to `--color-accent`. |
 | Clearable (reserved) | `type="search"` or `clearable={true}` | Extra trailing padding reserved even when value is empty (prevents jitter). |
 | Clearable (button visible) | `clearable` + non-empty `value` + `onClear` | Shared 22×22 `.uxm-field-clear` button at the trailing edge with `close` icon. |
