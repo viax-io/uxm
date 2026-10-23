@@ -111,8 +111,11 @@ catalog.
   `-checked-bg` / `-checked-border` / `-check-glyph-color`, which only the `Listbox` marker used to
   read; `checkbox.scss` reads them now, falling back through the older `-border-color` /
   `-check-color`, so existing overrides keep working and defaults are unchanged. A themed
-  unchecked background or glyph now holds on hover, and the `Listbox` marker honours the
-  older names too.
+  unchecked background or glyph holds under the pointer; hover otherwise keeps the registry's
+  own hover defaults, so a themed `-checked-bg` / `-checked-border` still deepens to
+  `--color-accent-bold` and a themed `-unchecked-border` still goes `--color-text-strong` —
+  theme hover with `-hover-checked-bg` / `-hover-checked-border` / `-hover-unchecked-border`.
+  The `Listbox` marker honours the older names too.
 
 ## Workflow
 

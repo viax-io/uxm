@@ -84,8 +84,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Default (unchecked) | – | Transparent box with `--color-border` outline; check SVG present but `opacity: 0`. |
 | Checked | `:checked` on the native input | Box fills with `--uxm-checkbox-checked-bg` and borders with `--uxm-checkbox-checked-border` (both `--color-accent`); check SVG fades to `opacity: 1`. |
 | Disabled | `disabled` prop | `--disabled` modifier: `cursor: not-allowed`, `opacity: 0.4`; native input also disabled. Hover is skipped. |
-| Hover (unchecked) | `:hover` on the root, input unchecked | Border moves to `--color-text-strong`; the box stays unfilled. |
-| Hover (checked) | `:hover` on the root, input checked | Box (fill + border) deepens to `--color-accent-bold`; glyph holds its resting colour (`--color-text-inverse`). |
+| Hover (unchecked) | `:hover` on the root, input unchecked | Border moves to `--color-text-strong`, regardless of a themed `--uxm-checkbox-unchecked-border`; the box keeps its resting background. |
+| Hover (checked) | `:hover` on the root, input checked | Box (fill + border) deepens to `--color-accent-bold`, regardless of a themed `--uxm-checkbox-checked-bg` / `-checked-border`; glyph holds its resting colour (`--color-text-inverse`). |
 | Focus | `:focus-visible` on the native input | The visible box gets a `2px` outline in `--uxm-checkbox-focus-ring` (`--color-accent`) at `2px` offset. |
 | Error | non-empty `error` prop | `aria-invalid` on the input; icon-led `FieldError` message below in `--uxm-checkbox-error-color`; box and label stay neutral. |
 

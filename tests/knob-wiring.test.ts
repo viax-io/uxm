@@ -33,6 +33,47 @@ const SHARED: Record<string, string[]> = {
   slider: ['range-slider'],
 };
 
+/**
+ * Registry ids whose styles live in a differently named folder.
+ *
+ * Without these the gate silently skipped them — 19 of 110 ids, including every
+ * Button variant, `input-text`, `textarea` and `select-dropdown`. That is not a
+ * harmless gap: "the id is not the folder name" is the exact shape that let the
+ * Checkbox's knobs emit into the void, so the atoms most likely to repeat it
+ * were the ones not being checked.
+ */
+const FOLDER_OF: Record<string, string[]> = {
+  'button-primary': ['button'],
+  'button-secondary': ['button'],
+  'button-tertiary': ['button'],
+  'button-ghost': ['button'],
+  'button-danger': ['button'],
+  'input-text': ['input'],
+  textarea: ['input'],
+  'select-dropdown': ['listbox', 'input', 'popover'],
+  'list-item': ['list'],
+  'content-tooltip': ['tooltip'],
+};
+
+/**
+ * Registry ids with no folder of their own: composites that style through the
+ * atoms they host, and knob groups that belong to another entry's component.
+ *
+ * Listed rather than skipped, so a NEW id has to be classified deliberately —
+ * an unknown one fails the test below instead of quietly dropping out of it.
+ */
+const NO_FOLDER = new Set([
+  'brand-settings',
+  'form-login',
+  'form-contact',
+  'form-multirow',
+  'login-page',
+  'property-grid',
+  'lifecycle-plus-button',
+  'lifecycle-connector-knobs',
+  'lifecycle-action-row',
+]);
+
 const brand = {} as BrandConfig;
 const stripComments = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"])\/\/.*$/gm, '$1');
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -48,15 +89,35 @@ function readersOf(cssVar: string) {
 }
 
 describe('Studio knob wiring', () => {
+  it('classifies every registry id — no silent skips', () => {
+    // The gate is only worth what it covers, and the previous version dropped
+    // any id without a same-named folder without saying so.
+    const unclassified = registry
+      .filter((d) => !existsSync(resolve(UI_DIR, d.id)) && !FOLDER_OF[d.id] && !NO_FOLDER.has(d.id))
+      .map((d) => d.id);
+    expect(
+      unclassified,
+      'registry ids with no src/ui folder of their own: map each to its folder in FOLDER_OF, ' +
+        'or add it to NO_FOLDER if it is a composite that styles through other atoms',
+    ).toEqual([]);
+  });
+
+  it('actually iterates the library (a silent zero would pass the check below)', () => {
+    expect(sources.length, 'src/ui source files').toBeGreaterThan(200);
+    expect(registry.length, 'registry entries').toBeGreaterThan(100);
+  });
+
   it('every emitted var another atom reads is read by its own atom too', () => {
     const masked: string[] = [];
+    let checked = 0;
     for (const def of registry) {
-      if (!existsSync(resolve(UI_DIR, def.id))) continue;
-      const home = new Set([def.id, ...(SHARED[def.id] ?? [])]);
+      if (NO_FOLDER.has(def.id)) continue;
+      const home = new Set([def.id, ...(FOLDER_OF[def.id] ?? []), ...(SHARED[def.id] ?? [])]);
       for (const prop of def.styleProperties) {
         if (prop.defaultValue === undefined || prop.defaultValue === null) continue;
         const css = generateOverridesCss({ [def.id]: { [prop.key]: prop.defaultValue } }, brand);
         for (const [, cssVar] of css.matchAll(/^\s*(--uxm-[a-z0-9-]+):/gm)) {
+          checked += 1;
           const readers = readersOf(cssVar);
           if (readers.length && !readers.some((r) => home.has(r.folder))) {
             masked.push(`${def.id}.${prop.key} → ${cssVar} (only ${readers.map((r) => r.file).join(', ')})`);
@@ -65,5 +126,8 @@ describe('Studio knob wiring', () => {
       }
     }
     expect(masked).toEqual([]);
+    // Non-vacuity: if the registry, the glob or the generator ever came back
+    // empty, `masked` would also be empty and this would pass green.
+    expect(checked, 'emitted vars examined').toBeGreaterThan(1000);
   });
 });

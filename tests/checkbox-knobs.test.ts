@@ -49,6 +49,18 @@ function resolveVars(value: string, vars: Vars): string {
   return value.slice(0, at) + substituted + resolveVars(value.slice(end + 1), vars);
 }
 
+/**
+ * Resolve ONE rule's `var()` chain, as if that rule were the winning one.
+ *
+ * This is not a cascade: it finds the declaration by exact selector text and
+ * substitutes variables into it, so it answers "what does this rule compute
+ * to", not "what does the browser paint on that element". A second rule that
+ * overrides this one — a later `background-color` on the same box, a shorthand
+ * clobbering a longhand — is invisible here, and `find` would quietly take the
+ * first of two same-selector rules. That is deliberate: the contract under test
+ * is the chain itself (which alias wins, what the innermost token is), and the
+ * real cascade is what the portal check covers.
+ */
 function paint(decls: ReturnType<typeof declarations>, selector: string, prop: string, vars: Vars = {}) {
   const decl = decls.find((d) => d.selector === selector && d.prop === prop);
   expect(decl, `${selector} { ${prop} }`).toBeDefined();
@@ -62,6 +74,7 @@ describe('Checkbox resting knobs', () => {
   const glyph = '.uxm-checkbox__box > svg';
   const hover = '.uxm-checkbox:not(.uxm-checkbox--disabled):hover';
   const hoverUnchecked = `${hover} .uxm-checkbox__input:not(:checked) + .uxm-checkbox__box`;
+  const hoverChecked = `${hover} .uxm-checkbox__input:checked + .uxm-checkbox__box`;
   const hoverGlyph = `${hover} .uxm-checkbox__input:checked + .uxm-checkbox__box > svg`;
 
   it('keeps the unset defaults', () => {
@@ -92,7 +105,37 @@ describe('Checkbox resting knobs', () => {
     expect(paint(css, checked, 'background-color', legacy)).toBe('red');
     expect(paint(css, checked, 'border-color', legacy)).toBe('red');
     expect(paint(css, box, 'border', legacy)).toBe('1.5px solid blue');
+    // Every chain, not just one: with precedence asserted on `checked-bg`
+    // alone, reordering either border's chain so the legacy name won passed.
     expect(paint(css, checked, 'background-color', { ...legacy, '--uxm-checkbox-checked-bg': 'green' })).toBe('green');
+    expect(paint(css, checked, 'border-color', { ...legacy, '--uxm-checkbox-checked-border': 'black' })).toBe('black');
+    expect(paint(css, box, 'border', { ...legacy, '--uxm-checkbox-unchecked-border': 'gray' })).toBe('1.5px solid gray');
+  });
+
+  it('leaves the checked fill and borders on their hover defaults — the deliberate limit', () => {
+    // Shipped on purpose: hover deepens to the registry's own hover defaults
+    // even over a themed resting colour, so a themed checkbox goes accent-bold
+    // under the pointer unless Hover › Checked Background is set too.
+    //
+    // Pinned because the opposite is a one-line "improvement" that reads like a
+    // bug fix — chaining `hover-checked-bg` through `checked-bg` passed every
+    // other assertion in this file. Changing it is a design decision, so it
+    // should have to change this test and say why.
+    const themed = {
+      '--uxm-checkbox-checked-bg': 'green',
+      '--uxm-checkbox-checked-border': 'black',
+      '--uxm-checkbox-unchecked-border': 'gray',
+    };
+    expect(paint(css, hoverChecked, 'background-color', themed)).toBe('var(--color-accent-bold)');
+    expect(paint(css, hoverChecked, 'border-color', themed)).toBe('var(--color-accent-bold)');
+    expect(paint(css, hoverUnchecked, 'border-color', themed)).toBe('var(--color-text-strong)');
+  });
+
+  it('keeps the unset hover defaults', () => {
+    expect(paint(css, hoverUnchecked, 'background-color')).toBe('transparent');
+    expect(paint(css, hoverUnchecked, 'border-color')).toBe('var(--color-text-strong)');
+    expect(paint(css, hoverChecked, 'background-color')).toBe('var(--color-accent-bold)');
+    expect(paint(css, hoverGlyph, 'color')).toBe('var(--color-text-inverse)');
   });
 
   it('holds a themed unchecked bg and glyph under the pointer', () => {
@@ -114,5 +157,7 @@ describe('Listbox checkbox marker', () => {
     expect(paint(css, checked, 'border-color', legacy)).toBe('red');
     expect(paint(css, marker, 'border', legacy)).toBe('1.5px solid blue');
     expect(paint(css, checked, 'background-color', { ...legacy, '--uxm-checkbox-checked-bg': 'green' })).toBe('green');
+    expect(paint(css, checked, 'border-color', { ...legacy, '--uxm-checkbox-checked-border': 'black' })).toBe('black');
+    expect(paint(css, marker, 'border', { ...legacy, '--uxm-checkbox-unchecked-border': 'gray' })).toBe('1.5px solid gray');
   });
 });
