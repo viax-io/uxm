@@ -8,11 +8,18 @@ export const pageHeaderDef: ComponentDef = {
   styleProperties: [
     { key: 'titleColor', label: 'Title Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
     { key: 'titleSize', label: 'Title Size', control: 'number', defaultValue: 22, min: 16, max: 32, step: 1, unit: 'px' },
+    // A select, not a number, because the CSS default is `normal` and Studio
+    // projects registry defaults as inline vars — a numeric default would make
+    // the workbench render a ratio no bare consumer gets. Strings also publish
+    // unitless on their own, so the value never depends on formatValue's
+    // `*LineHeight` rule. Same shape as `editable-cell`'s `smallFontSize`.
+    { key: 'titleLineHeight', label: 'Title Line Height', control: 'select', defaultValue: 'normal', options: ['normal', '1.1', '1.15', '1.2', '1.25', '1.3', '1.4', '1.5'] },
     { key: 'metaColor', label: 'Meta Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'metaSize', label: 'Meta Size', control: 'number', defaultValue: 13, min: 11, max: 18, step: 1, unit: 'px' },
     { key: 'iconBg', label: 'Icon Bg', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
     { key: 'iconColor', label: 'Icon Color', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
     { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 40, min: 24, max: 64, step: 4, unit: 'px' },
+    { key: 'iconGlyphSize', label: 'Icon Glyph Size', control: 'number', defaultValue: 14, min: 10, max: 40, step: 1, unit: 'px' },
     { key: 'gap', label: 'Gap', control: 'number', defaultValue: 16, min: 6, max: 32, step: 2, unit: 'px' },
     { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 0, min: 0, max: 40, step: 2, unit: 'px' },
     { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 0, min: 0, max: 32, step: 2, unit: 'px' },

@@ -127,3 +127,31 @@ describe('expandable-text knob mapping', () => {
     expect(block).not.toMatch(/^\s*(color|font-size|line-height|gap):/m);
   });
 });
+
+describe('page-header knob mapping', () => {
+  const css = (overrides: Record<string, unknown>) =>
+    generateOverridesCss({ 'page-header': overrides } as never, brand);
+
+  it('publishes the title line height verbatim \u2014 a ratio unitless, `normal` as-is', () => {
+    // `titleLineHeight` is a select, so Studio saves strings. Both have to reach
+    // the stylesheet untouched: a `px` suffix on the ratio would collapse the
+    // line box, and a mangled `normal` would silently drop the default.
+    expect(css({ titleLineHeight: '1.3' })).toContain('--uxm-page-header-title-line-height: 1.3;');
+    expect(css({ titleLineHeight: 'normal' })).toContain('--uxm-page-header-title-line-height: normal;');
+  });
+
+  it('publishes the glyph size in px', () => {
+    // Split from the line-height case on purpose: sharing one `it` meant a
+    // failure here reported as a line-height problem.
+    expect(css({ iconGlyphSize: 20 })).toContain('--uxm-page-header-icon-glyph-size: 20px;');
+  });
+
+  it('publishes a NUMERIC line-height unitless too', () => {
+    // Not reachable from the Studio UI \u2014 the select always sends a string \u2014 but
+    // reachable from an imported or hand-written overrides document, and it
+    // pins `formatValue`'s `*LineHeight` rule for the next per-element knob
+    // declared as a number. Without that rule a saved 1.3 publishes as
+    // `1.3px`: a 1px line box, with the title's lines stacked on each other.
+    expect(css({ titleLineHeight: 1.3 })).toContain('--uxm-page-header-title-line-height: 1.3;');
+  });
+});
