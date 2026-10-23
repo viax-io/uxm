@@ -2082,3 +2082,17 @@ reached the published library; now shipped in 2.8.0.
   Enter (confirm the candidate) and Escape (dismiss the candidate window) no longer
   commit or cancel the cell. Most visible on `type="textarea"`, where Escape used to
   discard the whole draft; no API change.
+
+### New in 4.70.2
+
+- **Docs: keep a row's own value enabled** — the 4.68.0 notes, the `DataTable`
+  README and its catalog row told per-row `editorOptions` to *disable* a row's own current
+  value when the rule excludes it. That makes it sticky: a disabled row is inert, so a
+  multiselect can only drop it via "Clear all". Corrected everywhere to "keep it enabled,
+  reason in the label". Also documented on `Listbox`: a panel whose options are all disabled
+  shows them rather than `emptyState` (the 4.68.0 fix). No code change.
+
+- **`LifecycleZoomControl`: the value field grows with the font** — its width
+  is now `calc(3ch + 10px)` instead of a fixed 34px, so "150" no longer clips once
+  `--uxm-lifecycle-zoom-font-size` or `--type-scale` is raised (it did from 16px). About
+  35px at the 13px default; no API or knob change.

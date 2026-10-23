@@ -1,3 +1,12 @@
+## [4.70.7](https://github.com/viax-io/uxm/compare/v4.70.6...v4.70.7) (2026-10-23)
+
+
+### Bug Fixes
+
+* **checkbox:** make the resting Studio knobs paint the Checkbox ([c7cf64c](https://github.com/viax-io/uxm/commit/c7cf64cb1f6b883c3df6b53164a0034bf2f98560))
+* **scripts:** let the drift check see bare registry ids and whole var names ([47a2859](https://github.com/viax-io/uxm/commit/47a2859784b2dbef0cb8f5946df5f119854b5752))
+* **scripts:** parse mapping blocks whose comments contain a brace ([db33028](https://github.com/viax-io/uxm/commit/db3302862ab0f66bc5dac40f4c9b786b9ff901e6))
+
 ## [4.70.6](https://github.com/viax-io/uxm/compare/v4.70.5...v4.70.6) (2026-10-21)
 
 

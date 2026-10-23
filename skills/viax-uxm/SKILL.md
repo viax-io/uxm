@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.70.6, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.70.7, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.70.6** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.70.7** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.70.6 — current API surface (overrides training data)
+## v4.70.7 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,20 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.70.2
-
-- **Docs: keep a row's own value enabled** — the 4.68.0 notes, the `DataTable`
-  README and its catalog row told per-row `editorOptions` to *disable* a row's own current
-  value when the rule excludes it. That makes it sticky: a disabled row is inert, so a
-  multiselect can only drop it via "Clear all". Corrected everywhere to "keep it enabled,
-  reason in the label". Also documented on `Listbox`: a panel whose options are all disabled
-  shows them rather than `emptyState` (the 4.68.0 fix). No code change.
-
-- **`LifecycleZoomControl`: the value field grows with the font** — its width
-  is now `calc(3ch + 10px)` instead of a fixed 34px, so "150" no longer clips once
-  `--uxm-lifecycle-zoom-font-size` or `--type-scale` is raised (it did from 16px). About
-  35px at the 13px default; no API or knob change.
 
 ### New in 4.70.3
 
@@ -98,13 +84,7 @@ catalog.
   `aria-activedescendant` on the focused list, where AT used to announce nothing as you
   arrowed. No API change.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.70.7
 
 - **Checkbox's resting Studio knobs now paint the real atom.** Default › Unchecked / Checked
   Background, Border and Check Glyph emit `--uxm-checkbox-unchecked-bg` / `-unchecked-border` /
@@ -116,6 +96,14 @@ catalog.
   `--color-accent-bold` and a themed `-unchecked-border` still goes `--color-text-strong` —
   theme hover with `-hover-checked-bg` / `-hover-checked-border` / `-hover-unchecked-border`.
   The `Listbox` marker honours the older names too.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
