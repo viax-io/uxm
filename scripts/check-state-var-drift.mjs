@@ -21,10 +21,13 @@ const kebab = (k) => k.replace(/(?<!^)(?=[A-Z])/g, '-').toLowerCase();
 // shape the gotchas entry warns about.
 const squash = (s) => s.replace(/\s+/g, ' ').replace(/\(\s/g, '(').replace(/\s\)/g, ')').trim();
 
-// 1. knob → var overrides from generate-css-mapping.ts
+// 1. knob → var overrides from generate-css-mapping.ts. Ids are quoted only when
+// they need it (`'input-text': {` but `checkbox: {`, `card: {`), so the quote is
+// optional — matching quoted keys alone silently dropped every bare id and fell
+// back to guessed names (`--uxm-card-background-color` for `--uxm-card-bg`).
 const gc = read('src/studio/persistence/generate-css-mapping.ts');
 const mapping = {};
-for (const m of gc.matchAll(/'([a-z0-9-]+)':\s*\{([^}]*)\}/g)) {
+for (const m of gc.matchAll(/^\s*'?([a-z0-9-]+)'?:\s*\{([^}]*)\}/gm)) {
   const entries = Object.fromEntries([...m[2].matchAll(/(\w+):\s*'(--[\w-]+)'/g)].map((e) => [e[1], e[2]]));
   if (Object.keys(entries).length) mapping[m[1]] = { ...(mapping[m[1]] ?? {}), ...entries };
 }
@@ -46,10 +49,14 @@ for (const f of registryFiles) {
 
 // 3. compare against every SCSS fallback
 const scss = globSync('src/ui/**/*.scss').map((f) => ({ f, text: squash(read(f)) }));
+const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 let drift = 0;
 for (const { cid, key, def } of knobs) {
   const cssVar = mapping[cid]?.[key] ?? `--uxm-${cid}-${kebab(key)}`;
-  const reads = scss.filter(({ text }) => text.includes(`var(${cssVar}`));
+  // Delimited, not a prefix match: `var(--uxm-x-bg` must not count a read of
+  // `--uxm-x-bg-hover` as a read of `--uxm-x-bg`.
+  const readsVar = new RegExp(`var\\(${escape(cssVar)}[,)]`);
+  const reads = scss.filter(({ text }) => readsVar.test(text));
   if (reads.length === 0) continue; // knob has no CSS read — a different defect class (dead emitted var)
   // Numeric knobs are emitted with a px suffix by generate-css, so a CSS
   // fallback of `2px` against a registry default of `2` is agreement, not drift.
@@ -60,7 +67,6 @@ for (const { cid, key, def } of knobs) {
   // hook (undeclared by the library), so they may sit in the chain too.
   const defs = [squash(def)];
   if (/^[\d.]+$/.test(def)) defs.push(`${def}px`);
-  const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(
     `var\\(${escape(cssVar)}, (?:var\\(--(?:uxm-[\\w-]+|font-weight-(?:strong|medium)), )*(?:${defs.map(escape).join('|')})\\)+`,
   );
