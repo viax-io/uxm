@@ -21,12 +21,37 @@ const kebab = (k) => k.replace(/(?<!^)(?=[A-Z])/g, '-').toLowerCase();
 // shape the gotchas entry warns about.
 const squash = (s) => s.replace(/\s+/g, ' ').replace(/\(\s/g, '(').replace(/\s\)/g, ')').trim();
 
-// 1. knob → var overrides from generate-css-mapping.ts
-const gc = read('src/studio/persistence/generate-css-mapping.ts');
+// 1. knob → var overrides from generate-css-mapping.ts. Ids are quoted only when
+// they need it (`'input-text': {` but `checkbox: {`, `card: {`), so the quote is
+// optional — matching quoted keys alone silently dropped every bare id and fell
+// back to guessed names (`--uxm-card-background-color` for `--uxm-card-bg`).
+//
+// Comments are stripped FIRST, because `[^}]*` stops at the first `}` anywhere
+// in the block — including one inside a comment. `editable-cell`'s block opens
+// with a note mentioning `--uxm-editable-cell-{kebab(key)}`, whose brace cut the
+// body off before a single mapping line, so all five of its knobs silently fell
+// back to guessed names. That is the same silent-miss shape as the quoting bug
+// above, which is why the count gate below now backs this parse.
+const gcRaw = read('src/studio/persistence/generate-css-mapping.ts');
+const gc = gcRaw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"])\/\/.*$/gm, '$1');
 const mapping = {};
-for (const m of gc.matchAll(/'([a-z0-9-]+)':\s*\{([^}]*)\}/g)) {
+for (const m of gc.matchAll(/^\s*'?([a-z0-9-]+)'?:\s*\{([^}]*)\}/gm)) {
   const entries = Object.fromEntries([...m[2].matchAll(/(\w+):\s*'(--[\w-]+)'/g)].map((e) => [e[1], e[2]]));
   if (Object.keys(entries).length) mapping[m[1]] = { ...(mapping[m[1]] ?? {}), ...entries };
+}
+
+// A parse miss here is invisible: an unmapped id just guesses `--uxm-<id>-<key>`,
+// which usually looks plausible and reads nothing, so the knob is skipped at
+// step 3 as "no CSS read" rather than reported. Count the top-level blocks in
+// the raw source and insist every one of them came back with entries.
+const declared = [...gcRaw.matchAll(/^ {2}'?([a-z0-9-]+)'?:\s*\{/gm)].map((m) => m[1]);
+const missed = declared.filter((id) => !mapping[id]);
+if (missed.length) {
+  console.error(
+    `MAPPING PARSE: ${missed.length} of ${declared.length} blocks in generate-css-mapping.ts ` +
+      `yielded no entries, so their knobs fall back to guessed var names: ${missed.join(', ')}`,
+  );
+  process.exit(1);
 }
 
 // 2. registry state knobs
@@ -46,10 +71,14 @@ for (const f of registryFiles) {
 
 // 3. compare against every SCSS fallback
 const scss = globSync('src/ui/**/*.scss').map((f) => ({ f, text: squash(read(f)) }));
+const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 let drift = 0;
 for (const { cid, key, def } of knobs) {
   const cssVar = mapping[cid]?.[key] ?? `--uxm-${cid}-${kebab(key)}`;
-  const reads = scss.filter(({ text }) => text.includes(`var(${cssVar}`));
+  // Delimited, not a prefix match: `var(--uxm-x-bg` must not count a read of
+  // `--uxm-x-bg-hover` as a read of `--uxm-x-bg`.
+  const readsVar = new RegExp(`var\\(${escape(cssVar)}[,)]`);
+  const reads = scss.filter(({ text }) => readsVar.test(text));
   if (reads.length === 0) continue; // knob has no CSS read — a different defect class (dead emitted var)
   // Numeric knobs are emitted with a px suffix by generate-css, so a CSS
   // fallback of `2px` against a registry default of `2` is agreement, not drift.
@@ -60,7 +89,6 @@ for (const { cid, key, def } of knobs) {
   // hook (undeclared by the library), so they may sit in the chain too.
   const defs = [squash(def)];
   if (/^[\d.]+$/.test(def)) defs.push(`${def}px`);
-  const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(
     `var\\(${escape(cssVar)}, (?:var\\(--(?:uxm-[\\w-]+|font-weight-(?:strong|medium)), )*(?:${defs.map(escape).join('|')})\\)+`,
   );

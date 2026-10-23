@@ -232,9 +232,13 @@ in baseline styles"). Reported from a consumer project, not caught here.
 the registry's `defaultValue` for the matching knob is the source of truth —
 diff the two whenever you touch either. A fallback that *equals* the resting
 value is fine when the registry declares it that way — the rule then exists as
-an override hook for a property the state deliberately leaves alone
-(`--uxm-checkbox-hover-unchecked-bg`, the hover thumb colours). It's a bug only
-when the registry says something else. Verify hover/focus in the portal (or any
+an override hook for a property the state deliberately leaves alone (the hover
+thumb colours). It's a bug only when the registry says something else. Better
+still, where the state deliberately leaves a property alone, fall back through
+the RESTING VAR rather than repeating its literal value
+(`var(--uxm-checkbox-hover-unchecked-bg, var(--uxm-checkbox-unchecked-bg,
+transparent))`), so a themed resting value carries into the state instead of
+being silently dropped back to the stock one — see the Studio note below. Verify hover/focus in the portal (or any
 consumer) with **no** overrides saved, never by reading the studio preview.
 `Checkbox` and `RadioGroup` had the same dead fallbacks and were fixed
 alongside, as was `disabledOpacity` on all three (registry 0.4 vs 0.6/1/0.6 in
@@ -270,6 +274,47 @@ resting thumb no longer drags the hover tone with it). `PillSelect` is NOT on th
 registry default is `1` **by design** (`composite.ts` — dimming would
 double-dim already-muted chips), so its flat disabled look is correct. Check
 any per-state block against the registry before assuming it's clean.
+
+**A shared var name can mask a dead knob — the Checkbox's resting knobs.** The
+registry's Default-state `uncheckedBg` / `uncheckedBorder` / `checkedBg` /
+`checkedBorder` / `checkGlyphColor` emitted `--uxm-checkbox-unchecked-bg` etc.,
+but `checkbox.scss` read the older `-border-color` / `-check-color` (and
+hardcoded the bg and glyph), so a saved value painted nothing on the
+`Checkbox`. The studio preview hid it (its showcase rows paint the knobs
+inline), and the drift script missed it twice over: it skips the Default
+state, and it searches every stylesheet, where `listbox.scss` reads the same
+names for its checkbox marker. Found from outside, by a theme proof that
+checked each emitted var against the emitting atom's own folder.
+`tests/knob-wiring.test.ts` now does the same in the suite: every knob of an
+atom with its own `src/ui/<id>/` folder goes through the real
+`generateOverridesCss`, and an emitted var that another atom reads must be read
+by its own folder too (`SHARED` lists the deliberate cases, e.g. the slider
+entry driving `RangeSlider`). It lives in a test, not the drift script, because
+only the real emitter knows the names: knobs like `backgroundColor` emit a
+literal property unless mapped, and the script's regex over
+`generate-css-mapping.ts` had been skipping every unquoted id (`card`, `tabs`,
+`checkbox`, …) until this fix. A var read by nothing at all is still not
+checked — that flags ~80 behaviour/composite knobs and isn't worth gating yet.
+
+**The inverse of this trap: Studio can UNDER-show a fallback chain.** Everything
+above is about the workbench looking right while a consumer breaks. A chain that
+falls through to another var reverses it. `checkbox.scss` resolves hover's
+unchecked background as `var(--uxm-checkbox-hover-unchecked-bg,
+var(--uxm-checkbox-unchecked-bg, transparent))`, so a bare consumer that themes
+only the resting background keeps that colour under the pointer. Studio never
+shows this: `checkbox-preview.tsx` projects `styles.hoverUncheckedBg` — the
+registry's `defaultValue`, `transparent` — as an inline var, which satisfies the
+outer `var()` and the chain never reaches the resting one. Same for
+`hoverCheckGlyphColor`. So the workbench shows the stock hover where production
+shows the themed one, and a designer checking "does my background hold on
+hover?" in Studio gets the wrong answer.
+
+**How to apply:** the projection makes the workbench a bad oracle in BOTH
+directions — it pins every knob that has a `defaultValue`, which hides a dead
+fallback and equally hides a live chain. A multi-step `var()` chain is therefore
+only ever verified outside the studio: in the portal with nothing saved, or in
+`tests/checkbox-knobs.test.ts`, which compiles the SCSS and resolves the chains
+the way a browser would. Don't "fix" a chain to match what Studio paints.
 
 ---
 
