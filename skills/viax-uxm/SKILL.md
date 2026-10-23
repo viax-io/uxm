@@ -106,6 +106,14 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Checkbox's resting Studio knobs now paint the real atom.** Default › Unchecked / Checked
+  Background, Border and Check Glyph emit `--uxm-checkbox-unchecked-bg` / `-unchecked-border` /
+  `-checked-bg` / `-checked-border` / `-check-glyph-color`, which only the `Listbox` marker used to
+  read; `checkbox.scss` reads them now, falling back through the older `-border-color` /
+  `-check-color`, so existing overrides keep working and defaults are unchanged. A themed
+  unchecked background or glyph now holds on hover, and the `Listbox` marker honours the
+  older names too.
+
 ## Workflow
 
 ### Where the documentation lives

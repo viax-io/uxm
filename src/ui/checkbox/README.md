@@ -39,15 +39,20 @@ The component does not spread arbitrary HTML attributes onto the input; only the
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-checkbox-gap` | – | `10px` | Gap between the box and the label. |
-| `--uxm-checkbox-border-color` | `--color-border` | – | Unchecked box border. |
+| `--uxm-checkbox-unchecked-bg` | – | `transparent` | Box background while unchecked (Studio's Default › Unchecked › Background). |
+| `--uxm-checkbox-unchecked-border` | `--uxm-checkbox-border-color` → `--color-border` | – | Box border while unchecked (Default › Unchecked › Border). |
+| `--uxm-checkbox-border-color` | `--color-border` | – | Legacy name for the unchecked border, still read as the fallback of `--uxm-checkbox-unchecked-border`. |
 | `--uxm-checkbox-border-radius` | – | `4px` | Box corner radius. |
 | `--uxm-checkbox-size` | – | `20px` | Box width and height. |
-| `--uxm-checkbox-check-color` | `--color-accent` | – | Checked-state background AND border (single knob — they always move together). |
-| `--uxm-checkbox-hover-unchecked-bg` | `transparent` | – | Box background on hover while unchecked (unfilled by default — the border carries the hover). |
+| `--uxm-checkbox-checked-bg` | `--uxm-checkbox-check-color` → `--color-accent` | – | Box background while checked (Default › Checked › Background). |
+| `--uxm-checkbox-checked-border` | `--uxm-checkbox-check-color` → `--color-accent` | – | Box border while checked (Default › Checked › Border). |
+| `--uxm-checkbox-check-color` | `--color-accent` | – | Legacy single knob for the checked background AND border, still read as the fallback of both `-checked-*` vars. |
+| `--uxm-checkbox-check-glyph-color` | `--color-text-inverse` | – | Check glyph while checked (Default › Checked › Check Glyph). |
+| `--uxm-checkbox-hover-unchecked-bg` | `--uxm-checkbox-unchecked-bg` → `transparent` | – | Box background on hover while unchecked (the resting background by default — the border carries the hover). |
 | `--uxm-checkbox-hover-unchecked-border` | `--color-text-strong` | – | Box border on hover while unchecked. |
 | `--uxm-checkbox-hover-checked-bg` | `--color-accent-bold` | – | Box background on hover while checked. |
 | `--uxm-checkbox-hover-checked-border` | `--color-accent-bold` | – | Box border on hover while checked. |
-| `--uxm-checkbox-hover-check-glyph-color` | `--color-text-inverse` | – | Check glyph on hover (unchanged by default — it still has to read on the deeper fill). |
+| `--uxm-checkbox-hover-check-glyph-color` | `--uxm-checkbox-check-glyph-color` → `--color-text-inverse` | – | Check glyph on hover (the resting glyph colour by default — it still has to read on the deeper fill). |
 | `--uxm-checkbox-focus-ring` | `--color-accent` | – | `:focus-visible` outline colour on the box (2px, 2px offset). |
 | `--uxm-checkbox-error-color` | `--color-danger-text` | – | Colour of the `error` message below the control (icon included — it uses `currentColor`). |
 | `--uxm-checkbox-error-message-size` | – | `12px` | Font size of the `error` message. |
@@ -55,18 +60,20 @@ The component does not spread arbitrary HTML attributes onto the input; only the
 > ⚠️ A studio-saved override for the two `error` vars does not currently reach the message: `generateOverridesCss` emits per-component vars on `.uxm-checkbox`, the message renders as that element's *sibling*, and custom properties only cascade downwards. Tracked separately — set the vars on a shared ancestor if you need to re-tone messages today.
 | `--uxm-checkbox-disabled-opacity` | – | `0.4` | Opacity when disabled (`.uxm-checkbox--disabled`). |
 
-Hover is scoped with `:not(.uxm-checkbox--disabled)`, so a disabled checkbox does not react to the pointer. The **resting** check glyph is hardcoded to `--color-text-inverse`; only its hover value is a variable.
+Hover is scoped with `:not(.uxm-checkbox--disabled)`, so a disabled checkbox does not react to the pointer. Where the registry's hover default differs from the resting one (the borders, the checked fill), the hover var falls back to that hover default, so a themed `-checked-bg` still deepens to `--color-accent-bold` on hover unless `-hover-checked-bg` is set too. Where they are the same (unchecked background, glyph), the hover var falls back through the resting var, so a themed value holds under the pointer.
+
+The resting vars are the names Studio's `generateOverridesCss` emits for the Default-state knobs. Before they were read here, a saved Background / Border / Check Glyph painted only the `Listbox` checkbox marker (which reads the same names), never the `Checkbox` itself. The older `-border-color` / `-check-color` names stay in the chains, so overrides written against them keep working; the registry names win when both are set.
 
 ## Design tokens (MODO-configurable)
 
 | Token | Group / name | Used for |
 |-------|--------------|----------|
 | `--color-text` | Text / Text | Label text colour. |
-| `--color-border` | Borders / Border | Unchecked box border (via `--uxm-checkbox-border-color` fallback). |
-| `--color-accent` | Accent / Accent | Checked-state background + border (via `--uxm-checkbox-check-color` fallback). |
+| `--color-border` | Borders / Border | Unchecked box border (via the `--uxm-checkbox-unchecked-border` → `-border-color` fallback). |
+| `--color-accent` | Accent / Accent | Checked-state background + border (via the `--uxm-checkbox-checked-*` → `-check-color` fallback). |
 | `--color-accent-bold` | Accent / Accent Bold | Checked box background + border on hover. |
 | `--color-text-strong` | Text / Text Strong | Unchecked box border on hover. |
-| `--color-text-inverse` | Text / Text Inverse | Check glyph colour (resting value is hardcoded; the hover value goes through `--uxm-checkbox-hover-check-glyph-color`). |
+| `--color-text-inverse` | Text / Text Inverse | Check glyph colour (via `--uxm-checkbox-check-glyph-color`, and `--uxm-checkbox-hover-check-glyph-color` on hover). |
 
 The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI.
 
@@ -75,10 +82,10 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | State / variant | Trigger | Visual |
 |-----------------|---------|--------|
 | Default (unchecked) | – | Transparent box with `--color-border` outline; check SVG present but `opacity: 0`. |
-| Checked | `:checked` on the native input | Box fills with `--uxm-checkbox-check-color`; check SVG fades to `opacity: 1`. |
+| Checked | `:checked` on the native input | Box fills with `--uxm-checkbox-checked-bg` and borders with `--uxm-checkbox-checked-border` (both `--color-accent`); check SVG fades to `opacity: 1`. |
 | Disabled | `disabled` prop | `--disabled` modifier: `cursor: not-allowed`, `opacity: 0.4`; native input also disabled. Hover is skipped. |
 | Hover (unchecked) | `:hover` on the root, input unchecked | Border moves to `--color-text-strong`; the box stays unfilled. |
-| Hover (checked) | `:hover` on the root, input checked | Box (fill + border) deepens to `--color-accent-bold`; glyph holds `--color-text-inverse`. |
+| Hover (checked) | `:hover` on the root, input checked | Box (fill + border) deepens to `--color-accent-bold`; glyph holds its resting colour (`--color-text-inverse`). |
 | Focus | `:focus-visible` on the native input | The visible box gets a `2px` outline in `--uxm-checkbox-focus-ring` (`--color-accent`) at `2px` offset. |
 | Error | non-empty `error` prop | `aria-invalid` on the input; icon-led `FieldError` message below in `--uxm-checkbox-error-color`; box and label stay neutral. |
 

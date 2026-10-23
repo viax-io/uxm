@@ -195,22 +195,24 @@
      clicks + keys; the marker just reflects state.
      Reads the SAME `--uxm-checkbox-*` vars the Checkbox atom writes, so
      designers tune the look once (in the Checkbox registry) and it
-     carries here automatically. No duplicate listbox-side knobs. */
+     carries here automatically. No duplicate listbox-side knobs. The
+     Checkbox's older `-border-color` / `-check-color` sit in the same chains
+     as there, so a legacy override re-tints both. */
   &__option-checkbox {
     width: var(--uxm-checkbox-size, 16px);
     height: var(--uxm-checkbox-size, 16px);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid var(--uxm-checkbox-unchecked-border, var(--color-border));
+    border: 1.5px solid var(--uxm-checkbox-unchecked-border, var(--uxm-checkbox-border-color, var(--color-border)));
     border-radius: var(--uxm-checkbox-border-radius, 3px);
     background-color: var(--uxm-checkbox-unchecked-bg, transparent);
     color: var(--uxm-checkbox-check-glyph-color, var(--color-text-inverse));
     transition: background-color 0.1s, border-color 0.1s;
 
     &--checked {
-      background-color: var(--uxm-checkbox-checked-bg, var(--color-accent));
-      border-color: var(--uxm-checkbox-checked-border, var(--color-accent));
+      background-color: var(--uxm-checkbox-checked-bg, var(--uxm-checkbox-check-color, var(--color-accent)));
+      border-color: var(--uxm-checkbox-checked-border, var(--uxm-checkbox-check-color, var(--color-accent)));
     }
   }
 }

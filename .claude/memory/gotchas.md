@@ -271,6 +271,27 @@ registry default is `1` **by design** (`composite.ts` — dimming would
 double-dim already-muted chips), so its flat disabled look is correct. Check
 any per-state block against the registry before assuming it's clean.
 
+**A shared var name can mask a dead knob — the Checkbox's resting knobs.** The
+registry's Default-state `uncheckedBg` / `uncheckedBorder` / `checkedBg` /
+`checkedBorder` / `checkGlyphColor` emitted `--uxm-checkbox-unchecked-bg` etc.,
+but `checkbox.scss` read the older `-border-color` / `-check-color` (and
+hardcoded the bg and glyph), so a saved value painted nothing on the
+`Checkbox`. The studio preview hid it (its showcase rows paint the knobs
+inline), and the drift script missed it twice over: it skips the Default
+state, and it searches every stylesheet, where `listbox.scss` reads the same
+names for its checkbox marker. Found from outside, by a theme proof that
+checked each emitted var against the emitting atom's own folder.
+`tests/knob-wiring.test.ts` now does the same in the suite: every knob of an
+atom with its own `src/ui/<id>/` folder goes through the real
+`generateOverridesCss`, and an emitted var that another atom reads must be read
+by its own folder too (`SHARED` lists the deliberate cases, e.g. the slider
+entry driving `RangeSlider`). It lives in a test, not the drift script, because
+only the real emitter knows the names: knobs like `backgroundColor` emit a
+literal property unless mapped, and the script's regex over
+`generate-css-mapping.ts` had been skipping every unquoted id (`card`, `tabs`,
+`checkbox`, …) until this fix. A var read by nothing at all is still not
+checked — that flags ~80 behaviour/composite knobs and isn't worth gating yet.
+
 ---
 
 ## A styled class nobody renders is invisible in review
