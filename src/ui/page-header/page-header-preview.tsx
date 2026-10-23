@@ -1,54 +1,61 @@
 import type { PreviewProps } from '@/previews/types';
 import { ButtonPrimary, ButtonTertiary } from '@/ui';
 import { Icon } from '@/ui';
+import { PageHeader } from '@/ui';
 import { Tag } from '@/ui';
 
+import type { CSSProperties } from 'react';
+
+/** `iconGlyphSize`'s registry default — see the note on the knob below. */
+const ICON_GLYPH_DEFAULT = 14;
+
 export function PageHeaderPreview({ styles }: PreviewProps) {
-  const iconSize = styles.iconSize as number;
+  // Each registry knob → matching CSS custom property; the preview consumes
+  // the real component, so the title's line height and the tile's glyph size
+  // paint through page-header.scss exactly as they do in an app.
+  const cssVars = {
+    '--uxm-page-header-title-color': styles.titleColor as string,
+    '--uxm-page-header-title-size': `${styles.titleSize}px`,
+    '--uxm-page-header-title-line-height': String(styles.titleLineHeight),
+    '--uxm-page-header-meta-color': styles.metaColor as string,
+    '--uxm-page-header-meta-size': `${styles.metaSize}px`,
+    '--uxm-page-header-icon-bg': styles.iconBg as string,
+    '--uxm-page-header-icon-color': styles.iconColor as string,
+    '--uxm-page-header-icon-size': `${styles.iconSize}px`,
+    // Omitted at the registry default so the fallback chain stays live in the
+    // canvas. The chain is `page-header knob → --uxm-icon-tile-icon-size → 14px`,
+    // and an inline value satisfies the first var, so projecting 14px
+    // unconditionally pinned the glyph: with the global `icon-tile` Icon Size
+    // set to 20px an app painted 20px while the workbench painted 14px. That
+    // is the divergence the `titleLineHeight` select exists to avoid, and this
+    // knob fell into it. Omitting at the default costs nothing, because Studio
+    // already deletes an override equal to its default.
+    ...(styles.iconGlyphSize === ICON_GLYPH_DEFAULT
+      ? {}
+      : { '--uxm-page-header-icon-glyph-size': `${styles.iconGlyphSize}px` }),
+    '--uxm-page-header-gap': `${styles.gap}px`,
+    '--uxm-page-header-padding-x': `${styles.paddingX}px`,
+    '--uxm-page-header-padding-y': `${styles.paddingY}px`,
+    width: 520,
+  } as CSSProperties;
+
   return (
-    <div
-      style={{
-        width: 520,
-        display: 'flex', alignItems: 'flex-start',
-        gap: `var(--uxm-page-header-gap, ${styles.gap}px)`,
-        padding: `var(--uxm-page-header-padding-y, ${styles.paddingY}px) var(--uxm-page-header-padding-x, ${styles.paddingX}px)`,
-      }}
-    >
-      <span style={{
-        width: `var(--uxm-page-header-icon-size, ${iconSize}px)`,
-        height: `var(--uxm-page-header-icon-size, ${iconSize}px)`,
-        flexShrink: 0,
-        borderRadius: 8,
-        backgroundColor: `var(--uxm-page-header-icon-bg, ${styles.iconBg as string})`,
-        color: `var(--uxm-page-header-icon-color, ${styles.iconColor as string})`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <Icon glyph="chat-bubble" size={iconSize * 0.55} strokeWidth={1.5} />
-      </span>
-      <div style={{ minWidth: 0, flex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h1 style={{
-            // Mirrors the atom's own chain (page-header.scss) so the canvas
-            // reflects a brand heading face/weight the way the shipped
-            // component does — this preview hand-rolls its markup.
-            fontFamily: 'var(--uxm-page-header-title-font, var(--type-page-title-font, var(--brand-heading-font, inherit)))',
-            fontSize: `calc(${styles.titleSize}px * var(--type-page-title-scale, 1) * var(--type-scale, 1))`,
-            fontWeight: 'var(--uxm-page-header-title-weight, var(--type-page-title-weight, var(--brand-heading-weight, 600)))',
-            color: styles.titleColor as string,
-            margin: 0,
-          }}>Billing Automation</h1>
+    <PageHeader
+      style={cssVars}
+      icon={<Icon glyph="chat-bubble" strokeWidth={1.5} />}
+      title={
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+          Billing Automation
           <Tag type="accent" size="small">Active</Tag>
-        </div>
-        <p style={{
-          fontSize: styles.metaSize as number,
-          color: styles.metaColor as string,
-          margin: '2px 0 0',
-        }}>End-to-end invoicing across subscription and usage plans</p>
-      </div>
-      <div style={{ display: 'flex', gap: 6 }}>
-        <ButtonTertiary>Edit</ButtonTertiary>
-        <ButtonPrimary>Publish</ButtonPrimary>
-      </div>
-    </div>
+        </span>
+      }
+      meta="End-to-end invoicing across subscription and usage plans"
+      actions={
+        <>
+          <ButtonTertiary>Edit</ButtonTertiary>
+          <ButtonPrimary>Publish</ButtonPrimary>
+        </>
+      }
+    />
   );
 }

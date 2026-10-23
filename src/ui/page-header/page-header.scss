@@ -1,8 +1,8 @@
 /* ── page-header ── */
 
 /* PageHeader — defaults match the `page-header` registry entry. Each
-   knob (titleColor, titleSize, metaColor, metaSize, iconBg, iconColor,
-   iconSize, gap, paddingX, paddingY) maps to a CSS custom property the
+   knob (titleColor, titleSize, titleLineHeight, metaColor, metaSize, iconBg,
+   iconColor, iconSize, iconGlyphSize, gap, paddingX, paddingY) maps to a CSS custom property the
    class rule reads; consumers re-theme through the same surface the
    editor knobs write to. */
 
@@ -25,6 +25,18 @@
 
   /* Icon tile is now <IconTile>; PageHeader's `--uxm-page-header-icon-{bg,color,size}`
      are bridged to IconTile's own CSS-variable surface in the .tsx. */
+
+  /* The glyph is sized here, not bridged in the .tsx like the tile's other
+     vars: an inline `--uxm-icon-tile-icon-size: var(--uxm-page-header-icon-glyph-size, …)`
+     would replace the value the global `icon-tile` Icon Size knob writes on
+     `.uxm-icon-tile`, and the custom property cannot fall back to itself (a
+     cycle). Reading both here keeps that knob reaching the page header when
+     the page-header knob is unset; with neither set it is IconTile's 14px.
+     Same selector shape as icon-tile.scss's own rule, one class stronger. */
+  & > .uxm-icon-tile > .uxm-icon {
+    height: var(--uxm-page-header-icon-glyph-size, var(--uxm-icon-tile-icon-size, 14px));
+    width: var(--uxm-page-header-icon-glyph-size, var(--uxm-icon-tile-icon-size, 14px));
+  }
 
   &__body {
     flex: 1;
@@ -52,6 +64,22 @@
     font-family: var(--uxm-page-header-title-font, var(--type-page-title-font, var(--brand-heading-font, inherit)));
     font-size: calc(var(--uxm-page-header-title-size, 22px) * var(--type-page-title-scale, 1) * var(--type-scale, 1));
     font-weight: var(--uxm-page-header-title-weight, var(--type-page-title-weight, var(--brand-heading-weight, 600)));
+    /* Its own line height, so a theme's body line height (`brand.bodyLineHeight`
+       → `body { line-height }`) stops reaching the title. Inherited, it grew the
+       line box with every step: 1.6 at a 39px title made a 62px box, and since
+       the row is `flex-start` the icon tile sat ~9px above the letters. Owning
+       its leading the box is 47.5px and the tile is 1.8px off its centre. (A
+       fixed 1.2 would give 46.8px / 1.4px — those numbers describe the
+       alternative below, not what ships.)
+
+       `normal`, not a ratio, so nothing renders differently for a consumer that
+       sets no root line-height: measured at 22px Inter the box is 27px either
+       way, where 1.2 would have made it 26.4px. A fixed ratio only beat `normal`
+       by 0.4px on the 39px/44px case that motivated this, which is not worth
+       moving every unthemed header for. Set the knob for a deterministic ratio
+       — `normal` follows the font's own metrics, so a serif title's box differs
+       from Inter's. */
+    line-height: var(--uxm-page-header-title-line-height, normal);
     margin: 0;
   }
 

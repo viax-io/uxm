@@ -55,12 +55,16 @@ function formatValue(value: string | number | boolean, key: string): string {
   if (typeof value === 'boolean') return value ? '1' : '0';
   if (typeof value === 'number') {
     // `lineHeight` is a ratio, not a length — without it here a knob saved as
-    // 1.5 emits `line-height: 1.5px`, which collapses every line box.
+    // 1.5 emits `line-height: 1.5px`, which collapses every line box. The same
+    // holds for any per-element `*LineHeight` knob declared as a number. The
+    // one shipped today (`titleLineHeight`) is a select, so the Studio UI only
+    // ever sends it as a string — this branch guards the next numeric one, and
+    // an imported or hand-written overrides document that carries a number.
     const unitless = ['fontWeight', 'titleWeight', 'nameWeight', 'typeLabelWeight', 'lineHeight', 'shadow', 'disabledOpacity'];
     // `opacity` is always unitless — match every *Opacity knob (e.g. the
     // per-element `itemDisabledOpacity` / `optionDisabledOpacity` variants)
     // so a saved value never gets a spurious `px` suffix.
-    if (unitless.includes(key) || key.endsWith('Opacity')) return String(value);
+    if (unitless.includes(key) || key.endsWith('Opacity') || key.endsWith('LineHeight')) return String(value);
     return `${value}px`;
   }
   // String style-override values are user/attacker-controlled and persisted

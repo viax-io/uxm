@@ -2,7 +2,7 @@
 
 A page-top header row pairing an optional icon tile, a title (`<h1>`), an optional meta line, and an optional actions slot.
 
-The icon tile is delegated to the `IconTile` atom — PageHeader's `--uxm-page-header-icon-{bg,color,size}` variables are bridged onto IconTile's own CSS-variable surface via an inline style object so per-instance icon theming flows through without hand-rolled `__icon` CSS. Title and meta defaults match the `page-header` registry entry; each knob (`titleColor`, `titleSize`, `metaColor`, `metaSize`, `iconBg`, `iconColor`, `iconSize`, `gap`, `paddingX`, `paddingY`) maps to a CSS custom property the class rule reads.
+The icon tile is delegated to the `IconTile` atom — PageHeader's `--uxm-page-header-icon-{bg,color,size}` variables are bridged onto IconTile's own CSS-variable surface via an inline style object so per-instance icon theming flows through without hand-rolled `__icon` CSS. The glyph inside the tile is the one exception: `--uxm-page-header-icon-glyph-size` is read in `page-header.scss` (see [Icon glyph size](#icon-glyph-size)). Title and meta defaults match the `page-header` registry entry; each knob (`titleColor`, `titleSize`, `titleLineHeight`, `metaColor`, `metaSize`, `iconBg`, `iconColor`, `iconSize`, `iconGlyphSize`, `gap`, `paddingX`, `paddingY`) maps to a CSS custom property the class rule reads. **Title Line Height** is a select (`normal`, then ratios from 1.1 to 1.5) rather than a number, so Studio projects the same `normal` an unthemed consumer gets.
 
 ## Usage
 
@@ -43,15 +43,16 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any standard div att
 | `--uxm-page-header-padding-y` | – | `0px` | Vertical padding on the row. |
 | `--uxm-page-header-padding-x` | – | `0px` | Horizontal padding on the row. |
 | `--uxm-page-header-title-color` | `--color-text` | – | Title colour. |
-| `--uxm-page-header-title-size` | – | `22px` | Title font size. |
 | `--uxm-page-header-title-font` | `--type-page-title-font` → `--brand-heading-font` | `inherit` | Title typeface (**h1** role). Unset = inherits the body face. |
 | `--uxm-page-header-title-weight` | `--type-page-title-weight` → `--brand-heading-weight` | `600` | Title weight (**h1** role). |
 | `--uxm-page-header-title-size` | – | `22px` | Title size; multiplied by `--type-page-title-scale` and `--type-scale`. |
+| `--uxm-page-header-title-line-height` | – | `normal` | Title line height. Set on the title itself, so a theme's body line height (`brand.bodyLineHeight`) never reaches it — see [Title line height](#title-line-height). |
 | `--uxm-page-header-meta-color` | `--color-text-muted` | – | Meta text colour. |
 | `--uxm-page-header-meta-size` | – | `13px` | Meta font size. |
 | `--uxm-page-header-icon-bg` | `--color-accent-subtle` | – | Icon tile background (bridged to `--uxm-icon-tile-bg`). |
 | `--uxm-page-header-icon-color` | `--color-accent-bold` | – | Icon tile glyph colour (bridged to `--uxm-icon-tile-color`). |
 | `--uxm-page-header-icon-size` | – | `40px` | Icon tile size (bridged to `--uxm-icon-tile-size`). |
+| `--uxm-page-header-icon-glyph-size` | `--uxm-icon-tile-icon-size` | `14px` | Size of the glyph inside the tile. Unset, the global `icon-tile` Icon Size knob still applies. |
 
 ## Design tokens (MODO-configurable)
 
@@ -73,7 +74,23 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Meta-less | `meta` omitted | Title-only single-line body. |
 | Actions-less | `actions` omitted | No trailing slot; body flexes to fill the row. |
 
-## Accessibility
+## Title line height
+
+The title sets its own `line-height` (`--uxm-page-header-title-line-height`, default `normal`) instead of inheriting one. Inheriting was a problem as soon as a theme set a body line height: Studio's `brand.bodyLineHeight` emits `body { line-height: var(--type-body-line-height) }`, and at 1.6 a 39px title (30px × `pageTitleScale` 1.3) stood in a **62px** line box. The row is `align-items: flex-start`, so the icon tile, top-aligned with that box, sat about **9px above** the letters. Owning its leading, the same title's box is 47.5px and the centre of a 44px tile is 1.8px from the centre of the title's line.
+
+**Nothing moves for a header that inherits no line height.** The default is `normal`, which is what the title already resolved to wherever the host set no line height — at the stock 22px Inter title that is a 27px box, before and after. A fixed `1.2` would have made it 26.4px; it reached 1.4px on the 39px case against `normal`'s 1.8px, which is not worth moving every unthemed header for.
+
+What does change is a line height inherited from **any ancestor**, not just the root — Tailwind's preflight puts `1.5` on `html` (a 33px box at 22px), but an app shell's `.app { line-height: 1.5 }`, or a `line-height` set on the `PageHeader` root itself, reached the title the same way and no longer does. Multi-line titles tighten accordingly. That is the fix — set the knob to get a taller box back deliberately.
+
+Studio's picker offers title-appropriate ratios up to `1.5`. The variable itself takes any value, so a host matching a looser body setting (the brand picker's Relaxed `1.7` or Loose `2`) can set `--uxm-page-header-title-line-height` directly.
+
+Pick a ratio from the knob when you need a deterministic box: `normal` follows the font's own metrics, so a serif title's line box will not match Inter's. The meta line still follows the body's line height — it is running text.
+
+## Icon glyph size
+
+The glyph inside the tile reads `--uxm-page-header-icon-glyph-size`, then the global `--uxm-icon-tile-icon-size` (the `icon-tile` Icon Size knob), then IconTile's 14px. Without it, raising **Icon Size** grew the tile around a glyph that stayed 14px, and the only lever was the global knob, which resizes every `IconTile` in the app.
+
+This one is read in `page-header.scss` (`.uxm-page-header > .uxm-icon-tile > .uxm-icon`, specificity (0,3,0)) rather than bridged inline like the tile's other variables. Size the glyph through the variable: an element rule of (0,2,0) or less that used to win on source order — `.uxm-page-header .uxm-icon`, say — now loses to it. An inline `--uxm-icon-tile-icon-size: var(--uxm-page-header-icon-glyph-size, …)` would replace the value the global knob writes on `.uxm-icon-tile`, and a custom property cannot fall back to its own inherited value, so the global knob would stop reaching the page header.
 
 ## Narrow widths
 
