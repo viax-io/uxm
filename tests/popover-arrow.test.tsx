@@ -1,3 +1,7 @@
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { render, screen } from '@testing-library/react';
 import { useRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -31,7 +35,13 @@ function stubGeometry({
   panel: Rect;
   viewportW: number;
 }) {
-  const origRect = HTMLElement.prototype.getBoundingClientRect;
+  // `getBoundingClientRect` lives on Element.prototype in jsdom, so there is
+  // normally no own property here to put back — capture the descriptor rather
+  // than the function, or the restore plants a shadowing own property.
+  const ownRect = Object.getOwnPropertyDescriptor(
+    HTMLElement.prototype,
+    'getBoundingClientRect',
+  );
   const origW = Object.getOwnPropertyDescriptor(window, 'innerWidth');
 
   const toRect = (r: Rect) => {
@@ -58,7 +68,8 @@ function stubGeometry({
   Object.defineProperty(window, 'innerWidth', { configurable: true, value: viewportW });
 
   return () => {
-    HTMLElement.prototype.getBoundingClientRect = origRect;
+    if (ownRect) Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', ownRect);
+    else delete (HTMLElement.prototype as Partial<HTMLElement>).getBoundingClientRect;
     if (origW) Object.defineProperty(window, 'innerWidth', origW);
   };
 }
@@ -92,6 +103,43 @@ afterEach(() => {
   restore = undefined;
 });
 
+const SRC = resolve(dirname(fileURLToPath(import.meta.url)), '../src');
+/**
+ * Source with comments stripped. Without this the assertions below pass on the
+ * prose that EXPLAINS the contract rather than the code that implements it —
+ * deleting the stylesheet's only real reference still left `toContain` green,
+ * because the var name also appears in the comment above the rule.
+ */
+const read = (p: string) =>
+  readFileSync(resolve(SRC, p), 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|\s)\/\/.*$/gm, '$1');
+const VAR = '--_uxm-popover-arrow-offset';
+
+describe('Popover arrow offset — both ends of the wire', () => {
+  // The tests below prove the value is PUBLISHED. On their own that is the
+  // repo's "emitted but unread" defect class: deleting the stylesheet's
+  // reference to this var left the whole suite green, because jsdom does no
+  // layout and nothing else pairs the writer with the reader. These two pin
+  // the contract itself, so a rename on either side fails here.
+  it('popover.tsx writes it', () => {
+    expect(read('ui/popover/popover.tsx')).toContain(VAR);
+  });
+
+  it('tooltip.scss reads it, scoped to a direct child of the panel', () => {
+    const scss = read('ui/tooltip/tooltip.scss');
+    expect(scss).toContain(VAR);
+    // The `>` is the fix for inheritance: custom properties cascade, so a
+    // descendant selector would drag any Tooltip nested deeper inside any
+    // panel onto that panel's anchor.
+    expect(scss).toMatch(/\.uxm-popover > \.uxm-tooltip--top > \.uxm-tooltip__arrow/);
+    expect(scss).toMatch(/\.uxm-popover > \.uxm-tooltip--bottom > \.uxm-tooltip__arrow/);
+    // Capped at 50%, or `clamp()` inverts on a narrow bubble and parks the
+    // arrow outside it — which also bit a standalone Tooltip with a big radius.
+    expect(scss).toMatch(/--_uxm-tooltip-arrow-inset:\s*min\(/);
+  });
+});
+
 describe('Popover arrow offset', () => {
   it('points at the anchor centre, not the panel centre', () => {
     // The real case: a 200px trigger with a 600px tooltip. Start-aligned, so
@@ -121,16 +169,18 @@ describe('Popover arrow offset', () => {
   });
 
   it('follows an end-aligned panel too', () => {
-    // `top-end` puts panel.right at anchor.right: left = 760 - 400 = 360,
-    // so the anchor centre lands 370px in — same as the clamped case, which
-    // is the point: one measurement covers every alignment.
+    // `top-end` puts panel.right at anchor.right: left = 800 - 300 = 500, and
+    // the anchor's centre (750) lands 250px in. Nothing clamps here — the
+    // panel fits with room to spare — so this isolates alignment from the
+    // previous test, and the expected value differs from it on purpose: a
+    // start-aligned panel would report 50px.
     restore = stubGeometry({
-      anchor: { left: 700, width: 60 },
-      panel: { left: 0, width: 400 },
+      anchor: { left: 700, width: 100 },
+      panel: { left: 0, width: 300 },
       viewportW: 1400,
     });
     render(<Host placement="top-end" />);
-    expect(arrowOffsetOf()).toBe('370px');
+    expect(arrowOffsetOf()).toBe('250px');
   });
 
   it('can report an offset outside the panel, which CSS clamps', () => {

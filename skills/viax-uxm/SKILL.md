@@ -135,16 +135,19 @@ catalog.
 
 ### Unreleased
 
-- **A `Tooltip` arrow inside a `Popover` now points at the anchor, not at the middle of the
-  bubble.** It was a CSS constant (`left: 50%`), while `HoverTooltip` aligns the panel
+- **A `Tooltip` rendered by a `Popover` now points its arrow at the anchor, not at the middle of
+  the bubble.** It was a CSS constant (`left: 50%`), while `HoverTooltip` aligns the panel
   `*-start` — so the arrow missed the trigger's centre by `(panelWidth - anchorWidth) / 2`, and
   `truncatedOnly` means the bubble is wider than its anchor essentially every time it opens. On
   a 182px table cell with a 579px tooltip the arrow sat **199px off, clear of the cell
-  entirely**. `Popover` now publishes the anchor's centre relative to the panel and the arrow
-  follows it, through the start/end flip and the viewport clamp alike. Affects everything that
-  goes through `HoverTooltip` — `DataTable` capped cells, every `EditableCell` variant,
-  `Button`. A standalone `Tooltip` you position yourself is unchanged, still 50%; `AppSidebar`
-  passes `showArrow={false}` and is untouched. No new props or public knobs.
+  entirely**. `Popover` now publishes the anchor's centre relative to the panel, and the arrow
+  follows it through the horizontal viewport clamp as well. So this shows up anywhere a
+  `HoverTooltip` opens: `DataTable`'s `maxWidth` cells, the `EditableCell` variants that
+  truncate (text, date and select — *not* textarea, which has no hover tooltip), and anything
+  you wrap in one yourself. The rule is scoped to the panel's **direct child**, so a `Tooltip`
+  you position yourself, or one nested deeper inside some other panel, still sits at 50%
+  exactly as before; `AppSidebar` passes `showArrow={false}` and is untouched either way. No new
+  props and no new public knobs.
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
