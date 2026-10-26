@@ -2103,3 +2103,11 @@ reached the published library; now shipped in 2.8.0.
   the preview always projected `--uxm-app-sidebar-header-height` (64px), so the documented
   fallback to `--uxm-app-top-bar-height` never ran in the workbench. It is now projected
   only once the knob is moved off its default. Studio-only; the atom is unchanged.
+
+### New in 4.70.4
+
+- **`EditableCell type="textarea"`: keyboard and screen-reader fixes** — the
+  cell's `aria-label` now also names the edit-mode textarea (it had no accessible name), and
+  ending an edit with Cmd/Ctrl+Enter or Escape returns focus to the cell's edit button
+  instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
+  No API change.

@@ -1,3 +1,10 @@
+## [4.71.1](https://github.com/viax-io/uxm/compare/v4.71.0...v4.71.1) (2026-10-26)
+
+
+### Bug Fixes
+
+* **input-with-icon:** size the leading glyph from the Icon Size knob ([e098987](https://github.com/viax-io/uxm/commit/e09898744ede00554949703effc1305fa124a17a))
+
 # [4.71.0](https://github.com/viax-io/uxm/compare/v4.70.7...v4.71.0) (2026-10-23)
 
 
