@@ -991,13 +991,13 @@ toast store. Load it from a versioned path, never `latest/`: its locale dictiona
     "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime",
     "react-dom": "https://esm.sh/react-dom@19",
     "react-dom/client": "https://esm.sh/react-dom@19/client",
-    "@viax.io/uxm/ui": "https://uxm.viax.io/4.72.0/uxm.esm.js",
-    "@viax.io/uxm/studio": "https://uxm.viax.io/4.72.0/uxm-studio.esm.js"
+    "@viax.io/uxm/ui": "https://uxm.viax.io/4.73.0/uxm.esm.js",
+    "@viax.io/uxm/studio": "https://uxm.viax.io/4.73.0/uxm-studio.esm.js"
   }
 }
 </script>
-<link rel="stylesheet" href="https://uxm.viax.io/4.72.0/uxm.css" />
-<link rel="stylesheet" href="https://uxm.viax.io/4.72.0/uxm-studio.css" />
+<link rel="stylesheet" href="https://uxm.viax.io/4.73.0/uxm.css" />
+<link rel="stylesheet" href="https://uxm.viax.io/4.73.0/uxm-studio.css" />
 <script type="module">
   import { createElement } from 'react';
   import { createRoot } from 'react-dom/client';
