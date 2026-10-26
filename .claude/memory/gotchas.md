@@ -348,7 +348,16 @@ nothing in an app. Nor does it ask WHICH declaration reads the var, only that
 some non-preview source does — found while mutation-testing this very fix:
 reverting the root's `border-radius` alone left both wiring checks green,
 because the end items' `calc()` still read the name while the root no longer
-rounded. Pinning a specific declaration is a portal check, not a gate.
+rounded. Pinning a specific declaration is a portal check, not a gate. It also
+only sees a name written as a literal quoted object key: one built by a ternary
+(`Avatar`'s preview picks between two names), a template, or set through
+`style.setProperty` is never examined.
+
+Of the ~60 unread vars, most are behaviour knobs (`showArrow`, `showLabel`) or
+composite mock-ups (`login-page` alone is 17), but **about 17 are real style
+knobs that a theme would expect to work**: `button-with-icon` ×6,
+`radio-group`'s card set ×5, `content-tooltip` `shadow` and `titleSize`, and
+`icon` `size` / `strokeWidth`. Don't read the count as "all behaviour knobs".
 
 ---
 

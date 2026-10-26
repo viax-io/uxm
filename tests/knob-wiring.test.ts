@@ -140,10 +140,14 @@ describe('Studio knob wiring', () => {
     // a var to drive the production stylesheet, so a projected name that no
     // atom reads is either a dead knob or a typo. Previews also project other
     // atoms' vars (a Tag inside a composite), so any reader counts.
-    const previews = [
-      ...globSync('**/*-preview.tsx', { cwd: UI_DIR }).map((f) => resolve(UI_DIR, f)),
-      ...globSync('**/*.tsx', { cwd: resolve(UI_DIR, '../previews') }).map((f) => resolve(UI_DIR, '../previews', f)),
-    ];
+    // Counted per source: `src/previews` contributes only ~34 of the ~1,200
+    // projections, so a single combined floor stays green with that glob
+    // broken entirely.
+    const atomPreviews = globSync('**/*-preview.tsx', { cwd: UI_DIR }).map((f) => resolve(UI_DIR, f));
+    const sharedPreviews = globSync('**/*.tsx', { cwd: resolve(UI_DIR, '../previews') }).map((f) =>
+      resolve(UI_DIR, '../previews', f),
+    );
+    const previews = [...atomPreviews, ...sharedPreviews];
     const unread: string[] = [];
     let projected = 0;
     for (const file of previews) {
@@ -156,6 +160,11 @@ describe('Studio knob wiring', () => {
       }
     }
     expect(unread).toEqual([]);
-    expect(projected, 'projected vars examined').toBeGreaterThan(1000);
+    // Non-vacuity, per source and close to the real counts, so a regex or glob
+    // regression that silently drops most projections fails instead of passing.
+    // Measured today: 97 atom previews, 8 shared, 1,216 projections.
+    expect(atomPreviews.length, 'src/ui preview files').toBeGreaterThan(90);
+    expect(sharedPreviews.length, 'src/previews files').toBeGreaterThan(5);
+    expect(projected, 'projected vars examined').toBeGreaterThan(1150);
   });
 });
