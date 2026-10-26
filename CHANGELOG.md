@@ -1,3 +1,11 @@
+## [4.77.1](https://github.com/viax-io/uxm/compare/v4.77.0...v4.77.1) (2026-10-26)
+
+
+### Bug Fixes
+
+* **tooltip:** point the arrow at the anchor instead of the middle of the bubble ([b60baa1](https://github.com/viax-io/uxm/commit/b60baa13d9f763c04aaecb5698bda13b50284cc8))
+* **tooltip:** scope the arrow offset to the panel's own tooltip, and cap the inset ([c7208f9](https://github.com/viax-io/uxm/commit/c7208f98186d6ecacd6e80f3f740edcaf705800a))
+
 # [4.77.0](https://github.com/viax-io/uxm/compare/v4.76.0...v4.77.0) (2026-10-26)
 
 

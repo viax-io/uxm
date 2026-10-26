@@ -2196,3 +2196,14 @@ reached the published library; now shipped in 2.8.0.
   the variable (default `8px`, so an unthemed group is unchanged), and the first and last items
   round their outer corners to match, so a keyboard focus ring on an end item follows the curve
   instead of losing its corners to the clip. A theme that saved a radius now gets it.
+
+### New in 4.73.0
+
+- **CDN: the studio ships as `uxm-studio.esm.js`** — `UxmApp` and the rest of
+  `@viax.io/uxm/studio` for a page that already has React 19, plus `uxm-studio.css` and one
+  lazily loaded `chunks/<locale>-<hash>.js` per studio locale. It imports the components from the
+  sibling `./uxm.esm.js` instead of carrying its own copy, so host and studio share one locale
+  context and one toast store: map `@viax.io/uxm/ui` to the `uxm.esm.js` of the **same** version
+  folder, and load the studio from a versioned path, never `latest/` (a release removes the
+  previous chunks there). `uxm.esm.js` also exports `VERSION` now — CDN-only, for hosts with no
+  `package.json` to read. Recipe 18 has the import map.
