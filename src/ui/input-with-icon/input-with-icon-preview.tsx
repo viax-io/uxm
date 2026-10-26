@@ -17,6 +17,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-input-with-icon-padding-y': `${styles.paddingY}px`,
     '--uxm-input-with-icon-font-size': `${styles.fontSize}px`,
     '--uxm-input-with-icon-color': styles.color as string,
+    '--uxm-input-with-icon-placeholder-color': styles.placeholderColor as string,
     '--uxm-input-with-icon-icon-color': styles.iconColor as string,
     '--uxm-input-with-icon-icon-size': `${iconSize}px`,
     '--uxm-input-with-icon-icon-offset': `${styles.iconOffset}px`,

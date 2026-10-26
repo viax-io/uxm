@@ -19,6 +19,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-password-input-background-color': styles.backgroundColor as string,
     '--uxm-password-input-border-color': styles.borderColor as string,
     '--uxm-password-input-color': styles.color as string,
+    '--uxm-password-input-placeholder-color': styles.placeholderColor as string,
     '--uxm-password-input-border-radius': `${styles.borderRadius}px`,
     '--uxm-password-input-padding-x': `${styles.paddingX}px`,
     '--uxm-password-input-padding-y': `${styles.paddingY}px`,

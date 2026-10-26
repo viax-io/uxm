@@ -21,7 +21,7 @@
   box-sizing: border-box;
 }
 .uxm-number-input::placeholder {
-  color: var(--color-text-muted);
+  color: var(--uxm-number-input-placeholder-color, var(--color-text-muted));
 }
 .uxm-number-input--state-hover,
 .uxm-number-input:hover:not(:disabled):not(.uxm-number-input--error) {

@@ -10,6 +10,7 @@ export const selectDropdownDef: ComponentDef = {
     { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'fieldColors', showWhen: { state: 'default' } },
     { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'fieldColors', showWhen: { state: 'default' } },
     { key: 'color', label: 'Text', control: 'color', defaultValue: 'var(--color-text)', section: 'fieldColors', showWhen: { state: 'default' } },
+    { key: 'placeholderColor', label: 'Placeholder', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'fieldColors', showWhen: { state: 'default' } },
     // Hover
     { key: 'hoverBg', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'fieldColors', showWhen: { state: 'hover' } },
     { key: 'hoverBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'fieldColors', showWhen: { state: 'hover' } },
@@ -39,7 +40,8 @@ export const selectDropdownDef: ComponentDef = {
     // themeable aspect — the placeholder COLOR — lives once on the
     // `listbox` entry (`searchPlaceholderColor`). A text knob here would
     // also serialize to a dead `--uxm-…-search-placeholder` CSS var that
-    // paints nothing.
+    // paints nothing. The TRIGGER's placeholder colour is this entry's
+    // own `placeholderColor` above.
   ],
   layoutVariants: [
     {

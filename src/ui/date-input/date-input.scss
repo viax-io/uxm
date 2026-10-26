@@ -73,6 +73,12 @@
       var(--uxm-date-input-padding-x, 12px);
     transition: border-color 0.15s, background-color 0.15s, color 0.15s;
     width: 100%;
+
+    /* The format mask (`MM/DD/YYYY`) is the placeholder. Without a rule of its
+       own it takes the browser's grey (#757575 in Chrome). */
+    &::placeholder {
+      color: var(--uxm-date-input-placeholder-color, var(--color-text-muted));
+    }
   }
 
   &--state-hover &__input,

@@ -43,6 +43,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>` — `type` is owne
 |----------|----------------|---------|---------|
 | `--uxm-password-input-background-color` | `--color-card` | – | Input background. |
 | `--uxm-password-input-color` | `--color-text` | – | Input text colour. |
+| `--uxm-password-input-placeholder-color` | `--color-text-muted` | – | Placeholder text (`::placeholder`). Before this variable the field had no placeholder rule, so the browser's grey painted. |
 | `--uxm-password-input-border-color` | `--color-border` | – | Input border. |
 | `--uxm-password-input-border-radius` | – | `8px` | Input corner radius. |
 | `--uxm-password-input-padding-y` | – | `10px` | Vertical input padding. |
@@ -70,7 +71,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>` — `type` is owne
 |-------|--------------|----------|
 | `--color-card` | Surfaces / Card | Default and hover background. |
 | `--color-text` | Text / Text | Input text; toggle hover colour. |
-| `--color-text-muted` | Text / Text Muted | Default toggle icon colour; disabled text. |
+| `--color-text-muted` | Text / Text Muted | Default toggle icon colour; placeholder and disabled text. |
 | `--color-border` | Borders / Border | Default and disabled border. |
 | `--color-accent` | Accent / Accent | Hover / focus border + focus outline ring. |
 | `--color-surface-alt` | Surfaces / Surface Alt | Disabled background. |

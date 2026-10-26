@@ -67,6 +67,7 @@ Most `--uxm-search-dropdown-*` knobs live on the wrapper and cascade to descenda
 |----------|----------------|---------|---------|
 | `--uxm-search-dropdown-trigger-bg` | `--color-card` | – | Trigger button background. |
 | `--uxm-search-dropdown-trigger-border` | `--color-border` | – | Trigger border colour. |
+| `--uxm-search-dropdown-trigger-placeholder-color` | `--color-text-muted` | – | Trigger text while no value is selected (the `placeholder` prop). A disabled trigger uses `-trigger-disabled-color` instead. |
 | `--uxm-search-dropdown-trigger-focus-border` | `--color-accent` | – | Trigger border on `:focus-visible` and while open. |
 | `--uxm-search-dropdown-trigger-radius` | – | `6px` | Trigger corner radius. |
 | `--uxm-search-dropdown-trigger-padding-x` | – | `10px` | Trigger horizontal padding. |
@@ -95,7 +96,7 @@ Most `--uxm-search-dropdown-*` knobs live on the wrapper and cascade to descenda
 | `--color-card` | Surfaces / Card | Trigger + popover background (fallbacks). |
 | `--color-border` | Borders / Border | Trigger border, popover border, search divider. |
 | `--color-text` | Text / Text | Trigger label, option label, search input value. |
-| `--color-text-muted` | Text / Text Muted | Empty trigger placeholder, chevron, empty-state copy. |
+| `--color-text-muted` | Text / Text Muted | Empty trigger placeholder (fallback of `-trigger-placeholder-color`), chevron, empty-state copy. |
 | `--color-text-subtle` | Text / Text Subtle | Search icon, option meta. |
 | `--color-accent` | Accent / Accent | Trigger focus / open border (fallback). |
 | `--color-surface-alt` | Surfaces / Surface Alt | Highlighted option background (fallback). |
@@ -109,7 +110,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | State / variant | Trigger | Visual |
 |-----------------|---------|--------|
 | Closed | initial | Trigger shows selected label or placeholder; chevron points down. |
-| Empty | no value selected | Trigger label uses `--color-text-muted` and the placeholder text. |
+| Empty | no value selected | Trigger shows the placeholder text in `--uxm-search-dropdown-trigger-placeholder-color` (`--color-text-muted`). |
 | Open | trigger click / re-click | Popover appears 4px below trigger; chevron rotates 180°; trigger border switches to accent. |
 | Option highlighted | ArrowUp / ArrowDown / mouse hover | Background switches to `--uxm-search-dropdown-option-hover-bg`. |
 | Option selected | value equals option value | Background `--accent-subtle`, text `--accent-bold`, font weight `600`. |

@@ -23,9 +23,13 @@
   transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
-.uxm-input-text::placeholder,
+/* Each atom reads its own `placeholderColor` knob, so a dark themed field
+   can carry a light placeholder without moving the global token. */
+.uxm-input-text::placeholder {
+  color: var(--uxm-input-text-placeholder-color, var(--color-text-muted));
+}
 .uxm-textarea::placeholder {
-  color: var(--color-text-muted);
+  color: var(--uxm-textarea-placeholder-color, var(--color-text-muted));
 }
 
 /* Text Input
@@ -149,8 +153,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* The placeholder option's label. Set on the span, so it wins over the
+   trigger's own `color` (and its disabled colour) whatever their specificity. */
 .uxm-select-dropdown__trigger-label--empty {
-  color: var(--color-text-muted);
+  color: var(--uxm-select-dropdown-placeholder-color, var(--color-text-muted));
 }
 .uxm-select-dropdown__trigger-chevron {
   flex-shrink: 0;

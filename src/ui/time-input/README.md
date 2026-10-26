@@ -58,6 +58,7 @@ The `TimeInputFormat` union (`'24h' \| '12h'`) is exported.
 |----------|----------------|---------|---------|
 | `--uxm-time-input-background-color` | `--color-card` | – | Input background. |
 | `--uxm-time-input-color` | `--color-text` | – | Input + popover row text colour. |
+| `--uxm-time-input-placeholder-color` | `--color-text-muted` | – | Placeholder text, `HH:MM` by default (`::placeholder`). Before this variable the field had no placeholder rule, so the browser's grey painted. |
 | `--uxm-time-input-border-color` | `--color-border` | – | Input border. |
 | `--uxm-time-input-border-radius` | – | `8px` | Input radius. |
 | `--uxm-time-input-padding-x` | – | `12px` | Input left padding. |
@@ -104,7 +105,7 @@ The `TimeInputFormat` union (`'24h' \| '12h'`) is exported.
 |-------|--------------|----------|
 | `--color-card` | Surfaces / Card | Field + popover background. |
 | `--color-text` | Text / Text | Field text. |
-| `--color-text-muted` | Text / Text Muted | Clock icon + AM/PM + disabled text. |
+| `--color-text-muted` | Text / Text Muted | Clock icon + AM/PM + placeholder + disabled text. |
 | `--color-text-inverse` | Text / Text Inverse | Selected popover-row text. |
 | `--color-border` | Borders / Border | Field + popover + column-divider borders. |
 | `--color-surface-alt` | Surfaces / Surface Alt | Disabled background, column-head, row-hover. |

@@ -19,6 +19,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-number-input-bg': styles.backgroundColor as string,
     '--uxm-number-input-border-color': styles.borderColor as string,
     '--uxm-number-input-color': styles.color as string,
+    '--uxm-number-input-placeholder-color': styles.placeholderColor as string,
     '--uxm-number-input-border-radius': `${styles.borderRadius}px`,
     '--uxm-number-input-padding-x': `${styles.paddingX}px`,
     '--uxm-number-input-padding-y': `${styles.paddingY}px`,

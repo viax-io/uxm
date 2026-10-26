@@ -10,6 +10,7 @@ export const searchDropdownDef: ComponentDef = {
     { key: 'triggerBg', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'triggerColors', showWhen: { state: 'default' } },
     { key: 'triggerBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'triggerColors', showWhen: { state: 'default' } },
     { key: 'triggerColor', label: 'Text', control: 'color', defaultValue: 'var(--color-text)', section: 'triggerColors', showWhen: { state: 'default' } },
+    { key: 'triggerPlaceholderColor', label: 'Placeholder', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'triggerColors', showWhen: { state: 'default' } },
     // Hover — trigger
     { key: 'triggerHoverBg', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'triggerColors', showWhen: { state: 'hover' } },
     { key: 'triggerHoverBorder', label: 'Border', control: 'color', defaultValue: 'var(--color-accent)', section: 'triggerColors', showWhen: { state: 'hover' } },

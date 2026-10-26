@@ -99,7 +99,15 @@ Backed by `MultiListbox` in its default live `commitMode="change"`, with checkbo
 
 ## CSS variables
 
-The shared rule reads no `--uxm-input-*` variables — every visual property reads design tokens directly or is a hard-coded literal (8px radius, 14px font size, 10px/12px padding, 100px textarea min-height, 32px select right padding).
+Each atom reads its own `--uxm-input-text-*`, `--uxm-textarea-*` and `--uxm-select-dropdown-*` variables, one per Studio knob, each falling back to the design token below. The placeholder colours:
+
+| Variable | Fallback token | Default | Affects |
+|----------|----------------|---------|---------|
+| `--uxm-input-text-placeholder-color` | `--color-text-muted` | – | `TextInput` placeholder (`::placeholder`). |
+| `--uxm-textarea-placeholder-color` | `--color-text-muted` | – | `Textarea` placeholder (`::placeholder`). |
+| `--uxm-select-dropdown-placeholder-color` | `--color-text-muted` | – | `Select` trigger label while the placeholder option is showing (`.uxm-select-dropdown__trigger-label--empty`). |
+
+Set one on a dark or brand-coloured field so its placeholder stays readable without moving `--color-text-muted` for the whole app.
 
 ## Design tokens (MODO-configurable)
 
@@ -108,7 +116,7 @@ The shared rule reads no `--uxm-input-*` variables — every visual property rea
 | `--color-card` | Surfaces / Card | Field background. |
 | `--color-border` | Borders / Border | Field border. |
 | `--color-text` | Text / Text | Field text colour. |
-| `--color-text-muted` | Text / Text Muted | Placeholder text. |
+| `--color-text-muted` | Text / Text Muted | Placeholder text (fallback of each `-placeholder-color`). |
 | `--color-accent` | Accent / Accent | Focused border colour. |
 | `--color-danger-text` | Semantic / Danger Text | Error-modifier border colour. |
 
@@ -120,7 +128,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 |-----------------|---------|--------|
 | Default | – | Card background, border, 8px radius, 14px text. |
 | Focus | `:focus` | Border colour transitions (0.15s) to `--color-accent`. Outline suppressed in favour of the border. |
-| Placeholder | `::placeholder` (input + textarea) | `--color-text-muted` colour. |
+| Placeholder | `::placeholder` (input + textarea), empty select label | `--uxm-<id>-placeholder-color`, falling back to `--color-text-muted`. |
 | Error | `uxm-input-text--error` or `uxm-input-error` className | Border forced to `--color-danger-text` with `!important`. |
 | Textarea resize | – | `resize: vertical`, `min-height: 100px`. |
 | Select caret | – | Inline SVG chevron at 16px, 10px from the right edge; field reserves `padding-right: 32px`. |

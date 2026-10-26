@@ -133,7 +133,7 @@
   word-break: break-word;
 }
 .uxm-code-editor__input::placeholder {
-  color: var(--color-text-muted);
+  color: var(--uxm-code-editor-placeholder-color, var(--color-text-muted));
 }
 
 /* State coverage mirrors the rest of the input family. The `--state-*`

@@ -15,6 +15,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-textarea-bg': styles.backgroundColor as string,
     '--uxm-textarea-border-color': styles.borderColor as string,
     '--uxm-textarea-color': styles.color as string,
+    '--uxm-textarea-placeholder-color': styles.placeholderColor as string,
     '--uxm-textarea-border-radius': `${styles.borderRadius}px`,
     '--uxm-textarea-padding-x': `${styles.paddingX}px`,
     '--uxm-textarea-padding-y': `${styles.paddingY}px`,

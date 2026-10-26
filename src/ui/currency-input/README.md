@@ -69,6 +69,7 @@ interface CurrencyValue {
 | `--uxm-currency-input-border-color` | `--color-border` | – | Wrapper border. |
 | `--uxm-currency-input-border-radius` | – | `8px` | Wrapper border-radius. |
 | `--uxm-currency-input-color` | `--color-text` | – | Default text colour (input, picker, code). |
+| `--uxm-currency-input-placeholder-color` | `--color-text-muted` | – | Amount placeholder (`::placeholder`). |
 | `--uxm-currency-input-padding-y` | – | `10px` | Vertical padding on the input + picker. |
 | `--uxm-currency-input-padding-x` | – | `12px` | Horizontal padding on the input + picker. |
 | `--uxm-currency-input-font-size` | – | `14px` | Input + picker font size. |
@@ -100,7 +101,7 @@ The error state (`uxm-currency-input--error`) is driven by the `error?: string` 
 | `--color-surface-alt` | Surfaces / Surface Alt | Disabled bg, picker hover bg, popover row hover bg. |
 | `--color-border` | Borders / Border | Wrapper border, picker divider, popover border + search divider. |
 | `--color-text` | Text / Text | Default text, symbol colour. |
-| `--color-text-muted` | Text / Text Muted | Caret, disabled text, placeholder, popover meta. |
+| `--color-text-muted` | Text / Text Muted | Caret, disabled text, placeholder (fallback of `-placeholder-color`), popover meta. |
 | `--color-text-inverse` | Text / Text Inverse | Selected popover row text. |
 | `--color-accent` | Accent / Accent | Hover border, focus border + outline, selected popover row bg. |
 | `--color-danger-text` | Semantic / Danger Text | Error border + caret tone. |

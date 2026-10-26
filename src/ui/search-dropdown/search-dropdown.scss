@@ -67,8 +67,10 @@
   font-size: calc(var(--uxm-search-dropdown-trigger-error-message-size, 12px) * var(--type-scale, 1));
   color: var(--uxm-search-dropdown-trigger-error-color, var(--color-danger-text));
 }
+/* Same (0,1,0) weight as the trigger's own `color`, and later, so the
+   placeholder wins at rest; the `[aria-disabled]` rule above still beats it. */
 .uxm-search-dropdown__trigger--empty {
-  color: var(--color-text-muted);
+  color: var(--uxm-search-dropdown-trigger-placeholder-color, var(--color-text-muted));
 }
 .uxm-search-dropdown__trigger-label {
   flex: 1;
