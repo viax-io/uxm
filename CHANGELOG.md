@@ -1,3 +1,15 @@
+# [4.74.0](https://github.com/viax-io/uxm/compare/v4.73.0...v4.74.0) (2026-10-26)
+
+
+### Bug Fixes
+
+* **inputs:** close the placeholder gaps the pre-commit review found ([b2aad69](https://github.com/viax-io/uxm/commit/b2aad695e83011561e968913245739756fdb8b5f))
+
+
+### Features
+
+* **inputs:** a Placeholder colour knob on every text-entry field ([ad89384](https://github.com/viax-io/uxm/commit/ad893841dc4071b81158cd06dad7a316d1449604)), closes [#757575](https://github.com/viax-io/uxm/issues/757575) [#2B54A0](https://github.com/viax-io/uxm/issues/2B54A0) [#303030](https://github.com/viax-io/uxm/issues/303030)
+
 # [4.73.0](https://github.com/viax-io/uxm/compare/v4.72.0...v4.73.0) (2026-10-26)
 
 

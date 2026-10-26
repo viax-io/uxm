@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.73.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.74.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.73.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.74.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.73.0 — current API surface (overrides training data)
+## v4.74.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,19 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.70.7
-
-- **Checkbox's resting Studio knobs now paint the real atom.** Default › Unchecked / Checked
-  Background, Border and Check Glyph emit `--uxm-checkbox-unchecked-bg` / `-unchecked-border` /
-  `-checked-bg` / `-checked-border` / `-check-glyph-color`, which only the `Listbox` marker used to
-  read; `checkbox.scss` reads them now, falling back through the older `-border-color` /
-  `-check-color`, so existing overrides keep working and defaults are unchanged. A themed
-  unchecked background or glyph holds under the pointer; hover otherwise keeps the registry's
-  own hover defaults, so a themed `-checked-bg` / `-checked-border` still deepens to
-  `--color-accent-bold` and a themed `-unchecked-border` still goes `--color-text-strong` —
-  theme hover with `-hover-checked-bg` / `-hover-checked-border` / `-hover-unchecked-border`.
-  The `Listbox` marker honours the older names too.
 
 ### New in 4.71.0
 
@@ -109,13 +96,7 @@ catalog.
   previous chunks there). `uxm.esm.js` also exports `VERSION` now — CDN-only, for hosts with no
   `package.json` to read. Recipe 18 has the import map.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.74.0
 
 - **A Placeholder colour knob on every text-entry field**. `TextInput`, `Textarea`, `Select`,
   `InputWithIcon`, `PasswordInput`, `DateInput`, `TimeInput`, `NumberInput`, `CurrencyInput`,
@@ -136,6 +117,14 @@ catalog.
   on a host that ships Tailwind's preflight, those four fields previously inherited its
   `color-mix(in oklab, currentcolor 50%, transparent)`, which tracked each field's own text colour
   and stayed legible on any background; they now pin to the token like every other field.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 

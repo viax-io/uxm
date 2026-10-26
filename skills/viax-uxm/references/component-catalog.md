@@ -1,6 +1,6 @@
 # @viax.io/uxm — Component Catalog
 
-All 99 components exported from `@viax.io/uxm/ui` (as of v4.73.0) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
+All 99 components exported from `@viax.io/uxm/ui` (as of v4.74.0) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
 
 ## Deprecated (removed in the next major — do not use in new code)
 

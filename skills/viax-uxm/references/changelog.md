@@ -2139,3 +2139,16 @@ reached the published library; now shipped in 2.8.0.
   a listbox may not own — axe `aria-required-children`), and a non-searchable panel now sets
   `aria-activedescendant` on the focused list, where AT used to announce nothing as you
   arrowed. No API change.
+
+### New in 4.70.7
+
+- **Checkbox's resting Studio knobs now paint the real atom.** Default › Unchecked / Checked
+  Background, Border and Check Glyph emit `--uxm-checkbox-unchecked-bg` / `-unchecked-border` /
+  `-checked-bg` / `-checked-border` / `-check-glyph-color`, which only the `Listbox` marker used to
+  read; `checkbox.scss` reads them now, falling back through the older `-border-color` /
+  `-check-color`, so existing overrides keep working and defaults are unchanged. A themed
+  unchecked background or glyph holds under the pointer; hover otherwise keeps the registry's
+  own hover defaults, so a themed `-checked-bg` / `-checked-border` still deepens to
+  `--color-accent-bold` and a themed `-unchecked-border` still goes `--color-text-strong` —
+  theme hover with `-hover-checked-bg` / `-hover-checked-border` / `-hover-unchecked-border`.
+  The `Listbox` marker honours the older names too.
