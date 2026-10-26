@@ -773,6 +773,7 @@ export const messages: StudioMessages = {
     'Row Background': '行の背景',
     'Row Bg': '行の背景',
     'Row Border': '行の境界線',
+    'Row Focus Ring': '行のフォーカスリング',
     'Row Gap': '行の間隔',
     'Row Hover': '行のホバー',
     'Row Hover Bg': '行ホバーの背景',

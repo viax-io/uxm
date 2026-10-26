@@ -292,6 +292,7 @@ DataTable reads a small set of `--uxm-data-table-*` custom properties on the roo
 | `--uxm-data-table-scroll-arrow-shadow` | `--shadow-sm` | – | Lift under the arrows, so they read above the rows. |
 | `--uxm-data-table-scroll-focus-color` | `--color-accent-bold` | – | Focus ring on the scroll region. Inset, because the root clips. |
 | `--uxm-data-table-row-bg` | `--color-card` | – | `<tr>` background. |
+| `--uxm-data-table-row-focus-color` | `--color-accent-bold` | – | Focus ring on a keyboard-focused clickable row (2px, inset). Re-drawn on sticky cells, which would otherwise paint over it. |
 | `--uxm-data-table-row-hover-bg` | `--color-surface-alt` | – | Row hover fill. Defaults to the same token as the header band — see [Hover and the header band](#hover-and-the-header-band). |
 | `--uxm-data-table-cell-padding-x` | – | `12px` | Horizontal cell padding (default density). |
 | `--uxm-data-table-cell-padding-y` | – | `10px` (th) / `12px` (td) | Vertical cell padding (default density). |
@@ -352,9 +353,17 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 ## Accessibility
 
 - Renders a semantic `<table>` with `<thead>` / `<tbody>` — screen readers announce row/column counts and navigation via standard table-traversal shortcuts.
-- Row clicks: when `onRowClick` is provided, the click handler is attached to `<tr>`, **not** to a focusable element. For full keyboard support, consumers should:
-  - render an interactive control (link or button) inside the row, or
-  - wrap row content in a `<button>`/`<a>` to retain native focus and `Enter` activation.
+- **Row clicks are keyboard-operable.** With `onRowClick`, each `<tr>` takes `tabIndex={0}` and
+  activates on `Enter` or `Space`, with a focus ring from `--uxm-data-table-row-focus-color`. A
+  table without `onRowClick` is unchanged and stays out of the tab order.
+  - The key must land on the **row itself**. `Enter` on a cell's button, link or editable cell is
+    that control's and does not also open the row.
+  - `Space` is `preventDefault`ed, or it would scroll the region as well as activate.
+  - `rowProps` composes: your `onKeyDown` runs first, and `preventDefault()` in it suppresses the
+    row activation — the same contract `onClick` has. Your `tabIndex` overrides the default, so
+    you can run a roving-tabindex scheme of your own.
+  - Each row is its own tab stop. On a long table that is a lot of stops; a roving scheme (one
+    stop, arrow keys between rows) is the APG grid answer and is not built in yet.
 - Column headers (`<th>`) have no `scope` attribute.
 - **The active row** carries `aria-current="true"`, and is cued by an accent rail as well as a tint: at AA the difference between two adjacent row fills is necessarily subtle, and colour alone is not an acceptable sole cue (1.4.1).
 - **Sorting** follows the APG sortable-table pattern. A column with `sortKey` renders a `<button>` (or an `<a>` with `sortHref`) inside its `<th>`, and the `<th>` carries `aria-sort`: `ascending` / `descending` on the sorted column, and `none` on every other sortable column. (`none` is ARIA's default, so screen readers announce nothing for it — emitting it explicitly is valid and harmless, and makes the sortable set visible in the DOM. The APG example sets the attribute only on the sorted header.) Non-sortable columns carry no `aria-sort` at all.

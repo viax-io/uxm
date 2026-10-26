@@ -130,6 +130,19 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable` rows with `onRowClick` are reachable from the keyboard.** The `<tr>` carried a
+  click handler and nothing else — no `tabIndex`, no `onKeyDown`, no focus style — so a row that
+  opens a detail pane could only be used with a pointer (**WCAG 2.1.1, Level A**). It now takes
+  `tabIndex={0}`, activates on `Enter` / `Space`, and shows a ring from the new
+  `--uxm-data-table-row-focus-color` (Studio knob **Row Focus Ring**). A table with no
+  `onRowClick` is unchanged and stays out of the tab order. The key has to land on the row
+  itself, so `Enter` on a cell's button or editable cell stays that control's; `rowProps`
+  composes, with your `onKeyDown` first and `preventDefault()` cancelling the activation, and
+  your `tabIndex` overriding the default. Stacked card mode needs nothing — the row IS the card.
+  **Each row is its own tab stop**; a roving scheme (one stop, arrow keys) is the APG grid answer
+  and is not built in. The README previously documented this gap and asked consumers to put their
+  own focusable control in the row; that advice is gone.
+
 ## Workflow
 
 ### Where the documentation lives

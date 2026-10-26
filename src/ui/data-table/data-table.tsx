@@ -8,7 +8,7 @@ import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
 import { Menu, type MenuEntry } from '../menu';
 
-import type { CSSProperties, HTMLAttributes, MouseEvent, ReactNode, RefObject } from 'react';
+import type { CSSProperties, HTMLAttributes, KeyboardEvent, MouseEvent, ReactNode, RefObject } from 'react';
 
 export type DataTableDensity = 'compact' | 'default' | 'relaxed';
 
@@ -710,7 +710,12 @@ export function DataTable<T>({
             // override `aria-current` — it may well have its own idea of what
             // "current" means — without having to fight the defaults.
             const extra = rowProps?.(row);
-            const { className: rowClassName, onClick: rowOnClick, ...restRowProps } = extra ?? {};
+            const {
+              className: rowClassName,
+              onClick: rowOnClick,
+              onKeyDown: rowOnKeyDown,
+              ...restRowProps
+            } = extra ?? {};
             // Compose rather than let one win: `onClick` sitting after the
             // spread meant a consumer's handler was dropped every time, and
             // `onClick={undefined}` clobbered it even with no `onRowClick`.
@@ -721,10 +726,32 @@ export function DataTable<T>({
                     if (!event.defaultPrevented) onRowClick?.(row);
                   }
                 : undefined;
+            // A clickable row has to be operable from the keyboard (2.1.1).
+            // The row takes `tabIndex` below; this is its activation.
+            const handleKeyDown =
+              rowOnKeyDown || onRowClick
+                ? (event: KeyboardEvent<HTMLTableRowElement>) => {
+                    rowOnKeyDown?.(event);
+                    if (event.defaultPrevented || !onRowClick) return;
+                    // Only when the ROW ITSELF has focus. A key pressed on a
+                    // control inside the row — a cell's input, an actions
+                    // menu, a link — belongs to that control, and Enter there
+                    // must not also open the row's detail.
+                    if (event.target !== event.currentTarget) return;
+                    if (event.key !== 'Enter' && event.key !== ' ') return;
+                    // Space would otherwise scroll the scroll region.
+                    event.preventDefault();
+                    onRowClick(row);
+                  }
+                : undefined;
             return (
             <tr
               key={id}
               aria-current={isActive ? 'true' : undefined}
+              // Before the spread, so `rowProps` can override it — the same
+              // treatment `aria-current` gets. Only a row that is already a
+              // click target joins the tab order.
+              tabIndex={onRowClick ? 0 : undefined}
               {...restRowProps}
               className={cn(
                 'uxm-data-table__row',
@@ -733,6 +760,7 @@ export function DataTable<T>({
                 rowClassName,
               )}
               onClick={handleClick}
+              onKeyDown={handleKeyDown}
             >
               {columns.map((c) => {
                 // Cells fall into three rendering paths:

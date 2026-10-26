@@ -785,6 +785,7 @@ export const messages: StudioMessages = {
     'Row Background': 'Sfondo della riga',
     'Row Bg': 'Sfondo riga',
     'Row Border': 'Bordo della riga',
+    'Row Focus Ring': 'Anello del focus della riga',
     'Row Gap': 'Spazio tra le righe',
     'Row Hover': 'Riga al passaggio',
     'Row Hover Bg': 'Sfondo della riga al passaggio',

@@ -24,6 +24,7 @@ export const dataTableDef: ComponentDef = {
     { key: 'sortColor', label: 'Sort Header', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'sortHoverColor', label: 'Sort Header Hover', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
     { key: 'sortActiveColor', label: 'Sort Header Active', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
+    { key: 'rowFocusColor', label: 'Row Focus Ring', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
     { key: 'sortFocusColor', label: 'Sort Header Focus', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
     { key: 'sortIconColor', label: 'Sort Glyph', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },

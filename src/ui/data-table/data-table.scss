@@ -187,6 +187,18 @@
   background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
 }
 
+/* A row with `onRowClick` takes `tabIndex={0}` so it is operable from the
+   keyboard (2.1.1); this is the ring that makes the focus visible (2.4.7).
+   Inset, because an outline drawn outside the row is clipped by the scroller.
+
+   Re-asserted on the sticky cells below for the same reason the hover fill is:
+   pinned cells carry `z-index: 1` and paint over a row-level outline, which is
+   what forced the SCROLLER's ring onto the root (see the comment there). */
+.uxm-data-table__row:focus-visible {
+  outline: 2px solid var(--uxm-data-table-row-focus-color, var(--color-accent-bold));
+  outline-offset: -2px;
+}
+
 /* The active row — the one whose detail is open beside the table. Written
    AFTER :hover so it holds while the pointer is on another row, which is the
    whole point of the state: hover says "the pointer is here", active says
@@ -349,6 +361,18 @@
 .uxm-data-table__row:hover > .uxm-data-table__td--sticky-start,
 .uxm-data-table__row:hover > .uxm-data-table__td--sticky-end {
   background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
+}
+/* The focused row's ring, re-drawn on the pinned cells. Without this the
+   `z-index: 1` on a sticky cell paints over the row's outline and the ring
+   loses its leading and trailing edges — the same clipping that moved the
+   scroller's ring to the root. A top and bottom inset shadow rather than an
+   outline, so the two pinned edges join the row's own ring instead of boxing
+   each cell separately. */
+.uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-start,
+.uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-end {
+  box-shadow:
+    inset 0 2px 0 0 var(--uxm-data-table-row-focus-color, var(--color-accent-bold)),
+    inset 0 -2px 0 0 var(--uxm-data-table-row-focus-color, var(--color-accent-bold));
 }
 .uxm-data-table__row--active > .uxm-data-table__td--sticky-start,
 .uxm-data-table__row--active > .uxm-data-table__td--sticky-end {
