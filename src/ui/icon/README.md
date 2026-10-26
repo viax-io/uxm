@@ -60,6 +60,12 @@ single disambiguator in parentheses, matching the set's existing style (`Cog (6 
 icon set — `no-symbol` answers to `ban`, `paper-airplane` to `send` — without the label
 turning into a keyword list.
 
+A keyword is also a **name you can render by**: `getIcon` falls back to one when no id
+matches, so `<Icon glyph="ban" />` draws `no-symbol`. Before that, those names resolved to
+nothing and `Icon` rendered `null` — a silently missing glyph, for 86 of them. An exact id
+always wins, and a keyword must belong to exactly one glyph (pinned by `icon.test.tsx`), so
+the fallback is single-valued.
+
 All three pickers run the same exported predicate, `matchesIconQuery(def, query)`. Use it
 rather than writing the substring test again: the preview grid and the studio's glyph
 picker have to agree, and the one duplicate that existed drifted silently.
@@ -70,8 +76,8 @@ picker have to agree, and the one duplicate that existed drifted silently.
 | `ICON_OPTIONS` | `IconOption[]` (`{ value, label, keywords? }`) for a picker — `keywords` mirrors the def's, so a `SearchDropdown` matches synonyms too. **Mutated in place** by `registerIcons`, so a consumer holding a reference (the studio registry does, at module scope) sees additions without re-importing. |
 | `ICON_IDS` | Const tuple of the built-in ids. |
 | `IconName` | Literal union of `ICON_IDS` — use it to narrow your own props. |
-| `getIcon(id)` | Looks the id up in `ICONS`. Reads the array live, so it cannot go stale. |
-| `IconDef.keywords` | Optional extra search terms. Not rendered anywhere — search only. |
+| `getIcon(id)` | Looks the id up in `ICONS`, then falls back to a glyph that lists it in `keywords`. Reads the array live, so it cannot go stale. |
+| `IconDef.keywords` | Extra names for the glyph: the search matches them, and `getIcon` resolves them when no id does. Each must be unique across the registry. |
 | `matchesIconQuery(def, q)` | The shared search predicate — substring match on `id`, `label` and `keywords`; an empty query matches everything. |
 | `registerIcons(defs)` | Adds or replaces; returns how many ids it **replaced**. |
 

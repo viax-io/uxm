@@ -123,6 +123,16 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Two glyphs, and a keyword is now a name you can render by.** `scroll-text` (a scroll,
+  distinct from `document-text`'s page) and `dot-circle-solid` (`dot-circle`'s ring with a
+  filled centre, for a live or active state) join the registry. The bigger change is
+  `getIcon`: it falls back to a glyph's `keywords` when no id matches, so `<Icon
+  glyph="ban" />` draws `no-symbol`, `"send"` draws `paper-airplane`, `"circle-dot"` draws
+  `dot-circle`. **86 names resolved to nothing before** — `Icon` renders `null` on a miss, so
+  they were invisible with no error, including every "exists under another name" alias the
+  catalog advertises. An exact id still wins, and each keyword belongs to exactly one glyph
+  (pinned by a test), so the fallback is single-valued.
+
 ## Workflow
 
 ### Where the documentation lives

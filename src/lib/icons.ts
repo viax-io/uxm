@@ -345,6 +345,29 @@ export const ICONS: IconDef[] = [
     keywords: ['bars-arrow-down', 'z to a', 'largest first', 'decreasing'],
     path: 'M3 6.75H12M3 12H9.75M3 17.25H7.5M18 4.5V19.5M15 16.5L18 19.5L21 16.5',
   },
+  {
+    id: 'dot-circle-solid',
+    label: 'Dot Circle Solid',
+    keywords: ['circle-dot-solid', 'active', 'recording', 'online'],
+    // `dot-circle`'s ring with the centre filled, for a live/active state.
+    // The fill is inline on the inner circle rather than `filled: true` on the
+    // def: that flag sets `fill="currentColor" stroke="none"` on the WHOLE
+    // glyph, which would fill the ring into a solid disc and lose the mark.
+    //
+    // r=3, where the stroked sibling uses 2.25. Both sit on the 0.375 grid, but
+    // a stroked 2.25 ring spans ~1.4-3.1 at the default stroke width, so a
+    // FILLED 2.25 disc reads lighter than the mark it pairs with.
+    body: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>',
+  },
+  {
+    id: 'scroll-text',
+    label: 'Scroll Text',
+    keywords: ['transcript', 'parchment'],
+    // A scroll, distinct from `document-text`'s page: a curled top edge over a
+    // body with text lines. `document-text` keeps the `scroll-text` keyword, so
+    // the picker still finds it there too.
+    body: '<path d="M6 4.5h10.5a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5"/><path d="M6 4.5A1.5 1.5 0 0 0 4.5 6v1.5H6"/><path d="M19.5 19.5H7.5A1.5 1.5 0 0 1 6 18V4.5"/><path d="M9 9h6M9 12h6M9 15h3.75"/>',
+  },
 ];
 
 /**
@@ -382,7 +405,7 @@ export const ICON_IDS = [
   'server', 'shield-exclamation', 'shield-check', 'wrench',
   'document-text', 'activity', 'dot-circle', 'coins',
   'git-fork', 'plug', 'webhook', 'sort-none',
-  'sort-asc', 'sort-desc',
+  'sort-asc', 'sort-desc', 'dot-circle-solid', 'scroll-text',
 ] as const;
 
 /**
@@ -453,7 +476,19 @@ export function getIcon(id: string): IconDef | undefined {
   // Map silently returned the old glyph for the code most likely to be
   // mid-migration. `.find` over ~85 entries is not a cost worth that risk, and
   // it cannot go stale.
-  return ICONS.find((i) => i.id === id);
+  const exact = ICONS.find((i) => i.id === id);
+  if (exact) return exact;
+
+  // Fall back to a KEYWORD, so the names the registry already advertises
+  // actually render. `document-text` has carried `scroll-text` since it was
+  // added, `no-symbol` carries `ban`, `paper-airplane` carries `send` — and
+  // every one of them resolved to `undefined` here, which `Icon` turns into a
+  // silently missing glyph. 86 names behaved that way.
+  //
+  // An exact id always wins, above, so nothing that resolves today can change
+  // meaning. `tests/icon.test.tsx` pins that no non-id keyword has two owners,
+  // which is what keeps this single-valued; it is true of all 86 today.
+  return ICONS.find((i) => i.keywords?.includes(id));
 }
 
 /**

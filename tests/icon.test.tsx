@@ -115,7 +115,7 @@ describe('icon registry', () => {
     // visibly detaches the line. So pin the part that IS a rule, and let the
     // comment in icons.ts carry the exception — an unpinned prose claim about
     // `coins` and `webhook` was simply false for a release.
-    const HOUSE = ['activity', 'dot-circle', 'coins', 'git-fork', 'plug', 'webhook'];
+    const HOUSE = ['activity', 'dot-circle', 'dot-circle-solid', 'coins', 'git-fork', 'plug', 'webhook'];
     const onGrid = (n: number) => Math.abs(n / 0.375 - Math.round(n / 0.375)) < 1e-9;
     for (const id of HOUSE) {
       const def = ICONS.find((d) => d.id === id);
@@ -273,6 +273,49 @@ describe('registerIcons', () => {
       ICONS.push({ id: 'smuggled', label: 'Smuggled', path: 'M0 0h1' });
       expect(getIcon('smuggled')?.label).toBe('Smuggled');
     } finally { restore(before); }
+  });
+});
+
+describe('getIcon aliases', () => {
+  // Keywords were search-only: `getIcon` matched `id` alone, so every name the
+  // registry advertised but did not use as an id resolved to `undefined`, and
+  // `Icon` renders `null` for that — a silently missing glyph. 86 names.
+  it('resolves a name the registry advertises as a keyword', () => {
+    for (const [alias, owner] of [
+      ['scroll-text', 'scroll-text'], // now a real id, not document-text's keyword
+      ['circle-dot', 'dot-circle'],
+      ['ban', 'no-symbol'],
+      ['send', 'paper-airplane'],
+      ['shield-alert', 'shield-exclamation'],
+    ] as const) {
+      expect(getIcon(alias)?.id, `${alias} should resolve`).toBe(owner);
+    }
+  });
+
+  it('lets an exact id beat any keyword that shadows it', () => {
+    // The ordering that makes the fallback safe: if some glyph ever lists an
+    // existing id among its keywords, the id's own glyph still wins.
+    for (const def of ICONS) {
+      expect(getIcon(def.id)?.id, `${def.id} must resolve to itself`).toBe(def.id);
+    }
+  });
+
+  it('keeps every alias single-valued', () => {
+    // What makes the fallback well-defined. Two glyphs claiming one keyword
+    // would make `getIcon` return whichever sits earlier in the array, which is
+    // an arbitrary answer that would look stable until someone reorders them.
+    const ids = new Set(ICONS.map((i) => i.id));
+    const owners = new Map<string, string[]>();
+    for (const i of ICONS) {
+      for (const k of i.keywords ?? []) {
+        if (ids.has(k)) continue; // an id wins outright; not an alias
+        owners.set(k, [...(owners.get(k) ?? []), i.id]);
+      }
+    }
+    const contested = [...owners].filter(([, v]) => v.length > 1);
+    expect(contested.map(([k, v]) => `${k} -> ${v.join(' | ')}`)).toEqual([]);
+    // Non-vacuity: a registry that lost its keywords would pass the check above.
+    expect(owners.size, 'aliases examined').toBeGreaterThan(50);
   });
 });
 
