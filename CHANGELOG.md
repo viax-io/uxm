@@ -1,3 +1,10 @@
+# [4.76.0](https://github.com/viax-io/uxm/compare/v4.75.0...v4.76.0) (2026-10-26)
+
+
+### Features
+
+* **icon:** add scroll-text and dot-circle-solid, and resolve keyword aliases ([6e0315e](https://github.com/viax-io/uxm/commit/6e0315e189f07561616791098f88e8af597b0130))
+
 # [4.75.0](https://github.com/viax-io/uxm/compare/v4.74.0...v4.75.0) (2026-10-26)
 
 

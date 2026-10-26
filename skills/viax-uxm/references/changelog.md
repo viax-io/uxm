@@ -2174,3 +2174,16 @@ reached the published library; now shipped in 2.8.0.
   that sized it through the `icon-tile` knob keeps that. The Studio preview now renders the real
   atom (its hand-rolled glyph was 55% of the tile, not the 14px an app gets). Additive: two new
   `--uxm-*` knobs, and a header that inherits no line height renders identically.
+
+### New in 4.71.1
+
+- **`InputWithIcon`: Icon Size sizes the glyph, not just its padding**.
+  `--uxm-input-with-icon-icon-size` (Studio knob **Icon Size**, 16px) used to feed only the
+  left-padding calc, so the README's own `icon={<Icon glyph="search" />}` drew `Icon`'s 24px
+  default in a 16px slot, and every app passed `size={16}` by hand. Any `<svg>` in the slot is
+  now sized to the variable, which **wins over an explicit `size`**: the glyph and the room kept
+  for it can't drift apart. Pass the `Icon` without a `size`. A call site that passed `size={16}`
+  renders identically; one that passed 14 or 15 now draws 16px (set the variable to keep the
+  smaller glyph — the padding follows it). The global `.uxm-input-with-icon__icon svg` clamp this
+  skill used to recommend can go. `DateInput`, `TimeInput` and `PasswordInput` already sized
+  their glyph from their own `iconSize`; no change there.
