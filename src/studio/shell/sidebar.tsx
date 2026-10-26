@@ -131,7 +131,7 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onClear={() => setQuery('')}
-                icon={<Icon glyph="search" size={14} />}
+                icon={<Icon glyph="search" />}
               />
             </div>
             <IconButton

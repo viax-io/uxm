@@ -80,7 +80,7 @@ export function PageShellPreview({ styles, variants }: PreviewProps) {
               <InputWithIcon
                 type="search"
                 placeholder="Search…"
-                icon={<Icon glyph="search" size={14} strokeWidth={1.5} />}
+                icon={<Icon glyph="search" strokeWidth={1.5} />}
               />
             }
             actions={

@@ -622,9 +622,9 @@ const toggleTask = (id) =>
 </Stack>
 ```
 
-**4. `<Icon>` inside `<InputWithIcon>` must be 16px.**
+**4. `<Icon>` inside `<InputWithIcon>` needs no `size`.**
 
-`<Icon>` defaults to `size={24}`, but `InputWithIcon` reserves padding for a 16px icon (`--uxm-input-with-icon-icon-size: 16px`). The mismatch makes the leading icon look giant and crowd the placeholder text. Fix it globally in `globals.css` (rule below) — no per-call `size={16}` needed.
+`<Icon>` defaults to `size={24}`. The library now sizes the glyph from `--uxm-input-with-icon-icon-size` (16px) itself, so leave `size` off and change the glyph through the variable — the padding follows it. On versions before that fix the variable reserved padding only, and an un-sized `<Icon>` overflowed the slot; the `globals.css` rule below is that back-stop, harmless on current versions because it sets exactly what the library already sets.
 
 **5. Required `globals.css` baseline.**
 
@@ -717,8 +717,10 @@ button, input, select, textarea { font: inherit; }
   padding-left: var(--uxm-detail-section-padding, 20px);
 }
 
-/* InputWithIcon: clamp nested <Icon> SVGs to the 16px slot the input expects.
-   <Icon> defaults to size=24, which overflows the padding-left reservation. */
+/* InputWithIcon: size nested <Icon> SVGs to the slot the input reserves.
+   Redundant on uxm versions that size the glyph themselves — it sets the same
+   declaration from the same variable — and the back-stop on earlier ones,
+   where <Icon>'s size=24 default overflowed the padding reservation. */
 .uxm-input-with-icon__icon svg {
   width: var(--uxm-input-with-icon-icon-size, 16px);
   height: var(--uxm-input-with-icon-icon-size, 16px);

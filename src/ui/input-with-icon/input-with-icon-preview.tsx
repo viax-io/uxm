@@ -47,7 +47,6 @@ export function InputWithIconPreview({ styles, variants }: PreviewProps) {
 // sub-component and `useState` re-seeds — no effect needed to sync.
 function InputWithIconDemo({ state, styles }: { state: string; styles: Styles }) {
   const isError = state === 'error';
-  const iconSize = styles.iconSize as number;
 
   // Error: pre-fill with a query that has no matches so the message reads true.
   const [value, setValue] = useState(isError ? 'macroFoo ' : '');
@@ -68,7 +67,9 @@ function InputWithIconDemo({ state, styles }: { state: string; styles: Styles })
       <InputWithIcon
         type="search"
         placeholder="Search…"
-        icon={<Icon glyph="search" size={iconSize} strokeWidth={1.5} />}
+        // No `size`: the Icon Size knob reaches the glyph through the atom's
+        // own CSS (`--uxm-input-with-icon-icon-size`), as it does in an app.
+        icon={<Icon glyph="search" strokeWidth={1.5} />}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onClear={() => setValue('')}

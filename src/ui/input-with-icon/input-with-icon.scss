@@ -3,9 +3,10 @@
 /* InputWithIcon — every registry knob (bg, border, radius, paddings,
    fontSize, color, iconColor, iconSize, iconOffset) maps to a CSS
    variable. The left padding stays computed so the input text can't
-   overlap the leading icon: `paddingX + iconOffset + iconSize ≈ 36px`
-   default. State colours (hover/focus/disabled) mirror the input-text
-   sibling so the input family themes uniformly. */
+   overlap the leading icon: `iconOffset + iconSize + 8px` = 36px
+   default, and iconSize sizes the glyph itself too. State colours
+   (hover/focus/disabled) mirror the input-text sibling so the input
+   family themes uniformly. */
 
 .uxm-input-with-icon {
   position: relative;
@@ -26,6 +27,24 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+
+    /* The glyph fills the slot the left padding reserves. `icon` is any
+       ReactNode, typically an `<Icon>`, which writes `width` / `height`
+       attributes (24 unless `size` is passed). An attribute loses to any
+       stylesheet rule, so the knob wins over an explicit `size` too: the
+       glyph and the room kept for it can't drift apart.
+
+       DateInput, TimeInput and PasswordInput size their glyph the same way
+       but scope it `> svg`, because each renders its own `<Icon>` and knows
+       the shape. Here the slot holds whatever the consumer passes, so this
+       one is a DESCENDANT selector and `<span><svg/></span>` is covered too.
+       The cost is that every svg in the slot is squared to this size: a
+       composite mark that needs its own dimensions has to set them inline,
+       and then the padding no longer follows it. */
+    & svg {
+      height: var(--uxm-input-with-icon-icon-size, 16px);
+      width: var(--uxm-input-with-icon-icon-size, 16px);
+    }
   }
 
   &__input {

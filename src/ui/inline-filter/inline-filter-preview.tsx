@@ -36,7 +36,7 @@ export function InlineFilterPreview({ styles }: PreviewProps) {
             placeholder="Search…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            icon={<Icon glyph="search" size={14} strokeWidth={1.5} />}
+            icon={<Icon glyph="search" strokeWidth={1.5} />}
           />
         }
         filters={

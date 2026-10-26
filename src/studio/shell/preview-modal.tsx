@@ -802,7 +802,7 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                       <MiniInput
                         label="Name"
                         placeholder="Motion name"
-                        icon={<Icon glyph="pencil" size={14} />}
+                        icon={<Icon glyph="pencil" />}
                       />
                       <MiniSelect label="Segment" options={['Enterprise', 'Mid-Market', 'SMB', 'Startup']} />
                       <MiniCheckbox label="Send confirmation email" initial />
