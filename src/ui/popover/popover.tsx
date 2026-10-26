@@ -112,6 +112,7 @@ export function Popover({
     left: number;
     width: number | undefined;
     anchorWidth: number;
+    arrowOffset: number;
     placement: PopoverPlacement;
   } | null>(null);
 
@@ -161,11 +162,19 @@ export function Popover({
       wantsEnd ? 'end' : 'start'
     }` as PopoverPlacement;
 
+    // Where the anchor's centre falls inside the panel. Measured against the
+    // FINAL `left`, so it stays true through both the end/start flip and the
+    // viewport clamp above — the two things that decouple a panel from the
+    // thing it describes. A panel that draws an arrow reads this; one that
+    // doesn't simply ignores it.
+    const arrowOffset = triggerRect.left + triggerRect.width / 2 - left;
+
     setPosition({
       top,
       left,
       width: matchAnchorWidth === true ? triggerRect.width : undefined,
       anchorWidth: triggerRect.width,
+      arrowOffset,
       placement: resolvedPlacement,
     });
   }, [anchor, offset, placement, matchAnchorWidth]);
@@ -255,6 +264,7 @@ export function Popover({
     // also gated so a not-yet-positioned panel can't eat clicks.
     visibility: position ? 'visible' : 'hidden',
     pointerEvents: position ? 'auto' : 'none',
+    ...(position ? { ['--_uxm-popover-arrow-offset' as string]: `${position.arrowOffset}px` } : null),
     ...style,
   };
 

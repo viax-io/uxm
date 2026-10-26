@@ -28,7 +28,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — all native div attributes are forwa
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | – | **Required.** Body content. Rendered inside `.uxm-tooltip__body`. |
-| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | Controls arrow position via the `uxm-tooltip--{placement}` modifier. Does NOT position the surface itself. |
+| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | Which side the arrow sits on, via the `uxm-tooltip--{placement}` modifier. Does NOT position the surface itself. |
 | `showArrow` | `boolean` | `true` | Render the directional arrow. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div role="tooltip">`. |
@@ -48,7 +48,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — all native div attributes are forwa
 
 ## Design tokens (MODO-configurable)
 
-The components have no `--uxm-tooltip-*` overrides — colours wire directly to the global token layer.
+`Tooltip` reads `--uxm-tooltip-background-color`, `--uxm-tooltip-color`, `--uxm-tooltip-font-size`, `--uxm-tooltip-padding-x`, `--uxm-tooltip-padding-y` and `--uxm-tooltip-border-radius`, each falling back to the global token below. `ContentTooltip` has its own `--uxm-content-tooltip-*` set. Note `--uxm-tooltip-border-radius` is not purely cosmetic: the arrow keeps itself clear of the corner it rounds.
 
 | Token | Group / name | Used for |
 |-------|--------------|----------|
@@ -66,6 +66,7 @@ The components have no `--uxm-tooltip-*` overrides — colours wire directly to 
 | `Tooltip` placement: `left` | `placement="left"` | Arrow drawn at right-centre. |
 | `Tooltip` placement: `right` | `placement="right"` | Arrow drawn at left-centre. |
 | `Tooltip` no arrow | `showArrow={false}` | Arrow `<span>` omitted; just the body bubble. |
+| `Tooltip` arrow tracking | the **direct child** of a `Popover` panel (what `HoverTooltip` renders) | A `top` / `bottom` arrow slides along the bubble to sit over the anchor's centre. Kept clear of the rounded corners, and collapsing back to the centre when the bubble is too narrow to offset within. Anywhere else — standalone, or nested deeper inside some other panel — it stays at 50%, unchanged. |
 | `Tooltip` body | – | Dark `--color-text` background, `--color-text-inverse` text, 12px, `white-space: nowrap`. |
 | `ContentTooltip` default | – | Card-coloured background, 1px border, 8px radius, 12px padding, 320px max width. |
 | `ContentTooltip` shadow | `shadow={true}` | Adds `--shadow-md` drop shadow. |
@@ -74,6 +75,7 @@ The components have no `--uxm-tooltip-*` overrides — colours wire directly to 
 
 - Both components carry `role="tooltip"` on the surface — assistive tech recognises them as tooltip content.
 - The arrow span is `aria-hidden="true"` and decorative.
+- **If you position a `Tooltip` yourself**, a `top` / `bottom` arrow sits at 50% of the bubble — correct only when the bubble is exactly as wide as the thing it points at. Rendering it through `HoverTooltip` (or as the direct child of a `Popover`) is what makes the arrow track the anchor instead; there is no supported way to drive the offset by hand.
 - **The components do not implement WAI-ARIA tooltip behaviour end-to-end.** Consumers must:
   - link the trigger to the tooltip via `aria-describedby` (matching the tooltip's `id`),
   - manage show/hide on `mouseenter` / `mouseleave` and `focusin` / `focusout` of the trigger,

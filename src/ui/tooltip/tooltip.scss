@@ -20,16 +20,21 @@
     width: 10px;
   }
 
-  &--top &__arrow {
-    bottom: -5px;
+  // `left: 50%` is what the atom has always done, and it stays the default:
+  // only a tooltip that `Popover` positioned gets the anchor-tracking rule at
+  // the bottom of this file.
+  &--top &__arrow,
+  &--bottom &__arrow {
     left: 50%;
     transform: translateX(-50%) rotate(45deg);
   }
 
+  &--top &__arrow {
+    bottom: -5px;
+  }
+
   &--bottom &__arrow {
-    left: 50%;
     top: -5px;
-    transform: translateX(-50%) rotate(45deg);
   }
 
   &--left &__arrow {
@@ -43,6 +48,42 @@
     top: 50%;
     transform: translateY(-50%) rotate(45deg);
   }
+}
+
+// ── The arrow points at the ANCHOR, not at the middle of its own bubble ──────
+//
+// `HoverTooltip` aligns its panel `*-start`, so an arrow pinned at 50% of the
+// bubble misses the anchor's centre by (panelWidth - anchorWidth) / 2 — and
+// `truncatedOnly` opens the tooltip precisely BECAUSE the content is too wide
+// for its anchor, so the bubble is nearly always the wider of the two. Measured
+// at 199px off on a 182px table cell, which put the arrow clear of the cell.
+//
+// `Popover` publishes the anchor's centre relative to the panel as
+// `--_uxm-popover-arrow-offset`, measured against its final `left` so it holds
+// through the viewport clamp.
+//
+// Scoped to a DIRECT child of the panel, and that `>` is load-bearing: custom
+// properties inherit, so a descendant selector would also catch a `Tooltip` a
+// consumer renders deeper inside some other panel — a Menu, a Select — and
+// shove its arrow to that panel's anchor for no reason. Only the tooltip that
+// IS the panel's content should track it.
+//
+// The inset keeps the arrow off the rounded corners: half the arrow's diagonal
+// (a 10px square rotated 45deg, ~7.07px, taken as 7) plus the body's radius.
+// Capped at 50%, because `clamp()` returns its MIN when min > max — so a bubble
+// narrower than two insets (a two-character tooltip, or a large
+// `--uxm-tooltip-border-radius`) would otherwise park the arrow outside the
+// bubble entirely. Capped, that case collapses to the centre, which is exactly
+// where an arrow belongs when there is no room to offset it.
+.uxm-popover > .uxm-tooltip--top > .uxm-tooltip__arrow,
+.uxm-popover > .uxm-tooltip--bottom > .uxm-tooltip__arrow {
+  --_uxm-tooltip-arrow-inset: min(calc(var(--uxm-tooltip-border-radius, 6px) + 7px), 50%);
+
+  left: clamp(
+    var(--_uxm-tooltip-arrow-inset),
+    var(--_uxm-popover-arrow-offset, 50%),
+    calc(100% - var(--_uxm-tooltip-arrow-inset))
+  );
 }
 
 .uxm-content-tooltip {
