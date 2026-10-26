@@ -1,10 +1,10 @@
 /* ── input-with-icon ── */
 
 /* InputWithIcon — every registry knob (bg, border, radius, paddings,
-   fontSize, color, iconColor, iconSize, iconOffset) maps to a CSS
-   variable. The left padding stays computed so the input text can't
-   overlap the leading icon: `iconOffset + iconSize + 8px` = 36px
-   default, and iconSize sizes the glyph itself too. State colours
+   fontSize, color, placeholderColor, iconColor, iconSize, iconOffset)
+   maps to a CSS variable. The left padding stays computed so the input
+   text can't overlap the leading icon: `iconOffset + iconSize + 8px` =
+   36px default, and iconSize sizes the glyph itself too. State colours
    (hover/focus/disabled) mirror the input-text sibling so the input
    family themes uniformly. */
 
@@ -67,6 +67,12 @@
       );
     transition: border-color 0.15s, background-color 0.15s, color 0.15s;
     width: 100%;
+
+    /* Without a rule of its own the placeholder takes the browser's grey
+       (#757575 in Chrome), which a dark themed field can't carry. */
+    &::placeholder {
+      color: var(--uxm-input-with-icon-placeholder-color, var(--color-text-muted));
+    }
 
     &::-webkit-search-cancel-button,
     &::-webkit-search-decoration {

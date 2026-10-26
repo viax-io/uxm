@@ -20,6 +20,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-currency-input-background-color': styles.backgroundColor as string,
     '--uxm-currency-input-border-color': styles.borderColor as string,
     '--uxm-currency-input-color': styles.color as string,
+    '--uxm-currency-input-placeholder-color': styles.placeholderColor as string,
     '--uxm-currency-input-divider-color': styles.dividerColor as string,
     '--uxm-currency-input-symbol-color': styles.symbolColor as string,
     '--uxm-currency-input-caret-color': styles.caretColor as string,

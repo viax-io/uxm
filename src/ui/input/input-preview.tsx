@@ -23,6 +23,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-input-text-bg': styles.backgroundColor as string,
     '--uxm-input-text-border-color': styles.borderColor as string,
     '--uxm-input-text-color': styles.color as string,
+    '--uxm-input-text-placeholder-color': styles.placeholderColor as string,
     '--uxm-input-text-border-radius': `${styles.borderRadius}px`,
     '--uxm-input-text-padding-x': `${styles.paddingX}px`,
     '--uxm-input-text-padding-y': `${styles.paddingY}px`,

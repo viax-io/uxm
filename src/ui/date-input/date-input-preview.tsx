@@ -19,6 +19,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-date-input-background-color': styles.backgroundColor as string,
     '--uxm-date-input-border-color': styles.borderColor as string,
     '--uxm-date-input-color': styles.color as string,
+    '--uxm-date-input-placeholder-color': styles.placeholderColor as string,
     '--uxm-date-input-border-radius': `${styles.borderRadius}px`,
     '--uxm-date-input-padding-x': `${styles.paddingX}px`,
     '--uxm-date-input-padding-y': `${styles.paddingY}px`,

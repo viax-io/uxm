@@ -19,6 +19,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-time-input-background-color': styles.backgroundColor as string,
     '--uxm-time-input-border-color': styles.borderColor as string,
     '--uxm-time-input-color': styles.color as string,
+    '--uxm-time-input-placeholder-color': styles.placeholderColor as string,
     '--uxm-time-input-border-radius': `${styles.borderRadius}px`,
     '--uxm-time-input-padding-x': `${styles.paddingX}px`,
     '--uxm-time-input-padding-y': `${styles.paddingY}px`,

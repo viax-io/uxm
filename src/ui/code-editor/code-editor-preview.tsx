@@ -33,6 +33,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-code-editor-bg': styles.backgroundColor as string,
     '--uxm-code-editor-border-color': styles.borderColor as string,
     '--uxm-code-editor-color': styles.color as string,
+    '--uxm-code-editor-placeholder-color': styles.placeholderColor as string,
     '--uxm-code-editor-border-radius': `${styles.borderRadius}px`,
     '--uxm-code-editor-padding-x': `${styles.paddingX}px`,
     '--uxm-code-editor-padding-y': `${styles.paddingY}px`,
@@ -76,6 +77,9 @@ function CodeEditorDemo({ state, styles }: { state: string; styles: Styles }) {
         value={code}
         onChange={(e) => setCode(e.target.value)}
         lineNumbers
+        // Shows once the sample is cleared, so the Placeholder knob has
+        // something to paint.
+        placeholder="Write a GraphQL query…"
         disabled={state === 'disabled'}
         error={isError ? 'Syntax error on line 2: expected "}".' : undefined}
         className={

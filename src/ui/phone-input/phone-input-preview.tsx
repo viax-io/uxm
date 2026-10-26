@@ -19,6 +19,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-phone-input-background-color': styles.backgroundColor as string,
     '--uxm-phone-input-border-color': styles.borderColor as string,
     '--uxm-phone-input-color': styles.color as string,
+    '--uxm-phone-input-placeholder-color': styles.placeholderColor as string,
     '--uxm-phone-input-divider-color': styles.dividerColor as string,
     '--uxm-phone-input-caret-color': styles.caretColor as string,
     '--uxm-phone-input-border-radius': `${styles.borderRadius}px`,

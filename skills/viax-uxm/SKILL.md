@@ -117,6 +117,17 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **A Placeholder colour knob on every text-entry field**. `TextInput`, `Textarea`, `Select`,
+  `InputWithIcon`, `PasswordInput`, `DateInput`, `TimeInput`, `NumberInput`, `CurrencyInput`,
+  `PhoneInput` and `CodeEditor` read `--uxm-<id>-placeholder-color` (Studio knob **Placeholder**,
+  Default state), and `SearchDropdown` reads `--uxm-search-dropdown-trigger-placeholder-color`.
+  All default to `--color-text-muted`, so set one on a dark or brand-coloured field (a search box
+  in a dark top bar) instead of overriding `::placeholder` in app CSS. ⚠️ `InputWithIcon`,
+  `PasswordInput`, `DateInput` and `TimeInput` had no placeholder rule and painted the browser's
+  grey (#757575 in Chrome); they now paint `--color-text-muted`, a little darker in light
+  (#6E6A64, 5.37:1 on card) and lighter in dark (#A3A3A3, 6.89:1), like the rest of the input
+  family. A host `::placeholder` rule written as a workaround can go.
+
 ## Workflow
 
 ### Where the documentation lives

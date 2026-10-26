@@ -59,6 +59,7 @@ interface PhoneValue {
 | `--uxm-phone-input-padding-x` | – | `12px` | Horizontal padding (country button + input). |
 | `--uxm-phone-input-font-size` | – | `14px` | Country dial-code + input font size. |
 | `--uxm-phone-input-color` | `--color-text` | – | Default text colour (input + country). |
+| `--uxm-phone-input-placeholder-color` | `--color-text-muted` | – | Number placeholder (`::placeholder`). |
 | `--uxm-phone-input-divider-color` | `--color-border` | – | Border between country button and input. |
 | `--uxm-phone-input-caret-color` | `--color-text-muted` | – | Country caret colour. |
 | `--uxm-phone-input-country-hover-bg` | `--color-surface-alt` | – | Country button hover background. |
@@ -83,7 +84,7 @@ The country picker panel is the shared `<Listbox>` (`.uxm-listbox__panel`) — i
 | `--color-card` | Surfaces / Card | Wrapper + popover background; hover / error backgrounds. |
 | `--color-border` | Borders / Border | Wrapper border; country / input divider; popover border. |
 | `--color-text` | Text / Text | Input + country text. |
-| `--color-text-muted` | Text / Text Muted | Caret, placeholder, search-icon, dial-code in rows. |
+| `--color-text-muted` | Text / Text Muted | Caret, placeholder (fallback of `-placeholder-color`), search-icon, dial-code in rows. |
 | `--color-surface-alt` | Surfaces / Surface Alt | Country-button hover; disabled bg; popover row hover. |
 | `--color-accent` | Accent / Accent | Hover / focus border + focus ring; selected-row background. |
 | `--color-text-inverse` | Text / Text Inverse | Selected-row text colour. |

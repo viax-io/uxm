@@ -125,7 +125,7 @@
   font-size: calc(var(--uxm-phone-input-font-size, 14px) * var(--type-scale, 1));
 }
 .uxm-phone-input__input::placeholder {
-  color: var(--color-text-muted);
+  color: var(--uxm-phone-input-placeholder-color, var(--color-text-muted));
 }
 .uxm-phone-input__input:disabled {
   cursor: not-allowed;

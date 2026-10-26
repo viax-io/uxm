@@ -28,6 +28,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-select-dropdown-bg': styles.backgroundColor as string,
     '--uxm-select-dropdown-border-color': styles.borderColor as string,
     '--uxm-select-dropdown-color': styles.color as string,
+    '--uxm-select-dropdown-placeholder-color': styles.placeholderColor as string,
     '--uxm-select-dropdown-border-radius': `${styles.borderRadius}px`,
     '--uxm-select-dropdown-padding-x': `${styles.paddingX}px`,
     '--uxm-select-dropdown-padding-y': `${styles.paddingY}px`,

@@ -70,6 +70,11 @@ span.uxm-time-input__icon {
   transition: border-color 0.15s, background-color 0.15s, color 0.15s;
   box-sizing: border-box;
 }
+/* `HH:MM` is the placeholder. Without a rule of its own it takes the
+   browser's grey (#757575 in Chrome). */
+.uxm-time-input__input::placeholder {
+  color: var(--uxm-time-input-placeholder-color, var(--color-text-muted));
+}
 .uxm-time-input[data-format="12h"] .uxm-time-input__input {
   /* 12h: reserve right padding for the clock icon + AM/PM suffix + gaps.
      The meridiem term scales with the type scale because the suffix it reserves

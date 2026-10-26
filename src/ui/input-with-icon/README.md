@@ -55,6 +55,7 @@ Extends `InputHTMLAttributes<HTMLInputElement>` — any standard input attribute
 | `--uxm-input-with-icon-border-color` | `--color-border` | – | Input border. |
 | `--uxm-input-with-icon-radius` | – | `8px` | Input corner radius. |
 | `--uxm-input-with-icon-color` | `--color-text` | – | Input text colour. |
+| `--uxm-input-with-icon-placeholder-color` | `--color-text-muted` | – | Placeholder text (`::placeholder`). Up to 4.71.x the field had no placeholder rule, so the browser's grey painted (#757575 in Chrome). |
 | `--uxm-input-with-icon-font-size` | – | `14px` | Input font size. |
 | `--uxm-input-with-icon-padding-y` | – | `8px` | Input vertical padding. |
 | `--uxm-input-with-icon-padding-x` | – | `12px` | Input right padding when not clearable. The left padding is computed from the icon (see the note below). |
@@ -77,7 +78,7 @@ Focus border (`var(--color-accent)`) and the clear button styling (`color-mix` d
 | `--color-surface` | Surfaces / Surface | Input background. |
 | `--color-border` | Borders / Border | Input border. |
 | `--color-text` | Text / Text | Input text colour and clear-button colour-mix base. |
-| `--color-text-muted` | Text / Text Muted | Leading icon and clear button resting colour. |
+| `--color-text-muted` | Text / Text Muted | Leading icon and clear button resting colour; placeholder text. |
 | `--color-accent` | Accent / Accent | Focused border colour. |
 
 The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens/index.ts`) — that array is the canonical source for MODO's editor UI.

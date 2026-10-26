@@ -19,6 +19,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-search-dropdown-trigger-bg': styles.triggerBg as string,
     '--uxm-search-dropdown-trigger-border': styles.triggerBorder as string,
     '--uxm-search-dropdown-trigger-color': styles.triggerColor as string,
+    '--uxm-search-dropdown-trigger-placeholder-color': styles.triggerPlaceholderColor as string,
     '--uxm-search-dropdown-trigger-radius': `${styles.triggerRadius}px`,
     '--uxm-search-dropdown-trigger-padding-x': `${styles.triggerPaddingX}px`,
     '--uxm-search-dropdown-trigger-padding-y': `${styles.triggerPaddingY}px`,

@@ -103,6 +103,7 @@ Extends `HTMLAttributes<HTMLDivElement>` (minus `onScroll`, re-typed below).
 | `--uxm-code-editor-bg` | `--color-surface-alt` | – | Root background (both atoms). |
 | `--uxm-code-editor-border-color` | `--color-border` | – | Root border. |
 | `--uxm-code-editor-color` | `--color-text` | – | Code text. |
+| `--uxm-code-editor-placeholder-color` | `--color-text-muted` | – | Placeholder text (`::placeholder`, `CodeEditor` only). |
 | `--uxm-code-editor-border-radius` | – | `8px` | Root radius. |
 | `--uxm-code-editor-font-family` | – | `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace` | Typeface for code **and** gutter. |
 | `--uxm-code-editor-font-size` | – | `12.5px` | Multiplied by `--type-scale`. |

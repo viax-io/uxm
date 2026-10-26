@@ -53,6 +53,7 @@ Extends `Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'def
 |----------|----------------|---------|---------|
 | `--uxm-number-input-bg` | `--color-card` | – | Input background. |
 | `--uxm-number-input-color` | `--color-text` | – | Input text colour. |
+| `--uxm-number-input-placeholder-color` | `--color-text-muted` | – | Placeholder text (`::placeholder`). |
 | `--uxm-number-input-border-color` | `--color-border` | – | Input border colour. |
 | `--uxm-number-input-border-radius` | – | `8px` | Border radius. |
 | `--uxm-number-input-padding-y` | – | `10px` | Vertical padding. |
