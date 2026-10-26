@@ -294,7 +294,8 @@ only the real emitter knows the names: knobs like `backgroundColor` emit a
 literal property unless mapped, and the script's regex over
 `generate-css-mapping.ts` had been skipping every unquoted id (`card`, `tabs`,
 `checkbox`, …) until this fix. A var read by nothing at all is still not
-checked — that flags ~80 behaviour/composite knobs and isn't worth gating yet.
+checked — that flags ~60 behaviour/composite knobs and isn't worth gating yet
+(the ButtonGroup entry below covers the narrower check that is).
 
 **The inverse of this trap: Studio can UNDER-show a fallback chain.** Everything
 above is about the workbench looking right while a consumer breaks. A chain that
@@ -326,6 +327,37 @@ reporting it. **How to apply:** a preview should hand the atom what a consumer
 hands it (the README's usage) and let the knob arrive as a var, never re-apply a
 knob value through a prop. `tests/input-icon-size.test.ts` now pins the
 slot-and-glyph pairing for every `iconSize` knob that feeds a padding.
+
+**A var nothing reads passes every gate — ButtonGroup's Border Radius.** The
+knob emitted `--uxm-button-group-border-radius`, the preview projected the same
+name, and `button-group.scss` hard-coded `border-radius: 8px`. This one didn't
+even look right in Studio: the slider moved and the group stayed at 8px. It
+still shipped, because no gate asks whether anything reads a var. The drift
+script compares state knobs only and skips unread vars, and `knob-wiring` checks
+only vars that SOME atom reads. Found from outside again, by the theme proof.
+The full "emitted but unread" check is still too noisy to gate (~60 vars, most
+of them behaviour knobs such as `showArrow` and composite mock-ups such as
+`login-page`). `knob-wiring` now runs a narrower one with no allowlist: every
+`--uxm-*` name a preview projects must be read by some atom. A preview only
+projects a var to drive a stylesheet, so an unread one is a dead knob or a typo.
+**What it doesn't catch:** a preview that projects the name the atom reads while
+the emitter writes another (RadioGroup's card knobs, the zoom control's divider),
+and a preview that paints a knob through inline style properties instead of a
+var (ButtonWithIcon's radius, padding and font). Both look live in Studio and do
+nothing in an app. Nor does it ask WHICH declaration reads the var, only that
+some non-preview source does — found while mutation-testing this very fix:
+reverting the root's `border-radius` alone left both wiring checks green,
+because the end items' `calc()` still read the name while the root no longer
+rounded. Pinning a specific declaration is a portal check, not a gate. It also
+only sees a name written as a literal quoted object key: one built by a ternary
+(`Avatar`'s preview picks between two names), a template, or set through
+`style.setProperty` is never examined.
+
+Of the ~60 unread vars, most are behaviour knobs (`showArrow`, `showLabel`) or
+composite mock-ups (`login-page` alone is 17), but **about 17 are real style
+knobs that a theme would expect to work**: `button-with-icon` ×6,
+`radio-group`'s card set ×5, `content-tooltip` `shadow` and `titleSize`, and
+`icon` `size` / `strokeWidth`. Don't read the count as "all behaviour knobs".
 
 ---
 

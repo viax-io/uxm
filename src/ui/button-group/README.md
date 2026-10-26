@@ -54,6 +54,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — `onChange` is rep
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-button-group-border-color` | `--color-border` | – | Root border + per-item right divider. |
+| `--uxm-button-group-border-radius` | – | `8px` | Root corner radius. The first and last items round their outer corners to it, less the 1px border, so a focus ring on an end item follows the curve; the corners are logical, so they follow `dir`. Set the radius through this variable — a plain `border-radius` override on the root (via `className`) leaves the end items at the old radius, with the ring clipped again. |
 | `--uxm-button-group-inactive-bg` | `--color-card` | – | Resting background of unselected items. |
 | `--uxm-button-group-inactive-text` | `--color-text-muted` | – | Resting text colour of unselected items. |
 | `--uxm-button-group-active-bg` | `--color-accent-subtle` | – | Background of the active item. |
