@@ -119,6 +119,15 @@ catalog.
 
 ### Unreleased
 
+- **CDN: the studio ships as `uxm-studio.esm.js`** (unreleased) — `UxmApp` and the rest of
+  `@viax.io/uxm/studio` for a page that already has React 19, plus `uxm-studio.css` and one
+  lazily loaded `chunks/<locale>-<hash>.js` per studio locale. It imports the components from the
+  sibling `./uxm.esm.js` instead of carrying its own copy, so host and studio share one locale
+  context and one toast store: map `@viax.io/uxm/ui` to the `uxm.esm.js` of the **same** version
+  folder, and load the studio from a versioned path, never `latest/` (a release removes the
+  previous chunks there). `uxm.esm.js` also exports `VERSION` now — CDN-only, for hosts with no
+  `package.json` to read. Recipe 18 has the import map.
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh

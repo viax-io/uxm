@@ -475,6 +475,28 @@ location, never from `cwd`.
 
 ---
 
+## The studio reaches ui by more than the barrel
+
+Making `ui` external in the CDN studio bundle by import specifier —
+`/(\.\.\/)+ui\/index\.js$/`, from a probe on 22-10-2026 — looked right: every
+`dist/studio` file imports ui through `../ui/index.js`. The bundle still came
+out with 213 ui modules inside, `dist/ui/index.js` among them, i.e. a second
+copy of ui (two locale contexts, two toast stores). The studio's registry
+imports the per-atom previews (`dist/ui/*/*-preview.js`), and those reach ui
+through `../index.js` and siblings like `./menu.js`, none of which the pattern
+matches. The probe's "181 KB gz" was that copy; the real bundle is ~126.
+
+**How to apply:** decide external-or-bundled on the RESOLVED path
+(`scripts/cdn/studio-bundle.mjs`), and prove it from the esbuild metafile, not
+by grepping the output — after minification no name like `UxmLocaleProvider`
+survives to grep for, so that check passes on a broken bundle. A preview that
+needs a value the public `/ui` surface doesn't export breaks the Node smoke
+with "does not provide an export named …": move the value into a pure-data
+module and add it to `UI_DUPLICATE_OK` (how `list-item-styles.ts` came about),
+never add it to the public barrel for the CDN's sake.
+
+---
+
 ## A new mode isn't done until the studio can reach it
 
 Three times in one release train (4.44-4.48) an atom gained a mode and the

@@ -976,6 +976,41 @@ actually reach for.
 </script>
 ```
 
+**The studio workbench (`UxmApp`) from the CDN** (unreleased) — same import map, plus the studio
+file from the **same** version folder. It imports the components from that folder's
+`./uxm.esm.js`, so map `@viax.io/uxm/ui` to exactly that file; any other version (or
+`uxm.standalone.js`) puts a second copy of ui on the page and splits the locale context and the
+toast store. Load it from a versioned path, never `latest/`: its locale dictionaries are lazy
+`chunks/` whose names change every release.
+
+```html
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19",
+    "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime",
+    "react-dom": "https://esm.sh/react-dom@19",
+    "react-dom/client": "https://esm.sh/react-dom@19/client",
+    "@viax.io/uxm/ui": "https://uxm.viax.io/4.72.0/uxm.esm.js",
+    "@viax.io/uxm/studio": "https://uxm.viax.io/4.72.0/uxm-studio.esm.js"
+  }
+}
+</script>
+<link rel="stylesheet" href="https://uxm.viax.io/4.72.0/uxm.css" />
+<link rel="stylesheet" href="https://uxm.viax.io/4.72.0/uxm-studio.css" />
+<script type="module">
+  import { createElement } from 'react';
+  import { createRoot } from 'react-dom/client';
+  import { UxmApp, createReadOnlyPersistence } from '@viax.io/uxm/studio';
+
+  createRoot(document.getElementById('root')).render(
+    createElement(UxmApp, { persistence: createReadOnlyPersistence(), locale: 'de' }),
+  );
+</script>
+```
+
+`import { VERSION } from '@viax.io/uxm/ui'` gives a CDN page the release it runs (CDN build only).
+
 Still copy recipe 0's host baseline in verbatim — a CDN page gets none of a bundler-based app's
 resets, and skipping it renders the whole page in Times New Roman with inputs overflowing their
 containers.
