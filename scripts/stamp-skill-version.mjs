@@ -16,6 +16,10 @@
  *      sections; older ones are rolled verbatim to the END of
  *      references/changelog.md (ascending order), so the skill stays short
  *      without anyone hand-moving text
+ *   7. Inline "(unreleased)" qualifiers resolve to the release that shipped
+ *      them: dropped inside a "### New in X.Y.Z" section (its heading carries
+ *      the version), rewritten to "(X.Y.Z)" everywhere else in SKILL.md and the
+ *      references (see dropQualifiers / resolveQualifiers)
  *
  * The component count is derived from the src/ui component folders (the same
  * set the barrel exports), so it can never drift from the code. Exits 1 if a
@@ -124,6 +128,45 @@ function stripGuidanceComment(text) {
   return text.replace(/\n*<!-- Notes for changes merged but not yet published\.[\s\S]*?-->\n*/g, '\n\n');
 }
 
+/**
+ * Drop the bare "(unreleased)" qualifiers from a "### New in X.Y.Z" section.
+ *
+ * The heading already says when it shipped, so the qualifier is just removed,
+ * emphasis and all (`**(unreleased)**`, `*(unreleased)*`), with ONE space
+ * around it: the one before it, or the one after when it opens a parenthesis
+ * ("(**(unreleased)** an array"). One that starts a wrapped line takes the
+ * line's punctuation back up to the end of the line before, so
+ * "knob**\n  (unreleased). The" becomes "knob**.\n  The", not "knob**\n  . The".
+ * A qualifier that carries more text — "(unreleased, default `false`)" — is
+ * left to resolveQualifiers, which keeps the text.
+ */
+function dropQualifiers(text) {
+  return text
+    .replace(/\n([ \t]+)(\*{0,2})\(unreleased\)\2([.,;:]?) ?/g, '$3\n$1')
+    .replace(/ (\*{0,2})\(unreleased\)\1|(\*{0,2})\(unreleased\)\2 ?/g, '');
+}
+
+/**
+ * Rewrite every remaining "unreleased" qualifier to the release that ships it.
+ *
+ * Every merge to master releases, so whatever a file still calls unreleased
+ * when the stamper runs is exactly what `release` publishes. Before this ran
+ * here the qualifiers were dropped by hand after each release (#96, #100 and
+ * earlier), and until someone did, the skill told agents that shipped API was
+ * not out yet.
+ *
+ * Only the parenthesised forms the skill has used are touched: "(unreleased)",
+ * "(unreleased, …)" / "(unreleased; …)" / "(unreleased: …)", and the word as a
+ * later item of a parenthesised list: "(…, unreleased)", "(16px; unreleased, …)".
+ * Lower-case on purpose, so the "### Unreleased" heading is never a match, and
+ * neither is prose like "merged but unreleased" outside parentheses.
+ */
+function resolveQualifiers(text, release = version) {
+  return text
+    .replace(/\(unreleased(?=[),;:])/g, `(${release}`)
+    .replace(/([,;] )unreleased(?=[),;:])/g, `$1${release}`);
+}
+
 // A feature PR may have parked its notes under "### Unreleased". Promote that
 // section to the released version and immediately re-open an empty one.
 //
@@ -161,6 +204,18 @@ if (unreleasedAt !== -1) {
       skill.slice(bodyEnd);
   }
 }
+// Each "### New in" section resolves to ITS OWN version — the one promoted
+// above is simply the newest of them. A qualifier left under an older heading
+// (a note appended after that release was stamped) shipped with that release,
+// not this one. Whatever remains outside those sections ships now. Done before
+// the roll below, so a section moved to the append-only changelog never
+// carries a qualifier out with it.
+skill = resolveQualifiers(
+  skill.replace(/^### New in (\d+\.\d+\.\d+)\n[\s\S]*?(?=^#{2,3} |(?![\s\S]))/gm, (section, release) =>
+    resolveQualifiers(dropQualifiers(section), release),
+  ),
+);
+
 // Roll surplus release sections into the changelog. The API-surface region
 // runs from the "## vX.Y.Z — current API surface" heading to the next "## ";
 // inside it, every "### New in …" section is a release entry, oldest first.
@@ -202,6 +257,18 @@ catalog = stampOnce(
   'component-catalog.md',
 );
 writeFileSync(catalogPath, catalog);
+
+// The other references carry qualifiers too (catalog rows, token tables,
+// recipes). changelog.md is history: append-only, and its prose describes the
+// qualifier convention itself, so it is never rewritten.
+const referencesDir = join(root, 'skills/viax-uxm/references');
+for (const name of readdirSync(referencesDir)) {
+  if (!name.endsWith('.md') || name === 'changelog.md') continue;
+  const path = join(referencesDir, name);
+  const text = readFileSync(path, 'utf8');
+  const resolved = resolveQualifiers(text);
+  if (resolved !== text) writeFileSync(path, resolved);
+}
 
 // eslint-disable-next-line no-console -- release-log line; the CI job output is the audience
 console.log(`stamp-skill-version: stamped v${version}, ${componentCount} components`);

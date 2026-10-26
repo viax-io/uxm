@@ -1,6 +1,24 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.5.1 → 1.5.2
+Bump rationale: PATCH — the release stamper now also resolves the skill's
+"(unreleased)" qualifiers, so the manual post-release cleanup step is gone.
+The rule for authors (mark rows "(unreleased)") is unchanged; only who
+removes the word changed, from a hand-made PR to the release commit.
+
+Modified principles:
+  - Skill governance bullets — `/update-ai-skill` does a version/qualifier
+    check instead of a post-release cleanup; the CI-stamped list gains the
+    qualifiers.
+Added sections: none. Removed sections: none.
+
+Templates requiring updates:
+  ✅ .claude/commands/update-ai-skill.md (lifecycle row, step 3)
+  ✅ scripts/stamp-skill-version.mjs + tests/stamp-skill-version.test.ts
+  — CLAUDE.md, agents: no change needed
+
+Previous report (1.5.0 → 1.5.1) — kept for history:
 Version change: 1.5.0 → 1.5.1
 Bump rationale: PATCH — clarifies Principle VI's "the host supplies the
 locale" rule: with no host `locale`, the studio may offer its own switcher
@@ -413,13 +431,14 @@ end.
   fact the skill states. The shared `viax-ai-skills` GitHub repo is a
   distribution target only, synced from release commits **manually by the
   maintainer**. `/update-ai-skill` works only locally (drift-check +
-  post-release cleanup in `skills/viax-uxm/`) and ends by reminding about the
+  version/qualifier check in `skills/viax-uxm/`) and ends by reminding about the
   manual sync — Claude never pushes to the distribution repo.
 - Any PR that adds, renames, or removes a public component **MUST** update the
   skill in the same PR: a catalog/cheatsheet row (marked "(unreleased)") and a
   bullet under `### Unreleased` in SKILL.md.
-- The skill's version marker, component count, and the `### Unreleased` →
-  `New in X.Y.Z` rename are **stamped by CI at release**
+- The skill's version marker, component count, the `### Unreleased` →
+  `New in X.Y.Z` rename, and the "(unreleased)" qualifiers (dropped under a
+  `New in` heading, rewritten to the version elsewhere) are **stamped by CI at release**
   (`scripts/stamp-skill-version.mjs` via semantic-release). Hand-editing these
   markers is prohibited — the stamp fails the release on marker drift, by
   design.
@@ -476,4 +495,4 @@ end.
   document end-to-end and file follow-up issues for drift.
 - **Deferred items.** None.
 
-**Version**: 1.5.1 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-10-13
+**Version**: 1.5.2 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-10-26
