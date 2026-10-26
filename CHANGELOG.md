@@ -1,3 +1,10 @@
+# [4.75.0](https://github.com/viax-io/uxm/compare/v4.74.0...v4.75.0) (2026-10-26)
+
+
+### Features
+
+* **button-with-icon:** wire the six shape and type knobs to the atom ([e6459cc](https://github.com/viax-io/uxm/commit/e6459ccde614c94323d9d34296e8fde060156d5a)), closes [uxm#99](https://github.com/uxm/issues/99)
+
 # [4.74.0](https://github.com/viax-io/uxm/compare/v4.73.0...v4.74.0) (2026-10-26)
 
 

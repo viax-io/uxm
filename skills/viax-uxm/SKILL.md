@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.74.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.75.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.74.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.75.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.74.0 — current API surface (overrides training data)
+## v4.75.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,28 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.71.0
-
-- **`PageHeader`: the title keeps its own line height, and the tile's glyph has a knob**.
-  The title read no `line-height`, so a theme's body line height
-  (`brand.bodyLineHeight` → `body { line-height }`) reached it: at 1.6 a 39px title stood in a
-  62px line box, and since the row is top-aligned the icon tile sat ~9px above the letters. It
-  now reads `--uxm-page-header-title-line-height` (default `normal`; Studio knob **Title Line
-  Height**, a select of `normal` plus ratios), so the tile stays level with the title whatever
-  the body uses — that 39px title's box becomes 47.5px, 1.8px off a 44px tile. **An unthemed
-  header is unchanged**: `normal` is what the title already resolved to wherever the host set no
-  line height (27px at the stock 22px Inter title, before and after). What changes is a line
-  height inherited from ANY ancestor — Tailwind's preflight on `html`, an app shell's own rule,
-  or one set on the `PageHeader` root — which gave a 33px box at 1.5 and no longer reaches the
-  title; multi-line titles tighten too. Set the knob to get a taller box back (the picker offers
-  ratios to 1.5; the variable takes any value). The glyph inside
-  the tile was stuck at `IconTile`'s 14px however large **Icon
-  Size** made the tile; `--uxm-page-header-icon-glyph-size` (Studio knob **Icon Glyph Size**)
-  sizes it, falling back to the global `--uxm-icon-tile-icon-size` and then 14px, so a theme
-  that sized it through the `icon-tile` knob keeps that. The Studio preview now renders the real
-  atom (its hand-rolled glyph was 55% of the tile, not the 14px an app gets). Additive: two new
-  `--uxm-*` knobs, and a header that inherits no line height renders identically.
 
 ### New in 4.71.1
 
@@ -118,13 +96,7 @@ catalog.
   `color-mix(in oklab, currentcolor 50%, transparent)`, which tracked each field's own text colour
   and stayed legible on any background; they now pin to the token like every other field.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.75.0
 
 - **`ButtonWithIcon`'s shape and type knobs reach the atom.** Border Radius, Padding X / Y,
   Font Size, Font Weight and Icon Size emitted `--uxm-button-with-icon-*` variables that
@@ -142,6 +114,14 @@ catalog.
   an `Icon` size other than 15** now draws 15px, because the slot sizes any `<svg>` in it the way
   `InputWithIcon` does — set the variable instead. Every svg in the slot is squared to that size,
   so a composite mark needs its own dimensions.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 

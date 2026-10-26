@@ -2152,3 +2152,25 @@ reached the published library; now shipped in 2.8.0.
   `--color-accent-bold` and a themed `-unchecked-border` still goes `--color-text-strong` —
   theme hover with `-hover-checked-bg` / `-hover-checked-border` / `-hover-unchecked-border`.
   The `Listbox` marker honours the older names too.
+
+### New in 4.71.0
+
+- **`PageHeader`: the title keeps its own line height, and the tile's glyph has a knob**.
+  The title read no `line-height`, so a theme's body line height
+  (`brand.bodyLineHeight` → `body { line-height }`) reached it: at 1.6 a 39px title stood in a
+  62px line box, and since the row is top-aligned the icon tile sat ~9px above the letters. It
+  now reads `--uxm-page-header-title-line-height` (default `normal`; Studio knob **Title Line
+  Height**, a select of `normal` plus ratios), so the tile stays level with the title whatever
+  the body uses — that 39px title's box becomes 47.5px, 1.8px off a 44px tile. **An unthemed
+  header is unchanged**: `normal` is what the title already resolved to wherever the host set no
+  line height (27px at the stock 22px Inter title, before and after). What changes is a line
+  height inherited from ANY ancestor — Tailwind's preflight on `html`, an app shell's own rule,
+  or one set on the `PageHeader` root — which gave a 33px box at 1.5 and no longer reaches the
+  title; multi-line titles tighten too. Set the knob to get a taller box back (the picker offers
+  ratios to 1.5; the variable takes any value). The glyph inside
+  the tile was stuck at `IconTile`'s 14px however large **Icon
+  Size** made the tile; `--uxm-page-header-icon-glyph-size` (Studio knob **Icon Glyph Size**)
+  sizes it, falling back to the global `--uxm-icon-tile-icon-size` and then 14px, so a theme
+  that sized it through the `icon-tile` knob keeps that. The Studio preview now renders the real
+  atom (its hand-rolled glyph was 55% of the tile, not the 14px an app gets). Additive: two new
+  `--uxm-*` knobs, and a header that inherits no line height renders identically.
