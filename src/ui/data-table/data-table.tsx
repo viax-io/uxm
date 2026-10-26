@@ -624,7 +624,18 @@ export function DataTable<T>({
           content is wider, so the two go together — but switching every table
           to fixed would re-lay-out every existing consumer, which is a major
           decision, not a side effect of adding a prop. */}
-      {scrolls && (
+      {/* `edges.start || edges.end` is false ONLY when there is nothing to
+          scroll: with any overflow, `end` is true at the start, `start` is true
+          at the end, and both are true in between. So this gates on REAL
+          overflow while never unmounting an arrow mid-scroll — which is the
+          2.4.3 problem the mounted-but-inert shape exists to avoid.
+
+          Without it the arrows keyed off configuration alone, so ANY sticky
+          column put two permanently-inert buttons over a table that fits.
+          cs-ops-portal pins an Open column on every list, so every list in that
+          portal carried them. The scroller's own `focusable` has always been
+          measured this way; the arrows just did not follow. */}
+      {scrolls && (edges.start || edges.end) && (
         <ScrollArrows
           scrollerRef={scrollerRef}
           edges={edges}

@@ -126,14 +126,38 @@ function withGeometry(scrollWidth: number, clientWidth: number) {
 }
 
 describe('DataTable scroll arrows', () => {
-  it('renders both arrows, inert, when there is nowhere to scroll', () => {
+  it('renders no arrows at all when there is nowhere to scroll', () => {
+    // Was "mounted but inert". The mounted-but-inert shape exists for the
+    // 2.4.3 problem at the ENDS of a scroll: pressing `forward` until it
+    // disables must not unmount the button you are pressing. That cannot
+    // happen in a table that never scrolls — a disabled arrow's handler is
+    // `active && nudge()`, a no-op, so no interaction can change the overflow
+    // that would unmount it. The test below pins the case the rationale is
+    // actually about.
+    //
+    // Keying the arrows off `scrollable`/sticky alone put two permanently
+    // inert buttons over every table that fits. One sticky column was enough,
+    // which is how cs-ops-portal ended up with them on every list.
     render(table(PLAIN, { scrollable: true }));
-    const back = screen.getByRole('button', { name: 'Scroll Table back' });
-    const forward = screen.getByRole('button', { name: 'Scroll Table forward' });
-    // Mounted but inert, NOT unmounted: removing the button under the pointer
-    // or the focus ring is the 2.4.3 problem this shape avoids.
-    expect(back).toHaveAttribute('aria-disabled', 'true');
-    expect(forward).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.queryByRole('button', { name: 'Scroll Table back' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Scroll Table forward' })).toBeNull();
+  });
+
+  it('keeps both arrows mounted at either end of a real scroll', () => {
+    // The 2.4.3 guard, pinned where it belongs. At the start `back` is inert
+    // and at the end `forward` is — but both stay in the DOM, so the button
+    // under the pointer or the focus ring is never removed.
+    const restore = withGeometry(1000, 400);
+    try {
+      render(table(PLAIN, { scrollable: true }));
+      expect(screen.getByRole('button', { name: 'Scroll Table back' })).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+      expect(screen.getByRole('button', { name: 'Scroll Table forward' })).toBeInTheDocument();
+    } finally {
+      restore();
+    }
   });
 
   it('enables the forward arrow once there is overflow', () => {
@@ -197,14 +221,20 @@ describe('DataTable scroll arrows', () => {
   });
 
   it('takes a caller-supplied arrow label', () => {
-    render(
-      table(PLAIN, {
-        scrollable: true,
-        scrollLabel: 'Orders',
-        scrollArrowLabel: (d, l) => `${l}: ${d === 'start' ? 'previous' : 'next'}`,
-      }),
-    );
-    expect(screen.getByRole('button', { name: 'Orders: next' })).toBeInTheDocument();
+    // Needs geometry: the arrows only mount when there is real overflow.
+    const restore = withGeometry(1000, 400);
+    try {
+      render(
+        table(PLAIN, {
+          scrollable: true,
+          scrollLabel: 'Orders',
+          scrollArrowLabel: (d, l) => `${l}: ${d === 'start' ? 'previous' : 'next'}`,
+        }),
+      );
+      expect(screen.getByRole('button', { name: 'Orders: next' })).toBeInTheDocument();
+    } finally {
+      restore();
+    }
   });
 });
 
