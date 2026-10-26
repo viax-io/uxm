@@ -309,6 +309,11 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    *   would silently drop the other, which is what the first version did.
    * - `onKeyDown` is COMPOSED the same way, for the same reason: yours runs
    *   first, and `preventDefault()` cancels the Enter / Space activation.
+   *   Note the asymmetry it leaves: keyboard activation calls `onRowClick`
+   *   directly, so your `onClick` does NOT run on Enter / Space. That is
+   *   deliberate — an `onClick` firing without a click would surprise more
+   *   consumers than it helps — so put anything that must see every
+   *   activation (analytics, say) in `onRowClick` itself, not in `onClick`.
    * - everything else wins over the default, `aria-current` and `tabIndex`
    *   included — a consumer may have its own idea of what "current" means,
    *   and `tabIndex: -1` is the escape hatch for running your own roving
