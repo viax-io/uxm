@@ -12,7 +12,7 @@ import { Icon } from '@viax.io/uxm';
 
 function Example() {
   return (
-    <ButtonWithIcon icon={<Icon glyph="plus" size={14} />} onClick={() => addRow()}>
+    <ButtonWithIcon icon={<Icon glyph="plus" />} onClick={() => addRow()}>
       Add row
     </ButtonWithIcon>
   );
@@ -35,11 +35,40 @@ function Example() {
 
 ## CSS variables
 
+One per Studio knob. Every value below is the fallback, so an unthemed button
+renders exactly as it always has.
+
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
+| `--uxm-button-with-icon-background-color` | `--color-card` | – | Resting background. |
+| `--uxm-button-with-icon-border-color` | `--color-border` | – | Resting border. |
+| `--uxm-button-with-icon-color` | `--color-text-muted` | – | Resting label and glyph colour. |
+| `--uxm-button-with-icon-hover-background-color` | `--color-accent-subtle` | – | Hover background. |
+| `--uxm-button-with-icon-hover-border-color` | `--color-accent` | – | Hover border. |
+| `--uxm-button-with-icon-hover-color` | `--color-text` | – | Hover label colour. |
+| `--uxm-button-with-icon-active-background-color` | `--color-card` | – | `:active` background. |
+| `--uxm-button-with-icon-active-border-color` | `--color-accent` | – | `:active` border. |
+| `--uxm-button-with-icon-active-color` | `--color-text` | – | `:active` label colour. |
+| `--uxm-button-with-icon-focus-ring-color` | `--color-accent` | – | `:focus-visible` outline. |
+| `--uxm-button-with-icon-focus-color` | `--color-text` | – | `:focus-visible` label colour. |
+| `--uxm-button-with-icon-disabled-color` | `--color-text-muted` | – | Disabled label colour. |
+| `--uxm-button-with-icon-disabled-opacity` | – | `0.4` | Disabled opacity. |
+| `--uxm-button-with-icon-border-radius` | – | `4px` | Corner radius. |
+| `--uxm-button-with-icon-padding-x` | – | `12px` | Inline padding. |
+| `--uxm-button-with-icon-padding-y` | – | `8px` | Block padding. |
+| `--uxm-button-with-icon-font-size` | – | `13px` | Label size, still multiplied by `--type-scale`. |
+| `--uxm-button-with-icon-font-weight` | `--font-weight-medium` | `500` | Label weight. |
+| `--uxm-button-with-icon-icon-size` | – | `15px` | Glyph width and height — any `<svg>` in the icon slot, whatever `size` the `Icon` was given. |
 | `--uxm-button-with-icon-gap` | – | `8px` | Gap between the icon span and the label span. |
 
-The background, border, and text colours read the design tokens below directly (no per-component CSS-var indirection).
+The six rows above Icon Gap used to be hard-coded, so their Studio knobs
+emitted a variable nothing read: the slider moved in the workbench (its preview painted the value
+inline) and no app ever changed. Pass the `Icon` without a `size` and set
+`--uxm-button-with-icon-icon-size` instead — an svg's `width` / `height` are
+presentation attributes, and the rule in the icon slot out-ranks them. A call
+site that passed `size={15}` renders identically; any other size now draws
+15px. Every `<svg>` in the slot is squared to that size, so a composite or
+non-square mark has to set its own dimensions inline.
 
 ## Design tokens (MODO-configurable)
 
@@ -60,8 +89,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 |-----------------|---------|--------|
 | Default | – | `--color-card` bg, `--color-border` outline, `--color-text-muted` text. |
 | Hover | `:hover` | Background fills to `--color-accent-subtle`, border shifts to `--color-accent`, text/icon to `--color-text`; 0.15s transition. |
-| Disabled | `disabled` attribute | Native disabled cursor; no built-in opacity dim — handle visually via consumer styling. |
-| Focus | `:focus-visible` | Inherits browser default focus ring; no token-driven focus outline. |
+| Disabled | `disabled` attribute | Native disabled cursor, label to `--uxm-button-with-icon-disabled-color` and `opacity: var(--uxm-button-with-icon-disabled-opacity, 0.4)`. |
+| Focus | `:focus-visible` | 2px outline in `--uxm-button-with-icon-focus-ring-color` (`--color-accent`) at 2px offset, label to `-focus-color`. |
 
 ## Accessibility
 

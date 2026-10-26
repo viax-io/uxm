@@ -314,12 +314,12 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'disabledOpacity', label: 'Opacity', control: 'slider', defaultValue: 0.4, min: 0.1, max: 1, step: 0.05, section: 'states', showWhen: { state: 'disabled' } },
       { key: 'disabledColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'states', showWhen: { state: 'disabled' } },
       // Shared style
-      { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 20, step: 1, unit: 'px' },
+      { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 20, step: 1, unit: 'px' },
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 32, step: 2, unit: 'px' },
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 8, min: 2, max: 16, step: 1, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 10, max: 18, step: 1, unit: 'px' },
       { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600', '700'] },
-      { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 16, min: 12, max: 24, step: 1, unit: 'px' },
+      { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 15, min: 12, max: 24, step: 1, unit: 'px' },
       { key: 'gap', label: 'Icon Gap', control: 'number', defaultValue: 8, min: 2, max: 16, step: 1, unit: 'px' },
     ],
     layoutVariants: [

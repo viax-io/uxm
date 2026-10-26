@@ -5,7 +5,6 @@ import { Icon } from '@/ui';
 import type { CSSProperties } from 'react';
 
 export function ButtonWithIconPreview({ styles, variants }: PreviewProps) {
-  const iconSize = styles.iconSize as number;
   const state = (variants.state as string) ?? 'default';
   const isHover = state === 'hover';
   const isPressed = state === 'active';
@@ -51,10 +50,15 @@ export function ButtonWithIconPreview({ styles, variants }: PreviewProps) {
 
   const cssVars = {
     ...forcedDirectOverrides,
-    borderRadius: styles.borderRadius as number,
-    padding: `${styles.paddingY}px ${styles.paddingX}px`,
-    fontSize: styles.fontSize as number,
-    fontWeight: styles.fontWeight as string,
+    // Projected as vars, not painted inline: the inline versions drove the
+    // canvas directly, so all six looked live in the workbench while the
+    // stylesheet hard-coded them and no app ever saw them.
+    '--uxm-button-with-icon-border-radius': styles.borderRadius != null ? `${styles.borderRadius}px` : undefined,
+    '--uxm-button-with-icon-padding-x': styles.paddingX != null ? `${styles.paddingX}px` : undefined,
+    '--uxm-button-with-icon-padding-y': styles.paddingY != null ? `${styles.paddingY}px` : undefined,
+    '--uxm-button-with-icon-font-size': styles.fontSize != null ? `${styles.fontSize}px` : undefined,
+    '--uxm-button-with-icon-font-weight': styles.fontWeight as string | undefined,
+    '--uxm-button-with-icon-icon-size': styles.iconSize != null ? `${styles.iconSize}px` : undefined,
     '--uxm-button-with-icon-gap': styles.gap != null ? `${styles.gap}px` : undefined,
     '--uxm-button-with-icon-background-color': styles.backgroundColor as string | undefined,
     '--uxm-button-with-icon-color': styles.color as string | undefined,
@@ -81,7 +85,7 @@ export function ButtonWithIconPreview({ styles, variants }: PreviewProps) {
 
   return (
     <ButtonWithIcon
-      icon={<Icon glyph="refresh" size={iconSize} />}
+      icon={<Icon glyph="refresh" />}
       style={cssVars}
       disabled={isDisabled}
     >
