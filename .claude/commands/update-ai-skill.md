@@ -9,7 +9,7 @@ Maintain the Claude skills this repo owns. **The editing source lives IN THIS RE
 | `skills/viax-portal/` | The portal generator (SKILL.md + the BEM MetaPrompt) | **No** — no version marker, no `(unreleased)` qualifiers; it tracks the library's API by hand |
 | `skills/viax-uxm-theming/` | How ANY app consumes the published UXM Studio config — fetch, apply, identity | **No** — same as above. Owns the theming topic; `viax-portal` delegates to it, so a change here must not be duplicated there |
 
-Steps 2 and 3 below (version check, post-release cleanup) apply to **`viax-uxm` only** —
+Steps 2 and 3 below (version check, leftover-qualifier check) apply to **`viax-uxm` only** —
 `viax-portal` has no markers to stamp. Step 1 (drift + hygiene) and step 4 (sync) cover
 **both**. The shared `viax-ai-skills` repo (`https://github.com/viax-io/viax-ai-skills`,
 private; clone as `git@github-viax:viax-io/viax-ai-skills.git` with the work-account ssh
@@ -27,19 +27,19 @@ files correct + a reminder to the maintainer that a manual sync is (or isn't) du
 | What | When | Who |
 |---|---|---|
 | Skill CONTENT (catalog rows, recipes, "### Unreleased" notes) | in the SAME feature PR as the library change | the author of the change |
-| Version marker + component count + "### Unreleased" → "New in X.Y.Z" | at release, automatically | CI: `scripts/stamp-skill-version.mjs` via `@semantic-release/exec` (see `.releaserc`); the stamped files land in the `chore(release)` commit |
-| Post-release cleanup (drop obsolete "(unreleased)" qualifiers) in `skills/viax-uxm/` | after a release lands | this command, locally in this repo |
+| Version marker + component count + "### Unreleased" → "New in X.Y.Z" + "(unreleased)" qualifiers resolved | at release, automatically | CI: `scripts/stamp-skill-version.mjs` via `@semantic-release/exec` (see `.releaserc`); the stamped files land in the `chore(release)` commit |
 | Sync to `viax-ai-skills` | after a release lands | the MAINTAINER, manually — this command only reminds |
 
 Authors must NEVER hand-edit the version/count markers — the stamp script requires each
 pattern to match exactly once and fails the release otherwise. Park not-yet-released notes
 under the `### Unreleased` heading in SKILL.md; mark catalog rows for unreleased atoms with
-"(unreleased)" — and drop that word during post-release cleanup (step 3 below).
+"(unreleased)". Don't remove it after the release: the stamper does, dropping it inside a
+"### New in X.Y.Z" section and rewriting it to "(X.Y.Z)" in the references (step 3 below).
 
 ## Usage
 
 ```
-/update-ai-skill          # drift-check + local post-release cleanup; reminds about the manual sync
+/update-ai-skill          # drift-check + version/qualifier check; reminds about the manual sync
 ```
 
 ## Workflow
@@ -78,12 +78,16 @@ under the `### Unreleased` heading in SKILL.md; mark catalog rows for unreleased
   report "skill is current", remind the maintainer to check that the manual sync to
   `viax-ai-skills` has been done for this version, and STOP.
 
-### 3. Post-release cleanup (local, in this repo)
+### 3. Leftover-qualifier check
 
-- Once the release has landed (marker stamped to the published version), remove the
-  "(unreleased)" qualifiers that the release has made obsolete — in THIS repo's
-  `skills/viax-uxm/` files. Leave the stamper-guidance comment in SKILL.md untouched.
-- These are content edits on a normal feature branch of this repo — never touch the
+- The release resolves every "(unreleased)" qualifier itself
+  (`scripts/stamp-skill-version.mjs`, pinned by `tests/stamp-skill-version.test.ts`), so after
+  a release `grep -rn "unreleased" skills/viax-uxm` should find only the `### Unreleased`
+  heading, its guidance comment, prose that is not a parenthesised qualifier, and history in
+  `references/changelog.md`.
+- Anything else is a form the stamper does not recognise. Fix it by hand on a normal branch
+  (use the version from `git tag --contains <commit>`, never the latest one by default) AND
+  teach the stamper that form with a test, so it is the last time. Never touch the
   version/count markers.
 
 ### 4. Remind about the manual sync (do NOT perform it)
