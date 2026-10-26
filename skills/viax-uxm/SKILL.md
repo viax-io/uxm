@@ -135,6 +135,17 @@ catalog.
 
 ### Unreleased
 
+- **A `Tooltip` arrow inside a `Popover` now points at the anchor, not at the middle of the
+  bubble.** It was a CSS constant (`left: 50%`), while `HoverTooltip` aligns the panel
+  `*-start` — so the arrow missed the trigger's centre by `(panelWidth - anchorWidth) / 2`, and
+  `truncatedOnly` means the bubble is wider than its anchor essentially every time it opens. On
+  a 182px table cell with a 579px tooltip the arrow sat **199px off, clear of the cell
+  entirely**. `Popover` now publishes the anchor's centre relative to the panel and the arrow
+  follows it, through the start/end flip and the viewport clamp alike. Affects everything that
+  goes through `HoverTooltip` — `DataTable` capped cells, every `EditableCell` variant,
+  `Button`. A standalone `Tooltip` you position yourself is unchanged, still 50%; `AppSidebar`
+  passes `showArrow={false}` and is untouched. No new props or public knobs.
+
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh

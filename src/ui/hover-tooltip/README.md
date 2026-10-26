@@ -36,7 +36,7 @@ Does **not** extend a native attribute interface — the prop list is closed and
 | `truncatedOnly` | `boolean` | `true` | Only open when the anchor actually overflows (`scrollWidth > clientWidth`). |
 | `openDelay` | `number` | `300` | Milliseconds of hover/focus before opening. |
 | `disabled` | `boolean` | – | Never open. |
-| `showArrow` | `boolean` | – | Forwarded to the inner `Tooltip`. |
+| `showArrow` | `boolean` | – | Forwarded to the inner `Tooltip`. The arrow points at the trigger's centre, not the bubble's — the panel is `*-start` aligned, so the two coincide only when the bubble happens to be as wide as the trigger, which `truncatedOnly` makes rare by definition. |
 
 The truncation check measures **the anchor element itself**, so the element you wrap must be the one carrying the ellipsis CSS. Wrapping a padded parent instead will read as "not truncated" and the tooltip will never open.
 

@@ -20,16 +20,42 @@
     width: 10px;
   }
 
-  &--top &__arrow {
-    bottom: -5px;
-    left: 50%;
+  /* The arrow points at the ANCHOR, not at the middle of itself.
+     `Popover` publishes the anchor's centre relative to the panel as
+     `--_uxm-popover-arrow-offset`, measured after its end/start flip and its
+     viewport clamp, so the arrow tracks the trigger wherever the panel ended
+     up. The error without this is (panelWidth - anchorWidth) / 2, and
+     `HoverTooltip` opens precisely when the content is too wide for its
+     anchor — so the panel is nearly always wider and the arrow was nearly
+     always wrong, by 199px on a 182px table cell in the case that found this.
+
+     A standalone `Tooltip` has no Popover around it, so the 50% fallback keeps
+     its existing behaviour exactly.
+
+     Clamped off the rounded corners: half the arrow's diagonal (10px square
+     rotated 45deg, so ~7.07px) plus whatever radius the body is carrying. If
+     the panel is narrower than two insets `clamp()` returns the min, which is
+     the correct degenerate answer. Only top/bottom get this — `Popover` never
+     resolves to a left/right placement, so wiring those would be a variable
+     nothing sets. */
+  &--top &__arrow,
+  &--bottom &__arrow {
+    --_uxm-tooltip-arrow-inset: calc(var(--uxm-tooltip-border-radius, 6px) + 7px);
+
+    left: clamp(
+      var(--_uxm-tooltip-arrow-inset),
+      var(--_uxm-popover-arrow-offset, 50%),
+      calc(100% - var(--_uxm-tooltip-arrow-inset))
+    );
     transform: translateX(-50%) rotate(45deg);
   }
 
+  &--top &__arrow {
+    bottom: -5px;
+  }
+
   &--bottom &__arrow {
-    left: 50%;
     top: -5px;
-    transform: translateX(-50%) rotate(45deg);
   }
 
   &--left &__arrow {

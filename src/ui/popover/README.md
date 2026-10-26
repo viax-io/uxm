@@ -70,6 +70,7 @@ Always `position: fixed`, so transformed or clipped ancestors cannot break it.
 
 - **Vertical flip**: if the preferred side lacks room for the panel and the opposite side has it, the panel flips. The resolved side is published as `data-placement` on the panel, so chrome can style the arrow or corner accordingly.
 - **Horizontal clamp**: `left` is re-anchored if it would overflow either viewport edge, with a 4px margin.
+- **Arrow offset**: the anchor's centre, in px from the panel's own left edge, is published as an inline `--_uxm-popover-arrow-offset`. It is measured against the **final** `left`, so it stays true through both the flip and the clamp above — the two things that move a panel independently of the thing it describes. A panel that draws an arrow reads it (see `Tooltip`); one that doesn't ignores it. Private on purpose: it is a measurement recomputed on every reposition, not a design decision, and an inline style would beat a consumer's value anyway.
 - **Recomputed on** open, window resize, scroll in *any* ancestor (a capture-phase listener — `fixed` positioning means every scroll matters, not just window scroll), and on panel resize via `ResizeObserver` (a filtered list shortening would otherwise flip against stale dimensions).
 - **No flash at 0,0**: `useLayoutEffect` positions before first paint, and the panel is `visibility: hidden` with `pointer-events: none` until the first measurement lands, so an unpositioned panel can never eat a click.
 
