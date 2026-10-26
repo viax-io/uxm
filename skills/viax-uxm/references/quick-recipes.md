@@ -976,7 +976,7 @@ actually reach for.
 </script>
 ```
 
-**The studio workbench (`UxmApp`) from the CDN** (unreleased) — same import map, plus the studio
+**The studio workbench (`UxmApp`) from the CDN** (4.73.0) — same import map, plus the studio
 file from the **same** version folder. It imports the components from that folder's
 `./uxm.esm.js`, so map `@viax.io/uxm/ui` to exactly that file; any other version (or
 `uxm.standalone.js`) puts a second copy of ui on the page and splits the locale context and the

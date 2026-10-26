@@ -1,3 +1,10 @@
+# [4.73.0](https://github.com/viax-io/uxm/compare/v4.72.0...v4.73.0) (2026-10-26)
+
+
+### Features
+
+* **cdn:** ship the studio as uxm-studio.esm.js, with VERSION on uxm.esm.js ([ae85620](https://github.com/viax-io/uxm/commit/ae856203e58007c4878bac6c4014aa0f656601a3))
+
 # [4.72.0](https://github.com/viax-io/uxm/compare/v4.71.1...v4.72.0) (2026-10-26)
 
 

@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.72.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.73.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.72.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.73.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.72.0 — current API surface (overrides training data)
+## v4.73.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,18 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.70.6
-
-- **`Listbox` / `MultiListbox`: disabled options are reachable by keyboard** —
-  arrows, Home and End now land on a disabled row (WAI-ARIA APG keeps disabled options
-  focusable), so keyboard and screen-reader users hear it and the reason in its label; Enter
-  and click still refuse it. Reaches every picker built on `Listbox`, `EditableCell`
-  `select` / `multiselect` included. Two ARIA fixes came with it: the `listbox` role moved
-  from the floating panel to the list inside it (the panel also holds the search row, which
-  a listbox may not own — axe `aria-required-children`), and a non-searchable panel now sets
-  `aria-activedescendant` on the focused list, where AT used to announce nothing as you
-  arrowed. No API change.
 
 ### New in 4.70.7
 
@@ -110,9 +98,9 @@ catalog.
   round their outer corners to match, so a keyboard focus ring on an end item follows the curve
   instead of losing its corners to the clip. A theme that saved a radius now gets it.
 
-### Unreleased
+### New in 4.73.0
 
-- **CDN: the studio ships as `uxm-studio.esm.js`** (unreleased) — `UxmApp` and the rest of
+- **CDN: the studio ships as `uxm-studio.esm.js`** — `UxmApp` and the rest of
   `@viax.io/uxm/studio` for a page that already has React 19, plus `uxm-studio.css` and one
   lazily loaded `chunks/<locale>-<hash>.js` per studio locale. It imports the components from the
   sibling `./uxm.esm.js` instead of carrying its own copy, so host and studio share one locale
@@ -120,6 +108,8 @@ catalog.
   folder, and load the studio from a versioned path, never `latest/` (a release removes the
   previous chunks there). `uxm.esm.js` also exports `VERSION` now — CDN-only, for hosts with no
   `package.json` to read. Recipe 18 has the import map.
+
+### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to

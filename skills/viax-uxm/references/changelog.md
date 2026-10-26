@@ -2127,3 +2127,15 @@ reached the published library; now shipped in 2.8.0.
   instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
   `select` / `multiselect` already behaved (the `Listbox` trigger stays mounted). No API
   change.
+
+### New in 4.70.6
+
+- **`Listbox` / `MultiListbox`: disabled options are reachable by keyboard** —
+  arrows, Home and End now land on a disabled row (WAI-ARIA APG keeps disabled options
+  focusable), so keyboard and screen-reader users hear it and the reason in its label; Enter
+  and click still refuse it. Reaches every picker built on `Listbox`, `EditableCell`
+  `select` / `multiselect` included. Two ARIA fixes came with it: the `listbox` role moved
+  from the floating panel to the list inside it (the panel also holds the search row, which
+  a listbox may not own — axe `aria-required-children`), and a non-searchable panel now sets
+  `aria-activedescendant` on the focused list, where AT used to announce nothing as you
+  arrowed. No API change.
