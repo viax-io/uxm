@@ -1,3 +1,16 @@
+# [4.77.0](https://github.com/viax-io/uxm/compare/v4.76.0...v4.77.0) (2026-10-26)
+
+
+### Bug Fixes
+
+* **data-table:** show the scroll arrows only when there is somewhere to scroll ([027778b](https://github.com/viax-io/uxm/commit/027778b35b8c30ae3d83a3e5af4df17e1aa051a4))
+* **data-table:** stop the row focus ring erasing the active rail, and bridge its knob ([a5d6a11](https://github.com/viax-io/uxm/commit/a5d6a111abf54d02bc72eb87eb9a556d607ebd77))
+
+
+### Features
+
+* **data-table:** make clickable rows reachable from the keyboard ([91d41a5](https://github.com/viax-io/uxm/commit/91d41a52c2cd9e48f3ddfaa96acbd4db595cf42a))
+
 # [4.76.0](https://github.com/viax-io/uxm/compare/v4.75.0...v4.76.0) (2026-10-26)
 
 

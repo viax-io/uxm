@@ -2187,3 +2187,12 @@ reached the published library; now shipped in 2.8.0.
   smaller glyph — the padding follows it). The global `.uxm-input-with-icon__icon svg` clamp this
   skill used to recommend can go. `DateInput`, `TimeInput` and `PasswordInput` already sized
   their glyph from their own `iconSize`; no change there.
+
+### New in 4.72.0
+
+- **`ButtonGroup`: Border Radius rounds the real atom.** Studio's **Border Radius**
+  knob emits `--uxm-button-group-border-radius`, but `button-group.scss` hard-coded `8px` and
+  never read it, so a saved radius changed nothing, in Studio or in an app. The root now reads
+  the variable (default `8px`, so an unthemed group is unchanged), and the first and last items
+  round their outer corners to match, so a keyboard focus ring on an end item follows the curve
+  instead of losing its corners to the clip. A theme that saved a radius now gets it.
