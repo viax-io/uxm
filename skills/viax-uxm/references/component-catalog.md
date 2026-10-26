@@ -162,7 +162,9 @@ Import path for all: `import { … } from 'uxm/ui';`
 
 ## Icon glyph registry (every id; enumerate `ICONS` rather than trusting a count here)
 
-`<Icon glyph="…">` returns **`null`** for anything not in this list — no error, no warning, just a
+`<Icon glyph="…">` returns **`null`** for a name that is neither an id below nor one of a glyph's
+`keywords` (unreleased: a keyword resolves too, so `glyph="ban"` draws `no-symbol`) — no error,
+no warning, just a
 missing icon. There is deliberately no `dashboard`, `folder`, `package`, `external`, `chart`,
 `shopping-cart` or `home`; reaching for those is the most common generation mistake. Verify against
 `ICONS.map(i => i.id)` (or `ICON_OPTIONS`, from `uxm/ui`) if you suspect the set has grown.
@@ -172,12 +174,14 @@ activity  archive-box  archive-x  arrow-down  arrow-left  arrow-right
 arrow-right-start-on-rectangle  arrow-up  arrow-up-right  arrows-up-down  bell  bolt  book-open  bot
 business-interaction  calculator  calendar  chat-bubble  check  check-circle  chevron-down
 chevron-left  chevron-right  chevron-up  clock  close  cloud-arrow-up  code  cog-6-tooth  coins
-copy  cursor-arrow-rays  dock-bottom  dock-right  document  document-text  dot-circle  drag-handle
+copy  cursor-arrow-rays  dock-bottom  dock-right  document  document-text  dot-circle
+dot-circle-solid  drag-handle
 exclamation-circle  exclamation-triangle  eye  eye-slash  eyedropper  filter  git-fork  globe  grid
 history  image  info  json  kebab  key  list  list-lines  menu  minus  model-business-interaction
 model-configuration  model-determination  model-revenue-motion  money  moon  no-symbol  organization
 paint-brush  paper-airplane  paper-clip  pause  pencil  play  plug  plus  product
-question-mark-circle  refresh  save  search  server  settings  shield-check  shield-exclamation
+question-mark-circle  refresh  save  scroll-text  search  server  settings  shield-check
+shield-exclamation
 sort-asc  sort-desc  sort-none  sparkle  square  sun  trash  upload  user  webhook  wrench  x-circle
 ```
 
@@ -205,7 +209,7 @@ Ids follow the Heroicons convention the set already uses, not another library's 
 | `arrow-down-up` | `arrows-up-down` (the plain two-way arrow) |
 | sort state in a table header | `sort-none` / `sort-asc` / `sort-desc` — one family, identical path-geometry box in all three states, so toggling keeps one footprint and weight. Prefer these over hand-swapping `arrow-up` / `arrow-down` / `arrows-up-down`, whose ink widths differ (15 vs 18). |
 | `shield-alert` | `shield-exclamation` |
-| `scroll-text` / logs / audit trail | `document-text` (`document` is the blank-page variant) |
+| logs / audit trail | `document-text` (`document` is the blank-page variant). `scroll-text` is its own glyph (unreleased) — a scroll, where `document-text` is a page |
 | `circle-dot` | `dot-circle` — the set names enclosed glyphs inner-thing-first (`x-circle`, `check-circle`, `exclamation-circle`). |
 | `activity` / `coins` / `dot-circle` / `git-fork` / `plug` / `webhook` | All present, but **house-drawn, not Heroicons** — Heroicons has no equivalent and the nearest candidates (`chart-bar`, `banknotes`, `stop-circle`, `share`, `bolt`, `link`) mean different things. Drawn to the same house rules (24×24, round caps/joins, inherited stroke, geometry 3 units clear of the edge; circle centres and radii on 0.375 — only the computed tangent points in `coins`/`webhook` sit off-grid); they read slightly lighter than true Heroicons. Do not regenerate them from an upstream package — there is none. |
 

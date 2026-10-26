@@ -503,7 +503,7 @@ export const messages: StudioMessages = {
     'Done Icon': 'Symbol erledigt',
     'Dot': 'Punkt',
     'Dot Circle': 'Punkt im Kreis',
-    'Dot Circle Solid': 'Punkt im Kreis (gefüllt)',
+    'Dot Circle (Solid)': 'Punkt im Kreis (gefüllt)',
     'Dot Color': 'Punktfarbe',
     'Dot Grid': 'Punktraster',
     'Dot Ring': 'Punktring',

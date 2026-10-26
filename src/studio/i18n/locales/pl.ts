@@ -515,7 +515,7 @@ export const messages: StudioMessages = {
     'Done Icon': 'Ikona ukończenia',
     'Dot': 'Kropka',
     'Dot Circle': 'Kropka w kole',
-    'Dot Circle Solid': 'Kropka w kole (wypełniona)',
+    'Dot Circle (Solid)': 'Kropka w kole (wypełniona)',
     'Dot Color': 'Kolor kropki',
     'Dot Grid': 'Siatka kropek',
     'Dot Ring': 'Pierścień kropki',

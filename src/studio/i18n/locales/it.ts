@@ -509,7 +509,7 @@ export const messages: StudioMessages = {
     'Done Icon': 'Icona completato',
     'Dot': 'Punto',
     'Dot Circle': 'Punto nel cerchio',
-    'Dot Circle Solid': 'Punto nel cerchio (pieno)',
+    'Dot Circle (Solid)': 'Punto nel cerchio (pieno)',
     'Dot Color': 'Colore del punto',
     'Dot Grid': 'Griglia di punti',
     'Dot Ring': 'Anello del punto',

@@ -515,7 +515,7 @@ export const messages: StudioMessages = {
     'Done Icon': 'Іконка «готово»',
     'Dot': 'Крапка',
     'Dot Circle': 'Крапка в колі',
-    'Dot Circle Solid': 'Крапка в колі (залита)',
+    'Dot Circle (Solid)': 'Крапка в колі (із заливкою)',
     'Dot Color': 'Колір крапки',
     'Dot Grid': 'Сітка з крапок',
     'Dot Ring': 'Кільце навколо крапки',

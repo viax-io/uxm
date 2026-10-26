@@ -503,7 +503,7 @@ export const messages: StudioMessages = {
     'Done Icon': 'Tamamlandı simgesi',
     'Dot': 'Nokta',
     'Dot Circle': 'Daire içinde nokta',
-    'Dot Circle Solid': 'Daire içinde nokta (dolu)',
+    'Dot Circle (Solid)': 'Daire içinde nokta (dolu)',
     'Dot Color': 'Nokta rengi',
     'Dot Grid': 'Nokta ızgarası',
     'Dot Ring': 'Nokta halkası',

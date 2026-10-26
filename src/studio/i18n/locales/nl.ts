@@ -503,7 +503,7 @@ export const messages: StudioMessages = {
     'Done Icon': 'Pictogram voltooid',
     'Dot': 'Punt',
     'Dot Circle': 'Stip in cirkel',
-    'Dot Circle Solid': 'Stip in cirkel (gevuld)',
+    'Dot Circle (Solid)': 'Stip in cirkel (gevuld)',
     'Dot Color': 'Puntkleur',
     'Dot Grid': 'Puntenraster',
     'Dot Ring': 'Ring om de punt',

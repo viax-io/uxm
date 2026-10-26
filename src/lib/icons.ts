@@ -35,6 +35,10 @@ export interface IconDef {
    * names people reach for from other icon sets (`ban` for `no-symbol`), or
    * the domain words they would search (`credits`, `billing`). Matched by the
    * studio's icon search alongside `id` and `label`.
+   *
+   * A keyword is ALSO a renderable name: `getIcon` falls back to one when no id
+   * matches, so `<Icon glyph="ban" />` draws `no-symbol`. Each must therefore
+   * belong to exactly one glyph — `tests/icon.test.tsx` pins that.
    */
   keywords?: string[];
 }
@@ -347,7 +351,7 @@ export const ICONS: IconDef[] = [
   },
   {
     id: 'dot-circle-solid',
-    label: 'Dot Circle Solid',
+    label: 'Dot Circle (Solid)',
     keywords: ['circle-dot-solid', 'active', 'recording', 'online'],
     // `dot-circle`'s ring with the centre filled, for a live/active state.
     // The fill is inline on the inner circle rather than `filled: true` on the
@@ -468,6 +472,10 @@ export function matchesIconQuery(def: IconDef, query: string): boolean {
   );
 }
 
+/**
+ * Resolve a glyph by name: an exact `id` first, then a glyph that lists the
+ * name in `keywords`, otherwise `undefined` (which `Icon` renders as nothing).
+ */
 export function getIcon(id: string): IconDef | undefined {
   // A linear scan, deliberately. An id→def Map was tried and removed: it has to
   // be invalidated, and every cheap invalidation check is wrong. Keying off

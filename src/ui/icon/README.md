@@ -62,9 +62,21 @@ turning into a keyword list.
 
 A keyword is also a **name you can render by**: `getIcon` falls back to one when no id
 matches, so `<Icon glyph="ban" />` draws `no-symbol`. Before that, those names resolved to
-nothing and `Icon` rendered `null` — a silently missing glyph, for 86 of them. An exact id
-always wins, and a keyword must belong to exactly one glyph (pinned by `icon.test.tsx`), so
-the fallback is single-valued.
+nothing and `Icon` rendered `null` — a silently missing glyph. An exact id always wins, and a
+keyword must belong to exactly one glyph (pinned by `icon.test.tsx`), so the fallback is
+single-valued.
+
+Three consequences worth knowing:
+
+- **A data-driven `glyph` can now draw.** Keywords include ordinary words (`error`, `status`,
+  `active`, `order`, `host`), so `glyph={item.status}` may resolve where it used to render
+  nothing.
+- **Adding an id that equals an existing keyword repoints that alias.** `scroll-text` was
+  `document-text`'s keyword before it became a glyph of its own. The uniqueness test skips
+  keywords that match an id, so this case has no gate — do it deliberately.
+- **`registerIcons` replaces in place.** Replacing a built-in with a def that omits
+  `keywords` drops its aliases, so `ban` or `send` would stop resolving. A registered keyword
+  that collides with an existing one loses silently: the earlier entry in `ICONS` wins.
 
 All three pickers run the same exported predicate, `matchesIconQuery(def, query)`. Use it
 rather than writing the substring test again: the preview grid and the studio's glyph
@@ -78,6 +90,7 @@ picker have to agree, and the one duplicate that existed drifted silently.
 | `IconName` | Literal union of `ICON_IDS` — use it to narrow your own props. |
 | `getIcon(id)` | Looks the id up in `ICONS`, then falls back to a glyph that lists it in `keywords`. Reads the array live, so it cannot go stale. |
 | `IconDef.keywords` | Extra names for the glyph: the search matches them, and `getIcon` resolves them when no id does. Each must be unique across the registry. |
+| Mixed fill | A glyph may set `fill` inline on one sub-shape — `dot-circle-solid`'s centre does — so that part is solid and ignores `strokeWidth`, while the rest of the glyph still strokes. The `filled` flag is the all-or-nothing version. |
 | `matchesIconQuery(def, q)` | The shared search predicate — substring match on `id`, `label` and `keywords`; an empty query matches everything. |
 | `registerIcons(defs)` | Adds or replaces; returns how many ids it **replaced**. |
 

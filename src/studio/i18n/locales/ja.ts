@@ -497,7 +497,7 @@ export const messages: StudioMessages = {
     'Done Icon': '完了アイコン',
     'Dot': 'ドット',
     'Dot Circle': '丸囲みドット',
-    'Dot Circle Solid': '丸囲みドット（塗りつぶし）',
+    'Dot Circle (Solid)': '丸囲みドット（塗りつぶし）',
     'Dot Color': 'ドットのカラー',
     'Dot Grid': 'ドットグリッド',
     'Dot Ring': 'ドットのリング',
