@@ -307,8 +307,12 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * - `onClick` is COMPOSED with `onRowClick`: yours runs first, then the row
    *   click, unless you call `preventDefault()`. Letting either one simply win
    *   would silently drop the other, which is what the first version did.
-   * - everything else wins over the default, `aria-current` included — a
-   *   consumer may have its own idea of what "current" means.
+   * - `onKeyDown` is COMPOSED the same way, for the same reason: yours runs
+   *   first, and `preventDefault()` cancels the Enter / Space activation.
+   * - everything else wins over the default, `aria-current` and `tabIndex`
+   *   included — a consumer may have its own idea of what "current" means,
+   *   and `tabIndex: -1` is the escape hatch for running your own roving
+   *   scheme over the rows.
    * - `children` and `dangerouslySetInnerHTML` are not accepted; they would
    *   fight the cells. A runtime `key` is ignored.
    */

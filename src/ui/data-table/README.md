@@ -190,8 +190,9 @@ Use `scrollable` on its own for a wide table that wants the affordances without 
 
 What you get, and what to know:
 
-- **The scroller is a focusable `role="region"`.** A scroll container reachable only by
-  pointer fails 2.1.1, so it takes `tabIndex={0}` and is named by `scrollLabel`.
+- **The scroller is a `role="region"`, focusable while it can scroll.** A scroll container
+  reachable only by pointer fails 2.1.1, so it takes `tabIndex={0}` — but only while there is
+  overflow, so a table that happens to fit adds no empty tab stop. Named by `scrollLabel`.
 - **Scroll shadows and arrows** appear only while there is somewhere to scroll, both driven
   by the same measured state so they cannot disagree. The arrows move ~80% of a viewport and
   respect `prefers-reduced-motion`.
@@ -209,8 +210,10 @@ What you get, and what to know:
 - **`scrollable` alone will not scroll a table that already fits.** Auto layout wraps content
   to the available width, so give columns a `width` (or `white-space: nowrap` content) if you
   want a horizontal scroll at all.
-- **The arrows stay mounted and go `aria-disabled` at the ends**, rather than unmounting —
-  removing the button you are pressing throws focus to the document.
+- **While there is overflow the arrows stay mounted and go `aria-disabled` at the ends**,
+  rather than unmounting — removing the button you are pressing throws focus to the document.
+  Both are absent only when there is nothing to scroll at all, which no button press can cause;
+  a resize that removes the overflow can, so don't park focus on an arrow across one.
 - **The studio preview demonstrates all of it.** It renders the real `<DataTable>` with column
   widths that overflow the canvas, a sticky identity column and `stickyActions`, so the
   scroller, the pinned columns and the arrows are visible and every knob is live.
@@ -227,7 +230,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `rows` | `T[]` | – | **Required.** Row dataset; rendered in order, one `<tr>` per item. |
 | `rowKey` | `(row: T) => string` | – | **Required.** Stable key extractor for React's reconciliation; pick a value that doesn't change between renders. |
 | `density` | `'compact' \| 'default' \| 'relaxed'` | `'default'` | Vertical cell padding modifier. See [States](#states--variants). |
-| `onRowClick` | `(row: T) => void` | – | When provided, rows render with a pointer cursor (`uxm-data-table__row--interactive`) and forward clicks. Header clicks are not captured. |
+| `onRowClick` | `(row: T) => void` | – | When provided, rows render with a pointer cursor (`uxm-data-table__row--interactive`), forward clicks, and become keyboard-operable: each row takes `tabIndex={0}` and activates on `Enter` / `Space` with a focus ring. **Every row is its own tab stop**, so a long table is a long tab sequence — `rowProps` returning `tabIndex: -1` is the hook for your own roving scheme. A key pressed on a control inside the row stays that control's. Header clicks are not captured. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div className="uxm-data-table">`. |
 | `actionsColumnLabel` | `string` | `'Actions'` | Accessible name for the visually-empty actions column header. |
@@ -237,7 +240,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `sortHref` | `(next: DataTableSort) => string` | – | Sort as a **link**: the header renders an `<a href>` instead. Use when sort lives in the URL, so the list is linkable, the back button works and the table can render on the server. Takes precedence over `onSortChange`. |
 | `renderSortLink` | `(args) => ReactNode` | – | Render link mode's anchor yourself, for a client-side router — the default `<a href>` means a full document load per sort click in a Next / React Router app. Receives `{ href, sort, className, children, 'aria-label' }`. Requires `sortHref`. |
 | `activeRowId` | `string \| null` | – | Marks one row active — the row whose detail is open in a pane beside the table. Compared against `rowKey(row)`. Sets `aria-current="true"` and a `--active` class. Distinct from hover and from `onRowClick`: the row stays active while the pointer is elsewhere. |
-| `rowProps` | `(row: T) => HTMLAttributes<HTMLTableRowElement>` | – | Extra attributes merged onto the `<tr>` — an `id` to deep-link to, a data attribute, a row-specific class. `className` merges with the library's; everything else wins over the defaults, including `aria-current`. |
+| `rowProps` | `(row: T) => HTMLAttributes<HTMLTableRowElement>` | – | Extra attributes merged onto the `<tr>` — an `id` to deep-link to, a data attribute, a row-specific class. `className` merges with the library's, and `onClick` / `onKeyDown` compose with the row's own (yours first; `preventDefault()` cancels the activation); everything else wins over the defaults, including `aria-current` and `tabIndex`. |
 | `scrollable` | `boolean` | `false` | Puts the table in its own horizontal scroller instead of letting it push its container wide. Implied by any `sticky` column; set it alone for a wide table that wants the affordances without pinning. |
 | `scrollLabel` | `string` | `'Table'` | Accessible name for the scroll region and its arrows. Give it the table's subject when a page has more than one, or every region announces the same. |
 | `scrollArrowLabel` | `(direction, tableLabel) => string` | `Scroll {label} back` / `… forward` | Names the two arrows. A callback, not a prefix, so a translation can place the table's name where its grammar needs it. Not "left"/"right" by default — those are physical, and in RTL the start arrow sits on the right. |
@@ -346,7 +349,8 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Density: `default` | `density="default"` (or omitted) | Cell padding from `--uxm-data-table-cell-padding-*` vars (`10–12px`). |
 | Density: `relaxed` | `density="relaxed"` | Cell padding clamped to `16px 12px`. |
 | Row hover | `:hover` on `<tr>` | Background shifts to `--uxm-data-table-row-hover-bg` with a 0.1s transition. |
-| Row interactive | `onRowClick` provided | Adds `uxm-data-table__row--interactive` → pointer cursor; click handler fires. |
+| Row interactive | `onRowClick` provided | Adds `uxm-data-table__row--interactive` → pointer cursor; `tabIndex={0}`; click, `Enter` and `Space` all fire the handler. |
+| Row focused | `:focus-visible` on an interactive `<tr>` | 2px ring from `--uxm-data-table-row-focus-color`, continued across any pinned cells so it is not broken by their `z-index`. |
 | Cell alignment | `column.align` | `--right` / `--center` modifier on `<th>` and `<td>`. Left is the implicit default. |
 | Last row | Structural | Trailing `<td>`s drop their bottom border so the root border isn't doubled. |
 
@@ -375,4 +379,4 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
   - In link mode the anchor carries no `aria-current` or disabled cue; state is on the `<th>` via `aria-sort`, which is where assistive tech looks for it.
 - Density modifiers preserve a minimum touch target of `~32px` in `compact`; verify against your specific row content if you add custom row controls.
 - In stacked mode (`@container (max-width: 480px)`) the table, its `tbody`, the rows and the cells all become blocks so each row fills the container as a card. The `tbody` is part of that list on purpose: it carries no class, and left as a `table-row-group` inside a block table it gets wrapped in an anonymous `table` box that shrinks to min-content — which made rows render at a fraction of their container (measured: 318px table, 81px row). If you ever restyle this block, keep the `tbody` in it.
-- The root container is a `<div>` with `overflow: hidden` and a rounded border — for tables wider than the viewport, wrap the component in a scroll container with `overflow-x: auto` and an explicit `tabIndex={0}` for keyboard scrolling.
+- The root container is a `<div>` with `overflow: hidden` and a rounded border. For tables wider than the viewport, use `scrollable` (or any `sticky` column, which implies it) rather than wrapping the component yourself — it brings the named, conditionally-focusable scroll region, the edge shadows and the arrows, and it is the path the stacked-mode resets know about.

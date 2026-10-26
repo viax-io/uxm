@@ -18,13 +18,13 @@ export const dataTableDef: ComponentDef = {
     { key: 'rowActiveBg', label: 'Row Active Bg', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
     { key: 'rowActiveRail', label: 'Row Active Rail', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
     { key: 'rowActiveHoverBg', label: 'Row Active Hover Bg', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
+    { key: 'rowFocusColor', label: 'Row Focus Ring', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
     { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
     // Sortable-header colours. Only visible on a column with `sortKey`; a
     // table without sorting never paints these.
     { key: 'sortColor', label: 'Sort Header', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'sortHoverColor', label: 'Sort Header Hover', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
     { key: 'sortActiveColor', label: 'Sort Header Active', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
-    { key: 'rowFocusColor', label: 'Row Focus Ring', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
     { key: 'sortFocusColor', label: 'Sort Header Focus', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
     { key: 'sortIconColor', label: 'Sort Glyph', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },

@@ -107,4 +107,24 @@ describe('DataTable row keyboard activation', () => {
     );
     expect(rowOf('Alpha')).toHaveAttribute('tabindex', '-1');
   });
+
+  it('still delivers a consumer onKeyDown on a table with no onRowClick', () => {
+    // `onKeyDown` is destructured OUT of rowProps so it can be composed, which
+    // means the composed handler is now the ONLY thing passing it through. Build
+    // that handler from `onRowClick` alone and a plain non-interactive table
+    // silently stops delivering the consumer's key events — a regression against
+    // the old straight-through spread, and invisible to every other test here.
+    const consumer = vi.fn();
+    render(
+      <DataTable
+        rowKey={(r) => r.id}
+        columns={COLUMNS}
+        rows={ROWS}
+        rowProps={() => ({ onKeyDown: consumer })}
+      />,
+    );
+    expect(rowOf('Alpha')).not.toHaveAttribute('tabindex');
+    fireEvent.keyDown(rowOf('Alpha'), { key: 'Enter' });
+    expect(consumer).toHaveBeenCalledTimes(1);
+  });
 });

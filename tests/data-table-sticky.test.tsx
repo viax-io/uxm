@@ -144,17 +144,27 @@ describe('DataTable scroll arrows', () => {
   });
 
   it('keeps both arrows mounted at either end of a real scroll', () => {
-    // The 2.4.3 guard, pinned where it belongs. At the start `back` is inert
-    // and at the end `forward` is — but both stay in the DOM, so the button
-    // under the pointer or the focus ring is never removed.
+    // The 2.4.3 guard, pinned where it belongs: pressing an arrow until it
+    // goes inert must not remove the button under the pointer or the focus
+    // ring. BOTH ends have to be asserted — gating on `edges.start` alone
+    // still passes a start-only check while unmounting both arrows at the end.
     const restore = withGeometry(1000, 400);
     try {
-      render(table(PLAIN, { scrollable: true }));
-      expect(screen.getByRole('button', { name: 'Scroll Table back' })).toHaveAttribute(
-        'aria-disabled',
-        'true',
-      );
-      expect(screen.getByRole('button', { name: 'Scroll Table forward' })).toBeInTheDocument();
+      const { container } = render(table(PLAIN, { scrollable: true }));
+      const scroller = container.querySelector('.uxm-data-table__scroller')!;
+      const back = () => screen.getByRole('button', { name: 'Scroll Table back' });
+      const forward = () => screen.getByRole('button', { name: 'Scroll Table forward' });
+
+      // At the start: back is inert, both present.
+      expect(back()).toHaveAttribute('aria-disabled', 'true');
+      expect(forward()).not.toHaveAttribute('aria-disabled');
+
+      // At the end (scrollWidth 1000 - clientWidth 400): forward is inert,
+      // and crucially both are STILL in the DOM.
+      scroller.scrollLeft = 600;
+      fireEvent.scroll(scroller);
+      expect(forward()).toHaveAttribute('aria-disabled', 'true');
+      expect(back()).not.toHaveAttribute('aria-disabled');
     } finally {
       restore();
     }

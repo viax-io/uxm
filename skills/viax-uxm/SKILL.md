@@ -138,10 +138,15 @@ catalog.
   `onRowClick` is unchanged and stays out of the tab order. The key has to land on the row
   itself, so `Enter` on a cell's button or editable cell stays that control's; `rowProps`
   composes, with your `onKeyDown` first and `preventDefault()` cancelling the activation, and
-  your `tabIndex` overriding the default. Stacked card mode needs nothing — the row IS the card.
-  **Each row is its own tab stop**; a roving scheme (one stop, arrow keys) is the APG grid answer
-  and is not built in. The README previously documented this gap and asked consumers to put their
-  own focusable control in the row; that advice is gone.
+  your `tabIndex` overriding the default. **Each row is its own tab stop**, so a long table is a
+  long tab sequence; a roving scheme (one stop, arrow keys) is the APG grid answer and is not
+  built in — `rowProps` returning `tabIndex: -1` is the hook for one.
+
+- **`DataTable`'s horizontal scroll arrows now appear only when the table can actually scroll.**
+  They were keyed off configuration rather than measurement, so *any* `sticky` column mounted two
+  permanently inert buttons — and two dead tab stops — over a table that fits. If you assert on
+  those buttons, a test against a narrow fixture that no longer overflows will stop finding them.
+  At either end of a real scroll both arrows still stay mounted and go `aria-disabled`, unchanged.
 
 ## Workflow
 
