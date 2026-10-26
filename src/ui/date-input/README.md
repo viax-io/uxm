@@ -68,7 +68,7 @@ Set these on the wrapper (via `style` or a higher scope) — because `style` is 
 | `--uxm-date-input-border-color` | `--color-border` | – | Input border (idle). |
 | `--uxm-date-input-border-radius` | – | `8px` | Input corner radius. |
 | `--uxm-date-input-color` | `--color-text` | – | Input text color. |
-| `--uxm-date-input-placeholder-color` | `--color-text-muted` | – | Placeholder text, the format mask by default (`::placeholder`). Up to 4.71.x the field had no placeholder rule, so the browser's grey painted. |
+| `--uxm-date-input-placeholder-color` | `--color-text-muted` | – | Placeholder text, the format mask by default (`::placeholder`). Before this variable the field had no placeholder rule, so the browser's grey painted. |
 | `--uxm-date-input-font-size` | – | `14px` | Input font size. |
 | `--uxm-date-input-padding-x` | – | `12px` | Horizontal padding (left). |
 | `--uxm-date-input-padding-y` | – | `10px` | Vertical padding. |

@@ -809,6 +809,17 @@
   --uxm-textarea-border-radius: var(--uxm-editable-cell-radius, 4px);
   --uxm-textarea-padding-x: var(--_uxm-editable-cell-padding-x, 8px);
   --uxm-textarea-padding-y: var(--_uxm-editable-cell-padding-y, 4px);
+  /* Pinned for the same reason as the colours above: Studio emits a saved
+     Textarea Placeholder as `.uxm-textarea { … }` (0,1,0), which this block
+     (0,2,0) out-ranks. Left unpinned, a standalone Textarea override would
+     reach into the cell's editor — the one var the isolation missed.
+
+     The TOKEN, not the cell's own `--uxm-editable-cell-placeholder-color`:
+     that knob paints the display-mode empty state at `--color-text-subtle`
+     (3.66:1 on card), so reusing it here would darken an editor placeholder
+     that paints `--color-text-muted` (5.37:1) today. Giving the editor its
+     own knob is a separate design call. */
+  --uxm-textarea-placeholder-color: var(--color-text-muted);
   /* The atom's 100px floor — the ghost owns the height bounds here. */
   --uxm-textarea-min-height: 0;
   /* `font: inherit`, not the atom's own 14px: the cell reads at the scale of

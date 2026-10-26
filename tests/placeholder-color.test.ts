@@ -32,10 +32,17 @@ const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 /** `<input>` / `<textarea>` classes that show a placeholder but deliberately
  *  have no rule yet, each with its reason. */
 const EXEMPT: Record<string, string> = {
-  // The edit-mode input of an EditableCell. Its `placeholderColor` knob paints
-  // the display-mode empty state at `--color-text-subtle` (3.66:1 on card);
-  // reusing it here would drop the input below Chrome's 4.61:1. Separate fix.
-  'uxm-editable-cell__input': 'display-mode knob is a 3:1 token',
+  // The TEXT and DATE edit inputs of an EditableCell, which this scan sees as a
+  // bare `<input>`. Its `placeholderColor` knob paints the display-mode empty
+  // state at `--color-text-subtle` (3.66:1 on card); reusing it for an editor
+  // would drop it below Chrome's 4.61:1, so the editors want their own knob —
+  // a separate design call.
+  //
+  // NOT the textarea editor: that renders the shared `<Textarea>`, so it has
+  // painted through `.uxm-textarea::placeholder` all along. `editable-cell.scss`
+  // pins `--uxm-textarea-placeholder-color` to the token so a saved standalone
+  // Textarea override cannot reach into the cell.
+  'uxm-editable-cell__input': 'text/date editors only; see editable-cell.scss',
 };
 
 /** Placeholders that are not a `::placeholder`: the label a trigger shows
@@ -67,9 +74,14 @@ function placeholderFields() {
     const src = readFileSync(resolve(UI_DIR, file), 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
     for (const [tag] of src.matchAll(/<(input|textarea)\s[\s\S]*?\/>/g)) {
       if (/type=["'](checkbox|radio|range|file|color)["']/.test(tag)) continue;
-      if (!/\bplaceholder\b|\{\s*\.\.\.(rest|props|inputProps)\s*\}/.test(tag)) continue;
+      // Any spread can carry the caller's `placeholder`, not just the three
+      // names this atom family happens to use today.
+      if (!/\bplaceholder\b|\{\s*\.\.\.\w+\s*\}/.test(tag)) continue;
       const cls = tag.match(/className=["']([\w-]+)["']/)?.[1] ?? tag.match(/className=\{cn\(\s*['"]([\w-]+)['"]/)?.[1];
-      if (cls) out.push(cls);
+      // A field whose className is a template literal or a variable would
+      // otherwise drop out of the scan silently, taking its missing rule with
+      // it. Surface it as a failure instead of skipping.
+      out.push(cls ?? `<unclassed ${file}>`);
     }
   }
   return [...new Set(out)].sort();
