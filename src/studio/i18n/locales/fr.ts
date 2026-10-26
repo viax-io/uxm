@@ -785,6 +785,7 @@ export const messages: StudioMessages = {
     'Row Background': 'Arrière-plan de la ligne',
     'Row Bg': 'Arrière-plan de ligne',
     'Row Border': 'Bordure de la ligne',
+    'Row Focus Ring': 'Anneau de focus de ligne',
     'Row Gap': 'Écart entre lignes',
     'Row Hover': 'Ligne au survol',
     'Row Hover Bg': 'Arrière-plan de ligne au survol',

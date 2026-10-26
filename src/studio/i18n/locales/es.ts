@@ -785,6 +785,7 @@ export const messages: StudioMessages = {
     'Row Background': 'Fondo de la fila',
     'Row Bg': 'Fondo de fila',
     'Row Border': 'Borde de la fila',
+    'Row Focus Ring': 'Anillo de foco de fila',
     'Row Gap': 'Espacio entre filas',
     'Row Hover': 'Fila al pasar',
     'Row Hover Bg': 'Fondo de fila al pasar',

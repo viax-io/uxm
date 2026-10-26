@@ -126,6 +126,7 @@ function tableVars(styles: Styles): CSSProperties {
     '--uxm-data-table-row-active-bg': styles.rowActiveBg as string,
     '--uxm-data-table-row-active-rail': styles.rowActiveRail as string,
     '--uxm-data-table-row-active-hover-bg': styles.rowActiveHoverBg as string,
+    '--uxm-data-table-row-focus-color': styles.rowFocusColor as string,
     '--uxm-data-table-border-color': styles.borderColor as string,
     '--uxm-data-table-border-radius': `${styles.borderRadius as number}px`,
     '--uxm-data-table-font-size': `${styles.fontSize as number}px`,

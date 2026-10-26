@@ -779,6 +779,7 @@ export const messages: StudioMessages = {
     'Row Background': 'Rijachtergrond',
     'Row Bg': 'Rijachtergrond',
     'Row Border': 'Rijrand',
+    'Row Focus Ring': 'Rijfocusring',
     'Row Gap': 'Ruimte tussen rijen',
     'Row Hover': 'Rij bij zweven',
     'Row Hover Bg': 'Rijachtergrond bij zweven',

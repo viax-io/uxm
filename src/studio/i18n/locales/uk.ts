@@ -791,6 +791,7 @@ export const messages: StudioMessages = {
     'Row Background': 'Тло рядка',
     'Row Bg': 'Тло рядка',
     'Row Border': 'Межа рядка',
+    'Row Focus Ring': 'Кільце фокуса рядка',
     'Row Gap': 'Відступ між рядками',
     'Row Hover': 'Рядок при наведенні',
     'Row Hover Bg': 'Тло рядка при наведенні',

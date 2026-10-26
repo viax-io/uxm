@@ -187,6 +187,18 @@
   background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
 }
 
+/* A row with `onRowClick` takes `tabIndex={0}` so it is operable from the
+   keyboard (2.1.1); this is the ring that makes the focus visible (2.4.7).
+   Inset, because an outline drawn outside the row is clipped by the scroller.
+
+   Re-asserted on the sticky cells below for the same reason the hover fill is:
+   pinned cells carry `z-index: 1` and paint over a row-level outline, which is
+   what forced the SCROLLER's ring onto the root (see the comment there). */
+.uxm-data-table__row:focus-visible {
+  outline: 2px solid var(--uxm-data-table-row-focus-color, var(--color-accent-bold));
+  outline-offset: -2px;
+}
+
 /* The active row — the one whose detail is open beside the table. Written
    AFTER :hover so it holds while the pointer is on another row, which is the
    whole point of the state: hover says "the pointer is here", active says
@@ -350,6 +362,41 @@
 .uxm-data-table__row:hover > .uxm-data-table__td--sticky-end {
   background-color: var(--uxm-data-table-row-hover-bg, var(--color-surface-alt));
 }
+/* The focused row's ring, continued across the pinned cells. A sticky cell
+   carries `z-index: 1`, so it paints over the row's own outline and the ring
+   breaks wherever a column is pinned — the same clipping that moved the
+   scroller's ring to the root.
+
+   Drawn with `background-image`, NOT `box-shadow`, and that choice is the
+   whole mechanism. Two concerns already claim the box-shadow of this exact
+   element — the active rail and the scroll seam — and `box-shadow` replaces
+   rather than accumulates, so they needed the combination rule further down
+   to coexist. A third claimant cannot just be added: at (0,3,0) it erases the
+   plain rail and seam at (0,2,0) and loses to their combination at (0,4,0),
+   which is a silently broken 1.4.1 cue on the very row you just opened with
+   Enter — focused AND active is the normal case, not an edge one. Background
+   images are orthogonal to all of it: the hover and active rules set
+   `background-color`, and nothing in this file sets `background-image` on a
+   cell.
+
+   Three bars, so the ring actually closes: the top and bottom runs the cell
+   paints over, plus the one outer vertical edge the row's outline can never
+   reach. Physical positions, matching the rail and seam above, which are
+   physical too. */
+.uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-start,
+.uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-end {
+  background-image:
+    linear-gradient(var(--uxm-data-table-row-focus-color, var(--color-accent-bold)) 0 0),
+    linear-gradient(var(--uxm-data-table-row-focus-color, var(--color-accent-bold)) 0 0),
+    linear-gradient(var(--uxm-data-table-row-focus-color, var(--color-accent-bold)) 0 0);
+  background-repeat: no-repeat;
+  background-size: 100% 2px, 100% 2px, 2px 100%;
+  background-position: left top, left bottom, left top;
+}
+/* Same specificity, later in the file: only the vertical bar moves. */
+.uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-end {
+  background-position: left top, left bottom, right top;
+}
 .uxm-data-table__row--active > .uxm-data-table__td--sticky-start,
 .uxm-data-table__row--active > .uxm-data-table__td--sticky-end {
   background-color: var(--uxm-data-table-row-active-bg, var(--color-accent-subtle));
@@ -459,6 +506,14 @@
   .uxm-data-table--scrolled-end .uxm-data-table__th--sticky-end,
   .uxm-data-table--scrolled-end .uxm-data-table__td--sticky-end {
     box-shadow: none;
+  }
+  /* Nothing is pinned down here (`position: static` above), so the row's own
+     outline draws the whole ring and the continuation bars would be three
+     stray lines inside the card. Same (0,3,0) shape as the rule they reset,
+     for the reason given at the top of this block. */
+  .uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-start,
+  .uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-end {
+    background-image: none;
   }
   .uxm-data-table__scroll-arrow { display: none; }
 }

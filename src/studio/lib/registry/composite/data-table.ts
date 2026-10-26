@@ -18,6 +18,7 @@ export const dataTableDef: ComponentDef = {
     { key: 'rowActiveBg', label: 'Row Active Bg', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
     { key: 'rowActiveRail', label: 'Row Active Rail', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
     { key: 'rowActiveHoverBg', label: 'Row Active Hover Bg', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
+    { key: 'rowFocusColor', label: 'Row Focus Ring', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
     { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
     // Sortable-header colours. Only visible on a column with `sortKey`; a
     // table without sorting never paints these.

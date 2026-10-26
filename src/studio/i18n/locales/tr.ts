@@ -779,6 +779,7 @@ export const messages: StudioMessages = {
     'Row Background': 'Satır arka planı',
     'Row Bg': 'Satır arka planı',
     'Row Border': 'Satır kenarlığı',
+    'Row Focus Ring': 'Satır odak halkası',
     'Row Gap': 'Satır aralığı',
     'Row Hover': 'Üzerine gelince satır',
     'Row Hover Bg': 'Üzerine gelince satır arka planı',

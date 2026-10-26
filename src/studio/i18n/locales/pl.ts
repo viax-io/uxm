@@ -791,6 +791,7 @@ export const messages: StudioMessages = {
     'Row Background': 'Tło wiersza',
     'Row Bg': 'Tło wiersza',
     'Row Border': 'Obramowanie wiersza',
+    'Row Focus Ring': 'Pierścień fokusu wiersza',
     'Row Gap': 'Odstęp między wierszami',
     'Row Hover': 'Wiersz po najechaniu',
     'Row Hover Bg': 'Tło wiersza po najechaniu',

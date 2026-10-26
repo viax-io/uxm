@@ -531,6 +531,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-data-table-row-active-hover-bg",
   "--uxm-data-table-row-active-rail",
   "--uxm-data-table-row-bg",
+  "--uxm-data-table-row-focus-color",
   "--uxm-data-table-row-hover-bg",
   "--uxm-data-table-scroll-arrow-bg",
   "--uxm-data-table-scroll-arrow-shadow",

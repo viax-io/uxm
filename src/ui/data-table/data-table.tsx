@@ -8,7 +8,7 @@ import { Icon } from '../icon';
 import { IconButton } from '../icon-button';
 import { Menu, type MenuEntry } from '../menu';
 
-import type { CSSProperties, HTMLAttributes, MouseEvent, ReactNode, RefObject } from 'react';
+import type { CSSProperties, HTMLAttributes, KeyboardEvent, MouseEvent, ReactNode, RefObject } from 'react';
 
 export type DataTableDensity = 'compact' | 'default' | 'relaxed';
 
@@ -307,8 +307,17 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * - `onClick` is COMPOSED with `onRowClick`: yours runs first, then the row
    *   click, unless you call `preventDefault()`. Letting either one simply win
    *   would silently drop the other, which is what the first version did.
-   * - everything else wins over the default, `aria-current` included — a
-   *   consumer may have its own idea of what "current" means.
+   * - `onKeyDown` is COMPOSED the same way, for the same reason: yours runs
+   *   first, and `preventDefault()` cancels the Enter / Space activation.
+   *   Note the asymmetry it leaves: keyboard activation calls `onRowClick`
+   *   directly, so your `onClick` does NOT run on Enter / Space. That is
+   *   deliberate — an `onClick` firing without a click would surprise more
+   *   consumers than it helps — so put anything that must see every
+   *   activation (analytics, say) in `onRowClick` itself, not in `onClick`.
+   * - everything else wins over the default, `aria-current` and `tabIndex`
+   *   included — a consumer may have its own idea of what "current" means,
+   *   and `tabIndex: -1` is the escape hatch for running your own roving
+   *   scheme over the rows.
    * - `children` and `dangerouslySetInnerHTML` are not accepted; they would
    *   fight the cells. A runtime `key` is ignored.
    */
@@ -624,7 +633,18 @@ export function DataTable<T>({
           content is wider, so the two go together — but switching every table
           to fixed would re-lay-out every existing consumer, which is a major
           decision, not a side effect of adding a prop. */}
-      {scrolls && (
+      {/* `edges.start || edges.end` is false ONLY when there is nothing to
+          scroll: with any overflow, `end` is true at the start, `start` is true
+          at the end, and both are true in between. So this gates on REAL
+          overflow while never unmounting an arrow mid-scroll — which is the
+          2.4.3 problem the mounted-but-inert shape exists to avoid.
+
+          Without it the arrows keyed off configuration alone, so ANY sticky
+          column put two permanently-inert buttons over a table that fits.
+          cs-ops-portal pins an Open column on every list, so every list in that
+          portal carried them. The scroller's own `focusable` has always been
+          measured this way; the arrows just did not follow. */}
+      {scrolls && (edges.start || edges.end) && (
         <ScrollArrows
           scrollerRef={scrollerRef}
           edges={edges}
@@ -710,7 +730,12 @@ export function DataTable<T>({
             // override `aria-current` — it may well have its own idea of what
             // "current" means — without having to fight the defaults.
             const extra = rowProps?.(row);
-            const { className: rowClassName, onClick: rowOnClick, ...restRowProps } = extra ?? {};
+            const {
+              className: rowClassName,
+              onClick: rowOnClick,
+              onKeyDown: rowOnKeyDown,
+              ...restRowProps
+            } = extra ?? {};
             // Compose rather than let one win: `onClick` sitting after the
             // spread meant a consumer's handler was dropped every time, and
             // `onClick={undefined}` clobbered it even with no `onRowClick`.
@@ -721,10 +746,32 @@ export function DataTable<T>({
                     if (!event.defaultPrevented) onRowClick?.(row);
                   }
                 : undefined;
+            // A clickable row has to be operable from the keyboard (2.1.1).
+            // The row takes `tabIndex` below; this is its activation.
+            const handleKeyDown =
+              rowOnKeyDown || onRowClick
+                ? (event: KeyboardEvent<HTMLTableRowElement>) => {
+                    rowOnKeyDown?.(event);
+                    if (event.defaultPrevented || !onRowClick) return;
+                    // Only when the ROW ITSELF has focus. A key pressed on a
+                    // control inside the row — a cell's input, an actions
+                    // menu, a link — belongs to that control, and Enter there
+                    // must not also open the row's detail.
+                    if (event.target !== event.currentTarget) return;
+                    if (event.key !== 'Enter' && event.key !== ' ') return;
+                    // Space would otherwise scroll the scroll region.
+                    event.preventDefault();
+                    onRowClick(row);
+                  }
+                : undefined;
             return (
             <tr
               key={id}
               aria-current={isActive ? 'true' : undefined}
+              // Before the spread, so `rowProps` can override it — the same
+              // treatment `aria-current` gets. Only a row that is already a
+              // click target joins the tab order.
+              tabIndex={onRowClick ? 0 : undefined}
               {...restRowProps}
               className={cn(
                 'uxm-data-table__row',
@@ -733,6 +780,7 @@ export function DataTable<T>({
                 rowClassName,
               )}
               onClick={handleClick}
+              onKeyDown={handleKeyDown}
             >
               {columns.map((c) => {
                 // Cells fall into three rendering paths:

@@ -779,6 +779,7 @@ export const messages: StudioMessages = {
     'Row Background': 'Zeilenhintergrund',
     'Row Bg': 'Zeilen-Hintergrund',
     'Row Border': 'Zeilenrahmen',
+    'Row Focus Ring': 'Zeilen-Fokusring',
     'Row Gap': 'Zeilenabstand',
     'Row Hover': 'Zeilen-Hover',
     'Row Hover Bg': 'Zeilen-Hover-Hintergrund',
