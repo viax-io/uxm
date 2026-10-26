@@ -130,4 +130,32 @@ describe('Studio knob wiring', () => {
     // empty, `masked` would also be empty and this would pass green.
     expect(checked, 'emitted vars examined').toBeGreaterThan(1000);
   });
+
+  it('every var a preview projects is read by some atom', () => {
+    // ButtonGroup's Border Radius emitted `--uxm-button-group-border-radius`,
+    // its preview projected the same name, and button-group.scss hard-coded
+    // `border-radius: 8px`, so the knob painted nothing anywhere. The check
+    // above can't see it (no atom reads the var at all), and neither can the
+    // drift script (a frame knob, and it skips unread vars). A preview projects
+    // a var to drive the production stylesheet, so a projected name that no
+    // atom reads is either a dead knob or a typo. Previews also project other
+    // atoms' vars (a Tag inside a composite), so any reader counts.
+    const previews = [
+      ...globSync('**/*-preview.tsx', { cwd: UI_DIR }).map((f) => resolve(UI_DIR, f)),
+      ...globSync('**/*.tsx', { cwd: resolve(UI_DIR, '../previews') }).map((f) => resolve(UI_DIR, '../previews', f)),
+    ];
+    const unread: string[] = [];
+    let projected = 0;
+    for (const file of previews) {
+      const text = stripComments(readFileSync(file, 'utf8'));
+      // Object keys only (`'--uxm-x': …`, `['--uxm-x' as string]: …`); a
+      // template-built name (`--uxm-${id}-…`) has no closing quote here.
+      for (const [, cssVar] of text.matchAll(/['"`](--uxm-[a-z0-9-]+)['"`]\s*(?:as string\s*)?\]?\s*:/g)) {
+        projected += 1;
+        if (!readersOf(cssVar).length) unread.push(`${cssVar} (${file.slice(file.indexOf('src/'))})`);
+      }
+    }
+    expect(unread).toEqual([]);
+    expect(projected, 'projected vars examined').toBeGreaterThan(1000);
+  });
 });

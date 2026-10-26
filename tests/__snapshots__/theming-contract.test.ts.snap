@@ -166,6 +166,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-button-group-active-bg",
   "--uxm-button-group-active-text",
   "--uxm-button-group-border-color",
+  "--uxm-button-group-border-radius",
   "--uxm-button-group-disabled-bg",
   "--uxm-button-group-disabled-opacity",
   "--uxm-button-group-disabled-text",

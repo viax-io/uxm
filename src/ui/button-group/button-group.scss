@@ -7,7 +7,7 @@
 
 .uxm-button-group {
   border: 1px solid var(--uxm-button-group-border-color, var(--color-border));
-  border-radius: 8px;
+  border-radius: var(--uxm-button-group-border-radius, 8px);
   display: inline-flex;
   overflow: hidden;
 
@@ -22,8 +22,20 @@
     padding: var(--uxm-button-group-padding-y, 8px) var(--uxm-button-group-padding-x, 16px);
     transition: background-color 0.15s, color 0.15s;
 
+    /* The root's `overflow: hidden` clips the end segments to its curve, and
+       their focus ring with them. An outline follows its own element's
+       corners, so on square ends the clip cut the ring's corners away at any
+       radius past a few px. Rounding the outer corners to the root's inner
+       radius (its radius less the 1px border) keeps the ring whole. */
+    &:first-child {
+      border-bottom-left-radius: calc(var(--uxm-button-group-border-radius, 8px) - 1px);
+      border-top-left-radius: calc(var(--uxm-button-group-border-radius, 8px) - 1px);
+    }
+
     &:last-child {
+      border-bottom-right-radius: calc(var(--uxm-button-group-border-radius, 8px) - 1px);
       border-right: none;
+      border-top-right-radius: calc(var(--uxm-button-group-border-radius, 8px) - 1px);
     }
 
     &:hover:not(.uxm-button-group__item--active):not(:disabled) {
