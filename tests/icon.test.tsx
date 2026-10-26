@@ -115,7 +115,7 @@ describe('icon registry', () => {
     // visibly detaches the line. So pin the part that IS a rule, and let the
     // comment in icons.ts carry the exception — an unpinned prose claim about
     // `coins` and `webhook` was simply false for a release.
-    const HOUSE = ['activity', 'dot-circle', 'coins', 'git-fork', 'plug', 'webhook'];
+    const HOUSE = ['activity', 'dot-circle', 'dot-circle-solid', 'coins', 'git-fork', 'plug', 'webhook'];
     const onGrid = (n: number) => Math.abs(n / 0.375 - Math.round(n / 0.375)) < 1e-9;
     for (const id of HOUSE) {
       const def = ICONS.find((d) => d.id === id);
@@ -238,6 +238,39 @@ describe('registerIcons', () => {
     } finally { restore(before); }
   });
 
+  it('resolves a registered glyph by its keyword too', () => {
+    // The alias fallback reads `ICONS` live, so a runtime glyph gets it for
+    // free. Pinned because a consumer's own synonyms are the main reason to
+    // call `registerIcons` with keywords at all.
+    const before = snapshot();
+    try {
+      registerIcons([{ id: 'test-glyph', label: 'Test', path: 'M0 0h24', keywords: ['test-alias'] }]);
+      expect(getIcon('test-alias')?.id).toBe('test-glyph');
+    } finally { restore(before); }
+  });
+
+  it('never lets a registered keyword outrank a built-in id', () => {
+    // A consumer cannot hijack `close` by listing it as a keyword: `getIcon`
+    // matches ids first, so the built-in keeps the name.
+    const before = snapshot();
+    try {
+      registerIcons([{ id: 'test-glyph', label: 'Test', path: 'M0 0h24', keywords: ['close'] }]);
+      expect(getIcon('close')?.id).toBe('close');
+    } finally { restore(before); }
+  });
+
+  it('drops a built-in\'s aliases when a replacement omits them', () => {
+    // Replace-in-place swaps the whole def, so a replacement without `keywords`
+    // silently takes `ban` down with it. Documented in the Icon README; pinned
+    // here so the behaviour is deliberate rather than discovered.
+    const before = snapshot();
+    try {
+      expect(getIcon('ban')?.id).toBe('no-symbol');
+      registerIcons([{ id: 'no-symbol', label: 'No Symbol', path: 'M0 0h24' }]);
+      expect(getIcon('ban')).toBeUndefined();
+    } finally { restore(before); }
+  });
+
   it('replaces an existing id in place rather than duplicating the picker row', () => {
     const before = snapshot();
     try {
@@ -273,6 +306,71 @@ describe('registerIcons', () => {
       ICONS.push({ id: 'smuggled', label: 'Smuggled', path: 'M0 0h1' });
       expect(getIcon('smuggled')?.label).toBe('Smuggled');
     } finally { restore(before); }
+  });
+});
+
+describe('getIcon aliases', () => {
+  // Keywords were search-only: `getIcon` matched `id` alone, so every name the
+  // registry advertised but did not use as an id resolved to `undefined`, and
+  // `Icon` renders `null` for that — a silently missing glyph. 86 names.
+  it('resolves a name the registry advertises as a keyword', () => {
+    for (const [alias, owner] of [
+      ['circle-dot', 'dot-circle'],
+      ['ban', 'no-symbol'],
+      ['send', 'paper-airplane'],
+      ['shield-alert', 'shield-exclamation'],
+    ] as const) {
+      expect(getIcon(alias)?.id, `${alias} should resolve`).toBe(owner);
+    }
+  });
+
+  it('lets an exact id beat any keyword that shadows it', () => {
+    // The ordering that makes the fallback safe: if some glyph ever lists an
+    // existing id among its keywords, the id's own glyph still wins.
+    for (const def of ICONS) {
+      expect(getIcon(def.id)?.id, `${def.id} must resolve to itself`).toBe(def.id);
+    }
+  });
+
+  it('keeps every alias single-valued', () => {
+    // What makes the fallback well-defined. Two glyphs claiming one keyword
+    // would make `getIcon` return whichever sits earlier in the array, which is
+    // an arbitrary answer that would look stable until someone reorders them.
+    const ids = new Set(ICONS.map((i) => i.id));
+    const owners = new Map<string, string[]>();
+    for (const i of ICONS) {
+      for (const k of i.keywords ?? []) {
+        if (ids.has(k)) continue; // an id wins outright; not an alias
+        owners.set(k, [...(owners.get(k) ?? []), i.id]);
+      }
+    }
+    const contested = [...owners].filter(([, v]) => v.length > 1);
+    expect(contested.map(([k, v]) => `${k} -> ${v.join(' | ')}`)).toEqual([]);
+    // Non-vacuity. Tied to the real number rather than a loose floor: at `> 50`
+    // the registry could have shed ~40 aliases and stayed green.
+    const declared = ICONS.flatMap((i) => i.keywords ?? []).filter((k) => !ids.has(k));
+    expect(owners.size, 'aliases examined').toBe(new Set(declared).size);
+    expect(owners.size, 'the registry should carry a substantial alias set').toBeGreaterThan(80);
+  });
+});
+
+describe('icon alias shadows', () => {
+  it('pins the keywords that are also ids', () => {
+    // Adding a glyph whose id equals an existing keyword silently REPOINTS that
+    // alias: the id wins, so everyone passing the name gets a different glyph.
+    // `scroll-text` did exactly that here, safely, because it had never
+    // resolved. The uniqueness test skips these (an id beats a keyword outright),
+    // so without this list the case has no gate at all.
+    const ids = new Set(ICONS.map((i) => i.id));
+    const shadows = ICONS.flatMap((i) =>
+      (i.keywords ?? []).filter((k) => ids.has(k)).map((k) => `${k} (on ${i.id})`),
+    ).sort();
+    expect(shadows).toEqual([
+      'close (on x-circle)',
+      'money (on coins)',
+      'scroll-text (on document-text)',
+      'settings (on wrench)',
+    ]);
   });
 });
 
