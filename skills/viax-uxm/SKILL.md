@@ -126,6 +126,17 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`ButtonWithIcon`'s shape and type knobs reach the atom.** Border Radius, Padding X / Y,
+  Font Size, Font Weight and Icon Size emitted `--uxm-button-with-icon-*` variables that
+  `button-with-icon.scss` never read — it hard-coded `4px`, `8px 12px`, `13px` and the medium
+  weight, and nothing sized the glyph. Six of its twenty knobs were dead; the thirteen colour
+  knobs and Icon Gap always worked. Its preview painted all six inline (and passed `size` to the
+  `Icon`), so every slider moved in Studio and no app ever changed. **Nothing renders differently**
+  — each fallback is the value that shipped — and two registry defaults that had never painted
+  were corrected to match it (Border Radius 8 → 4, Icon Size 16 → 15, the size all 28 consumer
+  call sites pass). Pass the `Icon` without a `size`: the slot sizes any `<svg>` in it, the way
+  `InputWithIcon` does.
+
 ## Workflow
 
 ### Where the documentation lives

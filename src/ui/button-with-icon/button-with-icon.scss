@@ -4,14 +4,16 @@
   align-items: center;
   background-color: var(--uxm-button-with-icon-background-color, var(--color-card));
   border: 1px solid var(--uxm-button-with-icon-border-color, var(--color-border));
-  border-radius: 4px;
+  border-radius: var(--uxm-button-with-icon-border-radius, 4px);
   color: var(--uxm-button-with-icon-color, var(--color-text-muted));
   cursor: pointer;
   display: inline-flex;
-  font-size: calc(13px * var(--type-scale, 1));
-  font-weight: var(--font-weight-medium, 500);
+  /* The knob multiplies by the type scale the same way the literal did, so a
+     brand's scale still reaches the label. */
+  font-size: calc(var(--uxm-button-with-icon-font-size, 13px) * var(--type-scale, 1));
+  font-weight: var(--uxm-button-with-icon-font-weight, var(--font-weight-medium, 500));
   gap: var(--uxm-button-with-icon-gap, 8px);
-  padding: 8px 12px;
+  padding: var(--uxm-button-with-icon-padding-y, 8px) var(--uxm-button-with-icon-padding-x, 12px);
   transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 
   &:hover {
@@ -42,5 +44,15 @@
 
   &__icon {
     display: inline-flex;
+
+    /* Sized here rather than left to the caller's `<Icon size>`: the knob has
+       to reach the glyph for a theme to change it, and an svg's width/height
+       are presentation attributes that any rule out-ranks. Descendant, not
+       `> svg`, because `icon` is a consumer ReactNode and may be wrapped —
+       the same shape as InputWithIcon's. */
+    & svg {
+      height: var(--uxm-button-with-icon-icon-size, 15px);
+      width: var(--uxm-button-with-icon-icon-size, 15px);
+    }
   }
 }
