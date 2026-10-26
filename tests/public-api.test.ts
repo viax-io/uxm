@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 
@@ -23,10 +23,12 @@ import pkg from '../package.json';
  *    (a plain `npm test` before any build); CI always builds first.
  *
  * 3. **That the CDN bundles carry the same surface.** `npm run build:cdn`
- *    (`dist-cdn/`, see scripts/build-cdn.mjs) rolls `./ui` and
+ *    (`dist-cdn/`, see scripts/build-cdn.mjs) rolls `./ui`, `./studio` and
  *    `./studio/generate-css` into single files for <script>-tag consumers.
  *    Each must export exactly what its npm subpath does — the snapshot above
- *    is then the CDN changelog too. Skipped when `dist-cdn/` is absent.
+ *    is then the CDN changelog too — except that `uxm.esm.js` also carries
+ *    `VERSION`, which a CDN host has no package.json to read from. Skipped
+ *    when `dist-cdn/` is absent.
  *
  * Types are not covered — an `interface` leaves no runtime trace.
  */
@@ -103,16 +105,24 @@ describe.skipIf(!hasDist)('dist/ (built package)', () => {
 describe.skipIf(!hasDistCdn)('dist-cdn/ (CDN bundles)', () => {
   const CDN_ENTRIES: Record<string, string> = {
     './ui': 'uxm.esm.js',
+    './studio': 'uxm-studio.esm.js',
     './studio/generate-css': 'uxm-generate-css.esm.js',
   };
+  /** CDN-only names, on top of the npm subpath's surface. */
+  const CDN_EXTRA: Record<string, string[]> = { 'uxm.esm.js': ['VERSION'] };
 
   for (const [subpath, file] of Object.entries(CDN_ENTRIES)) {
     it(`${file} exports exactly the ${subpath} surface`, async () => {
       const cdn = (await import(resolve(DIST_CDN, file))) as Record<string, unknown>;
       const source = await SOURCE_ENTRIES[subpath]();
-      expect(exportNames(cdn)).toEqual(exportNames(source));
+      expect(exportNames(cdn)).toEqual([...exportNames(source), ...(CDN_EXTRA[file] ?? [])].sort());
     });
   }
+
+  it('uxm.esm.js reports the version it was built from', async () => {
+    const cdn = (await import(resolve(DIST_CDN, 'uxm.esm.js'))) as { VERSION: unknown };
+    expect(cdn.VERSION).toBe(pkg.version);
+  });
 
   it('ships a bundled .d.ts next to every JS bundle and a manifest that lists them all', () => {
     const manifest = JSON.parse(readFileSync(resolve(DIST_CDN, 'cdn-manifest.json'), 'utf8')) as {
@@ -126,6 +136,10 @@ describe.skipIf(!hasDistCdn)('dist-cdn/ (CDN bundles)', () => {
     for (const [file, meta] of Object.entries(manifest.files)) {
       expect(existsSync(resolve(DIST_CDN, file)), file).toBe(true);
       expect(meta.sri).toMatch(/^sha384-[A-Za-z0-9+/]+=*$/);
+    }
+    // Every studio dictionary chunk is listed too, so a host can pin them by SRI.
+    for (const chunk of readdirSync(resolve(DIST_CDN, 'chunks'))) {
+      expect(manifest.files, `chunks/${chunk}`).toHaveProperty([`chunks/${chunk}`]);
     }
   });
 });

@@ -129,12 +129,15 @@ Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same 
 
 | File | Format | React | For |
 |---|---|---|---|
-| `uxm.esm.js` | ESM, `react` / `react-dom` / `react/jsx-runtime` **external** | the host page's, via import map | pages that already have React 19 |
+| `uxm.esm.js` | ESM, `react` / `react-dom` / `react/jsx-runtime` **external**; also exports `VERSION` (the release it was built from) | the host page's, via import map | pages that already have React 19 |
 | `uxm.standalone.js` | IIFE, `window.UXM`, React **bundled in** | its own, inside the bundle | pages with **no** React at all |
 | `uxm.css` | flattened `tokens.css` + `ui.css` | — | both |
+| `uxm-studio.esm.js` | ESM, React **and ui external** — imports `./uxm.esm.js` | the host page's, via import map | the studio workbench (`UxmApp`) — see [below](#studio--the-workbench-from-the-cdn) |
+| `chunks/<locale>-<hash>.js` | ESM, one per studio locale, loaded lazily by `uxm-studio.esm.js` | — | never referenced directly |
+| `uxm-studio.css` | the studio's own stylesheet | — | with `uxm-studio.esm.js`, after `uxm.css` |
 | `uxm-generate-css.esm.js` | ESM, no deps | — | only if you need `generateOverridesCss` (the theming applier) |
-| `uxm.esm.d.ts` / `uxm-generate-css.esm.d.ts` | bundled `.d.ts` per JS artifact | needs `@types/react` | editor/type-check support |
-| `cdn-manifest.json` | byte size, gzip size, `sha384` SRI hash per file | — | verify what you fetched |
+| `uxm.esm.d.ts` / `uxm-studio.esm.d.ts` / `uxm-generate-css.esm.d.ts` | bundled `.d.ts` per JS artifact | needs `@types/react` | editor/type-check support |
+| `cdn-manifest.json` | byte size, gzip size, `sha384` SRI hash per file, chunks included | — | verify what you fetched |
 
 ⚠️ **React 19 ships no UMD build.** The classic "two `<script>` tags from a CDN plus our UMD on top" isn't possible — that's why there are two separate formats above instead of one.
 
@@ -172,6 +175,41 @@ Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same 
 ```
 
 ⚠️ **Never load `uxm.standalone.js` on a page that already has another React instance** — two copies of React break hooks and context. If the page has React, use the ESM build above instead.
+
+### Studio — the workbench from the CDN
+
+`uxm-studio.esm.js` is the same `UxmApp` (and the rest of `@viax.io/uxm/studio`) as the npm package, for a page that already has React 19. It does **not** contain the components: it imports them from `./uxm.esm.js` — the sibling file in the same version folder — so the page holds one copy of ui. That is what keeps the studio and the host on one locale context and one toast store; a second copy would silently split both.
+
+```html
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19",
+    "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime",
+    "react-dom": "https://esm.sh/react-dom@19",
+    "react-dom/client": "https://esm.sh/react-dom@19/client",
+    "@viax.io/uxm/ui": "https://uxm.viax.io/4.73.0/uxm.esm.js",
+    "@viax.io/uxm/studio": "https://uxm.viax.io/4.73.0/uxm-studio.esm.js"
+  }
+}
+</script>
+<link rel="stylesheet" href="https://uxm.viax.io/4.73.0/uxm.css" />
+<link rel="stylesheet" href="https://uxm.viax.io/4.73.0/uxm-studio.css" />
+<script type="module">
+  import { createElement } from 'react';
+  import { createRoot } from 'react-dom/client';
+  import { UxmApp, createReadOnlyPersistence } from '@viax.io/uxm/studio';
+
+  createRoot(document.getElementById('root')).render(
+    createElement(UxmApp, { persistence: createReadOnlyPersistence(), locale: 'de' }),
+  );
+</script>
+```
+
+- **Same version for both files.** Map `@viax.io/uxm/ui` to the `uxm.esm.js` in the **same** folder as `uxm-studio.esm.js`. The import map entry and the studio's own `./uxm.esm.js` then resolve to one URL, and the browser loads it once. A different version, or `uxm.standalone.js`, gives you two copies of ui.
+- **A versioned path, not `latest/`.** The studio loads each locale's dictionary lazily from `chunks/`, and those file names change with every release. A release replaces `latest/` wholesale, removing the previous chunks, so a page that loaded the studio from `latest/` before a release gets a 404 the first time it switches language after it. The ~5-minute edge lag above can also pair a new `uxm-studio.esm.js` with an old `uxm.esm.js`.
+- **`VERSION`** (`import { VERSION } from '@viax.io/uxm/ui'`) tells a CDN host which release it is running — there is no `node_modules/@viax.io/uxm/package.json` to read.
+- **Default brand assets.** With no brand logo or icon configured, the studio shows `/viax-logo.svg` and `/viax-icon.svg` from the **host's** origin, exactly as the npm build does; serve them, or configure a brand.
 
 ### Required host baseline
 

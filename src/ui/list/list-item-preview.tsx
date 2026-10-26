@@ -7,7 +7,7 @@ import { List, ListItem, type ListVariant } from '@/ui';
 import { Tag, type TagType } from '@/ui';
 import { Thumbnail } from '@/ui';
 
-import { LIST_ITEM_ICON_TILE_STYLE, LIST_ITEM_MEDIA_STYLE } from './list';
+import { LIST_ITEM_ICON_TILE_STYLE, LIST_ITEM_MEDIA_STYLE } from './list-item-styles';
 
 type Styles = PreviewProps['styles'];
 type Mode = 'static' | 'interactive';

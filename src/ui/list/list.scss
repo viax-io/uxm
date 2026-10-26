@@ -156,7 +156,7 @@
    row, so the descendant selector costs nothing.
 
    Atoms with a size var of their own are ALSO handled by the forwarding in
-   `LIST_ITEM_MEDIA_STYLE` (list.tsx) — that path is what makes their border /
+   `LIST_ITEM_MEDIA_STYLE` (list-item-styles.ts) — that path is what makes their border /
    radius / inner glyph scale with the row instead of merely being clamped to
    its box. Both resolve to the same size; this rule is the floor for a bare
    <img>, <svg>, or a consumer's own node. */
