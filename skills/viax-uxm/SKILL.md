@@ -130,12 +130,18 @@ catalog.
   Font Size, Font Weight and Icon Size emitted `--uxm-button-with-icon-*` variables that
   `button-with-icon.scss` never read — it hard-coded `4px`, `8px 12px`, `13px` and the medium
   weight, and nothing sized the glyph. Six of its twenty knobs were dead; the thirteen colour
-  knobs and Icon Gap always worked. Its preview painted all six inline (and passed `size` to the
-  `Icon`), so every slider moved in Studio and no app ever changed. **Nothing renders differently**
-  — each fallback is the value that shipped — and two registry defaults that had never painted
-  were corrected to match it (Border Radius 8 → 4, Icon Size 16 → 15, the size all 28 consumer
-  call sites pass). Pass the `Icon` without a `size`: the slot sizes any `<svg>` in it, the way
-  `InputWithIcon` does.
+  state knobs (twelve colours plus Disabled Opacity) and Icon Gap always worked. Its preview
+  painted all six inline (and passed `size` to the `Icon`), so every slider moved in Studio and no
+  app ever changed. Two registry defaults that had never painted were corrected to match the
+  stylesheet (Border Radius 8 → 4, Icon Size 16 → 15, the size all 28 consumer call sites pass).
+
+  **An unthemed button renders identically** — each fallback is the value that shipped — but two
+  groups do see a change on upgrade. A **saved theme** that set any of the six already emitted the
+  variable (`generateOverridesCss` has always written them); it was inert and now paints, so check
+  a published config for `button-with-icon` overrides before rolling out. And a **call site passing
+  an `Icon` size other than 15** now draws 15px, because the slot sizes any `<svg>` in it the way
+  `InputWithIcon` does — set the variable instead. Every svg in the slot is squared to that size,
+  so a composite mark needs its own dimensions.
 
 ## Workflow
 

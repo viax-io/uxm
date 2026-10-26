@@ -343,8 +343,10 @@ projects a var to drive a stylesheet, so an unread one is a dead knob or a typo.
 **What it doesn't catch:** a preview that projects the name the atom reads while
 the emitter writes another (RadioGroup's card knobs, the zoom control's divider),
 and a preview that paints a knob through inline style properties instead of a
-var (ButtonWithIcon's radius, padding and font). Both look live in Studio and do
-nothing in an app. Nor does it ask WHICH declaration reads the var, only that
+var. Both look live in Studio and do nothing in an app. The second kind's
+largest instance, ButtonWithIcon's radius, padding, font and glyph size, is
+fixed — its preview painted all six itself — but the HOLE IS STILL OPEN: those
+six were real CSS properties, never `--uxm-*` keys, so nothing scanned them. Nor does it ask WHICH declaration reads the var, only that
 some non-preview source does — found while mutation-testing this very fix:
 reverting the root's `border-radius` alone left both wiring checks green,
 because the end items' `calc()` still read the name while the root no longer
@@ -355,9 +357,22 @@ only sees a name written as a literal quoted object key: one built by a ternary
 
 Of the ~60 unread vars, most are behaviour knobs (`showArrow`, `showLabel`) or
 composite mock-ups (`login-page` alone is 17), but **about 17 are real style
-knobs that a theme would expect to work**: `button-with-icon` ×6,
-`radio-group`'s card set ×5, `content-tooltip` `shadow` and `titleSize`, and
-`icon` `size` / `strokeWidth`. Don't read the count as "all behaviour knobs".
+knobs that a theme would expect to work**: `radio-group`'s card set ×5,
+`content-tooltip` `shadow` and `titleSize`, and `icon` `size` / `strokeWidth`
+(`button-with-icon`'s six are now wired). Don't read the count as "all
+behaviour knobs".
+
+A note on gating this class, from trying: `input-icon-size` looks narrow
+because it has to be. Its invariant is "an `iconSize` var that reserves
+`padding` must also size an svg". Broadening it to "any atom that reads its
+`iconSize` var must size something" immediately produced false positives —
+EmptyState sizes a WRAPPER whose `> svg` fills it, ViewSwitcher and IconTile
+size `.uxm-icon` (the svg, but by class, and rendered by the composed `Icon`
+rather than the atom's own file), and SidebarNavTrigger uses `min-width` /
+`min-height`. Each accommodation made the rule fuzzier until it meant "the var
+appears in some sizing-ish property", which is close to vacuous. ButtonWithIcon
+reserves no padding, so it stays outside that gate; covering it wants a check
+of its own, not a stretched one.
 
 ---
 
