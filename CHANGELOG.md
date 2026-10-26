@@ -1,3 +1,15 @@
+# [4.72.0](https://github.com/viax-io/uxm/compare/v4.71.1...v4.72.0) (2026-10-26)
+
+
+### Bug Fixes
+
+* **button-group:** round the end segments with logical corners ([c9dd34d](https://github.com/viax-io/uxm/commit/c9dd34df0a2fb88236aa12b272f30e6bd5fd2a59))
+
+
+### Features
+
+* **button-group:** read the Border Radius knob ([a8a74bb](https://github.com/viax-io/uxm/commit/a8a74bb8c1af1b57d50613bfb355e113cad4c127)), closes [#98](https://github.com/viax-io/uxm/issues/98)
+
 ## [4.71.1](https://github.com/viax-io/uxm/compare/v4.71.0...v4.71.1) (2026-10-26)
 
 

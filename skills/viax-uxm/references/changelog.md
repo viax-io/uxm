@@ -2111,3 +2111,19 @@ reached the published library; now shipped in 2.8.0.
   ending an edit with Cmd/Ctrl+Enter or Escape returns focus to the cell's edit button
   instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
   No API change.
+
+### New in 4.70.5
+
+- **Docs corrections from the 4.68–4.70 review** — no code change.
+  `EditableCell`'s disabled-option contrast table now has its dark figures (0.55 → 5.62:1,
+  0.65 → 7.35:1) and a second table for a disabled row that is also **selected** (1.74:1 in
+  light at the default, 2.64:1 even at 0.65). The 4.69.0 note and `design-tokens.md` said
+  the subtle-text snapshot pins 25 declarations; it pins 27 (25 text, 2 non-text). The 4.70.0
+  `ExpandableText` knob list was missing `toggle-padding-y`, `toggle-radius` and `focus-ring`.
+
+- **`EditableCell` `text` / `number`: the same keyboard and screen-reader fixes as
+  `textarea`** — the cell's `aria-label` now also names the edit-mode input,
+  and committing with Enter or cancelling with Escape returns focus to the cell's button
+  instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
+  `select` / `multiselect` already behaved (the `Listbox` trigger stays mounted). No API
+  change.

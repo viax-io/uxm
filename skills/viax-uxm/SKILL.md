@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.71.1, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.72.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.71.1** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.72.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.71.1 — current API surface (overrides training data)
+## v4.72.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,22 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.70.5
-
-- **Docs corrections from the 4.68–4.70 review** — no code change.
-  `EditableCell`'s disabled-option contrast table now has its dark figures (0.55 → 5.62:1,
-  0.65 → 7.35:1) and a second table for a disabled row that is also **selected** (1.74:1 in
-  light at the default, 2.64:1 even at 0.65). The 4.69.0 note and `design-tokens.md` said
-  the subtle-text snapshot pins 25 declarations; it pins 27 (25 text, 2 non-text). The 4.70.0
-  `ExpandableText` knob list was missing `toggle-padding-y`, `toggle-radius` and `focus-ring`.
-
-- **`EditableCell` `text` / `number`: the same keyboard and screen-reader fixes as
-  `textarea`** — the cell's `aria-label` now also names the edit-mode input,
-  and committing with Enter or cancelling with Escape returns focus to the cell's button
-  instead of dropping it to `<body>`. Ending by blur leaves focus where the user moved it.
-  `select` / `multiselect` already behaved (the `Listbox` trigger stays mounted). No API
-  change.
 
 ### New in 4.70.6
 
@@ -117,13 +101,7 @@ catalog.
   skill used to recommend can go. `DateInput`, `TimeInput` and `PasswordInput` already sized
   their glyph from their own `iconSize`; no change there.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.72.0
 
 - **`ButtonGroup`: Border Radius rounds the real atom.** Studio's **Border Radius**
   knob emits `--uxm-button-group-border-radius`, but `button-group.scss` hard-coded `8px` and
@@ -131,6 +109,14 @@ catalog.
   the variable (default `8px`, so an unthemed group is unchanged), and the first and last items
   round their outer corners to match, so a keyboard focus ring on an end item follows the curve
   instead of losing its corners to the clip. A theme that saved a radius now gets it.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
