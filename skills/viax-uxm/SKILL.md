@@ -84,8 +84,8 @@ catalog.
 
 ### New in 4.71.0
 
-- **`PageHeader`: the title keeps its own line height, and the tile's glyph has a knob**
-  (unreleased). The title read no `line-height`, so a theme's body line height
+- **`PageHeader`: the title keeps its own line height, and the tile's glyph has a knob**.
+  The title read no `line-height`, so a theme's body line height
   (`brand.bodyLineHeight` → `body { line-height }`) reached it: at 1.6 a 39px title stood in a
   62px line box, and since the row is top-aligned the icon tile sat ~9px above the letters. It
   now reads `--uxm-page-header-title-line-height` (default `normal`; Studio knob **Title Line
@@ -106,7 +106,7 @@ catalog.
 
 ### New in 4.71.1
 
-- **`InputWithIcon`: Icon Size sizes the glyph, not just its padding** (unreleased).
+- **`InputWithIcon`: Icon Size sizes the glyph, not just its padding**.
   `--uxm-input-with-icon-icon-size` (Studio knob **Icon Size**, 16px) used to feed only the
   left-padding calc, so the README's own `icon={<Icon glyph="search" />}` drew `Icon`'s 24px
   default in a 16px slot, and every app passed `size={16}` by hand. Any `<svg>` in the slot is
