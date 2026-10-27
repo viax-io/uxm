@@ -19,6 +19,7 @@
 | `GITHUB_REPO` | Target GitHub repository | _(not set — scaffold locally)_ |
 | `PORTAL_SUBDIR` | Subdirectory within the repo | `/viax-lab-portal/` |
 | `EMBED_UXM_STUDIO` | Embed the UXM Studio editor at `/uxm`? (`yes`/`no`) — `no` = consume the env's published config only | `no` |
+| `LOCALIZATION` | Build the i18n layer? (`yes`/`no`) — `no` = English-only portal, steps 3 and 14 skipped | `yes` |
 | `PORTAL_ID` | Unique portal identifier, `vx-{CLIENT_SLUG}-{8 hex}` — suffix generated at build time via `openssl rand -hex 4`, never hand-invented | _(generated fresh per build)_ |
 | `GENERATED_AT` | Generation date, `YYYY-MM-DD` | _(today at build time)_ |
 
@@ -115,11 +116,11 @@ The design language features a **greyscale/neutral palette**, clean typography, 
 | Client State | Zustand |
 | Auth | keycloak-js (OAuth 2.0 OIDC, browser-only) |
 | Language | JavaScript (ES2024+, JSX) |
-| Localization | **Portal-owned two-layer catalog** — generated `src/i18n/locales/*.json` + runtime overlay from the backend `Translation` catalog, wrapped in `UxmLocaleProvider` from `uxm/ui`. **Do NOT** add i18next, react-intl, LinguiJS or any other i18n runtime — see [Localization & i18n](#localization--i18n-mandatory--every-generated-surface). |
+| Localization | **Only when `{{LOCALIZATION}} = yes`.** Portal-owned locale files — generated `src/i18n/locales/*.json` are the single source of UI copy, wrapped in `UxmLocaleProvider` from `uxm/ui` for formatting. Entity data (`maName`, `bpStatus.name`, …) is localized by the server from the `X-Viax-User-Locale` header and needs nothing else. **Do NOT** add i18next, react-intl, LinguiJS or any other i18n runtime — the whole topic is the [`viax-localization`](../../viax-localization/SKILL.md) skill. |
 
 ### `@viax.io/uxm` — required UI library
 
-The portal **must** use `@viax.io/uxm` for every interactive UI primitive. See the dedicated [`viax-uxm` skill](viax-uxm/SKILL.md) for the authoritative component catalog, design-token reference, and quick-recipes (or browse the library source at [github.com/viax-io/uxm](https://github.com/viax-io/uxm)).
+The portal **must** use `@viax.io/uxm` for every interactive UI primitive. See the dedicated [`viax-uxm` skill](../../viax-uxm/SKILL.md) for the authoritative component catalog, design-token reference, and quick-recipes (or browse the library source at [github.com/viax-io/uxm](https://github.com/viax-io/uxm)).
 
 **Hard rules from that skill (apply here too):**
 
@@ -150,13 +151,7 @@ VITE_AUTH_URL=https://auth.viax.lab.viax.tech
 VITE_API_URL=https://api.viax.lab.viax.tech/graphql
 VITE_USE_MOCK_AUTH=false
 VITE_USE_MOCK_DATA=false
-VITE_I18N_CATALOG=auto
 ```
-
-`VITE_I18N_CATALOG`: `auto` (default — probe for a `Translation` read query and
-overlay if one exists), `off` (file layer only; set this when the probe found no
-read query), or `on` (fail loudly if the overlay cannot load, for realms where
-the catalog is known to be the source of truth).
 
 Access them in code via `import.meta.env.VITE_*`.
 
@@ -423,7 +418,7 @@ Call `keycloak.logout()` (imported from `src/lib/keycloak.js`) to end the sessio
 
 Use **`@viax.io/uxm`'s canonical `--color-*` design tokens** as the source of truth. They're declared on `:root` by `uxm/tokens.css` and themed centrally — every component re-tints automatically when a token changes.
 
-See [`viax-uxm/references/design-tokens.md`](viax-uxm/references/design-tokens.md) for the full catalogue. Quick summary:
+See [`viax-uxm/references/design-tokens.md`](../../viax-uxm/references/design-tokens.md) for the full catalogue. Quick summary:
 
 | Group | Token examples | Use for |
 |---|---|---|
@@ -850,906 +845,74 @@ specified in the theming skill — see *"App identity"* there; `{{PORTAL_ID}}` a
 `{{GENERATED_AT}}` are the values to substitute.
 
 
-## Localization & i18n (mandatory — every generated surface)
+## Localization & i18n — `{{LOCALIZATION}} = yes`
 
-Every portal is localized on first build. There is no "add i18n later" path: a
-surface generated without this section has hardcoded English in it, and the
+**This whole topic lives in its own skill: [`viax-localization`](../../viax-localization/SKILL.md).**
+Read it and follow it — the locale files as the single source of UI copy, their shape,
+the boot gate, locale resolution and server-side persistence, header propagation, the
+`LanguageSwitcher` contract, the library caveats and all currency / date / number formatting
+are there, and none of it is portal-specific. Do not re-derive any of it here.
+
+**The user was asked (question 10) and the answer is `{{LOCALIZATION}}`. Honour it.**
+
+### When `{{LOCALIZATION}} = yes`
+
+The portal is localized on first build, and there is no "add i18n later" path inside this
+build: a surface generated without the skill has hardcoded English in it, and the
 hardcoded-string scan (step 14 of Implementation Order) fails the build.
 
-**The contract in one line:** the *library* formats, the *backend* owns the
-strings, the *portal* wires the two together and never invents either.
-
-### 🔴 Introspect with `__type`, not with the MCP `get_type` tool
-
-`get_type` reads the viax **meta-model** and lists only a type's **directly
-defined** fields; inherited ones are absent. GraphQL introspection returns the
-real, flattened schema:
-
-| Query | Fields returned for `User` |
-|---|---|
-| MCP `get_type("User")` | **2** — `parDigitalIdentities`, `party` |
-| `__type(name: "User") { fields { name } }` | **16** — including `parProfile`, `parParty`, `parId` |
-
-`parProfile` — the field that leads to the user's i18n preferences — is one of
-the 14 the shorter answer omits.
-
-**Always confirm a "field does not exist" conclusion with `__type` before
-designing around it.** The introspection response can be large; save it and query
-it with `jq` rather than reading it whole.
-
-Two more introspection notes for this environment:
-
-- The MCP query tool **blocks any request containing the string `mutation`**,
-  including read-only introspection of the mutation type
-  (`__schema { mutationType }`, `__type(name: "Mutation")`). It is a substring
-  guard, not an operation check. Use the MCP `get_type("Mutation")` tool instead
-  — that one is not filtered, and returns all 5050 mutation names.
-- A validation error and a runtime error mean different things.
-  `GRAPHQL_VALIDATION_FAILED` says the field path is wrong;
-  `INTERNAL_SERVER_ERROR` ("UID for current user is empty") says the path is
-  **correct** and only the execution context is missing. The second is a pass for
-  schema-shape purposes.
-
-### What is verified to exist in the viax API
-
-Confirmed against a live environment — do not assume anything beyond this list,
-and re-verify per realm at scaffold time:
-
-| Capability | Shape | Notes |
-|---|---|---|
-| Configured locales for the realm | `getSupportedLocales` → `[String]` | e.g. `["en-US"]`. **The only source of truth.** Never hardcode a locale list. ⚠️ **Authenticated in some realms** — it returns nothing to an anonymous caller, so it can never be in the boot path. See "Where the locale list comes from — boot and after". |
-| Server's current locale | `currentLocale` → `String` | Use as the configured default when nothing else resolves. Takes **no arguments** — it is derived from request context, not stored state. It is **not** `getSupportedLocales[0]`: a realm returning `["de-DE","en-US","en-CA"]` answered `en-US`. Which context input feeds it (the header, `Accept-Language`, the user's `i18Language`, a realm setting) was **not** determined — do not depend on any particular one. |
-| The caller's own preferences | `getCurrentUserInfo { parProfile { prpI18NPreferences { … } } }` | **This is the link — a direct traversal, no filtering.** `User.parProfile: UserProfile` → `UserProfile.prpI18NPreferences: I18NPreferences`. Verified live: `USER-25` resolves to a row with `i18TimeZone: "Europe/Warsaw"`. |
-| No profile yet | `parProfile` is **nullable** | 3 of 5 sampled users have `parProfile: null`. That — or a null `prpI18NPreferences` — is the "no preferences row yet" case; handle it, do not assume the traversal always lands. |
-| Single-record fetch | `getViaxI18NPreferences(pk, uid)` | **Not useful for "find my row".** It is get-by-key and errors without one: *"Query must have at least one identification input argument passed"*. |
-| Sorting on filter queries | `_orderBy` | **`_sort` is not accepted** by `filter<TypeName>` — it exists only on the 16 `fullTextSearch*` fields. 1510 filter queries take `_orderBy`. |
-| Per-request locale | **The `X-Viax-User-Locale` header — NOT a `_locale` argument.** | ⚠️ `_locale` is a **mutation** argument. On the query side, exactly **1 of 3661** query fields accepts it (`fullTextSearchProducts`); no `filter*` or `get*` query does. Passing it to one fails validation outright: `Unknown argument "_locale" on field "Query.filterOrder"`. Verified by introspecting `Query`'s field args. |
-| Determination context | `X-Viax-User-Locale`, `X-Viax-User-Currency` request headers | Plus `X-Viax-User-Order`, `-Order-Item`, `-Product`. |
-| Translation catalog entity | `Translation { code: String!, value: String, _value_i18n: [LocalizedString!], value_en_US: String }` | Codes are page-scoped and dotted: `page.orders.title`. |
-| Catalog write | `upsertTranslation(_locale: "es", input: { code: "page.orders.title", value: { node: "Pedidos" } })` | This is how a business user's change lands. |
-| User i18n preference | `I18NPreferences { i18Language, i18TimeZone, i18DateFormat, i18Currency }` | Server-side persistence of the user's choice. Implementors: `ViaxI18NPreferences`. Written with **`upsertViaxI18NPreferences`**; input is `{ uid, pk, i18Language: LanguageTag, i18TimeZone: String, i18DateFormat: String, i18Currency: UnitOfMeasureInput, … }`. |
-| Setting the locale server-side | **There is no mutation for `currentLocale`.** | Verified: of 5050 mutations none sets it (the only `set*` is `setConfigurationComponentResultValue`). `currentLocale` is a *derived* read of the request context, not stored state — the docs list `$currentLocale` as a **filter placeholder**, "used to substitute on the current locale". You influence it with the `X-Viax-User-Locale` header and persist the user's choice via `upsertViaxI18NPreferences`. |
-| Localized entity fields | `deName_Locale_en_US`, `value_en_US`, `_field_i18n` | Per-locale field variants exist on entities. Which one the bare `field` resolves to follows the request's locale context — i.e. the header — not a per-query argument. |
-
-⚠️ **Two environment-dependent gaps you MUST probe before relying on them:**
-
-1. **A read query for `Translation` may not exist.** In the Palooza Demo realm
-   none of the 3642 query fields matches `/translat/i` — the entity and its
-   `upsert` mutation exist, but nothing reads the catalog back. Probe at
-   scaffold time and branch:
-   ```graphql
-   query ProbeCatalog { __schema { queryType { fields { name } } } }
-   ```
-   Filter for `translat`. If a read query exists, wire the runtime overlay
-   (below). If it does not, generate the file layer only, set
-   `VITE_I18N_CATALOG=off` in `.env.local`, and state the limitation in
-   `design.md` — do **not** silently ship a portal that claims live catalog
-   updates it cannot perform.
-2. **`i18Language` is frequently `null`.** In Palooza Demo every
-   `ViaxI18NPreferences` row has `i18TimeZone` and `i18DateFormat` populated but
-   `i18Language` and `i18Currency` `null`. Treat the server preference as an
-   *optional* input to resolution, never as a guaranteed one.
-
-### The two-layer catalog
-
-Files and the backend catalog are not alternatives — they are layers, and each
-exists for a criterion the other cannot meet:
-
-- **Generated JSON files** (`src/i18n/locales/{locale}.json`) — the build-time
-  seed and the guaranteed fallback. They make the portal render with real copy
-  offline, with `VITE_USE_MOCK_DATA=true`, and before the first catalog fetch
-  resolves. They are also what the hardcoded-string scan checks against.
-- **Runtime overlay from the `Translation` catalog** — fetched on boot and
-  merged *over* the file layer. This is the only thing that satisfies *"a
-  business user changes a label and the surface reflects it with no code change
-  and no deploy"*. A file-only portal cannot meet that criterion; say so in
-  `design.md` if the read query is absent.
-
-Merge order, lowest to highest precedence:
-
-```
-file[configured default locale]  →  file[selected locale]  →  catalog[selected locale]
-```
-
-### File layout and the key ↔ code mapping
-
-Create `src/i18n/locales/{locale}.json` for **every** locale in
-`getSupportedLocales` — the default locale fully populated, the others created
-with the same key set so a translator has a complete checklist and a missing
-value is visibly `null` rather than absent. Generate them with
-`scripts/gen-locale-files.mjs` rather than by hand, and keep using it for every
-later change — see [Every later change must touch the locale files](#every-later-change-must-touch-the-locale-files).
-
-Two levels, no more. **Level 1 is the page key; level 2 is the label key:**
-
-```json
-{
-  "common": {
-    "clear": "Clear",
-    "close": "Close",
-    "search": "Search",
-    "save": "Save"
-  },
-  "products": {
-    "title": "Products",
-    "col.id": "Product ID",
-    "col.name": "Name",
-    "addToCart": "Add to cart",
-    "empty": "No products match this filter."
-  },
-  "orders": {
-    "title": "Orders",
-    "col.status": "Status"
-  }
-}
-```
-
-The nesting maps mechanically onto the backend translation code, in both
-directions — this is what lets one key space serve both layers:
-
-| File position | Translation `code` |
-|---|---|
-| `products.title` | `page.products.title` |
-| `products.col.id` | `page.products.col.id` |
-| `common.clear` | `common.clear` |
-
-`common` is the one reserved level-1 key: it maps to `common.*`, every other
-level-1 key maps to `page.<key>.*`. Level-2 keys may contain dots for grouping
-(`col.id`) — they are opaque string keys, not further nesting. Never introduce a
-third level of objects: the flat-ish shape is what keeps the file diffable and
-the code round-trippable.
-
-A non-default locale file starts as the key set with `null` values:
-
-```json
-{ "common": { "clear": null, "close": null }, "products": { "title": null } }
-```
-
-`null` means "no value in this locale" and triggers the fallback chain. An empty
-string means "deliberately blank" and is respected — do not conflate them.
-
-### Every later change must touch the locale files
-
-The first generation creates the files. **Everything after it keeps them in
-sync** — this is not a follow-up chore, it is part of the same change.
-
-Whenever a change introduces, renames, or removes user-visible text — a new
-page, a new column, a new validation message, a new empty state — the locale
-files move with it, in the same commit:
-
-| File | What happens |
-|---|---|
-| `locales/{default}.json` | New keys **with real values** — the English copy the surface actually renders. |
-| Every other `locales/*.json` | The same keys with **`null` values**. A translator gets a complete checklist; the fallback chain renders the default until they fill it. |
-
-Concretely — asked to *"add a deliveries list page"*, with the realm on
-`["de-DE", "en-US", "en-CA"]` and `en-US` the default:
-
-```jsonc
-// locales/en-US.json  — new page key, populated
-"deliveries": {
-  "title": "Deliveries",
-  "meta": "{count} deliveries",
-  "col.id": "Delivery ID",
-  "col.status": "Status",
-  "empty": "No deliveries match this filter."
-}
-
-// locales/de-DE.json and locales/en-CA.json — same keys, null values
-"deliveries": {
-  "title": null, "meta": null, "col.id": null, "col.status": null, "empty": null
-}
-```
-
-`null` means "no value in this locale" and falls through the chain. `""` means
-"deliberately blank" and is rendered as such — never use one for the other.
-**Provide a first-pass translation for every locale** rather than leaving the
-new keys null — see [Seed translations, and mark them as drafts](#seed-translations-and-mark-them-as-drafts).
-
-Ship a generator so this is mechanical rather than remembered —
-`scripts/gen-locale-files.mjs`, wired as `"gen:locales"`:
-
-```bash
-npm run gen:locales -- de-DE en-US en-CA --default=en-US
-```
-
-It must:
-
-- **Preserve every existing non-null value.** Re-running it after a translator
-  has worked must never blank their strings — that is the one failure that
-  makes a team stop trusting the tool.
-- **Add keys missing from a non-default file** as `null`, taking the key set
-  from the default locale.
-- **Delete files for locales the realm no longer configures** — a stale file
-  keeps offering a language that has been withdrawn.
-- **Report `filled/total` per locale**, so translation debt is visible.
-
-Two more obligations on the same change:
-
-- **Removing a page removes its keys** from every locale file, and its codes
-  from `design.md`. Orphaned keys accumulate into a catalogue nobody trusts.
-- **`design.md` lists the codes the change introduced**, so they can be loaded
-  into the backend translation catalog.
-
-The hardcoded-string scan (step 14) is what enforces all of this: a new page
-whose copy never reached the locale files still has literals in the JSX, and the
-build fails. **Run `npm run scan:i18n` after adding any surface** — it is the
-difference between "I added the keys" and "the keys are actually being used".
-
-### Seed translations, and mark them as drafts
-
-Generate a first-pass translation for every configured locale. A file full of
-`null` renders as the default language, which looks like the feature is broken
-and gives a reviewer nothing to react to — a draft they can correct is worth more
-than a blank they have to author.
-
-**The drafts must be visibly provisional.** Machine-written copy that is
-indistinguishable from approved copy is how unreviewed text reaches production.
-Each non-default locale file carries a reserved level-1 `_meta` key:
-
-```jsonc
-{
-  "_meta": { "status": "machine-translated", "reviewed": [] },
-  "common": { "clear": "Löschen", "close": "Schließen" },
-  "products": { "title": "Produkte" }
-}
-```
-
-- `_meta` is reserved alongside `common` — it is **not** a page and maps to no
-  translation code. The `t()` lookup must never reach into it.
-- As a reviewer approves keys, their dotted paths move into `reviewed`. The
-  generator reports `reviewed / total` per locale so the remaining debt is
-  visible, and `design.md` states that non-default locales ship as drafts.
-
-#### Translating well
-
-- **Keep placeholders and markup verbatim.** `{count}`, `{name}`, `{percent}`
-  must survive untouched; a translated placeholder silently renders as literal
-  text.
-- **Never translate identifiers**: field codes (`maId`, `biCreatedAt`), currency
-  codes, IANA timezones, BCP-47 tags, glyph ids, status codes from the API
-  (`Active_Trial`), product or brand names.
-- **Match the register the locale expects of business software.** German portals
-  address the user with *Sie*, not *du*; French with *vous*. Getting this wrong
-  reads as amateurish faster than a mistranslation does.
-- **Follow each language's UI conventions**, not English ones translated
-  literally: German capitalises all nouns; French inserts a narrow space before
-  `:` `!` `?` `»`; Ukrainian and Polish decline nouns after numerals, so a
-  `{count}` string may need a different phrasing rather than a direct rendering.
-- **Watch length.** German runs roughly 30% longer than English; a label that
-  fits a column header in `en-US` may truncate in `de-DE`. Prefer the shorter
-  natural wording for table headers and buttons.
-- **Endonyms are never translated** — the language switcher derives them from
-  `Intl.DisplayNames` and no locale file should contain language names.
-
-#### Regional variants: translate only the differences
-
-For a second locale sharing a base language — `en-CA` beside `en-US`,
-`de-AT` beside `de-DE` — **fill only the keys that genuinely differ** and leave
-the rest `null`. The base-language link in the fallback chain resolves them.
-
-Copying an identical string into both files creates two places to update, and
-they will drift. `en-CA` typically needs a handful of spelling changes
-(`-our`, `-re`) and nothing else; a file that is 95% duplicated `en-US` is
-noise, not a translation.
-
-### Where the locale list comes from
-
-**One source: the realm.** `getSupportedLocales` + `currentLocale`, fetched once
-the session exists. There is **no pre-auth locale list and no pre-auth guess** —
-the login screen belongs to Keycloak, and the portal renders nothing localized
-before the server has answered (see
-[Nothing renders in the wrong language first](#nothing-renders-in-the-wrong-language-first)).
-
-The generated locale files are the **copy** source, not a locale list to resolve
-against. They also serve as the fallback list if `getSupportedLocales` cannot be
-read at all, since they are the only locales the build has strings for.
-
-Rules:
-
-- **A realm locale with no bundled file is still selectable** — it falls through
-  the value chain to the configured default. Log the gap; do not hide the locale.
-- If the realm list and the bundle disagree, that is drift worth reporting in
-  `design.md`: the portal needs regenerating to pick up the new locale's file.
-
-### Reading and writing the user's language preference
-
-**Read it in one query, by traversing the profile.** The user owns a profile,
-the profile owns the preferences — the server resolves the link, so there is no
-filtering, no identity juggling and no way to land on somebody else's row:
-
-```graphql
-query MyI18nPreferences {
-  getCurrentUserInfo {
-    uid
-    parProfile {
-      uid
-      prpI18NPreferences {
-        uid
-        i18Language
-        i18TimeZone
-        i18DateFormat
-      }
-    }
-  }
-}
-```
-
-`User.parProfile: UserProfile` → `UserProfile.prpI18NPreferences: I18NPreferences`.
-Verified against the live realm.
-
-**This traversal is the only way to obtain the row's `uid`.**
-
-**Both hops are nullable, and that is the "no row yet" signal.** Of five sampled
-users, three had `parProfile: null`. A null at either hop means the user has no
-row: persist locally (see [Locale resolution](#locale-resolution)). It is not an
-error.
-
-**Write with the row's own `uid`, and nothing else.**
-
-```graphql
-mutation SetPreferredLanguage($uid: UUID, $tag: LanguageTag) {
-  upsertViaxI18NPreferences(input: { uid: $uid, i18Language: $tag }) {
-    uid
-    i18Language
-  }
-}
-```
-
-Per the backend: *an existing record already carries its owner link, so there is
-no reason to send it on every update.* The input shape confirms it —
-`{ uid, pk, i18Language: LanguageTag, i18TimeZone, i18DateFormat, i18Currency, createdBy, … }`
-carries no party or user field.
-
-**Do not upsert without a `uid`.** The mutation is keyed on it; omitting the key
-mints a fresh row on every switch, leaving a trail of orphans under one user.
-
-⚠️ **Open question — how a user's FIRST preferences row is created.** With
-`parProfile` null for most users and `i18Language` null on every existing row,
-this path is the common case, not the edge. Until the backend confirms whether
-an upsert without `uid` creates-and-links, or whether rows arrive via
-provisioning, a portal with no row **persists locally only** and says so in
-`design.md`. Do not guess.
-
-**Do not look for `currentLocale` on the write side.** There is no mutation for
-it and nothing to set: it is a derived read of the request context, driven by
-the `X-Viax-User-Locale` header the client already sends.
-
-**Fire the write in the background.** The local switch has already taken effect;
-a failed mirror is not a user-facing error. Wrap it so a rejection cannot reach
-an error boundary.
-
-### Nothing renders in the wrong language first
-
-Two of the inputs that decide the language need a token, so they land *after*
-login: the realm's configured list and the user's stored preference. Render
-before they arrive and the whole surface paints in the browser-detected
-language, then repaints in the user's — a visible English → German flip that
-reads as a bug.
-
-**Hold the WHOLE app until the language is settled.** The gate is the
-`I18nProvider` itself: it starts with no locale at all and renders a
-**full-screen spinner** until the realm's list, its default and the user's
-preference have landed. No separate `LocaleGate` component, and nothing below
-it — not the shell, not a page — renders before then.
-
-```jsx
-// src/i18n/index.jsx
-const [locale, setLocaleState] = useState(null)   // nothing is guessed
-…
-if (!locale) return <FullScreenSpinner />         // no copy: no locale to render it in
-return (
-  <I18nContext.Provider value={value}>
-    <UxmLocaleProvider locale={locale}>{children}</UxmLocaleProvider>
-  </I18nContext.Provider>
-)
-```
-
-```js
-// per hook — signed out there is nothing to wait for
-ready: !accessToken || isFetched
-// the gate
-localeReady = realmReady && prefsReady
-```
-
-Rules that make this correct rather than a hang:
-
-- **No initial guess, therefore no repaint.** Seeding the locale from the
-  browser (or from anything else) and correcting it when the server answers is
-  what produces the visible English→German flip. Start with `null`.
-- **`isFetched`, not `isSuccess`.** A 403 or a network failure settles the
-  question as firmly as a 200. Waiting for success holds the spinner forever on
-  a query that will never succeed; fall through to the bundled list instead.
-- **The spinner carries no copy.** There is no resolved locale yet, so any text
-  would have to be hardcoded in one language — render the bare `<Loader />`.
-- **Do not send a locale header before one is resolved.** The module-level
-  locale starts `null` and the request interceptor omits
-  `X-Viax-User-Locale` while it is — a guessed header on the very query that
-  decides the locale is circular.
-- **It also removes a double data fetch.** Page queries are keyed by locale, so
-  a locale that changes under them invalidates and refetches. Mounting pages
-  only once the locale is final means each list loads once.
-
-#### Fetch the locale inputs with TanStack Query, not a raw effect
-
-`React.StrictMode` double-invokes effects in development, so a hand-rolled
-`useEffect` + fetch issues **every request twice** — visible as duplicated
-`LocaleConfig` / `MyIdentity` / `MyI18nPreferences` in the network panel. A
-`cancelled` flag does not help: it guards the state update, never the call.
-
-The portal already has TanStack Query in its stack for page data; use it here
-too and the query key deduplicates. `staleTime: Infinity` and `retry: false`
-suit both — the realm's locale list and a user's preference do not change
-mid-session, and a failure should fall through to the bundle rather than retry
-behind a spinner the gate is holding.
-
-### Locale resolution
-
-**The backend is the only store for a signed-in user's language.** Nothing about
-it is kept in `localStorage` — a second copy is how the two sources silently
-disagree, and the server is authoritative.
-
-```
-1. Server user preference   I18NPreferences.i18Language        ← the only stored source
-2. Browser locale           navigator.languages, first match against supported
-3. Configured default       currentLocale
-4. First supported locale   getSupportedLocales[0]
-```
-
-`resolve.js` must **return which link resolved**, not just the tag
-(`{ locale, source }`) — it makes the whole chain debuggable from one log line.
-
-Rules that the acceptance criteria turn on:
-
-- **Match browser locale against the configured list, never against a hardcoded
-  one.** Match exact tag first (`de-DE`), then base language (`de` matches
-  `de-DE` or `de-AT`). An unsupported candidate — from *any* link, the server's
-  value included — must never survive: match every one against `supported`
-  before accepting it. Resolution only ever runs with the realm's own inputs —
-  there is no earlier pass to seed a locale from.
-
-- **🔴 No client-side persistence of the locale. At all.** No `localStorage`
-  key, no `sessionStorage`, no cookie, no "fallback" entry keyed by user. If a
-  generated portal has a locale storage module, that is a defect. The chain
-  above has no stored link, so a local copy cannot be reintroduced without
-  changing `resolve.js` itself.
-
-- **A user with no preferences row CANNOT set a language — that is the
-  behaviour, not a gap to paper over.** `upsertViaxI18NPreferences` is keyed on
-  the row's `uid`, so with no row there is nowhere to write. Handle it exactly
-  like a failed write: the switch applies to the **current session**, nothing is
-  persisted, and the user is told it was not saved (`toast.error` with a
-  translated `common.*` key). Creating a user's first row is a **separate
-  iteration** — do not invent a client-side workaround for it, and do not upsert
-  without a `uid` hoping the server links the row.
-
-  | Situation | What happens |
-  |---|---|
-  | Row exists, write **succeeds** | The server holds the language. Also write it into the cached `['i18n-preferences', userId]` row. |
-  | Row exists, write **fails** | Session-only switch + `toast.error`. The server still holds its previous value, so the pick reverts on reload — say so rather than fail silently. |
-  | **No row** (`parProfile` or `prpI18NPreferences` is null) | Session-only switch + the same `toast.error`. Nothing is stored anywhere. |
-
-- **The switch must never block on the network.** Update the UI synchronously
-  and write the server behind it.
-
-- **Key the preferences query by user** (`['i18n-preferences', userId]`), or
-  signing in as somebody else serves the previous user's record from cache.
-
-- **Pin the resolution with tests.** `resolve.js` is pure — no framework needed,
-  and no new dependency is allowed for this: ship
-  `scripts/test-locale-resolution.mjs` using `node:test`, wired as
-  `"test:i18n": "node --test scripts/test-locale-resolution.mjs"`. It must
-  cover, at minimum: the server value winning; no server value falling through
-  to the browser; **a `stored` input being ignored, so client-side persistence
-  cannot creep back in**; an unsupported value never surviving; the first
-  supported locale as the last resort; base-language matching; and the value
-  chain ending at the POPULATED default.
-
-#### Writing the language server-side
-
-**Do NOT try to mutate `currentLocale` — no such mutation exists.** The write is:
-
-```graphql
-mutation SetLanguage($uid: UUID, $tag: LanguageTag) {
-  upsertViaxI18NPreferences(input: { uid: $uid, i18Language: $tag }) {
-    uid
-    i18Language
-  }
-}
-```
-
-The row is found by traversing the profile — `getCurrentUserInfo { parProfile
-{ prpI18NPreferences { uid … } } }`, verified by introspection: `User.parProfile:
-UserProfile` → `UserProfile.prpI18NPreferences: I18NPreferences`. Use that
-`uid`, and **never upsert without one**: the mutation is keyed on it, so omitting
-it mints a fresh row on every switch.
-
-⚠️ **Still open: how a user's FIRST row is created — a separate iteration.**
-With `parProfile` null for most users this is the common case, not an edge.
-Until the backend confirms whether an upsert without `uid` creates-and-links, or
-whether rows arrive via provisioning, such a user simply **cannot persist a
-language**: the switch lasts the session, a toast says it was not saved, and
-`design.md` records it as a known limitation. Do not guess, and do not build a
-client-side substitute.
-
-### Wiring — files to create
-
-```
-src/i18n/
-├── index.jsx                    I18nProvider + useT() + useLocale(); wraps UxmLocaleProvider
-├── resolve.js                   the resolution order above → { locale, source }; pure and unit-testable
-├── bundled.js                   the bundled files + BUNDLED_LOCALES; the COPY source and the fallback list
-├── locale-state.js              module-level locale/currency holder the graphql client reads
-├── catalog.js                   runtime overlay: fetch Translation catalog, merge over files
-├── codes.js                     fileKey ↔ translation code mapping, both directions
-└── locales/
-    ├── en-US.json               generated, fully populated (default locale)
-    └── {each other supported}.json
-```
-
-`I18nProvider` sits **above the router and above the auth guard** in `App.jsx`,
-and it must not depend on an access token: the boot paint happens before the
-authenticated inputs land. The **file layer** works unauthenticated
-and supplies both the copy and the pre-auth locale list;
-`getSupportedLocales` / `currentLocale`, the catalog overlay, and
-`I18NPreferences` are all wired in only once a token exists (see "Where the
-locale list comes from, pre- and post-auth").
-
-It renders `<UxmLocaleProvider locale={locale}>` from `uxm/ui` around its
-children. That provider is what makes every UXM atom's `Intl` call — month
-names, decimal separators, byte units — follow the selected locale. It does
-**not** translate copy: UXM ships no catalog by design, so every UXM label prop
-(`clearLabel`, `emptyState`, `labels={{…}}`, `requiredMessage`, …) still has to
-be passed a `t()` value by the portal.
-
-```jsx
-// The shape every generated page uses. `t` is page-scoped so a page never
-// reaches into another page's keys.
-const t = useT('products')
-<ButtonPrimary>{t('addToCart')}</ButtonPrimary>
-<DataTable columns={[{ key: 'maId', header: t('col.id') }]} … />
-<EmptyState title={t('empty')} />
-<TextInput clearLabel={useT('common')('clear')} />
-```
-
-### Value fallback chain
-
-When the selected locale has no value for a key — in the catalog or the files:
-
-```
-selected locale (de-AT)  →  base language (de)  →  configured default (en-US)  →  the code itself
-```
-
-Never render blank. Rendering the code (`page.products.col.id`) is the last
-resort and is deliberately ugly — it is a visible bug report, not a fallback to
-be relied on. The same chain applies to **API-sourced localized values**
-(product names, BI type and status labels, attribute labels, category names,
-determination model names), not just chrome.
-
-### 🔴 The chain's last resort is the POPULATED default, not the configured one
-
-These are two different locales and conflating them breaks the whole surface:
-
-| | What it is | Where it comes from |
-|---|---|---|
-| **Configured default** | The realm's `currentLocale` | Server, post-auth, **can change** |
-| **Populated default** | The one locale file generation actually filled | A constant in the code, changes only on regeneration |
-
-The chain must end with the populated one:
-
-```
-catalog[selected] → file[selected] → file[base language]
-                  → file[configured default] → file[POPULATED default] → the code
-```
-
-Leave the last link out and the moment a realm names a locale nobody has
-translated yet, **every label renders as its code** — with a perfectly good
-`en-US.json` sitting right there unused. Every link above it is `null`, because
-the untranslated file is both the selected locale and the configured default.
-
-This shipped and was caught in manual testing: a mock returning
-`currentLocale: 'de-DE'` against an all-null `de-DE.json` turned the entire UI
-into `common.brandAlt`, `page.products.title`, and so on.
-
-```js
-const POPULATED_DEFAULT = 'en-US'   // the file generation filled
-
-// …
-fromLayer(BUNDLED, configuredDefault),
-configuredDefault === POPULATED_DEFAULT ? undefined : fromLayer(BUNDLED, POPULATED_DEFAULT),
-```
-
-Do **not** collapse this by hardcoding the last link to the scaffold default and
-dropping `configuredDefault` — that silently ignores a realm that legitimately
-changed its default. Both links, in that order.
-
-#### Mock data must mirror the realm it stands in for
-
-The same defect arrived through the mock: `fetchLocaleConfig` returned
-`{ getSupportedLocales: ['en-US','de-DE'], currentLocale: 'de-DE' }` while the
-realm actually returns `['de-DE','en-US','en-CA']` with `currentLocale: 'en-US'`.
-
-A mock that disagrees with production is not a mock, it is a second source of
-truth — and this one named an **untranslated** locale as the default, which is
-precisely the input that dead-ends the chain. Take mock values from the
-scaffold-time probe, verbatim.
-
-#### Never ship a stub that impersonates a working API
-
-An API module that returns a hardcoded shape instead of calling the server —
-
-```js
-export async function fetchMyI18nPreferences() {
-  return { i18Language: null, ownerResolvable: false }   // ← never queries
-}
-```
-
-— reads as implemented at every call site, and the missing behaviour surfaces
-only as "the feature does nothing". If a capability cannot be built yet, the
-function must be **absent**, or throw, or be named so the gap is unmissable
-(`fetchMyI18nPreferencesNotImplemented`). Record the blocker in `design.md`,
-never as a return value that looks like data.
-
-### Locale on every API call — one place only
-
-Locale propagation lives in `lib/graphql-client.js` and **nowhere else**. No
-component, hook, or `lib/api/*` module passes locale explicitly.
-
-```javascript
-// lib/graphql-client.js — request interceptor, in addition to the Bearer token
-config.headers['X-Viax-User-Locale'] = getLocale()      // from the i18n store
-config.headers['X-Viax-User-Currency'] = getCurrency()  // from user/pricing context, NOT from locale
-// Locale travels in the HEADER ONLY. Do NOT add a `_locale` argument to
-// queries — see the capability table: it is a mutation argument, and adding
-// it to a filter query is a hard validation error.
-```
-
-Changing locale must **re-run the affected queries, not reload the page**.
-Include the locale in the TanStack Query key so a switch invalidates cleanly:
-
-```javascript
-queryKey: ['products', locale, filters]
-```
-
-Criterion: switching locale re-renders chrome and data with no page reload,
-without losing form state or navigation position. A `window.location.reload()`
-anywhere in the switcher is an automatic fail.
-
-### The language switcher
-
-**PREREQUISITE — check before generating.** The switcher is a single
-UXM-owned component; the portal must not hand-roll one, and must not copy one
-between portals.
-
-```js
-import { LanguageSwitcher } from 'uxm/ui'
-```
-
-If the installed `@viax.io/uxm` does **not** export `LanguageSwitcher`, **STOP and
-report it** — do not substitute a local `<Select>`-based switcher. A local copy
-is exactly the duplication the single-component rule exists to prevent, and it
-will diverge on brand tokens and WCAG compliance. Report to the user: *"the
-portal skill requires `LanguageSwitcher` from @viax.io/uxm; the installed version
-does not export it."*
-
-#### API
-
-| Prop | Type | Default | Notes |
-|---|---|---|---|
-| `locales` | `string[]` | – | **Required.** BCP-47 tags — the realm's `getSupportedLocales`. Nothing renders before it has been fetched, so there is no earlier list. |
-| `value` | `string` | – | **Required.** Controlled; must be one of `locales`. |
-| `onChange` | `(locale: string) => void` | – | **Required.** Persist + re-resolve here; the atom stores nothing. |
-| `label` | `string` | `'Language'` | Trigger's accessible name. **Always pass a `t()` value** — see below. |
-| `searchLabel` | `string` | `'Search languages'` | Panel search box name + placeholder. Translate it too. |
-| `variant` | `'full' \| 'compact'` | `'full'` | `compact` = icon-only, for tight bars. |
-| `searchable` | `boolean \| 'auto'` | `'auto'` | Search appears past 6 locales. |
-| `disabled` | `boolean` | `false` | |
-| `getLabel` | `(locale: string) => string` | endonym | **Do not pass this.** See "Language names". |
-
-```jsx
-<LanguageSwitcher
-  locales={supported}
-  value={locale}
-  onChange={setLocale}
-  label={t('common.language')}
-  searchLabel={t('common.searchLanguages')}
-/>
-```
-
-**It is data-free.** It issues no query, reads no context, persists nothing. The
-list, the value and the handler all come from the portal's i18n layer.
-
-#### Placement
-
-- In `<AppTopBar actions>`, **immediately before the Sign out button** — it is
-  the last control the user touches before leaving, and grouping it with the
-  session actions keeps the account-related cluster together. Full order:
-  user name → light/dark toggle → theme picker → **LanguageSwitcher** → Sign
-  out. There is no second call site: the portal has no pre-login surface.
-- The call site renders it **unconditionally**. Do **not** add
-  `{locales.length > 1 && …}` — the component already returns `null` at one
-  locale or none, emitting no wrapper and costing no layout. A second guard at
-  the call site duplicates a rule that has exactly one owner, and the two
-  copies will eventually disagree.
-
-#### Language names
-
-The component derives the **endonym** itself — `Deutsch`, not `German` — from
-`Intl.DisplayNames`. **Do not compute names in the portal and do not pass
-`getLabel`.** Two traps that the component already handles and a hand-rolled
-version reliably gets wrong:
-
-- `new Intl.DisplayNames([tag], { type: 'language' }).of(tag)` on a **full** tag
-  returns `"Deutsch (Deutschland)"` / `"American English"` — country names in a
-  language picker. The component resolves on the base subtag instead.
-- It then re-adds the region **only where two configured tags share a base
-  language**, so `["en-US", "en-GB"]` renders `American English` /
-  `British English` while `["en-US", "de-DE"]` renders `English` / `Deutsch`.
-
-`getLabel` exists for a genuinely different rendering (a flag, a marketing
-name). It is not the translation hook: endonyms are identical in every UI
-language, so they do not change when the app's locale changes.
-
-#### Accessibility
-
-`label` is the **only** accessible name the control has. Its visible text is a
-language name, which tells a screen-reader user what is *selected* but not what
-the control *does* — "English, button" gives no hint that pressing it changes
-the language. Never leave it at the English default in a localized portal.
-
-### Library caveats found the hard way
-
-Four traps that cost real debugging time. None is a defect you can fix from the
-portal; all four change how portal code must be written.
-
-**1. No UXM date atom accepts a `timeZone`.** `Calendar`, `DateInput` and
-`EditableCell`'s date editor all operate on local `Date` objects. The API returns
-UTC, so every instant must be formatted in portal code with an explicit zone.
-Handing a UTC instant straight to an atom renders it in the browser's zone and
-silently misfiles any row recorded near midnight.
-
-**2. `DateInput` and `EditableCell` forward nothing to their inner `Calendar`.**
-Both render `<Calendar value={…} onChange={…} />` and nothing more, so
-`previousMonthLabel` / `nextMonthLabel` / `drillUpLabel` are unreachable through
-either wrapper, and `weekStartsOn` is stuck on Sunday — wrong for every European
-locale. Month and weekday names *do* localize, but only because
-`UxmLocaleProvider` reaches the inner `Calendar` through context where
-prop-drilling never existed. Do not assume the a11y labels follow.
-
-**3. `parseDate` / `FORMAT_SPEC` are not exported from `uxm/ui`.** They
-exist in the library source but the barrel re-exports only the component and its
-types. A portal comparing a typed date against its own data has to re-derive the
-mask itself.
-
-**4. A `Listbox`-backed atom shares its root node with `.uxm-listbox`.** The
-class a consumer passes is merged onto Listbox's own root (`cn('uxm-listbox',
-className)`), which is `width: 100%` — right for field-embedded pickers, wrong
-for a standalone trigger. Specificity ties, so cascade order decides, and it can
-stretch the control across its flex parent and push its neighbours out of the
-row. If you hit this in portal CSS, qualify the selector
-(`.uxm-listbox.uxm-language-switcher`) rather than reordering imports.
-
-#### `keycloak-js` cannot be imported outside a browser
-
-`lib/keycloak.js` constructs its `Keycloak` instance at **module scope**, and the
-constructor reads `document`. Importing that module in Node — an SSR pass, a
-smoke test, a unit test — throws `ReferenceError: document is not defined`
-before a single line of portal code runs.
-
-Not a defect for the running app, which only ever loads in a browser, but it
-means the auth module (and anything importing it, including most pages) is
-untestable outside one. If tests are planned, make the instantiation lazy —
-create the client on first use rather than at import.
-
-### Currency — display only in this story
-
-#### Where the currency comes from
-
-Amount **and** currency both come from the pricing result — `amount` +
-`units.code` — and travel together as one value:
-
-```graphql
-pricPrice { edges { node { amount units { code } } } }
-```
-
-Normalise the connection to `[{ amount, currency }]` by mapping
-`units.code → currency`. Two shape traps: the edges routinely contain
-`{ node: null }` holes, and the same BI can carry several price types, so the
-TOTAL is the first **non-null** node, not `edges[0]`.
-
-**Never infer currency from the locale** — a `de-DE` user is not automatically
-paying in EUR — and **never hardcode a fallback**. A row with no resolvable
-`units.code` renders no amount; inventing `'USD'` to avoid a blank cell prints a
-number in the wrong currency, which is worse than printing nothing.
-
-#### The locale controls presentation, never the value
-
-```js
-new Intl.NumberFormat(locale, { style: 'currency', currency: units.code })
-```
-
-The same EUR amount, same value, two locales — verified output:
-
-| Locale | `1234.56` EUR |
-|---|---|
-| `en-US` | `€1,234.56` |
-| `de-DE` | `1.234,56 €` |
-
-⚠️ **Precision follows the CURRENCY, not the locale** — despite how the rule is
-usually phrased. `Intl` applies the currency's minor-unit digits, and the locale
-never overrides them:
-
-| | `en-US` | `de-DE` | `ja-JP` |
-|---|---|---|---|
-| `JPY` 1234.56 | `¥1,235` | `1.235 ¥` | `￥1,235` |
-| `BHD` 1234.5678 | `BHD 1,234.568` | — | — |
-
-JPY has no minor unit, so it renders whole in every locale; BHD has three. This
-is why you must **not** pass `minimumFractionDigits` / `maximumFractionDigits`
-to "make it consistent": a hardcoded `2` invents decimals JPY does not have and
-truncates one off BHD. Let `Intl` read the currency.
-
-#### Currency context goes to the engine, never to a converter
-
-Pass `X-Viax-User-Currency` from the same interceptor that carries the locale
-header, and let prices be **re-resolved through the Determination Engine**.
-
-There must be **no client-side conversion anywhere in the portal** — no rate
-table, no multiply, no cached FX. A converted number is a number the pricing
-engine never approved, and it will disagree with the invoice. If a currency
-context changes, re-query; do not recompute.
-
-#### Mixed-currency lists
-
-Render each row in its **own** currency. `formatMoney(row.amount, row.currency, locale)`
-— the currency is per row, never lifted to the table.
-
-**Never total across differing `units.code`.** Summing raw `amount` values from
-mixed currencies produces a number that looks authoritative and means nothing —
-the "silent totalling error". If a total is required, group by currency and show
-per-currency subtotals; if that is not acceptable to the design, the total does
-not belong on that screen.
-
-#### Display-only
-
-Currency is **derived** from the pricing result and the user's context. It is
-not user-switchable in this story, so the portal renders no control for it.
-(`CurrencyInput` remains available for *entering* a monetary value — a different
-job from choosing the display currency.)
-
-### Dates, times and numbers### Dates, times and numbers
-
-- The API returns UTC (viax date & time rules: store UTC, return UTC). Render in
-  the **user's timezone** — `I18NPreferences.i18TimeZone`, falling back to
-  `Intl.DateTimeFormat().resolvedOptions().timeZone`.
-- ⚠️ **No UXM date atom accepts a `timeZone`.** `Calendar`, `DateInput` and
-  `EditableCell`'s date editor all operate on local `Date` objects. Every
-  UTC-instant render therefore goes through `lib/utils/format.js` in portal
-  code — `formatDateTime(iso, locale, timeZone)`. Passing a UTC instant
-  straight to a UXM atom silently renders it in the browser's zone, which
-  misfiles any row recorded near midnight.
-- `DateInput`'s mask (`mdy` / `dmy` / `ymd`) is not derived from the locale by
-  the library — pick it per locale in `lib/i18n/` and pass it explicitly.
-- Numbers, percentages and quantities go through `Intl.NumberFormat(locale)`.
-  No `toFixed()` with a hand-written separator anywhere.
-
-### What `design.md` must state
-
-The emitted `design.md` is incomplete without:
-
-1. **Locales in play** — the value of `getSupportedLocales` at generation time,
-   which one is the configured default, and that the runtime re-check happens
-   post-login (the query is authenticated).
-2. **Translation codes introduced** — every `page.<page>.<label>` and
-   `common.<label>` the generated surface added, so they can be loaded into the
-   backend catalog.
-3. **Where the switcher lives** — or, if `getSupportedLocales.length === 1`,
-   an explicit note that no switcher is rendered and why.
-4. **Whether the runtime catalog overlay is active** — and if not, that live
-   catalog edits will not surface until a read query exists in the realm.
-5. **That a user without a preferences row cannot persist a language** — the
-   switch lasts the session and a toast says so — and that creating the first
-   row is a separate iteration.
+The portal-specific decisions this MetaPrompt adds on top:
+
+- **Nothing is collected from the user.** The locale list comes from `getSupportedLocales` for
+  `{{REALM}}` and is **never hardcoded**, never guessed, and never a config question. Probe it
+  at scaffold time with your own credentials — the runtime query is authenticated.
+- **Order in the build.** The i18n foundation is **step 3 of Implementation Order — before ANY
+  page**. Building a page first guarantees hardcoded strings that step 14 rejects.
+- **UI copy vs entity data.** The locale files cover the portal's own chrome only. Product
+  names, status labels and category names come back already localized because
+  `lib/graphql-client.js` sends `X-Viax-User-Locale` — render them as they arrive, and never
+  run the value chain over them or ask for `<field>_Locale_<tag>` variants.
+- **File locations.** `src/i18n/{index.jsx,bundled.js,resolve.js,locale-state.js}`
+  + `src/i18n/locales/*.json`; headers go in `lib/graphql-client.js`; formatters in
+  `lib/utils/format.js` — see [Application Structure](#application-structure).
+- **npm scripts to ship.** `gen:locales` (`scripts/gen-locale-files.mjs`), `scan:i18n`
+  (`scripts/scan-hardcoded-strings.mjs`), `test:i18n`
+  (`node --test scripts/test-locale-resolution.mjs`). No new dependency for any of them.
+- **Header order (`<AppTopBar actions>`).** user name → light/dark toggle → `<ThemePicker />`
+  (only when `{{THEME_PICKER}} = yes`) → **`<LanguageSwitcher />`** → Sign out. One call site,
+  rendered unconditionally — the portal has no pre-login surface, and the atom returns `null`
+  by itself at one locale.
+- **`design.md`.** Emit the six localization items the skill lists under *"What `design.md`
+  must state"*, alongside the rest of the design notes.
+
+**Every later change to this portal obeys the skill too** — adding a page, a column or a
+message adds its keys in the same change (real values in the default locale, the same keys with
+`null` elsewhere), and `npm run scan:i18n` is what proves the keys are actually being used.
+
+### When `{{LOCALIZATION}} = no`
+
+The user opted out. **Skip steps 3 and 14 of Implementation Order entirely** and generate none
+of it: no `src/i18n/` directory, no `UxmLocaleProvider`, no
+`LanguageSwitcher` in `<AppTopBar actions>`, no `X-Viax-User-Locale` / `X-Viax-User-Currency`
+headers, and no `gen:locales` / `scan:i18n` / `test:i18n` scripts. Copy is written in English
+directly in the JSX.
+
+Three things still hold, and they are what keeps a later retrofit cheap:
+
+- **Money, dates and numbers still go through `Intl`** — `lib/utils/format.js` with a fixed
+  `'en-US'`, exactly as specified in the skill's formatting reference. Never `toFixed()` with a
+  hand-written separator, never a hardcoded currency, never an amount divorced from its
+  `units.code`. This is a correctness rule, not a localization one: it is what stops a JPY total
+  growing two decimals it does not have. See *"Formatting when the app is not localized"* in the
+  skill.
+- **Copy stays out of shared config objects where it is cheap not to.** A `DataTable` column's
+  `header` written inline is fine; the point is not to invent a second string layer.
+- **`design.md` records the decision** — that the portal is deliberately **not** localized, that
+  `getSupportedLocales` for `{{REALM}}` was not consulted, and that adding i18n later is a
+  retrofit (the skill's retrofit path), not a config flip.
+
+**If the user later asks to localize this portal**, that is the retrofit path in the
+[`viax-localization`](../../viax-localization/SKILL.md) skill — not a regeneration.
 
 ---
 
@@ -1760,20 +923,20 @@ The emitted `design.md` is incomplete without:
 | # | Wrong | Correct | Why |
 |---|---|---|---|
 | 1 | `filter<Type>(..., _sort: [...])` | `filter<Type>(_first: N, _filter: "...")` | `_sort` is **not** a valid argument on `filter*` queries |
-| 2 | `pricPrice_TOTAL { amount currency }` | `pricPrice { edges { node { amount units { code } } } }` | Breakdown fields (`_TOTAL`, `_SUBTOTAL`, etc.) are not queryable; `pricPrice` is a connection |
+| 2 | `pricPrice_TOTAL { amount currency }` | `pricPrice { edges { node { amount units { code } } } }` | `pricPrice` is a connection, readable on every environment. The per-code parts (`pricPrice_TOTAL`, `_SUBTOTAL`, etc.) are readable on Schema API v2 environments only (as lists of `Money`), and `Money` has no `currency` |
 | 3 | `bpStatus` (scalar) | `bpStatus { code }` | `bpStatus` is a DynamicEnum object — must select subfields |
 | 4 | `Money { amount currency }` | `Money { amount units { code } }` | `currency` is not a field on `Money`; currency code is at `units.code` |
 | 5 | Calling `keycloak.init()` more than once | Create keycloak instance as a module singleton in `lib/keycloak.js` and import it everywhere | Re-initializing Keycloak causes state conflicts and unexpected redirects |
 | 6 | `@radix-ui/react-badge` in `package.json` | Remove or implement badge using `class-variance-authority` | This package does not exist on npm |
 | 7 | `biConfigurationStateResult` (scalar in query) | Omit from queries entirely | It's `[StateConfigurationResult!]` — a complex nested type, not a scalar. It is also typically empty (`[]`). Do not query it; the component guard (`data.biConfigurationStateResult &&`) handles undefined gracefully. |
 | 8 | Using `get_type` field listing to detect if a type has `bpStatus` | Every BEM-discovered type has `bpStatus` — always set `hasStatus: true` | `get_type` only returns **directly defined** fields. Inherited fields (like `bpStatus` from `BusinessProcessable`) are **not shown**, even though they are fully queryable. Every type in the BEM tree extends `BusinessInteraction → BusinessProcessable`, so `bpStatus { code }` is always available. Never infer `hasStatus` from the `get_type` field list. |
-| 9 | `query Filter($filter: ${TypeName}Filter)` | `query Filter($filter: String)` | The `_filter` argument on all `filter*` queries is a **plain string expression** (e.g. `"bpStatus = 'Active'"`), not a typed input object. Using `${TypeName}Filter` as the variable type causes "Unknown type" errors at runtime. Always declare `$filter: String` and pass a string like `"bpStatus = 'Placed' AND biName regexp 'foo'"`. |
+| 9 | `query Filter($filter: ${TypeName}Filter)` | `query Filter($filter: String)` | The `_filter` argument on all `filter*` queries is a **plain string expression** (e.g. `"bpStatus = 'Active'"`), not a typed input object. Using `${TypeName}Filter` as the variable type causes "Unknown type" errors at runtime. Always declare `$filter: String` and pass a string like `"bpStatus = 'Placed' AND biName regexp '(?i).*foo.*'"`. Text search uses `regexp` (a Java regex matched against the whole value, hence the `.*`), never `LIKE`. |
 | 10 | `prPartyX { edges { node { paId paName } } }` | `prPartyX { edges { node { parId parParty { paId paName } } } }` | `prParty*` connection nodes are `PartyRole` objects, **not** `Party` objects. `PartyRole` has no `paId`/`paName` — those fields live on the nested `Party` via `parParty`. Always traverse: `node.parId` (role ID) and `node.parParty.paId` / `node.parParty.paName` (the actual party). |
 | 11 | `getCurrentUserInfo { uid name email party { paPartyRoles { typeName } } }` | `getCurrentUserInfo { uid party { paId paName paMappedRolesList paPartyRoles { typeName } } }` | `name` and `email` are **not fields on the `User` type** — querying them causes a validation error. Use `party.paName` for display name. For sidebar role matching use `party.paMappedRolesList` (returns `["Partner", "Admin", ...]` — already normalized role name strings) rather than `paPartyRoles[].typeName` (returns `["PaloozaPartner", ...]` with realm prefix that won't match `prParty*` field names). |
-| 12 | `filterMaterialArticle` / `getMaterialArticle` / `filterViaxProduct` / `getViaxProduct` | `filterMaterial` / `getMaterial` | The correct queries for products are `filterMaterial(_first: N)` and `getMaterial(maId: "...")`. `MaterialArticle` and `ViaxProduct` are not valid query root fields. |
+| 12 | `filterMaterialArticle` / `getMaterialArticle` / `filterViaxProduct` / `getViaxProduct` | `filterMaterial` / `getMaterial` | The queries for products are `filterMaterial(_first: N)` and `getMaterial(maId: "...")`: they return products of every material type. `MaterialArticle` has no query root fields, and `filterViaxProduct` / `getViaxProduct` return `ViaxProduct` records only. |
 | 13 | `maCategories` (scalar) | `maCategories { catId catName }` | `maCategories` is `[MaterialCategory]` — an object list, not a scalar. Must select subfields. `catId` and `catName` are the standard display fields from the `Category` interface. |
 | 14 | `maStatus` on products / `pricPrice` connection on `Material` | Omit both | `maStatus` does not exist on `Material`. `pricPrice` is not a queryable connection on material types (only on `BusinessInteraction` types). Product queries should use: `maId`, `maName`, `maDescription`, `maCategories { catId catName }`, `attAttachments { atId atName atMimeType atUrl }`. |
-| 15 | `query Get($id: ID!)` | `query Get($id: String!)` | viax `get*` and `filter*` query arguments (`biId`, `maId`, `uid`, etc.) are typed as `String` in the schema, **not** `ID`. Using `ID!` causes "used in position expecting type String" errors. Always declare lookup variable types as `String!` or `String`. |
+| 15 | `query Get($id: ID!)` | `query Get($biId: String!)` / `query Get($uid: UUID!)` | The business keys of `get*` and `filter*` (`biId`, `maId`, `paId`, etc.) are typed as `String`, and `uid` as `UUID` — **not** `ID`. Using `ID!` causes "used in position expecting type String" (or `UUID`) errors. Declare `$biId: String!`, `$uid: UUID!`. |
 
 ---
 
@@ -1785,7 +948,8 @@ The emitted `design.md` is incomplete without:
 // lib/graphql-client.js
 // - Singleton Axios instance pointed at VITE_API_URL
 // - Request interceptor: attach Bearer token from useAuthStore.getState().accessToken
-// - Request interceptor: attach X-Viax-User-Locale + X-Viax-User-Currency and inject
+// - Request interceptor (ONLY when {{LOCALIZATION}} = yes): attach X-Viax-User-Locale
+//   + X-Viax-User-Currency and inject
 //   nothing else. THIS IS THE ONLY PLACE locale touches the API — no component,
 //   hook or lib/api/* module passes it. Do NOT inject a `_locale` variable or
 //   argument; it is not accepted by filter/get queries. See "Localization & i18n".
@@ -1811,6 +975,31 @@ One file per domain entity in `hooks/`:
 // useOrder(biId)      → useQuery for single order detail
 // useCreateOrder()    → useMutation
 ```
+
+**Writes** use bcore Schema API v2 ([bcore-schema-v2.md](../../graphql/references/bcore-schema-v2.md); on a v1
+environment convert them with its §3; schema-validated, not run live). A BI type created in the BI Modeler comes with `create`, `update` and
+`delete`; its item type has none, so items change through the BI:
+
+```graphql
+mutation CreateOrder($input: PaloozaShopifyOrderInput) {
+  createPaloozaShopifyOrder(input: $input) { uid biId }
+}
+
+mutation RenameOrder($biId: String!, $name: String) {
+  updatePaloozaShopifyOrder(id: { biId: $biId }, _actions: [{ setToBiName: { value: $name } }]) { uid biName }
+}
+
+mutation DeleteOrder($biId: String!) {
+  deletePaloozaShopifyOrder(id: { biId: $biId }) { uid }
+}
+```
+
+- In `input`, an existing record is one key (`prPartyPrimary: { uid: "…" }`), never nested data or `typeName`; a
+  link to another BI goes through the per-code field (`biRelatesTo_<CODE>: [{ biId: "…" }]`); items are data in
+  `hiConsistsOf`.
+- `update` takes one action per `_actions` element: `setTo…` wraps the value (`{ value: … }`), links are added with
+  `addToBiRelatesTo_<CODE>: { biId: "…" }`, an existing item changes with
+  `updateInHiConsistsOf: { id: { uid: "…" }, _actions: [ … ] }`. Never `update…(input: …)`.
 
 **`use-user.js` — special pattern:** This hook does more than fetch; it also syncs roles into `auth-store` via `useEffect`:
 
@@ -1856,7 +1045,7 @@ Call `useUser()` inside `shell.jsx` (the portal layout wrapper) so roles are pop
 ### Querying Patterns
 
 ```graphql
-# Single entity — ID arguments are String, NOT ID type (see Gotcha #15)
+# Single entity — business keys are String, uid is UUID, never ID (see Gotcha #15)
 get<TypeName>(biId: "...")
 get<TypeName>(uid: "...")
 
@@ -1872,7 +1061,7 @@ filter<TypeName>(
 edges { node { ... } }
 ```
 
-> **GraphQL variable types for IDs:** All `biId`, `maId`, `uid` etc. arguments accept `String`, not `ID`. Always declare variables as `$biId: String!` — using `ID!` causes a type mismatch error at runtime (see Gotcha #15).
+> **GraphQL variable types for IDs:** `biId`, `maId` etc. arguments accept `String`, and `uid` accepts `UUID` — never `ID`. Declare variables as `$biId: String!` / `$uid: UUID!` — using `ID!` causes a type mismatch error at runtime (see Gotcha #15).
 
 ### Key Entity Types
 
@@ -1898,7 +1087,7 @@ The exact set of party fields available on a given BI type is **not fixed** — 
 
 **Materials (Products):** `filterMaterial` / `getMaterial` — fields: `maId`, `maName`, `maDescription`, `maCategories { catId catName }`, `attAttachments { atId atName atMimeType atUrl }` (images come from `attAttachments`; filter by `atMimeType.startsWith('image/')` or use the first entry with an `atUrl`; `maStatus` and `pricPrice` do not exist on this type)
 
-**Parties (Customers/Orgs):** `filterOrganisation`, `filterIndividual` — fields: `paId`, `paName`, `paDescription`
+**Parties (Customers/Orgs):** `filterOrganisation`, `filterIndividual` — fields: `paId`, `paName` (`Party` has no `paDescription`)
 
 **User Info:** Fetch on every app load using the full query below. The `paPartyRoles` array drives role-based menu visibility (see [Step 7 — Sidebar Navigation](#step-7--sidebar-navigation)):
 
@@ -1951,19 +1140,18 @@ export const MOCK_USER = {
     biId
     biName
     hiConsistsOf {
-      edges {
-        node {
-          ... on BusinessInteractionItem {
-            biiId
-            biiName
-            biiQuantity { quQuantity }
-          }
-        }
+      ... on BusinessInteractionItem {
+        biiId
+        biiName
+        biiQuantity { amount units { code } }
       }
     }
   }
 }
 ```
+
+`hiConsistsOf` is a plain list of the BI's item type, not a connection (no `edges`), and `Quantity` is
+`{ amount units { code } }`.
 
 ---
 
@@ -2119,7 +1307,7 @@ query Get{TypeName}StatusValues {
 
 From the result, collect all unique non-null `bpStatus.code` values and store them as `statusValues` on the config entry.
 
-> **Why not `get{TypeName}StatusValues`?** That query does not exist in the viax API. Sampling live records is the only reliable method.
+> **Status codes:** read them with `get{TypeName}StatusValues { code }` (every BI Modeler type has it); sample live records only to learn which codes are in use.
 >
 > **If all sampled records return `bpStatus: null`** (e.g. the type has no business process defined yet), set `hasStatus: false` and `statusValues: []` as an exception — and leave a comment in the config noting the manual override.
 
@@ -2293,19 +1481,17 @@ viax-lab-portal/
 │   │       ├── status-badge.jsx             # Maps status → <Tag type="…">
 │   │       ├── money-display.jsx
 │   │       └── date-display.jsx
-│   ├── i18n/
+│   ├── i18n/                                  # ONLY when {{LOCALIZATION}} = yes
 │   │   ├── index.jsx                        # I18nProvider + useT(page) + useLocale(); wraps <UxmLocaleProvider>
 │   │   ├── bundled.js                       # the bundled locale files + BUNDLED_LOCALES (copy source + fallback list)
 │   │   ├── resolve.js                       # locale resolution (server prefs → browser → default) → { locale, source }; no stored link
 │   │   ├── locale-state.js                  # module-level locale/currency the graphql client reads
-│   │   ├── catalog.js                       # runtime overlay: Translation catalog merged over the file layer
-│   │   ├── codes.js                         # fileKey ↔ `page.<page>.<label>` mapping, both directions
 │   │   └── locales/
 │   │       ├── en-US.json                   # GENERATED, fully populated (configured default locale)
 │   │       └── {each getSupportedLocales entry}.json   # GENERATED, same key set, null values
 │   ├── lib/
 │   │   ├── keycloak.js                      # Keycloak singleton instance
-│   │   ├── graphql-client.js                # + X-Viax-User-Locale / -Currency headers (headers only — no `_locale` arg)
+│   │   ├── graphql-client.js                # + X-Viax-User-Locale / -Currency headers when {{LOCALIZATION}} = yes (headers only — no `_locale` arg)
 │   │   ├── uxm-studio-config.js             # live { overrides, brand } store: localStorage cache + pub/sub + brand seed
 │   │   ├── theme-catalog.js                 # OPTIONAL ({{THEME_PICKER}}=yes): pure read-only helpers over uxmStudio's themes[]
 │   │   ├── uxm-persistence.js               # StudioPersistence adapter: load→live store, save→server (saveUxmConfig)+mirror
@@ -2451,7 +1637,7 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 - The portal must be fully functional with `VITE_USE_MOCK_DATA=true`
 - Theme changes apply instantly via the UXM Studio — a Save regenerates the global `#uxm-overrides` stylesheet (no page reload, no custom theme code)
 - Every list page filter/search/sort state must live in the URL via React Router `useSearchParams` (shareable links)
-- **Use `@viax.io/uxm` for every UI primitive** — see [`viax-uxm/SKILL.md`](viax-uxm/SKILL.md). Never handroll a div with the same intent as an existing primitive (Card, FormField, DataTable, List, StatCard, PageShell, EmptyState, Loader, Tag, Banner, …).
+- **Use `@viax.io/uxm` for every UI primitive** — see [`viax-uxm/SKILL.md`](../../viax-uxm/SKILL.md). Never handroll a div with the same intent as an existing primitive (Card, FormField, DataTable, List, StatCard, PageShell, EmptyState, Loader, Tag, Banner, …).
 - Layout via `<Stack>`, `<Cluster>`, `<ResponsiveGrid>` — not ad-hoc flex/grid divs.
 - Inline `style` only for one-off overrides via `--uxm-{component}-*` vars or layout sizing the library doesn't expose.
 - JSDoc comments on all function signatures and complex types
@@ -2472,9 +1658,9 @@ Build in this exact sequence:
 
 1. **Project scaffold** — Vite + React 19; install `uxm` (the `@viax.io/uxm` alias) + deps; import `uxm/tokens.css` and `uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (Gotcha #6); jsconfig paths. **Portal identity stamp (General Note #4, mandatory):** generate `{{PORTAL_ID}}` via `openssl rand -hex 4`, write the `"portal"` block into `package.json`, add the `__PORTAL_META__` `define` to `vite.config.js`, and the `stampPortalId()` boot call in `main.jsx`.
 2. **Theme system** — `globals.css` with the **full baseline from "UXM Layout & Styling Gotchas → Required `globals.css`"** (panel-radius unification, DetailSection padding override, InputWithIcon icon clamp, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 11). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchUxmConfig`/`fetchStudioConfig`/`fetchPortalAssignment`/`fetchAppliedStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveUxmConfig`/`saveStudioConfig` write helpers (deferred to step 11). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 5.
-3. **i18n foundation (before ANY page)** — query `getSupportedLocales` + `currentLocale` **at scaffold time** (as the generator, with your own credentials) to learn the realm's list; probe whether a `Translation` read query exists and set `VITE_I18N_CATALOG` accordingly; generate `src/i18n/locales/{locale}.json` for every supported locale (default fully populated, others same key set with `null`); build `src/i18n/{index.jsx,bundled.js,resolve.js,locale-state.js,catalog.js,codes.js}` — the backend is the ONLY store for a signed-in user's language, so persist nothing client-side and follow the write rules in [Locale resolution](#locale-resolution) exactly, and ship `scripts/test-locale-resolution.mjs` (`npm run test:i18n`) with it; mount `<I18nProvider>` in `App.jsx` **above the router and above the auth guard**, starting with **no locale at all** and holding a full-screen spinner until the realm's inputs land — the runtime `getSupportedLocales` call is authenticated and belongs in a post-login hook that reconciles the list, never in the boot path; add the locale/currency **headers** to `lib/graphql-client.js` (headers only — `_locale` is a mutation argument and is rejected by `filter*` / `get*` queries). Verify `LanguageSwitcher` is exported by the installed `@viax.io/uxm` — **if it is not, STOP and report; never hand-roll one.** Building any page before this step guarantees hardcoded strings that step 14 will reject. See [Localization & i18n](#localization--i18n-mandatory--every-generated-surface).
+3. **i18n foundation (before ANY page) — ONLY when `{{LOCALIZATION}} = yes`; when `no`, skip this step entirely and go to step 4.** Follow the [`viax-localization`](../../viax-localization/SKILL.md) skill end to end: probe `getSupportedLocales` + `currentLocale` **at scaffold time** (as the generator, with your own credentials); generate `src/i18n/locales/{locale}.json` for every supported locale; **copy** `src/i18n/{index.jsx,bundled.js,resolve.js,locale-state.js}` and `lib/api/i18n.js` from the skill's [`reference-implementation.md`](../../viax-localization/references/reference-implementation.md) and the three npm scripts from its [`scripts.md`](../../viax-localization/references/scripts.md) — do NOT write this layer from scratch, it is identical in every viax React app and only `POPULATED_DEFAULT`, the bundled locale imports and the locale JSON contents are per-portal; mount `<I18nProvider>` in `App.jsx` **above the router and above the auth guard**; add the locale **header** to `lib/graphql-client.js`. Verify `LanguageSwitcher` is exported by the installed `@viax.io/uxm` — **if it is not, STOP and report; never hand-roll one.** Building any page before this step guarantees hardcoded strings that step 14 will reject.
 4. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow with `onLoad: 'login-required'`, `auth-store`, `ProtectedRoute` (token-less → `keycloak.login()`). **Generate NO login page and no `/login` route** — Keycloak's own form is the login screen; a portal page whose only job is a button that redirects there is pure friction. Mock auth mints its session at boot, so it needs no form either, and renders no sign-out control. The portal passes Keycloak **no locale**: that screen is the realm's.
-5. **Shell layout** — `<PageShell>` + `<AppSidebar>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; `useUser()` populates roles for sidebar visibility. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle.
+5. **Shell layout** — `<PageShell>` + `<AppSidebar>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; `useUser()` populates roles for sidebar visibility. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle. **Only when `{{LOCALIZATION}} = yes`:** add `<LanguageSwitcher />` after that and before Sign out (full order under *"Localization & i18n → Header order"*).
 
    🔴 **`linkAs` needs an `href` → `to` adapter — never pass react-router's `Link` directly.**
    `AppSidebar` renders each item as `<linkAs href={item.href}>`. `next/link` accepts `href`, but
@@ -2512,46 +1698,14 @@ Build in this exact sequence:
     - Computed `font-family` on a native `<button>`/`<input>` matches the body — **never Arial/Helvetica**. Arial controls → the `font: inherit` rule is missing.
     - Sans-serif but not Inter → the `index.html` `<link>` is missing.
     If any check fails, fix `globals.css`/`index.html` from the Gotcha #5/#6 baselines verbatim — do not improvise alternative font declarations.
-14. **Hardcoded-string scan (MANDATORY — do not skip).** Generate
+14. **Hardcoded-string scan — ONLY when `{{LOCALIZATION}} = yes`** (when `no`, the build ends
+    at step 13). **MANDATORY in that case — do not skip.** Generate
     `scripts/scan-hardcoded-strings.mjs`, wire it as `"scan:i18n"` in
     `package.json`, and run it. **It must exit non-zero on any literal UI text**,
-    and the build is not done while it fails.
-
-    What it flags in `src/**/*.jsx` (excluding `src/i18n/locales/*.json`):
-    - A JSX text node that contains a letter and is not wrapped in `{…}`:
-      `<ButtonPrimary>Add to cart</ButtonPrimary>`.
-    - A string literal passed to a known user-facing prop:
-      `title`, `label`, `header`, `placeholder`, `aria-label`, `emptyState`,
-      `helpText`, `titleText`, `description`, and every UXM label prop
-      (`clearLabel`, `closeLabel`, `requiredMessage`, `invalidMessage`,
-      `openCalendarLabel`, `startLabel`, `endLabel`, …).
-    - A string literal on a user-facing key **inside an object literal** — a
-      `DataTable` column's `header:`, a `labels={{ … }}` entry, a config array.
-      **This case is easy to omit and is where hardcoded copy actually hides:**
-      it is not JSX so the first rule misses it, and it is not a JSX attribute
-      so the second misses it too. A scan without it reports zero on a file
-      whose entire table is hardcoded:
-
-      ```js
-      // must be flagged
-      const columns = [{ key: 'maName', header: 'Product name' }]
-      ```
-
-      Match `(?:^|[,{(]\s*)([\w-]+):\s*['"]…['"]` and flag when the key is in
-      the user-facing prop list **or** matches `/label|message|text|header|title/i`.
-
-    What it must NOT flag (or the scan is useless noise and will be disabled):
-    - Anything inside `src/i18n/`.
-    - Non-linguistic literals: CSS values, `--color-*` / `--uxm-*` var names,
-      glyph ids (`<Icon glyph="search">`), `data-*`, `role`, `type`, `key`,
-      route paths, field codes (`maId`, `biCreatedAt`), currency codes,
-      IANA timezones, BCP-47 tags, `className`.
-    - Single non-letter tokens: `—`, `·`, `/`, `%`.
-
-    Report each hit as `file:line  <the literal>` so it is directly fixable, and
-    print the total. A generated surface starts at **zero** hits — every hit is
-    a key that should have been added to `src/i18n/locales/` and pulled through
-    `t()`.
+    and the build is not done while it fails. A generated surface starts at
+    **zero** hits. The full spec — what it must flag, what it must not flag, and
+    the object-literal case that is easy to omit — is in
+    [`viax-localization/references/catalog-and-files.md`](../../viax-localization/references/catalog-and-files.md).
 
 ---
 
