@@ -669,6 +669,7 @@ export const messages: StudioMessages = {
     'Line Height': 'Висота рядка',
     'Line Width': 'Товщина лінії',
     'Linear': 'Лінійний',
+    'Link': 'Посилання',
     'Link Weight': 'Насиченість посилання',
     'List': 'Список',
     'List (Lines Only)': 'Список (лише лінії)',

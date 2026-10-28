@@ -669,6 +669,7 @@ export const messages: StudioMessages = {
     'Line Height': 'Wysokość wiersza',
     'Line Width': 'Grubość linii',
     'Linear': 'Liniowy',
+    'Link': 'Link',
     'Link Weight': 'Grubość linku',
     'List': 'Lista',
     'List (Lines Only)': 'Lista (tylko linie)',

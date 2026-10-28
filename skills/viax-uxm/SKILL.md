@@ -146,6 +146,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **A `link` glyph.** Heroicons' chain link, for a "Copy link" action or anything that is a URL —
+  until now the nearest was `copy`, which reads as "duplicate". `chain`, `hyperlink`, `url` and
+  `permalink` resolve to it as keywords.
+
 ## Workflow
 
 ### Where the documentation lives
