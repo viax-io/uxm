@@ -149,6 +149,9 @@ catalog.
 - **A `link` glyph.** Heroicons' chain link, for a "Copy link" action or anything that is a URL —
   until now the nearest was `copy`, which reads as "duplicate". `chain`, `hyperlink`, `url` and
   `permalink` resolve to it as keywords.
+- **A `target` glyph.** House-drawn rings and a centre dot with an arrow landed in it, for
+  "reached" or "committed" (e.g. a value committed at a lifecycle step). `bullseye`, `goal`, `aim`,
+  `hit` and `commit` resolve to it.
 
 ## Workflow
 

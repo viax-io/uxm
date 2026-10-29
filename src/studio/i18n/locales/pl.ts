@@ -880,6 +880,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'Wypełnienie karty X',
     'Tab Padding Y': 'Wypełnienie karty Y',
     'Tab Radius': 'Promień karty',
+    'Target': 'Tarcza',
     'Task': 'Zadanie',
     'Text': 'Tekst',
     'Text Align': 'Wyrównanie tekstu',

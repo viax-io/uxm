@@ -868,6 +868,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'Tabbladopvulling X',
     'Tab Padding Y': 'Tabbladopvulling Y',
     'Tab Radius': 'Tabbladradius',
+    'Target': 'Doelwit',
     'Task': 'Taak',
     'Text': 'Tekst',
     'Text Align': 'Tekstuitlijning',

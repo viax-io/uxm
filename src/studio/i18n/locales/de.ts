@@ -868,6 +868,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'Tab-Innenabstand X',
     'Tab Padding Y': 'Tab-Innenabstand Y',
     'Tab Radius': 'Tab-Radius',
+    'Target': 'Zielscheibe',
     'Task': 'Aufgabe',
     'Text': 'Text',
     'Text Align': 'Textausrichtung',

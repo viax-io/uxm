@@ -862,6 +862,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'タブの内側余白 X',
     'Tab Padding Y': 'タブの内側余白 Y',
     'Tab Radius': 'タブの角丸',
+    'Target': 'ターゲット',
     'Task': 'タスク',
     'Text': 'テキスト',
     'Text Align': 'テキストの配置',
