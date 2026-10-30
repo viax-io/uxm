@@ -2207,3 +2207,44 @@ reached the published library; now shipped in 2.8.0.
   folder, and load the studio from a versioned path, never `latest/` (a release removes the
   previous chunks there). `uxm.esm.js` also exports `VERSION` now — CDN-only, for hosts with no
   `package.json` to read. Recipe 18 has the import map.
+
+### New in 4.74.0
+
+- **A Placeholder colour knob on every text-entry field**. `TextInput`, `Textarea`, `Select`,
+  `InputWithIcon`, `PasswordInput`, `DateInput`, `TimeInput`, `NumberInput`, `CurrencyInput`,
+  `PhoneInput` and `CodeEditor` read `--uxm-<id>-placeholder-color` (Studio knob **Placeholder**,
+  Default state), and `SearchDropdown` reads `--uxm-search-dropdown-trigger-placeholder-color`.
+  All default to `--color-text-muted`, so set one on a dark or brand-coloured field (a search box
+  in a dark top bar) instead of overriding `::placeholder` in app CSS. ⚠️ `InputWithIcon`,
+  `PasswordInput`, `DateInput` and `TimeInput` had no placeholder rule and painted the browser's
+  grey (#757575 in Chrome); they now paint `--color-text-muted`, a little darker in light
+  (#6E6A64, 5.37:1 on card) and lighter in dark (#A3A3A3, 6.89:1), like the rest of the input
+  family. **The new default does NOT rescue a themed dark field** — `#6E6A64` is 1.36:1 on a blue
+  `#2B54A0` search and 2.46:1 on a dark grey `#303030`, slightly worse than the browser grey was.
+  Setting the knob is what fixes those, which is the point of the change.
+
+  Two more things to know when upgrading. The library rule is `.<class>::placeholder` at (0,1,1),
+  so a host workaround written as a bare `::placeholder` or `input::placeholder` no longer wins —
+  set the variable instead (a class-qualified host rule still ties and wins on source order). And
+  on a host that ships Tailwind's preflight, those four fields previously inherited its
+  `color-mix(in oklab, currentcolor 50%, transparent)`, which tracked each field's own text colour
+  and stayed legible on any background; they now pin to the token like every other field.
+
+### New in 4.75.0
+
+- **`ButtonWithIcon`'s shape and type knobs reach the atom.** Border Radius, Padding X / Y,
+  Font Size, Font Weight and Icon Size emitted `--uxm-button-with-icon-*` variables that
+  `button-with-icon.scss` never read — it hard-coded `4px`, `8px 12px`, `13px` and the medium
+  weight, and nothing sized the glyph. Six of its twenty knobs were dead; the thirteen colour
+  state knobs (twelve colours plus Disabled Opacity) and Icon Gap always worked. Its preview
+  painted all six inline (and passed `size` to the `Icon`), so every slider moved in Studio and no
+  app ever changed. Two registry defaults that had never painted were corrected to match the
+  stylesheet (Border Radius 8 → 4, Icon Size 16 → 15, the size all 28 consumer call sites pass).
+
+  **An unthemed button renders identically** — each fallback is the value that shipped — but two
+  groups do see a change on upgrade. A **saved theme** that set any of the six already emitted the
+  variable (`generateOverridesCss` has always written them); it was inert and now paints, so check
+  a published config for `button-with-icon` overrides before rolling out. And a **call site passing
+  an `Icon` size other than 15** now draws 15px, because the slot sizes any `<svg>` in it the way
+  `InputWithIcon` does — set the variable instead. Every svg in the slot is squared to that size,
+  so a composite mark needs its own dimensions.

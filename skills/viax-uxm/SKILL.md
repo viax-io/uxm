@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.77.1, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.79.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.77.1** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.79.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.77.1 — current API surface (overrides training data)
+## v4.79.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,47 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.74.0
-
-- **A Placeholder colour knob on every text-entry field**. `TextInput`, `Textarea`, `Select`,
-  `InputWithIcon`, `PasswordInput`, `DateInput`, `TimeInput`, `NumberInput`, `CurrencyInput`,
-  `PhoneInput` and `CodeEditor` read `--uxm-<id>-placeholder-color` (Studio knob **Placeholder**,
-  Default state), and `SearchDropdown` reads `--uxm-search-dropdown-trigger-placeholder-color`.
-  All default to `--color-text-muted`, so set one on a dark or brand-coloured field (a search box
-  in a dark top bar) instead of overriding `::placeholder` in app CSS. ⚠️ `InputWithIcon`,
-  `PasswordInput`, `DateInput` and `TimeInput` had no placeholder rule and painted the browser's
-  grey (#757575 in Chrome); they now paint `--color-text-muted`, a little darker in light
-  (#6E6A64, 5.37:1 on card) and lighter in dark (#A3A3A3, 6.89:1), like the rest of the input
-  family. **The new default does NOT rescue a themed dark field** — `#6E6A64` is 1.36:1 on a blue
-  `#2B54A0` search and 2.46:1 on a dark grey `#303030`, slightly worse than the browser grey was.
-  Setting the knob is what fixes those, which is the point of the change.
-
-  Two more things to know when upgrading. The library rule is `.<class>::placeholder` at (0,1,1),
-  so a host workaround written as a bare `::placeholder` or `input::placeholder` no longer wins —
-  set the variable instead (a class-qualified host rule still ties and wins on source order). And
-  on a host that ships Tailwind's preflight, those four fields previously inherited its
-  `color-mix(in oklab, currentcolor 50%, transparent)`, which tracked each field's own text colour
-  and stayed legible on any background; they now pin to the token like every other field.
-
-### New in 4.75.0
-
-- **`ButtonWithIcon`'s shape and type knobs reach the atom.** Border Radius, Padding X / Y,
-  Font Size, Font Weight and Icon Size emitted `--uxm-button-with-icon-*` variables that
-  `button-with-icon.scss` never read — it hard-coded `4px`, `8px 12px`, `13px` and the medium
-  weight, and nothing sized the glyph. Six of its twenty knobs were dead; the thirteen colour
-  state knobs (twelve colours plus Disabled Opacity) and Icon Gap always worked. Its preview
-  painted all six inline (and passed `size` to the `Icon`), so every slider moved in Studio and no
-  app ever changed. Two registry defaults that had never painted were corrected to match the
-  stylesheet (Border Radius 8 → 4, Icon Size 16 → 15, the size all 28 consumer call sites pass).
-
-  **An unthemed button renders identically** — each fallback is the value that shipped — but two
-  groups do see a change on upgrade. A **saved theme** that set any of the six already emitted the
-  variable (`generateOverridesCss` has always written them); it was inert and now paints, so check
-  a published config for `button-with-icon` overrides before rolling out. And a **call site passing
-  an `Icon` size other than 15** now draws 15px, because the slot sizes any `<svg>` in it the way
-  `InputWithIcon` does — set the variable instead. Every svg in the slot is squared to that size,
-  so a composite mark needs its own dimensions.
 
 ### New in 4.76.0
 
@@ -138,6 +97,25 @@ catalog.
   exactly as before; `AppSidebar` passes `showArrow={false}` and is untouched either way. No new
   props and no new public knobs.
 
+### New in 4.78.0
+
+- **`DataTable` can stack into cards at a wider container than 480px.** `stackAt={640 |
+  768 | 960}` moves the threshold; `480` stays the default and emits no class, so a table
+  that doesn't set it is unchanged. Use it when the table's slot is narrow for its content
+  — a side panel, a dashboard column — remembering the measurement is the table's **own
+  container**, not the viewport, so the same table can stack in a 600px panel and stay a
+  table full-bleed on the same screen. It is a prop, not a CSS knob, because a container
+  query cannot read a custom property (the condition parses and then never matches), which
+  is also why the accepted values are a closed set.
+  Studio exposes it as the Data Table's "Stack Into Cards" layout variant — the only way
+  to reach the stacked layout there, since the canvas never narrows to 480px on its own.
+
+### New in 4.79.0
+
+- **A `link` glyph.** Heroicons' chain link, for a "Copy link" action or anything that is a URL —
+  until now the nearest was `copy`, which reads as "duplicate". `chain`, `hyperlink`, `url` and
+  `permalink` resolve to it as keywords.
+
 ### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
@@ -146,9 +124,6 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
-- **A `link` glyph.** Heroicons' chain link, for a "Copy link" action or anything that is a URL —
-  until now the nearest was `copy`, which reads as "duplicate". `chain`, `hyperlink`, `url` and
-  `permalink` resolve to it as keywords.
 - **A `target` glyph.** House-drawn rings and a centre dot with an arrow landed in it, for
   "reached" or "committed" (e.g. a value committed at a lifecycle step). `bullseye`, `goal`, `aim`,
   `hit` and `commit` resolve to it.

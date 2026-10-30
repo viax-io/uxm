@@ -12,6 +12,17 @@ import type { CSSProperties, HTMLAttributes, KeyboardEvent, MouseEvent, ReactNod
 
 export type DataTableDensity = 'compact' | 'default' | 'relaxed';
 
+/**
+ * Container widths at which rows may reflow into stacked cards.
+ *
+ * A closed set, not `number`, and that is a constraint of the platform rather
+ * than a preference: a container query will not read a custom property — the
+ * condition parses and then never matches — so each threshold needs its own
+ * `@container` block in the stylesheet. A free `number` would accept `500` and
+ * silently do nothing, which is the one failure mode this union removes.
+ */
+export type DataTableStackAt = 480 | 640 | 768 | 960;
+
 export type DataTableSortDirection = 'asc' | 'desc';
 
 /** Which column is sorted, and which way. `null`/absent means "unsorted". */
@@ -124,8 +135,9 @@ export interface DataTableColumn<T> {
    * first, and a wrong offset overlaps two columns rather than degrading. Give
    * the sticky column a `width` so its size is known rather than content-led.
    *
-   * No effect in stacked mode (below a 480px container) — there is no
-   * horizontal axis to pin against there.
+   * No effect in stacked mode — at or below the stacking threshold (a 480px
+   * container by default, or `stackAt`) there is no horizontal axis to pin
+   * against.
    */
   sticky?: 'start' | 'end';
   /**
@@ -212,6 +224,17 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   columns: DataTableColumn<T>[];
   rows: T[];
   density?: DataTableDensity;
+  /**
+   * Container width at or below which rows reflow into stacked cards.
+   * Defaults to `480` — the long-standing threshold — which emits no class, so
+   * a table that does not set this is unaffected down to the byte.
+   *
+   * Raise it when the table lives somewhere narrow for its content: a side
+   * panel, a dashboard column, a two-up layout. The measurement is the
+   * TABLE's own container, not the viewport, so the same table stacks in a
+   * 600px panel and stays a table full-bleed on the same screen.
+   */
+  stackAt?: DataTableStackAt;
   rowKey: (row: T) => string;
   onRowClick?: (row: T) => void;
   /**
@@ -591,6 +614,7 @@ export function DataTable<T>({
   columns,
   rows,
   density = 'default',
+  stackAt,
   rowKey,
   onRowClick,
   rowActions,
@@ -621,6 +645,12 @@ export function DataTable<T>({
       className={cn(
         'uxm-data-table',
         `uxm-data-table--${density}`,
+        // 480 is the stylesheet's unconditional threshold, so it needs no
+        // class — and emitting one would be worse than redundant: the opt-in
+        // rules carry an extra class of specificity, so a `stack-480` table
+        // would resolve its stacked rules differently from every table that
+        // leaves this alone.
+        stackAt !== undefined && stackAt !== 480 && `uxm-data-table--stack-${stackAt}`,
         scrolls && 'uxm-data-table--scrollable',
         scrolls && edges.start && 'uxm-data-table--scrolled-start',
         scrolls && edges.end && 'uxm-data-table--scrolled-end',

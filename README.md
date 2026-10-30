@@ -278,7 +278,7 @@ Every component folder ships a `README.md` documenting props, CSS variables, MOD
 [`card`](src/ui/card/README.md) · [`cluster`](src/ui/cluster/README.md) · [`detail-section`](src/ui/detail-section/README.md) · [`divider`](src/ui/divider/README.md) · [`inline-filter`](src/ui/inline-filter/README.md) · [`page-header`](src/ui/page-header/README.md) · [`page-shell`](src/ui/page-shell/README.md) · [`responsive-grid`](src/ui/responsive-grid/README.md) · [`section-header`](src/ui/section-header/README.md) · [`side-flexpane`](src/ui/side-flexpane/README.md) · [`stack`](src/ui/stack/README.md)
 
 ### Data display
-[`avatar`](src/ui/avatar/README.md) · [`data-table`](src/ui/data-table/README.md) · [`disclosure`](src/ui/disclosure/README.md) · [`icon`](src/ui/icon/README.md) · [`icon-tile`](src/ui/icon-tile/README.md) · [`list`](src/ui/list/README.md) (List + ListItem) · [`meta-row`](src/ui/meta-row/README.md) · [`property-field`](src/ui/property-field/README.md) (PropertyField + PropertyGrid) · [`stat-card`](src/ui/stat-card/README.md) · [`thumbnail`](src/ui/thumbnail/README.md) · [`timeline-entry`](src/ui/timeline-entry/README.md) · [`type-overview-card`](src/ui/type-overview-card/README.md)
+[`avatar`](src/ui/avatar/README.md) · [`data-table`](src/ui/data-table/README.md) · [`disclosure`](src/ui/disclosure/README.md) · [`expandable-text`](src/ui/expandable-text/README.md) · [`icon`](src/ui/icon/README.md) · [`icon-tile`](src/ui/icon-tile/README.md) · [`list`](src/ui/list/README.md) (List + ListItem) · [`meta-row`](src/ui/meta-row/README.md) · [`property-field`](src/ui/property-field/README.md) (PropertyField + PropertyGrid) · [`range-bar`](src/ui/range-bar/README.md) · [`stat-card`](src/ui/stat-card/README.md) · [`thumbnail`](src/ui/thumbnail/README.md) · [`timeline-entry`](src/ui/timeline-entry/README.md) · [`type-overview-card`](src/ui/type-overview-card/README.md)
 
 ### Configuration editor
 [`component-row`](src/ui/component-row/README.md) · [`config-component-row`](src/ui/config-component-row/README.md) · [`config-segment-item`](src/ui/config-segment-item/README.md) · [`explorer-list-item`](src/ui/explorer-list-item/README.md) · [`explorer-section`](src/ui/explorer-section/README.md) · [`segment-card`](src/ui/segment-card/README.md) · [`segment-row`](src/ui/segment-row/README.md)
@@ -449,7 +449,7 @@ npm run build        # full dist/ (see the pipeline below)
 npm run typecheck    # tsc --noEmit for src + portal
 npm run lint         # eslint .
 npm run lint:fix     # eslint . --fix
-npm run check:drift  # state-var drift, type-scale, tokens.css ↔ themeTokens parity and studio-i18n gates
+npm run check:drift  # state-var drift, type-scale, tokens.css ↔ themeTokens parity, studio-i18n and skill-catalog gates
 npm run i18n:extract # re-scan the registry + t() calls into src/studio/i18n/source-catalog.json
 npm run i18n:gen     # sync every studio dictionary to that catalog (new keys land as null)
 npm run check:studio-i18n # every shipped studio locale is complete
