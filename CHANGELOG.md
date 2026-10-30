@@ -1,3 +1,16 @@
+# [4.78.0](https://github.com/viax-io/uxm/compare/v4.77.1...v4.78.0) (2026-10-30)
+
+
+### Bug Fixes
+
+* **data-table:** key the stackAt copies correctly, and release the second 480 gate ([34e75f6](https://github.com/viax-io/uxm/commit/34e75f6134c680802d9baa41be37c93859a87786))
+
+
+### Features
+
+* **data-table:** let a table stack into cards at a wider container than 480px ([7469a37](https://github.com/viax-io/uxm/commit/7469a3730fcbb150aa76cc664732313b3aed8e52))
+* **data-table:** make the stacked-card layout reachable in the studio ([52e8e00](https://github.com/viax-io/uxm/commit/52e8e00cda5c0a9750e6c1ecfec6d08a5f32f91b))
+
 ## [4.77.1](https://github.com/viax-io/uxm/compare/v4.77.0...v4.77.1) (2026-10-26)
 
 

@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.77.1, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.78.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.77.1** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.78.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.77.1 — current API surface (overrides training data)
+## v4.78.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,28 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.74.0
-
-- **A Placeholder colour knob on every text-entry field**. `TextInput`, `Textarea`, `Select`,
-  `InputWithIcon`, `PasswordInput`, `DateInput`, `TimeInput`, `NumberInput`, `CurrencyInput`,
-  `PhoneInput` and `CodeEditor` read `--uxm-<id>-placeholder-color` (Studio knob **Placeholder**,
-  Default state), and `SearchDropdown` reads `--uxm-search-dropdown-trigger-placeholder-color`.
-  All default to `--color-text-muted`, so set one on a dark or brand-coloured field (a search box
-  in a dark top bar) instead of overriding `::placeholder` in app CSS. ⚠️ `InputWithIcon`,
-  `PasswordInput`, `DateInput` and `TimeInput` had no placeholder rule and painted the browser's
-  grey (#757575 in Chrome); they now paint `--color-text-muted`, a little darker in light
-  (#6E6A64, 5.37:1 on card) and lighter in dark (#A3A3A3, 6.89:1), like the rest of the input
-  family. **The new default does NOT rescue a themed dark field** — `#6E6A64` is 1.36:1 on a blue
-  `#2B54A0` search and 2.46:1 on a dark grey `#303030`, slightly worse than the browser grey was.
-  Setting the knob is what fixes those, which is the point of the change.
-
-  Two more things to know when upgrading. The library rule is `.<class>::placeholder` at (0,1,1),
-  so a host workaround written as a bare `::placeholder` or `input::placeholder` no longer wins —
-  set the variable instead (a class-qualified host rule still ties and wins on source order). And
-  on a host that ships Tailwind's preflight, those four fields previously inherited its
-  `color-mix(in oklab, currentcolor 50%, transparent)`, which tracked each field's own text colour
-  and stayed legible on any background; they now pin to the token like every other field.
 
 ### New in 4.75.0
 
@@ -138,7 +116,7 @@ catalog.
   exactly as before; `AppSidebar` passes `showArrow={false}` and is untouched either way. No new
   props and no new public knobs.
 
-### Unreleased
+### New in 4.78.0
 
 - **`DataTable` can stack into cards at a wider container than 480px.** `stackAt={640 |
   768 | 960}` moves the threshold; `480` stays the default and emits no class, so a table
@@ -150,6 +128,8 @@ catalog.
   is also why the accepted values are a closed set.
   Studio exposes it as the Data Table's "Stack Into Cards" layout variant — the only way
   to reach the stacked layout there, since the canvas never narrows to 480px on its own.
+
+### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to
