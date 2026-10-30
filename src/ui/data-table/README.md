@@ -205,6 +205,33 @@ What you get, and what to know:
 - **In card mode the actions cell follows the stacked reset** — it is a full-width block rather
   than its table-mode 1% sliver — but keeps its trailing alignment, so the ⋮ stays at the card's
   trailing edge.
+### Stacking threshold
+
+Rows reflow into stacked cards below a **480px container** by default. `stackAt` raises
+that:
+
+```tsx
+<DataTable stackAt={768} columns={columns} rows={rows} rowKey={(r) => r.id} />
+```
+
+Raise it when the table lives somewhere narrow for its content — a side panel, a dashboard
+column, one half of a two-up layout. Because the measurement is the **table's own
+container** and not the viewport, the same table can stack inside a 600px panel and stay a
+table full-bleed on the same screen.
+
+`480` is the default and deliberately emits no class, so a table that doesn't set this is
+unchanged down to the byte. Passing `stackAt={480}` explicitly is the same thing.
+
+**Why a prop and not a `--uxm-data-table-*` knob.** A container query will not read a
+custom property: `@container (max-width: var(--bp))` parses, is kept in `cssRules` with
+its `conditionText` intact, and then never matches — so it fails silently rather than
+erroring. Each threshold therefore needs its own `@container` block in the stylesheet,
+which is also why the prop is a closed set rather than a `number`: a value with no block
+behind it would type-check and do nothing.
+
+A table's own container is what counts, so `stackAt` has no relationship to the viewport
+or to any app breakpoint. Pick it from how wide the table's slot actually gets.
+
 - **Nothing applies in stacked mode.** Below a 480px container there is no horizontal axis:
   cells un-pin, shadows clear and the arrows are hidden.
 - **`scrollable` alone will not scroll a table that already fits.** Auto layout wraps content
@@ -230,6 +257,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `rows` | `T[]` | – | **Required.** Row dataset; rendered in order, one `<tr>` per item. |
 | `rowKey` | `(row: T) => string` | – | **Required.** Stable key extractor for React's reconciliation; pick a value that doesn't change between renders. |
 | `density` | `'compact' \| 'default' \| 'relaxed'` | `'default'` | Vertical cell padding modifier. See [States](#states--variants). |
+| `stackAt` | `480 \| 640 \| 768 \| 960` | `480` | Container width at or below which rows reflow into stacked cards. See [Stacking threshold](#stacking-threshold). |
 | `onRowClick` | `(row: T) => void` | – | When provided, rows render with a pointer cursor (`uxm-data-table__row--interactive`), forward clicks, and become keyboard-operable: each row takes `tabIndex={0}` and activates on `Enter` / `Space` with a focus ring. **Every row is its own tab stop**, so a long table is a long tab sequence — `rowProps` returning `tabIndex: -1` is the hook for your own roving scheme. A key pressed on a control inside the row stays that control's. Header clicks are not captured. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div className="uxm-data-table">`. |
@@ -378,5 +406,5 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
   - `sortLabel` sets the control's `aria-label`. Needed whenever `header` is not plain text: an icon-only header otherwise leaves the button or link with **no accessible name at all**, which axe reports as `button-name` / `link-name`.
   - In link mode the anchor carries no `aria-current` or disabled cue; state is on the `<th>` via `aria-sort`, which is where assistive tech looks for it.
 - Density modifiers preserve a minimum touch target of `~32px` in `compact`; verify against your specific row content if you add custom row controls.
-- In stacked mode (`@container (max-width: 480px)`) the table, its `tbody`, the rows and the cells all become blocks so each row fills the container as a card. The `tbody` is part of that list on purpose: it carries no class, and left as a `table-row-group` inside a block table it gets wrapped in an anonymous `table` box that shrinks to min-content — which made rows render at a fraction of their container (measured: 318px table, 81px row). If you ever restyle this block, keep the `tbody` in it.
+- In stacked mode (`@container (max-width: 480px)`, or `stackAt`) the table, its `tbody`, the rows and the cells all become blocks so each row fills the container as a card. The `tbody` is part of that list on purpose: it carries no class, and left as a `table-row-group` inside a block table it gets wrapped in an anonymous `table` box that shrinks to min-content — which made rows render at a fraction of their container (measured: 318px table, 81px row). If you ever restyle this block, keep the `tbody` in it.
 - The root container is a `<div>` with `overflow: hidden` and a rounded border. For tables wider than the viewport, use `scrollable` (or any `sticky` column, which implies it) rather than wrapping the component yourself — it brings the named, conditionally-focusable scroll region, the edge shadows and the arrows, and it is the path the stacked-mode resets know about.

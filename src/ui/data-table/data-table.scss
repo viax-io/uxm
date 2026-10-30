@@ -225,7 +225,7 @@
    This has to come AFTER the base rail rule: both selectors are (0,1,0), so
    source order decides, and declared earlier it simply lost — which is how the
    first attempt ended up drawing BOTH rails at once. */
-@container (max-width: 480px) {
+@mixin stacked-active-rail {
   .uxm-data-table__row--active > :first-child {
     box-shadow: none;
   }
@@ -233,6 +233,7 @@
     box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
   }
 }
+@container (max-width: 480px) { @include stacked-active-rail; }
 
 /* Exists so `:hover` does not replace the active tint — without it, pointing at
    the active row would make it look like any other hovered row. It defaults to
@@ -490,7 +491,7 @@
 
 /* Stacked mode has no horizontal axis, so nothing here applies: the scroller
    stops scrolling, pinned cells un-pin, and the arrows would point at nothing. */
-@container (max-width: 480px) {
+@mixin stacked-no-scroll {
   .uxm-data-table__scroller { overflow-x: visible; }
   /* The `--scrolled-*` shadow selectors are (0,2,0); a bare class reset here is
      (0,1,0) and loses, so the shadows survived into the stacked cards. Match
@@ -517,6 +518,7 @@
   }
   .uxm-data-table__scroll-arrow { display: none; }
 }
+@container (max-width: 480px) { @include stacked-no-scroll; }
 
 /* ── Card mode — LAST in this file, and that placement is load-bearing ────
    These rules target the same classes as the table-mode rules above at the
@@ -537,7 +539,7 @@
    This is a container query (not a media query) so the same table
    behaves correctly whether it's full-bleed in a 1440px page or
    stuffed into a 320px side-panel — its own width drives the layout. */
-@container (max-width: 480px) {
+@mixin stacked-cards {
   .uxm-data-table__head {
     /* The header row carries no information once each cell labels itself
        — hide it rather than reflow it as another card. */
@@ -610,5 +612,33 @@
      than jumping to the left margin under the first value. */
   .uxm-data-table__td--actions {
     text-align: right;
+  }
+}
+@container (max-width: 480px) { @include stacked-cards; }
+
+/* ── A wider stacking threshold, opt-in via `stackAt` ─────────────────────────
+   The 480px blocks above are untouched on purpose. Their selectors are bare
+   (`.uxm-data-table__td`, (0,1,0)) and deliberately EQUAL to the table-mode
+   rules they override, so source order alone decides each contest — measured,
+   not theorised, per the card-mode note. Gating them would raise them to
+   (0,2,0) and silently flip those contests for every existing table.
+
+   So nothing is gated; blocks are appended. Inside one, the modifier raises the
+   stacked rules by exactly one class, which is REQUIRED here — they have to
+   beat table-mode at a width where table-mode still holds — and uniform, so
+   every relative outcome above is preserved. A table that does not opt in
+   cannot match these selectors at all.
+
+   A query per preset is unavoidable: a container query will not read a custom
+   property (the condition parses and then never matches), which is why the
+   threshold is a prop and not a `--uxm-data-table-*` knob. The set is closed
+   for the same reason — a value with no block here would do nothing. */
+@each $bp in (640, 768, 960) {
+  @container (max-width: #{$bp}px) {
+    .uxm-data-table--stack-#{$bp} {
+      @include stacked-active-rail;
+      @include stacked-no-scroll;
+      @include stacked-cards;
+    }
   }
 }
