@@ -312,6 +312,16 @@ export const ICONS: IconDef[] = [
       '<circle cx="18" cy="17.25" r="2.625"/>' +
       '<path d="M10.7 9.03 7.3 14.97M13.3 9.03l3.4 5.94M8.625 17.25h6.75"/>',
   },
+  {
+    id: 'target',
+    label: 'Target',
+    keywords: ['bullseye', 'goal', 'aim', 'hit', 'commit'],
+    // Rings and a centre dot with an arrow landed in it: "reached", e.g. a
+    // value committed at a step. Kept 3 units clear of the edge like the rest.
+    body:
+      '<circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="3.75"/><circle cx="12" cy="12" r="0.75"/>' +
+      '<path d="M12 12l6.75-6.75M18.75 5.25V3M18.75 5.25H21"/>',
+  },
 
   // ── Sort states ──────────────────────────────────────────────────────────
   // A family, not three unrelated glyphs. Every one is the SAME frame -- three
@@ -415,7 +425,7 @@ export const ICON_IDS = [
   'x-circle', 'key', 'arrow-right-start-on-rectangle', 'paper-airplane',
   'server', 'shield-exclamation', 'shield-check', 'wrench',
   'document-text', 'activity', 'dot-circle', 'coins',
-  'git-fork', 'plug', 'webhook', 'sort-none',
+  'git-fork', 'plug', 'webhook', 'target', 'sort-none',
   'sort-asc', 'sort-desc', 'dot-circle-solid', 'scroll-text',
 ] as const;
 

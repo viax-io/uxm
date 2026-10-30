@@ -873,6 +873,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'Sekme iç boşluğu X',
     'Tab Padding Y': 'Sekme iç boşluğu Y',
     'Tab Radius': 'Sekme yarıçapı',
+    'Target': 'Hedef',
     'Task': 'Görev',
     'Text': 'Metin',
     'Text Align': 'Metin hizalaması',

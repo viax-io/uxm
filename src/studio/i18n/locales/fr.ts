@@ -879,6 +879,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'Marge interne d’onglet X',
     'Tab Padding Y': 'Marge interne d’onglet Y',
     'Tab Radius': 'Rayon de l’onglet',
+    'Target': 'Cible',
     'Task': 'Tâche',
     'Text': 'Texte',
     'Text Align': 'Alignement du texte',

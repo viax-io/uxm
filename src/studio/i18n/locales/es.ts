@@ -879,6 +879,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'Relleno de pestaña X',
     'Tab Padding Y': 'Relleno de pestaña Y',
     'Tab Radius': 'Radio de la pestaña',
+    'Target': 'Diana',
     'Task': 'Tarea',
     'Text': 'Texto',
     'Text Align': 'Alineación del texto',

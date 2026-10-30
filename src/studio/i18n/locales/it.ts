@@ -879,6 +879,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'Spaziatura della scheda X',
     'Tab Padding Y': 'Spaziatura della scheda Y',
     'Tab Radius': 'Raggio della scheda',
+    'Target': 'Bersaglio',
     'Task': 'Attività',
     'Text': 'Testo',
     'Text Align': 'Allineamento del testo',

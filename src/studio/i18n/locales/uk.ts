@@ -885,6 +885,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'Відступ вкладки X',
     'Tab Padding Y': 'Відступ вкладки Y',
     'Tab Radius': 'Радіус вкладки',
+    'Target': 'Мішень',
     'Task': 'Завдання',
     'Text': 'Текст',
     'Text Align': 'Вирівнювання тексту',

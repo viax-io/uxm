@@ -879,6 +879,7 @@ export const messages: StudioMessages = {
     'Tab Padding X': 'Espaçamento da aba X',
     'Tab Padding Y': 'Espaçamento da aba Y',
     'Tab Radius': 'Raio da aba',
+    'Target': 'Alvo',
     'Task': 'Tarefa',
     'Text': 'Texto',
     'Text Align': 'Alinhamento do texto',

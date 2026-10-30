@@ -115,7 +115,7 @@ describe('icon registry', () => {
     // visibly detaches the line. So pin the part that IS a rule, and let the
     // comment in icons.ts carry the exception — an unpinned prose claim about
     // `coins` and `webhook` was simply false for a release.
-    const HOUSE = ['activity', 'dot-circle', 'dot-circle-solid', 'coins', 'git-fork', 'plug', 'webhook'];
+    const HOUSE = ['activity', 'dot-circle', 'dot-circle-solid', 'coins', 'git-fork', 'plug', 'webhook', 'target'];
     const onGrid = (n: number) => Math.abs(n / 0.375 - Math.round(n / 0.375)) < 1e-9;
     for (const id of HOUSE) {
       const def = ICONS.find((d) => d.id === id);

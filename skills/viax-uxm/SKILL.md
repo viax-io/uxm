@@ -124,6 +124,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **A `target` glyph.** House-drawn rings and a centre dot with an arrow landed in it, for
+  "reached" or "committed" (e.g. a value committed at a lifecycle step). `bullseye`, `goal`, `aim`,
+  `hit` and `commit` resolve to it.
+
 ## Workflow
 
 ### Where the documentation lives
