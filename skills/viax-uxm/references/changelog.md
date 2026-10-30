@@ -2248,3 +2248,23 @@ reached the published library; now shipped in 2.8.0.
   an `Icon` size other than 15** now draws 15px, because the slot sizes any `<svg>` in it the way
   `InputWithIcon` does — set the variable instead. Every svg in the slot is squared to that size,
   so a composite mark needs its own dimensions.
+
+### New in 4.76.0
+
+- **Two glyphs, and a keyword is now a name you can render by.** `scroll-text` (a scroll,
+  distinct from `document-text`'s page) and `dot-circle-solid` (`dot-circle`'s ring with a
+  filled centre, for a live or active state) join the registry. The bigger change is
+  `getIcon`: it falls back to a glyph's `keywords` when no id matches, so `<Icon
+  glyph="ban" />` draws `no-symbol`, `"send"` draws `paper-airplane`, `"circle-dot"` draws
+  `dot-circle`. Most of the registry's keywords resolved to nothing before — `Icon` renders
+  `null` on a miss, so they were invisible with no error — including most of the "exists under
+  another name" aliases the catalog advertises. **Not all of them**: `log-out` and `archive`
+  are advertised but are nobody's keyword, so they still resolve to nothing. An exact id still
+  wins, and each keyword belongs to exactly one glyph (pinned by a test), so the fallback is
+  single-valued.
+
+  Worth knowing if you pass a **data-driven** name: the keyword set includes ordinary words
+  (`error`, `status`, `active`, `live`, `order`, `host`, `notes`), so `glyph={item.status}`
+  can now draw a glyph where it drew nothing. Adding a glyph whose **id** equals an existing
+  keyword also repoints that alias — `scroll-text` was `document-text`'s keyword before it
+  became an id.

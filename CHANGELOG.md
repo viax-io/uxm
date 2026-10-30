@@ -1,3 +1,10 @@
+# [4.80.0](https://github.com/viax-io/uxm/compare/v4.79.0...v4.80.0) (2026-10-30)
+
+
+### Features
+
+* **icon:** add a target glyph ([2d35a41](https://github.com/viax-io/uxm/commit/2d35a416f16d8cf83e33da2361e28ff4f8d72e18))
+
 # [4.79.0](https://github.com/viax-io/uxm/compare/v4.78.0...v4.79.0) (2026-10-30)
 
 
