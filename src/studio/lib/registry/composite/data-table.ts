@@ -43,6 +43,21 @@ export const dataTableDef: ComponentDef = {
       ],
       defaultValue: 'default',
     },
+    // The canvas is whatever is left between the sidebar and the properties
+    // panel — comfortably wider than 480px — so the stacked-card layout was
+    // unreachable here and its knobs (cell padding, the active rail) could not
+    // be tuned at all. Moving the threshold brings that layout into the canvas.
+    {
+      key: 'stackAt',
+      label: 'Stack Into Cards',
+      options: [
+        { value: '480', label: 'Below 480px (default)' },
+        { value: '640', label: 'Below 640px' },
+        { value: '768', label: 'Below 768px' },
+        { value: '960', label: 'Below 960px' },
+      ],
+      defaultValue: '480',
+    },
   ],
   events: [
     { name: 'onRowClick', description: 'Fires when the user clicks a row (not bubbled from clicks inside the row-actions cell).', payload: '{ row: T }' },

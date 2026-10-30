@@ -6,6 +6,7 @@ import {
   Tag,
   type DataTableColumn,
   type DataTableSort,
+  type DataTableStackAt,
   type EditableCellOption,
   type EditableCellValue,
   type MenuEntry,
@@ -114,6 +115,15 @@ const STATUS_TO_TAG_TYPE: Record<string, TagType> = {
  * knob here reaches the atom through the same custom property a consumer would
  * set.
  */
+/**
+ * Must match the `stackAt` layout variant's option values in the studio
+ * registry. The registry hands every variant back as a string; `stackAt` is a
+ * closed numeric set, so narrow through this map rather than `Number()` — an
+ * option added to the registry and not here falls back to the default instead
+ * of reaching the atom as an unsupported width.
+ */
+const STACK_AT: Record<string, DataTableStackAt> = { '480': 480, '640': 640, '768': 768, '960': 960 };
+
 /** Must match `cellPaddingX`/`cellPaddingY` in the studio registry. */
 const CELL_PADDING_DEFAULT = 12;
 
@@ -290,6 +300,7 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
     <DataTable<Row>
       style={tableVars(styles)}
       density={(variants.density as 'compact' | 'default' | 'relaxed') ?? 'default'}
+      stackAt={STACK_AT[variants.stackAt ?? ''] ?? 480}
       columns={columns}
       rows={sorted}
       rowKey={(r) => r.id}

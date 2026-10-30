@@ -235,7 +235,10 @@
   // `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit
   // on the same element as the stack class, so a descendant selector can never
   // match and the rule is dead. Everything else is a descendant of the root.
-  $d: if($self == '', '', $self + ' ');
+  $d: '';
+  @if $self != '' {
+    $d: $self + ' ';
+  }
 
   #{$d}.uxm-data-table__row--active > :first-child {
     box-shadow: none;
@@ -512,7 +515,10 @@
   // `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit
   // on the same element as the stack class, so a descendant selector can never
   // match and the rule is dead. Everything else is a descendant of the root.
-  $d: if($self == '', '', $self + ' ');
+  $d: '';
+  @if $self != '' {
+    $d: $self + ' ';
+  }
 
   #{$d}.uxm-data-table__scroller { overflow-x: visible; }
   /* The `--scrolled-*` shadow selectors are (0,2,0); a bare class reset here is
@@ -574,7 +580,10 @@
   // `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit
   // on the same element as the stack class, so a descendant selector can never
   // match and the rule is dead. Everything else is a descendant of the root.
-  $d: if($self == '', '', $self + ' ');
+  $d: '';
+  @if $self != '' {
+    $d: $self + ' ';
+  }
 
   #{$d}.uxm-data-table__head {
     /* The header row carries no information once each cell labels itself

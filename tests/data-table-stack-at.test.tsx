@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { dataTableDef } from '@/studio/lib/registry/composite/data-table';
 import { DataTable } from '@/ui';
 import type { DataTableColumn, DataTableStackAt } from '@/ui';
 
@@ -136,5 +137,51 @@ describe('DataTable stackAt — the prop and the stylesheet agree', () => {
     );
     expect(css).toContain(`.${sel}.uxm-data-table--compact`);
     expect(css).toContain(`.${sel}.uxm-data-table--scrolled-start`);
+  });
+});
+
+describe('DataTable stackAt — the registry, the preview and the prop agree', () => {
+  // A knob the studio offers and the preview never reads is this repo's
+  // recurring defect: the panel looks like it works, the canvas does nothing,
+  // and no gate notices. It has bitten the DataTable preview three times. The
+  // variant is only reachable through two hand-written maps — the registry's
+  // option list and the preview's `STACK_AT` — so pin both against the union.
+  const read = (rel: string) =>
+    readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', rel), 'utf8');
+
+  const union = (() => {
+    const m = read('src/ui/data-table/data-table.tsx').match(/export type DataTableStackAt =([^;]+);/);
+    if (!m) throw new Error('DataTableStackAt union not found');
+    return m[1].split('|').map((v) => Number(v.trim())).sort((a, b) => a - b);
+  })();
+
+  const variant = dataTableDef.layoutVariants.find((v) => v.key === 'stackAt');
+
+  it('exposes stackAt as a layout variant', () => {
+    // Without it the stacked-card layout is unreachable in the studio: the
+    // canvas never narrows to 480px, so its knobs cannot be tuned at all.
+    expect(variant, 'the studio registry must offer the stackAt variant').toBeDefined();
+  });
+
+  it('offers exactly the widths the prop accepts', () => {
+    const offered = (variant?.options ?? [])
+      .map((o) => Number(typeof o === 'string' ? o : o.value))
+      .sort((a, b) => a - b);
+    expect(offered).toEqual(union);
+  });
+
+  it('defaults to the width that emits no class', () => {
+    expect(Number(variant?.defaultValue)).toBe(480);
+  });
+
+  it('is read by the preview, through a map covering every option', () => {
+    const src = read('src/ui/data-table/data-table-preview.tsx');
+    expect(src, 'the preview must pass the variant to the atom').toMatch(/stackAt=\{STACK_AT\[/);
+    const m = src.match(/const STACK_AT:[^=]+=\s*\{([^}]+)\}/);
+    if (!m) throw new Error('STACK_AT map not found in the preview');
+    const mapped = [...m[1].matchAll(/'(\d+)':\s*(\d+)/g)];
+    // Keys are what the registry hands back; values are what reaches the atom.
+    expect(mapped.map(([, k]) => Number(k)).sort((a, b) => a - b)).toEqual(union);
+    expect(mapped.every(([, k, v]) => k === v), 'each key must map to its own width').toBe(true);
   });
 });

@@ -148,6 +148,8 @@ catalog.
   table full-bleed on the same screen. It is a prop, not a CSS knob, because a container
   query cannot read a custom property (the condition parses and then never matches), which
   is also why the accepted values are a closed set.
+  Studio exposes it as the Data Table's "Stack Into Cards" layout variant — the only way
+  to reach the stacked layout there, since the canvas never narrows to 480px on its own.
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
      PR as the change. At release the pipeline renames this heading to

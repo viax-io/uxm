@@ -251,6 +251,11 @@ different change with a different risk, and not available here.
 A table's own container is what counts, so `stackAt` has no relationship to the viewport
 or to any app breakpoint. Pick it from how wide the table's slot actually gets.
 
+In UXM Studio the threshold is a layout variant on the Data Table ("Stack Into Cards").
+That is the only way to reach the stacked layout there: the canvas sits between the
+sidebar and the properties panel and never narrows to 480px, so before this the cards —
+and every knob that paints them — could not be seen at all.
+
 ## Props
 
 ### `DataTableProps<T>`
