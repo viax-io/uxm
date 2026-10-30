@@ -167,6 +167,30 @@ neighbouring headings, not just your own.
 
 ---
 
+## A type-only export is invisible to the public-API snapshot
+
+`tests/public-api.test.ts` snapshots what each subpath exports **at runtime**. A
+`export type { … }` is erased at build, so it never appears there — the snapshot
+is green whether you documented the type or not, and the "minus line = MAJOR,
+plus line = MINOR" reading of that diff simply has no line to show.
+
+That bit on 4.78.0. `DataTableStackAt` shipped as a public type, was described in
+SKILL.md's release note, and was missing from the catalog row listing DataTable's
+exports — beside the five sibling types that *were* listed. To anything working
+from the skill instead of the source (which is the point of the skill) the type
+did not exist. `/end-task` didn't catch it either: it checks the skill was
+*updated*, not that the export list is *complete*.
+
+`npm run check:skill-catalog` now closes it — part of `check:drift`, so CI gates
+it. Every name in `src/ui/index.ts` must appear in backticks somewhere in
+`references/component-catalog.md`. It deliberately does not check WHICH row:
+exports are spread across the component tables, the hooks table and the constants
+prose, and pinning each to a cell would be brittle without catching much more.
+The failure it closes is "added an export, never mentioned it".
+
+It also refuses to pass when it parses zero exports from the barrel — a gate that
+reports success because it measured nothing is the same defect in a different coat.
+
 ## Skill-file branches: catalog rows are one physical line — parallel branches conflict wholesale; resolve by re-applying, not hand-merging
 
 `component-catalog.md` keeps each component's entire description on ONE physical
