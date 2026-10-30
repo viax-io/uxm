@@ -1,3 +1,10 @@
+# [4.79.0](https://github.com/viax-io/uxm/compare/v4.78.0...v4.79.0) (2026-10-30)
+
+
+### Features
+
+* **icon:** add a link glyph ([8b3b2f6](https://github.com/viax-io/uxm/commit/8b3b2f6c1c7585ab47523d7029cecacab4317d01))
+
 # [4.78.0](https://github.com/viax-io/uxm/compare/v4.77.1...v4.78.0) (2026-10-30)
 
 
