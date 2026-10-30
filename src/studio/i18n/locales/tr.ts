@@ -661,6 +661,7 @@ export const messages: StudioMessages = {
     'Line Height': 'Satır yüksekliği',
     'Line Width': 'Çizgi kalınlığı',
     'Linear': 'Doğrusal',
+    'Link': 'Bağlantı',
     'Link Weight': 'Bağlantı kalınlığı',
     'List': 'Liste',
     'List (Lines Only)': 'Liste (yalnızca çizgiler)',

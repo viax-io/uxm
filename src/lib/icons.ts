@@ -196,6 +196,13 @@ export const ICONS: IconDef[] = [
   // ── Tools / data ──
   { id: 'calculator', label: 'Calculator', path: 'M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z' },
   { id: 'paper-clip', label: 'Paper Clip', path: 'm18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 0 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13' },
+  // Link — Heroicons link (two chain links): "copy link", a URL or permalink.
+  {
+    id: 'link',
+    label: 'Link',
+    keywords: ['chain', 'hyperlink', 'url', 'permalink', 'copy link'],
+    path: 'M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244',
+  },
   // JSON — the curly-braces glyph (two mirrored braces, each its own subpath).
   { id: 'json', label: 'JSON', path: 'M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1M16 3h1a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2 2 2 0 0 0-2 2v5a2 2 0 0 1-2 2h-1' },
   // Bot — multi-shape (rounded head + antenna + eyes + side ports), so it uses
@@ -403,7 +410,7 @@ export const ICON_IDS = [
   'clock', 'save', 'upload', 'refresh',
   'user', 'bell', 'menu', 'globe',
   'copy', 'play', 'pause', 'calculator',
-  'paper-clip', 'json', 'bot', 'money',
+  'paper-clip', 'link', 'json', 'bot', 'money',
   'arrows-up-down', 'archive-box', 'no-symbol', 'book-open',
   'x-circle', 'key', 'arrow-right-start-on-rectangle', 'paper-airplane',
   'server', 'shield-exclamation', 'shield-check', 'wrench',
