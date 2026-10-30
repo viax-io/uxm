@@ -25,7 +25,7 @@ that fails and report it — a task is not done while any gate is red.
 ```bash
 npm run lint          # 0 errors (warnings are reported, not blocking)
 npm run typecheck     # tsc --noEmit for src + portal — 0 errors
-npm run check:drift   # registry-vs-SCSS state-var gate + type-scale + tokens parity
+npm run check:drift   # state-var gate + type-scale + tokens parity + i18n + skill catalog
 npm test              # Vitest smoke suite (tests/)
 npm run build         # when src/, tsup.config.ts, tsconfig*, package.json or scripts/ changed
 ```
