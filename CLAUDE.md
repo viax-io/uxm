@@ -19,7 +19,7 @@ npm run build:cdn   # dist-cdn/ — self-contained <script>-tag bundles (esm, st
 npm run typecheck   # tsc --noEmit for src + portal/tsconfig.json
 npm run lint        # eslint .
 npm run lint:fix    # eslint . --fix
-npm run check:drift # registry-vs-CSS state-var drift + type-scale + tokens.css↔themeTokens parity + studio-i18n gates (also run in CI's test job)
+npm run check:drift # registry-vs-CSS state-var drift + type-scale + tokens.css↔themeTokens parity + studio-i18n + skill-catalog gates (also run in CI's test job)
 npm run i18n:extract # re-scan the registry + t() calls into src/studio/i18n/source-catalog.json
 npm run i18n:gen    # sync every studio dictionary to that catalog (new keys land as null)
 npm test            # Vitest smoke suite (tests/) — jsdom; `npm run test:watch` while iterating
@@ -123,7 +123,7 @@ Two facts worth repeating: variant classes are often folded into the block name 
 
 ## Adding a component (repo-specific requirement)
 
-Beyond the react-style-guide checklist: when you add/change a component you **must update the AI skill in the same change** — `skills/viax-uxm/` (catalog row + cheatsheet row marked "(unreleased)", a bullet under `### Unreleased` in `SKILL.md`). Do **not** touch version/count markers — CI stamps them at release (`scripts/stamp-skill-version.mjs`). See the `/update-ai-skill` command. Also add the `@import` for the new `<name>.scss`'s compiled CSS to `src/ui/styles.css` in cascade order, and re-export from both the folder `index.ts` and `src/ui/index.ts`.
+Beyond the react-style-guide checklist: when you add/change a component you **must update the AI skill in the same change** — `skills/viax-uxm/` (catalog row + cheatsheet row marked "(unreleased)", a bullet under `### Unreleased` in `SKILL.md`). Do **not** touch version/count markers — CI stamps them at release (`scripts/stamp-skill-version.mjs`). See the `/update-ai-skill` command. Also add the `@import` for the new `<name>.scss`'s compiled CSS to `src/ui/styles.css` in cascade order, and re-export from both the folder `index.ts` and `src/ui/index.ts`. **Every name you export from `src/ui/index.ts` has to be named in the catalog** — `npm run check:skill-catalog` (part of `check:drift`) fails otherwise. That gate exists because a type-only export is erased at build and so never shows up in `tests/public-api.test.ts`'s snapshot; see `gotchas.md`.
 
 ## Branches & pull requests
 

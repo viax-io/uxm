@@ -449,7 +449,7 @@ npm run build        # full dist/ (see the pipeline below)
 npm run typecheck    # tsc --noEmit for src + portal
 npm run lint         # eslint .
 npm run lint:fix     # eslint . --fix
-npm run check:drift  # state-var drift, type-scale, tokens.css ↔ themeTokens parity and studio-i18n gates
+npm run check:drift  # state-var drift, type-scale, tokens.css ↔ themeTokens parity, studio-i18n and skill-catalog gates
 npm run i18n:extract # re-scan the registry + t() calls into src/studio/i18n/source-catalog.json
 npm run i18n:gen     # sync every studio dictionary to that catalog (new keys land as null)
 npm run check:studio-i18n # every shipped studio locale is complete
