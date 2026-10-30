@@ -55,6 +55,7 @@ export type {
   DataTableProps,
   DataTableSort,
   DataTableSortDirection,
+  DataTableStackAt,
 } from './data-table';
 export { DateInput } from './date-input';
 export type { DateInputFormat, DateInputMode, DateInputProps } from './date-input';

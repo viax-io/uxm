@@ -7,6 +7,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { DataTable } from '@/ui';
 import type { DataTableColumn } from '@/ui';
 
+import { compiledCss } from './compiled-css';
+
 interface Row {
   id: string;
   name: string;
@@ -181,6 +183,7 @@ describe('DataTable fixed layout — the cases CSS alone decides', () => {
   // that must exist for the opt-in to mean anything. Renaming either side
   // silently without this would leave every class-name assertion passing.
   const scss = readFileSync('src/ui/data-table/data-table.scss', 'utf8');
+  const css = compiledCss('src/ui/data-table/data-table.scss');
 
   it('defines the fixed-layout and active-row rules the component emits', () => {
     expect(scss).toMatch(/\.uxm-data-table__table--fixed\s*\{[^}]*table-layout:\s*fixed/);
@@ -209,11 +212,11 @@ describe('DataTable fixed layout — the cases CSS alone decides', () => {
     // Both selectors are (0,1,0), so SOURCE ORDER decides. Declared earlier the
     // override loses and the stacked card draws two rails — one on the row and
     // one on its first field. That is exactly what the first version did.
-    const base = scss.indexOf('.uxm-data-table__row--active > :first-child');
-    const stacked = scss.indexOf('@container (max-width: 480px)', base);
+    const base = css.indexOf('.uxm-data-table__row--active > :first-child');
+    const stacked = css.indexOf('@container (max-width: 480px)', base);
     expect(base, 'base rail rule missing').toBeGreaterThan(-1);
     expect(stacked, 'stacked rail override must come after the base rule').toBeGreaterThan(base);
-    expect(scss.slice(stacked)).toMatch(
+    expect(css.slice(stacked)).toMatch(
       /@container \(max-width: 480px\)[\s\S]{0,400}?__row--active > :first-child\s*\{\s*box-shadow:\s*none/,
     );
   });
