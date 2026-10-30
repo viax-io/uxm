@@ -8,6 +8,8 @@ import { describe, expect, it } from 'vitest';
 import { DataTable } from '@/ui';
 import type { DataTableColumn, DataTableStackAt } from '@/ui';
 
+import { compiledCss } from './compiled-css';
+
 /**
  * `stackAt` moves the width at which rows reflow into stacked cards.
  *
@@ -61,39 +63,78 @@ describe('DataTable stackAt', () => {
 });
 
 describe('DataTable stackAt — the prop and the stylesheet agree', () => {
-  // Without this the prop is the "emitted but unread" shape: `stackAt={1024}`
-  // would type-check, render a class, and style nothing, with every other test
-  // in this file still green. Comments are stripped first, the way
-  // `theming-contract.test.ts` does, so a value named only in prose cannot
-  // satisfy either side.
+  // The DOM tests above prove a class is rendered. On their own they are the
+  // repo's "emitted but unread" shape, and measurably so: renaming the SCSS
+  // selector to `--stak-N`, or dropping any one `@include`, left every test in
+  // this file and the two sibling data-table files green while the feature did
+  // nothing. So these read the COMPILED css — what the browser resolves — and
+  // check each preset's block actually contains the rules.
+  const css = compiledCss('src/ui/data-table/data-table.scss');
+
   const strip = (src: string) =>
     src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1');
-  const read = (p: string) =>
-    strip(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../src', p), 'utf8'));
+  const tsx = strip(
+    readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../src/ui/data-table/data-table.tsx'), 'utf8'),
+  );
 
   const declared = () => {
-    const m = read('ui/data-table/data-table.tsx').match(/export type DataTableStackAt =([^;]+);/);
+    const m = tsx.match(/export type DataTableStackAt =([^;]+);/);
     if (!m) throw new Error('DataTableStackAt union not found');
-    return new Set(m[1].split('|').map((v) => Number(v.trim())));
+    return [...m[1].split('|').map((v) => Number(v.trim()))].sort((a, b) => a - b);
   };
 
-  const styled = () => {
-    const scss = read('ui/data-table/data-table.scss');
-    const each = scss.match(/@each \$bp in \(([^)]+)\)/);
-    if (!each) throw new Error('opt-in @each loop not found');
-    const set = new Set(each[1].split(',').map((v) => Number(v.trim())));
-    // The base threshold has no loop entry — it is the unconditional block.
-    expect(scss).toContain('@container (max-width: 480px)');
-    set.add(480);
-    return set;
+  /** The text of one `@container (max-width: Npx)` block in the compiled css. */
+  const blockFor = (bp: number) => {
+    const at = css.indexOf(`@container (max-width: ${bp}px)`);
+    if (at < 0) return '';
+    const end = css.indexOf('\n}', at);
+    return css.slice(at, end < 0 ? undefined : end);
   };
 
-  it('reads a non-empty set from each side (a silent zero would pass the check below)', () => {
-    expect(declared().size).toBeGreaterThan(1);
-    expect(styled().size).toBeGreaterThan(1);
+  const OPT_IN = [640, 768, 960] as const;
+
+  it('reads a non-empty union (a silent zero would pass the checks below)', () => {
+    expect(declared().length).toBeGreaterThan(1);
+    expect(blockFor(480).length).toBeGreaterThan(200);
   });
 
   it('every value the prop accepts has a block, and every block has a value', () => {
-    expect([...declared()].sort()).toEqual([...styled()].sort());
+    const inScss = [...OPT_IN, 480].sort((a, b) => a - b);
+    expect(declared()).toEqual(inScss);
+    for (const bp of OPT_IN) expect(blockFor(bp), `no @container block for ${bp}`).not.toBe('');
+  });
+
+  it.each(OPT_IN)("%i's block carries all three rule groups, keyed to its own class", (bp) => {
+    const block = blockFor(bp);
+    const sel = `.uxm-data-table--stack-${bp}`;
+    // One signature rule per mixin. Dropping any single `@include` previously
+    // left the whole suite green.
+    expect(block, 'cards: the header must be hidden').toMatch(
+      new RegExp(`\\${sel}[^{]*__head[^}]*display:\\s*none`),
+    );
+    expect(block, 'no-scroll: the arrows must go').toMatch(
+      new RegExp(`\\${sel}[^{]*__scroll-arrow[^}]*display:\\s*none`),
+    );
+    expect(block, 'active rail: the row carries it, not the first cell').toMatch(
+      new RegExp(`\\${sel}[^{]*__row--active\\s*\\{[^}]*box-shadow`),
+    );
+    // The `min-width: 481px` clip is a second hard-coded 480, and an inverted
+    // one. A table stacked by `stackAt` sits above it, so it must opt back out
+    // or stacked cells clip their focus ring (2.4.7).
+    expect(block, 'the fixed-layout clip must be released').toMatch(
+      new RegExp(`\\${sel}[^{]*--fixed[^}]*overflow:\\s*visible`),
+    );
+  });
+
+  it.each(OPT_IN)('%i keys root modifiers COMPOUND, never as descendants', (bp) => {
+    const sel = `uxm-data-table--stack-${bp}`;
+    // `--compact`, `--scrolled-start` and friends live on the SAME element as
+    // the stack class. Nested, they compile to descendants and can never match
+    // — four such selectors shipped in the first version of this change.
+    expect(css, 'a root modifier written as a descendant is a dead rule').not.toMatch(
+      new RegExp(`\\.${sel} \\.uxm-data-table--`),
+    );
+    expect(css).toContain(`.${sel}.uxm-data-table--compact`);
+    expect(css).toContain(`.${sel}.uxm-data-table--scrolled-start`);
   });
 });

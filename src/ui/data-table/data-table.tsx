@@ -135,8 +135,9 @@ export interface DataTableColumn<T> {
    * first, and a wrong offset overlaps two columns rather than degrading. Give
    * the sticky column a `width` so its size is known rather than content-led.
    *
-   * No effect in stacked mode (below a 480px container) — there is no
-   * horizontal axis to pin against there.
+   * No effect in stacked mode — at or below the stacking threshold (a 480px
+   * container by default, or `stackAt`) there is no horizontal axis to pin
+   * against.
    */
   sticky?: 'start' | 'end';
   /**

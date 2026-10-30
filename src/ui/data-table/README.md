@@ -205,10 +205,24 @@ What you get, and what to know:
 - **In card mode the actions cell follows the stacked reset** — it is a full-width block rather
   than its table-mode 1% sliver — but keeps its trailing alignment, so the ⋮ stays at the card's
   trailing edge.
+- **Nothing applies in stacked mode.** At the stacking threshold (a 480px container by
+  default, or `stackAt`) there is no horizontal axis: cells un-pin, shadows clear, the arrows
+  are hidden, and a fixed-layout column stops clipping its content.
+- **`scrollable` alone will not scroll a table that already fits.** Auto layout wraps content
+  to the available width, so give columns a `width` (or `white-space: nowrap` content) if you
+  want a horizontal scroll at all.
+- **While there is overflow the arrows stay mounted and go `aria-disabled` at the ends**,
+  rather than unmounting — removing the button you are pressing throws focus to the document.
+  Both are absent only when there is nothing to scroll at all, which no button press can cause;
+  a resize that removes the overflow can, so don't park focus on an arrow across one.
+- **The studio preview demonstrates all of it.** It renders the real `<DataTable>` with column
+  widths that overflow the canvas, a sticky identity column and `stickyActions`, so the
+  scroller, the pinned columns and the arrows are visible and every knob is live.
+
 ### Stacking threshold
 
-Rows reflow into stacked cards below a **480px container** by default. `stackAt` raises
-that:
+Rows reflow into stacked cards at or below a **480px container** by default (the query is
+`max-width`, so the threshold itself stacks). `stackAt` raises that:
 
 ```tsx
 <DataTable stackAt={768} columns={columns} rows={rows} rowKey={(r) => r.id} />
@@ -222,28 +236,20 @@ table full-bleed on the same screen.
 `480` is the default and deliberately emits no class, so a table that doesn't set this is
 unchanged down to the byte. Passing `stackAt={480}` explicitly is the same thing.
 
-**Why a prop and not a `--uxm-data-table-*` knob.** A container query will not read a
-custom property: `@container (max-width: var(--bp))` parses, is kept in `cssRules` with
-its `conditionText` intact, and then never matches — so it fails silently rather than
-erroring. Each threshold therefore needs its own `@container` block in the stylesheet,
-which is also why the prop is a closed set rather than a `number`: a value with no block
-behind it would type-check and do nothing.
+**Why a prop and not a `--uxm-data-table-*` knob.** A **size** container condition cannot
+contain `var()`: `@container (max-width: var(--bp))` parses, is kept in `cssRules` with its
+`conditionText` intact, and then never matches — it fails silently rather than erroring.
+(`calc()` is fine, and `@container style(--x: 1)` does read custom properties; it is the
+size condition specifically that will not.) Each threshold therefore needs its own
+`@container` block, which is also why the prop is a closed set rather than a `number`: a
+value with no block behind it would type-check and do nothing.
+
+**480 is a floor, not just a default.** The set only goes up. Stacking below 480, or never
+stacking, would mean suppressing the unconditional block rather than adding to it — a
+different change with a different risk, and not available here.
 
 A table's own container is what counts, so `stackAt` has no relationship to the viewport
 or to any app breakpoint. Pick it from how wide the table's slot actually gets.
-
-- **Nothing applies in stacked mode.** Below a 480px container there is no horizontal axis:
-  cells un-pin, shadows clear and the arrows are hidden.
-- **`scrollable` alone will not scroll a table that already fits.** Auto layout wraps content
-  to the available width, so give columns a `width` (or `white-space: nowrap` content) if you
-  want a horizontal scroll at all.
-- **While there is overflow the arrows stay mounted and go `aria-disabled` at the ends**,
-  rather than unmounting — removing the button you are pressing throws focus to the document.
-  Both are absent only when there is nothing to scroll at all, which no button press can cause;
-  a resize that removes the overflow can, so don't park focus on an arrow across one.
-- **The studio preview demonstrates all of it.** It renders the real `<DataTable>` with column
-  widths that overflow the canvas, a sticky identity column and `stickyActions`, so the
-  scroller, the pinned columns and the arrows are visible and every knob is live.
 
 ## Props
 
@@ -402,9 +408,9 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
   - The control's accessible name is just the column header text. State lives in `aria-sort`, so the control does not also narrate it — and `header` is a `ReactNode`, so there is no string to build "sort by X descending" from.
   - The glyph is the `sort-none` / `sort-asc` / `sort-desc` family, whose three members share one ink box, so the header keeps its weight as the column toggles.
   - The control stretches to the cell's width, so the whole header row is clickable. On **target size** it meets WCAG 2.2 2.5.8 through the *spacing* exception (nothing else sits within 24px), not by being 24px itself — its own box is the line box, ~16–18px at the 12px header type and tighter at `compact` density.
-  - **Sorting disappears in stacked mode.** Below a 480px container the `<thead>` is `display: none` (each cell labels itself as a card), which takes the sort controls and `aria-sort` with it. Provide another way to sort at that width — a `Select` above the table — if sorting matters on phones.
+  - **Sorting disappears in stacked mode.** At the stacking threshold (480px by default, or `stackAt`) the `<thead>` is `display: none` (each cell labels itself as a card), which takes the sort controls and `aria-sort` with it. Provide another way to sort at that width — a `Select` above the table — if sorting matters on phones.
   - `sortLabel` sets the control's `aria-label`. Needed whenever `header` is not plain text: an icon-only header otherwise leaves the button or link with **no accessible name at all**, which axe reports as `button-name` / `link-name`.
   - In link mode the anchor carries no `aria-current` or disabled cue; state is on the `<th>` via `aria-sort`, which is where assistive tech looks for it.
 - Density modifiers preserve a minimum touch target of `~32px` in `compact`; verify against your specific row content if you add custom row controls.
-- In stacked mode (`@container (max-width: 480px)`, or `stackAt`) the table, its `tbody`, the rows and the cells all become blocks so each row fills the container as a card. The `tbody` is part of that list on purpose: it carries no class, and left as a `table-row-group` inside a block table it gets wrapped in an anonymous `table` box that shrinks to min-content — which made rows render at a fraction of their container (measured: 318px table, 81px row). If you ever restyle this block, keep the `tbody` in it.
+- In stacked mode (at or below a 480px container by default, or `stackAt`) the table, its `tbody`, the rows and the cells all become blocks so each row fills the container as a card. The `tbody` is part of that list on purpose: it carries no class, and left as a `table-row-group` inside a block table it gets wrapped in an anonymous `table` box that shrinks to min-content — which made rows render at a fraction of their container (measured: 318px table, 81px row). If you ever restyle this block, keep the `tbody` in it.
 - The root container is a `<div>` with `overflow: hidden` and a rounded border. For tables wider than the viewport, use `scrollable` (or any `sticky` column, which implies it) rather than wrapping the component yourself — it brings the named, conditionally-focusable scroll region, the edge shadows and the arrows, and it is the path the stacked-mode resets know about.

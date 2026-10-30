@@ -225,11 +225,22 @@
    This has to come AFTER the base rail rule: both selectors are (0,1,0), so
    source order decides, and declared earlier it simply lost — which is how the
    first attempt ended up drawing BOTH rails at once. */
-@mixin stacked-active-rail {
-  .uxm-data-table__row--active > :first-child {
+@mixin stacked-active-rail($self: '') {
+  // `$self` is the root selector this copy of the rules belongs to. Empty for
+  // the unconditional 480 path, which keeps the original top-level selectors
+  // byte for byte; the stack class for an opt-in copy.
+  //
+  // Two prefixes, not one, and the difference is the whole reason this is
+  // parameterised. A rule keyed off a ROOT modifier (`--compact`,
+  // `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit
+  // on the same element as the stack class, so a descendant selector can never
+  // match and the rule is dead. Everything else is a descendant of the root.
+  $d: if($self == '', '', $self + ' ');
+
+  #{$d}.uxm-data-table__row--active > :first-child {
     box-shadow: none;
   }
-  .uxm-data-table__row--active {
+  #{$d}.uxm-data-table__row--active {
     box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
   }
 }
@@ -491,36 +502,50 @@
 
 /* Stacked mode has no horizontal axis, so nothing here applies: the scroller
    stops scrolling, pinned cells un-pin, and the arrows would point at nothing. */
-@mixin stacked-no-scroll {
-  .uxm-data-table__scroller { overflow-x: visible; }
+@mixin stacked-no-scroll($self: '') {
+  // `$self` is the root selector this copy of the rules belongs to. Empty for
+  // the unconditional 480 path, which keeps the original top-level selectors
+  // byte for byte; the stack class for an opt-in copy.
+  //
+  // Two prefixes, not one, and the difference is the whole reason this is
+  // parameterised. A rule keyed off a ROOT modifier (`--compact`,
+  // `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit
+  // on the same element as the stack class, so a descendant selector can never
+  // match and the rule is dead. Everything else is a descendant of the root.
+  $d: if($self == '', '', $self + ' ');
+
+  #{$d}.uxm-data-table__scroller { overflow-x: visible; }
   /* The `--scrolled-*` shadow selectors are (0,2,0); a bare class reset here is
      (0,1,0) and loses, so the shadows survived into the stacked cards. Match
      their shape rather than reaching for !important. */
-  .uxm-data-table__th--sticky-start,
-  .uxm-data-table__td--sticky-start,
-  .uxm-data-table__th--sticky-end,
-  .uxm-data-table__td--sticky-end {
+  #{$d}.uxm-data-table__th--sticky-start,
+  #{$d}.uxm-data-table__td--sticky-start,
+  #{$d}.uxm-data-table__th--sticky-end,
+  #{$d}.uxm-data-table__td--sticky-end {
     position: static;
   }
-  .uxm-data-table--scrolled-start .uxm-data-table__th--sticky-start,
-  .uxm-data-table--scrolled-start .uxm-data-table__td--sticky-start,
-  .uxm-data-table--scrolled-end .uxm-data-table__th--sticky-end,
-  .uxm-data-table--scrolled-end .uxm-data-table__td--sticky-end {
+  #{$self}.uxm-data-table--scrolled-start .uxm-data-table__th--sticky-start,
+  #{$self}.uxm-data-table--scrolled-start .uxm-data-table__td--sticky-start,
+  #{$self}.uxm-data-table--scrolled-end .uxm-data-table__th--sticky-end,
+  #{$self}.uxm-data-table--scrolled-end .uxm-data-table__td--sticky-end {
     box-shadow: none;
   }
   /* Nothing is pinned down here (`position: static` above), so the row's own
      outline draws the whole ring and the continuation bars would be three
      stray lines inside the card. Same (0,3,0) shape as the rule they reset,
      for the reason given at the top of this block. */
-  .uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-start,
-  .uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-end {
+  #{$d}.uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-start,
+  #{$d}.uxm-data-table__row:focus-visible > .uxm-data-table__td--sticky-end {
     background-image: none;
   }
-  .uxm-data-table__scroll-arrow { display: none; }
+  #{$d}.uxm-data-table__scroll-arrow { display: none; }
 }
 @container (max-width: 480px) { @include stacked-no-scroll; }
 
-/* ── Card mode — LAST in this file, and that placement is load-bearing ────
+/* ── Card mode — last of the UNCONDITIONAL rules, and that is load-bearing ──
+   (The `stackAt` blocks at the very end of the file are appended copies of
+   these, carrying a modifier class; they do not compete with table mode on
+   source order, so they do not belong to this ordering contract.)
    These rules target the same classes as the table-mode rules above at the
    SAME specificity, so source order alone decides the winner. Declared
    earlier (where this block used to sit) the cell reset lost outright: card
@@ -539,8 +564,19 @@
    This is a container query (not a media query) so the same table
    behaves correctly whether it's full-bleed in a 1440px page or
    stuffed into a 320px side-panel — its own width drives the layout. */
-@mixin stacked-cards {
-  .uxm-data-table__head {
+@mixin stacked-cards($self: '') {
+  // `$self` is the root selector this copy of the rules belongs to. Empty for
+  // the unconditional 480 path, which keeps the original top-level selectors
+  // byte for byte; the stack class for an opt-in copy.
+  //
+  // Two prefixes, not one, and the difference is the whole reason this is
+  // parameterised. A rule keyed off a ROOT modifier (`--compact`,
+  // `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit
+  // on the same element as the stack class, so a descendant selector can never
+  // match and the rule is dead. Everything else is a descendant of the root.
+  $d: if($self == '', '', $self + ' ');
+
+  #{$d}.uxm-data-table__head {
     /* The header row carries no information once each cell labels itself
        — hide it rather than reflow it as another card. */
     display: none;
@@ -559,27 +595,27 @@
      forcing ITS tbody to block and collapsing their layout to a sliver, with
      nothing in their own CSS to explain it. A tbody is always a direct child
      of its table, so `>` covers this table exactly and stops there. */
-  .uxm-data-table__table,
-  .uxm-data-table__table > tbody,
-  .uxm-data-table__row,
-  .uxm-data-table__td {
+  #{$d}.uxm-data-table__table,
+  #{$d}.uxm-data-table__table > tbody,
+  #{$d}.uxm-data-table__row,
+  #{$d}.uxm-data-table__td {
     display: block;
     width: 100%;
   }
-  .uxm-data-table__row {
+  #{$d}.uxm-data-table__row {
     border-bottom: 1px solid var(--uxm-data-table-border-color, var(--color-border));
     padding: 8px var(--uxm-data-table-cell-padding-x, 12px);
   }
-  .uxm-data-table__row:last-child {
+  #{$d}.uxm-data-table__row:last-child {
     border-bottom: none;
   }
-  .uxm-data-table__td {
+  #{$d}.uxm-data-table__td {
     /* Reset table-cell defaults that don't apply once we're block. */
     padding: 4px 0;
     border-bottom: none;
     text-align: left;
   }
-  .uxm-data-table__td::before {
+  #{$d}.uxm-data-table__td::before {
     /* The column header, surfaced from `data-label`. Cells whose header
        wasn't a string don't get a label — `attr()` falls through to an
        empty string and the pseudo-element collapses. */
@@ -593,8 +629,8 @@
     margin-bottom: 2px;
   }
   /* Right/center alignment loses meaning in single-column card-list mode. */
-  .uxm-data-table__td--right,
-  .uxm-data-table__td--center {
+  #{$d}.uxm-data-table__td--right,
+  #{$d}.uxm-data-table__td--center {
     text-align: left;
   }
   /* Density presets are (0,2,0) — `.uxm-data-table--compact .uxm-data-table__td`
@@ -602,43 +638,69 @@
      Moving the block fixed default density and left these two exactly as
      broken as before: compact cards kept 6px 12px, relaxed 16px 12px, stacking
      cell padding on top of the row's own. Match their shape to beat them. */
-  .uxm-data-table--compact .uxm-data-table__td,
-  .uxm-data-table--relaxed .uxm-data-table__td {
+  #{$self}.uxm-data-table--compact .uxm-data-table__td,
+  #{$self}.uxm-data-table--relaxed .uxm-data-table__td {
     padding: 4px 0;
   }
   /* The actions cell takes the stacked reset like any other cell — its
      table-mode `width: 1%` made it a 28px sliver in a card — but keeps its
      trailing alignment, so the kebab stays at the card's trailing edge rather
      than jumping to the left margin under the first value. */
-  .uxm-data-table__td--actions {
+  #{$d}.uxm-data-table__td--actions {
     text-align: right;
   }
 }
 @container (max-width: 480px) { @include stacked-cards; }
 
 /* ── A wider stacking threshold, opt-in via `stackAt` ─────────────────────────
-   The 480px blocks above are untouched on purpose. Their selectors are bare
+   The 480px blocks above are untouched. Their selectors are bare
    (`.uxm-data-table__td`, (0,1,0)) and deliberately EQUAL to the table-mode
    rules they override, so source order alone decides each contest — measured,
    not theorised, per the card-mode note. Gating them would raise them to
-   (0,2,0) and silently flip those contests for every existing table.
+   (0,2,0) and silently flip those contests for every existing table. So nothing
+   is gated; copies are appended, carrying the stack class.
 
-   So nothing is gated; blocks are appended. Inside one, the modifier raises the
-   stacked rules by exactly one class, which is REQUIRED here — they have to
-   beat table-mode at a width where table-mode still holds — and uniform, so
-   every relative outcome above is preserved. A table that does not opt in
-   cannot match these selectors at all.
+   The copies are NOT nested under that class. Nesting makes every selector a
+   descendant, which is wrong for the rules keyed off a root modifier
+   (`--compact`, `--relaxed`, `--scrolled-start`, `--scrolled-end`): those sit
+   on the SAME element as the stack class, so as descendants they can never
+   match. The first version of this did nest, and shipped four selectors that
+   could not fire — the density rules only appeared to work because
+   `.stack-N .__td` happens to tie `.--compact .__td` and win on source order.
+   `$self` is compounded onto those and used as a descendant prefix elsewhere.
 
-   A query per preset is unavoidable: a container query will not read a custom
-   property (the condition parses and then never matches), which is why the
-   threshold is a prop and not a `--uxm-data-table-*` knob. The set is closed
-   for the same reason — a value with no block here would do nothing. */
+   Note what this does NOT claim: that every contest resolves as it does at 480.
+   Two do not, and both are the opt-in path behaving BETTER. The arrow's
+   `display: none` is (0,1,0) at 480 and loses to `icon-button.css`, which is
+   imported later; at (0,2,0) here it wins. And a stacked actions cell under
+   `table--fixed` stays 56px wide at 480 while here it fills the card, which is
+   what the README describes. Both are latent at 480 (the arrows unmount with no
+   overflow), and fixing the 480 path is a separate change.
+
+   A query per preset is unavoidable: a SIZE container condition cannot contain
+   `var()` — the condition parses, is kept in `cssRules`, and never matches — so
+   the threshold is a prop and the accepted values are a closed set. */
 @each $bp in (640, 768, 960) {
+  $self: '.uxm-data-table--stack-#{$bp}';
+
   @container (max-width: #{$bp}px) {
-    .uxm-data-table--stack-#{$bp} {
-      @include stacked-active-rail;
-      @include stacked-no-scroll;
-      @include stacked-cards;
+    @include stacked-active-rail($self);
+    @include stacked-no-scroll($self);
+    @include stacked-cards($self);
+
+    /* The fixed-layout clip is gated on `min-width: 481px` — a SECOND
+       hard-coded 480, and an inverted one, which is why it was easy to miss.
+       A table stacked by `stackAt` is stacked AND above 480, so it matched the
+       clip: stacked cells have zero horizontal padding, and the comment on that
+       rule says plainly that a clipped cell with no room swallows a focus ring
+       (2.4.7). The gate's own intent is "while this is a table", so a table
+       stacked at a wider threshold has to opt back out.
+
+       (0,4,0) against the gate's (0,3,0), so it wins wherever both apply. */
+    #{$self} .uxm-data-table__table--fixed .uxm-data-table__td:not(.uxm-data-table__td--actions),
+    #{$self} .uxm-data-table__table--fixed .uxm-data-table__th:not(.uxm-data-table__th--actions) {
+      overflow: visible;
+      text-overflow: clip;
     }
   }
 }
