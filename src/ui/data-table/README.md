@@ -272,7 +272,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `onRowClick` | `(row: T) => void` | – | When provided, rows render with a pointer cursor (`uxm-data-table__row--interactive`), forward clicks, and become keyboard-operable: each row takes `tabIndex={0}` and activates on `Enter` / `Space` with a focus ring. **Every row is its own tab stop**, so a long table is a long tab sequence — `rowProps` returning `tabIndex: -1` is the hook for your own roving scheme. A key pressed on a control inside the row stays that control's. Header clicks are not captured. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div className="uxm-data-table">`. |
-| `actionsColumnLabel` | `string` | `'Actions'` | Accessible name for the visually-empty actions column header. |
+| `actionsColumnLabel` | `string` | `'Actions'` | Accessible name for the visually-empty actions column header, and the label the actions cell shows in stacked mode — translate it once and both follow. |
 | `rowActionsLabel` | `string` | `'Row actions'` | Accessible name for each row's ⋮ trigger and menu. Repeats on every row — override where the row has a name. |
 | `sort` | `DataTableSort \| null` | – | The current sort (`{ key, direction }`). **Controlled** — the table never sorts `rows` itself and holds no sort state; it renders what you pass and reports intent, which is the only way a server-paged list can work. |
 | `onSortChange` | `(next: DataTableSort) => void` | – | Sort as a **callback**: the header renders a `<button>`. Never called with `null` — a sorted column flips rather than cycling back to unsorted. |

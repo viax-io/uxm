@@ -916,7 +916,7 @@ export function DataTable<T>({
                       'uxm-data-table__td uxm-data-table__td--actions',
                       stickyActions && 'uxm-data-table__td--sticky-end',
                     )}
-                    data-label="Actions"
+                    data-label={actionsColumnLabel}
                     // Opening the menu must not also fire the row click —
                     // same guard the editable cells use.
                     onClick={(e) => e.stopPropagation()}

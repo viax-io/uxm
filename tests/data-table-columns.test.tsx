@@ -135,6 +135,23 @@ describe('DataTable column label', () => {
     expect(container.querySelector('td')).toHaveAttribute('data-label', 'Full name');
   });
 
+  it('labels the stacked actions cell with actionsColumnLabel', () => {
+    // The header's accessible name and the card's visible label are the same
+    // word. The cell used to hard-code "Actions", so a translated table showed
+    // its own word to screen readers and English on every card.
+    const { container } = render(
+      table(PLAIN, { rowActions: () => [], actionsColumnLabel: 'Дії' }),
+    );
+    const cells = container.querySelectorAll('.uxm-data-table__td--actions');
+    expect(cells).toHaveLength(ROWS.length);
+    for (const cell of cells) expect(cell).toHaveAttribute('data-label', 'Дії');
+  });
+
+  it('keeps "Actions" on the stacked actions cell by default', () => {
+    const { container } = render(table(PLAIN, { rowActions: () => [] }));
+    expect(container.querySelector('.uxm-data-table__td--actions')).toHaveAttribute('data-label', 'Actions');
+  });
+
   it('names the sort control when the header is not text', () => {
     render(
       table([{ key: 'flag', header: <svg aria-hidden />, label: 'Flagged', sortKey: 'flag' }], {
