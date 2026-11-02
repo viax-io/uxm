@@ -110,6 +110,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable` stacked cards label the actions cell with `actionsColumnLabel`** — it was a
+  hard-coded English "Actions", so a translated table showed English on every card. Pass
+  `actionsColumnLabel` in your language and both the header's accessible name and the card label follow.
+
 ## Workflow
 
 ### Where the documentation lives
