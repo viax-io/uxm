@@ -1,3 +1,10 @@
+## [4.80.1](https://github.com/viax-io/uxm/compare/v4.80.0...v4.80.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* **data-table:** say the stackAt threshold itself stacks in the studio labels ([f953f57](https://github.com/viax-io/uxm/commit/f953f57290ca26105556dac1f3c9791fe9a8d010))
+
 # [4.80.0](https://github.com/viax-io/uxm/compare/v4.79.0...v4.80.0) (2026-10-30)
 
 
