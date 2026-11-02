@@ -138,6 +138,26 @@ describe('DataTable stackAt — the prop and the stylesheet agree', () => {
     expect(css).toContain(`.${sel}.uxm-data-table--compact`);
     expect(css).toContain(`.${sel}.uxm-data-table--scrolled-start`);
   });
+
+  it.each(OPT_IN)('%i comes after every base rule it overrides', (bp) => {
+    // Most of the overrides tie or barely beat what they override — the sticky
+    // reset, the shadow reset, the 480 blocks' own rules — so they win on
+    // source order. Moved above the base rules, the block still compiles, still
+    // carries every rule the test above looks for, and loses every tie.
+    const at = css.indexOf(`@container (max-width: ${bp}px)`);
+    expect(at, 'after the unconditional 480 blocks').toBeGreaterThan(
+      css.lastIndexOf('@container (max-width: 480px)'),
+    );
+    expect(at, 'after the fixed-layout clip it releases').toBeGreaterThan(
+      css.indexOf('@container (min-width: 481px)'),
+    );
+    // And nothing but other presets after it: a base rule appended below the
+    // presets would win the same ties from the other side.
+    const tail = css.slice(css.indexOf(`@container (max-width: ${OPT_IN[0]}px)`));
+    const topLevel = tail.match(/^\S[^\n]*\{/gm) ?? [];
+    const preset = new RegExp(`^@container \\(max-width: (${OPT_IN.join('|')})px\\)`);
+    expect(topLevel.filter((r) => !preset.test(r))).toEqual([]);
+  });
 });
 
 describe('DataTable stackAt — the registry, the preview and the prop agree', () => {
