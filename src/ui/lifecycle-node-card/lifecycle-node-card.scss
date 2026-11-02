@@ -44,7 +44,7 @@
   &--interaction {
     --kind-badge-bg: color-mix(in srgb, var(--color-accent-bold) 12%, transparent);
     --kind-badge-color: var(--color-accent-bold);
-    --kind-icon-bg: color-mix(in srgb, var(--color-accent-bold) 18%, transparent);
+    --kind-icon-bg: color-mix(in srgb, var(--color-accent) 24%, transparent);
     --kind-icon-color: var(--color-accent-bold);
   }
 
@@ -58,7 +58,7 @@
   &--task {
     --kind-badge-bg: color-mix(in srgb, var(--color-highlight-cool) 25%, transparent);
     --kind-badge-color: var(--color-on-highlight-cool);
-    --kind-icon-bg: color-mix(in srgb, var(--color-highlight-cool) 35%, transparent);
+    --kind-icon-bg: color-mix(in srgb, var(--color-highlight-cool) 22%, transparent);
     --kind-icon-color: var(--color-on-highlight-cool);
   }
 
