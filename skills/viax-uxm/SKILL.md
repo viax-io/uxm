@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.80.1, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.80.2, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.80.1** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.80.2** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.80.1 — current API surface (overrides training data)
+## v4.80.2 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,26 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.77.0
-
-- **`DataTable` rows with `onRowClick` are reachable from the keyboard.** The `<tr>` carried a
-  click handler and nothing else — no `tabIndex`, no `onKeyDown`, no focus style — so a row that
-  opens a detail pane could only be used with a pointer (**WCAG 2.1.1, Level A**). It now takes
-  `tabIndex={0}`, activates on `Enter` / `Space`, and shows a ring from the new
-  `--uxm-data-table-row-focus-color` (Studio knob **Row Focus Ring**). A table with no
-  `onRowClick` is unchanged and stays out of the tab order. The key has to land on the row
-  itself, so `Enter` on a cell's button or editable cell stays that control's; `rowProps`
-  composes, with your `onKeyDown` first and `preventDefault()` cancelling the activation, and
-  your `tabIndex` overriding the default. **Each row is its own tab stop**, so a long table is a
-  long tab sequence; a roving scheme (one stop, arrow keys) is the APG grid answer and is not
-  built in — `rowProps` returning `tabIndex: -1` is the hook for one.
-
-- **`DataTable`'s horizontal scroll arrows now appear only when the table can actually scroll.**
-  They were keyed off configuration rather than measurement, so *any* `sticky` column mounted two
-  permanently inert buttons — and two dead tab stops — over a table that fits. If you assert on
-  those buttons, a test against a narrow fixture that no longer overflows will stop finding them.
-  At either end of a real scroll both arrows still stay mounted and go `aria-disabled`, unchanged.
 
 ### New in 4.77.1
 
@@ -102,6 +82,12 @@ catalog.
   "reached" or "committed" (e.g. a value committed at a lifecycle step). `bullseye`, `goal`, `aim`,
   `hit` and `commit` resolve to it.
 
+### New in 4.80.2
+
+- **`DataTable` stacked cards label the actions cell with `actionsColumnLabel`** — it was a
+  hard-coded English "Actions", so a translated table showed English on every card. Pass
+  `actionsColumnLabel` in your language and both the header's accessible name and the card label follow.
+
 ### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
@@ -109,10 +95,6 @@ catalog.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
-
-- **`DataTable` stacked cards label the actions cell with `actionsColumnLabel`** — it was a
-  hard-coded English "Actions", so a translated table showed English on every card. Pass
-  `actionsColumnLabel` in your language and both the header's accessible name and the card label follow.
 
 ## Workflow
 

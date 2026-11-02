@@ -2268,3 +2268,23 @@ reached the published library; now shipped in 2.8.0.
   can now draw a glyph where it drew nothing. Adding a glyph whose **id** equals an existing
   keyword also repoints that alias — `scroll-text` was `document-text`'s keyword before it
   became an id.
+
+### New in 4.77.0
+
+- **`DataTable` rows with `onRowClick` are reachable from the keyboard.** The `<tr>` carried a
+  click handler and nothing else — no `tabIndex`, no `onKeyDown`, no focus style — so a row that
+  opens a detail pane could only be used with a pointer (**WCAG 2.1.1, Level A**). It now takes
+  `tabIndex={0}`, activates on `Enter` / `Space`, and shows a ring from the new
+  `--uxm-data-table-row-focus-color` (Studio knob **Row Focus Ring**). A table with no
+  `onRowClick` is unchanged and stays out of the tab order. The key has to land on the row
+  itself, so `Enter` on a cell's button or editable cell stays that control's; `rowProps`
+  composes, with your `onKeyDown` first and `preventDefault()` cancelling the activation, and
+  your `tabIndex` overriding the default. **Each row is its own tab stop**, so a long table is a
+  long tab sequence; a roving scheme (one stop, arrow keys) is the APG grid answer and is not
+  built in — `rowProps` returning `tabIndex: -1` is the hook for one.
+
+- **`DataTable`'s horizontal scroll arrows now appear only when the table can actually scroll.**
+  They were keyed off configuration rather than measurement, so *any* `sticky` column mounted two
+  permanently inert buttons — and two dead tab stops — over a table that fits. If you assert on
+  those buttons, a test against a narrow fixture that no longer overflows will stop finding them.
+  At either end of a real scroll both arrows still stay mounted and go `aria-disabled`, unchanged.

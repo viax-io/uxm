@@ -1,3 +1,10 @@
+## [4.80.2](https://github.com/viax-io/uxm/compare/v4.80.1...v4.80.2) (2026-11-02)
+
+
+### Bug Fixes
+
+* **data-table:** label the stacked actions cell with actionsColumnLabel ([ae8f7e1](https://github.com/viax-io/uxm/commit/ae8f7e16befce7537c937062624a1197065db960))
+
 ## [4.80.1](https://github.com/viax-io/uxm/compare/v4.80.0...v4.80.1) (2026-11-02)
 
 
