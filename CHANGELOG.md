@@ -1,3 +1,10 @@
+## [4.80.3](https://github.com/viax-io/uxm/compare/v4.80.2...v4.80.3) (2026-11-02)
+
+
+### Bug Fixes
+
+* **lifecycle-node-card:** brighten the green icon tile and lighten the task tile ([222effb](https://github.com/viax-io/uxm/commit/222effb31399a4b8ceb751519143821b65b9857f))
+
 ## [4.80.2](https://github.com/viax-io/uxm/compare/v4.80.1...v4.80.2) (2026-11-02)
 
 
