@@ -218,6 +218,24 @@
 .uxm-data-table__row--active > :first-child {
   box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
 }
+// The three stacked-mode mixins below take `$self`: the root selector a copy of
+// their rules belongs to. Empty for the unconditional 480 path, which keeps the
+// original top-level selectors byte for byte; the stack class (`--stack-640` …)
+// for an opt-in copy.
+//
+// Two prefixes, not one, and the difference is the whole reason they are
+// parameterised. A rule keyed off a ROOT modifier (`--compact`,
+// `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit on
+// the same element as the stack class, so a descendant selector can never match
+// and the rule is dead. Everything else is a descendant of the root, written
+// with the prefix this returns.
+@function stack-descendant($self) {
+  @if $self == '' {
+    @return '';
+  }
+  @return $self + ' ';
+}
+
 /* Stacked, the row IS the card, so the rail belongs on it. Left on the first
    cell it marks one field and sits over its text, which reads as a highlight on
    that value rather than on the record.
@@ -226,19 +244,8 @@
    source order decides, and declared earlier it simply lost — which is how the
    first attempt ended up drawing BOTH rails at once. */
 @mixin stacked-active-rail($self: '') {
-  // `$self` is the root selector this copy of the rules belongs to. Empty for
-  // the unconditional 480 path, which keeps the original top-level selectors
-  // byte for byte; the stack class for an opt-in copy.
-  //
-  // Two prefixes, not one, and the difference is the whole reason this is
-  // parameterised. A rule keyed off a ROOT modifier (`--compact`,
-  // `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit
-  // on the same element as the stack class, so a descendant selector can never
-  // match and the rule is dead. Everything else is a descendant of the root.
-  $d: '';
-  @if $self != '' {
-    $d: $self + ' ';
-  }
+  // Descendants only — the rail keys off no root modifier. See stack-descendant().
+  $d: stack-descendant($self);
 
   #{$d}.uxm-data-table__row--active > :first-child {
     box-shadow: none;
@@ -506,19 +513,9 @@
 /* Stacked mode has no horizontal axis, so nothing here applies: the scroller
    stops scrolling, pinned cells un-pin, and the arrows would point at nothing. */
 @mixin stacked-no-scroll($self: '') {
-  // `$self` is the root selector this copy of the rules belongs to. Empty for
-  // the unconditional 480 path, which keeps the original top-level selectors
-  // byte for byte; the stack class for an opt-in copy.
-  //
-  // Two prefixes, not one, and the difference is the whole reason this is
-  // parameterised. A rule keyed off a ROOT modifier (`--compact`,
-  // `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit
-  // on the same element as the stack class, so a descendant selector can never
-  // match and the rule is dead. Everything else is a descendant of the root.
-  $d: '';
-  @if $self != '' {
-    $d: $self + ' ';
-  }
+  // `$self` compounds the `--scrolled-*` shadows; `$d` prefixes the rest.
+  // See stack-descendant().
+  $d: stack-descendant($self);
 
   #{$d}.uxm-data-table__scroller { overflow-x: visible; }
   /* The `--scrolled-*` shadow selectors are (0,2,0); a bare class reset here is
@@ -571,19 +568,9 @@
    behaves correctly whether it's full-bleed in a 1440px page or
    stuffed into a 320px side-panel — its own width drives the layout. */
 @mixin stacked-cards($self: '') {
-  // `$self` is the root selector this copy of the rules belongs to. Empty for
-  // the unconditional 480 path, which keeps the original top-level selectors
-  // byte for byte; the stack class for an opt-in copy.
-  //
-  // Two prefixes, not one, and the difference is the whole reason this is
-  // parameterised. A rule keyed off a ROOT modifier (`--compact`,
-  // `--scrolled-start`) has to be COMPOUND with `$self` — those modifiers sit
-  // on the same element as the stack class, so a descendant selector can never
-  // match and the rule is dead. Everything else is a descendant of the root.
-  $d: '';
-  @if $self != '' {
-    $d: $self + ' ';
-  }
+  // `$self` compounds the density modifiers; `$d` prefixes the rest.
+  // See stack-descendant().
+  $d: stack-descendant($self);
 
   #{$d}.uxm-data-table__head {
     /* The header row carries no information once each cell labels itself
