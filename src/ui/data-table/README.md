@@ -248,6 +248,14 @@ value with no block behind it would type-check and do nothing.
 stacking, would mean suppressing the unconditional block rather than adding to it — a
 different change with a different risk, and not available here.
 
+**Every table pays for the presets, used or not.** Each opt-in threshold is a full copy of
+the stacked rules (the card reflow, the scroll and sticky resets, the active rail) keyed to
+its own class, and the stylesheet ships all three whether or not anything sets `stackAt`.
+Measured on the `sass` compressed output: about 2.8 KB per preset, 8.4 KB for the three — a
+little under half of `data-table.css` — but only about 0.5 KB after gzip, because the copies
+repeat each other almost exactly. That is the price of a closed set; adding a fourth
+threshold adds another copy, so add one only for a width a real layout needs.
+
 A table's own container is what counts, so `stackAt` has no relationship to the viewport
 or to any app breakpoint. Pick it from how wide the table's slot actually gets.
 
