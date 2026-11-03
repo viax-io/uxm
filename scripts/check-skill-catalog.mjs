@@ -27,7 +27,22 @@
 // closes is "added an export, never mentioned it", which is the one that
 // actually happens.
 //
-// Usage: node scripts/check-skill-catalog.mjs   (exits 1 on any omission)
+// Two guards keep that check honest:
+//
+//   - The barrel parser reads `export { … }` and `export type { … }` only,
+//     which is every form `src/ui/index.ts` uses. Any other form — `export *`,
+//     `export const`, `export function`, `export default` — would have its names
+//     silently skipped, so the check would pass while missing them. Such a line
+//     fails the run instead: teach the parser the form, or keep the barrel to
+//     named re-exports.
+//   - The reverse direction, scoped to where it is exact: every name in a
+//     component row's "Key exports" cell has to still be exported. A removed or
+//     renamed type-only export otherwise stays advertised — the runtime
+//     snapshot cannot see it, for the same reason as above. Prose elsewhere in
+//     the catalog is not checked this way: it backticks props, CSS variables
+//     and removed names in breaking-change notes, which are meant to be there.
+//
+// Usage: node scripts/check-skill-catalog.mjs   (exits 1 on any failure)
 import { readFileSync } from 'node:fs';
 
 const BARREL = 'src/ui/index.ts';
@@ -38,6 +53,19 @@ const strip = (src) =>
   src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1');
 
 const barrel = strip(readFileSync(BARREL, 'utf8'));
+
+const unsupported = barrel
+  .split('\n')
+  .map((line, i) => ({ line: line.trim(), no: i + 1 }))
+  .filter(({ line }) => /^export\b/.test(line) && !/^export\s+(?:type\s+)?\{/.test(line));
+
+if (unsupported.length > 0) {
+  console.error(`✗ ${BARREL} uses an export form this check cannot read:\n`);
+  for (const { line, no } of unsupported) console.error(`    ${no}: ${line}`);
+  console.error('\n  Its names would be skipped and the check would pass without them.');
+  console.error('  Re-export by name (`export { … } from`), or teach scripts/check-skill-catalog.mjs the form.');
+  process.exit(1);
+}
 
 /**
  * Names from `export { … }` and `export type { … }` blocks. `a as b` exports
@@ -57,10 +85,26 @@ if (exported.size === 0) {
   process.exit(1);
 }
 
+const catalog = readFileSync(CATALOG, 'utf8');
+
 // Underscores matter: ICON_IDS and SEARCHABLE_AUTO_THRESHOLD are exports.
-const mentioned = new Set(
-  [...readFileSync(CATALOG, 'utf8').matchAll(/`([A-Za-z_][A-Za-z0-9_]*)`/g)].map((m) => m[1]),
+const mentioned = new Set([...catalog.matchAll(/`([A-Za-z_][A-Za-z0-9_]*)`/g)].map((m) => m[1]));
+
+/**
+ * Names in the second cell of each component row (`| **Name** | `A`, `B` | …`).
+ * The first cell can carry a parenthesised version but never a pipe.
+ */
+const advertised = [...catalog.matchAll(/^\| \*\*[^|\n]*\|([^|\n]*)\|/gm)].flatMap((row) =>
+  [...row[1].matchAll(/`([^`]+)`/g)].map((m) => m[1]),
 );
+
+if (advertised.length === 0) {
+  console.error(`✗ no "Key exports" cells parsed from ${CATALOG} — the stale check would pass vacuously`);
+  process.exit(1);
+}
+
+const advertisedNames = new Set(advertised);
+const stale = [...advertisedNames].filter((name) => !exported.has(name)).sort();
 
 const missing = [...exported].filter((name) => !mentioned.has(name)).sort();
 
@@ -72,5 +116,15 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
+if (stale.length > 0) {
+  console.error(`✗ ${stale.length} name(s) in the catalog's "Key exports" cells are not exported from ${BARREL}:\n`);
+  for (const name of stale) console.error(`    ${name}`);
+  console.error('\n  Removed or renamed? Drop the name from its row, or rename it there too.');
+  console.error('  A removal belongs in a breaking-change note, not in a row listing what you can import.');
+  process.exit(1);
+}
+
 // eslint-disable-next-line no-console -- CLI summary line; this IS the program's output
-console.log(`OK — all ${exported.size} ui exports appear in the skill catalog`);
+console.log(
+  `OK — all ${exported.size} ui exports appear in the skill catalog, and all ${advertisedNames.size} Key exports names resolve`,
+);

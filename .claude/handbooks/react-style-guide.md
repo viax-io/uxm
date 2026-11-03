@@ -573,7 +573,7 @@ rules). Template literals are always fine.
   `// eslint-disable-next-line <rule> -- <reason>`.
 - `npm run typecheck` — `tsc --noEmit` for `src` and `portal`.
 - `npm run check:drift` — registry-vs-SCSS state vars + type-scale wrap + every `src/ui`
-  export named in the skill catalog.
+  export named in the skill catalog (and every "Key exports" name still exported).
 - `npm run build` — tsup → studio CSS → DTS → `tsc-alias` → CJS fix; every
   `exports` entry must produce ESM + CJS + `.d.ts` (+ CSS).
 - Portal smoke test (`npm run dev:modo`) in light **and** dark theme for any
