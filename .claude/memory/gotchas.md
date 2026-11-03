@@ -191,6 +191,15 @@ The failure it closes is "added an export, never mentioned it".
 It also refuses to pass when it parses zero exports from the barrel — a gate that
 reports success because it measured nothing is the same defect in a different coat.
 
+Two later guards, same reasoning. The parser reads only `export { … }` /
+`export type { … }`, so an `export *`, `export const` or `export default` line in
+the barrel **fails** the run rather than having its names skipped while it still
+prints OK. And the reverse direction is checked where it is exact: every name in a
+component row's "Key exports" cell must still be exported, so a removed or renamed
+type-only export cannot linger there (the runtime snapshot is as blind to that as
+to the addition). Description prose is not reverse-checked — it backticks props,
+CSS variables and removed names in breaking notes on purpose.
+
 ## Skill-file branches: catalog rows are one physical line — parallel branches conflict wholesale; resolve by re-applying, not hand-merging
 
 `component-catalog.md` keeps each component's entire description on ONE physical
