@@ -243,6 +243,55 @@ hand-merge would have had to reconcile a five-row block by eye.
 
 ---
 
+## `stopPropagation()` cannot order two listeners on the same node
+
+It stops the event reaching the next NODE up, not the next listener on the node
+you are already on. `useDismiss` had every layer add its own `keydown` to
+`document` and called `stopPropagation()` in each, with a comment claiming this
+made nested layers "close one layer at a time". It never did: one Escape inside
+a `Dialog` closed the popover AND the dialog under it, for every atom built on
+`Popover` or `Listbox`. `stopImmediatePropagation()` would not have helped
+either: it only wins if the innermost layer's listener runs first, and the old
+effect re-subscribed on every render (see the next entry), so registration order
+was not something to rely on in either direction.
+
+The comment had been wrong since the hook replaced the three hand-rolled copies,
+and `lifecycle-zoom-control.tsx` carried a workaround comment describing the
+REAL behaviour all along. A claim in a comment is not a test.
+
+Ordering between peers on one node needs a structure you own: a module-level
+stack, one listener for all of it, and the top entry decided explicitly.
+
+## A stack keyed on effect subscription re-orders itself on every render
+
+The obvious way to build that stack — push in the effect, pop in its cleanup —
+is wrong whenever the effect has an unstable dependency, and `useDismiss`'s did:
+callers pass `onDismiss` as an inline arrow (`() => onOpenChange(false)`), so
+with it in the deps the effect re-ran on EVERY render. Measured before the fix,
+a `Dialog` with a `Popover` inside it subscribed:
+
+```
++dialog -dialog +popover +dialog -popover +popover -popover +popover
+                         ^^^^^^^ the dialog re-subscribes after the popover
+```
+
+Push-on-subscribe would have handed Escape to whichever layer re-rendered last.
+That run only ends popover-last by accident of render counts. Keep the handler's
+identity out of the deps (read it from a ref at call time) so the effect runs on
+`enabled` transitions only.
+
+Two more things that bit while fixing it:
+
+- **Remove by identity, never `pop()`.** Layers are disabled out of order — a
+  dialog can close while a layer inside it is still enabled.
+- **React runs a child's effects before its parent's**, so two layers enabled in
+  the SAME commit push inner-first, which reads as the outer being newer. The
+  library's own atoms never hit it (a portaled child cannot mount before its
+  portaled parent), but a consumer nesting two plain `useDismiss` layers hits it
+  immediately — the first and most natural test written for this did. Containment
+  between the layers' own `refs` settles it; siblings contain nothing of each
+  other, so push order still decides them.
+
 ## A per-state var whose fallback is the resting value ships a dead rule
 
 `var(--uxm-<comp>-hover-<prop>, <resting value>)` looks like a correct two-layer

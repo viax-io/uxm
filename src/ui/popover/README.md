@@ -142,7 +142,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Closed | `open={false}` | Renders `null`; cached position is cleared so a reopen recomputes. |
 | Opening | first frame after open | `visibility: hidden` until measured, then visible. |
 | Placed | after measurement | `data-placement` carries the **resolved** side, which may differ from the requested one. |
-| Escape / outside click | per the two flags | Calls `onOpenChange(false)`. |
+| Escape / outside click | per the two flags | Calls `onOpenChange(false)`. Escape reaches the **topmost** open layer only, so a popover inside a `Dialog` closes itself without taking the dialog with it, and `closeOnEscape={false}` passes the key down to whatever is underneath. |
 
 ## Accessibility
 
