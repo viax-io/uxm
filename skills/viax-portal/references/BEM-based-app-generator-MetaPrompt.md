@@ -247,13 +247,13 @@ import { create } from 'zustand'
 const useAuthStore = create((set) => ({
   accessToken: null,
   user: null,
-  userRoles: new Set(),
 
   syncFromKeycloak(keycloak) {
     const parsed = keycloak.tokenParsed ?? {}
     set({
       accessToken: keycloak.token,
       user: {
+        id: parsed.sub ?? null, // identity key for the access probes' cache (viax-access)
         name: parsed.name ?? parsed.preferred_username ?? 'User',
         email: parsed.email ?? '',
       },
@@ -265,13 +265,8 @@ const useAuthStore = create((set) => ({
   setMockSession() {
     set({
       accessToken: 'mock-access-token-' + Date.now(),
-      user: { name: 'Mock User', email: 'mock@viax-lab.io' },
-      userRoles: new Set(['Admin', 'Partner']),
+      user: { id: 'mock-user', name: 'Mock User', email: 'mock@viax-lab.io' },
     })
-  },
-
-  setUserRoles(roles) {
-    set({ userRoles: roles })
   },
 }))
 
@@ -373,10 +368,12 @@ strategy and reintroduces the CSP failure above.
 ```javascript
 {
   accessToken: string,           // Bearer token for API calls
-  user: { name, email },         // parsed from Keycloak token
-  userRoles: Set<string>,        // populated by use-user.js after fetching getCurrentUserInfo
+  user: { id, name, email },     // parsed from Keycloak token; id = `sub`
 }
 ```
+
+The store holds **no roles**. What a user may see is answered by the API at runtime — see
+*"Access & permissions"*; role names are never compared in the portal's code.
 
 ### Mock Auth (when `VITE_USE_MOCK_AUTH=true`)
 
@@ -955,6 +952,10 @@ Three things still hold, and they are what keeps a later retrofit cheap:
 //   argument; it is not accepted by filter/get queries. See "Localization & i18n".
 // - Response interceptor: 401 → keycloak.logout() → Keycloak redirects to login
 // - Generic execute function: (query, variables?) => Promise
+// - execute() classifies errors[] (viax-access → runtime contract §1): any
+//   extensions.code === 'ACCESS_DENIED' → throw AccessDeniedError (paths, types, partial data);
+//   other errors → ordinary Error. NEVER join errors[].message into one string before this
+//   check, and never treat a network failure as a denial. See "Access & permissions".
 // - No direct fetch() calls anywhere — all GraphQL goes through this client
 
 // lib/api/bi.js — data normalization after fetching:
@@ -1001,42 +1002,29 @@ mutation DeleteOrder($biId: String!) {
   `addToBiRelatesTo_<CODE>: { biId: "…" }`, an existing item changes with
   `updateInHiConsistsOf: { id: { uid: "…" }, _actions: [ … ] }`. Never `update…(input: …)`.
 
-**`use-user.js` — special pattern:** This hook does more than fetch; it also syncs roles into `auth-store` via `useEffect`:
+**`use-user.js`** — an ordinary query hook for the signed-in user's party (display name, avatar, the
+role list shown on the Account page). It feeds **no** visibility decision:
 
 ```javascript
 // hooks/use-user.js
-import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchCurrentUser } from '@/lib/api/user'
-import useAuthStore from '@/stores/auth-store'
 
 export function useUser() {
-  const setUserRoles = useAuthStore((s) => s.setUserRoles)
-
-  const query = useQuery({
+  return useQuery({
     queryKey: ['current-user'],
     queryFn: fetchCurrentUser,
     staleTime: 300_000,
     refetchOnWindowFocus: false,
   })
-
-  useEffect(() => {
-    if (!query.data) return
-    const roles = query.data.party?.paMappedRolesList || []
-    setUserRoles(new Set(roles))
-  }, [query.data, setUserRoles])
-
-  return query
 }
 ```
-
-Call `useUser()` inside `shell.jsx` (the portal layout wrapper) so roles are populated on every authenticated page before the sidebar renders.
 
 ### Mock Data Layer
 
 - `lib/mock-data/` — realistic mock data for every entity type using actual viax field names
-- `lib/api/` — each module exports a real and mock implementation, toggled via `NEXT_PUBLIC_USE_MOCK_DATA=true`
-- The portal must be fully functional with `NEXT_PUBLIC_USE_MOCK_DATA=true` — no real API calls required
+- `lib/api/` — each module exports a real and mock implementation, toggled via `VITE_USE_MOCK_DATA=true`
+- The portal must be fully functional with `VITE_USE_MOCK_DATA=true` — no real API calls required (access probes answer `allowed` in this mode without calling the API)
 
 ---
 
@@ -1089,7 +1077,7 @@ The exact set of party fields available on a given BI type is **not fixed** — 
 
 **Parties (Customers/Orgs):** `filterOrganisation`, `filterIndividual` — fields: `paId`, `paName` (`Party` has no `paDescription`)
 
-**User Info:** Fetch on every app load using the full query below. The `paPartyRoles` array drives role-based menu visibility (see [Step 7 — Sidebar Navigation](#step-7--sidebar-navigation)):
+**User Info:** Fetch with the query below for display (Account page, avatar). It does **not** drive menu visibility — navigation is gated by access probes (see [Step 7 — Sidebar Navigation](#step-7--sidebar-navigation)):
 
 ```graphql
 query getCurrentUserInfo {
@@ -1109,11 +1097,7 @@ query getCurrentUserInfo {
 
 > **`name` and `email` are not fields on `User`** — do not include them in the query (causes a GraphQL validation error). Use `party.paName` as the display name.
 
-The result is **not** stored directly in `auth-store` via `syncFromKeycloak` — the Keycloak token carries no viax role data. Instead, the `use-user.js` hook fetches this query, then calls `authStore.setUserRoles(new Set(data.party.paMappedRolesList))` via a `useEffect`. The `auth-store` must expose a `setUserRoles(roles)` action for this.
-
-Use `party.paMappedRolesList` (a `[String]` like `["Admin", "Partner"]`) — **not** `paPartyRoles[].typeName`. `paMappedRolesList` already strips the realm prefix, so it matches the `prParty*` field naming convention directly (e.g. `prPartyPartner` → strip `prParty` → `Partner` → matches `paMappedRolesList` entry `"Partner"`). Using `paPartyRoles[].typeName` (e.g. `"PaloozaPartner"`) would never match.
-
-**Critical:** `useUser()` must be called from the portal shell component (`shell.jsx`) so it runs on every authenticated page and roles are always populated before the sidebar renders. If it is only defined but never called, `userRoles` stays as `new Set()` and all role-gated BEM menu items are hidden.
+The result stays in TanStack Query (`useUser()`); nothing is copied into `auth-store`. To show the user's business roles, use `party.paMappedRolesList` (a `[String]` like `["Admin", "Partner"]`, realm prefix stripped) — **not** `paPartyRoles[].typeName` (`"PaloozaPartner"`). These roles may be **displayed**; they never decide what is visible or editable (viax-access, rule 6).
 
 **Mock user shape** must mirror the real API response:
 ```javascript
@@ -1123,7 +1107,7 @@ export const MOCK_USER = {
   party: {
     paId: 'mock-party-001',
     paName: 'Alex Johnson',
-    paMappedRolesList: ['Admin', 'Partner'],   // normalized — matches prParty* field names
+    paMappedRolesList: ['Admin', 'Partner'],   // display only — never compared in code
     paPartyRoles: [
       { typeName: 'ViaxAdmin' },
       { typeName: 'PaloozaPartner' },
@@ -1175,29 +1159,30 @@ query GetBEMByUid {
     _first: 1,
     _filter: "uid = '019a92b2-52a7-7726-8299-e3d38a5bab0f'"
   ) {
-    edges { node { code name uid } }
+    edges { node { code name uid version status } }
   }
 }
 
-# If the user provided a code:
+# If the user provided a code — its ACTIVE version:
 query GetBEMByCode {
   filterBusinessInteractionExecutionModel(
     _first: 1,
-    _filter: "code = '2UBusinessExecutionModel'"
+    _filter: "code = '2UBusinessExecutionModel' AND status = ACTIVE"
   ) {
-    edges { node { code name uid } }
+    edges { node { code name uid version status } }
   }
 }
 ```
 
-- If **zero** results: inform the user the identifier did not match any BEM and ask them to verify it.
+- If **zero** results: inform the user the identifier did not match any BEM (or, by code, that the code has no `ACTIVE` version) and ask them to verify it.
 - If a result is returned: confirm the BEM name back to the user before proceeding.
+- **Read the `ACTIVE` version only.** A code has at most one; it is the version whose types, relations and hand-offs exist. By uid, check `status`: a `DRAFT` (not published, its new types may not exist yet) or `ARCHIVED` version is not what runs — fetch the code's `ACTIVE` one instead (`code = '<code>' AND status = ACTIVE`) and tell the user.
 
 ### Step 2 — Fetch the Full BEM Relation Tree
 
 The BEM structure is a **tree**, not a flat list. The root type has `groups`, each group has `relations`, and each relation can itself have nested `groups` and `relations`. You must traverse the **entire tree recursively** to collect every unique BI type — otherwise you will miss types that are nested deeper than one level.
 
-First, call `get_type('BusinessInteractionExecutionModel')` and `get_type('BITypeRelation')` to confirm the available fields, then execute a single deep query that fetches all levels at once:
+First, call `get_type('BusinessInteractionExecutionModel')` and `get_type('BITypeRelation')` to confirm the available fields, then execute a single deep query that fetches all levels at once — the tree, the specs of the BI types the BEM owns (`biTypes`, bcore 5.0.0 and later) and the hand-off of every group (`handOff`, at every depth):
 
 ```graphql
 query GetBEMFullTree {
@@ -1210,17 +1195,24 @@ query GetBEMFullTree {
         code
         name
         uid
+        status
         sourceBIType
+        biTypes {
+          biTypeName
+          label
+          summary
+          partyRoles { role primary required }
+        }
         groups {
-          groupNameId
+          ...GroupHandOff
           relations {
             sourceBIType
             groups {
-              groupNameId
+              ...GroupHandOff
               relations {
                 sourceBIType
                 groups {
-                  groupNameId
+                  ...GroupHandOff
                   relations {
                     sourceBIType
                   }
@@ -1233,9 +1225,24 @@ query GetBEMFullTree {
     }
   }
 }
+
+fragment GroupHandOff on BITypeGroupRelations {
+  groupNameId
+  handOff {
+    split
+    splitField
+    routes { targetBIType values }
+    header { field action }
+    items { field action }
+  }
+  copyDeterminationModel { deId }
+  splitDeterminationModel { deId }
+}
 ```
 
-> **Depth note:** Nest `groups → relations` as many levels as needed until no further nesting appears in the data. The query above covers 4 levels which is sufficient for most BEMs, but add more if the model is deeper.
+> **Depth note:** Nest `groups → relations` as many levels as needed until no further nesting appears in the data. The query above covers 4 levels which is sufficient for most BEMs, but add more if the model is deeper. Put `...GroupHandOff` on every `groups` level you add.
+
+> **Never read `metadata.modo.*`** (`handOffs`, `draftBis`, …): that is where BEMs built before bcore 5.0.0 kept their drafts and hand-offs. A current BEM's `ACTIVE` version carries everything in `biTypes` and `groups[].handOff`; `metadata` is free-form and not interpreted.
 
 ### Step 3 — Collect All Unique BI Types
 
@@ -1260,6 +1267,8 @@ Unique types found: `Palooza2USubscriptionOrder`, `Palooza2UInvoice`, `Palooza2U
 
 For each unique type in the collected list, call `get_type(typeName)` in parallel to discover which interfaces it implements.
 
+**Display name and description of each type.** A type the BEM owns has a spec in `biTypes` (`biTypeName` equal to the tree's `sourceBIType`): its `label` and `summary` are the entry's `label` and `description`. A type the BEM only uses (no spec — the platform's `ViaxBill`, a type made in the BI modeler) has none there: take the type's own label and summary (`get_type(typeName)` / `getEntity(name: …) { label summary }`).
+
 ### Step 4 — Interface Feature Flags
 
 Map implemented interfaces to feature flags stored in `bi-types.config.js`:
@@ -1271,17 +1280,20 @@ Map implemented interfaces to feature flags stored in `bi-types.config.js`:
 | `Hierarchical` | `hasLineItems: true` | Line Items table on detail page |
 | `PartyRoleHolder` | `hasParties: true`, `partyFields: [...]` | Party Cards on detail page — one card per discovered `prParty*` field. `partyFields` is populated during BEM parsing (see note below). |
 
-> **`hasParties` — discover actual party fields via `get_type` / `getEntity`:**
-> When a type implements `PartyRoleHolder`, call `get_type(typeName)` (or `getEntity`) to list its fields and collect every field whose name starts with `prParty`. Store them as `partyFields` in the config entry, e.g.:
+> **`hasParties` — the participants of a type:**
+> - **A type the BEM owns** (a spec in `biTypes`): its participants are the spec's `partyRoles[{ role, primary, required }]`. `role` is the platform's party role type (`BillTo`, `SoldTo`, `Sales` — not a label like "Bill-To"); the one with `primary: true` is the record's `prPartyPrimary` field, every other role its own `prParty<Role>` field (`BillTo` → `prPartyBillTo`). Carry `required` into the entry as a hint for the card (a participant the business expects on every record); the API does not enforce it — the field is not mandatory. The same list is on the type's metadata as `TypeMetadata.data.modoPartyRoles`.
+> - **A type the BEM only uses** (no spec): call `get_type(typeName)` (or `getEntity`) to list its fields and collect every field whose name starts with `prParty`.
+>
+> Store them as `partyFields` in the config entry — `role` as the API names it, `label` as the card shows it (the
+> human label of `bi-creation` → "Party Role Mapping", `SoldTo` → "Sold-To"; the technical name where none is known):
 > ```javascript
 > partyFields: [
->   { field: 'prPartyPrimary', label: 'Primary' },       // always present on PartyRoleHolder types
->   { field: 'prPartySoldTo',  label: 'Sold-To' },
->   { field: 'prPartyBillTo',  label: 'Bill-To' },
->   { field: 'prPartyShipTo',  label: 'Ship-To' },
+>   { field: 'prPartyPrimary', role: 'SoldTo', label: 'Sold-To', required: true },  // the primary role (always present on PartyRoleHolder types)
+>   { field: 'prPartyBillTo',  role: 'BillTo', label: 'Bill-To' },
+>   { field: 'prPartyShipTo',  role: 'ShipTo', label: 'Ship-To' },
 > ]
 > ```
-> The detail page iterates `partyFields` to render one `<PartyCard>` per entry. Do **not** hard-code a fixed list of party roles — use whatever was discovered.
+> The detail page iterates `partyFields` to render one `<PartyCard>` per entry. Do **not** hard-code a fixed list of party roles — use whatever was discovered. `partyFields` describe **the data** (which party cards to render); they say nothing about who may see the BI type — never derive navigation or route visibility from them.
 
 > **`hasStatus` rule — always `true` for every BEM type:**
 > Every type in the BEM tree extends `BusinessInteraction`, which extends `BusinessProcessable`, which defines `bpStatus`. **Do NOT use `get_type` field listing to decide this.** `get_type` only shows directly-defined fields — inherited fields like `bpStatus` will not appear, making it look like the type has no status. The correct approach: always set `hasStatus: true` and `statusField: 'bpStatus'` for every BEM-discovered type, then verify by querying live data (see Step 5).
@@ -1329,6 +1341,8 @@ export const BI_TYPES = [
     statusValues: ['Draft', 'Active', 'Completed', 'Cancelled'], // from getPaloozaShopifyOrderStatusValues
     hasLineItems: true,
     hasParties: true,
+    partyFields: [{ field: 'prPartyPrimary', role: 'SoldTo', label: 'Sold-To', required: true }, { field: 'prPartyBillTo', role: 'BillTo', label: 'Bill-To' }], // Step 4
+    handOffs: [{ group: 'TO_FULFILLMENT', targets: ['PaloozaShopifyFulfillment'], split: 'LINE' }],                          // Step 5b
   },
   // ... one entry per BEM relation
 ]
@@ -1337,6 +1351,37 @@ export function getBiType(slug) {
   return BI_TYPES.find(t => t.slug === slug) ?? null
 }
 ```
+
+### Step 5b — Collect the Hand-offs
+
+A group's `handOff` says how a record of the group's **source** type becomes records of the group's **target** types
+(bcore 5.0.0 and later). Walk every group at every depth:
+
+- the source type is the `sourceBIType` of the node holding the group — the BEM's for the root's `groups`, the
+  relation's for a relation's own `groups`;
+- the target types are the group's `relations[].sourceBIType`;
+- `split`: `ONE` — the whole source record becomes one new record; `LINE` — one new record per line; `GROUP` — the
+  lines grouped by the value of `splitField` (a field of the line, or a path through its product, e.g.
+  `wtTransactable.family`), each group becoming a record of the type `routes[{ targetBIType, values }]` sends that
+  value to;
+- `header` / `items`: the fields of the record / of its lines carried over, `{ field, action }` with `COPY` (the value)
+  or `LINK` (a reference to the same value); a field not listed is not carried over;
+- `copyDeterminationModel { deId }` / `splitDeterminationModel { deId }`: the models the publish wrote for it — the
+  `ACTIVE` version has them on every group with a hand-off.
+
+A group without `handOff` is a plain relation: nothing is created from the source. Record each hand-off on the
+**source** type's config entry:
+
+```javascript
+handOffs: [
+  { group: 'TO_FULFILLMENTS', targets: ['PaloozaHardwareFulfillment', 'PaloozaServiceFulfillment'], split: 'GROUP', splitField: 'wtTransactable.family' },
+  { group: 'TO_INVOICE', targets: ['Palooza2UInvoice'], split: 'ONE' },
+]
+```
+
+The hand-off runs in the source type's lifecycle (a "Create related" step), never from the portal; the records it
+creates are linked to the source through the BEM's relation codes (`biRelatesTo_<bemCode>_<targetType>` on the
+source, `biRelatesTo_<bemCode>_<sourceType>` on the new record).
 
 ### Step 6 — Scaffold Route Files
 
@@ -1377,14 +1422,16 @@ export default function BiDetailPage() {
 
 ### Step 7 — Sidebar Navigation
 
-Build the nav items array from fixed pages + `BI_TYPES`, filtered by the current user's party roles.
-
-**Rule:** A BI menu item is visible to a user if **at least one** of the user's role type names matches any `prParty*` field defined on that BI type (i.e. the field name ends with the role type name). Users with the `Admin` role bypass the filter and see all items.
+Build the nav items array from fixed pages + `BI_TYPES`. **Which BI items appear is answered by
+the API**, through one access probe per BI type (`filter<Type>(_first: 1) { edges { node { biId } } }`,
+cached per session and identity) — see [`viax-access`](../../viax-access/SKILL.md) rule 3 and its
+[`react-uxm.md`](../../viax-access/references/react-uxm.md) §2–3. Never filter by role names, by
+`paMappedRolesList`, or by matching roles against `partyFields`.
 
 ```javascript
 // src/components/layout/sidebar.jsx (relevant excerpt)
 import { BI_TYPES } from '@/lib/bi-types.config'
-import { useAuthStore } from '@/lib/stores/auth-store'
+import { useBiTypesAccess } from '@/access/use-access'
 
 const NAV_TOP = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -1396,36 +1443,22 @@ const NAV_BOTTOM = [
   { href: '/admin',   label: 'Admin',   icon: Settings },
 ]
 
-// Returns true if the user's roles grant access to a given BI type config entry.
-// userRoles — Set<string> from party.paMappedRolesList (e.g. 'Partner', 'Admin')
-//             NOT paPartyRoles[].typeName (which has realm prefix, e.g. 'PaloozaPartner')
-// biConfig  — one entry from BI_TYPES, must include partyFields: [{ field, label }]
-function userCanSeeBiType(userRoles, biConfig) {
-  if (userRoles.has('Admin')) return true
-  if (!biConfig.partyFields?.length) return true // no party constraint = visible to all
-  return biConfig.partyFields.some(({ field }) =>
-    // field is e.g. 'prPartyPartner' — strip 'prParty' prefix → 'Partner'
-    // matches paMappedRolesList entry 'Partner' directly
-    userRoles.has(field.replace(/^prParty/, ''))
-  )
-}
-
 export function useNavItems() {
-  const userRoles = useAuthStore(s => s.userRoles) // Set<string>
+  const access = useBiTypesAccess(BI_TYPES) // { [typeName]: 'loading' | 'allowed' | 'denied' | 'error' }
 
   const NAV_BI = BI_TYPES
-    .filter(t => userCanSeeBiType(userRoles, t))
-    .map(t => ({
-      href: `/${t.slug}`,
-      label: t.label,
-      icon: FileText,
-    }))
+    .filter((t) => access[t.typeName] === 'allowed') // loading / denied / error → not shown
+    .map((t) => ({ href: `/${t.slug}`, label: t.label, icon: FileText }))
 
   return [...NAV_TOP, ...NAV_BI, ...NAV_BOTTOM]
 }
 ```
 
-> **`partyFields` visibility rule:** `partyFields: []` (empty — no party constraint) means the BI type is **visible to all authenticated users**. Only entries with a non-empty `partyFields` array are role-gated. The `userCanSeeBiType` guard short-circuits with `return true` when `partyFields` is empty. This is intentional: if a BI type has no party role constraint, it should always appear in the sidebar.
+> Each BI item appears when its probe answers — never show-then-hide. Under
+> `VITE_USE_MOCK_DATA=true` every probe answers `allowed` without calling the API.
+> A typed URL is gated the same way: the BI list and detail templates call
+> `useBiTypeAccess(config)` and render `<NoAccessPage />` (403) on `denied`
+> (see *"Access & permissions"*).
 
 ---
 
@@ -1443,6 +1476,12 @@ viax-lab-portal/
 ├── src/
 │   ├── main.jsx                             # Entry: import uxm/tokens.css + ui.css + globals.css; stampPortalId(); init Keycloak; render React
 │   ├── App.jsx                              # Root: QueryProvider + <UxmConfigApplier/> + React Router + Toaster
+│   ├── access/                              # viax-access runtime contract — see "Access & permissions"
+│   │   ├── errors.js                        # AccessDeniedError + isAccessDenied()
+│   │   ├── probe.js                         # filter<Type>(_first: 1) probe — the one place that asks "may I?"
+│   │   ├── use-access.js                    # useBiTypeAccess(), useBiTypesAccess() — cached per identity
+│   │   ├── write-denials.js                 # session memory of refused mutations / transitions
+│   │   └── no-access.jsx                    # NoAccessSection (EmptyState) + NoAccessPage (ErrorPage 403)
 │   ├── routes/
 │   │   ├── index.jsx                        # Route definitions (React Router v6)
 │   │   └── ProtectedRoute.jsx               # Auth guard: token-less → keycloak.login() (no portal sign-in page)
@@ -1510,13 +1549,13 @@ viax-lab-portal/
 │   │       └── format.js                    # Currency, date, number formatting
 │   ├── hooks/
 │   │   ├── use-bi-list.js                   # Generic BI list query (parameterized by BiTypeConfig)
-│   │   ├── use-bi-detail.js                 # Generic BI detail query (parameterized by BiTypeConfig)
+│   │   ├── use-bi-detail.js                 # BI detail: one hook per guarded section (header, parties, items, price)
 │   │   ├── use-products.js
 │   │   ├── use-parties.js
 │   │   ├── use-user.js
 │   │   └── use-hydrate-studio-config.js     # boot: server uxmStudio config → live store (one-shot)
 │   ├── stores/
-│   │   ├── auth-store.js                    # accessToken + user info synced from Keycloak (in-memory)
+│   │   ├── auth-store.js                    # accessToken + user { id, name, email } from Keycloak (in-memory; no roles)
 │   │   └── theme-store.js                   # OPTIONAL ({{THEME_PICKER}}=yes): selectedThemeId (1 localStorage key) + loadThemes/selectTheme
 │   ├── types/
 │   │   ├── api.js                           # JSDoc typedefs for GraphQL responses
@@ -1549,7 +1588,8 @@ viax-lab-portal/
 
 One list page per `BI_TYPES` entry in `bi-types.config.js`. All share the `<BiListPage config={config} />` template — behavior is driven by feature flags on the config object:
 
-- Page title from `config.label` + "Create New" button
+- Page title from `config.label`; a "Create New" button **only** where the access model (design.md) says `write` for `create{TypeName}` — otherwise none. A refused create shows `toast.error` and records the denial (viax-access rule 4)
+- Route gate: `useBiTypeAccess(config)` — `loading` → `<Loader>`, `denied` → `<NoAccessPage />`
 - Filters bar (`<InlineFilter>`): search (`<InputWithIcon>`), status filter (`<FormField>` + `<Select>` if `config.hasStatus`) — all synced to URL via React Router `useSearchParams`
 - `<DataTable>` with typed columns; clicking a row (`onRowClick`) navigates to `/{slug}/{biId}`
 - **Base columns** (always): ID (`biId`), Name (`biName`), Created date (`biCreatedAt`)
@@ -1564,12 +1604,24 @@ One detail page per `BI_TYPES` entry. All share the `<BiDetailPage config={confi
 
 - Back button — `<BackLink href="/{config.slug}" onClick={(e) => { e.preventDefault(); navigate(-1) }}>` (always pass a real `href`, not just `onClick` — Gotcha #10), `biId`, `biName`, Created / Completed dates (always). Render `biId`/dates via `<PageHeader meta={<>…</>}>` — **inline content only**, never a `Stack`/block element (Gotcha #8).
 - **`config.hasStatus`**: Status badge
-- **`config.hasParties`**: Party cards — one `<Card>` per `config.partyFields` entry, each an avatar+name row laid out with `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — Gotcha #9)
+- **`config.hasParties`**: Party cards — one `<Card>` per `config.partyFields` entry, each an avatar+name row laid out with `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — Gotcha #9); a `required` entry without a party shows an empty card, not an error
+- **`config.handOffs`** (non-empty): a read-only "Becomes" section — one row per hand-off: the target type(s), linked to their list pages, and how (`ONE` one record, `LINE` one per line, `GROUP` by `splitField`). The hand-off itself runs in the lifecycle (Step 5b), never from the portal
 - **`config.hasLineItems`**: Line items table — quantity, product, unit price
 - **`config.isPriceable`**: Price summary card — subtotal, discount, tax, freight, **total**, each rendered via `<PropertyField label="…">{value}</PropertyField>` (value as children, never a `value` prop — Gotcha #7)
 - Status / event timeline (always)
 
-Data is fetched via `useBiDetail(config, biId)` hook → `lib/api/bi.js` → `get{config.typeName}` GraphQL query.
+Route gate as on the list page (`useBiTypeAccess(config)` → `<NoAccessPage />` on `denied`).
+
+**One query per guarded section** (viax-access rule 1 — a denied connection returns `data: null` for the whole operation, so one combined query would blank the page). `lib/api/bi.js` exposes one `get{config.typeName}` query per section, each selecting only that section's fields, and `hooks/use-bi-detail.js` one hook per section:
+
+| Hook | Fields | On `AccessDeniedError` |
+|---|---|---|
+| `useBiHeader(config, biId)` | `biId biName biCreatedAt biCompletedAt bpStatus { code }` (+ timeline) | `<NoAccessPage />` — without the header there is no page |
+| `useBiParties(config, biId)` | the `partyFields` | `<NoAccessSection />` in place of the party cards |
+| `useBiLineItems(config, biId)` | `hiConsistsOf …` | `<NoAccessSection />` in place of the table |
+| `useBiPrice(config, biId)` | `pricPrice …` | `<NoAccessSection />` in place of the price summary |
+
+Every value is read-only (`<PropertyField>`) by default; an inline editor or workflow action is emitted only where the access model says `write`, with denial handling (viax-access rule 4–5).
 
 ### Products (`/products`)
 
@@ -1581,7 +1633,7 @@ Data is fetched via `useBiDetail(config, biId)` hook → `lib/api/bi.js` → `ge
 
 ### Account (`/account`)
 
-- Top profile block: `<Card shadow>` with a `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — Gotcha #9) of `<Avatar>` + name/email (no `DetailSection` here — it's a single-row identity card).
+- Top profile block: `<Card shadow>` with a `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — Gotcha #9) of `<Avatar>` + name/email (no `DetailSection` here — it's a single-row identity card). Next to them, the user's business roles from `useUser()` (`party.paMappedRolesList`) as `<Tag>`s — **display only**, never compared in code (viax-access rule 6).
 - **Below that, render each section as a `<DetailSection>` directly** — Addresses, Notifications, Security — **with no `<Card>` wrapper** (Gotcha #1). DetailSection is already a card.
 - Addresses: `<EmptyState>` until backend wired.
 - Notifications: `<Stack>` of `<ToggleSwitch>`-es.
@@ -1607,6 +1659,37 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 
 ---
 
+## Access & permissions
+
+**This whole topic lives in its own skill: [`viax-access`](../../viax-access/SKILL.md).** Who may
+read a field, run a query, call a mutation or fire a workflow transition is decided by the
+backend's authorization policies; the portal **reads what the API allows** and renders
+accordingly. The portal adds only this glue:
+
+- **Build time (step 8, after BEM discovery)** — run viax-access steps 1, 2 and 5 with the realm's
+  MCP ([`discovery.md`](../../viax-access/references/discovery.md)). Ask the user which Keycloak
+  roles the portal serves; never guess them. If policies are not readable (`ACCESS_DENIED`, types
+  missing), say so and continue with the runtime contract only. Write the **Access model** and
+  **Access audit** sections into `design.md`, and report the audit findings to the user — never
+  change policies from the build.
+- **Runtime** — implement [`runtime-contract.md`](../../viax-access/references/runtime-contract.md)
+  with [`react-uxm.md`](../../viax-access/references/react-uxm.md) in `src/access/*`. Portal
+  bindings for its placeholders: `<graphql-client>` = `lib/graphql-client.js` (classify
+  `res.data.errors` inside `execute()`; Axios resolves HTTP 200 with GraphQL errors in the body),
+  `useIdentity()` = `useAuthStore((s) => s.user?.id ?? null)`, `isMockMode` =
+  `import.meta.env.VITE_USE_MOCK_DATA === 'true'`, `useTranslate()` = the portal's `useT()`
+  when `{{LOCALIZATION}} = yes`, English literals otherwise.
+- **Surfaces** — nav items (Step 7), BI list/detail route gates, per-section queries on the
+  detail page, the dashboard's "Recent orders" (its own query; `<NoAccessSection />` on denial
+  once wired to live data). Products, Account and Admin are not BI types and get no probe; their
+  queries still go through the same error classification.
+- **Copy** — `access.noAccessTitle`, `access.noAccessSection`, `access.noAccessPage`,
+  `access.noAccessWrite` go through the locale files like every other string.
+- **Done when** the *Checks* in `runtime-contract.md` pass — including the role-literal grep
+  (`grep -rnE "has\('(Admin|Partner|admin)'\)|roles\.(has|includes)\(" src` → no hits).
+
+---
+
 ## State Management
 
 | State type | Tool |
@@ -1614,7 +1697,8 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 | Server / API data | TanStack Query |
 | URL filters, pagination, search, tabs | React Router `useSearchParams` |
 | Auth tokens + user info | Zustand `auth-store` — in-memory only, synced from keycloak-js on init |
-| User party roles for sidebar visibility | Zustand `auth-store.userRoles` — populated by `use-user.js` hook calling `setUserRoles(new Set(paMappedRolesList))` after fetching `getCurrentUserInfo`; **NOT** from the Keycloak token (which carries no viax role data) |
+| What the user may see (BI types in nav / routes) | TanStack Query — access probes keyed `['access', 'bi-type', typeName, user.id]`, `staleTime: Infinity`, dropped on sign-out (viax-access). **No role state anywhere** |
+| Writes the API refused this session | Zustand `access/write-denials.js` |
 | Theme / brand configuration | UXM Studio config — `{ overrides, brand }` in the live `lib/uxm-studio-config.js` store (localStorage cache + pub/sub), **persisted to the server** under the UXM config's `uxmStudio` key via `saveUxmConfig` (read back on boot by `useHydrateStudioConfig`); the app-level `UxmConfigApplier` turns the live store into a global stylesheet. **No Zustand `theme-store` for the admin/editor path.** |
 | Which published theme is selected (only when `{{THEME_PICKER}} = yes`) | Zustand `theme-store.js` — `selectedThemeId` in ONE `localStorage` key, no server write; boot default is the theme assigned via the config's `portals[{{PORTAL_ID}}].themeId` when the user never picked; see *"Optional: read-only theme picker"* under Runtime Theming |
 | Light/dark mode | Host-owned `data-theme` on `:root` — session-only `useState` in `shell.jsx` (the embedded studio defers it to the host) |
@@ -1645,7 +1729,7 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 
 ### Error Handling
 
-- TanStack Query error boundaries for API failures
+- TanStack Query error boundaries for API failures — **except access denials**: an `AccessDeniedError` is rendered by the section or route that owns the query (`<NoAccessSection />` / `<NoAccessPage />`), never thrown to an error boundary, and never retried (`retry: (n, err) => !isAccessDenied(err) && n < 2` on the `QueryClient`)
 - Toast notifications via the library's own toast API — `import { Toaster, toast } from 'uxm/ui'`, mount `<Toaster position="top-right" max={5} />` ONCE at the app root, then call `toast.error(...)` / `toast.success(...)`. Do **NOT** add `sonner`: `@viax.io/uxm` already ships its own `Toast`/`Toaster`/`toast`, and a second toast system violates the "never duplicate a primitive" rule
 - `<Loader>` for in-flight queries, `<EmptyState>` for zero-result lists — not spinners or hand-rolled skeletons
 - 401 response: call `keycloak.logout()` from `lib/keycloak.js` — Keycloak redirects to its login page and clears the session
@@ -1660,7 +1744,7 @@ Build in this exact sequence:
 2. **Theme system** — `globals.css` with the **full baseline from "UXM Layout & Styling Gotchas → Required `globals.css`"** (panel-radius unification, DetailSection padding override, InputWithIcon icon clamp, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 11). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchUxmConfig`/`fetchStudioConfig`/`fetchPortalAssignment`/`fetchAppliedStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveUxmConfig`/`saveStudioConfig` write helpers (deferred to step 11). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 5.
 3. **i18n foundation (before ANY page) — ONLY when `{{LOCALIZATION}} = yes`; when `no`, skip this step entirely and go to step 4.** Follow the [`viax-localization`](../../viax-localization/SKILL.md) skill end to end: probe `getSupportedLocales` + `currentLocale` **at scaffold time** (as the generator, with your own credentials); generate `src/i18n/locales/{locale}.json` for every supported locale; **copy** `src/i18n/{index.jsx,bundled.js,resolve.js,locale-state.js}` and `lib/api/i18n.js` from the skill's [`reference-implementation.md`](../../viax-localization/references/reference-implementation.md) and the three npm scripts from its [`scripts.md`](../../viax-localization/references/scripts.md) — do NOT write this layer from scratch, it is identical in every viax React app and only `POPULATED_DEFAULT`, the bundled locale imports and the locale JSON contents are per-portal; mount `<I18nProvider>` in `App.jsx` **above the router and above the auth guard**; add the locale **header** to `lib/graphql-client.js`. Verify `LanguageSwitcher` is exported by the installed `@viax.io/uxm` — **if it is not, STOP and report; never hand-roll one.** Building any page before this step guarantees hardcoded strings that step 14 will reject.
 4. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow with `onLoad: 'login-required'`, `auth-store`, `ProtectedRoute` (token-less → `keycloak.login()`). **Generate NO login page and no `/login` route** — Keycloak's own form is the login screen; a portal page whose only job is a button that redirects there is pure friction. Mock auth mints its session at boot, so it needs no form either, and renders no sign-out control. The portal passes Keycloak **no locale**: that screen is the realm's.
-5. **Shell layout** — `<PageShell>` + `<AppSidebar>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; `useUser()` populates roles for sidebar visibility. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle. **Only when `{{LOCALIZATION}} = yes`:** add `<LanguageSwitcher />` after that and before Sign out (full order under *"Localization & i18n → Header order"*).
+5. **Shell layout** — `<PageShell>` + `<AppSidebar>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; BI navigation items are gated by access probes (Step 7 — Sidebar Navigation), never by roles. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle. **Only when `{{LOCALIZATION}} = yes`:** add `<LanguageSwitcher />` after that and before Sign out (full order under *"Localization & i18n → Header order"*).
 
    🔴 **`linkAs` needs an `href` → `to` adapter — never pass react-router's `Link` directly.**
    `AppSidebar` renders each item as `<linkAs href={item.href}>`. `next/link` accepts `href`, but
@@ -1686,11 +1770,11 @@ Build in this exact sequence:
 
 6. **Mock data** — Realistic data for all entity types using real viax field names
 7. **Dashboard** — `<PageHeader>` + `<StatCard>` × 4 + recharts charts in `<Card>` + `<DataTable>` for Recent orders (no Card wrapper — Gotcha #1) + `<Checkbox>`-driven Tasks (Gotcha #3) + Quick links Card (mock data)
-8. **BEM discovery** — Query active BEM via MCP (`get_type` + `execute_query`); call `get_type` on each discovered BI type to resolve interfaces; populate `bi-types.config.js`; build `<BiListPage>` and `<BiDetailPage>` shared templates using `<DataTable>`, `<PageHeader>`, `<InlineFilter>`, `<TimelineEntry>`, `<PropertyGrid>`; scaffold one thin page pair per `BI_TYPES` entry; populate sidebar `navItems` from `BI_TYPES`
+8. **BEM discovery** — Query active BEM via MCP (`get_type` + `execute_query`); call `get_type` on each discovered BI type to resolve interfaces; populate `bi-types.config.js`; build `<BiListPage>` and `<BiDetailPage>` shared templates using `<DataTable>`, `<PageHeader>`, `<InlineFilter>`, `<TimelineEntry>`, `<PropertyGrid>`; scaffold one thin page pair per `BI_TYPES` entry; populate sidebar `navItems` from `BI_TYPES`. **Then access (viax-access steps 1–5)** — see *"Access & permissions"*: discover the realm's policies, write the access model + audit into `design.md`, add `src/access/*`, the error classification in `lib/graphql-client.js`, the probes, the route gates and the no-access surfaces, and emit edit controls only where the model says `write`
 9. **Products** — `<DataTable>` with 5 columns (image `<Thumbnail>`, name, ID, description, categories `<Tag>`s); **no `<Card>` wrapper** (Gotcha #1). Detail page via `<DetailSection>` + `<PropertyGrid>` rendered directly.
-10. **Account** — top `<Card>` for the Avatar identity row; each section (Addresses, Notifications, Security) as a bare `<DetailSection>` — **no `<Card>` around DetailSection** (Gotcha #1). Wire to `useAuthStore(s => s.user)`.
+10. **Account** — top `<Card>` for the Avatar identity row; each section (Addresses, Notifications, Security) as a bare `<DetailSection>` — **no `<Card>` around DetailSection** (Gotcha #1). Wire to `useAuthStore(s => s.user)`; the role `<Tag>`s come from `useUser()` (display only).
 11. **Admin index (+ UXM Studio editor only if `{{EMBED_UXM_STUDIO}} = yes`)** — Admin index uses `<DataTable>` for the section list (Gotcha #2: Users / Integrations "coming soon", **no Theme row**). **Always** wire the host light/dark toggle in `<AppTopBar>` and the brand-driven sidebar logo (subscribe to `uxm-studio-config`). **Only when `{{EMBED_UXM_STUDIO}} = yes`:** create `lib/uxm-persistence.js` + the `saveUxmConfig`/`saveStudioConfig` write helpers, import `uxm/studio.css` in `main.jsx`, build the UXM Studio page (`src/pages/uxm/UxmStudioPage.jsx`) mounting `<UxmApp embed persistence={createConfigRepoPersistence()} />`, register `/uxm` in the router, and add the "UXM Studio" item under the **Settings** sidebar group. See [Runtime Theming](#runtime-theming--consume-the-uxm-studio-config-optionally-embed-the-editor-at-uxm).
-12. **Polish** — `<Loader>` / `<EmptyState>` for all data-fetching pages, error boundaries, `<Toaster/>` + `toast.*()` from `uxm/ui` (no sonner), responsive (`<ResponsiveGrid>` does most of the work)
+12. **Polish** — `<Loader>` / `<EmptyState>` for all data-fetching pages, error boundaries (access denials excluded — see Error Handling), `<Toaster/>` + `toast.*()` from `uxm/ui` (no sonner), responsive (`<ResponsiveGrid>` does most of the work)
 13. **Font smoke-check (MANDATORY — do not skip).** Before declaring the build done, verify the typography wiring survived generation. In the running app (DevTools → Computed → `font-family`), or by inspecting the built files, confirm ALL of:
     - `globals.css` contains the `:root { --font-sans: var(--font-inter, …) }` bridge, the `html, body, #root { font-family: var(--brand-font, var(--font-sans)) }` chain, and `button, input, select, textarea { font: inherit }`.
     - `index.html` contains the Inter Google-Fonts `<link>` (Gotcha #6).
