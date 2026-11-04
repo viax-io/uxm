@@ -100,7 +100,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 |-------|---------|-----------|
 | Closed | `open={false}` | Renders `null` — nothing is in the DOM. |
 | Open | `open={true}` | Portals the layer, locks body scroll, traps focus, sets `data-state="open"` on the root. |
-| Escape | key press, `closeOnEscape` | Calls `onOpenChange(false)`. |
+| Escape | key press, `closeOnEscape` | Calls `onOpenChange(false)` — but only when no floating layer is open **inside** the dialog. A `Popover`, `Select` or `Menu` on top takes the key first, so the dialog survives the Escape that closes it. |
 | Backdrop click | pointer down outside the panel, `closeOnOutsideClick` | Calls `onOpenChange(false)`. |
 | Close | `open` → `false` | Releases scroll lock and trap; restores focus if `returnFocus`. |
 

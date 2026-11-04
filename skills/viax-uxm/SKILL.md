@@ -96,6 +96,19 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Escape closes one floating layer, not every open one.** A `Popover`, `Select`, `Menu` or
+  any other `useDismiss` layer opened inside a `Dialog` now takes Escape on its own and leaves
+  the dialog open; a second Escape closes the dialog. Before this, both fired — each layer put
+  its own listener on `document`, where `stopPropagation()` cannot order them. Affects every
+  atom built on `Popover` or `Listbox` — `Select` (so `Input` with options),
+  `SearchDropdown`, `Menu`, `MenuButton`, `PillSelect`, `LanguageSwitcher`, and the pickers of
+  `ColorInput`, `CurrencyInput`, `PhoneInput`, `TimeInput` and `EditableCell` — and needs no
+  change in consuming code. Two atoms keep their own `document` listener and so are NOT in the
+  stack: `DateInput`'s calendar, and `AppSidebar`'s flyout, which deliberately lets an
+  enclosing dialog have the key too (WCAG 1.4.13). The topmost layer is the
+  innermost by `refs` containment, then the most recently enabled; `closeOnEscape: false` keeps
+  a layer out of it so the key falls through. Outside clicks are untouched.
+
 ## Workflow
 
 ### Where the documentation lives
