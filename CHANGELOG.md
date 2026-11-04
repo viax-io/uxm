@@ -1,3 +1,10 @@
+## [4.80.4](https://github.com/viax-io/uxm/compare/v4.80.3...v4.80.4) (2026-11-04)
+
+
+### Bug Fixes
+
+* **use-dismiss:** let Escape close only the topmost floating layer ([b6bc4c7](https://github.com/viax-io/uxm/commit/b6bc4c7e36c6a290ff86b751950beeba1922ce67))
+
 ## [4.80.3](https://github.com/viax-io/uxm/compare/v4.80.2...v4.80.3) (2026-11-02)
 
 

@@ -1,6 +1,6 @@
 # @viax.io/uxm — Component Catalog
 
-All 99 components exported from `@viax.io/uxm/ui` (as of v4.80.3) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
+All 99 components exported from `@viax.io/uxm/ui` (as of v4.80.4) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
 
 ## Deprecated (removed in the next major — do not use in new code)
 
@@ -20,7 +20,7 @@ keyboard widget on top of the primitives. Pure React, no atom imports; all typed
 
 | Hook | What it does |
 |---|---|
-| `useDismiss({ enabled, onDismiss, refs, excludeClosest?, closeOnEscape?, closeOnOutsideClick? })` | Escape + outside-mousedown → `onDismiss` while `enabled`; the refs (and `excludeClosest` selector) are the exclusion region. **Escape reaches one layer — the topmost** (unreleased): enabled layers share a stack, so a `Popover` inside a `Dialog` closes itself and leaves the dialog open. Innermost by `refs` containment, then most-recently-enabled; `closeOnEscape: false` keeps a layer out of the stack entirely, so the key falls through to the layer beneath. Outside-click is unchanged and still uses `excludeClosest`. |
+| `useDismiss({ enabled, onDismiss, refs, excludeClosest?, closeOnEscape?, closeOnOutsideClick? })` | Escape + outside-mousedown → `onDismiss` while `enabled`; the refs (and `excludeClosest` selector) are the exclusion region. **Escape reaches one layer — the topmost** (4.80.4): enabled layers share a stack, so a `Popover` inside a `Dialog` closes itself and leaves the dialog open. Innermost by `refs` containment, then most-recently-enabled; `closeOnEscape: false` keeps a layer out of the stack entirely, so the key falls through to the layer beneath. Outside-click is unchanged and still uses `excludeClosest`. |
 | `useFocusTrap({ active, container })` | Tab / Shift+Tab cycle inside `container` while `active`. |
 | `useFocusOnMount({ active, initialFocus?, focusFirstIn?, returnFocus? })` | Focus `initialFocus` (or the first focusable in `focusFirstIn`) one frame after `active`; restore the previous element when it goes false. |
 | `useRovingTabIndex({ … })` | Arrow-key roving tabindex for lists / toolbars (`orientation: 'horizontal' \| 'vertical'`). |
