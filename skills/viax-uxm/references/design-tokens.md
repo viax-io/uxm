@@ -65,7 +65,7 @@ designed to derive from its hue (each keeps its own saturation + lightness step)
 | Token | cssVar | Light | Dark | Use for |
 |-------|--------|-------|------|---------|
 | `Accent` | `--color-accent` | `#3ECC87` | `#4FD99A` | Lead brand colour; indicators, active borders. |
-| `Accent Subtle` | `--color-accent-subtle` | `#E2F3E8` | `#1A4A2C` | Selected-state background, soft accent backdrops. `--color-accent-bold` on it is 5.16:1. |
+| `Accent Subtle` | `--color-accent-subtle` | `#ECF8F0` | `#1A4A2C` | Selected-state background, soft accent backdrops. `--color-accent-bold` on it is 5.45:1. |
 | `Accent Light` | `--color-accent-light` | `#90E9B8` | `#3AA36A` | Hover backdrop, illustrative. |
 | `Accent Bold` | `--color-accent-bold` | `#1E7150` | `#8AE6B4` | Primary button bg; link text; primary CTA. |
 

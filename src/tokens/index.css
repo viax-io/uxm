@@ -33,9 +33,11 @@
      base that PageHeader, TypeOverviewCard and ErrorPage project through
      --uxm-icon-tile-bg (the BARE IconTile default is --color-surface-alt, not
      this), so those tiles read acidic under the forest glyph they carry.
-     #E2F3E8 is hue 141, adjacent to `light`. The glyph keeps AA on it
-     (--color-accent-bold at 5.16:1, down from 5.54:1). */
-  --color-accent-subtle: #E2F3E8;
+     #E2F3E8 (hue 141, adjacent to `light`) then read heavy as a tile on white
+     cards, so it was softened halfway toward white: #ECF8F0, hue 140. The
+     glyph keeps AA on it (--color-accent-bold at 5.45:1). Not lighter: much
+     past this the tiles and selected states vanish on white cards. */
+  --color-accent-subtle: #ECF8F0;
   --color-accent-light: #90E9B8;
   --color-accent: #3ECC87;
   --color-accent-bold: #1E7150;

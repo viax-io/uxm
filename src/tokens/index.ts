@@ -34,7 +34,7 @@ export const themeTokens: ThemeToken[] = [
 
   // ── Accent ── (brand colour first; the others derive from its hue)
   { name: 'Accent', variable: 'var(--color-accent)', cssVar: '--color-accent', hex: '#3ECC87', darkHex: '#4FD99A', group: 'accent', identity: true },
-  { name: 'Accent Subtle', variable: 'var(--color-accent-subtle)', cssVar: '--color-accent-subtle', hex: '#E2F3E8', darkHex: '#1A4A2C', group: 'accent' },
+  { name: 'Accent Subtle', variable: 'var(--color-accent-subtle)', cssVar: '--color-accent-subtle', hex: '#ECF8F0', darkHex: '#1A4A2C', group: 'accent' },
   { name: 'Accent Light', variable: 'var(--color-accent-light)', cssVar: '--color-accent-light', hex: '#90E9B8', darkHex: '#3AA36A', group: 'accent' },
   { name: 'Accent Bold', variable: 'var(--color-accent-bold)', cssVar: '--color-accent-bold', hex: '#1E7150', darkHex: '#8AE6B4', group: 'accent' },
 
