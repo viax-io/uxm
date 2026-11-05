@@ -12,6 +12,12 @@ export interface SearchDropdownOption {
   label: string;
   /** Optional secondary text shown to the right of the label (e.g. category meta). */
   meta?: string;
+  /**
+   * Optional second line under the label, smaller and muted — the code or id
+   * behind a readable name ("Autoship quote" over `AutoshipQuote`). Shown in
+   * the option row and, for the selected option, in the trigger. Searchable.
+   */
+  description?: string;
   /** Optional leading visual — typically an `<Icon>` for icon-glyph pickers. */
   icon?: ReactNode;
   /**
@@ -34,6 +40,7 @@ function filterByLabelOrKeywords(
   return items.filter(
     (o) =>
       o.label.toLowerCase().includes(q) ||
+      (o.description?.toLowerCase().includes(q) ?? false) ||
       (o.keywords?.some((k) => k.toLowerCase().includes(q)) ?? false),
   );
 }
@@ -161,9 +168,16 @@ export function SearchDropdown({
             error && 'uxm-search-dropdown__trigger--error',
           )}
         >
-          <span className="uxm-search-dropdown__trigger-label">
-            {selected ? selected.label : placeholder}
-          </span>
+          {selected?.description ? (
+            <span className="uxm-search-dropdown__trigger-text">
+              <span className="uxm-search-dropdown__trigger-label">{selected.label}</span>
+              <span className="uxm-search-dropdown__description">{selected.description}</span>
+            </span>
+          ) : (
+            <span className="uxm-search-dropdown__trigger-label">
+              {selected ? selected.label : placeholder}
+            </span>
+          )}
           {selected && !disabled && (
             <IconButton
               aria-label={clearLabel}
@@ -205,7 +219,14 @@ export function SearchDropdown({
               {opt.icon}
             </span>
           )}
-          <span className="uxm-search-dropdown__option-label">{opt.label}</span>
+          {opt.description ? (
+            <span className="uxm-search-dropdown__option-text">
+              <span className="uxm-search-dropdown__option-label">{opt.label}</span>
+              <span className="uxm-search-dropdown__description">{opt.description}</span>
+            </span>
+          ) : (
+            <span className="uxm-search-dropdown__option-label">{opt.label}</span>
+          )}
           {opt.meta && (
             <span className="uxm-search-dropdown__option-meta">{opt.meta}</span>
           )}

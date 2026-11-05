@@ -112,6 +112,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- `SearchDropdownOption.description` — an optional second line under the option's label,
+  smaller and muted (a readable name over its code: "Autoship quote" / `AutoshipQuote`).
+  Shown in the row and under the selected value in the trigger; matched by the search.
+  Knobs `--uxm-search-dropdown-option-description-size` (11px) and `-color`
+  (`--color-text-muted`).
+
 ## Workflow
 
 ### Where the documentation lives

@@ -1316,6 +1316,8 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-range-slider-start",
   "--uxm-responsive-grid-gap",
   "--uxm-responsive-grid-min",
+  "--uxm-search-dropdown-option-description-color",
+  "--uxm-search-dropdown-option-description-size",
   "--uxm-search-dropdown-option-meta-color",
   "--uxm-search-dropdown-option-meta-size",
   "--uxm-search-dropdown-trigger-bg",

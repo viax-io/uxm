@@ -78,6 +78,14 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* A selected option with a `description`: label over description, the
+   column taking the label's place (and its flex: 1) in the trigger row. */
+.uxm-search-dropdown__trigger-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
 .uxm-search-dropdown__trigger-chevron {
   flex-shrink: 0;
   margin-left: 8px;
@@ -125,4 +133,22 @@
      clear AA today without overriding the global token and dragging every
      separator with it. */
   color: var(--uxm-search-dropdown-option-meta-color, var(--color-text-subtle));
+}
+/* An option's `description`: a second line under the label, in the row and
+   in the trigger. Muted (4.5:1) rather than subtle, since it is small text
+   that carries information. One pair of knobs for both places — set them on
+   `:root`, the option rows live in the portaled panel. */
+.uxm-search-dropdown__option-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.uxm-search-dropdown__description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: calc(var(--uxm-search-dropdown-option-description-size, 11px) * var(--type-scale, 1));
+  color: var(--uxm-search-dropdown-option-description-color, var(--color-text-muted));
 }
