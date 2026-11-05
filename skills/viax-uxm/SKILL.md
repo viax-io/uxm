@@ -95,6 +95,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`--color-accent-subtle` is softer: `#E2F3E8` → `#ECF8F0`** (light theme only; dark
+  stays `#1A4A2C`). Icon tiles (PageHeader, TypeOverviewCard, ErrorPage), selected
+  options, chips and accent tags read lighter on white cards. `--color-accent-bold` on it
+  is 5.45:1.
+
 ## Workflow
 
 ### Where the documentation lives
