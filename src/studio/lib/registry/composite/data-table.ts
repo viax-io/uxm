@@ -69,6 +69,18 @@ export const dataTableDef: ComponentDef = {
       ],
       defaultValue: 'off',
     },
+    // The placement fix rides on this prop, so it is only visible here.
+    {
+      key: 'scrollArrows',
+      label: 'Scroll Arrows',
+      options: [
+        { value: 'default', label: 'Always, at the table edge (default)' },
+        { value: 'always', label: 'Always, past the pinned columns' },
+        { value: 'hover', label: 'On hover or focus' },
+        { value: 'none', label: 'Never' },
+      ],
+      defaultValue: 'default',
+    },
   ],
   events: [
     { name: 'onRowClick', description: 'Fires when the user clicks a row (not bubbled from clicks inside the row-actions cell).', payload: '{ row: T }' },

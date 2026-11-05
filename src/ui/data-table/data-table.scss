@@ -501,8 +501,94 @@
 }
 /* 4px clears the root's 1px border and its radius without floating free of
    the edge; the arrows are an overlay, so this is pure geometry. */
-.uxm-data-table .uxm-data-table__scroll-arrow--start { inset-inline-start: 4px; }
-.uxm-data-table .uxm-data-table__scroll-arrow--end { inset-inline-end: 4px; }
+.uxm-data-table .uxm-data-table__scroll-arrow--start {
+  inset-inline-start: var(--uxm-data-table-scroll-arrow-inset, 4px);
+}
+.uxm-data-table .uxm-data-table__scroll-arrow--end {
+  inset-inline-end: var(--uxm-data-table-scroll-arrow-inset, 4px);
+}
+/* ── Scroll arrows: opt-in placement and visibility ────────────────────────
+   Both blocks are gated on a class the component sets only when `scrollArrows`
+   is passed, so a table that does not opt in resolves none of this and keeps
+   the 4px placement above to the pixel.
+
+   `--arrows-inset`: stand at the edges of the area that actually SCROLLS. The
+   4px rules above put an arrow on top of a pinned column — measured in the
+   portal, a 32px arrow sitting entirely inside a 180px pinned Name column, and
+   the end arrow inside a 56px actions column, clipping one row's kebab. The
+   pin widths cannot be derived from `column.width` (a percentage, absent, or
+   `1%` for the actions column), so the component measures them and publishes
+   `--_uxm-data-table-pin-*`; the fallbacks make this a no-op before the first
+   measurement lands. Same specificity as the base rules, so this has to sit
+   AFTER them. */
+.uxm-data-table--arrows-inset .uxm-data-table__scroll-arrow--start {
+  inset-inline-start: calc(
+    var(--uxm-data-table-scroll-arrow-inset, 4px) + var(--_uxm-data-table-pin-start, 0px)
+  );
+}
+.uxm-data-table--arrows-inset .uxm-data-table__scroll-arrow--end {
+  inset-inline-end: calc(
+    var(--uxm-data-table-scroll-arrow-inset, 4px) + var(--_uxm-data-table-pin-end, 0px)
+  );
+}
+
+/* `--arrows-hover`: present only while the table is hovered or holds focus.
+   `visibility`, not `opacity` alone — an invisible button that is still
+   focusable is a worse bug than the clutter this removes. The scroller is
+   itself focusable, so tabbing into the table reveals the arrows before the
+   next Tab can reach one. */
+.uxm-data-table--arrows-hover .uxm-data-table__scroll-arrow {
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity var(--uxm-data-table-scroll-arrow-transition, 120ms) ease,
+    visibility var(--uxm-data-table-scroll-arrow-transition, 120ms);
+}
+.uxm-data-table--arrows-hover:hover .uxm-data-table__scroll-arrow,
+.uxm-data-table--arrows-hover:focus-within .uxm-data-table__scroll-arrow {
+  visibility: visible;
+  opacity: 1;
+}
+/* Hidden at an end rather than dimmed: the point of this mode is to show only
+   what can be acted on — EXCEPT while it holds focus. Hiding the button a
+   keyboard user is sitting on drops focus to <body>, which is the exact
+   failure the mounted-but-inert shape above exists to prevent (its comment
+   says so). Measured before `:not(:focus)` was added: press the end arrow
+   until the end and `document.activeElement` became `body`. A focused arrow
+   stays visible and stays inert, as it does in every other mode.
+   This has to MATCH the reveal's shape, not undercut it. `:hover` and
+   `:focus-within` each count as a class, so the reveal above is (0,3,0); a
+   plain `.--arrows-hover .--disabled` is (0,2,0) and loses outright — measured,
+   not assumed: the disabled arrow came back `visibility: visible` at an end.
+   Compound with the same pseudo-classes and sit after it. Outside hover/focus
+   the base rule has already hidden everything, so there is nothing else to
+   cover. */
+.uxm-data-table--arrows-hover:hover .uxm-data-table__scroll-arrow--disabled:not(:focus),
+.uxm-data-table--arrows-hover:focus-within .uxm-data-table__scroll-arrow--disabled:not(:focus) {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* The hover-reveal fade, dropped for reduced motion. This block has to sit
+   AFTER the rule that sets the transition, not up with the other
+   reduced-motion rules near the top: both are (0,2,0), so the later one wins
+   and an override declared earlier simply loses. Measured in the compiled
+   output — the fade survived at char 24963 against an override at 7611. The
+   nudge's smooth scroll is handled in the component; this is the other
+   motion. */
+@media (prefers-reduced-motion: reduce) {
+  .uxm-data-table--arrows-hover .uxm-data-table__scroll-arrow {
+    transition: none;
+  }
+}
+/* No hover to depend on: the user swipes, and two permanent controls are the
+   clutter this mode exists to remove. */
+@media (hover: none) {
+  .uxm-data-table--arrows-hover .uxm-data-table__scroll-arrow {
+    display: none;
+  }
+}
+
 /* At an end: still present and still focusable (unmounting the button you are
    pressing throws focus to <body>), but visibly inert. */
 .uxm-data-table .uxm-data-table__scroll-arrow--disabled {

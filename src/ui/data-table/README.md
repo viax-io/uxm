@@ -369,6 +369,51 @@ Nothing happens on the first render, and nothing happens at all on a table that 
 scroll. **Unsetting the key does not reset** either: `undefined` means "no key", and the
 recorded key is left alone — `'a'` → `undefined` → `'a'` stays put.
 
+### Scroll arrows
+
+By default the arrows appear whenever there is anything to scroll, dim at an end, show on touch,
+and sit 4px inside the table's edges. That last part puts them **on top of the pinned columns**
+rather than at the edges of the area that actually scrolls. Measured in the portal: a 32px arrow
+sitting entirely inside a 180px pinned Name column, and the end arrow inside a 56px actions
+column, clipping one row's kebab by 24×12px.
+
+```tsx
+<DataTable columns={columns} rows={rows} rowKey={(r) => r.id} scrollArrows="hover" scrollable />
+```
+
+| value | arrows | at an end | touch | placement |
+|---|---|---|---|---|
+| *absent* | always | dimmed | shown | 4px from the edge |
+| `'always'` | always | dimmed | shown | past the pinned columns |
+| `'hover'` | while hovered or focused | **hidden** | **not rendered** | past the pinned columns |
+| `'none'` | never rendered | – | – | – |
+
+**The placement rides on the prop.** Insetting moves the arrows in every table that pins, so it
+is not a default change — a table that passes nothing is untouched to the pixel. It becomes the
+default in the next major.
+
+**The pin widths are measured, not declared.** `column.width` may be a percentage, absent, or
+`1%` for the actions column, so the component measures the sticky header cells with a
+`ResizeObserver` and publishes the result for the stylesheet to add to its own inset. Nothing is
+measured and no inline style is written for a table that does not opt in.
+
+**`'hover'` hides with `visibility`, not just opacity** — an invisible control that is still
+focusable is a worse problem than the clutter this removes. An arrow that holds focus is the one
+exception: it stays visible and inert when it reaches an end, because hiding the button a
+keyboard user is sitting on drops focus to `<body>` (WCAG 2.4.3).
+
+The arrows sit before the scroller in the DOM, so in this mode a forward Tab reaches the
+scroller rather than an arrow; the arrows are reachable by Shift+Tab once the table holds focus.
+Nothing is lost either way — the focused scroller scrolls with the arrow keys.
+
+The reveal fades over `--uxm-data-table-scroll-arrow-transition` (120ms), dropped under
+`prefers-reduced-motion`.
+
+Knobs: `--uxm-data-table-scroll-arrow-inset` (4px) and
+`--uxm-data-table-scroll-arrow-transition` (120ms), alongside the existing `-bg` and `-shadow`.
+
+In UXM Studio this is the Data Table's "Scroll Arrows" layout variant.
+
 ## Props
 
 ### `DataTableProps<T>`
@@ -383,6 +428,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `density` | `'compact' \| 'default' \| 'relaxed'` | `'default'` | Vertical cell padding modifier. See [States](#states--variants). |
 | `stackAt` | `480 \| 640 \| 768 \| 960` | `480` | Container width at or below which rows reflow into stacked cards. See [Stacking threshold](#stacking-threshold). |
 | `scrollResetKey` | `string` | – | Returns the horizontal scroller to its start edge whenever this changes. Opt-in; without it the position is kept. See [Scroll reset](#scroll-reset). |
+| `scrollArrows` | `'always' \| 'hover' \| 'none'` | – | When the scroll arrows show, and where they sit. Opt-in; absent keeps today's behaviour. See [Scroll arrows](#scroll-arrows). |
 | `onRowClick` | `(row: T) => void` | – | When provided, rows render with a pointer cursor (`uxm-data-table__row--interactive`), forward clicks, and become keyboard-operable: each row takes `tabIndex={0}` and activates on `Enter` / `Space` with a focus ring. **Every row is its own tab stop**, so a long table is a long tab sequence — `rowProps` returning `tabIndex: -1` is the hook for your own roving scheme. A key pressed on a control inside the row stays that control's. Header clicks are not captured. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div className="uxm-data-table">`. |

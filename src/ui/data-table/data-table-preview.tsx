@@ -116,6 +116,17 @@ const STATUS_TO_TAG_TYPE: Record<string, TagType> = {
  * set.
  */
 /**
+ * Must match the `scrollArrows` layout variant's option values in the studio
+ * registry. `'default'` has no entry on purpose: it is the opt-OUT, and
+ * `undefined` (passing nothing) is a different thing from passing a value.
+ */
+const SCROLL_ARROWS: Record<string, 'always' | 'hover' | 'none' | undefined> = {
+  always: 'always',
+  hover: 'hover',
+  none: 'none',
+};
+
+/**
  * Must match the `stackAt` layout variant's option values in the studio
  * registry. The registry hands every variant back as a string; `stackAt` is a
  * closed numeric set, so narrow through this map rather than `Number()` — an
@@ -318,6 +329,7 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
       // cell edit (which keeps the sort) does not.
       scrollResetKey={sort ? `${sort.key}:${sort.direction}` : 'unsorted'}
       columns={variants.stackedRoles === 'on' ? roleColumns : columns}
+      scrollArrows={SCROLL_ARROWS[variants.scrollArrows ?? '']}
       rows={sorted}
       rowKey={(r) => r.id}
       sort={sort}
