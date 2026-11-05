@@ -640,7 +640,12 @@ function useScrollEdges(ref: RefObject<HTMLDivElement | null>, enabled: boolean)
  * Only runs when a table opts in, so one that does not observes nothing and
  * carries no inline style.
  */
-function usePinnedInsets(ref: RefObject<HTMLDivElement | null>, enabled: boolean) {
+function usePinnedInsets(
+  ref: RefObject<HTMLDivElement | null>,
+  enabled: boolean,
+  /** Re-observe when the set of pinned columns changes. See the call site. */
+  stickySignature: string,
+) {
   const [insets, setInsets] = useState({ start: 0, end: 0 });
 
   useEffect(() => {
@@ -678,7 +683,7 @@ function usePinnedInsets(ref: RefObject<HTMLDivElement | null>, enabled: boolean
       }
     }
     return () => observer?.disconnect();
-  }, [ref, enabled]);
+  }, [ref, enabled, stickySignature]);
 
   return insets;
 }
@@ -774,7 +779,24 @@ export function DataTable<T>({
   const edges = useScrollEdges(scrollerRef, scrolls);
   // The placement change rides on the prop: without it nothing is measured and
   // the arrows keep their 4px, which is the whole point of it being opt-in.
-  const insets = usePinnedInsets(scrollerRef, scrollArrows !== undefined && scrollArrows !== 'none');
+  // The sticky signature is the load-bearing half: the effect must re-run when
+  // the SET of pinned columns changes. `measure()` always reads fresh
+  // elements, but WHICH ones the observer watches is fixed at effect time, so
+  // a column pinned after mount would never be observed and a later width
+  // change on it would go unnoticed.
+  //
+  // `scrolls` is belt-and-braces, not a second fix. The scroller ELEMENT only
+  // exists while the table scrolls, but any pinned column already forces
+  // `scrolls` true — so "pins exist and the scroller does not" is unreachable,
+  // and with no pins there is nothing to measure either way. It is here
+  // because it states that invariant at the call site, and because
+  // `useScrollEdges` next door keys off the same thing.
+  const stickySignature = `${columns.map((c) => `${c.key}:${c.sticky ?? ''}`).join('|')}|${stickyActions ?? false}`;
+  const insets = usePinnedInsets(
+    scrollerRef,
+    scrolls && scrollArrows !== undefined && scrollArrows !== 'none',
+    stickySignature,
+  );
 
   // Return to the start edge when `scrollResetKey` changes. Skips the first
   // run: there is nothing to reset on mount, and a table that renders already

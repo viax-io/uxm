@@ -156,6 +156,167 @@ describe('DataTable scrollArrows — visibility', () => {
   });
 });
 
+describe('DataTable scrollArrows — measuring the pins', () => {
+  /**
+   * jsdom ships no `ResizeObserver`, so the whole observe path is invisible
+   * without a stub. This one records what it was asked to watch, which is the
+   * only way to see that the right elements were picked up.
+   */
+  function withObserverSpy<T>(run: (observed: () => Element[]) => T): T {
+    const targets: Element[] = [];
+    const existing = (globalThis as { ResizeObserver?: unknown }).ResizeObserver;
+    class Stub {
+      observe(el: Element) {
+        targets.push(el);
+      }
+      unobserve() {}
+      disconnect() {}
+    }
+    (globalThis as { ResizeObserver?: unknown }).ResizeObserver = Stub;
+    try {
+      return run(() => targets);
+    } finally {
+      (globalThis as { ResizeObserver?: unknown }).ResizeObserver = existing;
+    }
+  }
+
+  it('observes nothing at all for a table that does not opt in', () => {
+    withObserverSpy((observed) => {
+      withFakeLayout(() =>
+        render(<DataTable<Row> columns={COLUMNS} rows={ROWS} rowKey={(r) => r.id} scrollLabel="T" />),
+      );
+      // The STICKY CELLS, not the scroller: `useScrollEdges` observes the
+       // scroller and the table for its own reasons, so counting those would
+       // measure the wrong hook.
+      expect(
+        observed().filter((el) => el.className.includes('--sticky-')),
+        'no pin should be observed for a table that did not ask',
+      ).toHaveLength(0);
+    });
+  });
+
+  it('picks up a pinned column added after mount', () => {
+    // `enabled` has to include `scrolls`, because the scroller ELEMENT does not
+    // exist until the table scrolls. Keyed on the prop alone, the effect ran
+    // once against a null ref and never again — arrows stuck at 4px on top of
+    // the pin, which is the bug the prop exists to fix.
+    const plain: DataTableColumn<Row>[] = [
+      { key: 'name', header: 'Name' },
+      { key: 'owner', header: 'Owner' },
+    ];
+    withObserverSpy((observed) => {
+      const { rerender } = withFakeLayout(() =>
+        render(
+          <DataTable<Row>
+            columns={plain}
+            rows={ROWS}
+            rowKey={(r) => r.id}
+            scrollArrows="always"
+            scrollLabel="T"
+          />,
+        ),
+      );
+      expect(observed(), 'nothing to observe while the table does not scroll').toHaveLength(0);
+
+      withFakeLayout(() =>
+        rerender(
+          <DataTable<Row>
+            columns={COLUMNS}
+            rows={ROWS}
+            rowKey={(r) => r.id}
+            scrollArrows="always"
+            scrollLabel="T"
+          />,
+        ),
+      );
+      expect(
+        observed().some((el) => el.classList.contains('uxm-data-table__th--sticky-start')),
+        'the newly pinned header cell must be observed',
+      ).toBe(true);
+    });
+  });
+
+  it('picks up a pin that appears at the same time as the scroller', () => {
+    // A table with no pins has no scroller either (any pin forces one), so the
+    // two appear together. The sticky signature is what re-runs the effect;
+    // `scrolls` in `enabled` is belt-and-braces for the same transition.
+    const pinned: DataTableColumn<Row>[] = [
+      { key: 'name', header: 'Name', width: 240, sticky: 'start' },
+    ];
+    withObserverSpy((observed) => {
+      // `sticky` implies a scroller, so start from a table whose scroller is
+      // suppressed by having nothing to scroll, then give it rows that do.
+      const { rerender } = withFakeLayout(() =>
+        render(
+          <DataTable<Row>
+            columns={[{ key: 'name', header: 'Name' }]}
+            rows={ROWS}
+            rowKey={(r) => r.id}
+            scrollArrows="always"
+            scrollLabel="T"
+          />,
+        ),
+      );
+      expect(observed().filter((el) => el.className.includes('--sticky-'))).toHaveLength(0);
+
+      withFakeLayout(() =>
+        rerender(
+          <DataTable<Row>
+            columns={pinned}
+            rows={ROWS}
+            rowKey={(r) => r.id}
+            scrollArrows="always"
+            scrollable
+            scrollLabel="T"
+          />,
+        ),
+      );
+      expect(
+        observed().some((el) => el.classList.contains('uxm-data-table__th--sticky-start')),
+        'the pin must be observed once the scroller exists',
+      ).toBe(true);
+    });
+  });
+
+  it('re-observes when the SET of pinned columns changes', () => {
+    // `measure()` always re-queries, so a measurement is right when it runs.
+    // WHICH elements are watched is fixed at effect time, so a newly pinned
+    // cell would never fire one.
+    const bothPinned: DataTableColumn<Row>[] = [
+      { key: 'name', header: 'Name', width: 240, sticky: 'start' },
+      { key: 'owner', header: 'Owner', width: 240, sticky: 'end' },
+    ];
+    withObserverSpy((observed) => {
+      const { rerender } = withFakeLayout(() =>
+        render(
+          <DataTable<Row>
+            columns={COLUMNS}
+            rows={ROWS}
+            rowKey={(r) => r.id}
+            scrollArrows="always"
+            scrollLabel="T"
+          />,
+        ),
+      );
+      const before = observed().filter((el) => el.classList.contains('uxm-data-table__th--sticky-end')).length;
+      withFakeLayout(() =>
+        rerender(
+          <DataTable<Row>
+            columns={bothPinned}
+            rows={ROWS}
+            rowKey={(r) => r.id}
+            scrollArrows="always"
+            scrollLabel="T"
+          />,
+        ),
+      );
+      const after = observed().filter((el) => el.classList.contains('uxm-data-table__th--sticky-end')).length;
+      expect(before, 'no end pin to observe yet').toBe(0);
+      expect(after, 'the new end pin must be observed').toBeGreaterThan(0);
+    });
+  });
+});
+
 describe('DataTable scrollArrows — the stylesheet', () => {
   const css = compiledCss('src/ui/data-table/data-table.scss');
   const bare = css.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -209,7 +370,7 @@ describe('DataTable scrollArrows — the stylesheet', () => {
     // (0,3,0). A plain `.--arrows-hover .--disabled` is (0,2,0) and loses —
     // measured in the browser, where the disabled arrow came back `visible`.
     expect(bare, 'the disabled rule must compound the same pseudo-classes').toMatch(
-      /\.uxm-data-table--arrows-hover:hover \.uxm-data-table__scroll-arrow--disabled,\s*\.uxm-data-table--arrows-hover:focus-within \.uxm-data-table__scroll-arrow--disabled \{[^}]*visibility:\s*hidden/,
+      /\.uxm-data-table--arrows-hover:hover \.uxm-data-table__scroll-arrow--disabled[^,{]*,\s*\.uxm-data-table--arrows-hover:focus-within \.uxm-data-table__scroll-arrow--disabled[^{]*\{[^}]*visibility:\s*hidden/,
     );
     expect(bare, 'and must not rely on the weaker un-compounded form').not.toMatch(
       /\n\.uxm-data-table--arrows-hover \.uxm-data-table__scroll-arrow--disabled \{/,
@@ -224,12 +385,40 @@ describe('DataTable scrollArrows — the stylesheet', () => {
     expect(block).toMatch(/display:\s*none/);
   });
 
-  it('honours prefers-reduced-motion for the reveal', () => {
-    // The fade is the component's second motion; the nudge's smooth scroll is
-    // handled in the component.
-    const at = css.indexOf('@media (prefers-reduced-motion: reduce)');
-    const block = css.slice(at, css.indexOf('\n}', at));
-    expect(block).toContain('arrows-hover');
+  it('honours prefers-reduced-motion for the reveal — and WINS the cascade', () => {
+    // The first version of this test only checked that some reduced-motion
+    // block mentioned `arrows-hover`. It did, near the top of the file, at the
+    // same (0,2,0) specificity as the rule that sets the transition some 17kB
+    // LATER — so the override lost and the fade survived, with this test green.
+    // Position is the contract here, not presence.
+    const setsTransition = css.indexOf('.uxm-data-table--arrows-hover .uxm-data-table__scroll-arrow {');
+    expect(setsTransition, 'the rule that sets the fade').toBeGreaterThan(-1);
+
+    const overrides = [...css.matchAll(/@media \(prefers-reduced-motion: reduce\)/g)]
+      .map((m) => m.index!)
+      .filter((at) => css.slice(at, css.indexOf('\n}', at)).includes('arrows-hover'));
+    expect(overrides.length, 'no reduced-motion rule for the arrows').toBeGreaterThan(0);
+    expect(
+      overrides.some((at) => at > setsTransition),
+      'the override must come AFTER the rule it has to beat, or it silently loses',
+    ).toBe(true);
+  });
+
+  it('never hides an arrow that holds focus', () => {
+    // Hiding the button a keyboard user is sitting on drops focus to <body> —
+    // the exact failure the mounted-but-inert disabled arrow exists to prevent.
+    // Measured before the fix: `document.activeElement` became `body` on
+    // reaching the end. Both halves of the disabled rule must exempt `:focus`.
+    const rule = bare.match(
+      /\.uxm-data-table--arrows-hover:hover \.uxm-data-table__scroll-arrow--disabled[^{]*\{[^}]*\}/,
+    );
+    expect(rule?.[0], 'the disabled-hiding rule').toBeDefined();
+    expect(rule?.[0]).toContain(':not(:focus)');
+    const selectors = rule![0].slice(0, rule![0].indexOf('{')).split(',').map((x) => x.trim());
+    expect(selectors.length, 'both hover and focus-within halves').toBe(2);
+    for (const sel of selectors) {
+      expect(sel, `${sel} must exempt a focused arrow`).toContain(':not(:focus)');
+    }
   });
 });
 

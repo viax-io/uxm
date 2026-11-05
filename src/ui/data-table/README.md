@@ -398,9 +398,15 @@ default in the next major.
 measured and no inline style is written for a table that does not opt in.
 
 **`'hover'` hides with `visibility`, not just opacity** — an invisible control that is still
-focusable is a worse problem than the clutter this removes. The scroller is itself focusable, so
-tabbing into the table reveals the arrows before the next Tab can reach one. The reveal fades
-over `--uxm-data-table-scroll-arrow-transition` (120ms), and that fade is dropped under
+focusable is a worse problem than the clutter this removes. An arrow that holds focus is the one
+exception: it stays visible and inert when it reaches an end, because hiding the button a
+keyboard user is sitting on drops focus to `<body>` (WCAG 2.4.3).
+
+The arrows sit before the scroller in the DOM, so in this mode a forward Tab reaches the
+scroller rather than an arrow; the arrows are reachable by Shift+Tab once the table holds focus.
+Nothing is lost either way — the focused scroller scrolls with the arrow keys.
+
+The reveal fades over `--uxm-data-table-scroll-arrow-transition` (120ms), dropped under
 `prefers-reduced-motion`.
 
 Knobs: `--uxm-data-table-scroll-arrow-inset` (4px) and

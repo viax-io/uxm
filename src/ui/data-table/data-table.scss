@@ -169,9 +169,6 @@
   /* The row fade and the pinned cells that match it. Cheap to honour, and
      leaving the pinned cells transitioning while the row does not would
      re-create the two-stage hover this block exists to avoid. */
-  /* The hover-reveal fade. The nudge's smooth scroll is handled in the
-     component; this is the component's other motion. */
-  .uxm-data-table--arrows-hover .uxm-data-table__scroll-arrow,
   .uxm-data-table__row,
   .uxm-data-table__td--sticky-start,
   .uxm-data-table__td--sticky-end {
@@ -553,7 +550,12 @@
   opacity: 1;
 }
 /* Hidden at an end rather than dimmed: the point of this mode is to show only
-   what can be acted on.
+   what can be acted on — EXCEPT while it holds focus. Hiding the button a
+   keyboard user is sitting on drops focus to <body>, which is the exact
+   failure the mounted-but-inert shape above exists to prevent (its comment
+   says so). Measured before `:not(:focus)` was added: press the end arrow
+   until the end and `document.activeElement` became `body`. A focused arrow
+   stays visible and stays inert, as it does in every other mode.
    This has to MATCH the reveal's shape, not undercut it. `:hover` and
    `:focus-within` each count as a class, so the reveal above is (0,3,0); a
    plain `.--arrows-hover .--disabled` is (0,2,0) and loses outright — measured,
@@ -561,10 +563,23 @@
    Compound with the same pseudo-classes and sit after it. Outside hover/focus
    the base rule has already hidden everything, so there is nothing else to
    cover. */
-.uxm-data-table--arrows-hover:hover .uxm-data-table__scroll-arrow--disabled,
-.uxm-data-table--arrows-hover:focus-within .uxm-data-table__scroll-arrow--disabled {
+.uxm-data-table--arrows-hover:hover .uxm-data-table__scroll-arrow--disabled:not(:focus),
+.uxm-data-table--arrows-hover:focus-within .uxm-data-table__scroll-arrow--disabled:not(:focus) {
   visibility: hidden;
   opacity: 0;
+}
+
+/* The hover-reveal fade, dropped for reduced motion. This block has to sit
+   AFTER the rule that sets the transition, not up with the other
+   reduced-motion rules near the top: both are (0,2,0), so the later one wins
+   and an override declared earlier simply loses. Measured in the compiled
+   output — the fade survived at char 24963 against an override at 7611. The
+   nudge's smooth scroll is handled in the component; this is the other
+   motion. */
+@media (prefers-reduced-motion: reduce) {
+  .uxm-data-table--arrows-hover .uxm-data-table__scroll-arrow {
+    transition: none;
+  }
 }
 /* No hover to depend on: the user swipes, and two permanent controls are the
    clutter this mode exists to remove. */
