@@ -102,6 +102,20 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable` can send the horizontal scroller back to the start when the rows change.**
+  `scrollResetKey` — any string; when it changes, the scroller returns to its start edge.
+  Opt-in: without it the position is kept, which is what the table has always done. A scrolled
+  table that swaps its rows for a filter or a sort otherwise leaves the reader mid-table on
+  records they have not seen, because the scroller is the same element across the change and
+  nothing resets it. Derive the key from what caused the swap
+  (`` `${query}|${sort.key}|${sort.direction}` ``). It is a key rather than a watch on `rows`
+  because only the caller knows whether new rows replace the old ones or continue them —
+  "load more" keeps the same key and keeps the position. The reset is FORCED instant — setting
+  `scrollLeft` honours the computed `scroll-behavior`, so the table pins `auto` for the write
+  and restores it, which is what leaves `prefers-reduced-motion` nothing to reduce. It goes to
+  the start edge in RTL too, in engines on the current CSSOM View spec (Chrome 85+, Safari 14+,
+  Firefox). Unsetting the key does not reset. No new CSS and no new knobs.
+
 ## Workflow
 
 ### Where the documentation lives

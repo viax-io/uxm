@@ -327,6 +327,48 @@ Theming: `--uxm-data-table-stacked-title-{font-size,font-weight,color}`,
 
 In UXM Studio this is the Data Table's "Card Shape" layout variant.
 
+### Scroll reset
+
+A scrolled table that swaps its rows for a filter or a sort leaves the reader mid-table on
+records they have not seen, usually with the identity column's neighbours off-screen. The
+scroller is the same element across a rows change, so nothing resets it — measured on 4.81.0:
+scrolled to 200px of 467, sorted, still at 200.
+
+`scrollResetKey` fixes that. Derive it from whatever caused the swap:
+
+```tsx
+<DataTable
+  columns={columns}
+  rows={rows}
+  rowKey={(r) => r.id}
+  scrollResetKey={`${query}|${sort.key}|${sort.direction}`}
+  scrollable
+/>
+```
+
+**Why a key and not a watch on `rows`.** Only the caller knows whether new rows *replace* the
+old ones or *continue* them. "Load more" appends and must keep the reader's position; a filter
+replaces and must not. A key the caller controls says which happened; `rows` changing identity
+cannot.
+
+The reset is **forced** instant — the reader is being shown a different set of rows, and
+animating several hundred pixels of travel to get there is slower and more disorienting than
+arriving, which is also what leaves `prefers-reduced-motion` nothing to reduce. Forced, because
+setting `scrollLeft` honours the element's computed `scroll-behavior`: a consumer with
+`scroll-behavior: smooth` on this scroller would otherwise get the reset animated (measured in
+Chrome). The table pins `auto` for the write and restores whatever was there.
+
+It goes to the **start** edge — left in LTR, right in RTL — in browsers that follow the current
+CSSOM View spec (Chrome 85+, Safari 14+, Firefox), which report `scrollLeft` as 0 at the start
+and negative towards the end. Older WebKit used positive values with the start at
+`scrollWidth - clientWidth`, where this would land at the *end*. There is deliberately no legacy
+branch. (The edge shadows measure correctly under both models, via `Math.abs`; only this write
+depends on the modern one.)
+
+Nothing happens on the first render, and nothing happens at all on a table that does not
+scroll. **Unsetting the key does not reset** either: `undefined` means "no key", and the
+recorded key is left alone — `'a'` → `undefined` → `'a'` stays put.
+
 ## Props
 
 ### `DataTableProps<T>`
@@ -340,6 +382,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `rowKey` | `(row: T) => string` | – | **Required.** Stable key extractor for React's reconciliation; pick a value that doesn't change between renders. |
 | `density` | `'compact' \| 'default' \| 'relaxed'` | `'default'` | Vertical cell padding modifier. See [States](#states--variants). |
 | `stackAt` | `480 \| 640 \| 768 \| 960` | `480` | Container width at or below which rows reflow into stacked cards. See [Stacking threshold](#stacking-threshold). |
+| `scrollResetKey` | `string` | – | Returns the horizontal scroller to its start edge whenever this changes. Opt-in; without it the position is kept. See [Scroll reset](#scroll-reset). |
 | `onRowClick` | `(row: T) => void` | – | When provided, rows render with a pointer cursor (`uxm-data-table__row--interactive`), forward clicks, and become keyboard-operable: each row takes `tabIndex={0}` and activates on `Enter` / `Space` with a focus ring. **Every row is its own tab stop**, so a long table is a long tab sequence — `rowProps` returning `tabIndex: -1` is the hook for your own roving scheme. A key pressed on a control inside the row stays that control's. Header clicks are not captured. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div className="uxm-data-table">`. |
