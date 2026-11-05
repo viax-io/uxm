@@ -1,3 +1,10 @@
+# [4.83.0](https://github.com/viax-io/uxm/compare/v4.82.0...v4.83.0) (2026-11-05)
+
+
+### Features
+
+* **search-dropdown:** option description as a second line ([e75140d](https://github.com/viax-io/uxm/commit/e75140d6129cddf2eea6fc6fd7f5beb60667cce6))
+
 # [4.82.0](https://github.com/viax-io/uxm/compare/v4.81.0...v4.82.0) (2026-11-05)
 
 
