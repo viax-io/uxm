@@ -312,6 +312,11 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
       style={tableVars(styles)}
       density={(variants.density as 'compact' | 'default' | 'relaxed') ?? 'default'}
       stackAt={STACK_AT[variants.stackAt ?? ''] ?? 480}
+      // Sorting replaces the rows, so it is exactly the case this guards:
+      // without a key the preview's scrolled table stays mid-row on records
+      // the reader has not seen. The key is the sort, so sorting resets and a
+      // cell edit (which keeps the sort) does not.
+      scrollResetKey={sort ? `${sort.key}:${sort.direction}` : 'unsorted'}
       columns={variants.stackedRoles === 'on' ? roleColumns : columns}
       rows={sorted}
       rowKey={(r) => r.id}

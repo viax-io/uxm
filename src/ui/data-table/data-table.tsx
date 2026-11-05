@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 
@@ -261,6 +261,23 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * 600px panel and stays a table full-bleed on the same screen.
    */
   stackAt?: DataTableStackAt;
+  /**
+   * Returns the horizontal scroller to its start edge whenever this value
+   * changes. Opt-in: with no key the position is kept across a rows change,
+   * which is what the table has always done.
+   *
+   * A scrolled table that swaps its rows for a filter or a sort leaves the
+   * reader mid-table on records they have not seen, usually with the identity
+   * column's neighbours off-screen. Derive the key from whatever caused the
+   * swap — `` `${query}|${sort.key}|${sort.direction}` `` — and the scroller
+   * goes back to the start with the new rows.
+   *
+   * Appending rows keeps the same key, so "load more" does not throw away the
+   * reader's position. That is the reason this is a key rather than a watch on
+   * `rows`: only the caller knows whether new rows replace the old ones or
+   * continue them.
+   */
+  scrollResetKey?: string;
   rowKey: (row: T) => string;
   onRowClick?: (row: T) => void;
   /**
@@ -641,6 +658,7 @@ export function DataTable<T>({
   rows,
   density = 'default',
   stackAt,
+  scrollResetKey,
   rowKey,
   onRowClick,
   rowActions,
@@ -669,6 +687,50 @@ export function DataTable<T>({
   const stackedRoles = columns.some((c) => c.stackedRole !== undefined);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const edges = useScrollEdges(scrollerRef, scrolls);
+
+  // Return to the start edge when `scrollResetKey` changes. Skips the first
+  // run: there is nothing to reset on mount, and a table that renders already
+  // scrolled did so because its consumer put it there.
+  //
+  // `scrollLeft = 0` is the START edge, left in LTR and right in RTL — in
+  // browsers that follow the current CSSOM View spec (Chrome 85+, Safari 14+,
+  // Firefox), which report 0 at the start and negative towards the end. Older
+  // WebKit used positive values with the start at `scrollWidth - clientWidth`,
+  // where this would land at the END. `useScrollEdges`'s `Math.abs` measures
+  // correctly under both models, but this write only holds under the modern
+  // one; no legacy branch, deliberately.
+  //
+  // `useLayoutEffect`, not `useEffect`: the reset has to land in the same frame
+  // as the new rows. A passive effect can run after paint, so a key change
+  // arriving from a non-discrete update — a debounced query, a transition —
+  // paints one frame of the new rows at the old offset and then jumps.
+  //
+  // Unsetting the key does NOT reset: `undefined` means "no key", and the
+  // recorded key is left alone, so `'a'` → `undefined` → `'a'` stays put.
+  const lastResetKey = useRef(scrollResetKey);
+  useLayoutEffect(() => {
+    if (scrollResetKey === undefined || lastResetKey.current === scrollResetKey) return;
+    lastResetKey.current = scrollResetKey;
+    const el = scrollerRef.current;
+    if (!el) return;
+    // Forced instant for the duration of the write. Setting `scrollLeft`
+    // honours the element's computed `scroll-behavior`, so a consumer with
+    // `scroll-behavior: smooth` on this scroller would get the reset ANIMATED
+    // across several hundred pixels — measured in Chrome: the offset is
+    // unchanged immediately after the write and only settles a frame later.
+    // The reader is being shown a different set of rows; arriving beats
+    // travelling. Keeping it instant is also what leaves `prefers-reduced-
+    // motion` nothing to reduce. An inline style rather than
+    // `scrollTo({ behavior: 'instant' })`: that enum value is newer than the
+    // method, so engines whose IDL predates it throw on the options object,
+    // and jsdom has no `Element.prototype.scrollTo` at all.
+    const previousBehavior = el.style.scrollBehavior;
+    el.style.scrollBehavior = 'auto';
+    // Programmatic, so it fires a scroll event and the edge shadows and arrows
+    // re-measure themselves — they must not keep promising content to the left.
+    el.scrollLeft = 0;
+    el.style.scrollBehavior = previousBehavior;
+  }, [scrollResetKey]);
 
   return (
     <div
