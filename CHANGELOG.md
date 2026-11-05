@@ -1,3 +1,10 @@
+# [4.82.0](https://github.com/viax-io/uxm/compare/v4.81.0...v4.82.0) (2026-11-05)
+
+
+### Features
+
+* **data-table:** return the scroller to the start when the rows are replaced ([765fa66](https://github.com/viax-io/uxm/commit/765fa66e6bfffc4b3eb9ce80d2dda3b5393ea7b5))
+
 # [4.81.0](https://github.com/viax-io/uxm/compare/v4.80.5...v4.81.0) (2026-11-05)
 
 

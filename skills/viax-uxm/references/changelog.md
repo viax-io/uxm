@@ -2323,3 +2323,9 @@ reached the published library; now shipped in 2.8.0.
 - **A `link` glyph.** Heroicons' chain link, for a "Copy link" action or anything that is a URL —
   until now the nearest was `copy`, which reads as "duplicate". `chain`, `hyperlink`, `url` and
   `permalink` resolve to it as keywords.
+
+### New in 4.80.0
+
+- **A `target` glyph.** House-drawn rings and a centre dot with an arrow landed in it, for
+  "reached" or "committed" (e.g. a value committed at a lifecycle step). `bullseye`, `goal`, `aim`,
+  `hit` and `commit` resolve to it.
