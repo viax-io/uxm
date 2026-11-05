@@ -1,3 +1,15 @@
+# [4.84.0](https://github.com/viax-io/uxm/compare/v4.83.0...v4.84.0) (2026-11-05)
+
+
+### Bug Fixes
+
+* **data-table:** honour reduced motion, and never hide a focused scroll arrow ([e004c89](https://github.com/viax-io/uxm/commit/e004c8904a39430422fe2a02e167d1c3cb08e73a))
+
+
+### Features
+
+* **data-table:** move the scroll arrows off the pinned columns, and let them hide ([fbff0eb](https://github.com/viax-io/uxm/commit/fbff0ebc2f553a28c6f2c4da01be755850e66edf))
+
 # [4.83.0](https://github.com/viax-io/uxm/compare/v4.82.0...v4.83.0) (2026-11-05)
 
 

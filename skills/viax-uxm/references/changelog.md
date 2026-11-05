@@ -2335,3 +2335,18 @@ reached the published library; now shipped in 2.8.0.
 - **`DataTable` stacked cards label the actions cell with `actionsColumnLabel`** — it was a
   hard-coded English "Actions", so a translated table showed English on every card. Pass
   `actionsColumnLabel` in your language and both the header's accessible name and the card label follow.
+
+### New in 4.80.4
+
+- **Escape closes one floating layer, not every open one.** A `Popover`, `Select`, `Menu` or
+  any other `useDismiss` layer opened inside a `Dialog` now takes Escape on its own and leaves
+  the dialog open; a second Escape closes the dialog. Before this, both fired — each layer put
+  its own listener on `document`, where `stopPropagation()` cannot order them. Affects every
+  atom built on `Popover` or `Listbox` — `Select` (so `Input` with options),
+  `SearchDropdown`, `Menu`, `MenuButton`, `PillSelect`, `LanguageSwitcher`, and the pickers of
+  `ColorInput`, `CurrencyInput`, `PhoneInput`, `TimeInput` and `EditableCell` — and needs no
+  change in consuming code. Two atoms keep their own `document` listener and so are NOT in the
+  stack: `DateInput`'s calendar, and `AppSidebar`'s flyout, which deliberately lets an
+  enclosing dialog have the key too (WCAG 1.4.13). The topmost layer is the
+  innermost by `refs` containment, then the most recently enabled; `closeOnEscape: false` keeps
+  a layer out of it so the key falls through. Outside clicks are untouched.
