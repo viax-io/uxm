@@ -58,6 +58,17 @@ export const dataTableDef: ComponentDef = {
       ],
       defaultValue: '480',
     },
+    // Without this the card shape is unreachable in the studio for the same
+    // reason the threshold was: the canvas never narrows to 480px.
+    {
+      key: 'stackedRoles',
+      label: 'Card Shape',
+      options: [
+        { value: 'off', label: 'Labelled cells (default)' },
+        { value: 'on', label: 'Title, fields and actions' },
+      ],
+      defaultValue: 'off',
+    },
   ],
   events: [
     { name: 'onRowClick', description: 'Fires when the user clicks a row (not bubbled from clicks inside the row-actions cell).', payload: '{ row: T }' },

@@ -646,7 +646,109 @@
     text-align: right;
   }
 }
-@container (max-width: 480px) { @include stacked-cards; }
+
+/* The `dl` a field cell carries exists in BOTH layouts, because one DOM serves
+   both. In table mode it must be invisible scaffolding: the `dt` repeats the
+   column header the `thead` already shows, and `dl`/`dd` bring browser margins
+   (`dd` is indented 40px by default) that would wreck a grid cell. So the term
+   is hidden and the margins are zeroed here, OUTSIDE the container query, and
+   the term is shown again inside it. Gated on the opt-in class like every other
+   rule in this section — these elements only exist when a column names a role,
+   but keeping the gate makes "no rule escapes the opt-in" checkable. */
+.uxm-data-table--stacked-roles .uxm-data-table__field,
+.uxm-data-table--stacked-roles .uxm-data-table__field-value {
+  margin: 0;
+}
+.uxm-data-table--stacked-roles .uxm-data-table__field-term {
+  display: none;
+}
+
+/* ── Card shape: title / field / actions / hidden ───────────────────────────
+   Everything below is gated on `.uxm-data-table--stacked-roles`, which the
+   component sets only when a column names a `stackedRole`. A table that does
+   not opt in resolves none of it, so the long-standing card — every cell in
+   turn behind its `data-label` — is untouched to the byte.
+
+   The row becomes a flex column so `order` can place the title first and the
+   actions last whatever order the columns are declared in. Flex also gives the
+   footer somewhere to sit: `margin-top: auto` is not it (the card is
+   content-height), the divider is. */
+@mixin stacked-role-cards($self: '') {
+  $d: stack-descendant($self);
+  $root: '.uxm-data-table--stacked-roles';
+  @if $self != '' {
+    $root: $self + '.uxm-data-table--stacked-roles';
+  }
+
+  #{$root} .uxm-data-table__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--uxm-data-table-stacked-gap, 2px);
+    padding: var(--uxm-data-table-stacked-card-padding, 12px)
+      var(--uxm-data-table-cell-padding-x, 12px);
+  }
+  /* Declared order is grid order; card order is title → fields → actions. */
+  #{$root} .uxm-data-table__td--stacked-title { order: -1; }
+  #{$root} .uxm-data-table__td--stacked-actions { order: 1; }
+
+  #{$root} .uxm-data-table__td--stacked-title {
+    font-size: var(--uxm-data-table-stacked-title-font-size, calc(15px * var(--type-scale, 1)));
+    font-weight: var(--uxm-data-table-stacked-title-font-weight, var(--font-weight-strong, 600));
+    color: var(--uxm-data-table-stacked-title-color, var(--color-text));
+    /* The title IS the card's name; a label above it repeats the obvious. */
+  }
+  #{$root} .uxm-data-table__td--stacked-title::before { content: none; }
+
+  /* `hidden` stays in the DOM for table mode and leaves the card. */
+  #{$root} .uxm-data-table__td--stacked-hidden { display: none; }
+
+  /* The label now lives in a `dt`, so the decorative pseudo would say it
+     twice. */
+  #{$root} .uxm-data-table__td--stacked-field::before { content: none; }
+  #{$root} .uxm-data-table__field-term {
+    display: block;
+    font-size: var(--uxm-data-table-stacked-label-font-size, calc(11px * var(--type-scale, 1)));
+    font-weight: var(--font-weight-strong, 600);
+    color: var(--uxm-data-table-stacked-label-color, var(--color-text-muted));
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+
+  /* The footer: a divider, then the actions, trailing-aligned.
+     `:empty` first — `rowActions` renders its cell whether or not the row has
+     any actions (`{actions.length > 0 && …}` yields `false`, so the td really
+     is empty), and without this a row with no actions draws a divider above an
+     empty padded strip. Neither padding nor a flex item's margin collapses on
+     its own. */
+  #{$root} .uxm-data-table__td--stacked-actions:empty {
+    display: none;
+  }
+  /* One divider per footer, not one per cell. A column with
+     `stackedRole: 'actions'` AND `rowActions` puts two cells down there; both
+     carry `order: 1`, so within that order they lay out in DOM order and the
+     general-sibling combinator takes the divider off every one after the
+     first. */
+  #{$root} .uxm-data-table__td--stacked-actions ~ .uxm-data-table__td--stacked-actions {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+  /* A footer of controls, not a labelled field — the `data-label` pseudo would
+     put "Actions" above the kebab, which names the obvious. */
+  #{$root} .uxm-data-table__td--stacked-actions::before { content: none; }
+  #{$root} .uxm-data-table__td--stacked-actions {
+    margin-top: var(--uxm-data-table-stacked-footer-gap, 8px);
+    padding-top: var(--uxm-data-table-stacked-footer-gap, 8px);
+    border-top: 1px solid var(--uxm-data-table-border-color, var(--color-border));
+    text-align: right;
+  }
+}
+
+@container (max-width: 480px) {
+  @include stacked-cards;
+  @include stacked-role-cards;
+}
 
 /* ── A wider stacking threshold, opt-in via `stackAt` ─────────────────────────
    The 480px blocks above are untouched. Their selectors are bare
@@ -683,6 +785,7 @@
     @include stacked-active-rail($self);
     @include stacked-no-scroll($self);
     @include stacked-cards($self);
+    @include stacked-role-cards($self);
 
     /* The fixed-layout clip is gated on `min-width: 481px` — a SECOND
        hard-coded 480, and an inverted one, which is why it was easy to miss.

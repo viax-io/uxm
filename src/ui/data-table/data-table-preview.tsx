@@ -296,12 +296,23 @@ export function DataTablePreview({ styles, variants }: PreviewProps & { componen
     },
   ];
 
+  // The same columns with card roles, so the Stacked Cards variant shows what
+  // `stackedRole` does rather than describing it. Name is what a row is found
+  // by; description earns its place in a grid but not in a card.
+  const roleColumns: DataTableColumn<Row>[] = columns.map((c) =>
+    c.key === 'name'
+      ? { ...c, stackedRole: 'title' as const }
+      : c.key === 'description'
+        ? { ...c, stackedRole: 'hidden' as const }
+        : { ...c, stackedRole: 'field' as const },
+  );
+
   return (
     <DataTable<Row>
       style={tableVars(styles)}
       density={(variants.density as 'compact' | 'default' | 'relaxed') ?? 'default'}
       stackAt={STACK_AT[variants.stackAt ?? ''] ?? 480}
-      columns={columns}
+      columns={variants.stackedRoles === 'on' ? roleColumns : columns}
       rows={sorted}
       rowKey={(r) => r.id}
       sort={sort}
