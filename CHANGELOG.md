@@ -1,3 +1,10 @@
+# [4.81.0](https://github.com/viax-io/uxm/compare/v4.80.5...v4.81.0) (2026-11-05)
+
+
+### Features
+
+* **data-table:** give a stacked card a title, fields and an actions footer ([29af7b0](https://github.com/viax-io/uxm/commit/29af7b0cd9b54d9b6dfbe7e182cf3880207f7b8a))
+
 ## [4.80.5](https://github.com/viax-io/uxm/compare/v4.80.4...v4.80.5) (2026-11-05)
 
 

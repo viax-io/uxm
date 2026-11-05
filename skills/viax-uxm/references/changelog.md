@@ -2317,3 +2317,9 @@ reached the published library; now shipped in 2.8.0.
   is also why the accepted values are a closed set.
   Studio exposes it as the Data Table's "Stack Into Cards" layout variant — the only way
   to reach the stacked layout there, since the canvas never narrows to 480px on its own.
+
+### New in 4.79.0
+
+- **A `link` glyph.** Heroicons' chain link, for a "Copy link" action or anything that is a URL —
+  until now the nearest was `copy`, which reads as "duplicate". `chain`, `hyperlink`, `url` and
+  `permalink` resolve to it as keywords.
