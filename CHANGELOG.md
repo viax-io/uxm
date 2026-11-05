@@ -1,3 +1,10 @@
+## [4.80.5](https://github.com/viax-io/uxm/compare/v4.80.4...v4.80.5) (2026-11-05)
+
+
+### Bug Fixes
+
+* **tokens:** soften accent-subtle to #ECF8F0 ([3fff726](https://github.com/viax-io/uxm/commit/3fff726ee64a23801702b603ef894ad6941ace83)), closes [#ECF8F0](https://github.com/viax-io/uxm/issues/ECF8F0) [#E2F3E8](https://github.com/viax-io/uxm/issues/E2F3E8) [#ECF8F0](https://github.com/viax-io/uxm/issues/ECF8F0)
+
 ## [4.80.4](https://github.com/viax-io/uxm/compare/v4.80.3...v4.80.4) (2026-11-04)
 
 

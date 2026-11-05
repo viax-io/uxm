@@ -2304,3 +2304,16 @@ reached the published library; now shipped in 2.8.0.
   you position yourself, or one nested deeper inside some other panel, still sits at 50%
   exactly as before; `AppSidebar` passes `showArrow={false}` and is untouched either way. No new
   props and no new public knobs.
+
+### New in 4.78.0
+
+- **`DataTable` can stack into cards at a wider container than 480px.** `stackAt={640 |
+  768 | 960}` moves the threshold; `480` stays the default and emits no class, so a table
+  that doesn't set it is unchanged. Use it when the table's slot is narrow for its content
+  — a side panel, a dashboard column — remembering the measurement is the table's **own
+  container**, not the viewport, so the same table can stack in a 600px panel and stay a
+  table full-bleed on the same screen. It is a prop, not a CSS knob, because a container
+  query cannot read a custom property (the condition parses and then never matches), which
+  is also why the accepted values are a closed set.
+  Studio exposes it as the Data Table's "Stack Into Cards" layout variant — the only way
+  to reach the stacked layout there, since the canvas never narrows to 480px on its own.
