@@ -56,6 +56,7 @@ function CountryPicker() {
 | `value` | `string` | yes | Identifier for the option; compared by `===` to the controlled `value`. |
 | `label` | `string` | yes | Primary text shown in the option row and the trigger. |
 | `meta` | `string` | no | Trailing secondary text (e.g. a country dialing code, category meta). Right-aligned in the option row. |
+| `description` | `string` | no | Second line under the label, smaller and muted — the code or id behind a readable name ("Autoship quote" over `AutoshipQuote`). Shown in the option row and, for the selected option, in the trigger. Matched by the search. |
 | `icon` | `ReactNode` | no | Leading visual — typically an `<Icon>` for icon-glyph pickers. |
 | `keywords` | `string[]` | no | Extra search terms matched alongside `label`, never rendered. Lets an option stay findable under a synonym without that synonym appearing in its visible name — the icon registry feeds its `IconDef.keywords` through `ICON_OPTIONS` this way. |
 
@@ -85,6 +86,8 @@ Most `--uxm-search-dropdown-*` knobs live on the wrapper and cascade to descenda
 | `--uxm-search-dropdown-option-font-size` | – | `13px` | Option label font size. |
 | `--uxm-search-dropdown-option-meta-size` | – | `10px` | Meta text font size. |
 | `--uxm-search-dropdown-option-meta-color` | `--color-text-subtle` | – | Meta text colour. The default is a **3:1** token on 10px text, which misses WCAG 1.4.3 (3.66:1 light, 3.41:1 dark); set it to `var(--color-text-muted)` to clear AA without moving every separator the token also paints. **Set it on `:root`** — the option row lives in the portaled panel, so a value on the wrapper never reaches it. |
+| `--uxm-search-dropdown-option-description-size` | – | `11px` | `description` font size, in the option row and the trigger. |
+| `--uxm-search-dropdown-option-description-color` | `--color-text-muted` | – | `description` colour, in the option row and the trigger. **Set it on `:root`** to reach the portaled option rows. |
 | `--uxm-search-dropdown-option-hover-bg` | `--color-surface-alt` | – | Highlighted option background (keyboard or mouse hover). |
 | `--uxm-search-dropdown-option-active-bg` | `--color-accent-subtle` | – | Selected option background. |
 | `--uxm-search-dropdown-option-active-color` | `--color-accent-bold` | – | Selected option text colour. |
@@ -96,7 +99,7 @@ Most `--uxm-search-dropdown-*` knobs live on the wrapper and cascade to descenda
 | `--color-card` | Surfaces / Card | Trigger + popover background (fallbacks). |
 | `--color-border` | Borders / Border | Trigger border, popover border, search divider. |
 | `--color-text` | Text / Text | Trigger label, option label, search input value. |
-| `--color-text-muted` | Text / Text Muted | Empty trigger placeholder (fallback of `-trigger-placeholder-color`), chevron, empty-state copy. |
+| `--color-text-muted` | Text / Text Muted | Empty trigger placeholder (fallback of `-trigger-placeholder-color`), chevron, empty-state copy, option `description`. |
 | `--color-text-subtle` | Text / Text Subtle | Search icon, option meta. |
 | `--color-accent` | Accent / Accent | Trigger focus / open border (fallback). |
 | `--color-surface-alt` | Surfaces / Surface Alt | Highlighted option background (fallback). |

@@ -11,6 +11,8 @@ type Styles = PreviewProps['styles'];
 const DEMO_OPTIONS: SearchDropdownOption[] = ICONS.slice(0, 24).map((g) => ({
   value: g.id,
   label: g.label,
+  // The glyph id under its name — the `description` second line.
+  description: g.id,
   icon: <Icon glyph={g.id} size={14} />,
 }));
 
