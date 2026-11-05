@@ -56,6 +56,7 @@ export type {
   DataTableSort,
   DataTableSortDirection,
   DataTableStackAt,
+  DataTableStackedRole,
 } from './data-table';
 export { DateInput } from './date-input';
 export type { DateInputFormat, DateInputMode, DateInputProps } from './date-input';

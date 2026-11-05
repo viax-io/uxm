@@ -23,6 +23,24 @@ export type DataTableDensity = 'compact' | 'default' | 'relaxed';
  */
 export type DataTableStackAt = 480 | 640 | 768 | 960;
 
+/**
+ * What a column becomes once the table reflows into cards.
+ *
+ * Opt-in per column, and opt-in for the table: until at least one column names
+ * a role, a stacked card is exactly what it has always been — every cell in
+ * turn behind its `data-label`. Give one column a role and the whole table
+ * switches to the card layout, so the roles are read as a set rather than a
+ * card that is half one shape and half the other.
+ *
+ * - `title` — the value the row is found by. Rendered first, at the card's
+ *   heading size, with no label above it.
+ * - `field` — a labelled value in the card's `dl`.
+ * - `actions` — pushed into a footer below a divider.
+ * - `hidden` — dropped from the card. Still rendered as a table cell at full
+ *   width; this is for the columns that only earn their place in a grid.
+ */
+export type DataTableStackedRole = 'title' | 'field' | 'actions' | 'hidden';
+
 export type DataTableSortDirection = 'asc' | 'desc';
 
 /** Which column is sorted, and which way. `null`/absent means "unsorted". */
@@ -218,6 +236,14 @@ export interface DataTableColumn<T> {
    * uncapped.
    */
   maxWidth?: number;
+  /**
+   * What this column becomes in a stacked card. See `DataTableStackedRole`.
+   *
+   * Columns left without a role in a table that uses them render as plain
+   * fields, so adding a role to one column does not mean annotating all of
+   * them — only the ones whose card treatment differs from "labelled value".
+   */
+  stackedRole?: DataTableStackedRole;
 }
 
 export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -637,6 +663,10 @@ export function DataTable<T>({
   // the scroller rather than quietly doing nothing.
   const hasSticky = columns.some((c) => c.sticky) || Boolean(stickyActions);
   const scrolls = Boolean(scrollable) || hasSticky;
+  // One column naming a role switches the whole table's card layout, so a card
+  // is never half title-and-fields and half label-above-value. Until then the
+  // stacked look is untouched, which is what keeps this a PATCH-safe opt-in.
+  const stackedRoles = columns.some((c) => c.stackedRole !== undefined);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const edges = useScrollEdges(scrollerRef, scrolls);
 
@@ -651,6 +681,7 @@ export function DataTable<T>({
         // would resolve its stacked rules differently from every table that
         // leaves this alone.
         stackAt !== undefined && stackAt !== 480 && `uxm-data-table--stack-${stackAt}`,
+        stackedRoles && 'uxm-data-table--stacked-roles',
         scrolls && 'uxm-data-table--scrollable',
         scrolls && edges.start && 'uxm-data-table--scrolled-start',
         scrolls && edges.end && 'uxm-data-table--scrolled-end',
@@ -879,6 +910,29 @@ export function DataTable<T>({
                 ) : (
                   staticContent
                 );
+                // With roles in play a field cell carries its label as real
+                // markup rather than the `::before` pseudo below. That pseudo
+                // is decorative: `content: attr(data-label)` is not reliably
+                // exposed to assistive tech, and the stacked card hides the
+                // `<thead>`, so today a screen reader meets a column of bare
+                // values. A `dt`/`dd` pair is in the tree.
+                //
+                // One `dl` per cell, not one per card: the switch to cards is
+                // a container query, so BOTH layouts are served by the same
+                // DOM, and a `dl` wrapping several `<td>`s is not valid inside
+                // a `<tr>`. A one-pair list is legal and carries the
+                // association; the `dt` is hidden outside the stacked query.
+                const role = stackedRoles ? (c.stackedRole ?? 'field') : undefined;
+                const fieldLabel = role === 'field' ? columnLabel(c) : undefined;
+                const body =
+                  fieldLabel !== undefined ? (
+                    <dl className="uxm-data-table__field">
+                      <dt className="uxm-data-table__field-term">{fieldLabel}</dt>
+                      <dd className="uxm-data-table__field-value">{cellContent}</dd>
+                    </dl>
+                  ) : (
+                    cellContent
+                  );
                 return (
                   <td
                     key={c.key}
@@ -897,6 +951,7 @@ export function DataTable<T>({
                       c.align && `uxm-data-table__td--${c.align}`,
                       rowEditable && 'uxm-data-table__td--editable',
                       c.sticky && `uxm-data-table__td--sticky-${c.sticky}`,
+                      role && `uxm-data-table__td--stacked-${role}`,
                       c.className,
                     )}
                     // Stop the row click from firing when the user clicks an
@@ -904,7 +959,7 @@ export function DataTable<T>({
                     // EditableCell's enter-edit handler race.
                     onClick={rowEditable ? (e) => e.stopPropagation() : undefined}
                   >
-                    {cellContent}
+                    {body}
                   </td>
                 );
               })}
@@ -914,6 +969,10 @@ export function DataTable<T>({
                   <td
                     className={cn(
                       'uxm-data-table__td uxm-data-table__td--actions',
+                      // The `rowActions` kebab is an actions cell by nature, so
+                      // it joins the footer whenever roles are in use without
+                      // anyone having to say so on a column.
+                      stackedRoles && 'uxm-data-table__td--stacked-actions',
                       stickyActions && 'uxm-data-table__td--sticky-end',
                     )}
                     data-label={actionsColumnLabel}

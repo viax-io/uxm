@@ -264,6 +264,69 @@ That is the only way to reach the stacked layout there: the canvas sits between 
 sidebar and the properties panel and never narrows to 480px, so before this the cards —
 and every knob that paints them — could not be seen at all.
 
+### Card shape
+
+By default a stacked card is every cell in turn, each behind its column header. For a table
+of six columns that reads as a column of labels. `column.stackedRole` gives the card a shape
+instead:
+
+```tsx
+const columns: DataTableColumn<Row>[] = [
+  { key: 'name',    header: 'Name',    stackedRole: 'title' },
+  { key: 'status',  header: 'Status',  stackedRole: 'field' },
+  { key: 'owner',   header: 'Owner' },                      // unnamed → field
+  { key: 'notes',   header: 'Notes',   stackedRole: 'hidden' },
+];
+```
+
+| Role | In the card |
+|---|---|
+| `title` | First, at heading size, with no label above it — the value the row is found by. |
+| `field` | A labelled value. The default for any column left unnamed. |
+| `actions` | Pushed into a footer below a divider. A `rowActions` kebab goes there on its own. |
+| `hidden` | Dropped from the card. Still a full table cell at wider widths. |
+
+**Opt-in twice over.** The card shape applies only once at least one column names a role —
+until then a stacked card is exactly what it has always been: every rule here is gated on a
+class the component sets only for an opted-in table, and no existing rule changed. One role
+switches the whole table, so a card is never half one shape and half the other.
+
+**A field's label is real markup, not a pseudo-element.** Stacked mode hides the `<thead>`,
+which takes every column header out of the accessibility tree, so the default card's
+`content: attr(data-label)` leaves a screen reader a column of bare values. A `field` cell
+renders a `<dl><dt>label</dt><dd>value</dd></dl>` instead, which is in the tree.
+
+The `dl` is per cell rather than one per card, and that is forced: the switch to cards is a
+container query, so **one DOM serves both layouts**, and a `dl` wrapping several `<td>`s is
+not valid inside a `<tr>`. A one-pair list is legal and carries the association. Outside the
+stacked width the `dt` is hidden and the browser's `dl`/`dd` margins are zeroed, so a table
+cell looks untouched.
+
+**The actions footer is visual, not structural.** The row *is* the card, so an actions cell
+is necessarily inside it — including inside the row's activation target when `onRowClick` is
+set. The `rowActions` kebab carries its own `stopPropagation`, so tapping it does not also
+fire `onRowClick`. **A column you mark `actions` does not** — it is an ordinary cell, and a
+button inside it fires the row click too unless you stop propagation yourself. That is true
+of any cell and always has been; the footer framing does not change it.
+
+An `actions` column and a `rowActions` kebab can both be in the footer. They share one
+divider, and a footer with nothing in it is dropped rather than drawn empty.
+
+**A field whose `header` is not a string needs `column.label`.** The label comes from
+`columnLabel()`, which falls back to `header` only when it is a string — so an icon-only or
+JSX header with no `label` renders the value with no label at all, sitting among labelled
+ones. The default card has the same gap, silently, through an empty `attr()`.
+
+**Declare the title first and the actions last.** `title` and `actions` are placed with CSS
+`order`, which moves them visually but not in DOM or focus order — declaring them out of
+order puts reading and tab order at odds with the layout (WCAG 1.3.2, 2.4.3).
+
+Theming: `--uxm-data-table-stacked-title-{font-size,font-weight,color}`,
+`--uxm-data-table-stacked-label-{font-size,color}`, `--uxm-data-table-stacked-card-padding`,
+`--uxm-data-table-stacked-gap`, `--uxm-data-table-stacked-footer-gap`.
+
+In UXM Studio this is the Data Table's "Card Shape" layout variant.
+
 ## Props
 
 ### `DataTableProps<T>`
@@ -300,6 +363,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `key` | `string` | yes | Used for the `<th>`/`<td>` React key and as the default cell value lookup (`row[key]`). |
 | `header` | `ReactNode` | yes | Rendered into the `<th>` cell. Accepts text, icons, or composite nodes. |
 | `render` | `(row: T) => ReactNode` | no | Custom cell renderer. When absent, the table falls back to `(row as Record<string, ReactNode>)[key]`. |
+| `stackedRole` | `'title' \| 'field' \| 'actions' \| 'hidden'` | no | What the column becomes in a stacked card. Naming it on any column switches the table to the card layout; unnamed columns then render as fields. See [Card shape](#card-shape). |
 | `align` | `'left' \| 'right' \| 'center'` | no | Applies `uxm-data-table__{th,td}--{align}` modifier classes; left is the implicit default. |
 | `sortKey` | `string` | no | Makes the column sortable and is the value reported back in `DataTableSort.key`. Separate from `key` on purpose — the column you show and the field you sort by are often different (a "Customer" column sorted by `customer.lastName`). A column without it renders its header exactly as before: no control, no `aria-sort`. |
 | `firstSortDirection` | `'asc' \| 'desc'` | no | Which way the **first** click sorts. Defaults to `'asc'`. Set `'desc'` on dates and amounts — ascending-first opens a date column on the oldest row, which is almost never wanted. |
