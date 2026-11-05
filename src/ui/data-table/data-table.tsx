@@ -41,6 +41,26 @@ export type DataTableStackAt = 480 | 640 | 768 | 960;
  */
 export type DataTableStackedRole = 'title' | 'field' | 'actions' | 'hidden';
 
+/**
+ * When the horizontal scroll arrows are shown, and where they sit.
+ *
+ * Opt-in. A table that passes nothing keeps the long-standing behaviour to the
+ * pixel: arrows whenever there is anything to scroll, dimmed at an end, 4px
+ * inside the table's edges — including on touch.
+ *
+ * - `always` — as today, but inset past the pinned columns so they stand at
+ *   the edges of the area that actually scrolls rather than on top of a pin.
+ * - `hover` — shown while the table is hovered or holds focus, *hidden* at an
+ *   end rather than dimmed, and not rendered at all where there is no hover.
+ * - `none` — never rendered. For a table whose consumer provides its own
+ *   affordance, or where swiping is the only interaction that matters.
+ *
+ * The placement change rides on this prop rather than landing as a default,
+ * because insetting moves the arrows in every table that pins. It becomes the
+ * default in the next major.
+ */
+export type DataTableScrollArrows = 'always' | 'hover' | 'none';
+
 export type DataTableSortDirection = 'asc' | 'desc';
 
 /** Which column is sorted, and which way. `null`/absent means "unsorted". */
@@ -278,6 +298,11 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * continue them.
    */
   scrollResetKey?: string;
+  /**
+   * When the horizontal scroll arrows show, and where they sit. See
+   * `DataTableScrollArrows`. Absent leaves today's behaviour untouched.
+   */
+  scrollArrows?: DataTableScrollArrows;
   rowKey: (row: T) => string;
   onRowClick?: (row: T) => void;
   /**
@@ -602,6 +627,62 @@ function useScrollEdges(ref: RefObject<HTMLDivElement | null>, enabled: boolean)
  * `disabled` has the same problem in some browsers, hence `aria-disabled` plus
  * a no-op handler.
  */
+/**
+ * The width of the pinned column on each edge, so the arrows can stand at the
+ * edges of the area that actually scrolls instead of on top of a pin.
+ *
+ * Measured rather than derived: `column.width` may be a percentage, absent, or
+ * — for the actions column — `1%`, so the declared widths say nothing useful
+ * about the rendered ones. The result is published as private custom
+ * properties the stylesheet adds to its own inset, the same shape the popover
+ * uses for its arrow offset.
+ *
+ * Only runs when a table opts in, so one that does not observes nothing and
+ * carries no inline style.
+ */
+function usePinnedInsets(ref: RefObject<HTMLDivElement | null>, enabled: boolean) {
+  const [insets, setInsets] = useState({ start: 0, end: 0 });
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!enabled || !el) {
+      // Back to zero when the table stops opting in, or the last measurement
+      // would stick as a phantom offset.
+      setInsets((prev) => (prev.start === 0 && prev.end === 0 ? prev : { start: 0, end: 0 }));
+      return undefined;
+    }
+    // The HEADER cells, not the body's: a header row always exists, and its
+    // cells carry the same widths as the column beneath them.
+    const measure = () => {
+      const start = el.querySelector<HTMLElement>('.uxm-data-table__th--sticky-start');
+      const end = el.querySelector<HTMLElement>('.uxm-data-table__th--sticky-end');
+      const next = {
+        start: start ? Math.round(start.getBoundingClientRect().width) : 0,
+        end: end ? Math.round(end.getBoundingClientRect().width) : 0,
+      };
+      // Bail out when nothing moved — this sets state, and the arrows live in
+      // the same tree as every row.
+      setInsets((prev) => (prev.start === next.start && prev.end === next.end ? prev : next));
+    };
+    measure();
+    // Guarded exactly as `useScrollEdges` guards its own: jsdom has no
+    // ResizeObserver unless a host polyfills it, and a bare constructor would
+    // throw for any consumer testing a table that opts in.
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
+    if (observer) {
+      observer.observe(el);
+      // The cells too: a column can change width while the scroller's own box
+      // does not, and nothing would fire.
+      for (const cell of el.querySelectorAll('.uxm-data-table__th--sticky-start, .uxm-data-table__th--sticky-end')) {
+        observer.observe(cell);
+      }
+    }
+    return () => observer?.disconnect();
+  }, [ref, enabled]);
+
+  return insets;
+}
+
 function ScrollArrows({
   scrollerRef,
   edges,
@@ -659,6 +740,7 @@ export function DataTable<T>({
   density = 'default',
   stackAt,
   scrollResetKey,
+  scrollArrows,
   rowKey,
   onRowClick,
   rowActions,
@@ -675,6 +757,9 @@ export function DataTable<T>({
   sortHref,
   renderSortLink,
   className,
+  // Pulled out of `...rest` so the measured pin widths can be merged into
+  // it rather than replacing whatever the consumer set.
+  style,
   ...rest
 }: DataTableProps<T>) {
   // Pinning only means something against a scroll, so a sticky column implies
@@ -687,6 +772,9 @@ export function DataTable<T>({
   const stackedRoles = columns.some((c) => c.stackedRole !== undefined);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const edges = useScrollEdges(scrollerRef, scrolls);
+  // The placement change rides on the prop: without it nothing is measured and
+  // the arrows keep their 4px, which is the whole point of it being opt-in.
+  const insets = usePinnedInsets(scrollerRef, scrollArrows !== undefined && scrollArrows !== 'none');
 
   // Return to the start edge when `scrollResetKey` changes. Skips the first
   // run: there is nothing to reset on mount, and a table that renders already
@@ -744,11 +832,26 @@ export function DataTable<T>({
         // leaves this alone.
         stackAt !== undefined && stackAt !== 480 && `uxm-data-table--stack-${stackAt}`,
         stackedRoles && 'uxm-data-table--stacked-roles',
+        scrollArrows === 'hover' && 'uxm-data-table--arrows-hover',
+        scrollArrows !== undefined && scrollArrows !== 'none' && 'uxm-data-table--arrows-inset',
         scrolls && 'uxm-data-table--scrollable',
         scrolls && edges.start && 'uxm-data-table--scrolled-start',
         scrolls && edges.end && 'uxm-data-table--scrolled-end',
         className,
       )}
+      // The measured pins, published for the arrow rules. Private (`--_uxm-`),
+      // because this is an implementation detail of the inset and not a knob
+      // anyone should set — and the snapshot of theming knobs only pins the
+      // public `--uxm-` names.
+      style={
+        insets.start || insets.end
+          ? ({
+              ...style,
+              '--_uxm-data-table-pin-start': `${insets.start}px`,
+              '--_uxm-data-table-pin-end': `${insets.end}px`,
+            } as CSSProperties)
+          : style
+      }
       {...rest}
     >
       {/* `table-layout: fixed` ONLY once a column declares a width. Under auto
@@ -767,7 +870,7 @@ export function DataTable<T>({
           cs-ops-portal pins an Open column on every list, so every list in that
           portal carried them. The scroller's own `focusable` has always been
           measured this way; the arrows just did not follow. */}
-      {scrolls && (edges.start || edges.end) && (
+      {scrolls && scrollArrows !== 'none' && (edges.start || edges.end) && (
         <ScrollArrows
           scrollerRef={scrollerRef}
           edges={edges}

@@ -53,6 +53,7 @@ export type {
   DataTableColumn,
   DataTableDensity,
   DataTableProps,
+  DataTableScrollArrows,
   DataTableSort,
   DataTableSortDirection,
   DataTableStackAt,

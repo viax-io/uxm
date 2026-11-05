@@ -112,6 +112,20 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable` scroll arrows can move off the pinned columns, and hide until they are needed.**
+  `scrollArrows` (`'always' | 'hover' | 'none'`). By default the arrows sit 4px inside the
+  table's edges, which puts them ON TOP of a pinned column rather than at the edges of the area
+  that scrolls — measured: a 32px arrow entirely inside a 180px pinned column, and the end arrow
+  inside the 56px actions column, clipping a kebab. All three values inset the arrows past the
+  pins; `'hover'` also shows them only while the table is hovered or focused, HIDES them at an
+  end instead of dimming, and renders nothing under `(hover: none)` where swiping is the
+  interaction. **The placement rides on the prop** — insetting moves the arrows in every table
+  that pins, so a table passing nothing is untouched, and it becomes the default in the next
+  major. Pin widths are measured (a `ResizeObserver` on the sticky header cells), because
+  `column.width` may be a percentage, absent, or `1%`. The hidden state uses `visibility`, not
+  opacity alone, so the control leaves the tab order. Knobs
+  `--uxm-data-table-scroll-arrow-{inset,transition}`; Studio exposes it as "Scroll Arrows".
+
 - `SearchDropdownOption.description` — an optional second line under the option's label,
   smaller and muted (a readable name over its code: "Autoship quote" / `AutoshipQuote`).
   Shown in the row and under the selected value in the trigger; matched by the search.
