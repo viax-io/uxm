@@ -2329,3 +2329,9 @@ reached the published library; now shipped in 2.8.0.
 - **A `target` glyph.** House-drawn rings and a centre dot with an arrow landed in it, for
   "reached" or "committed" (e.g. a value committed at a lifecycle step). `bullseye`, `goal`, `aim`,
   `hit` and `commit` resolve to it.
+
+### New in 4.80.2
+
+- **`DataTable` stacked cards label the actions cell with `actionsColumnLabel`** — it was a
+  hard-coded English "Actions", so a translated table showed English on every card. Pass
+  `actionsColumnLabel` in your language and both the header's accessible name and the card label follow.
