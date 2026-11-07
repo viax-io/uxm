@@ -1,3 +1,10 @@
+## [4.86.1](https://github.com/viax-io/uxm/compare/v4.86.0...v4.86.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* **studio:** save letter spacing in em, as the preview shows it ([12d3a44](https://github.com/viax-io/uxm/commit/12d3a44b07d1469ddee3388d5392efabbd12f0c4))
+
 # [4.86.0](https://github.com/viax-io/uxm/compare/v4.85.1...v4.86.0) (2026-11-07)
 
 

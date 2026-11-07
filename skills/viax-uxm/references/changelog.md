@@ -2392,3 +2392,11 @@ reached the published library; now shipped in 2.8.0.
   and restores it, which is what leaves `prefers-reduced-motion` nothing to reduce. It goes to
   the start edge in RTL too, in engines on the current CSSOM View spec (Chrome 85+, Safari 14+,
   Firefox). Unsetting the key does not reset. No new CSS and no new knobs.
+
+### New in 4.83.0
+
+- `SearchDropdownOption.description` — an optional second line under the option's label,
+  smaller and muted (a readable name over its code: "Autoship quote" / `AutoshipQuote`).
+  Shown in the row and under the selected value in the trigger; matched by the search.
+  Knobs `--uxm-search-dropdown-option-description-size` (11px) and `-color`
+  (`--color-text-muted`).
