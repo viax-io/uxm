@@ -59,7 +59,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `closeLabel` | `string` | `'Close navigation'` | Accessible name for the mobile drawer's close button. |
 | `expandLabel` | `string` | `'Expand sidebar'` | Accessible name for the collapse toggle while collapsed. |
 | `collapseLabel` | `string` | `'Collapse sidebar'` | Accessible name for the collapse toggle while expanded. |
-| `toggle` | `'header' \| 'edge'` | `'header'` | Where the collapse toggle sits. `header`: in the brand row (the collapsed icon expands the rail). `edge`: a round handle centred on the rail's right border, shown while the pointer is anywhere over the rail, within `--uxm-app-sidebar-edge-reveal` of the border, or on the handle, and always on keyboard focus; always shown on touch-only devices (no hover to reveal it), and hidden below 768px (the mobile drawer). It follows the nav in the tab order and reports `aria-expanded`. |
+| `toggle` | `'header' \| 'edge'` | `'header'` | Where the collapse toggle sits. `header`: in the brand row (the collapsed icon expands the rail). `edge`: a round handle centred on the rail's right border, shown while the pointer is anywhere over the rail, within `--uxm-app-sidebar-edge-reveal` of the border, or on the handle, and always on keyboard focus; always shown on devices without hover (`(hover: none)`, e.g. a tablet; nothing can reveal it there), and hidden below 768px (the mobile drawer). It follows the nav in the tab order and reports `aria-expanded`. |
 
 ### `AppSidebarBrand`
 

@@ -174,8 +174,8 @@ export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
    *   the pointer is over the rail or near its border, and whenever it has
    *   keyboard focus —
    *   the brand row (if any) then holds the brand alone. Always shown on
-   *   touch-only devices (nothing to hover), and not rendered below the
-   *   mobile breakpoint, where the drawer is the way in.
+   *   devices without hover (`(hover: none)`, e.g. a tablet), and hidden
+   *   below the mobile breakpoint, where the drawer is the way in.
    */
   toggle?: AppSidebarToggle;
 }
