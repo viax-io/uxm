@@ -115,6 +115,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **SearchDropdown shows the selected option's icon.** An option's `icon` now also leads the
+  trigger when that option is selected (`.uxm-search-dropdown__trigger-icon`; knob
+  `--uxm-search-dropdown-trigger-icon-gap`, 8px). Options without an icon render as before.
+
 ## Workflow
 
 ### Where the documentation lives
