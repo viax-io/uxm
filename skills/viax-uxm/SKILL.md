@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.86.1, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.87.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.86.1** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.87.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.86.1 — current API surface (overrides training data)
+## v4.87.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,22 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.84.0
-
-- **`DataTable` scroll arrows can move off the pinned columns, and hide until they are needed.**
-  `scrollArrows` (`'always' | 'hover' | 'none'`). By default the arrows sit 4px inside the
-  table's edges, which puts them ON TOP of a pinned column rather than at the edges of the area
-  that scrolls — measured: a 32px arrow entirely inside a 180px pinned column, and the end arrow
-  inside the 56px actions column, clipping a kebab. All three values inset the arrows past the
-  pins; `'hover'` also shows them only while the table is hovered or focused, HIDES them at an
-  end instead of dimming, and renders nothing under `(hover: none)` where swiping is the
-  interaction. **The placement rides on the prop** — insetting moves the arrows in every table
-  that pins, so a table passing nothing is untouched, and it becomes the default in the next
-  major. Pin widths are measured (a `ResizeObserver` on the sticky header cells), because
-  `column.width` may be a percentage, absent, or `1%`. The hidden state uses `visibility`, not
-  opacity alone, so the control leaves the tab order. Knobs
-  `--uxm-data-table-scroll-arrow-{inset,transition}`; Studio exposes it as "Scroll Arrows".
 
 ### New in 4.85.0
 
@@ -96,6 +80,14 @@ catalog.
   write `em`, like every `letter-spacing` in the library. The stylesheet is generated at save time, so a
   theme saved before this keeps `px` until it is saved again on this version.
 
+### New in 4.87.0
+
+- **Sentence-case sidebar headings.** `AppSidebar` section headings were always uppercase; the
+  case, tracking, size and weight are now knobs: `--uxm-app-sidebar-heading-{text-transform,
+  letter-spacing,font-size,font-weight}` (defaults `uppercase`, `0.06em`, `11px`, the strong
+  weight; unchanged). Set the transform to `none` to show headings as written. In Studio they are
+  App Sidebar's Section Heading group (Text Transform, Letter Spacing, Font Size, Font Weight).
+
 ### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
@@ -103,12 +95,6 @@ catalog.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
-
-- **Sentence-case sidebar headings.** `AppSidebar` section headings were always uppercase; the
-  case, tracking, size and weight are now knobs: `--uxm-app-sidebar-heading-{text-transform,
-  letter-spacing,font-size,font-weight}` (defaults `uppercase`, `0.06em`, `11px`, the strong
-  weight; unchanged). Set the transform to `none` to show headings as written. In Studio they are
-  App Sidebar's Section Heading group (Text Transform, Letter Spacing, Font Size, Font Weight).
 
 ## Workflow
 

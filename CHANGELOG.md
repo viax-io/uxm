@@ -1,3 +1,11 @@
+# [4.87.0](https://github.com/viax-io/uxm/compare/v4.86.1...v4.87.0) (2026-11-07)
+
+
+### Features
+
+* **app-sidebar:** section heading case, tracking, size and weight knobs ([d291112](https://github.com/viax-io/uxm/commit/d2911127d8cee3c0a08e3ccee3b8cfacb0381601))
+* **studio:** section heading typography in App Sidebar's panel ([9324636](https://github.com/viax-io/uxm/commit/93246365a2558a33c0ab91af569fe7017d551621)), closes [#135](https://github.com/viax-io/uxm/issues/135)
+
 ## [4.86.1](https://github.com/viax-io/uxm/compare/v4.86.0...v4.86.1) (2026-11-07)
 
 
