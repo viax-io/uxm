@@ -165,6 +165,7 @@ export type {
   MenuButtonVariant,
   MenuItem,
   MenuSeparator,
+  MenuControlRow,
   MenuEntry,
   MenuTriggerProps,
 } from './menu';

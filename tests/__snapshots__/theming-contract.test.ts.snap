@@ -1091,6 +1091,8 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-loader-message-size",
   "--uxm-loader-size",
   "--uxm-loader-track-color",
+  "--uxm-menu-control-gap",
+  "--uxm-menu-control-label-color",
   "--uxm-menu-item-active-bg",
   "--uxm-menu-item-active-color",
   "--uxm-menu-item-color",

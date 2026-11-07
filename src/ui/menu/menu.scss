@@ -76,6 +76,22 @@
   background-color: var(--uxm-menu-item-active-bg, var(--color-surface-alt));
   color: var(--uxm-menu-item-active-color, var(--color-text));
 }
+/* A labelled control row (MenuControlRow): label left, the control (e.g. a
+   ViewSwitcher) right. Not a command, so no hover surface; it shares the
+   item's padding and type so it lines up with the rows around it. */
+.uxm-menu__control {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--uxm-menu-control-gap, 12px);
+  padding: var(--uxm-menu-item-padding-y, 7px) var(--uxm-menu-item-padding-x, 10px);
+}
+.uxm-menu__control-label {
+  font-size: calc(var(--uxm-menu-item-font-size, 13px) * var(--type-scale, 1));
+  color: var(--uxm-menu-control-label-color, var(--color-text));
+}
+
 .uxm-menu__item--disabled {
   opacity: var(--uxm-menu-item-disabled-opacity, 0.4);
   cursor: not-allowed;

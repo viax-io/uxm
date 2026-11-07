@@ -98,10 +98,36 @@ export interface MenuSeparator {
   key?: string;
 }
 
-export type MenuEntry = MenuItem | MenuSeparator;
+/**
+ * A labelled control row — a quick setting set right in the menu (a
+ * `ViewSwitcher` for the theme, say), label on the left, control on the right.
+ * It is not a command: the CONTROL owns its value and its keys, picking in it
+ * does not close the menu, and arrow-key navigation steps over the row (Tab
+ * reaches the control). Reach for it for a value you flip while the menu is
+ * open; anything that runs an action and dismisses stays a `MenuItem`.
+ */
+export interface MenuControlRow {
+  /** Stable identity — used as React key. */
+  key: string;
+  /** Row label, on the left. A plain string also names the row's group for assistive tech. */
+  label: ReactNode;
+  /** The control, on the right — e.g. `<ViewSwitcher … />`. */
+  control: ReactNode;
+}
+
+export type MenuEntry = MenuItem | MenuSeparator | MenuControlRow;
 
 function isSeparator(entry: MenuEntry): entry is MenuSeparator {
   return (entry as MenuSeparator).separator === true;
+}
+
+function isControlRow(entry: MenuEntry): entry is MenuControlRow {
+  return 'control' in entry;
+}
+
+/** An actionable row — what keyboard nav, `current` and selection deal in. */
+function isItem(entry: MenuEntry): entry is MenuItem {
+  return !isSeparator(entry) && !isControlRow(entry);
 }
 
 /**
@@ -244,7 +270,7 @@ export function Menu({
   const focusableIndices = useMemo(() => {
     const idx: number[] = [];
     items.forEach((entry, i) => {
-      if (!isSeparator(entry) && !entry.disabled) idx.push(i);
+      if (isItem(entry) && !entry.disabled) idx.push(i);
     });
     return idx;
   }, [items]);
@@ -259,7 +285,7 @@ export function Menu({
   // "start here", so it keeps lighting row one exactly as before — no existing
   // consumer changes behaviour, since none of them pass `current` yet.
   const hasCurrent = useMemo(
-    () => items.some((entry) => !isSeparator(entry) && entry.current),
+    () => items.some((entry) => isItem(entry) && entry.current),
     [items],
   );
 
@@ -311,7 +337,7 @@ export function Menu({
     const itemIndex = focusableIndices[active];
     if (itemIndex == null) return;
     const entry = items[itemIndex];
-    if (isSeparator(entry)) return;
+    if (!isItem(entry)) return;
     itemRefs.current.get(entry.key)?.scrollIntoView({ block: 'nearest' });
   }, [active, open, items, focusableIndices]);
 
@@ -330,6 +356,9 @@ export function Menu({
   const onPanelKeyDown = useCallback(
      
     (e: React.KeyboardEvent) => {
+      // A key pressed inside a control row belongs to that control (a
+      // switcher's own Enter / Space / arrows), not to the menu's nav.
+      if (e.target !== e.currentTarget) return;
       const n = focusableIndices.length;
       if (n === 0) return;
       if (e.key === 'ArrowDown') {
@@ -351,7 +380,7 @@ export function Menu({
         if (active < 0) return;
         const itemIndex = focusableIndices[active];
         const entry = itemIndex != null ? items[itemIndex] : undefined;
-        if (entry && !isSeparator(entry)) select(entry);
+        if (entry && isItem(entry)) select(entry);
       }
       // Escape is handled globally by Popover.
     },
@@ -424,6 +453,19 @@ export function Menu({
                   className="uxm-menu__separator"
                   role="separator"
                 />
+              );
+            }
+            if (isControlRow(entry)) {
+              return (
+                <div
+                  key={entry.key}
+                  role="group"
+                  aria-label={typeof entry.label === 'string' ? entry.label : undefined}
+                  className="uxm-menu__control"
+                >
+                  <span className="uxm-menu__control-label">{entry.label}</span>
+                  {entry.control}
+                </div>
               );
             }
             const isActive = active >= 0 && focusableIndices[active] === i;
