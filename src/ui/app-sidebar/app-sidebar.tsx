@@ -173,9 +173,9 @@ export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
    * - `edge`: a round handle centred on the rail's right border, shown while
    *   the pointer is over the rail or near its border, and whenever it has
    *   keyboard focus —
-   *   the brand row (if any) then holds the brand alone. Not shown on
-   *   touch-only devices or below the mobile breakpoint, where the drawer
-   *   is the way in.
+   *   the brand row (if any) then holds the brand alone. Always shown on
+   *   devices without hover (`(hover: none)`, e.g. a tablet), and hidden
+   *   below the mobile breakpoint, where the drawer is the way in.
    */
   toggle?: AppSidebarToggle;
 }
