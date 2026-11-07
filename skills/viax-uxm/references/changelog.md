@@ -2350,3 +2350,10 @@ reached the published library; now shipped in 2.8.0.
   enclosing dialog have the key too (WCAG 1.4.13). The topmost layer is the
   innermost by `refs` containment, then the most recently enabled; `closeOnEscape: false` keeps
   a layer out of it so the key falls through. Outside clicks are untouched.
+
+### New in 4.80.5
+
+- **`--color-accent-subtle` is softer: `#E2F3E8` → `#ECF8F0`** (light theme only; dark
+  stays `#1A4A2C`). Icon tiles (PageHeader, TypeOverviewCard, ErrorPage), selected
+  options, chips and accent tags read lighter on white cards. `--color-accent-bold` on it
+  is 5.45:1.

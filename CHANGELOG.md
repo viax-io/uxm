@@ -1,3 +1,16 @@
+# [4.85.0](https://github.com/viax-io/uxm/compare/v4.84.0...v4.85.0) (2026-11-07)
+
+
+### Bug Fixes
+
+* **app-sidebar:** keep the edge toggle shown over the whole rail ([db66885](https://github.com/viax-io/uxm/commit/db668854248f53a23ea5695ff7f108407c87bafa))
+
+
+### Features
+
+* **app-sidebar:** show the edge toggle anywhere over the rail except on a row ([cc2a232](https://github.com/viax-io/uxm/commit/cc2a232bb998eff27444219b738f841a4aff0de0))
+* **page-shell:** full-width top bar, top-bar brand slot and sidebar edge toggle ([d8d1f7a](https://github.com/viax-io/uxm/commit/d8d1f7ab74f3943d2a28856accdea89c4ffe76fd))
+
 # [4.84.0](https://github.com/viax-io/uxm/compare/v4.83.0...v4.84.0) (2026-11-05)
 
 
