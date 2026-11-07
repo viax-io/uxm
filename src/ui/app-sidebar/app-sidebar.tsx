@@ -86,7 +86,13 @@ export const DEFAULT_SIDEBAR_ICON_COLORS: AppSidebarIconColor[] = [
 ];
 
 export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
-  brand: AppSidebarBrand;
+  /**
+   * The brand row's logo (expanded) and icon (collapsed). Optional: leave it
+   * out when the brand lives in the top bar instead (`PageShell
+   * topBarPlacement="above"`); the rail then starts with the `header` slot or
+   * the nav, and with `toggle="header"` the row holds only the collapse toggle.
+   */
+  brand?: AppSidebarBrand;
   sections: AppSidebarSection[];
   collapsed?: boolean;
   onCollapseToggle?: () => void;
@@ -159,7 +165,23 @@ export interface AppSidebarProps extends HTMLAttributes<HTMLElement> {
   expandLabel?: string;
   /** Accessible name for the collapse toggle while expanded. Default `"Collapse sidebar"`. */
   collapseLabel?: string;
+  /**
+   * Where the collapse toggle sits.
+   *
+   * - `header` (default): in the brand row (a chevron beside the logo; the
+   *   icon itself expands a collapsed rail).
+   * - `edge`: a round handle centred on the rail's right border, shown while
+   *   the pointer is over the rail or near its border, and whenever it has
+   *   keyboard focus —
+   *   the brand row (if any) then holds the brand alone. Not shown on
+   *   touch-only devices or below the mobile breakpoint, where the drawer
+   *   is the way in.
+   */
+  toggle?: AppSidebarToggle;
 }
+
+/** Where `AppSidebar`'s collapse toggle sits. */
+export type AppSidebarToggle = 'header' | 'edge';
 
 export function AppSidebar({
   brand,
@@ -176,9 +198,15 @@ export function AppSidebar({
   closeLabel = 'Close navigation',
   expandLabel = 'Expand sidebar',
   collapseLabel = 'Collapse sidebar',
+  toggle = 'header',
   className,
   ...rest
 }: AppSidebarProps) {
+  const edgeToggle = toggle === 'edge' && !!onCollapseToggle;
+  // The brand row: the brand, and the toggle when it lives here. Nothing to
+  // show (no brand, toggle on the edge) means no row at all.
+  const headerToggle = toggle === 'header' ? onCollapseToggle : undefined;
+  const showHeader = !!brand || !!headerToggle;
   // Resolve the auto-colour palette once: `true` → the built-in hues, an array
   // → the caller's, anything falsy → none (icons stay monochromatic).
   const iconPalette: AppSidebarIconColor[] =
@@ -265,30 +293,40 @@ export function AppSidebar({
         )}
         {...rest}
       >
+      {showHeader && (
       <div className="uxm-app-sidebar__header">
         {collapsed ? (
-          <button
-            type="button"
-            className="uxm-app-sidebar__brand uxm-app-sidebar__brand--icon"
-            onClick={onCollapseToggle}
-            aria-label={expandLabel}
-          >
-            {brand.iconUrl && (
-              <img src={brand.iconUrl} alt={brand.alt ?? ''} />
-            )}
-          </button>
+          headerToggle ? (
+            <button
+              type="button"
+              className="uxm-app-sidebar__brand uxm-app-sidebar__brand--icon"
+              onClick={headerToggle}
+              aria-label={expandLabel}
+            >
+              {brand?.iconUrl ? (
+                <img src={brand.iconUrl} alt={brand.alt ?? ''} />
+              ) : (
+                <Icon glyph="chevron-right" size={16} strokeWidth={1.5} />
+              )}
+            </button>
+          ) : (
+            // The toggle is on the edge: the collapsed icon is the brand alone.
+            <span className="uxm-app-sidebar__brand uxm-app-sidebar__brand--icon uxm-app-sidebar__brand--static">
+              {brand?.iconUrl && <img src={brand.iconUrl} alt={brand.alt ?? ''} />}
+            </span>
+          )
         ) : (
           <>
             <span className="uxm-app-sidebar__brand">
-              {brand.logoUrl && (
+              {brand?.logoUrl && (
                 <img src={brand.logoUrl} alt={brand.alt ?? ''} />
               )}
             </span>
-            {onCollapseToggle && (
+            {headerToggle && (
               <button
                 type="button"
                 className="uxm-app-sidebar__toggle"
-                onClick={onCollapseToggle}
+                onClick={headerToggle}
                 aria-label={collapseLabel}
               >
                 <Icon glyph="chevron-left" size={16} strokeWidth={1.5} />
@@ -297,6 +335,7 @@ export function AppSidebar({
           </>
         )}
       </div>
+      )}
 
       {header && <div className="uxm-app-sidebar__lead">{header}</div>}
 
@@ -374,6 +413,23 @@ export function AppSidebar({
           )}
         >
           {footer}
+        </div>
+      )}
+
+      {/* The edge toggle: a strip straddling the rail's right border (the
+          reveal zone) holding the round handle at its centre. Last in the
+          rail so it follows the nav in the tab order. */}
+      {edgeToggle && (
+        <div className="uxm-app-sidebar__edge">
+          <button
+            type="button"
+            className="uxm-app-sidebar__edge-toggle"
+            onClick={onCollapseToggle}
+            aria-label={collapsed ? expandLabel : collapseLabel}
+            aria-expanded={!collapsed}
+          >
+            <Icon glyph={collapsed ? 'chevron-right' : 'chevron-left'} size={14} strokeWidth={1.75} />
+          </button>
         </div>
       )}
     </aside>

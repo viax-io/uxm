@@ -4,6 +4,9 @@ import { Icon } from '@/ui/icon';
 import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface AppTopBarProps extends HTMLAttributes<HTMLElement> {
+  /** Leading brand (a logo link), first in the left column. Pair with
+      `PageShell topBarPlacement="above"` and an `AppSidebar` without a brand. */
+  brand?: ReactNode;
   /** Search input (use TextInput / InputWithIcon). */
   search?: ReactNode;
   /** Right-side actions (theme toggle, primary button, avatar, etc.). */
@@ -15,6 +18,7 @@ export interface AppTopBarProps extends HTMLAttributes<HTMLElement> {
 }
 
 export function AppTopBar({
+  brand,
   search,
   actions,
   onMobileMenuClick,
@@ -35,6 +39,7 @@ export function AppTopBar({
             <Icon glyph="menu" size={20} />
           </button>
         )}
+        {brand && <div className="uxm-app-top-bar__brand">{brand}</div>}
         {search && <div className="uxm-app-top-bar__search">{search}</div>}
       </div>
       {actions && <div className="uxm-app-top-bar__actions">{actions}</div>}
