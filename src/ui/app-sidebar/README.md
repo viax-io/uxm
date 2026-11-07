@@ -181,7 +181,8 @@ With the rail collapsed, hovering or tabbing to an icon shows its label in a pil
 | `--uxm-app-sidebar-edge-toggle-offset-y` | – | `50%` | `toggle="edge"`: the handle's vertical position on the border. |
 | `--uxm-app-sidebar-edge-toggle-z-index` | – | `5` | `toggle="edge"`: stacking of the strip over the content beside the rail. |
 | `--uxm-app-sidebar-edge-toggle-background-color` | `--color-card` | – | `toggle="edge"`: the handle's fill. |
-| `--uxm-app-sidebar-edge-toggle-color` | `--color-text-muted` | – | `toggle="edge"`: the chevron's colour (`--color-text` on hover and focus). |
+| `--uxm-app-sidebar-edge-toggle-color` | `--color-text-muted` | – | `toggle="edge"`: the chevron's resting colour. |
+| `--uxm-app-sidebar-edge-toggle-hover-color` | `--color-text` | – | `toggle="edge"`: the chevron's colour on hover and keyboard focus. |
 | `--uxm-app-sidebar-edge-toggle-shadow` | `--shadow-sm` | – | `toggle="edge"`: the handle's shadow. |
 | `--uxm-app-sidebar-edge-toggle-focus-ring-color` | `--color-accent` | – | `toggle="edge"`: the handle's focus ring. |
 | `--uxm-app-sidebar-footer-gap` | – | `8px` | Row gap between controls in the footer slot. |
@@ -218,6 +219,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Mobile drawer open | `mobileOpen={true}` | Adds `--mobile-open` modifier and renders the backdrop button as a sibling. Below 768px this slides the fixed rail in over the page behind a scrim; at wider widths the flag is inert and the backdrop is hidden. |
 | Toggle button | `onCollapseToggle` provided | Chevron-left icon rendered in the header; clickable to flip state. |
 | Heading hidden | `collapsed` truthy or `section.heading` undefined | Section heading paragraph is not rendered. |
+| Edge handle forced (Studio only) | `uxm-app-sidebar--state-edge-shown` / `--state-edge-hover` / `--state-edge-focus` on the root | Paints the `toggle="edge"` handle as resting, hovered or focused without a pointer, so its knobs can be previewed. They share selectors with the real `:hover` / `:focus-visible` rules; not for app use. |
 
 ## Accessibility
 

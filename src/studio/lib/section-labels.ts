@@ -42,4 +42,6 @@ export const SECTION_LABELS: Record<string, string> = {
   fileListStatus: 'File List Status',
   headerSlot: 'Header Slot',
   footerSlot: 'Footer Slot',
+  edgeToggle: 'Edge Toggle',
+  brandSlot: 'Brand Slot',
 };

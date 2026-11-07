@@ -47,6 +47,21 @@ export const appDefs: ComponentDef[] = [
       // instead of an "A x B" that implies each knob depends on both.
       { key: 'leadPadding', label: 'Padding', control: 'number', defaultValue: 8, min: 0, max: 24, step: 1, unit: 'px', section: 'headerSlot', showWhen: { headerSlot: 'on' } },
       { key: 'footerPadding', label: 'Padding', control: 'number', defaultValue: 8, min: 0, max: 24, step: 1, unit: 'px', section: 'footerSlot', showWhen: { footerSlot: 'on' } },
+      // `toggle="edge"`: the round handle on the rail's right border. All-gated
+      // on the one key, per the section rule above. Left out on purpose: the
+      // reveal zone (an invisible hit area, an interaction setting rather than
+      // a design value), the z-index (integration, like the flyout's) and the
+      // shadow (a toggle saves 1/0, which can't express a box-shadow).
+      { key: 'edgeToggleSize', label: 'Handle Size', control: 'number', defaultValue: 24, min: 20, max: 32, step: 2, unit: 'px', section: 'edgeToggle', showWhen: { toggle: 'edge' } },
+      // A select, not a number: a number knob saves as px, and the default is a
+      // percentage of the rail's height.
+      { key: 'edgeToggleOffsetY', label: 'Vertical Position', control: 'select', options: ['25%', '33%', '50%', '66%', '75%'], defaultValue: '50%', section: 'edgeToggle', showWhen: { toggle: 'edge' } },
+      { key: 'edgeToggleBackgroundColor', label: 'Handle Fill', control: 'color', defaultValue: 'var(--color-card)', section: 'edgeToggle', showWhen: { toggle: 'edge' } },
+      { key: 'edgeToggleColor', label: 'Chevron', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'edgeToggle', showWhen: { toggle: 'edge' } },
+      // Per-state, the `icon-button` way: each knob shows under the Handle
+      // state that paints it.
+      { key: 'edgeToggleHoverColor', label: 'Chevron', control: 'color', defaultValue: 'var(--color-text)', section: 'states', showWhen: { toggle: 'edge', handle: ['hover', 'focus'] } },
+      { key: 'edgeToggleFocusRingColor', label: 'Ring Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'states', showWhen: { toggle: 'edge', handle: 'focus' } },
     ],
     layoutVariants: [
       {
@@ -104,6 +119,50 @@ export const appDefs: ComponentDef[] = [
         ],
         defaultValue: 'on',
       },
+      // The 4.85.0 options last, so the Variant Matrix keeps its State x Header
+      // Slot axes (it expands the first two eligible variants in order).
+      {
+        // `toggle`: where the collapse toggle sits. A code prop, so this only
+        // picks what the preview shows; the app chooses it.
+        key: 'toggle',
+        label: 'Collapse Toggle',
+        options: [
+          { value: 'header', label: 'Header' },
+          { value: 'edge', label: 'Edge' },
+        ],
+        defaultValue: 'header',
+      },
+      {
+        // The edge handle appears only while the pointer is over the rail, so
+        // a designer editing its fill would see nothing change. The preview
+        // forces it: Shown (resting colours), Hover, or Focus. Inert while
+        // Collapse Toggle is Header (the label says whose it is).
+        //
+        // Deliberately NOT `showWhen: { toggle: 'edge' }`: the Variant Matrix
+        // treats a variant named in another's `showWhen` as a gate and pins it
+        // to that value in every cell, so the matrix would only ever show the
+        // edge handle and never the default header toggle. Its knobs stay
+        // gated on `toggle: 'edge'` (knob `showWhen` doesn't feed the matrix).
+        key: 'handle',
+        label: 'Edge Handle',
+        options: [
+          { value: 'shown', label: 'Shown' },
+          { value: 'hover', label: 'Hover' },
+          { value: 'focus', label: 'Focus' },
+        ],
+        defaultValue: 'shown',
+      },
+      {
+        // `brand` is optional: an app with its logo in a full-width top bar
+        // passes none, and the rail starts at the nav.
+        key: 'brandRow',
+        label: 'Brand Row',
+        options: [
+          { value: 'on', label: 'On' },
+          { value: 'off', label: 'Off' },
+        ],
+        defaultValue: 'on',
+      },
     ],
   },
   {
@@ -118,7 +177,22 @@ export const appDefs: ComponentDef[] = [
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 16, min: 8, max: 32, step: 2, unit: 'px' },
       { key: 'gap', label: 'Gap', control: 'number', defaultValue: 12, min: 4, max: 24, step: 2, unit: 'px' },
       { key: 'searchMaxWidth', label: 'Search Max Width', control: 'number', defaultValue: 320, min: 160, max: 480, step: 8, unit: 'px' },
+      { key: 'brandHeight', label: 'Logo Height', control: 'number', defaultValue: 24, min: 16, max: 40, step: 2, unit: 'px', section: 'brandSlot', showWhen: { brandSlot: 'logo' } },
+      { key: 'brandGap', label: 'Gap After Logo', control: 'number', defaultValue: 16, min: 0, max: 32, step: 2, unit: 'px', section: 'brandSlot', showWhen: { brandSlot: 'logo' } },
     ],
-    layoutVariants: [],
+    layoutVariants: [
+      {
+        // `brand` slot: the logo at the start of a full-width top bar
+        // (`PageShell topBarPlacement="above"`). The preview shows the Brand
+        // Settings logo.
+        key: 'brandSlot',
+        label: 'Brand Slot',
+        options: [
+          { value: 'off', label: 'Off' },
+          { value: 'logo', label: 'Logo' },
+        ],
+        defaultValue: 'off',
+      },
+    ],
   },
 ];

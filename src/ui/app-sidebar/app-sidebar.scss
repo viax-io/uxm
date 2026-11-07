@@ -110,13 +110,20 @@
     transition: opacity 0.15s ease, color 0.15s ease;
     width: var(--uxm-app-sidebar-edge-toggle-size, 24px);
 
-    &:hover {
-      color: var(--color-text);
+    /* The studio forces these with `uxm-app-sidebar--state-edge-hover` /
+       `--state-edge-focus` on the root (the handle is otherwise invisible
+       until the pointer finds it); they share the real rules' selectors. The
+       hover fallback differs from the resting `--color-text-muted`, so the
+       knob never ships a dead rule (gotchas.md). */
+    &:hover,
+    .uxm-app-sidebar--state-edge-hover & {
+      color: var(--uxm-app-sidebar-edge-toggle-hover-color, var(--color-text));
     }
 
-    &:focus-visible {
+    &:focus-visible,
+    .uxm-app-sidebar--state-edge-focus & {
       opacity: 1;
-      color: var(--color-text);
+      color: var(--uxm-app-sidebar-edge-toggle-hover-color, var(--color-text));
       outline: 2px solid var(--uxm-app-sidebar-edge-toggle-focus-ring-color, var(--color-accent));
       outline-offset: 2px;
     }
@@ -126,7 +133,9 @@
      doesn't blink as the pointer crosses them), and on the strip, which
      reaches a little past the border. */
   &:hover &__edge-toggle,
-  &__edge:hover &__edge-toggle {
+  &__edge:hover &__edge-toggle,
+  &--state-edge-shown &__edge-toggle,
+  &--state-edge-hover &__edge-toggle {
     opacity: 1;
   }
 
