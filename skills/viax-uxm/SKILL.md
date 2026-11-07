@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.85.1, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.86.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.85.1** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.86.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.85.1 — current API surface (overrides training data)
+## v4.86.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,22 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.82.0
-
-- **`DataTable` can send the horizontal scroller back to the start when the rows change.**
-  `scrollResetKey` — any string; when it changes, the scroller returns to its start edge.
-  Opt-in: without it the position is kept, which is what the table has always done. A scrolled
-  table that swaps its rows for a filter or a sort otherwise leaves the reader mid-table on
-  records they have not seen, because the scroller is the same element across the change and
-  nothing resets it. Derive the key from what caused the swap
-  (`` `${query}|${sort.key}|${sort.direction}` ``). It is a key rather than a watch on `rows`
-  because only the caller knows whether new rows replace the old ones or continue them —
-  "load more" keeps the same key and keeps the position. The reset is FORCED instant — setting
-  `scrollLeft` honours the computed `scroll-behavior`, so the table pins `auto` for the write
-  and restores it, which is what leaves `prefers-reduced-motion` nothing to reduce. It goes to
-  the start edge in RTL too, in engines on the current CSSOM View spec (Chrome 85+, Safari 14+,
-  Firefox). Unsetting the key does not reset. No new CSS and no new knobs.
 
 ### New in 4.83.0
 
@@ -103,13 +87,7 @@ catalog.
   is nothing to reveal it), and still hidden below 768px. A touch device that reports hover (an iPad
   with a trackpad) keeps the reveal on hover and focus. The 4.85.0 note above ("hidden on touch-only devices") no longer holds.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.86.0
 
 - **Studio covers 4.85.0's shell options, plus one knob.** `AppSidebar` gains
   `--uxm-app-sidebar-edge-toggle-hover-color` (default `--color-text`, the colour the edge handle's
@@ -118,6 +96,14 @@ catalog.
   without a pointer) and Brand Row pickers, with an Edge Toggle section (size, vertical position, fill, chevron);
   App Top Bar gets a Brand Slot picker with Logo Height and Gap After Logo; Page Shell gets Top Bar
   (Beside / Above). The previews use the Brand Settings logo.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 

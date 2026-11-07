@@ -1,3 +1,10 @@
+# [4.86.0](https://github.com/viax-io/uxm/compare/v4.85.1...v4.86.0) (2026-11-07)
+
+
+### Features
+
+* **studio:** cover the shell header and edge toggle in Studio ([f7ced2d](https://github.com/viax-io/uxm/commit/f7ced2d697966ade400bae2d6c941316075dfb3f))
+
 ## [4.85.1](https://github.com/viax-io/uxm/compare/v4.85.0...v4.85.1) (2026-11-07)
 
 
