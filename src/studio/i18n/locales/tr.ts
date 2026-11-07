@@ -1008,6 +1008,7 @@ export const messages: StudioMessages = {
     'Option': 'Seçenek',
     'Popover': 'Popover',
     'Range Options': 'Aralık seçenekleri',
+    'Section Heading': 'Bölüm başlığı',
     'Selected': 'Seçili',
     'Shared States': 'Ortak durumlar',
     'States': 'Durumlar',

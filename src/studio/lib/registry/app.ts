@@ -31,6 +31,14 @@ export const appDefs: ComponentDef[] = [
       { key: 'headerHeight', label: 'Logo Row Height', control: 'number', defaultValue: 64, min: 40, max: 96, step: 2, unit: 'px' },
       { key: 'headingColor', label: 'Section Heading', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
       { key: 'footerColor', label: 'Footer Text', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
+      // Section heading typography. Defaults equal the stylesheet's fallbacks.
+      // Weight is a select of strings and letter spacing an em number: a plain
+      // number knob saves as px (formatValue), which a weight can't take, and
+      // `*LetterSpacing` is the one name it saves in em.
+      { key: 'headingTextTransform', label: 'Text Transform', control: 'select', defaultValue: 'uppercase', options: ['uppercase', 'none', 'capitalize', 'lowercase'], section: 'sectionHeading' },
+      { key: 'headingLetterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0.06, min: 0, max: 0.2, step: 0.01, unit: 'em', section: 'sectionHeading' },
+      { key: 'headingFontSize', label: 'Font Size', control: 'number', defaultValue: 11, min: 9, max: 16, step: 1, unit: 'px', section: 'sectionHeading' },
+      { key: 'headingFontWeight', label: 'Font Weight', control: 'select', defaultValue: '600', options: ['400', '500', '600', '700'], section: 'sectionHeading' },
       // Both slots align to `__nav`'s 8px, so a control in either lines its text
       // up with the nav rows (8 + the child's own 12 = 20px, where a nav label
       // starts). The footer used to carry a 24px caption inset, which put a

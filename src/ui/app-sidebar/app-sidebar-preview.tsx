@@ -62,6 +62,9 @@ const SAMPLE_SECTIONS = [
 
 // Mirrors the `headerHeight` knob's registry default — see the projection below.
 const HEADER_HEIGHT_DEFAULT = 64;
+// Mirrors `headingFontWeight`'s registry default, which stands for the brand's
+// strong weight (`--font-weight-strong`), not a literal 600 — see below.
+const HEADING_WEIGHT_DEFAULT = '600';
 
 export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
   const brand = shell?.brand ?? {};
@@ -103,6 +106,18 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
     ['--uxm-app-sidebar-lead-padding' as string]: `${styles.leadPadding as number}px`,
     ['--uxm-app-sidebar-footer-padding' as string]: `${styles.footerPadding as number}px`,
     ['--uxm-app-sidebar-nav-padding-top' as string]: `${styles.navPaddingTop as number}px`,
+    ['--uxm-app-sidebar-heading-color' as string]: styles.headingColor as string,
+    ['--uxm-app-sidebar-footer-color' as string]: styles.footerColor as string,
+    ['--uxm-app-sidebar-heading-text-transform' as string]: styles.headingTextTransform as string,
+    ['--uxm-app-sidebar-heading-letter-spacing' as string]: `${styles.headingLetterSpacing as number}em`,
+    ['--uxm-app-sidebar-heading-font-size' as string]: `${styles.headingFontSize as number}px`,
+    // Projected only once moved off the default. Unset, the heading follows
+    // `--font-weight-strong`, which Brand Settings' strong weight sets; a
+    // projected '600' would pin it and hide that (same trap as the header
+    // height below).
+    ...(styles.headingFontWeight !== HEADING_WEIGHT_DEFAULT && {
+      ['--uxm-app-sidebar-heading-font-weight' as string]: styles.headingFontWeight as string,
+    }),
     // Projected ONLY once moved off the registry default. Unset, the logo row
     // follows `--uxm-app-top-bar-height`; projecting the default 64px would
     // pin it and hide that fallback — the "studio never runs the fallback

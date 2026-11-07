@@ -1002,6 +1002,7 @@ export const messages: StudioMessages = {
     'Option': 'オプション',
     'Popover': 'ポップオーバー',
     'Range Options': '範囲オプション',
+    'Section Heading': 'セクション見出し',
     'Selected': '選択中',
     'Shared States': '共通の状態',
     'States': '状態',

@@ -1014,6 +1014,7 @@ export const messages: StudioMessages = {
     'Option': 'Option',
     'Popover': 'Popover',
     'Range Options': 'Options de plage',
+    'Section Heading': 'Titre de section',
     'Selected': 'Sélectionné',
     'Shared States': 'États partagés',
     'States': 'États',
