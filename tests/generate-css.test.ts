@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { registry } from '@/studio/lib/registry';
 import type { BrandConfig } from '@/studio/lib/types';
 import { generateOverridesCss } from '@/studio/persistence/generate-css';
 
@@ -30,6 +31,30 @@ describe('generateOverridesCss', () => {
     expect(css).toContain('font-weight: 600;');
     expect(css).toContain('--uxm-input-text-disabled-opacity: 0.4;');
     expect(css).toContain('--uxm-input-text-item-disabled-opacity: 0.5;');
+  });
+
+  it('saves letter spacing in em, the unit the preview and every stylesheet use', () => {
+    const css = generateOverridesCss({ 'sidebar-nav-trigger': { captionLetterSpacing: 0.1 } }, brand);
+    expect(css).toContain('--uxm-sidebar-nav-trigger-caption-letter-spacing: 0.1em;');
+    expect(css).not.toContain('0.1px');
+  });
+
+  it('saves every registry number knob in the unit it declares', () => {
+    // A knob's `unit` is metadata the save path never sees: formatValue picks
+    // units by key name. When the two disagree, the preview (which projects the
+    // declared unit) and a saved theme render different values, as Sidebar Nav
+    // Trigger's em letter spacing did when it saved as px. Each knob goes through
+    // the real emitter at its default and must come out in its declared unit.
+    const wrong = registry.flatMap((def) =>
+      def.styleProperties
+        .filter((p) => (p.control === 'number' || p.control === 'slider') && p.unit && typeof p.defaultValue === 'number')
+        .flatMap((p) => {
+          const css = generateOverridesCss({ [def.id]: { [p.key]: p.defaultValue } }, brand);
+          const declared = css.split('\n').find((line) => line.trim().endsWith(';') && !line.includes('{'));
+          return declared?.trim().endsWith(`${p.defaultValue}${p.unit};`) ? [] : [`${def.id}.${p.key} (${p.unit}): ${declared?.trim()}`];
+        }),
+    );
+    expect(wrong).toEqual([]);
   });
 
   it('drops an override value that could break out of the declaration', () => {
