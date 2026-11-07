@@ -1,3 +1,10 @@
+## [4.85.1](https://github.com/viax-io/uxm/compare/v4.85.0...v4.85.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* **app-sidebar:** keep the edge toggle shown on touch-only devices ([37224f0](https://github.com/viax-io/uxm/commit/37224f0525db6784eb0b5040e13eb9eccd2eb07c))
+
 # [4.85.0](https://github.com/viax-io/uxm/compare/v4.84.0...v4.85.0) (2026-11-07)
 
 

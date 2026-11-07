@@ -395,12 +395,22 @@
   }
 }
 
-/* The edge toggle is a pointer affordance: on the mobile drawer, and on a
-   touch-only device, it has no place (the drawer's own controls open and close
-   the rail). */
-@media (max-width: 767px), (hover: none) {
+/* Below 768px the rail is the mobile drawer, whose own controls open and
+   close it, so the edge toggle has no place there. */
+@media (max-width: 767px) {
   .uxm-app-sidebar__edge {
     display: none;
+  }
+}
+
+/* A touch-only device at rail widths (a tablet) has no hover to reveal the
+   handle, and with `toggle="edge"` it is the rail's only collapse control —
+   hiding it left the rail stuck in whichever state it was in. So it stays
+   shown. After the base rule on purpose: same specificity, so it wins by
+   source order. */
+@media (min-width: 768px) and (hover: none) {
+  .uxm-app-sidebar__edge-toggle {
+    opacity: 1;
   }
 }
 

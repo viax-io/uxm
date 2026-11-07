@@ -2357,3 +2357,22 @@ reached the published library; now shipped in 2.8.0.
   stays `#1A4A2C`). Icon tiles (PageHeader, TypeOverviewCard, ErrorPage), selected
   options, chips and accent tags read lighter on white cards. `--color-accent-bold` on it
   is 5.45:1.
+
+### New in 4.81.0
+
+- **`DataTable` cards can have a shape, not just labelled cells.** `column.stackedRole`
+  (`'title' | 'field' | 'actions' | 'hidden'`) turns a stacked row into a card with a title,
+  labelled fields and an actions footer — for a table of six columns, which otherwise stacks
+  into a column of labels. Opt-in twice: the layout applies only once some column names a
+  role, and naming one switches the whole table (unnamed columns become fields), so a card is
+  never half one shape and half the other. A `field` renders a real `<dl><dt>/<dd>` rather
+  than the decorative `content: attr(data-label)` pseudo — stacked mode hides the `<thead>`,
+  so without it a screen reader meets a column of bare values. One `dl` per cell, because a
+  container query means one DOM serves both layouts and a `dl` cannot wrap `<td>`s. The
+  actions footer is visual: the row IS the card, so its cell is inside the row's activation
+  target. The `rowActions` kebab stops propagation itself; a column you mark `actions` does
+  NOT, so a button in it fires `onRowClick` too unless you stop it — true of any cell, and
+  unchanged by the footer framing. An `actions` column and a kebab share one divider, and an
+  empty footer is dropped. A field whose `header` is not a string needs `column.label` or it
+  renders unlabelled. Eight `--uxm-data-table-stacked-*` knobs; Studio exposes it as the
+  "Card Shape" variant.
