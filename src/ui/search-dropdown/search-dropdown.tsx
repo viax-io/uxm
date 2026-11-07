@@ -168,6 +168,11 @@ export function SearchDropdown({
             error && 'uxm-search-dropdown__trigger--error',
           )}
         >
+          {selected?.icon && (
+            <span className="uxm-search-dropdown__trigger-icon" aria-hidden="true">
+              {selected.icon}
+            </span>
+          )}
           {selected?.description ? (
             <span className="uxm-search-dropdown__trigger-text">
               <span className="uxm-search-dropdown__trigger-label">{selected.label}</span>

@@ -1338,6 +1338,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-search-dropdown-trigger-font-size",
   "--uxm-search-dropdown-trigger-hover-bg",
   "--uxm-search-dropdown-trigger-hover-border",
+  "--uxm-search-dropdown-trigger-icon-gap",
   "--uxm-search-dropdown-trigger-padding-x",
   "--uxm-search-dropdown-trigger-padding-y",
   "--uxm-search-dropdown-trigger-placeholder-color",
