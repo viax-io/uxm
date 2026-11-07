@@ -122,7 +122,7 @@ catalog.
   (knobs `--uxm-app-top-bar-brand-{gap,height}`). `AppSidebar.brand` is now optional (no brand row when it's left out),
   and `AppSidebar` gains `toggle?: 'header' | 'edge'` (default `'header'`, unchanged): `'edge'`
   puts the collapse toggle on a round handle centred on the rail's right border, shown while the
-  pointer is near the border and on keyboard focus, hidden on touch-only devices and the mobile
+  pointer is over the rail (not on a row or other control) or near its border, and on keyboard focus, hidden on touch-only devices and the mobile
   drawer. Knobs `--uxm-app-sidebar-edge-{reveal,toggle-size,toggle-offset-y,toggle-z-index,
   toggle-background-color,toggle-color,toggle-shadow,toggle-focus-ring-color}`.
 
