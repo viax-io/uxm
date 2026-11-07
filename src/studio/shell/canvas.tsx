@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { cn } from '@/helpers';
 import {
@@ -275,8 +276,13 @@ export function Canvas({
   embed = false,
   headerActions,
   account,
+  headerSlot,
 }: {
   embed?: boolean;
+  /** Embedded hosts: where the component's header goes — a row above the
+      sidebar and canvas, so the studio reads like the host's own page
+      (title and actions on the page background, not in the canvas). */
+  headerSlot?: HTMLElement | null;
   /** Optional host-provided actions rendered at the end of the top-bar
       cluster, right after the Preview & Publish button (e.g. a user avatar). */
   headerActions?: ReactNode;
@@ -313,8 +319,76 @@ export function Canvas({
   const Preview = previewMap[def.id];
   const hasOverrides = Object.keys(overrides).length > 0;
 
+  const header = (
+    <div
+      className={cn(
+        '@container flex items-center justify-between gap-3',
+        headerSlot ? 'px-6 pt-5 pb-4' : 'border-b border-border px-6 py-4',
+      )}
+    >
+      {/* min-w-0 enables `truncate` on the children — without it the
+          flex item ignores the constraint and pushes the actions
+          cluster off-screen. */}
+      <div className="min-w-0 flex-1">
+        <h2 className={cn('font-semibold text-text truncate', headerSlot ? 'text-[22px] leading-tight' : 'text-[15px]')}>
+          {t('component', def.name)}
+        </h2>
+        <p
+          className={cn(
+            'text-text-muted hidden @[640px]:block truncate',
+            headerSlot ? 'text-[13px] mt-1' : 'text-xs mt-0.5',
+          )}
+        >
+          {t('description', def.description)}
+        </p>
+      </div>
+      {/* flex-shrink-0 keeps the actions cluster from wrapping; the
+          label spans inside the secondary buttons hide first when
+          space gets tight. */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        {hasOverrides && (
+          <ButtonGhost onClick={() => resetOverrides(selectedId)} title={t('chrome', 'Reset overrides')}>
+            <Icon glyph="refresh" size={14} />
+            <span className="hidden @[480px]:inline">{t('chrome', 'Reset')}</span>
+          </ButtonGhost>
+        )}
+        {/* Language — only when the host passed no `locale` (then the studio
+            owns the pick for the session). A host that passes one owns it
+            and renders its own control, so nothing shows here. */}
+        {setLocale && (
+          <LanguageSwitcher
+            locales={STUDIO_LOCALE_TAGS}
+            value={locale}
+            onChange={setLocale}
+            getLabel={studioEndonym}
+            label={t('chrome', 'Language')}
+            searchLabel={t('chrome', 'Search languages')}
+          />
+        )}
+        {/* Light/dark toggle — only in the standalone portal (the studio
+            owns the theme here; ThemeSync mirrors it onto data-theme). An
+            embedded host renders its own theme control. */}
+        {!embed && (
+          <IconButton
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label={theme === 'dark' ? t('chrome', 'Switch to light theme') : t('chrome', 'Switch to dark theme')}
+            title={theme === 'dark' ? t('chrome', 'Switch to light theme') : t('chrome', 'Switch to dark theme')}
+          >
+            <Icon glyph={theme === 'dark' ? 'sun' : 'moon'} size={16} />
+          </IconButton>
+        )}
+        <ButtonPrimary onClick={() => setPreviewOpen(true)}>
+          <Icon glyph="eye" size={14} />
+          {capabilities.persist ? t('chrome', 'Preview & Publish') : t('chrome', 'Preview')}
+        </ButtonPrimary>
+        {headerActions}
+        {account && <AccountMenu account={account} embed={embed} />}
+      </div>
+    </div>
+  );
+
   return (
-    <div className="flex h-full flex-col bg-card">
+    <div className={cn('flex h-full flex-col', !headerSlot && 'bg-card')}>
       {/* Toolbar — uses container queries so the layout adapts to the
           canvas's actual width, not the viewport. The canvas can be
           much narrower than the viewport when the sidebar + properties
@@ -324,59 +398,7 @@ export function Canvas({
             480-640 hide description, keep labels
             <480px  icon-only secondary buttons; primary CTA stays
                     labelled (Preview & Publish is moment-of-truth). */}
-      <div className="@container flex items-center justify-between gap-3 border-b border-border px-6 py-4">
-        {/* min-w-0 enables `truncate` on the children — without it the
-            flex item ignores the constraint and pushes the actions
-            cluster off-screen. */}
-        <div className="min-w-0 flex-1">
-          <h2 className="text-[15px] font-semibold text-text truncate">{t('component', def.name)}</h2>
-          <p className="text-xs text-text-muted mt-0.5 hidden @[640px]:block truncate">
-            {t('description', def.description)}
-          </p>
-        </div>
-        {/* flex-shrink-0 keeps the actions cluster from wrapping; the
-            label spans inside the secondary buttons hide first when
-            space gets tight. */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {hasOverrides && (
-            <ButtonGhost onClick={() => resetOverrides(selectedId)} title={t('chrome', 'Reset overrides')}>
-              <Icon glyph="refresh" size={14} />
-              <span className="hidden @[480px]:inline">{t('chrome', 'Reset')}</span>
-            </ButtonGhost>
-          )}
-          {/* Language — only when the host passed no `locale` (then the studio
-              owns the pick for the session). A host that passes one owns it
-              and renders its own control, so nothing shows here. */}
-          {setLocale && (
-            <LanguageSwitcher
-              locales={STUDIO_LOCALE_TAGS}
-              value={locale}
-              onChange={setLocale}
-              getLabel={studioEndonym}
-              label={t('chrome', 'Language')}
-              searchLabel={t('chrome', 'Search languages')}
-            />
-          )}
-          {/* Light/dark toggle — only in the standalone portal (the studio
-              owns the theme here; ThemeSync mirrors it onto data-theme). An
-              embedded host renders its own theme control. */}
-          {!embed && (
-            <IconButton
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              aria-label={theme === 'dark' ? t('chrome', 'Switch to light theme') : t('chrome', 'Switch to dark theme')}
-              title={theme === 'dark' ? t('chrome', 'Switch to light theme') : t('chrome', 'Switch to dark theme')}
-            >
-              <Icon glyph={theme === 'dark' ? 'sun' : 'moon'} size={16} />
-            </IconButton>
-          )}
-          <ButtonPrimary onClick={() => setPreviewOpen(true)}>
-            <Icon glyph="eye" size={14} />
-            {capabilities.persist ? t('chrome', 'Preview & Publish') : t('chrome', 'Preview')}
-          </ButtonPrimary>
-          {headerActions}
-          {account && <AccountMenu account={account} embed={embed} />}
-        </div>
-      </div>
+      {headerSlot ? createPortal(header, headerSlot) : header}
 
       {/* Preview area with optional dot grid */}
       <div
