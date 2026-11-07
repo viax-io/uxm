@@ -10,6 +10,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-app-sidebar-edge-toggle-background-color",
   "--uxm-app-sidebar-edge-toggle-color",
   "--uxm-app-sidebar-edge-toggle-focus-ring-color",
+  "--uxm-app-sidebar-edge-toggle-hover-color",
   "--uxm-app-sidebar-edge-toggle-offset-y",
   "--uxm-app-sidebar-edge-toggle-shadow",
   "--uxm-app-sidebar-edge-toggle-size",

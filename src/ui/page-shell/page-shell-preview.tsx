@@ -29,8 +29,16 @@ const SAMPLE_SECTIONS = [
   },
 ];
 
-export function PageShellPreview({ styles, variants }: PreviewProps) {
+export function PageShellPreview({ styles, variants, shell }: PreviewProps) {
   const variant = (variants.variant as PageShellVariant) ?? 'standard';
+  const above = variants.topBar === 'above';
+  // The Brand Settings logo, theme-aware like the sidebar preview's. Above:
+  // the logo moves to the top bar, the sidebar drops its brand row and puts
+  // its collapse toggle on the edge (shown, since nothing hovers a preview).
+  const brand = shell?.brand ?? {};
+  const dark = shell?.theme === 'dark';
+  const logoUrl = (dark && brand.logoUrlDark) || brand.logoUrl || '/viax-logo.svg';
+  const iconUrl = (dark && brand.iconUrlDark) || brand.iconUrl || '/viax-icon.svg';
   const wrapperStyle: CSSProperties = {
     width: 720,
     height: 420,
@@ -44,10 +52,14 @@ export function PageShellPreview({ styles, variants }: PreviewProps) {
   return (
     <PageShell
       variant={variant}
+      topBarPlacement={above ? 'above' : 'beside'}
       style={wrapperStyle}
       sidebar={
         <AppSidebar
-          brand={{ logoUrl: '/viax-logo.svg', iconUrl: '/viax-icon.svg', alt: 'Brand' }}
+          brand={above ? undefined : { logoUrl, iconUrl, alt: 'Brand' }}
+          toggle={above ? 'edge' : 'header'}
+          onCollapseToggle={above ? () => {} : undefined}
+          className={above ? 'uxm-app-sidebar--state-edge-shown' : undefined}
           sections={SAMPLE_SECTIONS}
           collapsed={false}
           footer={<span>v0.1.0</span>}
@@ -76,6 +88,7 @@ export function PageShellPreview({ styles, variants }: PreviewProps) {
           </div>
         ) : (
           <AppTopBar
+            brand={above ? <img src={logoUrl} alt="Brand" /> : undefined}
             search={
               <InputWithIcon
                 type="search"
