@@ -71,6 +71,13 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
   const collapsedFlyout = (variants.collapsedFlyout ?? 'on') === 'on';
   const withHeader = (variants.headerSlot ?? 'on') === 'on';
   const withFooter = (variants.footerSlot ?? 'on') === 'on';
+  const toggle = variants.toggle === 'edge' ? 'edge' : 'header';
+  const withBrand = (variants.brandRow ?? 'on') === 'on';
+  // The edge handle only appears under the pointer; force the picked state so
+  // its knobs have something to paint (`--state-edge-*`, preview-only classes
+  // that share the real `:hover` / `:focus-visible` selectors).
+  const handle = (variants.handle as string) ?? 'shown';
+  const edgeState = toggle === 'edge' ? `uxm-app-sidebar--state-edge-${handle}` : undefined;
 
   // Pick the right brand asset for the active theme. Dark variants are
   // optional in BrandConfig — fall back through (dark → light → bundled
@@ -104,6 +111,12 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
     ...(styles.headerHeight !== HEADER_HEIGHT_DEFAULT && {
       ['--uxm-app-sidebar-header-height' as string]: `${styles.headerHeight as number}px`,
     }),
+    ['--uxm-app-sidebar-edge-toggle-size' as string]: `${styles.edgeToggleSize as number}px`,
+    ['--uxm-app-sidebar-edge-toggle-offset-y' as string]: styles.edgeToggleOffsetY as string,
+    ['--uxm-app-sidebar-edge-toggle-background-color' as string]: styles.edgeToggleBackgroundColor as string,
+    ['--uxm-app-sidebar-edge-toggle-color' as string]: styles.edgeToggleColor as string,
+    ['--uxm-app-sidebar-edge-toggle-hover-color' as string]: styles.edgeToggleHoverColor as string,
+    ['--uxm-app-sidebar-edge-toggle-focus-ring-color' as string]: styles.edgeToggleFocusRingColor as string,
     width: collapsed ? (styles.collapsedWidth as number) : (styles.expandedWidth as number),
     height: 480,
   };
@@ -158,7 +171,9 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
 
   return (
     <AppSidebar
-      brand={{ logoUrl, iconUrl, alt: 'Brand' }}
+      brand={withBrand ? { logoUrl, iconUrl, alt: 'Brand' } : undefined}
+      toggle={toggle}
+      className={edgeState}
       sections={SAMPLE_SECTIONS}
       autoIconColors={autoIconColors}
       collapsedFlyout={collapsedFlyout}

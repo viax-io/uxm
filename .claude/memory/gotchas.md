@@ -684,3 +684,32 @@ things bite there, both verified in the portal:
 2. **One Escape dismisses the dropdown AND the dialog.** Both listen, and
    neither stops the other. Not fixed — noted so the next person doesn't treat
    it as a bug in their own composition.
+
+## A number knob's `unit` never reaches the saved stylesheet
+
+A registry knob's `unit` (`unit: 'em'`) is display metadata for the panel. The
+preview projects whatever unit its own code writes, but the save path
+(`formatValue` in `src/studio/persistence/generate-css.ts`) never sees the
+registry: it picks a number's unit **by key name** (`*Opacity`, `*LineHeight`
+and a short list unitless, `*LetterSpacing` em, everything else `px`). A knob
+whose declared unit disagrees with that rule looks right in Studio and saves
+wrong.
+
+**This actually happened — Sidebar Nav Trigger's `captionLetterSpacing`** (a
+number, `unit: 'em'`, default 0.06). The preview projected `0.06em`; a saved
+theme got `0.06px`, effectively no tracking. Fixed by the `*LetterSpacing → em`
+rule. **Studio's CSS tab is no check for this:** it formats with the declared
+unit (`src/studio/editors/code-editor.tsx`), so it showed `0.06em` too. It is a
+third formatter, not the save path. To see what a save writes, call
+`generateOverridesCss` (as the test does).
+
+**How to apply:** a number knob in anything but px needs its key matched in
+`formatValue`, or must be a `select` of full strings (`'0.06em'`, `'50%'`),
+which pass through verbatim. A unitless one (a weight, a ratio) needs the same:
+a `fontWeight`-style number not on the unitless list saves as `600px`, which
+is invalid and dropped. `tests/generate-css.test.ts` ("saves every registry
+number knob in the unit it declares") fails for a declared `unit` the save path
+doesn't produce; a knob with no `unit` that must be unitless is still on you.
+
+Related: "A per-state var whose fallback is the resting value ships a dead rule",
+the same family of the workbench looking right while the shipped path is wrong.

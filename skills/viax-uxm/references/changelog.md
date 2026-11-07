@@ -2350,3 +2350,53 @@ reached the published library; now shipped in 2.8.0.
   enclosing dialog have the key too (WCAG 1.4.13). The topmost layer is the
   innermost by `refs` containment, then the most recently enabled; `closeOnEscape: false` keeps
   a layer out of it so the key falls through. Outside clicks are untouched.
+
+### New in 4.80.5
+
+- **`--color-accent-subtle` is softer: `#E2F3E8` → `#ECF8F0`** (light theme only; dark
+  stays `#1A4A2C`). Icon tiles (PageHeader, TypeOverviewCard, ErrorPage), selected
+  options, chips and accent tags read lighter on white cards. `--color-accent-bold` on it
+  is 5.45:1.
+
+### New in 4.81.0
+
+- **`DataTable` cards can have a shape, not just labelled cells.** `column.stackedRole`
+  (`'title' | 'field' | 'actions' | 'hidden'`) turns a stacked row into a card with a title,
+  labelled fields and an actions footer — for a table of six columns, which otherwise stacks
+  into a column of labels. Opt-in twice: the layout applies only once some column names a
+  role, and naming one switches the whole table (unnamed columns become fields), so a card is
+  never half one shape and half the other. A `field` renders a real `<dl><dt>/<dd>` rather
+  than the decorative `content: attr(data-label)` pseudo — stacked mode hides the `<thead>`,
+  so without it a screen reader meets a column of bare values. One `dl` per cell, because a
+  container query means one DOM serves both layouts and a `dl` cannot wrap `<td>`s. The
+  actions footer is visual: the row IS the card, so its cell is inside the row's activation
+  target. The `rowActions` kebab stops propagation itself; a column you mark `actions` does
+  NOT, so a button in it fires `onRowClick` too unless you stop it — true of any cell, and
+  unchanged by the footer framing. An `actions` column and a kebab share one divider, and an
+  empty footer is dropped. A field whose `header` is not a string needs `column.label` or it
+  renders unlabelled. Eight `--uxm-data-table-stacked-*` knobs; Studio exposes it as the
+  "Card Shape" variant.
+
+### New in 4.82.0
+
+- **`DataTable` can send the horizontal scroller back to the start when the rows change.**
+  `scrollResetKey` — any string; when it changes, the scroller returns to its start edge.
+  Opt-in: without it the position is kept, which is what the table has always done. A scrolled
+  table that swaps its rows for a filter or a sort otherwise leaves the reader mid-table on
+  records they have not seen, because the scroller is the same element across the change and
+  nothing resets it. Derive the key from what caused the swap
+  (`` `${query}|${sort.key}|${sort.direction}` ``). It is a key rather than a watch on `rows`
+  because only the caller knows whether new rows replace the old ones or continue them —
+  "load more" keeps the same key and keeps the position. The reset is FORCED instant — setting
+  `scrollLeft` honours the computed `scroll-behavior`, so the table pins `auto` for the write
+  and restores it, which is what leaves `prefers-reduced-motion` nothing to reduce. It goes to
+  the start edge in RTL too, in engines on the current CSSOM View spec (Chrome 85+, Safari 14+,
+  Firefox). Unsetting the key does not reset. No new CSS and no new knobs.
+
+### New in 4.83.0
+
+- `SearchDropdownOption.description` — an optional second line under the option's label,
+  smaller and muted (a readable name over its code: "Autoship quote" / `AutoshipQuote`).
+  Shown in the row and under the selected value in the trigger; matched by the search.
+  Knobs `--uxm-search-dropdown-option-description-size` (11px) and `-color`
+  (`--color-text-muted`).

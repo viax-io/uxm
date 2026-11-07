@@ -44,7 +44,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `brand` | `AppSidebarBrand` | – | **Required.** Logo + collapsed-icon descriptor. |
+| `brand` | `AppSidebarBrand` | – | Logo + collapsed-icon descriptor. Optional: leave it out when the brand lives in a full-width top bar (`PageShell topBarPlacement="above"`); with no brand and `toggle="edge"` there's no brand row at all. |
 | `sections` | `AppSidebarSection[]` | – | **Required.** Ordered list of nav groups. |
 | `collapsed` | `boolean` | `false` | When true, applies `--collapsed` modifier and hides labels / headings. Both slots still render. |
 | `onCollapseToggle` | `() => void` | – | Click handler for the chevron toggle; also reused as the click handler on the collapsed brand button. |
@@ -59,6 +59,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `closeLabel` | `string` | `'Close navigation'` | Accessible name for the mobile drawer's close button. |
 | `expandLabel` | `string` | `'Expand sidebar'` | Accessible name for the collapse toggle while collapsed. |
 | `collapseLabel` | `string` | `'Collapse sidebar'` | Accessible name for the collapse toggle while expanded. |
+| `toggle` | `'header' \| 'edge'` | `'header'` | Where the collapse toggle sits. `header`: in the brand row (the collapsed icon expands the rail). `edge`: a round handle centred on the rail's right border, shown while the pointer is anywhere over the rail, within `--uxm-app-sidebar-edge-reveal` of the border, or on the handle, and always on keyboard focus; always shown on devices without hover (`(hover: none)`, e.g. a tablet; nothing can reveal it there), and hidden below 768px (the mobile drawer). It follows the nav in the tab order and reports `aria-expanded`. |
 
 ### `AppSidebarBrand`
 
@@ -179,6 +180,15 @@ With the rail collapsed, hovering or tabbing to an icon shows its label in a pil
 | `--uxm-app-sidebar-lead-padding` | – | `8px` | Header-slot padding. Matches `__nav` so a control aligns with the nav rows. |
 | `--uxm-app-sidebar-footer-padding` | – | `8px` | Footer padding, in both rail states. Was `12px 24px`; see [Alignment](#alignment). |
 | `--uxm-app-sidebar-lead-gap` | – | `8px` | Row gap between controls in the header slot. |
+| `--uxm-app-sidebar-edge-reveal` | – | `12px` | `toggle="edge"`: width of the strip straddling the right border that reveals the handle on hover (it reaches past the border onto the content). |
+| `--uxm-app-sidebar-edge-toggle-size` | – | `24px` | `toggle="edge"`: the round handle's diameter. |
+| `--uxm-app-sidebar-edge-toggle-offset-y` | – | `50%` | `toggle="edge"`: the handle's vertical position on the border. |
+| `--uxm-app-sidebar-edge-toggle-z-index` | – | `5` | `toggle="edge"`: stacking of the strip over the content beside the rail. |
+| `--uxm-app-sidebar-edge-toggle-background-color` | `--color-card` | – | `toggle="edge"`: the handle's fill. |
+| `--uxm-app-sidebar-edge-toggle-color` | `--color-text-muted` | – | `toggle="edge"`: the chevron's resting colour. |
+| `--uxm-app-sidebar-edge-toggle-hover-color` | `--color-text` | – | `toggle="edge"`: the chevron's colour on hover and keyboard focus. |
+| `--uxm-app-sidebar-edge-toggle-shadow` | `--shadow-sm` | – | `toggle="edge"`: the handle's shadow. |
+| `--uxm-app-sidebar-edge-toggle-focus-ring-color` | `--color-accent` | – | `toggle="edge"`: the handle's focus ring. |
 | `--uxm-app-sidebar-footer-gap` | – | `8px` | Row gap between controls in the footer slot. |
 | `--uxm-app-sidebar-flyout-offset` | – | `8px` | Gap between a collapsed row's icon and its flyout (`collapsedFlyout`). |
 | `--uxm-app-sidebar-flyout-border-radius` | – | `999px` | Flyout corner radius — a pill by default. Set on the flyout wrapper as `--uxm-tooltip-border-radius`, so every other `--uxm-tooltip-*` knob (colour, padding, font size) themes the flyout too. |
@@ -213,6 +223,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Mobile drawer open | `mobileOpen={true}` | Adds `--mobile-open` modifier and renders the backdrop button as a sibling. Below 768px this slides the fixed rail in over the page behind a scrim; at wider widths the flag is inert and the backdrop is hidden. |
 | Toggle button | `onCollapseToggle` provided | Chevron-left icon rendered in the header; clickable to flip state. |
 | Heading hidden | `collapsed` truthy or `section.heading` undefined | Section heading paragraph is not rendered. |
+| Edge handle forced (Studio only) | `uxm-app-sidebar--state-edge-shown` / `--state-edge-hover` / `--state-edge-focus` on the root | Paints the `toggle="edge"` handle as resting, hovered or focused without a pointer, so its knobs can be previewed. They share selectors with the real `:hover` / `:focus-visible` rules; not for app use. |
 
 ## Accessibility
 
