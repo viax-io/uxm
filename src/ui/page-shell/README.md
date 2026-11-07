@@ -39,6 +39,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute is forwa
 | `variant` | `'standard' \| 'canvas'` | `'standard'` | Content-area behaviour. `standard` scrolls with padding; `canvas` is full-bleed and non-scrolling. |
 | `sidebar` | `ReactNode` | – | Left navigation. Typically `<AppSidebar />`. Slot collapses when omitted. |
 | `topBar` | `ReactNode` | – | Top header. Anything you want, or omit / `null` to render no header. |
+| `topBarPlacement` | `'beside' \| 'above'` | `'beside'` | Where the top bar sits. `beside`: the sidebar runs the full height and the top bar heads the column to its right (the brand lives in the sidebar). `above`: the top bar spans the window and the sidebar starts under it (the brand lives in the top bar; pair with `AppSidebar` without `brand` and `toggle="edge"`). |
 | `children` | `ReactNode` | – | **Required.** Page content, rendered into the scrollable (or full-bleed) `<main>`. |
 | `className` | `string` | – | Merged with `uxm-page-shell` and the variant modifier. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div>`. |

@@ -5,6 +5,7 @@ export type {
   AppSidebarNavItem,
   AppSidebarProps,
   AppSidebarSection,
+  AppSidebarToggle,
 } from './app-sidebar';
 export { AppTopBar } from './app-top-bar';
 export type { AppTopBarProps } from './app-top-bar';
@@ -172,7 +173,7 @@ export type { NumberStepperProps } from './number-stepper';
 export { PageHeader } from './page-header';
 export type { PageHeaderProps } from './page-header';
 export { PageShell } from './page-shell';
-export type { PageShellProps, PageShellVariant } from './page-shell';
+export type { PageShellProps, PageShellTopBarPlacement, PageShellVariant } from './page-shell';
 export { CurrencyInput } from './currency-input';
 export type { CurrencyInputProps, CurrencyValue } from './currency-input';
 export { FileUpload } from './file-upload';
