@@ -1,3 +1,45 @@
+# [4.87.0](https://github.com/viax-io/uxm/compare/v4.86.1...v4.87.0) (2026-11-07)
+
+
+### Features
+
+* **app-sidebar:** section heading case, tracking, size and weight knobs ([d291112](https://github.com/viax-io/uxm/commit/d2911127d8cee3c0a08e3ccee3b8cfacb0381601))
+* **studio:** section heading typography in App Sidebar's panel ([9324636](https://github.com/viax-io/uxm/commit/93246365a2558a33c0ab91af569fe7017d551621)), closes [#135](https://github.com/viax-io/uxm/issues/135)
+
+## [4.86.1](https://github.com/viax-io/uxm/compare/v4.86.0...v4.86.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* **studio:** save letter spacing in em, as the preview shows it ([12d3a44](https://github.com/viax-io/uxm/commit/12d3a44b07d1469ddee3388d5392efabbd12f0c4))
+
+# [4.86.0](https://github.com/viax-io/uxm/compare/v4.85.1...v4.86.0) (2026-11-07)
+
+
+### Features
+
+* **studio:** cover the shell header and edge toggle in Studio ([f7ced2d](https://github.com/viax-io/uxm/commit/f7ced2d697966ade400bae2d6c941316075dfb3f))
+
+## [4.85.1](https://github.com/viax-io/uxm/compare/v4.85.0...v4.85.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* **app-sidebar:** keep the edge toggle shown on touch-only devices ([37224f0](https://github.com/viax-io/uxm/commit/37224f0525db6784eb0b5040e13eb9eccd2eb07c))
+
+# [4.85.0](https://github.com/viax-io/uxm/compare/v4.84.0...v4.85.0) (2026-11-07)
+
+
+### Bug Fixes
+
+* **app-sidebar:** keep the edge toggle shown over the whole rail ([db66885](https://github.com/viax-io/uxm/commit/db668854248f53a23ea5695ff7f108407c87bafa))
+
+
+### Features
+
+* **app-sidebar:** show the edge toggle anywhere over the rail except on a row ([cc2a232](https://github.com/viax-io/uxm/commit/cc2a232bb998eff27444219b738f841a4aff0de0))
+* **page-shell:** full-width top bar, top-bar brand slot and sidebar edge toggle ([d8d1f7a](https://github.com/viax-io/uxm/commit/d8d1f7ab74f3943d2a28856accdea89c4ffe76fd))
+
 # [4.84.0](https://github.com/viax-io/uxm/compare/v4.83.0...v4.84.0) (2026-11-05)
 
 

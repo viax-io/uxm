@@ -62,6 +62,9 @@ const SAMPLE_SECTIONS = [
 
 // Mirrors the `headerHeight` knob's registry default — see the projection below.
 const HEADER_HEIGHT_DEFAULT = 64;
+// Mirrors `headingFontWeight`'s registry default, which stands for the brand's
+// strong weight (`--font-weight-strong`), not a literal 600 — see below.
+const HEADING_WEIGHT_DEFAULT = '600';
 
 export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
   const brand = shell?.brand ?? {};
@@ -71,6 +74,13 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
   const collapsedFlyout = (variants.collapsedFlyout ?? 'on') === 'on';
   const withHeader = (variants.headerSlot ?? 'on') === 'on';
   const withFooter = (variants.footerSlot ?? 'on') === 'on';
+  const toggle = variants.toggle === 'edge' ? 'edge' : 'header';
+  const withBrand = (variants.brandRow ?? 'on') === 'on';
+  // The edge handle only appears under the pointer; force the picked state so
+  // its knobs have something to paint (`--state-edge-*`, preview-only classes
+  // that share the real `:hover` / `:focus-visible` selectors).
+  const handle = (variants.handle as string) ?? 'shown';
+  const edgeState = toggle === 'edge' ? `uxm-app-sidebar--state-edge-${handle}` : undefined;
 
   // Pick the right brand asset for the active theme. Dark variants are
   // optional in BrandConfig — fall back through (dark → light → bundled
@@ -96,6 +106,18 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
     ['--uxm-app-sidebar-lead-padding' as string]: `${styles.leadPadding as number}px`,
     ['--uxm-app-sidebar-footer-padding' as string]: `${styles.footerPadding as number}px`,
     ['--uxm-app-sidebar-nav-padding-top' as string]: `${styles.navPaddingTop as number}px`,
+    ['--uxm-app-sidebar-heading-color' as string]: styles.headingColor as string,
+    ['--uxm-app-sidebar-footer-color' as string]: styles.footerColor as string,
+    ['--uxm-app-sidebar-heading-text-transform' as string]: styles.headingTextTransform as string,
+    ['--uxm-app-sidebar-heading-letter-spacing' as string]: `${styles.headingLetterSpacing as number}em`,
+    ['--uxm-app-sidebar-heading-font-size' as string]: `${styles.headingFontSize as number}px`,
+    // Projected only once moved off the default. Unset, the heading follows
+    // `--font-weight-strong`, which Brand Settings' strong weight sets; a
+    // projected '600' would pin it and hide that (same trap as the header
+    // height below).
+    ...(styles.headingFontWeight !== HEADING_WEIGHT_DEFAULT && {
+      ['--uxm-app-sidebar-heading-font-weight' as string]: styles.headingFontWeight as string,
+    }),
     // Projected ONLY once moved off the registry default. Unset, the logo row
     // follows `--uxm-app-top-bar-height`; projecting the default 64px would
     // pin it and hide that fallback — the "studio never runs the fallback
@@ -104,6 +126,12 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
     ...(styles.headerHeight !== HEADER_HEIGHT_DEFAULT && {
       ['--uxm-app-sidebar-header-height' as string]: `${styles.headerHeight as number}px`,
     }),
+    ['--uxm-app-sidebar-edge-toggle-size' as string]: `${styles.edgeToggleSize as number}px`,
+    ['--uxm-app-sidebar-edge-toggle-offset-y' as string]: styles.edgeToggleOffsetY as string,
+    ['--uxm-app-sidebar-edge-toggle-background-color' as string]: styles.edgeToggleBackgroundColor as string,
+    ['--uxm-app-sidebar-edge-toggle-color' as string]: styles.edgeToggleColor as string,
+    ['--uxm-app-sidebar-edge-toggle-hover-color' as string]: styles.edgeToggleHoverColor as string,
+    ['--uxm-app-sidebar-edge-toggle-focus-ring-color' as string]: styles.edgeToggleFocusRingColor as string,
     width: collapsed ? (styles.collapsedWidth as number) : (styles.expandedWidth as number),
     height: 480,
   };
@@ -158,7 +186,9 @@ export function AppSidebarPreview({ styles, variants, shell }: PreviewProps) {
 
   return (
     <AppSidebar
-      brand={{ logoUrl, iconUrl, alt: 'Brand' }}
+      brand={withBrand ? { logoUrl, iconUrl, alt: 'Brand' } : undefined}
+      toggle={toggle}
+      className={edgeState}
       sections={SAMPLE_SECTIONS}
       autoIconColors={autoIconColors}
       collapsedFlyout={collapsedFlyout}

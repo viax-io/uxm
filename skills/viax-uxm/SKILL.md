@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.84.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.87.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.84.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.87.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.84.0 — current API surface (overrides training data)
+## v4.87.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -41,71 +41,52 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
 
-### New in 4.80.5
+### New in 4.85.0
 
-- **`--color-accent-subtle` is softer: `#E2F3E8` → `#ECF8F0`** (light theme only; dark
-  stays `#1A4A2C`). Icon tiles (PageHeader, TypeOverviewCard, ErrorPage), selected
-  options, chips and accent tags read lighter on white cards. `--color-accent-bold` on it
-  is 5.45:1.
+- **A full-width header and an edge collapse toggle.** `PageShell` gains
+  `topBarPlacement?: 'beside' | 'above'` (default `'beside'`, unchanged): `'above'` spans the
+  top bar across the window with the sidebar under it, so the brand and an app switcher sit at
+  the left of the top bar; `AppTopBar` gains a `brand?: ReactNode` slot for that logo
+  (knobs `--uxm-app-top-bar-brand-{gap,height}`). `AppSidebar.brand` is now optional (no brand row when it's left out),
+  and `AppSidebar` gains `toggle?: 'header' | 'edge'` (default `'header'`, unchanged): `'edge'`
+  puts the collapse toggle on a round handle centred on the rail's right border, shown while the
+  pointer is over the rail or near its border, and on keyboard focus, hidden on touch-only devices and the mobile
+  drawer. Knobs `--uxm-app-sidebar-edge-{reveal,toggle-size,toggle-offset-y,toggle-z-index,
+  toggle-background-color,toggle-color,toggle-shadow,toggle-focus-ring-color}`.
 
-### New in 4.81.0
+### New in 4.85.1
 
-- **`DataTable` cards can have a shape, not just labelled cells.** `column.stackedRole`
-  (`'title' | 'field' | 'actions' | 'hidden'`) turns a stacked row into a card with a title,
-  labelled fields and an actions footer — for a table of six columns, which otherwise stacks
-  into a column of labels. Opt-in twice: the layout applies only once some column names a
-  role, and naming one switches the whole table (unnamed columns become fields), so a card is
-  never half one shape and half the other. A `field` renders a real `<dl><dt>/<dd>` rather
-  than the decorative `content: attr(data-label)` pseudo — stacked mode hides the `<thead>`,
-  so without it a screen reader meets a column of bare values. One `dl` per cell, because a
-  container query means one DOM serves both layouts and a `dl` cannot wrap `<td>`s. The
-  actions footer is visual: the row IS the card, so its cell is inside the row's activation
-  target. The `rowActions` kebab stops propagation itself; a column you mark `actions` does
-  NOT, so a button in it fires `onRowClick` too unless you stop it — true of any cell, and
-  unchanged by the footer framing. An `actions` column and a kebab share one divider, and an
-  empty footer is dropped. A field whose `header` is not a string needs `column.label` or it
-  renders unlabelled. Eight `--uxm-data-table-stacked-*` knobs; Studio exposes it as the
-  "Card Shape" variant.
+- **Fix: `AppSidebar toggle="edge"` on a tablet.** 4.85.0 hid the edge handle on every touch-only
+  device, but below 768px is the only place the mobile drawer takes over — so on a tablet the rail
+  had no collapse control at all and stayed in whichever state it was in. The handle is now
+  **always shown** at rail widths on a device without hover (`(hover: none)`, e.g. a tablet: there
+  is nothing to reveal it), and still hidden below 768px. A touch device that reports hover (an iPad
+  with a trackpad) keeps the reveal on hover and focus. The 4.85.0 note above ("hidden on touch-only devices") no longer holds.
 
-### New in 4.82.0
+### New in 4.86.0
 
-- **`DataTable` can send the horizontal scroller back to the start when the rows change.**
-  `scrollResetKey` — any string; when it changes, the scroller returns to its start edge.
-  Opt-in: without it the position is kept, which is what the table has always done. A scrolled
-  table that swaps its rows for a filter or a sort otherwise leaves the reader mid-table on
-  records they have not seen, because the scroller is the same element across the change and
-  nothing resets it. Derive the key from what caused the swap
-  (`` `${query}|${sort.key}|${sort.direction}` ``). It is a key rather than a watch on `rows`
-  because only the caller knows whether new rows replace the old ones or continue them —
-  "load more" keeps the same key and keeps the position. The reset is FORCED instant — setting
-  `scrollLeft` honours the computed `scroll-behavior`, so the table pins `auto` for the write
-  and restores it, which is what leaves `prefers-reduced-motion` nothing to reduce. It goes to
-  the start edge in RTL too, in engines on the current CSSOM View spec (Chrome 85+, Safari 14+,
-  Firefox). Unsetting the key does not reset. No new CSS and no new knobs.
+- **Studio covers 4.85.0's shell options, plus one knob.** `AppSidebar` gains
+  `--uxm-app-sidebar-edge-toggle-hover-color` (default `--color-text`, the colour the edge handle's
+  chevron already took on hover and focus, so nothing changes until it is set). In Studio, App Sidebar
+  gets Collapse Toggle (Header / Edge), Edge Handle (Shown / Hover / Focus: the handle is painted
+  without a pointer) and Brand Row pickers, with an Edge Toggle section (size, vertical position, fill, chevron);
+  App Top Bar gets a Brand Slot picker with Logo Height and Gap After Logo; Page Shell gets Top Bar
+  (Beside / Above). The previews use the Brand Settings logo.
 
-### New in 4.83.0
+### New in 4.86.1
 
-- `SearchDropdownOption.description` — an optional second line under the option's label,
-  smaller and muted (a readable name over its code: "Autoship quote" / `AutoshipQuote`).
-  Shown in the row and under the selected value in the trigger; matched by the search.
-  Knobs `--uxm-search-dropdown-option-description-size` (11px) and `-color`
-  (`--color-text-muted`).
+- **Fix: Studio saved letter spacing in px.** A saved theme wrote Sidebar Nav Trigger's caption letter
+  spacing as `0.06px` (effectively none) while Studio's preview showed `0.06em`. Saved themes now
+  write `em`, like every `letter-spacing` in the library. The stylesheet is generated at save time, so a
+  theme saved before this keeps `px` until it is saved again on this version.
 
-### New in 4.84.0
+### New in 4.87.0
 
-- **`DataTable` scroll arrows can move off the pinned columns, and hide until they are needed.**
-  `scrollArrows` (`'always' | 'hover' | 'none'`). By default the arrows sit 4px inside the
-  table's edges, which puts them ON TOP of a pinned column rather than at the edges of the area
-  that scrolls — measured: a 32px arrow entirely inside a 180px pinned column, and the end arrow
-  inside the 56px actions column, clipping a kebab. All three values inset the arrows past the
-  pins; `'hover'` also shows them only while the table is hovered or focused, HIDES them at an
-  end instead of dimming, and renders nothing under `(hover: none)` where swiping is the
-  interaction. **The placement rides on the prop** — insetting moves the arrows in every table
-  that pins, so a table passing nothing is untouched, and it becomes the default in the next
-  major. Pin widths are measured (a `ResizeObserver` on the sticky header cells), because
-  `column.width` may be a percentage, absent, or `1%`. The hidden state uses `visibility`, not
-  opacity alone, so the control leaves the tab order. Knobs
-  `--uxm-data-table-scroll-arrow-{inset,transition}`; Studio exposes it as "Scroll Arrows".
+- **Sentence-case sidebar headings.** `AppSidebar` section headings were always uppercase; the
+  case, tracking, size and weight are now knobs: `--uxm-app-sidebar-heading-{text-transform,
+  letter-spacing,font-size,font-weight}` (defaults `uppercase`, `0.06em`, `11px`, the strong
+  weight; unchanged). Set the transform to `none` to show headings as written. In Studio they are
+  App Sidebar's Section Heading group (Text Transform, Letter Spacing, Font Size, Font Weight).
 
 ### Unreleased
 

@@ -24,6 +24,19 @@
     min-width: 0;
   }
 
+  &__brand {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    margin-right: var(--uxm-app-top-bar-brand-gap, 16px);
+
+    img {
+      display: block;
+      height: var(--uxm-app-top-bar-brand-height, 24px);
+      width: auto;
+    }
+  }
+
   &__search {
     max-width: var(--uxm-app-top-bar-search-max-width, 320px);
     width: 100%;

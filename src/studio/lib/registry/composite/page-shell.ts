@@ -20,5 +20,17 @@ export const pageShellDef: ComponentDef = {
       ],
       defaultValue: 'standard',
     },
+    {
+      // `topBarPlacement`, a code prop: Beside keeps the brand in the sidebar,
+      // Above runs the top bar across the window with the brand in it and the
+      // sidebar's collapse toggle on its edge.
+      key: 'topBar',
+      label: 'Top Bar',
+      options: [
+        { value: 'beside', label: 'Beside' },
+        { value: 'above', label: 'Above' },
+      ],
+      defaultValue: 'beside',
+    },
   ],
 };

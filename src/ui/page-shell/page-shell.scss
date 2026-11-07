@@ -34,4 +34,19 @@
     overflow: hidden;
     padding: 0;
   }
+
+  /* `topBarPlacement="above"`: the top bar spans the full width; under it,
+     `__body` is a row of sidebar and content instead of a column. */
+  &--top-bar-above {
+    flex-direction: column;
+  }
+
+  &--top-bar-above &__body {
+    flex-direction: row;
+    min-height: 0;
+  }
+
+  &--top-bar-above &__content {
+    min-width: 0;
+  }
 }
