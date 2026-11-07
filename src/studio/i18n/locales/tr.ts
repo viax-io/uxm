@@ -938,6 +938,7 @@ export const messages: StudioMessages = {
     'Trend Up': 'Yükseliş eğilimi',
     'Triangle': 'Üçgen',
     'Trigger Font Size': 'Tetikleyici yazı tipi boyutu',
+    'Trigger Icon Gap': 'Tetikleyici simge aralığı',
     'Trigger Padding X': 'Tetikleyici iç boşluğu X',
     'Trigger Padding Y': 'Tetikleyici iç boşluğu Y',
     'Trigger Radius': 'Tetikleyici yarıçapı',

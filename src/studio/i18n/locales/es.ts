@@ -944,6 +944,7 @@ export const messages: StudioMessages = {
     'Trend Up': 'Tendencia al alza',
     'Triangle': 'Triángulo',
     'Trigger Font Size': 'Tamaño de fuente del disparador',
+    'Trigger Icon Gap': 'Espacio del icono del disparador',
     'Trigger Padding X': 'Relleno del disparador X',
     'Trigger Padding Y': 'Relleno del disparador Y',
     'Trigger Radius': 'Radio del disparador',

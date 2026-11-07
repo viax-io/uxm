@@ -26,6 +26,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-search-dropdown-trigger-padding-x': `${styles.triggerPaddingX}px`,
     '--uxm-search-dropdown-trigger-padding-y': `${styles.triggerPaddingY}px`,
     '--uxm-search-dropdown-trigger-font-size': `${styles.triggerFontSize}px`,
+    '--uxm-search-dropdown-trigger-icon-gap': `${styles.triggerIconGap}px`,
     '--uxm-search-dropdown-trigger-hover-bg': styles.triggerHoverBg as string,
     '--uxm-search-dropdown-trigger-hover-border': styles.triggerHoverBorder as string,
     '--uxm-search-dropdown-trigger-focus-border': styles.triggerFocusBorder as string,
