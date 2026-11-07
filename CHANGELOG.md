@@ -1,3 +1,11 @@
+# [4.88.0](https://github.com/viax-io/uxm/compare/v4.87.0...v4.88.0) (2026-11-07)
+
+
+### Features
+
+* **search-dropdown:** the selected option's icon leads the trigger ([bd9003d](https://github.com/viax-io/uxm/commit/bd9003d349d38266aa032e2919b82ffac3d5d15f))
+* **search-dropdown:** trigger icon gap in Studio, tests and upgrade note ([26de9f9](https://github.com/viax-io/uxm/commit/26de9f94332eba8ab710cae8cdd2cd6044eb17d0))
+
 # [4.87.0](https://github.com/viax-io/uxm/compare/v4.86.1...v4.87.0) (2026-11-07)
 
 

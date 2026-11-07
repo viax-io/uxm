@@ -2416,3 +2416,16 @@ reached the published library; now shipped in 2.8.0.
   `column.width` may be a percentage, absent, or `1%`. The hidden state uses `visibility`, not
   opacity alone, so the control leaves the tab order. Knobs
   `--uxm-data-table-scroll-arrow-{inset,transition}`; Studio exposes it as "Scroll Arrows".
+
+### New in 4.85.0
+
+- **A full-width header and an edge collapse toggle.** `PageShell` gains
+  `topBarPlacement?: 'beside' | 'above'` (default `'beside'`, unchanged): `'above'` spans the
+  top bar across the window with the sidebar under it, so the brand and an app switcher sit at
+  the left of the top bar; `AppTopBar` gains a `brand?: ReactNode` slot for that logo
+  (knobs `--uxm-app-top-bar-brand-{gap,height}`). `AppSidebar.brand` is now optional (no brand row when it's left out),
+  and `AppSidebar` gains `toggle?: 'header' | 'edge'` (default `'header'`, unchanged): `'edge'`
+  puts the collapse toggle on a round handle centred on the rail's right border, shown while the
+  pointer is over the rail or near its border, and on keyboard focus, hidden on touch-only devices and the mobile
+  drawer. Knobs `--uxm-app-sidebar-edge-{reveal,toggle-size,toggle-offset-y,toggle-z-index,
+  toggle-background-color,toggle-color,toggle-shadow,toggle-focus-ring-color}`.
