@@ -65,6 +65,13 @@ function formatValue(value: string | number | boolean, key: string): string {
     // per-element `itemDisabledOpacity` / `optionDisabledOpacity` variants)
     // so a saved value never gets a spurious `px` suffix.
     if (unitless.includes(key) || key.endsWith('Opacity') || key.endsWith('LineHeight')) return String(value);
+    // Letter spacing is in `em` throughout the library (every `letter-spacing`
+    // in src/ui is em or `normal`), and the knobs step in em fractions: as px,
+    // Sidebar Nav Trigger's `captionLetterSpacing` 0.06 saved as `0.06px`, ~0,
+    // while the preview showed 0.06em. A registry knob's `unit` never reaches
+    // this function, so units are decided by name here; tests/generate-css.test.ts
+    // checks every registry knob that declares a `unit` against this output.
+    if (/letterspacing$/i.test(key)) return `${value}em`;
     return `${value}px`;
   }
   // String style-override values are user/attacker-controlled and persisted

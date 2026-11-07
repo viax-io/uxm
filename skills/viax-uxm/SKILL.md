@@ -105,6 +105,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Fix: Studio saved letter spacing in px.** A saved theme wrote Sidebar Nav Trigger's caption letter
+  spacing as `0.06px` (effectively none) while Studio's preview showed `0.06em`. Saved themes now
+  write `em`, like every `letter-spacing` in the library. The stylesheet is generated at save time, so a
+  theme saved before this keeps `px` until it is saved again on this version.
+
 ## Workflow
 
 ### Where the documentation lives
