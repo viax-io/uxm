@@ -134,14 +134,17 @@
     gap: 2px;
   }
 
+  /* Section headings default to small caps-style uppercase; an app that labels
+     in sentence case sets the transform to `none` (and usually the spacing to
+     0 and the size up a step). */
   &__heading {
     color: var(--uxm-app-sidebar-heading-color, var(--color-text-muted));
-    font-size: calc(11px * var(--type-scale, 1));
-    font-weight: var(--font-weight-strong, 600);
-    letter-spacing: 0.06em;
+    font-size: calc(var(--uxm-app-sidebar-heading-font-size, 11px) * var(--type-scale, 1));
+    font-weight: var(--uxm-app-sidebar-heading-font-weight, var(--font-weight-strong, 600));
+    letter-spacing: var(--uxm-app-sidebar-heading-letter-spacing, 0.06em);
     margin: 0;
     padding: 8px 12px 2px;
-    text-transform: uppercase;
+    text-transform: var(--uxm-app-sidebar-heading-text-transform, uppercase);
   }
 
   &__item {
