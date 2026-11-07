@@ -122,11 +122,11 @@
     }
   }
 
-  /* Shown while the pointer is anywhere over the rail except on a row or
-     another control (a link, a button, the footer's switcher), and on the
-     strip itself, which reaches a little past the border. */
-  &__edge:hover &__edge-toggle,
-  &:hover:not(:has(a:hover, button:not(.uxm-app-sidebar__edge-toggle):hover, [role='button']:hover)) &__edge-toggle {
+  /* Shown while the pointer is anywhere over the rail, rows included (so it
+     doesn't blink as the pointer crosses them), and on the strip, which
+     reaches a little past the border. */
+  &:hover &__edge-toggle,
+  &__edge:hover &__edge-toggle {
     opacity: 1;
   }
 
