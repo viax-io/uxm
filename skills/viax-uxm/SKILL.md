@@ -104,6 +104,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Sentence-case sidebar headings.** `AppSidebar` section headings were always uppercase; the
+  case, tracking, size and weight are now knobs: `--uxm-app-sidebar-heading-{text-transform,
+  letter-spacing,font-size,font-weight}` (defaults `uppercase`, `0.06em`, `11px`, the strong
+  weight; unchanged). Set the transform to `none` to show headings as written. In Studio they are
+  App Sidebar's Section Heading group (Text Transform, Letter Spacing, Font Size, Font Weight).
+
 ## Workflow
 
 ### Where the documentation lives

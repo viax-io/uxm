@@ -170,6 +170,10 @@ With the rail collapsed, hovering or tabbing to an icon shows its label in a pil
 | `--uxm-app-sidebar-collapsed-width` | – | `64px` | Root width when `--collapsed` is applied. |
 | `--uxm-app-sidebar-border-color` | `--color-border` | – | Right-edge border + footer top border. |
 | `--uxm-app-sidebar-heading-color` | `--color-text-muted` | – | Section heading colour. |
+| `--uxm-app-sidebar-heading-text-transform` | – | `uppercase` | Section heading case. Set `none` to show headings as written (sentence case). |
+| `--uxm-app-sidebar-heading-letter-spacing` | – | `0.06em` | Section heading tracking (usually `0` with `text-transform: none`). |
+| `--uxm-app-sidebar-heading-font-size` | – | `11px` | Section heading size, before `--type-scale`. |
+| `--uxm-app-sidebar-heading-font-weight` | `--font-weight-strong` | `600` | Section heading weight. |
 | `--uxm-app-sidebar-footer-color` | `--color-text-muted` | – | Footer text colour. |
 | `--uxm-app-sidebar-header-height` | `--uxm-app-top-bar-height` | `64px` | Height of the brand (logo) row — the `__header` element, not the `header` prop's slot below it. Unset, it follows the top bar's height, so a shell that thins `AppTopBar` at `:root` keeps the logo level with the bar's contents. |
 | `--uxm-app-sidebar-nav-padding-top` | – | `8px` | Space above the first nav section. Set it to start the sections level with the page content's first line (e.g. `24px` under a `32px` content padding, less the heading's own `8px`). Sides and bottom stay `8px`. |

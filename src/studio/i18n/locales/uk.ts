@@ -1020,6 +1020,7 @@ export const messages: StudioMessages = {
     'Option': 'Опція',
     'Popover': 'Спливний блок',
     'Range Options': 'Параметри діапазону',
+    'Section Heading': 'Заголовок розділу',
     'Selected': 'Вибрано',
     'Shared States': 'Спільні стани',
     'States': 'Стани',
