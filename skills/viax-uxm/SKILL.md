@@ -121,6 +121,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Fix: `AppSidebar toggle="edge"` on a tablet.** 4.85.0 hid the edge handle on every touch-only
+  device, but below 768px is the only place the mobile drawer takes over — so on a tablet the rail
+  had no collapse control at all and stayed in whichever state it was in. The handle is now
+  **always shown** on a touch-only device at rail widths (there is no hover to reveal it), and
+  still hidden below 768px. The 4.85.0 note above ("hidden on touch-only devices") no longer holds.
+
 ## Workflow
 
 ### Where the documentation lives
