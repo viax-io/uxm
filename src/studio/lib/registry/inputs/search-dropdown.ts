@@ -32,6 +32,8 @@ export const searchDropdownDef: ComponentDef = {
     { key: 'triggerPaddingX', label: 'Trigger Padding X', control: 'number', defaultValue: 12, min: 4, max: 20, step: 1, unit: 'px' },
     { key: 'triggerPaddingY', label: 'Trigger Padding Y', control: 'number', defaultValue: 10, min: 2, max: 14, step: 1, unit: 'px' },
     { key: 'triggerFontSize', label: 'Trigger Font Size', control: 'number', defaultValue: 14, min: 10, max: 18, step: 1, unit: 'px' },
+    // Space after the selected option's icon in the trigger (only when that option has one; the preview's options all do).
+    { key: 'triggerIconGap', label: 'Trigger Icon Gap', control: 'number', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },
     // SearchDropdown's popover is owned by the shared Listbox atom —
     // see the `listbox` registry entry for panel chrome (bg, border,
     // radius, shadow), option row states (hover, selected, disabled),
