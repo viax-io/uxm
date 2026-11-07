@@ -91,6 +91,7 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'disabledColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'states', showWhen: { state: 'disabled' } },
       // Shared style
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 24, step: 1, unit: 'px' },
+      { key: 'borderWidth', label: 'Border Width', control: 'number', defaultValue: 1.5, min: 0, max: 4, step: 0.5, unit: 'px' },
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 20, min: 4, max: 48, step: 2, unit: 'px' },
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 2, max: 24, step: 2, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px' },
@@ -143,6 +144,7 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'disabledColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'states', showWhen: { state: 'disabled' } },
       // Shared style
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 24, step: 1, unit: 'px' },
+      { key: 'borderWidth', label: 'Border Width', control: 'number', defaultValue: 1, min: 0, max: 4, step: 0.5, unit: 'px' },
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 20, min: 4, max: 48, step: 2, unit: 'px' },
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 2, max: 24, step: 2, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px' },
@@ -244,6 +246,7 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'disabledColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-danger-text)', section: 'states', showWhen: { state: 'disabled' } },
       // Shared style
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 24, step: 1, unit: 'px' },
+      { key: 'borderWidth', label: 'Border Width', control: 'number', defaultValue: 1, min: 0, max: 4, step: 0.5, unit: 'px' },
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 20, min: 4, max: 48, step: 2, unit: 'px' },
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 2, max: 24, step: 2, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px' },
@@ -315,6 +318,7 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'disabledColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'states', showWhen: { state: 'disabled' } },
       // Shared style
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 20, step: 1, unit: 'px' },
+      { key: 'borderWidth', label: 'Border Width', control: 'number', defaultValue: 1, min: 0, max: 4, step: 0.5, unit: 'px' },
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 32, step: 2, unit: 'px' },
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 8, min: 2, max: 16, step: 1, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 10, max: 18, step: 1, unit: 'px' },
