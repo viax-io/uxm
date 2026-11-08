@@ -1,3 +1,15 @@
+# [4.89.0](https://github.com/viax-io/uxm/compare/v4.88.0...v4.89.0) (2026-11-08)
+
+
+### Bug Fixes
+
+* **studio:** mount the embedded header once, straight into its slot ([59dd0c7](https://github.com/viax-io/uxm/commit/59dd0c7ef6936277e3936f58655db6684afefe28))
+
+
+### Features
+
+* **studio:** embedded studio sits on the host page ([f2d9193](https://github.com/viax-io/uxm/commit/f2d919307c53caee8183dffb3b1ac8dbf461525e))
+
 # [4.88.0](https://github.com/viax-io/uxm/compare/v4.87.0...v4.88.0) (2026-11-07)
 
 

@@ -2429,3 +2429,12 @@ reached the published library; now shipped in 2.8.0.
   pointer is over the rail or near its border, and on keyboard focus, hidden on touch-only devices and the mobile
   drawer. Knobs `--uxm-app-sidebar-edge-{reveal,toggle-size,toggle-offset-y,toggle-z-index,
   toggle-background-color,toggle-color,toggle-shadow,toggle-focus-ring-color}`.
+
+### New in 4.85.1
+
+- **Fix: `AppSidebar toggle="edge"` on a tablet.** 4.85.0 hid the edge handle on every touch-only
+  device, but below 768px is the only place the mobile drawer takes over — so on a tablet the rail
+  had no collapse control at all and stayed in whichever state it was in. The handle is now
+  **always shown** at rail widths on a device without hover (`(hover: none)`, e.g. a tablet: there
+  is nothing to reveal it), and still hidden below 768px. A touch device that reports hover (an iPad
+  with a trackpad) keeps the reveal on hover and focus. The 4.85.0 note above ("hidden on touch-only devices") no longer holds.
