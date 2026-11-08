@@ -2438,3 +2438,13 @@ reached the published library; now shipped in 2.8.0.
   **always shown** at rail widths on a device without hover (`(hover: none)`, e.g. a tablet: there
   is nothing to reveal it), and still hidden below 768px. A touch device that reports hover (an iPad
   with a trackpad) keeps the reveal on hover and focus. The 4.85.0 note above ("hidden on touch-only devices") no longer holds.
+
+### New in 4.86.0
+
+- **Studio covers 4.85.0's shell options, plus one knob.** `AppSidebar` gains
+  `--uxm-app-sidebar-edge-toggle-hover-color` (default `--color-text`, the colour the edge handle's
+  chevron already took on hover and focus, so nothing changes until it is set). In Studio, App Sidebar
+  gets Collapse Toggle (Header / Edge), Edge Handle (Shown / Hover / Focus: the handle is painted
+  without a pointer) and Brand Row pickers, with an Edge Toggle section (size, vertical position, fill, chevron);
+  App Top Bar gets a Brand Slot picker with Logo Height and Gap After Logo; Page Shell gets Top Bar
+  (Beside / Above). The previews use the Brand Settings logo.

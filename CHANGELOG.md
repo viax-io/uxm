@@ -1,3 +1,11 @@
+# [4.90.0](https://github.com/viax-io/uxm/compare/v4.89.0...v4.90.0) (2026-11-08)
+
+
+### Features
+
+* **button:** border width knob for the bordered buttons ([e390d81](https://github.com/viax-io/uxm/commit/e390d819346a1148a9b11cb3a76383c25cd266ff))
+* **button:** save the border width knob as its var ([2fb158e](https://github.com/viax-io/uxm/commit/2fb158ed84b198eeab1c474946e5203f1b561bc8))
+
 # [4.89.0](https://github.com/viax-io/uxm/compare/v4.88.0...v4.89.0) (2026-11-08)
 
 
