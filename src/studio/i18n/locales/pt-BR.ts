@@ -944,6 +944,7 @@ export const messages: StudioMessages = {
     'Trend Up': 'Tendência de alta',
     'Triangle': 'Triângulo',
     'Trigger Font Size': 'Tamanho da fonte do gatilho',
+    'Trigger Icon Gap': 'Espaço do ícone do gatilho',
     'Trigger Padding X': 'Espaçamento do gatilho X',
     'Trigger Padding Y': 'Espaçamento do gatilho Y',
     'Trigger Radius': 'Raio do gatilho',

@@ -1,3 +1,31 @@
+# [4.90.0](https://github.com/viax-io/uxm/compare/v4.89.0...v4.90.0) (2026-11-08)
+
+
+### Features
+
+* **button:** border width knob for the bordered buttons ([e390d81](https://github.com/viax-io/uxm/commit/e390d819346a1148a9b11cb3a76383c25cd266ff))
+* **button:** save the border width knob as its var ([2fb158e](https://github.com/viax-io/uxm/commit/2fb158ed84b198eeab1c474946e5203f1b561bc8))
+
+# [4.89.0](https://github.com/viax-io/uxm/compare/v4.88.0...v4.89.0) (2026-11-08)
+
+
+### Bug Fixes
+
+* **studio:** mount the embedded header once, straight into its slot ([59dd0c7](https://github.com/viax-io/uxm/commit/59dd0c7ef6936277e3936f58655db6684afefe28))
+
+
+### Features
+
+* **studio:** embedded studio sits on the host page ([f2d9193](https://github.com/viax-io/uxm/commit/f2d919307c53caee8183dffb3b1ac8dbf461525e))
+
+# [4.88.0](https://github.com/viax-io/uxm/compare/v4.87.0...v4.88.0) (2026-11-07)
+
+
+### Features
+
+* **search-dropdown:** the selected option's icon leads the trigger ([bd9003d](https://github.com/viax-io/uxm/commit/bd9003d349d38266aa032e2919b82ffac3d5d15f))
+* **search-dropdown:** trigger icon gap in Studio, tests and upgrade note ([26de9f9](https://github.com/viax-io/uxm/commit/26de9f94332eba8ab710cae8cdd2cd6044eb17d0))
+
 # [4.87.0](https://github.com/viax-io/uxm/compare/v4.86.1...v4.87.0) (2026-11-07)
 
 

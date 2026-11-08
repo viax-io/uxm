@@ -3,7 +3,7 @@
 .uxm-button-with-icon {
   align-items: center;
   background-color: var(--uxm-button-with-icon-background-color, var(--color-card));
-  border: 1px solid var(--uxm-button-with-icon-border-color, var(--color-border));
+  border: var(--uxm-button-with-icon-border-width, 1px) solid var(--uxm-button-with-icon-border-color, var(--color-border));
   border-radius: var(--uxm-button-with-icon-border-radius, 4px);
   color: var(--uxm-button-with-icon-color, var(--color-text-muted));
   cursor: pointer;

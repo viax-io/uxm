@@ -54,6 +54,7 @@ export function ButtonWithIconPreview({ styles, variants }: PreviewProps) {
     // canvas directly, so all six looked live in the workbench while the
     // stylesheet hard-coded them and no app ever saw them.
     '--uxm-button-with-icon-border-radius': styles.borderRadius != null ? `${styles.borderRadius}px` : undefined,
+    '--uxm-button-with-icon-border-width': styles.borderWidth != null ? `${styles.borderWidth}px` : undefined,
     '--uxm-button-with-icon-padding-x': styles.paddingX != null ? `${styles.paddingX}px` : undefined,
     '--uxm-button-with-icon-padding-y': styles.paddingY != null ? `${styles.paddingY}px` : undefined,
     '--uxm-button-with-icon-font-size': styles.fontSize != null ? `${styles.fontSize}px` : undefined,

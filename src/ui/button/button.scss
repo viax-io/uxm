@@ -52,7 +52,7 @@
 .uxm-button-secondary {
   align-items: center;
   background-color: var(--uxm-button-secondary-background-color, var(--color-card));
-  border: 1.5px solid var(--uxm-button-secondary-border-color, var(--color-accent-bold));
+  border: var(--uxm-button-secondary-border-width, 1.5px) solid var(--uxm-button-secondary-border-color, var(--color-accent-bold));
   border-radius: var(--uxm-button-secondary-border-radius, 8px);
   color: var(--uxm-button-secondary-color, var(--color-accent-bold));
   cursor: pointer;
@@ -93,7 +93,7 @@
 .uxm-button-tertiary {
   align-items: center;
   background-color: var(--uxm-button-tertiary-background-color, transparent);
-  border: 1px solid var(--uxm-button-tertiary-border-color, var(--color-border));
+  border: var(--uxm-button-tertiary-border-width, 1px) solid var(--uxm-button-tertiary-border-color, var(--color-border));
   border-radius: var(--uxm-button-tertiary-border-radius, 8px);
   color: var(--uxm-button-tertiary-color, var(--color-text));
   cursor: pointer;
@@ -179,7 +179,7 @@
   gap: var(--uxm-button-danger-gap, 8px);
   background-color: var(--uxm-button-danger-background-color, var(--color-danger-bg));
   color: var(--uxm-button-danger-color, var(--color-danger-text));
-  border: 1px solid var(--uxm-button-danger-border-color, var(--color-danger-border));
+  border: var(--uxm-button-danger-border-width, 1px) solid var(--uxm-button-danger-border-color, var(--color-danger-border));
   border-radius: var(--uxm-button-danger-border-radius, 8px);
   padding: var(--uxm-button-danger-padding-y, 10px) var(--uxm-button-danger-padding-x, 20px);
   font-size: calc(var(--uxm-button-danger-font-size, 14px) * var(--type-scale, 1));
