@@ -169,6 +169,7 @@ function DesktopShell({ embed, headerActions, account }: { embed: boolean; heade
   const [orientation, setOrientation] = useState<Orientation>('horizontal');
   const [panelWidth, setPanelWidth] = useState(320);
   const [panelHeight, setPanelHeight] = useState(280);
+  const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null);
   const def = getComponentDef(selectedId);
   const showPropertiesPanel = !!def && (def.styleProperties.length > 0 || def.layoutVariants.length > 0);
   const dragging = useRef(false);
@@ -225,9 +226,9 @@ function DesktopShell({ embed, headerActions, account }: { embed: boolean; heade
     [],
   );
 
-  return (
+  const grid = (
     <div
-      className={`grid h-full text-text ${embed ? 'bg-card' : ''}`}
+      className={embed ? 'grid flex-1 min-h-0 text-text border-t border-border' : 'grid h-full text-text'}
       style={{ gridTemplateColumns: '260px 1fr' }}
     >
       <Sidebar embed={embed} />
@@ -237,7 +238,7 @@ function DesktopShell({ embed, headerActions, account }: { embed: boolean; heade
         }`}
       >
         <div className="flex-1 min-w-0 min-h-0">
-          <Canvas embed={embed} headerActions={headerActions} account={account} />
+          <Canvas embed={embed} headerActions={headerActions} account={account} headerSlot={embed ? headerSlot : undefined} />
         </div>
         {showPropertiesPanel && (
           <div
@@ -273,6 +274,17 @@ function DesktopShell({ embed, headerActions, account }: { embed: boolean; heade
           </div>
         )}
       </div>
+    </div>
+  );
+
+  // Embedded, the studio sits on the host's page background with the
+  // component's header as a page header above it; standalone it keeps its
+  // own white workbench.
+  if (!embed) return grid;
+  return (
+    <div className="flex h-full flex-col bg-surface">
+      <div ref={setHeaderSlot} />
+      {grid}
     </div>
   );
 }
