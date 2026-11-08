@@ -22,6 +22,18 @@ describe('generateOverridesCss', () => {
     expect(css).toContain('  --uxm-card-bg: var(--color-card);');
   });
 
+  it('saves the bordered buttons\' border width as their var, never a bare property', () => {
+    // `borderWidth` is a REAL_CSS_PROPS key: unmapped, a save writes a literal
+    // `border-width` on the root, which only beats the stylesheet's own
+    // `border:` shorthand (equal specificity) when it happens to load later.
+    // The preview projects the var, so the workbench looked right either way.
+    for (const variant of ['secondary', 'tertiary', 'danger', 'with-icon']) {
+      const css = generateOverridesCss({ [`button-${variant}`]: { borderWidth: 3 } }, brand);
+      expect(css).toContain(`  --uxm-button-${variant}-border-width: 3px;`);
+      expect(css).not.toMatch(/^\s*border-width:/m);
+    }
+  });
+
   it('adds px to lengths but never to weights or opacities', () => {
     const css = generateOverridesCss(
       { 'input-text': { borderRadius: 8, fontWeight: 600, disabledOpacity: 0.4, itemDisabledOpacity: 0.5 } },
