@@ -110,6 +110,34 @@ const workspaces: MenuEntry[] = [
 
 A separator is `{ separator: true, key? }`.
 
+### `MenuControlRow` — a quick setting in the menu
+
+`{ key, label, control }`: a label on the left and a control on the right — a quick setting
+flipped while the menu is open (the theme as a `ViewSwitcher`, say), not a command.
+
+```tsx
+{
+  key: 'theme',
+  label: 'Theme',
+  control: (
+    <ViewSwitcher
+      value={mode}
+      onChange={setMode}
+      options={[
+        { value: 'light', label: 'Light', icon: <Icon glyph="sun" size={14} /> },
+        { value: 'dark', label: 'Dark', icon: <Icon glyph="moon" size={14} /> },
+      ]}
+    />
+  ),
+}
+```
+
+- The control owns its value and its keys; picking in it does **not** close the menu.
+- Arrow-key navigation steps over the row (Tab reaches the control), and a key pressed inside
+  the control never reaches the menu's own Enter / arrows.
+- The row is a `role="group"`, named by `label` when it is a plain string.
+- Anything that runs an action and dismisses stays a `MenuItem`.
+
 ## Panel width
 
 What the trigger *is* decides:
@@ -141,6 +169,8 @@ Hint: `--uxm-menu-item-hint-{font-size,color}` — colour defaults to `--color-t
 Two-line row: `--uxm-menu-item-subtitle-font-size` (default `11px`), `--uxm-menu-item-subtitle-color` (default `--color-text-strong` — deliberately *not* the muted tone hints use; muted clears AA now at 5.37:1, so this is a hierarchy call rather than the contrast one it used to be), `--uxm-menu-item-subtitle-gap` (default `2px`, the space between headline and subtitle).
 
 Separator: `--uxm-menu-separator-{color,margin}`.
+
+Control row: `--uxm-menu-control-gap` (default `12px`, label to control) and `--uxm-menu-control-label-color` (default `--color-text`); padding and type follow the row's `--uxm-menu-item-{padding-x,padding-y,font-size}`.
 
 The trailing ✓ (`.uxm-menu__item-checkmark`) has no vars of its own — it inherits the row's `color`, so tuning a row's text tunes its ✓ (same contract as Listbox's checkmark).
 

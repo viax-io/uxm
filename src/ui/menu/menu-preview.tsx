@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { cn } from '@/helpers';
 import type { PreviewProps } from '@/previews/types';
-import { Icon } from '@/ui';
+import { Icon, ViewSwitcher } from '@/ui';
 
 import { Menu, type MenuEntry } from './menu';
 
@@ -61,6 +61,10 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-menu-item-subtitle-gap': `${styles.itemSubtitleGap}px`,
 
     '--uxm-menu-separator-color': styles.separatorColor as string,
+
+    // Control row (MenuControlRow).
+    '--uxm-menu-control-gap': `${styles.controlGap}px`,
+    '--uxm-menu-control-label-color': styles.controlLabelColor as string,
   } as CSSProperties;
 }
 
@@ -232,6 +236,8 @@ export function MenuPreview({ styles, variants }: PreviewProps & { componentId: 
   const withSubtitles = (variants.withSubtitles ?? 'no') === 'yes';
   const withHints = (variants.withHints ?? 'no') === 'yes';
   const shape = ((variants.shape as string) ?? 'actions') as 'actions' | 'switcher';
+  const withControlRow = (variants.withControlRow ?? 'no') === 'yes';
+  const [theme, setTheme] = useState('light');
 
   const cssVars = buildVars(styles);
 
@@ -251,10 +257,31 @@ export function MenuPreview({ styles, variants }: PreviewProps & { componentId: 
     current: r.current,
   });
   const separator = withSeparator ? ([{ separator: true, key: 'sep' }] as MenuEntry[]) : [];
+  // A quick setting at the head of the menu: the control keeps its own clicks
+  // and keys, so picking a theme leaves the menu open.
+  const controlRow: MenuEntry[] = withControlRow
+    ? [
+        {
+          key: 'theme',
+          label: 'Theme',
+          control: (
+            <ViewSwitcher
+              value={theme}
+              onChange={setTheme}
+              options={[
+                { value: 'light', label: 'Light', icon: <Icon glyph="sun" size={14} /> },
+                { value: 'dark', label: 'Dark', icon: <Icon glyph="moon" size={14} /> },
+              ]}
+            />
+          ),
+        },
+        { separator: true, key: 'control-sep' },
+      ]
+    : [];
   const liveItems: MenuEntry[] =
     shape === 'switcher'
-      ? [...WORKSPACE_ROWS.map(toItem), ...separator, toItem(COMMAND_ROW)]
-      : [...ACTION_ROWS.map(toItem), ...separator, toItem(DANGER_ROW)];
+      ? [...controlRow, ...WORKSPACE_ROWS.map(toItem), ...separator, toItem(COMMAND_ROW)]
+      : [...controlRow, ...ACTION_ROWS.map(toItem), ...separator, toItem(DANGER_ROW)];
 
   // The live panel is portaled and `position: fixed`, and `Popover` only
   // recomputes on open, on scroll and on window resize — never on the content

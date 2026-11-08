@@ -86,6 +86,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Menu — `MenuControlRow`.** A `MenuEntry` of `{ key, label, control }` puts a quick setting in
+  a menu: label left, a control such as `ViewSwitcher` right. Picking in it does not close the
+  menu, arrow-key nav steps over it, and keys inside the control stay the control's. New knobs
+  `--uxm-menu-control-{gap,label-color}`.
+
 ## Workflow
 
 ### Where the documentation lives
