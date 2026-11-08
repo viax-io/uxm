@@ -41,6 +41,7 @@ export const SECTION_LABELS: Record<string, string> = {
   fileListProgress: 'File List Progress',
   fileListStatus: 'File List Status',
   sectionHeading: 'Section Heading',
+  controlRow: 'Control Row',
   headerSlot: 'Header Slot',
   footerSlot: 'Footer Slot',
   edgeToggle: 'Edge Toggle',

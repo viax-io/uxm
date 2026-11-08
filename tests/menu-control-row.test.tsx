@@ -64,6 +64,26 @@ describe('Menu control row', () => {
     expect(screen.getByRole('menu')).toBeInTheDocument();
   });
 
+  it('still lets a Tab-focused menu item drive the menu with its keys', () => {
+    // The control row's key guard must not swallow keys from the item buttons,
+    // which Tab reaches from the list: ArrowDown + Enter on a focused item has
+    // to move and select, as it did before control rows existed.
+    const onAlpha = vi.fn();
+    const onBeta = vi.fn();
+    const items: MenuEntry[] = [
+      { key: 'alpha', label: 'Alpha', onSelect: onAlpha },
+      { key: 'beta', label: 'Beta', onSelect: onBeta },
+    ];
+    render(<Menu items={items} renderTrigger={({ triggerProps }) => <button {...triggerProps}>Open</button>} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Open' }));
+    const alpha = screen.getByRole('menuitem', { name: 'Alpha' });
+    alpha.focus();
+    fireEvent.keyDown(alpha, { key: 'ArrowDown' });
+    fireEvent.keyDown(alpha, { key: 'Enter' });
+    expect(onBeta).toHaveBeenCalledOnce();
+    expect(onAlpha).not.toHaveBeenCalled();
+  });
+
   it('steps arrow nav over the control row', () => {
     const onArchive = vi.fn();
     render(<Harness onArchive={onArchive} />);

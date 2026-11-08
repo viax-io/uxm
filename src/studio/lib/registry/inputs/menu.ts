@@ -86,6 +86,11 @@ export const menuDef: ComponentDef = {
     // static showcase has nothing to draw it between — open the live menu to
     // see this one land.
     { key: 'separatorColor', label: 'Color', control: 'color', defaultValue: 'var(--color-border)', section: 'separator', showWhen: { withSeparator: 'yes' } },
+    // Control row (MenuControlRow): a label + a control (a ViewSwitcher, say)
+    // for a quick setting flipped while the menu is open. Padding and type
+    // follow the item knobs; these two are the row's own.
+    { key: 'controlGap', label: 'Gap', control: 'number', defaultValue: 12, min: 0, max: 32, step: 1, unit: 'px', section: 'controlRow', showWhen: { withControlRow: 'yes' } },
+    { key: 'controlLabelColor', label: 'Label Color', control: 'color', defaultValue: 'var(--color-text)', section: 'controlRow', showWhen: { withControlRow: 'yes' } },
   ],
   layoutVariants: [
     {
@@ -173,6 +178,17 @@ export const menuDef: ComponentDef = {
       ],
       defaultValue: 'no',
     },
+    {
+      // A MenuControlRow at the head of the live menu (a Theme switcher). Off
+      // by default so the classic menu stays the baseline.
+      key: 'withControlRow',
+      label: 'Control Row',
+      options: [
+        { value: 'yes', label: 'On' },
+        { value: 'no', label: 'Off' },
+      ],
+      defaultValue: 'no',
+    },
   ],
   events: [
     { name: 'onSelect', description: "Fires when an item is invoked (click / Enter / Space). The menu closes afterward. Per-item — wired via each item's `onSelect`.", payload: 'void' },
@@ -182,7 +198,7 @@ export const menuDef: ComponentDef = {
     importPath: '@viax.io/uxm/ui',
     importNames: 'Menu',
     props: [
-      { name: 'items', type: 'MenuEntry[]', required: true, description: 'Menu entries — actionable items ({ key, label, subtitle?, icon?, iconColor?, hint?, onSelect?, disabled?, danger?, current? }) and separators ({ separator: true }), in display order. Pass `subtitle` to render a two-line row (label = headline), `iconColor` to tint ONE row\'s glyph (prefer a `var(--color-*)` reference; raw hex only for entity-identity colours), and `current` to mark the row the user is already on (aria-current + trailing checkmark + heavier label).' },
+      { name: 'items', type: 'MenuEntry[]', required: true, description: 'Menu entries — actionable items ({ key, label, subtitle?, icon?, iconColor?, hint?, onSelect?, disabled?, danger?, current? }) and separators ({ separator: true }), in display order. Pass `subtitle` to render a two-line row (label = headline), `iconColor` to tint ONE row\'s glyph (prefer a `var(--color-*)` reference; raw hex only for entity-identity colours), and `current` to mark the row the user is already on (aria-current + trailing checkmark + heavier label). A control row ({ key, label, control }) puts a quick setting in the menu: the control (e.g. a ViewSwitcher) keeps its own clicks and keys and does not close the menu.' },
       { name: 'renderTrigger', type: '(api: { open, triggerProps }) => ReactNode', required: true, description: 'Render the trigger. Spread `triggerProps` on your interactive element (an IconButton ⋮, a Button) — wires ref + click + ARIA in one go.' },
       { name: 'placement', type: '"bottom-start" | "bottom-end" | "top-start" | "top-end"', defaultValue: '"bottom-end"', description: 'Preferred placement; flips on overflow. Defaults to bottom-end since menus usually align to a trailing ⋮.' },
       { name: 'open', type: 'boolean', description: 'Controlled open state. Pair with onOpenChange. Omit for uncontrolled.' },

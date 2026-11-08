@@ -357,8 +357,11 @@ export function Menu({
      
     (e: React.KeyboardEvent) => {
       // A key pressed inside a control row belongs to that control (a
-      // switcher's own Enter / Space / arrows), not to the menu's nav.
-      if (e.target !== e.currentTarget) return;
+      // switcher's own Enter / Space / arrows), not to the menu's nav. Scoped to
+      // the row on purpose: the item buttons are Tab-reachable too, and their
+      // keys still drive the menu (a bare `target !== currentTarget` check
+      // dropped every key from a focused item).
+      if ((e.target as Element).closest('.uxm-menu__control')) return;
       const n = focusableIndices.length;
       if (n === 0) return;
       if (e.key === 'ArrowDown') {
