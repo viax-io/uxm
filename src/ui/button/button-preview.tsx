@@ -99,6 +99,7 @@ function plainButtonStateStyle(
     // production generate-css output and with the `--uxm` variable layer,
     // instead of inlining real properties that would shadow the var.
     [`--uxm-button-${variant}-border-radius`]: styles.borderRadius != null ? `${styles.borderRadius}px` : undefined,
+    [`--uxm-button-${variant}-border-width`]: styles.borderWidth != null ? `${styles.borderWidth}px` : undefined,
     [`--uxm-button-${variant}-padding-y`]: styles.paddingY != null ? `${styles.paddingY}px` : undefined,
     [`--uxm-button-${variant}-padding-x`]: styles.paddingX != null ? `${styles.paddingX}px` : undefined,
     [`--uxm-button-${variant}-font-size`]: styles.fontSize != null ? `${styles.fontSize}px` : undefined,
@@ -127,7 +128,7 @@ export function ButtonPreview(props: PreviewProps) {
     const { style, disabled } = plainButtonStateStyle(props, 'secondary');
     return (
       <ButtonSecondary
-        style={{ ...style, borderStyle: 'solid', borderWidth: 1.5 }}
+        style={style}
         disabled={disabled}
       >
         Secondary Button
@@ -139,7 +140,7 @@ export function ButtonPreview(props: PreviewProps) {
     const { style, disabled } = plainButtonStateStyle(props, 'tertiary');
     return (
       <ButtonTertiary
-        style={{ ...style, borderStyle: 'solid', borderWidth: 1 }}
+        style={style}
         disabled={disabled}
       >
         Tertiary Button
@@ -160,7 +161,7 @@ export function ButtonPreview(props: PreviewProps) {
     const { style, disabled } = plainButtonStateStyle(props, 'danger');
     return (
       <ButtonDanger
-        style={{ ...style, borderStyle: 'solid', borderWidth: 1 }}
+        style={style}
         disabled={disabled}
       >
         Delete

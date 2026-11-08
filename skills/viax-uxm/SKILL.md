@@ -90,6 +90,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Buttons — border width knob.** `ButtonSecondary`, `ButtonTertiary`, `ButtonDanger` and
+  `ButtonWithIcon` read `--uxm-button-{secondary,tertiary,danger,with-icon}-border-width`
+  (defaults 1.5px / 1px / 1px / 1px, unchanged), and the studio shows a Border Width knob for each.
+
 ## Workflow
 
 ### Where the documentation lives
