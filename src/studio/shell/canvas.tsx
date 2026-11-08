@@ -281,7 +281,10 @@ export function Canvas({
   embed?: boolean;
   /** Embedded hosts: where the component's header goes — a row above the
       sidebar and canvas, so the studio reads like the host's own page
-      (title and actions on the page background, not in the canvas). */
+      (title and actions on the page background, not in the canvas).
+      `undefined` (standalone): the header renders in the canvas. `null`: the
+      slot hasn't mounted yet, so the header waits rather than rendering in
+      the canvas first and remounting into the slot a moment later. */
   headerSlot?: HTMLElement | null;
   /** Optional host-provided actions rendered at the end of the top-bar
       cluster, right after the Preview & Publish button (e.g. a user avatar). */
@@ -388,7 +391,7 @@ export function Canvas({
   );
 
   return (
-    <div className={cn('flex h-full flex-col', !headerSlot && 'bg-card')}>
+    <div className={cn('flex h-full flex-col', headerSlot === undefined && 'bg-card')}>
       {/* Toolbar — uses container queries so the layout adapts to the
           canvas's actual width, not the viewport. The canvas can be
           much narrower than the viewport when the sidebar + properties
@@ -398,7 +401,7 @@ export function Canvas({
             480-640 hide description, keep labels
             <480px  icon-only secondary buttons; primary CTA stays
                     labelled (Preview & Publish is moment-of-truth). */}
-      {headerSlot ? createPortal(header, headerSlot) : header}
+      {headerSlot === undefined ? header : headerSlot && createPortal(header, headerSlot)}
 
       {/* Preview area with optional dot grid */}
       <div

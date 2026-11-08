@@ -91,6 +91,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Embedded Studio sits on the host page.** With `<UxmApp embed>`, the selected component's header
+  (title, description, language, Preview & Publish) is a page header above the sidebar and canvas,
+  on the host's `--color-surface` instead of a white workbench; the editor's cards and the properties
+  panel stay on `--color-card`. Its actions now come before the sidebar in the tab order. The
+  standalone Studio is unchanged.
+
 ## Workflow
 
 ### Where the documentation lives
