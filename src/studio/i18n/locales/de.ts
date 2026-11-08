@@ -938,6 +938,7 @@ export const messages: StudioMessages = {
     'Trend Up': 'Trend steigend',
     'Triangle': 'Dreieck',
     'Trigger Font Size': 'Trigger-Schriftgröße',
+    'Trigger Icon Gap': 'Trigger-Symbolabstand',
     'Trigger Padding X': 'Trigger-Innenabstand X',
     'Trigger Padding Y': 'Trigger-Innenabstand Y',
     'Trigger Radius': 'Trigger-Radius',

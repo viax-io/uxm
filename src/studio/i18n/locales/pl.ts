@@ -950,6 +950,7 @@ export const messages: StudioMessages = {
     'Trend Up': 'Trend wzrostowy',
     'Triangle': 'Trójkąt',
     'Trigger Font Size': 'Rozmiar czcionki wyzwalacza',
+    'Trigger Icon Gap': 'Odstęp ikony wyzwalacza',
     'Trigger Padding X': 'Wypełnienie wyzwalacza X',
     'Trigger Padding Y': 'Wypełnienie wyzwalacza Y',
     'Trigger Radius': 'Promień wyzwalacza',

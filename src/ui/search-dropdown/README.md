@@ -57,7 +57,7 @@ function CountryPicker() {
 | `label` | `string` | yes | Primary text shown in the option row and the trigger. |
 | `meta` | `string` | no | Trailing secondary text (e.g. a country dialing code, category meta). Right-aligned in the option row. |
 | `description` | `string` | no | Second line under the label, smaller and muted — the code or id behind a readable name ("Autoship quote" over `AutoshipQuote`). Shown in the option row and, for the selected option, in the trigger. Matched by the search. |
-| `icon` | `ReactNode` | no | Leading visual — typically an `<Icon>` for icon-glyph pickers. |
+| `icon` | `ReactNode` | no | Leading visual — typically an `<Icon>` for icon-glyph pickers. Shown in the option row and, for the selected option, at the start of the trigger. |
 | `keywords` | `string[]` | no | Extra search terms matched alongside `label`, never rendered. Lets an option stay findable under a synonym without that synonym appearing in its visible name — the icon registry feeds its `IconDef.keywords` through `ICON_OPTIONS` this way. |
 
 ## CSS variables
@@ -73,6 +73,7 @@ Most `--uxm-search-dropdown-*` knobs live on the wrapper and cascade to descenda
 | `--uxm-search-dropdown-trigger-radius` | – | `6px` | Trigger corner radius. |
 | `--uxm-search-dropdown-trigger-padding-x` | – | `10px` | Trigger horizontal padding. |
 | `--uxm-search-dropdown-trigger-padding-y` | – | `6px` | Trigger vertical padding. |
+| `--uxm-search-dropdown-trigger-icon-gap` | – | `8px` | Space after the selected option's icon in the trigger. |
 | `--uxm-search-dropdown-trigger-font-size` | – | `12px` | Trigger font size. |
 | `--uxm-search-dropdown-popover-bg` | `--color-card` | – | Popover background. |
 | `--uxm-search-dropdown-popover-border` | `--color-border` | – | Popover border. |

@@ -98,7 +98,7 @@ export function Sidebar({ embed = false }: { embed?: boolean }) {
 
   return (
     <aside className={`flex flex-col border-r border-border overflow-y-auto ${embed ? 'bg-transparent' : 'bg-surface-alt'}`}>
-      <div className={`sticky top-0 z-10 ${embed ? 'bg-card pt-3' : 'bg-surface-alt'}`}>
+      <div className={`sticky top-0 z-10 ${embed ? 'bg-surface pt-3' : 'bg-surface-alt'}`}>
         {/* Header — hidden in embed mode */}
         {!embed && (
           <div className="px-5 pt-2 pb-6 flex items-start gap-3">

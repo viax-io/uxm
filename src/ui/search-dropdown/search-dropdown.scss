@@ -72,6 +72,14 @@
 .uxm-search-dropdown__trigger--empty {
   color: var(--uxm-search-dropdown-trigger-placeholder-color, var(--color-text-muted));
 }
+/* The selected option's icon, when it has one, leads the trigger as it leads
+   the option's row in the list. */
+.uxm-search-dropdown__trigger-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-right: var(--uxm-search-dropdown-trigger-icon-gap, 8px);
+}
 .uxm-search-dropdown__trigger-label {
   flex: 1;
   overflow: hidden;

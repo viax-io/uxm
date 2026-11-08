@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.87.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.89.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.87.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.89.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.87.0 — current API surface (overrides training data)
+## v4.89.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,28 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.85.0
-
-- **A full-width header and an edge collapse toggle.** `PageShell` gains
-  `topBarPlacement?: 'beside' | 'above'` (default `'beside'`, unchanged): `'above'` spans the
-  top bar across the window with the sidebar under it, so the brand and an app switcher sit at
-  the left of the top bar; `AppTopBar` gains a `brand?: ReactNode` slot for that logo
-  (knobs `--uxm-app-top-bar-brand-{gap,height}`). `AppSidebar.brand` is now optional (no brand row when it's left out),
-  and `AppSidebar` gains `toggle?: 'header' | 'edge'` (default `'header'`, unchanged): `'edge'`
-  puts the collapse toggle on a round handle centred on the rail's right border, shown while the
-  pointer is over the rail or near its border, and on keyboard focus, hidden on touch-only devices and the mobile
-  drawer. Knobs `--uxm-app-sidebar-edge-{reveal,toggle-size,toggle-offset-y,toggle-z-index,
-  toggle-background-color,toggle-color,toggle-shadow,toggle-focus-ring-color}`.
-
-### New in 4.85.1
-
-- **Fix: `AppSidebar toggle="edge"` on a tablet.** 4.85.0 hid the edge handle on every touch-only
-  device, but below 768px is the only place the mobile drawer takes over — so on a tablet the rail
-  had no collapse control at all and stayed in whichever state it was in. The handle is now
-  **always shown** at rail widths on a device without hover (`(hover: none)`, e.g. a tablet: there
-  is nothing to reveal it), and still hidden below 768px. A touch device that reports hover (an iPad
-  with a trackpad) keeps the reveal on hover and focus. The 4.85.0 note above ("hidden on touch-only devices") no longer holds.
 
 ### New in 4.86.0
 
@@ -87,6 +65,22 @@ catalog.
   letter-spacing,font-size,font-weight}` (defaults `uppercase`, `0.06em`, `11px`, the strong
   weight; unchanged). Set the transform to `none` to show headings as written. In Studio they are
   App Sidebar's Section Heading group (Text Transform, Letter Spacing, Font Size, Font Weight).
+
+### New in 4.88.0
+
+- **SearchDropdown shows the selected option's icon.** An option's `icon` now also leads the
+  trigger when that option is selected (`.uxm-search-dropdown__trigger-icon`; knob
+  `--uxm-search-dropdown-trigger-icon-gap`, 8px; Studio's **Trigger Icon Gap**). Options without an
+  icon render as before; an app whose options already carry an `icon` will see it in the trigger
+  after upgrading (it fits the trigger's line, so the height doesn't change).
+
+### New in 4.89.0
+
+- **Embedded Studio sits on the host page.** With `<UxmApp embed>`, the selected component's header
+  (title, description, language, Preview & Publish) is a page header above the sidebar and canvas,
+  on the host's `--color-surface` instead of a white workbench; the editor's cards and the properties
+  panel stay on `--color-card`. Its actions now come before the sidebar in the tab order. The
+  standalone Studio is unchanged.
 
 ### Unreleased
 
