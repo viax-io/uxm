@@ -1,3 +1,11 @@
+# [4.91.0](https://github.com/viax-io/uxm/compare/v4.90.0...v4.91.0) (2026-11-08)
+
+
+### Features
+
+* **menu:** control rows put a quick setting in a menu ([21ca36a](https://github.com/viax-io/uxm/commit/21ca36a136a4b15af10f44688e8c10a8a66a7a06))
+* **menu:** scope the control row's key guard; control row in Studio ([ad33cf6](https://github.com/viax-io/uxm/commit/ad33cf63d626cf5cd58afb80c33622b69516cb32))
+
 # [4.90.0](https://github.com/viax-io/uxm/compare/v4.89.0...v4.90.0) (2026-11-08)
 
 

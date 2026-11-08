@@ -2448,3 +2448,10 @@ reached the published library; now shipped in 2.8.0.
   without a pointer) and Brand Row pickers, with an Edge Toggle section (size, vertical position, fill, chevron);
   App Top Bar gets a Brand Slot picker with Logo Height and Gap After Logo; Page Shell gets Top Bar
   (Beside / Above). The previews use the Brand Settings logo.
+
+### New in 4.86.1
+
+- **Fix: Studio saved letter spacing in px.** A saved theme wrote Sidebar Nav Trigger's caption letter
+  spacing as `0.06px` (effectively none) while Studio's preview showed `0.06em`. Saved themes now
+  write `em`, like every `letter-spacing` in the library. The stylesheet is generated at save time, so a
+  theme saved before this keeps `px` until it is saved again on this version.
