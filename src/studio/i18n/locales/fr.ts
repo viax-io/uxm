@@ -944,6 +944,7 @@ export const messages: StudioMessages = {
     'Trend Up': 'Tendance à la hausse',
     'Triangle': 'Triangle',
     'Trigger Font Size': 'Taille de police du déclencheur',
+    'Trigger Icon Gap': 'Écart de l’icône du déclencheur',
     'Trigger Padding X': 'Marge interne du déclencheur X',
     'Trigger Padding Y': 'Marge interne du déclencheur Y',
     'Trigger Radius': 'Rayon du déclencheur',

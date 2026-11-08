@@ -950,6 +950,7 @@ export const messages: StudioMessages = {
     'Trend Up': 'Тренд вгору',
     'Triangle': 'Трикутник',
     'Trigger Font Size': 'Розмір шрифту тригера',
+    'Trigger Icon Gap': 'Відступ іконки тригера',
     'Trigger Padding X': 'Відступ тригера X',
     'Trigger Padding Y': 'Відступ тригера Y',
     'Trigger Radius': 'Радіус тригера',

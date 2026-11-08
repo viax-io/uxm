@@ -932,6 +932,7 @@ export const messages: StudioMessages = {
     'Trend Up': '上昇トレンド',
     'Triangle': '三角形',
     'Trigger Font Size': 'トリガーのフォントサイズ',
+    'Trigger Icon Gap': 'トリガーのアイコンの間隔',
     'Trigger Padding X': 'トリガーの内側余白 X',
     'Trigger Padding Y': 'トリガーの内側余白 Y',
     'Trigger Radius': 'トリガーの角丸',
