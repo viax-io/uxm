@@ -392,8 +392,47 @@ export const displayDefs: ComponentDef[] = [
       { key: 'descriptionColor', label: 'Description Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
       { key: 'padding', label: 'Padding', control: 'number', defaultValue: 48, min: 16, max: 80, step: 8, unit: 'px' },
       { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 48, min: 24, max: 80, step: 4, unit: 'px' },
+      // Spacing. Icon Gap and Action Gap are whole distances (icon → title,
+      // description → action); the defaults are today's 12px and 20px.
+      { key: 'gap', label: 'Gap', control: 'number', defaultValue: 12, min: 0, max: 32, step: 2, unit: 'px' },
+      { key: 'iconGap', label: 'Icon Gap', control: 'number', defaultValue: 12, min: 0, max: 40, step: 2, unit: 'px' },
+      { key: 'actionGap', label: 'Action Gap', control: 'number', defaultValue: 20, min: 0, max: 48, step: 2, unit: 'px' },
+      { key: 'align', label: 'Align', control: 'select', defaultValue: 'center', options: ['center', 'start'] },
+      // A scaled glyph scales its stroke: a 24-unit icon in the 48px box paints
+      // twice its own line. `non-scaling-stroke` keeps the glyph's stroke width.
+      { key: 'iconVectorEffect', label: 'Icon Stroke', control: 'select', defaultValue: 'none', options: ['none', 'non-scaling-stroke'] },
+      { key: 'titleFontSize', label: 'Title Size', control: 'number', defaultValue: 16, min: 12, max: 24, step: 1, unit: 'px', section: 'text' },
+      { key: 'descriptionFontSize', label: 'Description Size', control: 'number', defaultValue: 14, min: 11, max: 18, step: 1, unit: 'px', section: 'text' },
+      // A select, not a number: a number knob saves in px whatever its unit.
+      { key: 'descriptionMaxWidth', label: 'Description Width', control: 'select', defaultValue: '32ch', options: ['24ch', '32ch', '40ch', '48ch', 'none'], section: 'text' },
+      // The frame is the first-run look's alone.
+      { key: 'firstRunBackground', label: 'Background', control: 'color', defaultValue: 'var(--color-surface)', section: 'frame', showWhen: { variant: 'first-run' } },
+      { key: 'firstRunBorderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'frame', showWhen: { variant: 'first-run' } },
+      { key: 'firstRunBorderWidth', label: 'Border Width', control: 'number', defaultValue: 1, min: 0, max: 4, step: 1, unit: 'px', section: 'frame', showWhen: { variant: 'first-run' } },
+      { key: 'firstRunBorderStyle', label: 'Border Style', control: 'select', defaultValue: 'dashed', options: ['dashed', 'solid'], section: 'frame', showWhen: { variant: 'first-run' } },
+      { key: 'firstRunRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 24, step: 1, unit: 'px', section: 'frame', showWhen: { variant: 'first-run' } },
     ],
-    layoutVariants: [],
+    layoutVariants: [
+      {
+        key: 'variant',
+        label: 'Variant',
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'first-run', label: 'First Run' },
+          { value: 'no-results', label: 'No Results' },
+        ],
+        defaultValue: 'default',
+      },
+      {
+        key: 'size',
+        label: 'Size',
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'compact', label: 'Compact' },
+        ],
+        defaultValue: 'default',
+      },
+    ],
   },
   {
     id: 'disclosure',

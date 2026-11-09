@@ -550,6 +550,7 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   'empty-state': {
     padding: '--uxm-empty-state-padding',
+    gap: '--uxm-empty-state-gap',
   },
   'form-field': {
     gap: '--uxm-form-field-gap',

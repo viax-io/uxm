@@ -34,6 +34,22 @@ describe('generateOverridesCss', () => {
     }
   });
 
+  it('saves the empty state\'s gap and first-run frame as the vars its stylesheet reads', () => {
+    // `gap` is a REAL_CSS_PROPS key: unmapped, a save writes a bare `gap` on the
+    // root, which the `compact` size's own gap can't be told apart from. The
+    // frame knobs are first-run vars, so a saved frame never paints the default.
+    const css = generateOverridesCss(
+      { 'empty-state': { gap: 16, firstRunBorderWidth: 2, firstRunRadius: 8, firstRunBorderStyle: 'solid', descriptionMaxWidth: '40ch' } },
+      brand,
+    );
+    expect(css).toContain('  --uxm-empty-state-gap: 16px;');
+    expect(css).not.toMatch(/^\s*gap:/m);
+    expect(css).toContain('  --uxm-empty-state-first-run-border-width: 2px;');
+    expect(css).toContain('  --uxm-empty-state-first-run-radius: 8px;');
+    expect(css).toContain('  --uxm-empty-state-first-run-border-style: solid;');
+    expect(css).toContain('  --uxm-empty-state-description-max-width: 40ch;');
+  });
+
   it('adds px to lengths but never to weights or opacities', () => {
     const css = generateOverridesCss(
       { 'input-text': { borderRadius: 8, fontWeight: 600, disabledOpacity: 0.4, itemDisabledOpacity: 0.5 } },

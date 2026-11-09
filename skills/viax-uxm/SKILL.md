@@ -86,6 +86,16 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **EmptyState — `variant` and `size`.** `variant="first-run"` frames the block (1px dashed
+  `--color-border` on `--color-surface`, 4px radius) to invite a first action; `"no-results"` is
+  unframed and quieter (32px 16px padding, 32px icon). `size="compact"` (20px 12px 8px, 24px
+  icon, 8px gap, 14 / 13px type) replaces local card overrides of padding and icon size. All
+  three keep the icon's own stroke width (`vector-effect: non-scaling-stroke`); the default look
+  is unchanged. New knobs `--uxm-empty-state-{gap,icon-gap,action-gap,align,
+  description-max-width,title-font-size,description-font-size,icon-vector-effect}` and
+  `--uxm-empty-state-first-run-{background,border-color,border-width,border-style,radius}`.
+  `align: start` left-aligns a tile's empty state.
+
 ## Workflow
 
 ### Where the documentation lives

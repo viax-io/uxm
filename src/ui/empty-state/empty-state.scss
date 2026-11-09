@@ -1,37 +1,99 @@
 /* ── empty-state ── */
 
+// Every public knob reads `var(--uxm-empty-state-<prop>, <default>)`. The
+// variants and `compact` only move the DEFAULT, through the private
+// `--_uxm-empty-state-*` values below, so a consumer's knob still wins over
+// any variant and the base block renders exactly as it did before them.
 .uxm-empty-state {
-  align-items: center;
+  --_uxm-empty-state-padding: 48px;
+  --_uxm-empty-state-gap: 12px;
+  --_uxm-empty-state-icon-size: 48px;
+  --_uxm-empty-state-title-font-size: 16px;
+  --_uxm-empty-state-description-font-size: 14px;
+  // A scaled glyph scales its stroke too: a 24-unit Icon in the 48px box
+  // paints a 3.5px line. `non-scaling-stroke` keeps the glyph's own width, but
+  // it thins every existing empty state, so only the opt-in looks turn it on.
+  --_uxm-empty-state-icon-vector-effect: none;
+  --_uxm-empty-state-gap-resolved: var(--uxm-empty-state-gap, var(--_uxm-empty-state-gap));
+
+  align-items: var(--uxm-empty-state-align, center);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: var(--uxm-empty-state-padding, 48px);
-  text-align: center;
+  gap: var(--_uxm-empty-state-gap-resolved);
+  padding: var(--uxm-empty-state-padding, var(--_uxm-empty-state-padding));
+  text-align: var(--uxm-empty-state-align, center);
 
   &__icon {
     color: var(--uxm-empty-state-icon-color, var(--color-border));
-    height: var(--uxm-empty-state-icon-size, 48px);
-    width: var(--uxm-empty-state-icon-size, 48px);
+    height: var(--uxm-empty-state-icon-size, var(--_uxm-empty-state-icon-size));
+    // Icon gap is the whole icon → title distance; the flex gap already
+    // supplies `gap` of it, so the margin adds (or takes back) the rest.
+    margin-bottom: calc(
+      var(--uxm-empty-state-icon-gap, var(--_uxm-empty-state-gap-resolved)) - var(--_uxm-empty-state-gap-resolved)
+    );
+    width: var(--uxm-empty-state-icon-size, var(--_uxm-empty-state-icon-size));
 
     & > svg {
       height: 100%;
       width: 100%;
     }
+
+    & > svg * {
+      vector-effect: var(--uxm-empty-state-icon-vector-effect, var(--_uxm-empty-state-icon-vector-effect));
+    }
   }
 
   &__title {
     color: var(--uxm-empty-state-title-color, var(--color-text));
-    font-size: calc(16px * var(--type-scale, 1));
+    font-size: calc(var(--uxm-empty-state-title-font-size, var(--_uxm-empty-state-title-font-size)) * var(--type-scale, 1));
     font-weight: var(--font-weight-strong, 600);
   }
 
   &__description {
     color: var(--uxm-empty-state-description-color, var(--color-text-muted));
-    font-size: calc(14px * var(--type-scale, 1));
-    max-width: 32ch;
+    // One line: the type-scale gate reads font-size declarations line by line.
+    font-size: calc(var(--uxm-empty-state-description-font-size, var(--_uxm-empty-state-description-font-size)) * var(--type-scale, 1));
+    max-width: var(--uxm-empty-state-description-max-width, 32ch);
   }
 
   &__action {
-    margin-top: 8px;
+    // Action gap is the whole description → action distance (8px more than
+    // the gap by default, as before the knob); the flex gap supplies `gap`.
+    margin-top: calc(
+      var(--uxm-empty-state-action-gap, calc(var(--_uxm-empty-state-gap-resolved) + 8px)) -
+        var(--_uxm-empty-state-gap-resolved)
+    );
+  }
+
+  // First run: a framed panel inviting the first action, so it never reads
+  // like a filter that came back empty. The frame is declared here only, never
+  // on the base block, so a consumer's own class that frames a default empty
+  // state doesn't start tying with the library on load order; and its knobs
+  // are first-run knobs, so a saved frame never paints another look.
+  &--first-run {
+    --_uxm-empty-state-icon-vector-effect: non-scaling-stroke;
+
+    background: var(--uxm-empty-state-first-run-background, var(--color-surface));
+    border: var(--uxm-empty-state-first-run-border-width, 1px) var(--uxm-empty-state-first-run-border-style, dashed)
+      var(--uxm-empty-state-first-run-border-color, var(--color-border));
+    border-radius: var(--uxm-empty-state-first-run-radius, 4px);
+  }
+
+  // No results: unframed and quieter, in the place the results would be.
+  &--no-results {
+    --_uxm-empty-state-padding: 32px 16px;
+    --_uxm-empty-state-icon-size: 32px;
+    --_uxm-empty-state-icon-vector-effect: non-scaling-stroke;
+  }
+
+  // Compact: for cards and tiles. Declared after the variants so its padding
+  // and icon size win when combined with `no-results`.
+  &--compact {
+    --_uxm-empty-state-padding: 20px 12px 8px;
+    --_uxm-empty-state-gap: 8px;
+    --_uxm-empty-state-icon-size: 24px;
+    --_uxm-empty-state-title-font-size: 14px;
+    --_uxm-empty-state-description-font-size: 13px;
+    --_uxm-empty-state-icon-vector-effect: non-scaling-stroke;
   }
 }
