@@ -73,7 +73,7 @@ export type { DividerProps } from './divider';
 export { EditableCell } from './editable-cell';
 export type { EditableCellAlign, EditableCellOption, EditableCellProps, EditableCellSize, EditableCellType, EditableCellValue } from './editable-cell';
 export { EmptyState } from './empty-state';
-export type { EmptyStateProps } from './empty-state';
+export type { EmptyStateProps, EmptyStateSize, EmptyStateVariant } from './empty-state';
 export { ErrorPage } from './error-page';
 export type { ErrorPageProps } from './error-page';
 export { ExpandableText } from './expandable-text';
