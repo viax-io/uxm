@@ -1,6 +1,6 @@
 # @viax.io/uxm — Component Catalog
 
-All 99 components exported from `@viax.io/uxm/ui` (as of v4.91.0) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
+All 99 components exported from `@viax.io/uxm/ui` (as of v4.92.0) — imported as `uxm/ui` through the `uxm` alias (SKILL.md → "Before writing any code"), grouped by intent. Use this file
 
 ## Deprecated (removed in the next major — do not use in new code)
 
@@ -115,7 +115,7 @@ Import path for all: `import { … } from 'uxm/ui';`
 | **Modal** | `Modal`, `ModalSize`, `ModalProps`, `ModalHeaderProps`, `ModalSectionProps` | Standard panel inside Dialog: `<Modal size onClose><Modal.Header/><Modal.Body/><Modal.Footer/></Modal>`. `size: 'sm' \| 'md' \| 'lg' \| 'fullscreen'`; `onClose` renders the header X. |
 | **Badge** | `Badge`, `BadgeMode`, `BadgeType`, `BadgeProps` | Small status pill; 6 tones × 2 modes (`count` / `dot`). |
 | **Chip** | `Chip`, `ChipMode`, `ChipProps` | Mode-driven (`assist` / `filter` / `input` / `suggestion`). Renders `<button>` or `<span>` depending on interactivity. |
-| **EmptyState** | `EmptyState`, `EmptyStateProps`, `EmptyStateVariant`, `EmptyStateSize` | Icon + title + `description` for empty lists / no-results. Props: `icon`, `title` (required), `description`, `action`, `variant` (`'default'` \| `'first-run'` framed \| `'no-results'` quieter, unreleased), `size` (`'default'` \| `'compact'` for cards and tiles, unreleased). ⚠️ It is `description` — **not** `body`. |
+| **EmptyState** | `EmptyState`, `EmptyStateProps`, `EmptyStateVariant`, `EmptyStateSize` | Icon + title + `description` for empty lists / no-results. Props: `icon`, `title` (required), `description`, `action`, `variant` (`'default'` \| `'first-run'` framed \| `'no-results'` quieter, 4.92.0), `size` (`'default'` \| `'compact'` for cards and tiles, 4.92.0). ⚠️ It is `description` — **not** `body`. |
 | **ErrorPage** | `ErrorPage`, `ErrorPageProps` | Full-page error layout. Code is a **display** role surface and the title an **h1** one (`--type-display-*` / `--type-page-title-*`); the message reads `--type-body-line-height`. Props: `code`, `icon`, `title` (required), `message`, `primaryAction`, `secondaryAction`. ⚠️ Not `description` / `action` — those are `EmptyState`'s names. |
 | **Loader** | `Loader`, `LoaderVariant`, `LoaderLayout`, `LoaderProps` | Spinner / dots / bar, optional `\|`-separated cycling messages. ⚠ Does not honour `prefers-reduced-motion`. |
 | **ProgressBar** | `ProgressBar`, `ProgressBarVariant`, `ProgressBarProps` | Determinate progress (0–100%) — companion to `Loader` when the fraction done is known (uploads, batch ops). `value` (clamped 0–100), `variant: 'linear' \| 'ring'` (linear track+fill or CSS conic-gradient ring, no SVG), `label` (caption + accessible name), `valueText` (override `${round}%`). `role="progressbar"` + aria-valuenow/min/max. Theming via `--uxm-progress-bar-*`. From `./progress-bar` (2.7.0). |

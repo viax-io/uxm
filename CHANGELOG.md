@@ -1,3 +1,10 @@
+# [4.92.0](https://github.com/viax-io/uxm/compare/v4.91.0...v4.92.0) (2026-11-09)
+
+
+### Features
+
+* **empty-state:** first-run and no-results variants, compact size, spacing knobs ([b6024cc](https://github.com/viax-io/uxm/commit/b6024cc2f268d7e1cadc4c7f082a1640b25ebf0b))
+
 # [4.91.0](https://github.com/viax-io/uxm/compare/v4.90.0...v4.91.0) (2026-11-08)
 
 
