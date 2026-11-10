@@ -103,3 +103,20 @@ describe('AppSidebar collapsedFlyout', () => {
     expect(flyout()).toBeNull();
   });
 });
+
+describe('AppSidebar edge toggle', () => {
+  it('names the action in its label and carries no aria-expanded', () => {
+    // Label + aria-expanded together read as "Collapse sidebar, expanded".
+    const onCollapseToggle = vi.fn();
+    const { rerender } = render(
+      <AppSidebar sections={sections} toggle="edge" onCollapseToggle={onCollapseToggle} />,
+    );
+    const collapse = screen.getByRole('button', { name: 'Collapse sidebar' });
+    expect(collapse).not.toHaveAttribute('aria-expanded');
+    fireEvent.click(collapse);
+    expect(onCollapseToggle).toHaveBeenCalledOnce();
+
+    rerender(<AppSidebar sections={sections} toggle="edge" collapsed onCollapseToggle={onCollapseToggle} />);
+    expect(screen.getByRole('button', { name: 'Expand sidebar' })).not.toHaveAttribute('aria-expanded');
+  });
+});

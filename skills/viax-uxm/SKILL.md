@@ -90,6 +90,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **AppSidebar** — `toggle="edge"`: the reveal strip no longer takes clicks until the pointer is
+  over the rail, so the content's left edge beside the rail is usable again (it swallowed clicks,
+  selection and drags there even with the handle hidden). The handle drops `aria-expanded`: its
+  label already names the action, and the pair read "Collapse sidebar, expanded".
+
 - **Menu** — a control row whose control opens its own panel (a `Select`, a `DateInput`) now keeps
   that panel's keys: Enter in the nested list used to pick the highlighted menu row and close the
   menu, and the arrows moved the menu's highlight.

@@ -80,9 +80,16 @@
      A strip straddling the right border — the reveal zone — with the round
      handle at its centre. The handle shows while the pointer is in the strip
      or on the handle, and always while it has keyboard focus; it half overlaps
-     the content beside the rail, so it sits above it. */
+     the content beside the rail, so it sits above it.
+     The strip is inert until the pointer is over the rail: it straddles the
+     content's edge for the rail's full height, and a hit-testable strip there
+     swallowed clicks, selection and drags on that sliver even while the handle
+     was invisible. Once the rail is hovered the strip (and the handle, which
+     inherits it) takes the pointer, so the handle stays shown and clickable as
+     the pointer crosses the border onto it. */
   &__edge {
     bottom: 0;
+    pointer-events: none;
     position: absolute;
     right: calc(var(--uxm-app-sidebar-edge-reveal, 12px) / -2);
     top: 0;
@@ -131,12 +138,18 @@
 
   /* Shown while the pointer is anywhere over the rail, rows included (so it
      doesn't blink as the pointer crosses them), and on the strip, which
-     reaches a little past the border. */
+     reaches a little past the border — the strip is the rail's child, so
+     hovering it keeps the rail's `:hover`. */
   &:hover &__edge-toggle,
-  &__edge:hover &__edge-toggle,
   &--state-edge-shown &__edge-toggle,
   &--state-edge-hover &__edge-toggle {
     opacity: 1;
+  }
+
+  &:hover &__edge,
+  &--state-edge-shown &__edge,
+  &--state-edge-hover &__edge {
+    pointer-events: auto;
   }
 
   &__toggle {
@@ -410,10 +423,12 @@
    handle, and with `toggle="edge"` it is the rail's only collapse control —
    hiding it left the rail stuck in whichever state it was in. So it stays
    shown. After the base rule on purpose: same specificity, so it wins by
-   source order. */
+   source order. The handle takes the tap itself: the strip around it stays
+   inert, since there is no hover to wake it. */
 @media (min-width: 768px) and (hover: none) {
   .uxm-app-sidebar__edge-toggle {
     opacity: 1;
+    pointer-events: auto;
   }
 }
 
