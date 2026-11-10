@@ -86,6 +86,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Menu** — `role="menu"`, its `id` (the trigger's `aria-controls`) and `aria-label` moved from
+  the floating `.uxm-menu__panel` to the `.uxm-menu__list` inside it; the panel is now
+  `presentation`, as in `Listbox`. The menu owned a focusable, roleless list, which axe flags
+  (`aria-required-children`). Selectors on `.uxm-menu__panel[role="menu"]` need updating.
+
 ## Workflow
 
 ### Where the documentation lives

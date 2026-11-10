@@ -1,8 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import axe from 'axe-core';
 import { describe, expect, it } from 'vitest';
 
-import { Banner, ButtonPrimary, Checkbox, Dialog, FormField, Modal, TextInput, ToggleSwitch } from '@/ui';
+import { Banner, ButtonPrimary, Checkbox, Dialog, FormField, Menu, Modal, TextInput, ToggleSwitch } from '@/ui';
 
 async function expectNoViolations(root: Element) {
   const results = await axe.run(root, {
@@ -46,5 +46,23 @@ describe('axe smoke', () => {
     );
     const dialog = await screen.findByRole('dialog');
     await expectNoViolations(dialog);
+  });
+
+  it('an open menu has no violations', async () => {
+    // The role sits on the list, not the floating panel: a `menu` on the panel
+    // owned the focusable, roleless list, which a menu may not.
+    render(
+      <Menu
+        aria-label="Row actions"
+        items={[
+          { key: 'edit', label: 'Edit' },
+          { separator: true },
+          { key: 'archive', label: 'Archive', disabled: true },
+        ]}
+        renderTrigger={({ triggerProps }) => <button {...triggerProps}>Open</button>}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Open' }));
+    await expectNoViolations(screen.getByRole('menu'));
   });
 });

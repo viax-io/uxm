@@ -440,15 +440,19 @@ export function Menu({
         maxWidth={resolvedMaxWidth}
         matchAnchorWidth={matchAnchorWidth}
         initialFocus={listRef as RefObject<HTMLElement | null>}
-        role="menu"
-        aria-label={ariaLabel}
-        id={panelId}
+        // The panel is chrome; the list inside it is the menu (as Listbox does
+        // with its listbox). With `menu` on the panel, its one child was the
+        // focusable, roleless list — which a menu may not own (axe:
+        // aria-required-children).
+        role="presentation"
         className={cn('uxm-menu__panel', panelClassName)}
         style={panelStyle}
       >
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- the panel carries role="menu" (set on the Popover above); this inner list is the focus target + key-router for WAI-ARIA menu nav, with full keyboard support via onKeyDown */}
         <div
           ref={listRef}
+          id={panelId}
+          role="menu"
+          aria-label={ariaLabel}
           className="uxm-menu__list"
           tabIndex={-1}
           onKeyDown={onPanelKeyDown}
