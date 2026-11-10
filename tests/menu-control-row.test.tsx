@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Icon, Menu, ViewSwitcher, type MenuEntry } from '@/ui';
@@ -92,5 +93,23 @@ describe('Menu control row', () => {
     fireEvent.keyDown(list, { key: 'ArrowDown' });
     fireEvent.keyDown(list, { key: 'Enter' });
     expect(onArchive).toHaveBeenCalledOnce();
+  });
+
+  it('leaves keys from a control\'s portaled panel to the control', () => {
+    // A picker in the row (Select, DateInput) opens a Popover on <body>. Its
+    // keys reach the menu through the React tree from outside the list, where
+    // the row's DOM guard cannot see them; Enter there must not pick a row.
+    const onArchive = vi.fn();
+    const items: MenuEntry[] = [
+      { key: 'archive', label: 'Archive', onSelect: onArchive },
+      { key: 'pick', label: 'Pick', control: createPortal(<button>Nested option</button>, document.body) },
+    ];
+    render(<Menu items={items} renderTrigger={({ triggerProps }) => <button {...triggerProps}>Open</button>} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Open' }));
+    const nested = screen.getByRole('button', { name: 'Nested option' });
+    fireEvent.keyDown(nested, { key: 'ArrowDown' });
+    fireEvent.keyDown(nested, { key: 'Enter' });
+    expect(onArchive).not.toHaveBeenCalled();
+    expect(screen.getByRole('menu')).toBeInTheDocument();
   });
 });
