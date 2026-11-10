@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { describe, expect, it, vi } from 'vitest';
@@ -111,5 +112,19 @@ describe('Menu control row', () => {
     fireEvent.keyDown(nested, { key: 'Enter' });
     expect(onArchive).not.toHaveBeenCalled();
     expect(screen.getByRole('menu')).toBeInTheDocument();
+  });
+
+  it('closes on Escape from inside the control and hands focus back to the trigger', async () => {
+    // The row's key guard leaves keys to the control; Escape is not the
+    // control's to keep — it still closes the menu, as from any row.
+    render(<Harness onArchive={vi.fn()} />);
+    const trigger = screen.getByRole('button', { name: 'Open' });
+    // A real click, so the trigger holds focus before the menu opens — that is
+    // the focus the popover hands back on close.
+    await userEvent.click(trigger);
+    screen.getByRole('button', { name: 'Dark' }).focus();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    await waitFor(() => expect(trigger).toHaveFocus());
   });
 });
