@@ -79,7 +79,7 @@ describe('generateOverridesCss', () => {
         .flatMap((p) => {
           const css = generateOverridesCss({ [def.id]: { [p.key]: p.defaultValue } }, brand);
           const declared = css.split('\n').find((line) => line.trim().endsWith(';') && !line.includes('{'));
-          return declared?.trim().endsWith(`${p.defaultValue}${p.unit};`) ? [] : [`${def.id}.${p.key} (${p.unit}): ${declared?.trim()}`];
+          return declared?.trim().endsWith(`: ${p.defaultValue}${p.unit};`) ? [] : [`${def.id}.${p.key} (${p.unit}): ${declared?.trim()}`];
         }),
     );
     expect(wrong).toEqual([]);
