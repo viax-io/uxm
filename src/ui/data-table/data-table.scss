@@ -794,7 +794,7 @@
   #{$root} .uxm-data-table__field-term {
     display: block;
     font-size: var(--uxm-data-table-stacked-label-font-size, calc(11px * var(--type-scale, 1)));
-    font-weight: var(--font-weight-strong, 600);
+    font-weight: var(--uxm-data-table-stacked-label-font-weight, var(--font-weight-strong, 600));
     color: var(--uxm-data-table-stacked-label-color, var(--color-text-muted));
     text-transform: uppercase;
     letter-spacing: 0.04em;

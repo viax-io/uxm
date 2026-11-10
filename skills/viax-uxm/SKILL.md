@@ -84,6 +84,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **DataTable** — `--uxm-data-table-stacked-label-font-weight` themes the weight of a
+  `stackedRoles` field's label (the `<dt>`), alongside `-stacked-label-{font-size,color}`. Default
+  unchanged: `--font-weight-strong`.
+
 ## Workflow
 
 ### Where the documentation lives

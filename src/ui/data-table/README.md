@@ -322,7 +322,7 @@ ones. The default card has the same gap, silently, through an empty `attr()`.
 order puts reading and tab order at odds with the layout (WCAG 1.3.2, 2.4.3).
 
 Theming: `--uxm-data-table-stacked-title-{font-size,font-weight,color}`,
-`--uxm-data-table-stacked-label-{font-size,color}`, `--uxm-data-table-stacked-card-padding`,
+`--uxm-data-table-stacked-label-{font-size,font-weight,color}`, `--uxm-data-table-stacked-card-padding`,
 `--uxm-data-table-stacked-gap`, `--uxm-data-table-stacked-footer-gap`.
 
 In UXM Studio this is the Data Table's "Card Shape" layout variant.

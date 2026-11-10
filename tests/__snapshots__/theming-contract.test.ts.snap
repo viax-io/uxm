@@ -569,6 +569,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-data-table-stacked-gap",
   "--uxm-data-table-stacked-label-color",
   "--uxm-data-table-stacked-label-font-size",
+  "--uxm-data-table-stacked-label-font-weight",
   "--uxm-data-table-stacked-title-color",
   "--uxm-data-table-stacked-title-font-size",
   "--uxm-data-table-stacked-title-font-weight",
