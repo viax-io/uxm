@@ -86,6 +86,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **AppSidebar** — `toggle="edge"`: the reveal strip no longer takes clicks until the pointer is
+  over the rail, so the content's left edge beside the rail is usable again (it swallowed clicks,
+  selection and drags there even with the handle hidden). The handle drops `aria-expanded`: its
+  label already names the action, and the pair read "Collapse sidebar, expanded".
+
 ## Workflow
 
 ### Where the documentation lives

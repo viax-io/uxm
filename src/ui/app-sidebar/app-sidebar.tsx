@@ -425,8 +425,10 @@ export function AppSidebar({
             type="button"
             className="uxm-app-sidebar__edge-toggle"
             onClick={onCollapseToggle}
+            // The label names the action, so no `aria-expanded`: with both,
+            // a reader announced "Collapse sidebar, expanded". Matches the
+            // header toggle, which carries the label alone.
             aria-label={collapsed ? expandLabel : collapseLabel}
-            aria-expanded={!collapsed}
           >
             <Icon glyph={collapsed ? 'chevron-right' : 'chevron-left'} size={14} strokeWidth={1.75} />
           </button>
