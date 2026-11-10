@@ -2485,3 +2485,10 @@ reached the published library; now shipped in 2.8.0.
 - **Buttons — border width knob.** `ButtonSecondary`, `ButtonTertiary`, `ButtonDanger` and
   `ButtonWithIcon` read `--uxm-button-{secondary,tertiary,danger,with-icon}-border-width`
   (defaults 1.5px / 1px / 1px / 1px, unchanged), and the studio shows a Border Width knob for each.
+
+### New in 4.91.0
+
+- **Menu — `MenuControlRow`.** A `MenuEntry` of `{ key, label, control }` puts a quick setting in
+  a menu: label left, a control such as `ViewSwitcher` right. Picking in it does not close the
+  menu, arrow-key nav steps over it, and keys inside the control stay the control's. New knobs
+  `--uxm-menu-control-{gap,label-color}`.

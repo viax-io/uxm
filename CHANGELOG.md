@@ -1,3 +1,10 @@
+## [4.92.4](https://github.com/viax-io/uxm/compare/v4.92.3...v4.92.4) (2026-11-10)
+
+
+### Bug Fixes
+
+* **menu:** put role="menu" on the list, not the floating panel ([70f8216](https://github.com/viax-io/uxm/commit/70f82160d0147f1cb0edad9008d8f29021157bff))
+
 ## [4.92.3](https://github.com/viax-io/uxm/compare/v4.92.2...v4.92.3) (2026-11-10)
 
 
