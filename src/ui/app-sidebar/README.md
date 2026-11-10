@@ -59,7 +59,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `closeLabel` | `string` | `'Close navigation'` | Accessible name for the mobile drawer's close button. |
 | `expandLabel` | `string` | `'Expand sidebar'` | Accessible name for the collapse toggle while collapsed. |
 | `collapseLabel` | `string` | `'Collapse sidebar'` | Accessible name for the collapse toggle while expanded. |
-| `toggle` | `'header' \| 'edge'` | `'header'` | Where the collapse toggle sits. `header`: in the brand row (the collapsed icon expands the rail). `edge`: a round handle centred on the rail's right border, shown while the pointer is anywhere over the rail, within `--uxm-app-sidebar-edge-reveal` of the border, or on the handle, and always on keyboard focus; always shown on devices without hover (`(hover: none)`, e.g. a tablet; nothing can reveal it there), and hidden below 768px (the mobile drawer). It follows the nav in the tab order and reports `aria-expanded`. |
+| `toggle` | `'header' \| 'edge'` | `'header'` | Where the collapse toggle sits. `header`: in the brand row (the collapsed icon expands the rail). `edge`: a round handle centred on the rail's right border, shown while the pointer is anywhere over the rail or, once it is, within `--uxm-app-sidebar-edge-reveal` of the border or on the handle, and always on keyboard focus; always shown on devices without hover (`(hover: none)`, e.g. a tablet; nothing can reveal it there), and hidden below 768px (the mobile drawer). It follows the nav in the tab order; its label names the action (`collapseLabel` / `expandLabel`), with no `aria-expanded`. Until the pointer is over the rail, the strip takes no clicks, so the content beside the rail stays fully usable. |
 
 ### `AppSidebarBrand`
 
@@ -180,7 +180,7 @@ With the rail collapsed, hovering or tabbing to an icon shows its label in a pil
 | `--uxm-app-sidebar-lead-padding` | – | `8px` | Header-slot padding. Matches `__nav` so a control aligns with the nav rows. |
 | `--uxm-app-sidebar-footer-padding` | – | `8px` | Footer padding, in both rail states. Was `12px 24px`; see [Alignment](#alignment). |
 | `--uxm-app-sidebar-lead-gap` | – | `8px` | Row gap between controls in the header slot. |
-| `--uxm-app-sidebar-edge-reveal` | – | `12px` | `toggle="edge"`: width of the strip straddling the right border that reveals the handle on hover (it reaches past the border onto the content). |
+| `--uxm-app-sidebar-edge-reveal` | – | `12px` | `toggle="edge"`: width of the strip straddling the right border that keeps the handle shown as the pointer leaves the rail onto it (it reaches past the border onto the content, and takes the pointer only while the rail is hovered). |
 | `--uxm-app-sidebar-edge-toggle-size` | – | `24px` | `toggle="edge"`: the round handle's diameter. |
 | `--uxm-app-sidebar-edge-toggle-offset-y` | – | `50%` | `toggle="edge"`: the handle's vertical position on the border. |
 | `--uxm-app-sidebar-edge-toggle-z-index` | – | `5` | `toggle="edge"`: stacking of the strip over the content beside the rail. |

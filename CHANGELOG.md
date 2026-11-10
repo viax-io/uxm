@@ -1,3 +1,10 @@
+## [4.92.3](https://github.com/viax-io/uxm/compare/v4.92.2...v4.92.3) (2026-11-10)
+
+
+### Bug Fixes
+
+* **app-sidebar:** free the content edge under the edge strip, and drop aria-expanded ([887a3ee](https://github.com/viax-io/uxm/commit/887a3eeda87592d51cec8e98678c95658ffa9154))
+
 ## [4.92.2](https://github.com/viax-io/uxm/compare/v4.92.1...v4.92.2) (2026-11-10)
 
 
