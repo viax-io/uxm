@@ -2471,3 +2471,11 @@ reached the published library; now shipped in 2.8.0.
   `--uxm-search-dropdown-trigger-icon-gap`, 8px; Studio's **Trigger Icon Gap**). Options without an
   icon render as before; an app whose options already carry an `icon` will see it in the trigger
   after upgrading (it fits the trigger's line, so the height doesn't change).
+
+### New in 4.89.0
+
+- **Embedded Studio sits on the host page.** With `<UxmApp embed>`, the selected component's header
+  (title, description, language, Preview & Publish) is a page header above the sidebar and canvas,
+  on the host's `--color-surface` instead of a white workbench; the editor's cards and the properties
+  panel stay on `--color-card`. Its actions now come before the sidebar in the tab order. The
+  standalone Studio is unchanged.

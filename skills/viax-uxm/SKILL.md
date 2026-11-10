@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.92.1, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.92.2, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.92.1** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.92.2** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.92.1 — current API surface (overrides training data)
+## v4.92.2 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,14 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.89.0
-
-- **Embedded Studio sits on the host page.** With `<UxmApp embed>`, the selected component's header
-  (title, description, language, Preview & Publish) is a page header above the sidebar and canvas,
-  on the host's `--color-surface` instead of a white workbench; the editor's cards and the properties
-  panel stay on `--color-card`. Its actions now come before the sidebar in the tab order. The
-  standalone Studio is unchanged.
 
 ### New in 4.90.0
 
@@ -80,6 +72,12 @@ catalog.
   that panel's keys: Enter in the nested list used to pick the highlighted menu row and close the
   menu, and the arrows moved the menu's highlight.
 
+### New in 4.92.2
+
+- **SearchDropdown** — the selected option's `description` now takes the selected row's colour
+  instead of `--color-text-muted`, which fell to 4.0:1 on the dark accent tint (under AA for 11px
+  text). A theme that sets `--uxm-search-dropdown-option-description-color` keeps its colour.
+
 ### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
@@ -87,10 +85,6 @@ catalog.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
-
-- **SearchDropdown** — the selected option's `description` now takes the selected row's colour
-  instead of `--color-text-muted`, which fell to 4.0:1 on the dark accent tint (under AA for 11px
-  text). A theme that sets `--uxm-search-dropdown-option-description-color` keeps its colour.
 
 ## Workflow
 
