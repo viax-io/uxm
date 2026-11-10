@@ -137,6 +137,13 @@ flipped while the menu is open (the theme as a `ViewSwitcher`, say), not a comma
   the control — or inside a panel the control opens, such as a `Select`'s list — never reaches
   the menu's own Enter / arrows.
 - The row is a `role="group"`, named by `label` when it is a plain string.
+- **Known ARIA trade-off.** A `menu` may own only `menuitem*`, `group` and `separator`, and a
+  group inside it only the same — so any control that is not itself made of menuitems (a
+  `ViewSwitcher`'s buttons, a `Select`) makes the menu fail axe's `aria-required-children`, and a
+  screen reader in menu mode may not expose the control at all. It stays reachable by Tab. The
+  atom accepts this on purpose rather than restrict `control`; keep control rows to quick,
+  non-essential settings that are also reachable elsewhere in the app, and expect an axe
+  exception for menus that use them.
 - Anything that runs an action and dismisses stays a `MenuItem`.
 
 ## Panel width

@@ -90,6 +90,9 @@ catalog.
   the floating `.uxm-menu__panel` to the `.uxm-menu__list` inside it; the panel is now
   `presentation`, as in `Listbox`. The menu owned a focusable, roleless list, which axe flags
   (`aria-required-children`). Selectors on `.uxm-menu__panel[role="menu"]` need updating.
+- **Menu** — `MenuControlRow` docs now state its known ARIA trade-off: a control that is not made of
+  menuitems fails axe `aria-required-children` inside `role="menu"` and may be hidden from a screen
+  reader in menu mode (Tab still reaches it). Keep control rows to non-essential settings.
 
 ## Workflow
 
