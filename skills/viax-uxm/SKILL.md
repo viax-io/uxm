@@ -90,6 +90,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **SearchDropdown** — the selected option's `description` now takes the selected row's colour
+  instead of `--color-text-muted`, which fell to 4.0:1 on the dark accent tint (under AA for 11px
+  text). A theme that sets `--uxm-search-dropdown-option-description-color` keeps its colour.
+
 ## Workflow
 
 ### Where the documentation lives

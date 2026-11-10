@@ -88,7 +88,7 @@ Most `--uxm-search-dropdown-*` knobs live on the wrapper and cascade to descenda
 | `--uxm-search-dropdown-option-meta-size` | – | `10px` | Meta text font size. |
 | `--uxm-search-dropdown-option-meta-color` | `--color-text-subtle` | – | Meta text colour. The default is a **3:1** token on 10px text, which misses WCAG 1.4.3 (3.66:1 light, 3.41:1 dark); set it to `var(--color-text-muted)` to clear AA without moving every separator the token also paints. **Set it on `:root`** — the option row lives in the portaled panel, so a value on the wrapper never reaches it. |
 | `--uxm-search-dropdown-option-description-size` | – | `11px` | `description` font size, in the option row and the trigger. |
-| `--uxm-search-dropdown-option-description-color` | `--color-text-muted` | – | `description` colour, in the option row and the trigger. **Set it on `:root`** to reach the portaled option rows. |
+| `--uxm-search-dropdown-option-description-color` | `--color-text-muted` | – | `description` colour, in the option row and the trigger. Unset, the selected row's description takes the row's own colour (`--uxm-listbox-option-selected-color`) so it keeps AA on the accent tint in dark. **Set it on `:root`** to reach the portaled option rows. |
 | `--uxm-search-dropdown-option-hover-bg` | `--color-surface-alt` | – | Highlighted option background (keyboard or mouse hover). |
 | `--uxm-search-dropdown-option-active-bg` | `--color-accent-subtle` | – | Selected option background. |
 | `--uxm-search-dropdown-option-active-color` | `--color-accent-bold` | – | Selected option text colour. |
