@@ -105,17 +105,6 @@ const STATUS_TO_TAG_TYPE: Record<string, TagType> = {
 };
 
 /**
- * Every `--uxm-data-table-*` knob the registry exposes, projected onto the real
- * component.
- *
- * This preview renders the shipped `<DataTable>`. It used to be a hand-rolled
- * replica with inline styles, which meant the panel tuned a drawing rather than
- * the component: knobs that did nothing went unnoticed, and whole features
- * (sorting, sticky columns, the active row) could not be seen at all. Every
- * knob here reaches the atom through the same custom property a consumer would
- * set.
- */
-/**
  * Must match the `scrollArrows` layout variant's option values in the studio
  * registry. `'default'` has no entry on purpose: it is the opt-OUT, and
  * `undefined` (passing nothing) is a different thing from passing a value.
@@ -171,6 +160,17 @@ function tableVars(styles: Styles): CSSProperties {
   } as CSSProperties;
 }
 
+/**
+ * Every `--uxm-data-table-*` knob the registry exposes, projected onto the real
+ * component.
+ *
+ * This preview renders the shipped `<DataTable>`. It used to be a hand-rolled
+ * replica with inline styles, which meant the panel tuned a drawing rather than
+ * the component: knobs that did nothing went unnoticed, and whole features
+ * (sorting, sticky columns, the active row) could not be seen at all. Every
+ * knob here reaches the atom through the same custom property a consumer would
+ * set.
+ */
 export function DataTablePreview({ styles, variants }: PreviewProps & { componentId: string }) {
   // Owning the rows lets every editable column round-trip its commits, so a
   // designer sees the new value persist after an edit.

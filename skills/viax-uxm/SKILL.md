@@ -86,6 +86,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **DataTable** — the actions column (table mode, stacked cards, and the `stackedRoles` actions
+  footer) aligns to the trailing edge with `text-align: end`, so it lands on the left in RTL
+  instead of the right. No change in LTR.
+
 ## Workflow
 
 ### Where the documentation lives
