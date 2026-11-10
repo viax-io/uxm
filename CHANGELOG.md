@@ -1,3 +1,10 @@
+## [4.92.1](https://github.com/viax-io/uxm/compare/v4.92.0...v4.92.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* **menu:** keep a control row's portaled panel keys out of the menu nav ([01d3c11](https://github.com/viax-io/uxm/commit/01d3c11a764bd0e50c6d422217ab6a19befab8a6))
+
 # [4.92.0](https://github.com/viax-io/uxm/compare/v4.91.0...v4.92.0) (2026-11-09)
 
 
