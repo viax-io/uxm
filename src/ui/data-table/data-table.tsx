@@ -775,6 +775,23 @@ export function DataTable<T>({
   // is never half title-and-fields and half label-above-value. Until then the
   // stacked look is untouched, which is what keeps this a PATCH-safe opt-in.
   const stackedRoles = columns.some((c) => c.stackedRole !== undefined);
+  // A `field` with no plain-text name gets no `<dt>`, and the stacked card
+  // hides the `<thead>` — so its value reaches a screen reader bare, which is
+  // what the `<dl>` exists to prevent. Keyed on the joined column keys, so an
+  // inline `columns` array warns once per change, not on every render.
+  const unnamedFields = stackedRoles
+    ? columns
+        .filter((c) => (c.stackedRole ?? 'field') === 'field' && columnLabel(c) === undefined)
+        .map((c) => c.key)
+        .join(', ')
+    : '';
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production' || !unnamedFields) return;
+    console.warn(
+      `[uxm] DataTable: stacked field column(s) ${unnamedFields} have no plain-text name — ` +
+        'their cards show the value with no label. Give each a `label` (or a string `header`).',
+    );
+  }, [unnamedFields]);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const edges = useScrollEdges(scrollerRef, scrolls);
   // The placement change rides on the prop: without it nothing is measured and

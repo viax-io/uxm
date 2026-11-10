@@ -315,7 +315,9 @@ divider, and a footer with nothing in it is dropped rather than drawn empty.
 **A field whose `header` is not a string needs `column.label`.** The label comes from
 `columnLabel()`, which falls back to `header` only when it is a string — so an icon-only or
 JSX header with no `label` renders the value with no label at all, sitting among labelled
-ones. The default card has the same gap, silently, through an empty `attr()`.
+ones. Outside production builds the table warns about it in the console, once per change
+of the offending columns. The default card has the same gap, silently, through an empty
+`attr()`.
 
 **Declare the title first and the actions last.** `title` and `actions` are placed with CSS
 `order`, which moves them visually but not in DOM or focus order — declaring them out of

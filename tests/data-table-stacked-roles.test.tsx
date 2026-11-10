@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { dataTableDef } from '@/studio/lib/registry/composite/data-table';
 import { DataTable } from '@/ui';
@@ -332,5 +332,35 @@ describe('DataTable stackedRole — the stylesheet', () => {
         `no ${bp} block carries the role rules`,
       ).toBe(true);
     }
+  });
+});
+
+/**
+ * A `field` whose header is JSX and that has no `label` renders its value with
+ * no `<dt>` — and the stacked card hides the `<thead>` — so a screen reader
+ * reads it bare. Nothing on screen says so, so development says it in the
+ * console, once per change of the offending columns rather than per render.
+ */
+describe('DataTable unnamed stacked field warning', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  const UNNAMED: DataTableColumn<Row>[] = [
+    { key: 'name', header: 'Name', stackedRole: 'title' },
+    { key: 'status', header: <span>Status</span> },
+  ];
+
+  it('warns once, naming the column, and not again on a re-render with fresh columns', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { rerender } = render(<DataTable rows={ROWS} rowKey={(r) => r.id} columns={[...UNNAMED]} />);
+    rerender(<DataTable rows={ROWS} rowKey={(r) => r.id} columns={[...UNNAMED]} />);
+    expect(warn).toHaveBeenCalledOnce();
+    expect(warn.mock.calls[0][0]).toContain('status');
+  });
+
+  it('stays quiet when the field has a label, or when no column names a role', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<DataTable rows={ROWS} rowKey={(r) => r.id} columns={[UNNAMED[0], { ...UNNAMED[1], label: 'Status' }]} />);
+    render(<DataTable rows={ROWS} rowKey={(r) => r.id} columns={[{ key: 'status', header: <span>Status</span> }]} />);
+    expect(warn).not.toHaveBeenCalled();
   });
 });

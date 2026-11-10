@@ -84,6 +84,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **DataTable** — with `stackedRole`s on, a `field` column with no plain-text name (a JSX `header`
+  and no `label`) now logs a development-only `console.warn` naming the column: its cards show the
+  value with no label. Production builds stay silent.
+
 ## Workflow
 
 ### Where the documentation lives
