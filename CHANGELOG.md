@@ -1,3 +1,10 @@
+# [4.94.0](https://github.com/viax-io/uxm/compare/v4.93.0...v4.94.0) (2026-11-10)
+
+
+### Features
+
+* **data-table:** warn in development about an unnamed stacked field ([d5f109a](https://github.com/viax-io/uxm/commit/d5f109a79ecdc16c23f64a998cdfb6272860a88f))
+
 # [4.93.0](https://github.com/viax-io/uxm/compare/v4.92.5...v4.93.0) (2026-11-10)
 
 

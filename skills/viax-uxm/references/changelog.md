@@ -2510,3 +2510,9 @@ reached the published library; now shipped in 2.8.0.
 - **Menu** — a control row whose control opens its own panel (a `Select`, a `DateInput`) now keeps
   that panel's keys: Enter in the nested list used to pick the highlighted menu row and close the
   menu, and the arrows moved the menu's highlight.
+
+### New in 4.92.2
+
+- **SearchDropdown** — the selected option's `description` now takes the selected row's colour
+  instead of `--color-text-muted`, which fell to 4.0:1 on the dark accent tint (under AA for 11px
+  text). A theme that sets `--uxm-search-dropdown-option-description-color` keeps its colour.
