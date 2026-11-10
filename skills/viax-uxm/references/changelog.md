@@ -2492,3 +2492,15 @@ reached the published library; now shipped in 2.8.0.
   a menu: label left, a control such as `ViewSwitcher` right. Picking in it does not close the
   menu, arrow-key nav steps over it, and keys inside the control stay the control's. New knobs
   `--uxm-menu-control-{gap,label-color}`.
+
+### New in 4.92.0
+
+- **EmptyState — `variant` and `size`.** `variant="first-run"` frames the block (1px dashed
+  `--color-border` on `--color-surface`, 4px radius) to invite a first action; `"no-results"` is
+  unframed and quieter (32px 16px padding, 32px icon). `size="compact"` (20px 12px 8px, 24px
+  icon, 8px gap, 14 / 13px type) replaces local card overrides of padding and icon size. All
+  three keep the icon's own stroke width (`vector-effect: non-scaling-stroke`); the default look
+  is unchanged. New knobs `--uxm-empty-state-{gap,icon-gap,action-gap,align,
+  description-max-width,title-font-size,description-font-size,icon-vector-effect}` and
+  `--uxm-empty-state-first-run-{background,border-color,border-width,border-style,radius}`.
+  `align: start` left-aligns a tile's empty state.

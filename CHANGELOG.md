@@ -1,3 +1,10 @@
+## [4.92.5](https://github.com/viax-io/uxm/compare/v4.92.4...v4.92.5) (2026-11-10)
+
+
+### Bug Fixes
+
+* **data-table:** align the actions column to the trailing edge in RTL too ([9ce8e0c](https://github.com/viax-io/uxm/commit/9ce8e0c827deddc14a2638d6554678aad3ae5eea))
+
 ## [4.92.4](https://github.com/viax-io/uxm/compare/v4.92.3...v4.92.4) (2026-11-10)
 
 
