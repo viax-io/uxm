@@ -2479,3 +2479,9 @@ reached the published library; now shipped in 2.8.0.
   on the host's `--color-surface` instead of a white workbench; the editor's cards and the properties
   panel stay on `--color-card`. Its actions now come before the sidebar in the tab order. The
   standalone Studio is unchanged.
+
+### New in 4.90.0
+
+- **Buttons — border width knob.** `ButtonSecondary`, `ButtonTertiary`, `ButtonDanger` and
+  `ButtonWithIcon` read `--uxm-button-{secondary,tertiary,danger,with-icon}-border-width`
+  (defaults 1.5px / 1px / 1px / 1px, unchanged), and the studio shows a Border Width knob for each.
