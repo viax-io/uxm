@@ -62,4 +62,25 @@ describe('AppSidebar edge toggle on touch-only devices', () => {
     expect(override).toBeDefined();
     expect(override!.start).toBeGreaterThan(base);
   });
+
+  it('takes the tap on the handle itself, the strip around it staying inert', () => {
+    const touch = blocks.find(showsHandle)!;
+    expect(touch.body).toMatch(/\.uxm-app-sidebar__edge-toggle\s*\{[^}]*pointer-events:\s*auto/);
+  });
+});
+
+/**
+ * The strip straddles the content's left edge for the rail's full height. It
+ * must not take the pointer until the rail is hovered, or it swallows clicks,
+ * selection and drags on that sliver of the content while the handle is
+ * invisible.
+ */
+describe('AppSidebar edge strip', () => {
+  it('is inert at rest', () => {
+    expect(css).toMatch(/\n\.uxm-app-sidebar__edge\s*\{[^}]*pointer-events:\s*none/);
+  });
+
+  it('takes the pointer once the rail is hovered', () => {
+    expect(css).toMatch(/\.uxm-app-sidebar:hover \.uxm-app-sidebar__edge[^{]*\{[^}]*pointer-events:\s*auto/);
+  });
 });
