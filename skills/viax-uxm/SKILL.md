@@ -90,6 +90,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Menu** — a control row whose control opens its own panel (a `Select`, a `DateInput`) now keeps
+  that panel's keys: Enter in the nested list used to pick the highlighted menu row and close the
+  menu, and the arrows moved the menu's highlight.
+
 ## Workflow
 
 ### Where the documentation lives

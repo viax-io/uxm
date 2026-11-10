@@ -362,6 +362,11 @@ export function Menu({
       // keys still drive the menu (a bare `target !== currentTarget` check
       // dropped every key from a focused item).
       if ((e.target as Element).closest('.uxm-menu__control')) return;
+      // React bubbles keys along the React tree, not the DOM: a control that
+      // portals its own panel (Select, DateInput — Popover mounts on <body>)
+      // sends its keys here from outside the list, where `closest` cannot see
+      // the row. Only a control's nested layer can sit outside, so leave it be.
+      if (!e.currentTarget.contains(e.target as Node)) return;
       const n = focusableIndices.length;
       if (n === 0) return;
       if (e.key === 'ArrowDown') {

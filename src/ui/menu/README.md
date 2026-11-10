@@ -134,7 +134,8 @@ flipped while the menu is open (the theme as a `ViewSwitcher`, say), not a comma
 
 - The control owns its value and its keys; picking in it does **not** close the menu.
 - Arrow-key navigation steps over the row (Tab reaches the control), and a key pressed inside
-  the control never reaches the menu's own Enter / arrows.
+  the control — or inside a panel the control opens, such as a `Select`'s list — never reaches
+  the menu's own Enter / arrows.
 - The row is a `role="group"`, named by `label` when it is a plain string.
 - Anything that runs an action and dismisses stays a `MenuItem`.
 
