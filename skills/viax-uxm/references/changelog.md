@@ -2504,3 +2504,9 @@ reached the published library; now shipped in 2.8.0.
   description-max-width,title-font-size,description-font-size,icon-vector-effect}` and
   `--uxm-empty-state-first-run-{background,border-color,border-width,border-style,radius}`.
   `align: start` left-aligns a tile's empty state.
+
+### New in 4.92.1
+
+- **Menu** — a control row whose control opens its own panel (a `Select`, a `DateInput`) now keeps
+  that panel's keys: Enter in the nested list used to pick the highlighted menu row and close the
+  menu, and the arrows moved the menu's highlight.

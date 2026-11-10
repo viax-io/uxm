@@ -1,3 +1,10 @@
+# [4.93.0](https://github.com/viax-io/uxm/compare/v4.92.5...v4.93.0) (2026-11-10)
+
+
+### Features
+
+* **data-table:** stacked label font-weight knob ([6763a8e](https://github.com/viax-io/uxm/commit/6763a8e137f74af777c8e75442b2bf9a07c8b38a))
+
 ## [4.92.5](https://github.com/viax-io/uxm/compare/v4.92.4...v4.92.5) (2026-11-10)
 
 
