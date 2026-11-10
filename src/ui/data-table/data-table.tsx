@@ -617,17 +617,6 @@ function useScrollEdges(ref: RefObject<HTMLDivElement | null>, enabled: boolean)
 }
 
 /**
- * The arrow pair. Scrolls by most of a viewport rather than a fixed step, so
- * one press moves a useful distance on any column layout, with a sliver of
- * overlap to keep your place.
- *
- * Both arrows stay MOUNTED and go `aria-disabled` at the ends. Unmounting the
- * one you are pressing destroys focus mid-interaction — press the end arrow
- * until it reaches the end and focus lands on <body> — which is 2.4.3. Native
- * `disabled` has the same problem in some browsers, hence `aria-disabled` plus
- * a no-op handler.
- */
-/**
  * The width of the pinned column on each edge, so the arrows can stand at the
  * edges of the area that actually scrolls instead of on top of a pin.
  *
@@ -688,6 +677,17 @@ function usePinnedInsets(
   return insets;
 }
 
+/**
+ * The arrow pair. Scrolls by most of a viewport rather than a fixed step, so
+ * one press moves a useful distance on any column layout, with a sliver of
+ * overlap to keep your place.
+ *
+ * Both arrows stay MOUNTED and go `aria-disabled` at the ends. Unmounting the
+ * one you are pressing destroys focus mid-interaction — press the end arrow
+ * until it reaches the end and focus lands on <body> — which is 2.4.3. Native
+ * `disabled` has the same problem in some browsers, hence `aria-disabled` plus
+ * a no-op handler.
+ */
 function ScrollArrows({
   scrollerRef,
   edges,

@@ -300,13 +300,13 @@
 
 /* Trailing row-action column — `width: 1%` + `nowrap` is the table idiom
    for "shrink to content", so the column hugs the ⋮ trigger and the data
-   columns keep the remaining width. Right-aligned so the affordance sits
-   at the row's trailing edge. */
+   columns keep the remaining width. End-aligned so the affordance sits
+   at the row's trailing edge, in RTL too. */
 .uxm-data-table__th--actions,
 .uxm-data-table__td--actions {
   width: 1%;
   white-space: nowrap;
-  text-align: right;
+  text-align: end;
 }
 /* Trim vertical padding so the IconButton (not the cell box) drives row
    height, keeping action rows the same height as data rows. */
@@ -729,7 +729,7 @@
      trailing alignment, so the kebab stays at the card's trailing edge rather
      than jumping to the left margin under the first value. */
   #{$d}.uxm-data-table__td--actions {
-    text-align: right;
+    text-align: end;
   }
 }
 
@@ -827,7 +827,7 @@
     margin-top: var(--uxm-data-table-stacked-footer-gap, 8px);
     padding-top: var(--uxm-data-table-stacked-footer-gap, 8px);
     border-top: 1px solid var(--uxm-data-table-border-color, var(--color-border));
-    text-align: right;
+    text-align: end;
   }
 }
 
