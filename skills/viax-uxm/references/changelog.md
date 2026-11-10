@@ -2463,3 +2463,19 @@ reached the published library; now shipped in 2.8.0.
   letter-spacing,font-size,font-weight}` (defaults `uppercase`, `0.06em`, `11px`, the strong
   weight; unchanged). Set the transform to `none` to show headings as written. In Studio they are
   App Sidebar's Section Heading group (Text Transform, Letter Spacing, Font Size, Font Weight).
+
+### New in 4.88.0
+
+- **SearchDropdown shows the selected option's icon.** An option's `icon` now also leads the
+  trigger when that option is selected (`.uxm-search-dropdown__trigger-icon`; knob
+  `--uxm-search-dropdown-trigger-icon-gap`, 8px; Studio's **Trigger Icon Gap**). Options without an
+  icon render as before; an app whose options already carry an `icon` will see it in the trigger
+  after upgrading (it fits the trigger's line, so the height doesn't change).
+
+### New in 4.89.0
+
+- **Embedded Studio sits on the host page.** With `<UxmApp embed>`, the selected component's header
+  (title, description, language, Preview & Publish) is a page header above the sidebar and canvas,
+  on the host's `--color-surface` instead of a white workbench; the editor's cards and the properties
+  panel stay on `--color-card`. Its actions now come before the sidebar in the tab order. The
+  standalone Studio is unchanged.

@@ -143,8 +143,8 @@
   color: var(--uxm-search-dropdown-option-meta-color, var(--color-text-subtle));
 }
 /* An option's `description`: a second line under the label, in the row and
-   in the trigger. Muted (4.5:1) rather than subtle, since it is small text
-   that carries information. One pair of knobs for both places — set them on
+   in the trigger. Muted rather than subtle, since it is small text that
+   carries information. One pair of knobs for both places — set them on
    `:root`, the option rows live in the portaled panel. */
 .uxm-search-dropdown__option-text {
   display: flex;
@@ -159,4 +159,11 @@
   white-space: nowrap;
   font-size: calc(var(--uxm-search-dropdown-option-description-size, 11px) * var(--type-scale, 1));
   color: var(--uxm-search-dropdown-option-description-color, var(--color-text-muted));
+}
+/* On the selected row the description takes the row's own colour: muted on
+   the dark accent-subtle row is 4.0:1, under AA for 11px text, while the
+   row's accent-bold clears it in both themes (5.4:1 light, 6.8:1 dark). The
+   knob still wins when a theme sets it. */
+.uxm-listbox__option--selected .uxm-search-dropdown__description {
+  color: var(--uxm-search-dropdown-option-description-color, currentColor);
 }
