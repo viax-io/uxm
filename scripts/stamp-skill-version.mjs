@@ -157,14 +157,17 @@ function dropQualifiers(text) {
  *
  * Only the parenthesised forms the skill has used are touched: "(unreleased)",
  * "(unreleased, …)" / "(unreleased; …)" / "(unreleased: …)", and the word as a
- * later item of a parenthesised list: "(…, unreleased)", "(16px; unreleased, …)".
+ * later item of a parenthesised list: "(…, unreleased)", "(16px; unreleased, …)",
+ * right after inline code naming what is new — "(9 knobs; `-label-font-weight`
+ * unreleased)" — and before a dash that goes on to explain it: "(`'none'`,
+ * unreleased — all three …)". The last two slipped past 4.84.0 and 4.93.0.
  * Lower-case on purpose, so the "### Unreleased" heading is never a match, and
  * neither is prose like "merged but unreleased" outside parentheses.
  */
 function resolveQualifiers(text, release = version) {
   return text
-    .replace(/\(unreleased(?=[),;:])/g, `(${release}`)
-    .replace(/([,;] )unreleased(?=[),;:])/g, `$1${release}`);
+    .replace(/\(unreleased(?=[),;:]| —)/g, `(${release}`)
+    .replace(/([,;] |` )unreleased(?=[),;:]| —)/g, `$1${release}`);
 }
 
 // A feature PR may have parked its notes under "### Unreleased". Promote that
