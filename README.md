@@ -394,7 +394,7 @@ import { UxmApp, createHttpPersistence } from '@viax.io/uxm/studio';
 <UxmApp persistence={createHttpPersistence('/api/uxm')} locale="de" />;
 ```
 
-The studio has no session of its own and never fetches one — **the host owns auth**. Pass the signed-in user as `account={{ name, email, role?, realm?, initials?, onSignOut? }}` and the canvas top bar grows an avatar → account menu with a settings pane; omit it and the header is unchanged. The "Log out" row renders only when `onSignOut` is given. Other optional props: `headerActions` (host nodes in the desktop top bar), `embed` (no full-page chrome) and `syncFavicon` (drive `<link rel="icon">` from the brand favicon).
+The studio has no session of its own and never fetches one — **the host owns auth**. Pass the signed-in user as `account={{ name, email, role?, realm?, initials?, onSignOut? }}` and the canvas top bar grows an avatar → account menu with a settings pane; omit it and the header is unchanged. The "Log out" row renders only when `onSignOut` is given. Other optional props: `headerActions` (host nodes in the desktop top bar), `embed` (no full-page chrome: the studio sits on the host page's background, with the component header as a page header above the workbench) and `syncFavicon` (drive `<link rel="icon">` from the brand favicon).
 
 `@viax.io/uxm/studio/generate-css` exposes `generateOverridesCss` and the CSS sanitizers on their own, so a server can render the saved overrides into a stylesheet without loading the workbench. The studio is the only layer styled with Tailwind; `studio.css` bundles those utilities and the token declarations but not the atom CSS.
 
@@ -455,6 +455,7 @@ npm run i18n:gen     # sync every studio dictionary to that catalog (new keys la
 npm run check:studio-i18n # every shipped studio locale is complete
 npm test             # Vitest smoke suite (tests/), jsdom — `npm run test:watch` while iterating
 npm run test:coverage # coverage summary for orientation only — no thresholds, not a gate
+npm run audit:report # npm audit against the public registry; CI's audit:ci fails only at critical
 npm run dev          # tsup --watch — only for local linked dev against a consumer
 ```
 
