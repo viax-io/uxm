@@ -156,6 +156,16 @@ describe('stamp-skill-version', () => {
       expect(ref('design-tokens.md')).toBe('| `--type-body-line-height` *(9.9.9)* |\n');
     });
 
+    it('rewrites the word after inline code and before an explaining dash', () => {
+      const { ref } = stamp('### Unreleased\n\n- One.\n', '9.9.9', {
+        'component-catalog.md':
+          '| (9 knobs; `-label-font-weight` unreleased) | (`a` \\| `b`, unreleased — all three) | (unreleased — new) |\n',
+      });
+      expect(ref('component-catalog.md')).toContain(
+        '| (9 knobs; `-label-font-weight` 9.9.9) | (`a` \\| `b`, 9.9.9 — all three) | (9.9.9 — new) |',
+      );
+    });
+
     it('resolves the references even when no notes are promoted', () => {
       const { skill, ref } = stamp(`### Unreleased\n\n${GUIDANCE}\n`, '9.9.9', {
         'component-catalog.md': '| **Foo** (unreleased) |\n',
