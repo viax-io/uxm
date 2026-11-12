@@ -1,3 +1,10 @@
+## [4.94.1](https://github.com/viax-io/uxm/compare/v4.94.0...v4.94.1) (2026-11-12)
+
+
+### Bug Fixes
+
+* **skill:** resolve the two qualifier forms the release stamper missed ([5d7f139](https://github.com/viax-io/uxm/commit/5d7f1399aa89e51762e582bca9fa89ca64020038))
+
 # [4.94.0](https://github.com/viax-io/uxm/compare/v4.93.0...v4.94.0) (2026-11-10)
 
 
