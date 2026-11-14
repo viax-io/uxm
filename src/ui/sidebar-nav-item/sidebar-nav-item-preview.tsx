@@ -46,6 +46,8 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-sidebar-nav-item-icon-box-size': `${styles.iconBoxSize}px`,
     '--uxm-sidebar-nav-item-icon-radius': `${styles.iconRadius}px`,
     '--uxm-sidebar-nav-item-icon-size': `${styles.iconSize}px`,
+    '--uxm-sidebar-nav-item-icon-count-bg': styles.iconCountBg as string,
+    '--uxm-sidebar-nav-item-icon-count-text': styles.iconCountText as string,
   } as CSSProperties;
 }
 
@@ -141,6 +143,9 @@ export function SidebarNavItemPreview({ styles, variants }: PreviewProps) {
               disabled={state === 'disabled' && i === 1}
               icon={<Icon glyph={it.glyph} />}
               badge={badgeFor(i)}
+              // "Count on Icon": the number a collapsed AppSidebar rail puts on
+              // the tile corner (`statusCount`). 120 shows the 99+ cap.
+              statusCount={badgeVariant === 'tile-count' ? [3, 12, 120][i] : undefined}
             >
               {it.label}
             </SidebarNavItem>

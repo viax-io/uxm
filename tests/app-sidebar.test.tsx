@@ -120,3 +120,59 @@ describe('AppSidebar edge toggle', () => {
     expect(screen.getByRole('button', { name: 'Expand sidebar' })).not.toHaveAttribute('aria-expanded');
   });
 });
+
+describe('AppSidebar item count', () => {
+  const glyph = <svg aria-hidden />;
+  const renderCount = (item: Partial<AppSidebarProps['sections'][number]['items'][number]>, collapsed: boolean) => {
+    const { container } = render(
+      <AppSidebar
+        brand={{}}
+        collapsed={collapsed}
+        sections={[{ items: [{ href: '/inbox', label: 'Inbox', icon: glyph, ...item }] }]}
+      />,
+    );
+    return {
+      tileCount: () => container.querySelector('.uxm-sidebar-nav-item__icon-count'),
+      inline: () => container.querySelector('.uxm-sidebar-nav-item__badge'),
+      dot: () => container.querySelector('.uxm-sidebar-nav-item__icon-dot'),
+    };
+  };
+
+  it('keeps the number on the collapsed tile, hidden from AT, and in the row name', () => {
+    const { tileCount, dot } = renderCount({ count: 12 }, true);
+    expect(screen.getByRole('link', { name: /^Inbox ?12$/ })).toBeTruthy();
+    expect(tileCount()?.textContent).toBe('12');
+    expect(tileCount()?.getAttribute('aria-hidden')).toBe('true');
+    expect(dot()).toBeNull();
+  });
+
+  it('shows the count inline while expanded, with no tile badge', () => {
+    const { tileCount, inline } = renderCount({ count: 12 }, false);
+    expect(screen.getByRole('link', { name: /^Inbox ?12$/ })).toBeTruthy();
+    expect(inline()?.textContent).toBe('12');
+    expect(tileCount()).toBeNull();
+  });
+
+  it('shows nothing for 0 or no count, in either state', () => {
+    for (const collapsed of [true, false]) {
+      for (const count of [0, undefined]) {
+        const { tileCount, inline, dot } = renderCount({ count }, collapsed);
+        expect([tileCount(), inline(), dot()]).toEqual([null, null, null]);
+        document.body.innerHTML = '';
+      }
+    }
+  });
+
+  it('caps the number at countMax (99 by default)', () => {
+    expect(renderCount({ count: 150 }, true).tileCount()?.textContent).toBe('99+');
+    document.body.innerHTML = '';
+    expect(renderCount({ count: 12, countMax: 9 }, true).tileCount()?.textContent).toBe('9+');
+  });
+
+  it('lets badge win over count, keeping the dot when collapsed', () => {
+    const { tileCount, inline, dot } = renderCount({ count: 12, badge: <span>new</span> }, true);
+    expect(inline()?.textContent).toBe('new');
+    expect(dot()).toBeTruthy();
+    expect(tileCount()).toBeNull();
+  });
+});

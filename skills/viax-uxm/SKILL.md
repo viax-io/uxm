@@ -84,6 +84,13 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **AppSidebar — item `count`.** `count?: number` (and `countMax`, default 99) on an
+  `AppSidebarNavItem` shows a `Badge` count after the label while expanded and keeps it a
+  number on the icon-tile corner while collapsed, where a `badge` turns into a dot. The row is
+  announced with the number in both states; `0` shows nothing; `badge` wins when both are set.
+  Underneath, `SidebarNavItem` gains `statusCount` / `statusCountMax` and the knobs
+  `--uxm-sidebar-nav-item-icon-count-{bg,text}`.
+
 ## Workflow
 
 ### Where the documentation lives

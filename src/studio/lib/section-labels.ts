@@ -46,4 +46,5 @@ export const SECTION_LABELS: Record<string, string> = {
   footerSlot: 'Footer Slot',
   edgeToggle: 'Edge Toggle',
   brandSlot: 'Brand Slot',
+  tileCount: 'Icon Count',
 };

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 
 import { cn } from '@/helpers';
 
+import { Badge } from '../badge';
 import { Icon } from '../icon';
 import { SidebarNavItem } from '../sidebar-nav-item';
 import { Tooltip } from '../tooltip';
@@ -43,6 +44,18 @@ export interface AppSidebarNavItem {
    * to `SidebarNavItem` (as `badge` expanded, `statusDot` collapsed).
    */
   badge?: ReactNode;
+  /**
+   * A number for the row — how many records wait in an inbox or a queue. Shown
+   * after the label as a `Badge` count while expanded; while **collapsed** it
+   * stays a number, on the icon-tile corner, instead of turning into the dot a
+   * `badge` becomes. Either way the row is announced with it ("Inbox 12"). `0`
+   * or less shows nothing. `badge` wins when both are set — any `badge` other
+   * than `null` / `undefined`, so `badge={0}` or `badge={false}` still wins.
+   * Pass a whole number: it is rendered as given, so `2.5` reads "2.5".
+   */
+  count?: number;
+  /** Cap for `count`: above it the badge reads `<max>+`. Default `99`. */
+  countMax?: number;
   /**
    * Trailing content rendered after the label (e.g. a hover-revealed × button
    * on removable nav items). Forwarded to `SidebarNavItem`. Hidden while the
@@ -357,6 +370,9 @@ export function AppSidebar({
                 !hasManualColor && iconPalette.length
                   ? iconPalette[(sectionOffset[idx] + itemIdx) % iconPalette.length]
                   : undefined;
+              // A count shows only when positive and only when no `badge`
+              // claims the slot; `badge` keeps its inline-then-dot behaviour.
+              const hasCount = item.badge == null && typeof item.count === 'number' && item.count > 0;
               return (
               <SidebarNavItem
                 key={item.href}
@@ -370,11 +386,15 @@ export function AppSidebar({
                 // the DOM and visually CLIPPED (see `__item--collapsed` in the
                 // SCSS) rather than dropped — the row announces identically
                 // collapsed and expanded ("Inbox 3"), while the corner status
-                // dot (aria-hidden) is only the sighted stand-in for the badge.
+                // dot or count (aria-hidden) is only the sighted stand-in for it.
                 // `trailing` IS dropped: it's an interactive hover-reveal slot,
                 // and a clipped focusable control would be an invisible tab stop.
-                badge={item.badge}
+                badge={item.badge ?? (hasCount ? (
+                  <Badge mode="count" type="neutral" count={item.count} max={item.countMax} />
+                ) : undefined)}
                 statusDot={collapsed && item.badge != null}
+                statusCount={collapsed && hasCount ? item.count : undefined}
+                statusCountMax={item.countMax}
                 trailing={collapsed ? undefined : item.trailing}
                 title={collapsed && !collapsedFlyout ? item.label : undefined}
                 {...(showFlyout

@@ -35,6 +35,9 @@ const SAMPLE_SECTIONS = [
         href: '#bi',
         label: 'Business Interactions',
         icon: <Icon glyph="model-business-interaction" />,
+        // Demonstrates `count`: inline while expanded, and still a number on
+        // the icon tile when the rail is collapsed (not the dot a `badge` gets).
+        count: 12,
       },
       {
         href: '#dm',
