@@ -35,6 +35,10 @@ export const sidebarNavItemDef: ComponentDef = {
     { key: 'iconBoxSize', label: 'Icon Tile Size', control: 'number', defaultValue: 24, min: 16, max: 36, step: 2, unit: 'px', section: 'icon' },
     { key: 'iconRadius', label: 'Icon Tile Radius', control: 'slider', defaultValue: 6, min: 0, max: 12, step: 1, unit: 'px', section: 'icon' },
     { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px', section: 'icon' },
+    // `statusCount`: the number on the tile corner a collapsed AppSidebar rail
+    // shows for an item's `count`. Solid by default, like the dot it replaces.
+    { key: 'iconCountBg', label: 'Background', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'tileCount', showWhen: { badge: 'tile-count' } },
+    { key: 'iconCountText', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'tileCount', showWhen: { badge: 'tile-count' } },
   ],
   layoutVariants: [
     {
@@ -59,6 +63,7 @@ export const sidebarNavItemDef: ComponentDef = {
         { value: 'off', label: 'Off' },
         { value: 'check', label: 'Checkmark' },
         { value: 'count', label: 'Count' },
+        { value: 'tile-count', label: 'Count on Icon' },
       ],
       defaultValue: 'off',
     },

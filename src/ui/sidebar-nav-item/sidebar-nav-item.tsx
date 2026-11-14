@@ -33,6 +33,18 @@ export interface SidebarNavItemProps extends AnchorHTMLAttributes<HTMLAnchorElem
    */
   statusDot?: boolean;
   /**
+   * Show a number on the icon-tile corner (a solid `Badge` in `count` mode) —
+   * the counterpart of `statusDot` for a count, so a collapsed rail still says
+   * how many. `AppSidebar` sets it from an item's `count`. Shown only when
+   * greater than 0 and when `icon` is set; wins over `statusDot`. Decorative
+   * (`aria-hidden`): keep the number in the row's accessible name too, as
+   * `AppSidebar` does with its clipped inline count. Pass a whole number: it
+   * is rendered as given.
+   */
+  statusCount?: number;
+  /** Cap for `statusCount`: above it the badge reads `<max>+`. Default `99`. */
+  statusCountMax?: number;
+  /**
    * Optional trailing content rendered after the label — used for hover-reveal
    * affordances like a × button on user-generated nav items. Hidden by default,
    * fades in on row hover via CSS.
@@ -60,11 +72,14 @@ export function SidebarNavItem({
   iconColor,
   badge,
   statusDot = false,
+  statusCount,
+  statusCountMax = 99,
   trailing,
   children,
   className,
   ...rest
 }: SidebarNavItemProps) {
+  const showCount = typeof statusCount === 'number' && statusCount > 0;
   const tileStyle: CSSProperties | undefined = (iconBg || iconColor)
     ? { backgroundColor: iconBg, color: iconColor }
     : undefined;
@@ -78,7 +93,16 @@ export function SidebarNavItem({
       {icon && (
         <span className="uxm-sidebar-nav-item__icon" style={tileStyle}>
           {icon}
-          {statusDot && (
+          {showCount ? (
+            <Badge
+              mode="count"
+              type="accent"
+              count={statusCount}
+              max={statusCountMax}
+              aria-hidden
+              className="uxm-sidebar-nav-item__icon-count"
+            />
+          ) : statusDot && (
             <Badge
               mode="dot"
               type="accent"

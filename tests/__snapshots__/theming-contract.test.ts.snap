@@ -1468,6 +1468,8 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-sidebar-nav-item-icon-bg",
   "--uxm-sidebar-nav-item-icon-box-size",
   "--uxm-sidebar-nav-item-icon-color",
+  "--uxm-sidebar-nav-item-icon-count-bg",
+  "--uxm-sidebar-nav-item-icon-count-text",
   "--uxm-sidebar-nav-item-icon-radius",
   "--uxm-sidebar-nav-item-icon-size",
   "--uxm-sidebar-nav-item-inactive-bg",

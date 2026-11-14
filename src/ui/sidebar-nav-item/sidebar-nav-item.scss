@@ -69,6 +69,23 @@
     --uxm-badge-dot-size: 8px;
   }
 
+  /* Count (a `Badge` in count mode) on the icon-tile corner — `statusCount`,
+     the collapsed rail's stand-in for an item's count. Solid, like the dot it
+     replaces, through the Badge's own accent knobs. A notch smaller than a
+     standalone count (16px tall, 10px digits) and set further out than the
+     dot, so on the 24px tile it covers a corner rather than the glyph. */
+  &__icon-count {
+    position: absolute;
+    right: -10px;
+    top: -8px;
+    --uxm-badge-count-font-size: 10px;
+    --uxm-badge-count-min-width: 16px;
+    --uxm-badge-count-padding-x: 4px;
+    --uxm-badge-count-padding-y: 0px;
+    --uxm-badge-accent-bg: var(--uxm-sidebar-nav-item-icon-count-bg, var(--color-accent-bold));
+    --uxm-badge-accent-text: var(--uxm-sidebar-nav-item-icon-count-text, var(--color-text-inverse));
+  }
+
   &__label {
     flex: 1;
     min-width: 0;

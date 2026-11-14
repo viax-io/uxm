@@ -46,6 +46,8 @@ Extends `AnchorHTMLAttributes<HTMLAnchorElement>` — any standard anchor attrib
 | `iconColor` | `string` | – | Inline foreground colour for the icon (overrides `--uxm-sidebar-nav-item-icon-color`). |
 | `badge` | `ReactNode` | – | **Persistent** after-label marker — a "configured ✓", count, or small pill. Unlike `trailing` it shows at rest (no hover gate). Rendered before `trailing`, so a row can carry both. (No collapsed mode here; in `AppSidebar`'s collapsed rail the inline badge is dropped in favour of `statusDot`.) |
 | `statusDot` | `boolean` | `false` | Overlay a small status dot on the icon-tile corner (a `Badge` in `dot` mode, `accent` tone). The compact stand-in for `badge` where there's no room for inline content — `AppSidebar` turns it on in its collapsed rail. Requires `icon` (anchors to the tile). |
+| `statusCount` | `number` | – | A number on the icon-tile corner (a solid `Badge` in `count` mode) — the counterpart of `statusDot` for a count, so a collapsed rail still says how many. `AppSidebar` sets it from an item's `count`. Shown only when greater than 0 and when `icon` is set; wins over `statusDot`. |
+| `statusCountMax` | `number` | `99` | Cap for `statusCount`: above it the badge reads `<max>+`. |
 | `trailing` | `ReactNode` | – | Right-side slot — hidden by default, fades in on row hover / focus-within. Typical use: a remove `×` button on user-generated nav items. |
 | `as` | `ElementType` | `'a'` | Outer element type. Pass a router `Link` to avoid full page reloads. |
 | `className` | `string` | – | Merged with `uxm-sidebar-nav-item` via `cn`. |
@@ -60,6 +62,10 @@ Extends `AnchorHTMLAttributes<HTMLAnchorElement>` — any standard anchor attrib
 | `--uxm-sidebar-nav-item-icon-box-size` | – | `24px` | Icon tile width + height. |
 | `--uxm-sidebar-nav-item-icon-radius` | – | `6px` | Icon tile corner radius. |
 | `--uxm-sidebar-nav-item-icon-size` | – | `14px` | Inner SVG icon size. |
+| `--uxm-sidebar-nav-item-icon-count-bg` | `--color-accent-bold` | – | `statusCount` badge fill (solid, like the dot). |
+| `--uxm-sidebar-nav-item-icon-count-text` | `--color-text-inverse` | – | `statusCount` badge number (5.94:1 light, 11.64:1 dark on the default fill). |
+
+The tile count sets the `Badge` atom's own accent and size variables on itself, so a theme that sets `--uxm-badge-accent-bg` / `--uxm-badge-count-*` globally does **not** reach it: the tile count is solid where a standalone accent Badge is a soft tint. Restyle it with the two knobs above.
 | `--uxm-sidebar-nav-item-badge-color` | `--color-text-muted` | – | Persistent `badge` slot colour (when the badge content doesn't set its own). |
 
 ## Design tokens (MODO-configurable)
@@ -83,6 +89,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Trailing reveal | `:hover` / `:focus-within` on row | Trailing slot fades from `opacity: 0` to `1` over 0.15s. |
 | Persistent badge | `badge` prop | Shows at rest after the label (no opacity gate), unlike the hover-reveal `trailing`. (In `AppSidebar`'s collapsed rail it's replaced by `statusDot`.) |
 | Status dot | `statusDot` prop | `Badge` dot (accent) overlaid on the icon-tile corner — the collapsed-rail stand-in for `badge`. Sized via `--uxm-badge-dot-size` (8px here). |
+| Status count | `statusCount` prop | Solid `Badge` count on the icon-tile corner, nudged further out than the dot since it is wider — the collapsed-rail stand-in for an `AppSidebar` item's `count`. |
 | With icon overrides | `iconBg` / `iconColor` props | Inline `style` on the icon tile wins over the `--uxm-sidebar-nav-item-icon-*` vars. |
 
 ## Accessibility
@@ -94,4 +101,5 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - The trailing slot starts at `opacity: 0` and reveals on `:hover` / `:focus-within`. Focus-within means keyboard users tabbing into the trailing control will see it appear before they interact with it — there's no separate "always visible on focus" knob for the row itself.
 - Icon tile contents carry no `aria-hidden`; if the icon is decorative, pass an `<Icon>` that handles its own hiding.
 - **`badge` content is part of the row's accessible name** — text/number badges announce for free ("Inbox 3"). A non-text badge (an icon-only pill) contributes nothing; give it its own accessible name or the status is invisible to assistive tech.
+- **`statusCount` is decorative too** — `aria-hidden`, like the dot. Keep the number in the row's accessible name as well (`AppSidebar` keeps the clipped inline count in the tree).
 - **`statusDot` is decorative** — the dot renders `aria-hidden` and carries no semantics of its own. It is a *sighted* stand-in only; pair it with accessible text conveying the same fact (`AppSidebar` does this automatically: in its collapsed rail the label + badge stay in the accessibility tree, visually clipped, while the dot paints).
