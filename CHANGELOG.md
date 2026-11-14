@@ -1,3 +1,10 @@
+# [4.95.0](https://github.com/viax-io/uxm/compare/v4.94.1...v4.95.0) (2026-11-14)
+
+
+### Features
+
+* **app-sidebar:** an item count that stays a number when collapsed ([bb4b1b2](https://github.com/viax-io/uxm/commit/bb4b1b262b699ce8902a36e3d034dff5e06b5f21))
+
 ## [4.94.1](https://github.com/viax-io/uxm/compare/v4.94.0...v4.94.1) (2026-11-12)
 
 

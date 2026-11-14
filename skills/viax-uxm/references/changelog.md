@@ -2516,3 +2516,10 @@ reached the published library; now shipped in 2.8.0.
 - **SearchDropdown** — the selected option's `description` now takes the selected row's colour
   instead of `--color-text-muted`, which fell to 4.0:1 on the dark accent tint (under AA for 11px
   text). A theme that sets `--uxm-search-dropdown-option-description-color` keeps its colour.
+
+### New in 4.92.3
+
+- **AppSidebar** — `toggle="edge"`: the reveal strip no longer takes clicks until the pointer is
+  over the rail, so the content's left edge beside the rail is usable again (it swallowed clicks,
+  selection and drags there even with the handle hidden). The handle drops `aria-expanded`: its
+  label already names the action, and the pair read "Collapse sidebar, expanded".
