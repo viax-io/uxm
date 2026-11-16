@@ -83,6 +83,7 @@ import { MultiListbox } from '@viax.io/uxm/ui';
 | `showCheckmark` | `boolean` | `true` | Right-edge ✓ on the selected row. Turn off when rows already carry trailing meta (dial codes, currency codes). |
 | `panelClassName` / `panelStyle` | – | – | Applied to the panel root. |
 | `className` / `style` | – | – | Wrapper — only meaningful if you visually wrap the trigger. |
+| `inline` | `boolean` | `false` | Size the wrapper to its trigger instead of filling the row (`width: 100%`). For a menu-style trigger in a row of other controls — e.g. a "Viewing as" picker in a top bar `Cluster` — where a full-width wrapper squeezes its neighbours. Form-field pickers keep the default; the atoms built on Listbox (`Select`, `PillSelect`, …) don't forward it. |
 | `disabled` | `boolean` | – | Blocks all interaction. |
 | `onOpenChange` | `(open: boolean) => void` | – | |
 | `aria-label` | `string` | – | Accessible name for the listbox. |
@@ -207,6 +208,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Open | click / Enter / Space / ArrowDown | Panel with optional search, list, optional footer. |
 | Searchable | `searchable` | Search row with leading icon above the list. |
 | Grouped | `groupBy` | Uppercase section headers between rows. |
+| Inline | `inline` | Wrapper as wide as its trigger (`inline-flex`, capped at the container's width) instead of `width: 100%`. |
 | Two-column | `columns={2}` | List balanced into up to two columns (panel height roughly halves); rows keep source order down column one, then column two. Falls back to one column when the panel is too narrow. With `groupBy`, headers span full width above each group. |
 | Row selected | in `value` | Accent-subtle background, accent-bold text, semibold; ✓ at the right edge (single-select, `showCheckmark`). |
 | Row active | arrow keys or hover | Surface-alt background — **never on the selected row**. |

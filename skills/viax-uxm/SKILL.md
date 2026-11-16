@@ -87,6 +87,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Listbox` / `MultiListbox` `inline`** — `inline?: boolean` (default `false`) sizes the
+  wrapper to its trigger instead of the form-field `width: 100%`. Use it for a menu-style picker
+  in a row of other controls, e.g. a "Viewing as" persona picker beside a Sign out button in an
+  `AppTopBar` `Cluster`, where the full-width wrapper took ~320px and squeezed the button.
+
 ## Workflow
 
 ### Where the documentation lives
