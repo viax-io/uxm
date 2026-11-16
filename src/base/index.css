@@ -1,0 +1,50 @@
+/* ── @viax.io/uxm/base.css — the opt-in page baseline ──────────────────────
+   The library styles its own atoms and nothing else: no reset, no html/body
+   rules. A host has to complete a few page-level defaults the atoms rely on
+   (the skill's quick-recipes § 0). This file ships them, so a host imports it
+   once, after tokens.css and ui.css, instead of copying the recipe.
+
+   Every selector is wrapped in :where(), so the whole file has specificity 0
+   and any rule the host writes wins, whatever the load order. Nothing here
+   selects a .uxm-* class or declares a --color-* token. */
+
+/* Several atoms size themselves as width: 100% plus their own padding and
+   border (TextInput, Textarea, LifecycleNodeCard, EditableCell); without
+   border-box they overflow their container. */
+:where(*, *::before, *::after) {
+  box-sizing: border-box;
+}
+
+/* A definite height down to the app root: PageShell is height: 100% with an
+   overflow: auto content area, so it bounds its own scroll only when its
+   ancestors have one. #root is the usual Vite / CRA mount node.
+   Trade-off for a page that scrolls the document instead: a position: sticky
+   child of body or #root stops sticking after one screen, since its
+   containing block is now one viewport tall. Such a page sets
+   #root { height: auto } (any host rule beats this one). */
+:where(html, body, #root) {
+  height: 100%;
+}
+
+/* tokens.css declares --font-sans only inside a Tailwind @theme block, which
+   browsers drop; --font-inter is in the real :root. Without this the page
+   falls back to the browser's serif, and every atom inherits it. */
+:where(html) {
+  font-family: var(--brand-font, var(--font-sans, var(--font-inter)));
+}
+
+/* No 8px frame round the page. Plain host text (a bare <p>, a name in the top
+   bar's actions) inherits its colour from <body>, and a short page shows the
+   body background to the bottom of the window (it propagates to the canvas). */
+:where(body) {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  margin: 0;
+}
+
+/* Native form controls don't inherit the document font (the UA default is
+   Arial). uxm atoms set font-family: inherit themselves; raw host controls
+   don't. */
+:where(button, input, select, textarea) {
+  font: inherit;
+}
