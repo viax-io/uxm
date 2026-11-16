@@ -1,3 +1,10 @@
+# [4.98.0](https://github.com/viax-io/uxm/compare/v4.97.0...v4.98.0) (2026-11-16)
+
+
+### Features
+
+* **base:** ship the host baseline as an opt-in base.css ([b69c889](https://github.com/viax-io/uxm/commit/b69c889ed63d73957e7300ad63e6695b102f5558))
+
 # [4.97.0](https://github.com/viax-io/uxm/compare/v4.96.0...v4.97.0) (2026-11-16)
 
 

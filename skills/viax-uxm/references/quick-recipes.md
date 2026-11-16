@@ -18,7 +18,7 @@ import 'uxm/ui.css';
 complete — two of them are load-bearing, and skipping either produces a broken app that looks
 like a library bug. Load this AFTER `tokens.css` and `ui.css`.
 
-**From the release that ships `uxm/base.css` (unreleased) on, import that file instead of
+**From the release that ships `uxm/base.css` (4.98.0) on, import that file instead of
 copying the CSS below.** It contains these rules, plus `margin: 0` on `body`, each wrapped in
 `:where()` (specificity 0, so any host rule wins):
 
@@ -1041,7 +1041,7 @@ toast store. Load it from a versioned path, never `latest/`: its locale dictiona
 
 Still give the page recipe 0's host baseline — a CDN page gets none of a bundler-based app's
 resets, and skipping it renders the whole page in Times New Roman with inputs overflowing their
-containers. From the release that ships it (unreleased), link `uxm-base.css` after `uxm.css`;
+containers. From the release that ships it (4.98.0), link `uxm-base.css` after `uxm.css`;
 on older releases, copy recipe 0's CSS in verbatim.
 
 URLs are versioned and immutable (`https://uxm.viax.io/<version>/…`) — pin one version number

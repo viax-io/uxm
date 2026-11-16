@@ -2539,3 +2539,9 @@ reached the published library; now shipped in 2.8.0.
 - **DataTable** — the actions column (table mode, stacked cards, and the `stackedRoles` actions
   footer) aligns to the trailing edge with `text-align: end`, so it lands on the left in RTL
   instead of the right. No change in LTR.
+
+### New in 4.93.0
+
+- **DataTable** — `--uxm-data-table-stacked-label-font-weight` themes the weight of a
+  `stackedRoles` field's label (the `<dt>`), alongside `-stacked-label-{font-size,color}`. Default
+  unchanged: `--font-weight-strong`.
