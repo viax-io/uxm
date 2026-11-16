@@ -1,3 +1,10 @@
+# [4.97.0](https://github.com/viax-io/uxm/compare/v4.96.0...v4.97.0) (2026-11-16)
+
+
+### Features
+
+* **listbox:** add inline prop to size the wrapper to its trigger ([86712bb](https://github.com/viax-io/uxm/commit/86712bb1e3d8a899fd67ccddd0ac1366b304e196))
+
 # [4.96.0](https://github.com/viax-io/uxm/compare/v4.95.0...v4.96.0) (2026-11-16)
 
 

@@ -2533,3 +2533,9 @@ reached the published library; now shipped in 2.8.0.
 - **Menu** — `MenuControlRow` docs now state its known ARIA trade-off: a control that is not made of
   menuitems fails axe `aria-required-children` inside `role="menu"` and may be hidden from a screen
   reader in menu mode (Tab still reaches it). Keep control rows to non-essential settings.
+
+### New in 4.92.5
+
+- **DataTable** — the actions column (table mode, stacked cards, and the `stackedRoles` actions
+  footer) aligns to the trailing edge with `text-align: end`, so it lands on the left in RTL
+  instead of the right. No change in LTR.
