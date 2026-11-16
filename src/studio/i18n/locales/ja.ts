@@ -183,6 +183,7 @@ export const messages: StudioMessages = {
     'Uploading…': 'アップロード中…',
     'Usage': '使用例',
     'Use {token}': '{token} を使用',
+    'Use {token} for {label}': '{label} に {token} を使用',
     'Variant Matrix': 'バリアントマトリクス',
     'Variants#other': 'バリアント',
     'Visual': 'ビジュアル',

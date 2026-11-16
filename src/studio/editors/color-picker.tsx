@@ -7,17 +7,11 @@ import { SectionHeader } from '@/ui';
 
 import { useStudioT } from '../i18n';
 import { COLOR_GROUP_LABELS, COLOR_GROUP_ORDER } from '../lib/color-group-labels';
-import { isFixedColor, isTranslucent, nearestColor } from '../lib/fixed-color';
 
 interface ColorPickerProps {
   label: string;
   value: string;
   onChange: (value: string | number | boolean) => void;
-  /**
-   * The knob's registry default. A fixed colour that IS the default (the
-   * library's own shadow colours) was chosen on purpose, so it gets no hint.
-   */
-  defaultValue?: string;
 }
 
 const groupLabels = COLOR_GROUP_LABELS;
@@ -59,7 +53,7 @@ function liveHex(value: string): string {
   return resolveHex(value);
 }
 
-export function ColorPicker({ label, value, onChange, defaultValue }: ColorPickerProps) {
+export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   const t = useStudioT();
   const [open, setOpen] = useState(false);
   const [customMode, setCustomMode] = useState(false);
@@ -146,15 +140,6 @@ export function ColorPicker({ label, value, onChange, defaultValue }: ColorPicke
   }
 
   const grouped = groupTokens(themeTokens);
-
-  // A fixed opaque colour someone picked: it paints the same in a dark panel,
-  // a light panel and the page, where a token would follow each. Translucent
-  // ones are shadows and overlays, a tint of whatever is under them, so they
-  // stay quiet. The suggestion is the token nearest to it in the active theme.
-  const showFixedHint = isFixedColor(value) && value !== defaultValue && !isTranslucent(value);
-  const suggestion = showFixedHint
-    ? nearestColor(value, themeTokens.map((tok) => ({ item: tok, color: liveHex(tok.variable) })))
-    : undefined;
 
   const dropdown = open
     ? createPortal(
@@ -294,55 +279,36 @@ export function ColorPicker({ label, value, onChange, defaultValue }: ColorPicke
     : null;
 
   return (
-    <div>
-      <div className="flex items-center gap-3">
-        <span className="text-[13px] text-text-strong flex-1 min-w-0 truncate">{label}</span>
+    <div className="flex items-center gap-3">
+      <span className="text-[13px] text-text-strong flex-1 min-w-0 truncate">{label}</span>
 
-        {/* Trigger button */}
-        <button
-          ref={triggerRef}
-          aria-expanded={open}
-          aria-haspopup="listbox"
-          onClick={() => { setOpen(!open); setCustomMode(false); }}
-          className="w-44 shrink-0 flex items-center gap-2 rounded-lg border border-border bg-surface px-2 py-1.5 text-[12px] text-text-strong hover:border-accent/40 transition-colors cursor-pointer"
+      {/* Trigger button */}
+      <button
+        ref={triggerRef}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        onClick={() => { setOpen(!open); setCustomMode(false); }}
+        className="w-44 shrink-0 flex items-center gap-2 rounded-lg border border-border bg-surface px-2 py-1.5 text-[12px] text-text-strong hover:border-accent/40 transition-colors cursor-pointer"
+      >
+        <span
+          className="h-4 w-4 flex-shrink-0 rounded border border-border/60 relative overflow-hidden"
+          style={{ backgroundColor: swatchColor }}
         >
-          <span
-            className="h-4 w-4 flex-shrink-0 rounded border border-border/60 relative overflow-hidden"
-            style={{ backgroundColor: swatchColor }}
-          >
-            {isNone && (
-              <span
-                className="absolute inset-0"
-                style={{
-                  background: 'linear-gradient(to top right, transparent calc(50% - 1px), var(--color-danger-text) calc(50% - 1px), var(--color-danger-text) calc(50% + 1px), transparent calc(50% + 1px))',
-                }}
-                aria-hidden
-              />
-            )}
-          </span>
-          <span className="truncate flex-1 text-left min-w-0">{displayLabel}</span>
-          <Icon glyph="chevron-down" size={12} strokeWidth={2} className="flex-shrink-0 text-text-subtle" />
-        </button>
-
-        {dropdown}
-      </div>
-      {showFixedHint && (
-        <p className="mt-1.5 text-[11px] leading-snug text-text-muted">
-          {t('chrome', 'Fixed color: it won’t follow a dark or light panel.')}
-          {suggestion && (
-            <>
-              {' '}
-              <button
-                type="button"
-                onClick={() => onChange(suggestion.variable)}
-                className="font-medium text-accent-bold underline-offset-2 hover:underline"
-              >
-                {t('chrome', 'Use {token}', { token: t('token', suggestion.name) })}
-              </button>
-            </>
+          {isNone && (
+            <span
+              className="absolute inset-0"
+              style={{
+                background: 'linear-gradient(to top right, transparent calc(50% - 1px), var(--color-danger-text) calc(50% - 1px), var(--color-danger-text) calc(50% + 1px), transparent calc(50% + 1px))',
+              }}
+              aria-hidden
+            />
           )}
-        </p>
-      )}
+        </span>
+        <span className="truncate flex-1 text-left min-w-0">{displayLabel}</span>
+        <Icon glyph="chevron-down" size={12} strokeWidth={2} className="flex-shrink-0 text-text-subtle" />
+      </button>
+
+      {dropdown}
     </div>
   );
 }

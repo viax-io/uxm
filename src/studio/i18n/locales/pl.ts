@@ -198,6 +198,7 @@ export const messages: StudioMessages = {
     'Uploading…': 'Przesyłanie…',
     'Usage': 'Użycie',
     'Use {token}': 'Użyj {token}',
+    'Use {token} for {label}': 'Użyj {token} dla {label}',
     'Variant Matrix': 'Macierz wariantów',
     'Variants#few': 'Warianty',
     'Variants#many': 'Wariantów',

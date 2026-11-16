@@ -15,7 +15,7 @@ import { SECTION_LABELS } from '../../lib/section-labels';
 import { WcagPanel } from '../wcag-panel';
 
 import { DevTab } from './dev-tab';
-import { PropertyRow, renderEditor } from './property-row';
+import { PropertyRow, renderBelow, renderEditor } from './property-row';
 
 import type { ComponentDef } from '../../lib/types';
 
@@ -436,12 +436,8 @@ export function PropertiesPanel({
                 {props.map((prop) => {
                   const value = resolve(prop.key, prop.defaultValue);
                   const onChange = handleChange(prop.key);
-                  const editor = renderEditor(prop.control, {
-                    label: t('label', prop.label),
-                    value,
-                    onChange,
-                    prop,
-                  });
+                  const editorArgs = { label: t('label', prop.label), value, onChange, prop };
+                  const editor = renderEditor(prop.control, editorArgs);
                   const peerCount = peersByKey.get(prop.key)?.length ?? 0;
                   const isOverridden = prop.key in overrides;
                   const isSynced = syncedKeys.has(prop.key);
@@ -457,6 +453,7 @@ export function PropertiesPanel({
                       justMatched={isJustMatched}
                       isOverridden={isOverridden}
                       onReset={() => resetOverride(selectedId, prop.key)}
+                      below={renderBelow(prop.control, editorArgs)}
                     >
                       {editor}
                     </PropertyRow>

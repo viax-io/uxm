@@ -5,6 +5,7 @@ import { IconButton } from '@/ui';
 import { InlineAction } from '@/ui';
 
 import { ColorPicker } from '../../editors/color-picker';
+import { FixedColorHint } from '../../editors/fixed-color-hint';
 import { NumberInput } from '../../editors/number-input';
 import { SelectInput } from '../../editors/select-input';
 import { SliderInput } from '../../editors/slider-input';
@@ -25,14 +26,7 @@ export function renderEditor(
   const { label, value, onChange, prop } = args;
   switch (control) {
     case 'color':
-      return (
-        <ColorPicker
-          label={label}
-          value={value as string}
-          onChange={onChange}
-          defaultValue={typeof prop.defaultValue === 'string' ? prop.defaultValue : undefined}
-        />
-      );
+      return <ColorPicker label={label} value={value as string} onChange={onChange} />;
     case 'number':
       return (
         <NumberInput
@@ -73,6 +67,23 @@ export function renderEditor(
   }
 }
 
+/**
+ * What sits under a property row, outside the box the reset button centres
+ * on: today only the fixed-colour hint under a colour knob.
+ */
+export function renderBelow(
+  control: ComponentDef['styleProperties'][number]['control'],
+  args: {
+    label: string;
+    value: string | number | boolean;
+    onChange: (v: string | number | boolean) => void;
+    prop: ComponentDef['styleProperties'][number];
+  },
+): ReactNode {
+  if (control !== 'color') return null;
+  return <FixedColorHint label={args.label} value={args.value} defaultValue={args.prop.defaultValue} onChange={args.onChange} />;
+}
+
 export function PropertyRow({
   cascadeCount,
   onCascade,
@@ -82,6 +93,7 @@ export function PropertyRow({
   justMatched,
   isOverridden,
   onReset,
+  below,
   children,
 }: {
   cascadeCount: number;
@@ -92,6 +104,8 @@ export function PropertyRow({
   justMatched: boolean;
   isOverridden: boolean;
   onReset: () => void;
+  /** Rendered under the control, outside the box the reset button centres on. */
+  below?: ReactNode;
   children: ReactNode;
 }) {
   // 16×16 footprint matches the previous `h-4 w-4` chrome — IconButton's
@@ -119,9 +133,12 @@ export function PropertyRow({
 
   if (cascadeCount === 0) {
     return (
-      <div className="relative pr-5">
-        {children}
-        {resetButton}
+      <div>
+        <div className="relative pr-5">
+          {children}
+          {resetButton}
+        </div>
+        {below}
       </div>
     );
   }
@@ -135,6 +152,7 @@ export function PropertyRow({
         {children}
         {resetButton}
       </div>
+      {below}
       {!hideLink && (
         justMatched ? (
           // The success-state confirmation is intentionally left as a plain

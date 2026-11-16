@@ -188,6 +188,7 @@ export const messages: StudioMessages = {
     'Uploading…': 'Yükleniyor…',
     'Usage': 'Kullanım',
     'Use {token}': '{token} kullan',
+    'Use {token} for {label}': '{label} için {token} kullan',
     'Variant Matrix': 'Varyant matrisi',
     'Variants#one': 'Varyant',
     'Variants#other': 'Varyantlar',

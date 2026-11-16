@@ -198,6 +198,7 @@ export const messages: StudioMessages = {
     'Uploading…': 'Завантаження…',
     'Usage': 'Використання',
     'Use {token}': 'Використати {token}',
+    'Use {token} for {label}': 'Використати {token} для {label}',
     'Variant Matrix': 'Матриця варіантів',
     'Variants#few': 'Варіанти',
     'Variants#many': 'Варіантів',

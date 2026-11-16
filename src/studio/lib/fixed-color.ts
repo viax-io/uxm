@@ -7,16 +7,36 @@ import { parseColor, type RGB } from '@/lib/contrast';
 const NOT_A_COLOR = new Set(['', 'none', 'transparent', 'inherit', 'initial', 'unset', 'revert', 'currentcolor']);
 
 /**
+ * CSS system colours: they follow the element's `color-scheme`, which a
+ * Surface sets, so they track a dark or light panel on their own.
+ */
+const SYSTEM_COLORS = new Set([
+  'canvas', 'canvastext', 'linktext', 'visitedtext', 'activetext', 'buttonface', 'buttontext',
+  'buttonborder', 'field', 'fieldtext', 'highlight', 'highlighttext', 'selecteditem',
+  'selecteditemtext', 'mark', 'marktext', 'graytext', 'accentcolor', 'accentcolortext',
+]);
+
+/**
  * True when a colour knob's value is FIXED: it names no `var(--…)`, so it
  * paints the same inside a dark panel, a light panel and the page. A token
- * (`var(--color-text)`) or a mix of one (`color-mix(in srgb, var(--color-accent) 20%, transparent)`)
- * is re-resolved in each theme scope and follows it.
+ * (`var(--color-text)`) is re-resolved in each theme scope and follows it.
+ *
+ * Deliberately quiet on anything it can't judge: `color-mix()` (a mix of
+ * literals may be a translucent overlay), `light-dark()` and the system
+ * colours (both follow `color-scheme`).
  */
 export function isFixedColor(value: string | number | boolean | undefined): boolean {
   if (typeof value !== 'string') return false;
   const v = value.trim().toLowerCase();
-  if (NOT_A_COLOR.has(v)) return false;
-  return !v.includes('var(--');
+  if (NOT_A_COLOR.has(v) || SYSTEM_COLORS.has(v)) return false;
+  if (/^(color-mix|light-dark)\(/.test(v)) return false;
+  return !/var\(\s*--/.test(v);
+}
+
+/** Two knob values naming the same colour, ignoring case and spacing. */
+export function sameColorValue(a: string, b: string): boolean {
+  const norm = (s: string) => s.trim().toLowerCase().replace(/\s+/g, '');
+  return norm(a) === norm(b);
 }
 
 /**
