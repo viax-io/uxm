@@ -1,3 +1,10 @@
+# [4.112.0](https://github.com/viax-io/uxm/compare/v4.111.0...v4.112.0) (2026-11-16)
+
+
+### Features
+
+* **media-object:** a new layout atom, media beside content ([1c1f323](https://github.com/viax-io/uxm/commit/1c1f323ac8add6dbaf868e908fc7079cffec1d61))
+
 # [4.111.0](https://github.com/viax-io/uxm/compare/v4.110.0...v4.111.0) (2026-11-16)
 
 

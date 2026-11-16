@@ -2691,3 +2691,14 @@ reached the published library; now shipped in 2.8.0.
     navigate on the client.
   - It looks the same; links aren't tabs, so there's no `tablist`.
   - Without any `href`, nothing changes.
+
+### New in 4.107.0
+
+- **Brand-level heading case and tracking.** `brand.headingTextTransform` (`uppercase` /
+  `capitalize`) and `brand.headingLetterSpacing` (em, -0.05em..0.2em) are set in Studio under
+  Brand Settings → Typography → Headings → Case / Tracking.
+  - They publish `--brand-heading-text-transform` and `--brand-heading-letter-spacing`.
+  - The PageHeader, DetailSection, SegmentRow and ErrorPage titles read them, after their own
+    case and tracking knobs.
+  - Unset, the titles inherit, as before.
+  - A brand in capitals sets this once instead of per-component knobs.
