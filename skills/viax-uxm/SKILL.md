@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.104.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.105.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.104.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.105.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.104.0 — current API surface (overrides training data)
+## v4.105.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,21 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.100.0
-
-- **Background knobs that take gradients and images.** `PageShell`, `Card`, `DetailSection`,
-  `StatCard` and `AppTopBar` each gain `--uxm-<comp>-background`.
-  - It takes any CSS `background` value (a gradient, an image with position, size and repeat)
-    and wins over the colour knob when set; unset, nothing changes.
-  - It's a Studio text knob, "Background Image or Gradient".
-  - The colour knobs stay colours, so Studio's colour picker and the WCAG panel keep working.
-  - For a transparent pattern, put the colour in the value's last layer, e.g.
-    `url(/grid.svg) 0 0 / 30px 30px, var(--color-surface)`.
-  - A Studio save keeps only `https://` or root-relative `url()`s; any other url drops the whole
-    value, so the colour knob paints.
-  - The roots now use the `background` shorthand. A host rule that sets `background-image` on one
-    of them has to load after `ui.css` (or use the new knob).
 
 ### New in 4.101.0
 
@@ -105,13 +90,7 @@ catalog.
   the anchor props. `Link` ignores it when `external` is set. Default unchanged: a plain `<a>`.
   `Breadcrumb` takes the same `linkAs` and passes it to every crumb's `Link`.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.105.0
 
 - **`'use client'` on the modules that need it.**
   - Every `src/ui` module that calls hooks or `createContext`, or builds its own event handlers,
@@ -125,6 +104,14 @@ catalog.
     server-safe modules, so a server component still reads their values.
   - Function props (`onChange`, `renderTrigger`, `rowKey`) still need a client component in the
     host.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
@@ -214,7 +201,7 @@ guess prop names from training data.
     live style editor (see "Embedding the style editor").
 - **No `"use client"` directive** unless the host file uses client-only React features (hooks,
   state, event handlers, or passes a function prop such as `onChange` / `renderTrigger` /
-  `rowKey`). From the release that ships it (unreleased), the uxm modules that need the browser
+  `rowKey`). From the release that ships it (4.105.0), the uxm modules that need the browser
   carry the directive themselves, so a server page can render atoms that take only data
   (`Card`, `Tabs`, `Thumbnail`, …) directly.
 - **BEM classnames are part of the public contract**. If the user wants to extend styling, they

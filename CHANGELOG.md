@@ -1,3 +1,10 @@
+# [4.105.0](https://github.com/viax-io/uxm/compare/v4.104.0...v4.105.0) (2026-11-16)
+
+
+### Features
+
+* **ui:** 'use client' on the modules that need it, so server pages can render the atoms ([bc237a7](https://github.com/viax-io/uxm/commit/bc237a7a4b9b62de8e11e0ae0a4f222d668271e9))
+
 # [4.104.0](https://github.com/viax-io/uxm/compare/v4.103.0...v4.104.0) (2026-11-16)
 
 

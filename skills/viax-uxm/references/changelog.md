@@ -2602,3 +2602,18 @@ reached the published library; now shipped in 2.8.0.
   - All of them are Studio knobs, in a "Top & Bottom Edges" section for the first two. Use them
     for a rule above a section, an accent along a card's top, or a heavier brand rule under the
     top bar — no host CSS needed. The left and right sides stay 1px.
+
+### New in 4.100.0
+
+- **Background knobs that take gradients and images.** `PageShell`, `Card`, `DetailSection`,
+  `StatCard` and `AppTopBar` each gain `--uxm-<comp>-background`.
+  - It takes any CSS `background` value (a gradient, an image with position, size and repeat)
+    and wins over the colour knob when set; unset, nothing changes.
+  - It's a Studio text knob, "Background Image or Gradient".
+  - The colour knobs stay colours, so Studio's colour picker and the WCAG panel keep working.
+  - For a transparent pattern, put the colour in the value's last layer, e.g.
+    `url(/grid.svg) 0 0 / 30px 30px, var(--color-surface)`.
+  - A Studio save keeps only `https://` or root-relative `url()`s; any other url drops the whole
+    value, so the colour knob paints.
+  - The roots now use the `background` shorthand. A host rule that sets `background-image` on one
+    of them has to load after `ui.css` (or use the new knob).

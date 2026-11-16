@@ -1084,7 +1084,7 @@ MODO brand-settings can re-tint.
 reason — host shells only.
 
 ❌ **Don't put `"use client"` on every file.** Only add it to host files that use hooks / state /
-event handlers or pass a function prop to an atom. From the release that ships it (unreleased),
+event handlers or pass a function prop to an atom. From the release that ships it (4.105.0),
 the uxm modules that need the browser carry the directive themselves.
 
 ❌ **Don't render labels manually next to `TextInput` / `Select` / `Textarea`.** The atoms are
