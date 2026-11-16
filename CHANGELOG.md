@@ -1,3 +1,10 @@
+# [4.101.0](https://github.com/viax-io/uxm/compare/v4.100.0...v4.101.0) (2026-11-16)
+
+
+### Features
+
+* **data-table:** stackAt={320} and stackAt={false} to stack later or never ([314538a](https://github.com/viax-io/uxm/commit/314538a55e8a5139e9380a95f6a1b11fc27af17e))
+
 # [4.100.0](https://github.com/viax-io/uxm/compare/v4.99.0...v4.100.0) (2026-11-16)
 
 
