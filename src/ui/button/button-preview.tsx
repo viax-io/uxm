@@ -105,6 +105,8 @@ function plainButtonStateStyle(
     [`--uxm-button-${variant}-font-size`]: styles.fontSize != null ? `${styles.fontSize}px` : undefined,
     [`--uxm-button-${variant}-font-weight`]: styles.fontWeight != null ? String(styles.fontWeight) : undefined,
     [`--uxm-button-${variant}-text-transform`]: styles.textTransform as string | undefined,
+    // Projected only once set: unset, the label inherits its wrapping.
+    [`--uxm-button-${variant}-white-space`]: styles.whiteSpace && styles.whiteSpace !== 'inherit' ? (styles.whiteSpace as string) : undefined,
     [`--uxm-button-${variant}-letter-spacing`]: styles.letterSpacing != null ? `${styles.letterSpacing}em` : undefined,
     [gapVar]: styles.gap != null ? `${styles.gap}px` : undefined,
     ...(isDisabled ? { opacity: styles.disabledOpacity as number | undefined } : {}),

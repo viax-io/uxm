@@ -17,6 +17,9 @@
   font-size: calc(var(--uxm-button-primary-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-primary-font-weight, var(--font-weight-strong, 600));
   letter-spacing: var(--uxm-button-primary-letter-spacing, normal);
+  /* Label wrapping, no fallback on purpose: unset, `white-space` inherits, as
+     it always did (a button inside a no-wrap cell keeps not wrapping). */
+  white-space: var(--uxm-button-primary-white-space);
   text-transform: var(--uxm-button-primary-text-transform, none);
   gap: var(--uxm-button-primary-gap, 8px);
   justify-content: center;
@@ -62,6 +65,7 @@
   font-size: calc(var(--uxm-button-secondary-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-secondary-font-weight, var(--font-weight-strong, 600));
   letter-spacing: var(--uxm-button-secondary-letter-spacing, normal);
+  white-space: var(--uxm-button-secondary-white-space);
   text-transform: var(--uxm-button-secondary-text-transform, none);
   gap: var(--uxm-button-secondary-gap, 8px);
   justify-content: center;
@@ -105,6 +109,7 @@
   font-size: calc(var(--uxm-button-tertiary-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-tertiary-font-weight, var(--font-weight-strong, 600));
   letter-spacing: var(--uxm-button-tertiary-letter-spacing, normal);
+  white-space: var(--uxm-button-tertiary-white-space);
   text-transform: var(--uxm-button-tertiary-text-transform, none);
   gap: var(--uxm-button-tertiary-gap, 8px);
   justify-content: center;
@@ -148,6 +153,7 @@
   font-size: calc(var(--uxm-button-ghost-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-ghost-font-weight, var(--font-weight-medium, 500));
   letter-spacing: var(--uxm-button-ghost-letter-spacing, normal);
+  white-space: var(--uxm-button-ghost-white-space);
   text-transform: var(--uxm-button-ghost-text-transform, none);
   gap: var(--uxm-button-ghost-gap, 8px);
   justify-content: center;
@@ -193,6 +199,7 @@
   font-size: calc(var(--uxm-button-danger-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-danger-font-weight, var(--font-weight-strong, 600));
   letter-spacing: var(--uxm-button-danger-letter-spacing, normal);
+  white-space: var(--uxm-button-danger-white-space);
   text-transform: var(--uxm-button-danger-text-transform, none);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;

@@ -19,6 +19,9 @@
     font-size: calc(var(--uxm-tabs-underline-font-size, 13px) * var(--type-scale, 1));
     font-weight: var(--uxm-tabs-underline-font-weight, var(--font-weight-medium, 500));
     letter-spacing: var(--uxm-tabs-underline-letter-spacing, normal);
+    /* Label wrapping, no fallback on purpose: unset, `white-space` inherits, as
+       it always did (a button inside a no-wrap cell keeps not wrapping). */
+    white-space: var(--uxm-tabs-underline-white-space);
     text-transform: var(--uxm-tabs-underline-text-transform, none);
     gap: var(--uxm-tabs-underline-icon-gap, 6px);
     justify-content: center;

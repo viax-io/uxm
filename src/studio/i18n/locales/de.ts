@@ -682,6 +682,7 @@ export const messages: StudioMessages = {
     'Label Tint': 'Beschriftungstönung',
     'Label Variant': 'Beschriftungsvariante',
     'Label Weight': 'Beschriftungsstärke',
+    'Label Wrapping': 'Zeilenumbruch der Beschriftung',
     'Label/Value Gap': 'Abstand Beschriftung/Wert',
     'Labelled cells (default)': 'Beschriftete Zellen (Standard)',
     'Large (640px)': 'Groß (640px)',

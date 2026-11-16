@@ -106,6 +106,14 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Label wrapping knob.**
+  - `--uxm-<comp>-white-space` (`normal` / `nowrap`; Studio "Label Wrapping") on the five Button
+    variants, `ButtonWithIcon`, `Tabs`, `TabsUnderline` and `FilterTabs`.
+  - Unset, a label inherits its wrapping, as before (no fallback, so a button in a no-wrap cell
+    keeps not wrapping).
+  - `nowrap` keeps a squeezed label ("Sign out" beside a wide picker) on one line; the control
+    grows instead.
+
 ## Workflow
 
 ### Where the documentation lives

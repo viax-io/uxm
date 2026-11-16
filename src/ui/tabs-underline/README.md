@@ -59,6 +59,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `--uxm-tabs-underline-font-size` | – | `13px` | Tab font size. |
 | `--uxm-tabs-underline-font-weight` | `--font-weight-medium` | `500` | Inactive font weight (active is bumped to `600`). |
 | `--uxm-tabs-underline-text-transform` | – | `none` | Tab label case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. |
+| `--uxm-tabs-underline-white-space` | – | `inherited` | Label wrapping: `normal` \| `nowrap`. Unset, the label inherits its wrapping, as before; `nowrap` keeps a squeezed label on one line (the control grows instead). |
 | `--uxm-tabs-underline-letter-spacing` | – | `normal` | Tab label tracking (Studio saves `em`). |
 | `--uxm-tabs-underline-icon-gap` | – | `6px` | Gap between icon and label. |
 | `--uxm-tabs-underline-icon-size` | – | `14px` | Icon box dimensions. |

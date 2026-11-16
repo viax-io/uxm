@@ -676,6 +676,7 @@ export const messages: StudioMessages = {
     'Label Tint': 'ラベルの色味',
     'Label Variant': 'ラベルのバリアント',
     'Label Weight': 'ラベルの太さ',
+    'Label Wrapping': 'ラベルの折り返し',
     'Label/Value Gap': 'ラベル/値の間隔',
     'Labelled cells (default)': 'ラベル付きセル（既定）',
     'Large (640px)': '大 (640px)',

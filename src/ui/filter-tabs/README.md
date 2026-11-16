@@ -86,6 +86,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `--uxm-filter-tabs-font-size` | – | `12px` | Tab label font size. |
 | `--uxm-filter-tabs-font-weight` | `--font-weight-medium` | `500` | Inactive tab font weight (active forced to `600`). |
 | `--uxm-filter-tabs-text-transform` | – | `none` | Tab label case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. |
+| `--uxm-filter-tabs-white-space` | – | `inherited` | Label wrapping: `normal` \| `nowrap`. Unset, the label inherits its wrapping, as before; `nowrap` keeps a squeezed label on one line (the control grows instead). |
 | `--uxm-filter-tabs-letter-spacing` | – | `normal` | Tab label tracking (Studio saves `em`). |
 | `--uxm-filter-tabs-inactive-text` | `--color-text-muted` | – | Inactive tab label colour. |
 | `--uxm-filter-tabs-active-bg` | `--color-card` | – | Active tab background. |

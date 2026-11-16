@@ -682,6 +682,7 @@ export const messages: StudioMessages = {
     'Label Tint': 'Etiket tonu',
     'Label Variant': 'Etiket varyantı',
     'Label Weight': 'Etiket kalınlığı',
+    'Label Wrapping': 'Etiket satır kaydırma',
     'Label/Value Gap': 'Etiket/değer aralığı',
     'Labelled cells (default)': 'Etiketli hücreler (varsayılan)',
     'Large (640px)': 'Büyük (640px)',

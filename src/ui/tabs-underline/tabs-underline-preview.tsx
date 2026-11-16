@@ -41,6 +41,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-tabs-underline-font-size': `${styles.fontSize}px`,
     '--uxm-tabs-underline-font-weight': styles.fontWeight as string,
     '--uxm-tabs-underline-text-transform': styles.textTransform as string,
+    '--uxm-tabs-underline-white-space': styles.whiteSpace && styles.whiteSpace !== 'inherit' ? (styles.whiteSpace as string) : undefined,
     '--uxm-tabs-underline-letter-spacing': `${styles.letterSpacing}em`,
     '--uxm-tabs-underline-icon-size': `${styles.iconSize}px`,
     '--uxm-tabs-underline-icon-gap': `${styles.iconGap}px`,

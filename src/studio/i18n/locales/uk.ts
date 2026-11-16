@@ -694,6 +694,7 @@ export const messages: StudioMessages = {
     'Label Tint': 'Відтінок підпису',
     'Label Variant': 'Варіант підпису',
     'Label Weight': 'Насиченість підпису',
+    'Label Wrapping': 'Перенесення підпису',
     'Label/Value Gap': 'Відступ підпис/значення',
     'Labelled cells (default)': 'Клітинки з підписами (типово)',
     'Large (640px)': 'Великий (640px)',
