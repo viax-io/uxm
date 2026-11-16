@@ -35,8 +35,9 @@ reusable, design-system-aligned code across its layers
 - `src/studio/` — the UXM design workbench (the only place Tailwind is allowed)
 - `portal/` — Vite dev shell for the studio (not published)
 
-Consumers are **client-side SPAs**. There are **no Server Components**, no SSR,
-no hydration, no `"use client"`.
+Consumers are SPAs **and Next.js App Router apps**, so a module with hooks,
+context or its own event handlers starts with `'use client'`, and pure atoms stay
+server components.
 
 **Before writing or reviewing code**, read:
 - `.claude/memory/constitution.md` — the source of truth; wins over any handbook
@@ -133,10 +134,12 @@ Stateful components MUST support both modes:
 
 Implementation pattern: `const isControlled = controlledValue !== undefined`.
 
-### No `"use client"` directives
+### `'use client'` only where needed
 
-Consumers are client-side SPAs; framework-specific pragmas leak abstractions.
-Never add `"use client"` to new code, and remove any you encounter.
+Add `'use client';` at the top of a module that calls hooks or `createContext`, or
+builds its own event handlers; leave it off pure layout and presentational
+modules and off modules that only forward handler props. Keep public constants in
+a separate server-safe module. `tests/use-client.test.ts` checks the set.
 
 ### Code standards
 
@@ -251,7 +254,7 @@ Never add `"use client"` to new code, and remove any you encounter.
 ## When reviewing or refactoring code, look for
 
 - Missing `export interface` / inline anonymous prop types
-- `"use client"` directives that should be removed
+- A missing `'use client'` on a module with hooks / context / own handlers, or one on a pure module
 - `className` not accepted or not forwarded through `cn()`
 - `...rest` not spread onto the root element
 - Hardcoded CSS values that should be design tokens

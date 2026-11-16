@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/helpers';
 
 import type { InputHTMLAttributes } from 'react';

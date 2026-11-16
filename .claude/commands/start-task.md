@@ -111,7 +111,7 @@ When this command is invoked:
 
 5. All changes must follow:
    - TypeScript everywhere (`.tsx` for JSX, `.ts` for logic)
-   - Function components + hooks; **no `"use client"` directives**
+   - Function components + hooks; **`'use client'` only on modules with hooks, context or their own handlers** (`tests/use-client.test.ts`)
    - Named exports only, kebab-case filenames, PascalCase symbols
    - `export interface ${Name}Props` for every component
    - Extend native HTML attribute interfaces; accept `className` (merged via

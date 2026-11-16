@@ -1,3 +1,5 @@
+'use client';
+
 import { useId, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
 
 import { cn } from '@/helpers';

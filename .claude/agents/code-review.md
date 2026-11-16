@@ -39,7 +39,7 @@ classes are often folded into the block name (`uxm-button-primary`, not
   - `portal/` — Vite dev shell for the studio (not published)
 - **Language:** TypeScript, `strict` on (`.tsx` for JSX, `.ts` for logic);
   the only path alias is `@/*` → `src/*` (e.g. `cn()` from `@/helpers`)
-- **Rendering:** client-side only — no SSR, no hydration, no `"use client"`
+- **Rendering:** SPAs and Next.js App Router consumers — `'use client'` only on modules with hooks, context or their own handlers (`tests/use-client.test.ts`)
 - **Styles:** authored as colocated `src/ui/<name>/<name>.scss` (nested BEM),
   compiled to a sibling `.css` at build; `src/ui/styles.css` is a pure
   `@import` aggregator — every other `.css` under `src/ui/` is build output
@@ -148,7 +148,7 @@ discussions (e.g. "fix #3 and #7").
 - [ ] **Extends native HTML attribute interface** where applicable (`ButtonHTMLAttributes`, `InputHTMLAttributes`, `HTMLAttributes`, etc.); uses `Omit<...>` when redefining a native prop
 - [ ] **`className` accepted** and forwarded through `cn("uxm-block", className)` (`cn` from `@/helpers`)
 - [ ] **`...rest` spread** on the root element where practical
-- [ ] **No `"use client"`** directive (client-side SPA consumers)
+- [ ] **`'use client'`** if and only if the module has hooks, context or its own handlers; public constants live in server-safe modules
 - [ ] **Controlled / uncontrolled pair** is consistent (`value`/`defaultValue`/`onChange`, `open`/`defaultOpen`/`onOpenChange`, etc.) when the component holds state
 - [ ] **Default values** via destructuring in the signature, not via `defaultProps`
 - [ ] **Children typed** as `ReactNode`

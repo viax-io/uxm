@@ -1,14 +1,10 @@
+'use client';
+
 import { createContext, useContext } from 'react';
 
-import type { ReactNode } from 'react';
+import { DEFAULT_UXM_LOCALE } from './locale-constants';
 
-/**
- * Locale used by every UXM atom that formats dates, numbers, or units when
- * neither a `locale` prop nor a surrounding {@link UxmLocaleProvider} says
- * otherwise. Matches the English defaults baked into the atoms' label props,
- * so an app that localises nothing keeps its current rendering.
- */
-export const DEFAULT_UXM_LOCALE = 'en-US';
+import type { ReactNode } from 'react';
 
 const UxmLocaleContext = createContext<string | undefined>(undefined);
 

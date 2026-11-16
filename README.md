@@ -4,7 +4,7 @@
 
 BEM-classed components, a single design-token layer, and themable previews. Framework-agnostic React 19 — distributed as ESM + CJS with first-class `.d.ts`, no runtime dependencies beyond React, and `sideEffects: ["**/*.css"]` for full tree-shaking.
 
-The package ships **no `"use client"` / `"use server"` directives** by design: consumers are client-side SPAs, and framework-specific pragmas would leak into every one of them. Under a React Server Components setup (e.g. Next.js App Router) the consuming file is responsible for its own `"use client"` boundary.
+**Server Components.** The modules that need the browser (hooks, context, their own event handlers) start with `'use client'`, so a Next.js App Router server page can render the atoms directly: `Card`, `Stack`, `Tabs`, `Thumbnail`, `Avatar` and the rest, with no client wrapper of its own. Pure layout atoms stay server components. What a server page still can't do is pass a function prop (`onChange`, `renderTrigger`, a `DataTable`'s `rowKey` or `render` columns); a component that needs one belongs in your own client component. In an SPA the directive does nothing; an older Rollup-based build (Vite 3–5) may log "Module level directives cause errors when bundled, 'use client' was ignored", a harmless warning.
 
 ## What's in this package
 

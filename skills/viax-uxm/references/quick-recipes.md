@@ -1083,8 +1083,9 @@ MODO brand-settings can re-tint.
 ❌ **Don't import previews into application code.** They live behind `uxm/previews` for a
 reason — host shells only.
 
-❌ **Don't put `"use client"` on every file.** UXM components themselves don't need it. Only add
-the directive to files that use hooks / state / event handlers.
+❌ **Don't put `"use client"` on every file.** Only add it to host files that use hooks / state /
+event handlers or pass a function prop to an atom. From the release that ships it (unreleased),
+the uxm modules that need the browser carry the directive themselves.
 
 ❌ **Don't render labels manually next to `TextInput` / `Select` / `Textarea`.** The atoms are
 intentionally bare; `FormField` owns label + help. Always wrap. (Field errors are the exception:

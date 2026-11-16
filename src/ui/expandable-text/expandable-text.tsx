@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/helpers';
 
 import { ExpandableTextToggle } from './expandable-text-toggle';

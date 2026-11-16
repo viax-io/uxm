@@ -1,3 +1,5 @@
+'use client';
+
 import { useId, useLayoutEffect, useState, type CSSProperties } from 'react';
 
 /** Lines shown before the text clamps — the value both `ExpandableText` and `EditableCell type="textarea"` default to. */

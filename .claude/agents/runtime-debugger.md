@@ -49,7 +49,7 @@ root cause.
   - `portal/` — Vite dev shell that mounts `UxmApp` (`npm run dev:modo`)
 - **Framework:** React 19, function components + hooks
 - **Language:** TypeScript everywhere (`.tsx` / `.ts`); path alias `@/*` → `src/*`
-- **Rendering:** client-side only (SPA) — no SSR, no hydration, no Server Components, no `"use client"` directives
+- **Rendering:** consumers are SPAs and Next.js App Router apps. Modules with hooks, context or their own handlers start with `'use client'`; pure atoms stay server components (`tests/use-client.test.ts`)
 - **Styles:** colocated `src/ui/<name>/<name>.scss` (canonical BEM `uxm-block__element--modifier`) with two-layer tokens `var(--uxm-*, var(--color-*))`
 - **Linter:** flat-config ESLint (`@typescript-eslint`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y`)
 - **Tests:** `npm test` runs the Vitest smoke suite in `tests/` (jsdom) — run it after a fix to a floating layer, picker, sanitizer or the generator; it is not a substitute for the browser check
@@ -149,7 +149,7 @@ root cause.
 - Follow project conventions:
   - TypeScript everywhere (`.tsx` / `.ts`)
   - Named exports, kebab-case filenames
-  - No `"use client"` directives — remove if you encounter one
+  - `'use client'` only on modules with hooks, context or their own handlers (`tests/use-client.test.ts`) — never remove one a module needs
   - Canonical BEM (`uxm-block__element--modifier`), `uxm-` prefix; variant classes may be folded into the block name (`uxm-button-primary`)
   - Two-layer tokens only — `var(--uxm-<comp>-<prop>, var(--color-<token>))`; no hardcoded colours, spacing, radii
   - `className` accepted and forwarded through `cn("uxm-block", className)`

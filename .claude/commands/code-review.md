@@ -92,7 +92,7 @@ Parse `$ARGUMENTS` as follows:
 |----------|--------|
 | **Lint + typecheck + drift + tests** | Must pass `npm run lint`, `npm run typecheck`, `npm run check:drift` (registry-vs-CSS state-var gate) and `npm test` with zero errors |
 | **React style guide** | See `.claude/handbooks/react-style-guide.md` |
-| **Project conventions** | Named exports, kebab-case files, `export interface ${Name}Props`, `className`+`cn`, `...rest` spread, no `"use client"` |
+| **Project conventions** | Named exports, kebab-case files, `export interface ${Name}Props`, `className`+`cn`, `...rest` spread, `'use client'` only on modules with hooks / context / own handlers |
 | **UI library specifics** | `uxm-` prefix, canonical BEM, two-layer theming (`var(--uxm-*, var(--color-*))`), no Tailwind outside `src/studio`, barrel re-exports, `styles.css` `@import`, AI-skill update (`skills/viax-uxm/`) |
 | **Accessibility** | Semantic HTML, ARIA, keyboard support, focus styles |
 | **Documentation** | JSDoc on non-obvious hooks/utilities; brief comment on non-obvious components |
