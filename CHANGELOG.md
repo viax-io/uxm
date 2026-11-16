@@ -1,3 +1,10 @@
+# [4.104.0](https://github.com/viax-io/uxm/compare/v4.103.0...v4.104.0) (2026-11-16)
+
+
+### Features
+
+* **link:** linkAs on Link, BackLink and Breadcrumb for client-side navigation ([005ae6f](https://github.com/viax-io/uxm/commit/005ae6fc9f88b3f36c1e9c96b8d2e8c421a3cdb7))
+
 # [4.103.0](https://github.com/viax-io/uxm/compare/v4.102.0...v4.103.0) (2026-11-16)
 
 
