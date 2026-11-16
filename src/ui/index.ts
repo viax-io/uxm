@@ -239,6 +239,8 @@ export { Stack } from './stack';
 export type { StackProps } from './stack';
 export { StatCard } from './stat-card';
 export type { StatCardProps, StatCardTrend } from './stat-card';
+export { Stepper } from './stepper';
+export type { StepperProps, StepperStep, StepperStepState } from './stepper';
 export { Tabs } from './tabs';
 export type { TabsOption, TabsProps } from './tabs';
 export { TabsUnderline } from './tabs-underline';

@@ -1,0 +1,134 @@
+/* ── stepper ── */
+
+/* Stepper — a horizontal lifecycle: markers on a line, labels under them.
+   Each step is an equal share of the row (at least --uxm-stepper-step-min-width)
+   and the list scrolls sideways when they don't fit. The connecting line is
+   each step's `::before`, drawn from the previous marker's centre to its own,
+   and filled up to the current step. */
+
+.uxm-stepper {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  /* A scroller clips both axes, so the block padding keeps the current
+     marker's 4px ring inside it. */
+  overflow-x: auto;
+  padding: 4px 0;
+
+  &:focus-visible {
+    outline: 2px solid var(--uxm-stepper-focus-ring, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  &__step {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 6px;
+    min-width: var(--uxm-stepper-step-min-width, 96px);
+    padding: 0 4px;
+    position: relative;
+    text-align: center;
+  }
+
+  /* From the previous marker's centre to this one's: half a step back, ending
+     half a step in. Under the markers, which paint over it. */
+  &__step + &__step::before {
+    background-color: var(--uxm-stepper-line-color, var(--color-border));
+    content: '';
+    height: var(--uxm-stepper-line-width, 2px);
+    /* Logical, so the line still runs back to the previous step in RTL. */
+    inset-inline-end: 50%;
+    inset-inline-start: -50%;
+    position: absolute;
+    top: calc((var(--uxm-stepper-marker-size, 20px) - var(--uxm-stepper-line-width, 2px)) / 2);
+  }
+
+  /* The line into a step that's been reached is the done colour. */
+  &__step--done + &__step--done::before,
+  &__step--done + &__step--current::before {
+    background-color: var(--uxm-stepper-done-color, var(--color-accent-bold));
+  }
+
+  &__marker {
+    align-items: center;
+    border: var(--uxm-stepper-line-width, 2px) solid transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    display: inline-flex;
+    flex-shrink: 0;
+    height: var(--uxm-stepper-marker-size, 20px);
+    justify-content: center;
+    position: relative;
+    width: var(--uxm-stepper-marker-size, 20px);
+    z-index: 1;
+  }
+
+  &__step--done &__marker {
+    background-color: var(--uxm-stepper-done-color, var(--color-accent-bold));
+    border-color: var(--uxm-stepper-done-color, var(--color-accent-bold));
+    color: var(--uxm-stepper-done-icon-color, var(--color-text-inverse));
+  }
+
+  &__step--current &__marker {
+    background-color: var(--uxm-stepper-current-color, var(--color-accent-bold));
+    border-color: var(--uxm-stepper-current-color, var(--color-accent-bold));
+    box-shadow: 0 0 0 4px var(--uxm-stepper-current-ring, var(--color-accent-subtle));
+    /* Forced colours drop the shadow; a transparent outline turns visible. */
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+
+  &__step--ahead &__marker {
+    background-color: var(--uxm-stepper-marker-bg, var(--color-card));
+    border-color: var(--uxm-stepper-ahead-color, var(--color-text-subtle));
+  }
+
+  &__step--off &__marker {
+    background-color: var(--uxm-stepper-marker-bg, var(--color-card));
+    border-color: var(--uxm-stepper-ahead-color, var(--color-text-subtle));
+    border-style: dashed;
+  }
+
+  &__label {
+    color: var(--uxm-stepper-label-color, var(--color-text));
+    font-size: calc(var(--uxm-stepper-label-size, 13px) * var(--type-scale, 1));
+    font-weight: var(--font-weight-medium, 500);
+    line-height: 1.3;
+    /* A long word wraps rather than widening its step, which would pull the
+       connecting lines off the marker centres. */
+    overflow-wrap: anywhere;
+  }
+
+  &__step--current &__label {
+    font-weight: var(--font-weight-strong, 600);
+  }
+
+  &__step--ahead &__label,
+  &__step--off &__label {
+    color: var(--uxm-stepper-muted-label-color, var(--color-text-muted));
+  }
+
+  &__step--off &__label {
+    text-decoration: line-through;
+  }
+
+  &__meta {
+    color: var(--uxm-stepper-meta-color, var(--color-text-muted));
+    font-size: calc(var(--uxm-stepper-meta-size, 12px) * var(--type-scale, 1));
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  /* Read after the label, never seen: the marker shows the state as a shape. */
+  &__status {
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+}
