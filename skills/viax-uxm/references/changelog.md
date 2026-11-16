@@ -2702,3 +2702,13 @@ reached the published library; now shipped in 2.8.0.
     case and tracking knobs.
   - Unset, the titles inherit, as before.
   - A brand in capitals sets this once instead of per-component knobs.
+
+### New in 4.108.0
+
+- **Label wrapping knob.**
+  - `--uxm-<comp>-white-space` (`normal` / `nowrap`; Studio "Label Wrapping") on the five Button
+    variants, `ButtonWithIcon`, `Tabs`, `TabsUnderline` and `FilterTabs`.
+  - Unset, a label inherits its wrapping, as before (no fallback, so a button in a no-wrap cell
+    keeps not wrapping).
+  - `nowrap` keeps a squeezed label ("Sign out" beside a wide picker) on one line; the control
+    grows instead.

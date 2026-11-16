@@ -1,3 +1,15 @@
+# [4.113.0](https://github.com/viax-io/uxm/compare/v4.112.1...v4.113.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* **tokens:** re-resolve the aliases at specificity 0 and say who a panel's tokens reach ([3ee7d21](https://github.com/viax-io/uxm/commit/3ee7d2171b442f8d1cb360881d3f92465a8d63ac))
+
+
+### Features
+
+* **tokens:** a light theme scope for light panels on a dark page ([0ff5817](https://github.com/viax-io/uxm/commit/0ff58174729e2713c34bbac259139ca58bf4076b))
+
 ## [4.112.1](https://github.com/viax-io/uxm/compare/v4.112.0...v4.112.1) (2026-11-16)
 
 
