@@ -31,11 +31,15 @@ function CheckIcon() {
 function stylesToCssVars(styles: PreviewProps['styles']): CSSProperties {
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(styles)) {
+    // Case and tracking have no stylesheet fallback (unset = inherit), so their
+    // registry defaults are left unprojected to match production.
+    if ((key === 'textTransform' && value === 'none') || (key === 'letterSpacing' && !value)) continue;
     const cssVar = '--uxm-tag-' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
     if (typeof value === 'boolean') {
       out[cssVar] = value ? '1' : '0';
     } else if (typeof value === 'number') {
-      out[cssVar] = `${value}px`;
+      // Tracking is in em, as the save path writes it (see generate-css).
+      out[cssVar] = /LetterSpacing$|^letterSpacing$/.test(key) ? `${value}em` : `${value}px`;
     } else {
       out[cssVar] = String(value);
     }

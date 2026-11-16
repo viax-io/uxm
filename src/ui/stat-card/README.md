@@ -39,6 +39,8 @@ The `StatCardTrend` union (`'up' \| 'down' \| 'neutral'`) is exported for consum
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-stat-card-label-size` | – | `13px` | Label font size. |
+| `--uxm-stat-card-label-text-transform` | – | `inherited` | Label case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. Unset, it inherits, as before. |
+| `--uxm-stat-card-label-letter-spacing` | – | `inherited` | Label tracking (Studio saves `em`). Unset, it inherits, as before. |
 | `--uxm-stat-card-value-size` | – | `28px` | Value font size. |
 | `--uxm-stat-card-value-font` | `--type-display-font` → `--brand-heading-font` | `inherit` | Value typeface (**display** role). |
 | `--uxm-stat-card-value-weight` | `--type-display-weight` → `--brand-heading-weight` | `700` | Value weight (**display** role). |

@@ -9,6 +9,9 @@ const stats = [
   { label: 'Churn Rate', value: '3.1%', trend: '+0.4%', up: false },
 ];
 
+// Case and tracking: projected only once set. The stylesheet has no fallback
+// for them (unset = inherit), so projecting the registry default would show
+// `none` / `0em` where production inherits.
 export function StatCardPreview({ styles }: PreviewProps) {
   return (
     <div style={{ display: 'flex', gap: 16 }}>
@@ -27,7 +30,7 @@ export function StatCardPreview({ styles }: PreviewProps) {
             minWidth: 160,
           } as CSSProperties}
         >
-          <p style={{ fontSize: styles.labelSize as number, color: 'var(--color-text-muted)', fontWeight: 'var(--font-weight-medium, 500)', margin: 0 }}>
+          <p style={{ fontSize: styles.labelSize as number, color: 'var(--color-text-muted)', fontWeight: 'var(--font-weight-medium, 500)', margin: 0, textTransform: styles.labelTextTransform !== 'none' ? (styles.labelTextTransform as CSSProperties['textTransform']) : undefined, letterSpacing: styles.labelLetterSpacing ? `${styles.labelLetterSpacing}em` : undefined }}>
             {stat.label}
           </p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>

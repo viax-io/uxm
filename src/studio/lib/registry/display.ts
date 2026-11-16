@@ -182,6 +182,8 @@ export const displayDefs: ComponentDef[] = [
       // Shared across both sizes.
       { key: 'borderRadius', label: 'Border Radius', control: 'number', defaultValue: 999, min: 0, max: 999, step: 1, unit: 'px' },
       { key: 'fontWeight',   label: 'Font Weight',   control: 'select', defaultValue: '500', options: ['400', '500', '600'] },
+      { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+      { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
     ],
     layoutVariants: [
       {

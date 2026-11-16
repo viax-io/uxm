@@ -47,6 +47,8 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any standard div att
 | `--uxm-page-header-title-weight` | `--type-page-title-weight` → `--brand-heading-weight` | `600` | Title weight (**h1** role). |
 | `--uxm-page-header-title-size` | – | `22px` | Title size; multiplied by `--type-page-title-scale` and `--type-scale`. |
 | `--uxm-page-header-title-line-height` | – | `normal` | Title line height. Set on the title itself, so a theme's body line height (`brand.bodyLineHeight`) never reaches it — see [Title line height](#title-line-height). |
+| `--uxm-page-header-title-text-transform` | – | `inherited` | Title case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. Unset, it inherits, as before. |
+| `--uxm-page-header-title-letter-spacing` | – | `inherited` | Title tracking (Studio saves `em`). Unset, it inherits, as before. |
 | `--uxm-page-header-meta-color` | `--color-text-muted` | – | Meta text colour. |
 | `--uxm-page-header-meta-size` | – | `13px` | Meta font size. |
 | `--uxm-page-header-icon-bg` | `--color-accent-subtle` | – | Icon tile background (bridged to `--uxm-icon-tile-bg`). |

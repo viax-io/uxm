@@ -58,6 +58,8 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `--uxm-tabs-underline-padding-y` | – | `8px` | Tab vertical padding. |
 | `--uxm-tabs-underline-font-size` | – | `13px` | Tab font size. |
 | `--uxm-tabs-underline-font-weight` | `--font-weight-medium` | `500` | Inactive font weight (active is bumped to `600`). |
+| `--uxm-tabs-underline-text-transform` | – | `none` | Tab label case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. |
+| `--uxm-tabs-underline-letter-spacing` | – | `normal` | Tab label tracking (Studio saves `em`). |
 | `--uxm-tabs-underline-icon-gap` | – | `6px` | Gap between icon and label. |
 | `--uxm-tabs-underline-icon-size` | – | `14px` | Icon box dimensions. |
 | `--uxm-tabs-underline-inactive-text` | `--color-text-muted` | – | Inactive tab text colour. |

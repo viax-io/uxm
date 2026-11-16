@@ -59,6 +59,8 @@ export function ButtonWithIconPreview({ styles, variants }: PreviewProps) {
     '--uxm-button-with-icon-padding-y': styles.paddingY != null ? `${styles.paddingY}px` : undefined,
     '--uxm-button-with-icon-font-size': styles.fontSize != null ? `${styles.fontSize}px` : undefined,
     '--uxm-button-with-icon-font-weight': styles.fontWeight as string | undefined,
+    '--uxm-button-with-icon-text-transform': styles.textTransform as string | undefined,
+    '--uxm-button-with-icon-letter-spacing': styles.letterSpacing != null ? `${styles.letterSpacing}em` : undefined,
     '--uxm-button-with-icon-icon-size': styles.iconSize != null ? `${styles.iconSize}px` : undefined,
     '--uxm-button-with-icon-gap': styles.gap != null ? `${styles.gap}px` : undefined,
     '--uxm-button-with-icon-background-color': styles.backgroundColor as string | undefined,

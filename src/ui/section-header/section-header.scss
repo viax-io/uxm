@@ -22,9 +22,11 @@
     color: var(--uxm-section-header-title-color, var(--color-text-subtle));
     font-size: calc(var(--uxm-section-header-title-size, 11px) * var(--type-scale, 1));
     font-weight: var(--uxm-section-header-title-weight, var(--font-weight-strong, 600));
-    letter-spacing: 0.06em;
+    /* Uppercase is this atom's default, not its definition: a sentence-case
+       theme sets the case knob to `none` (and tracking to 0em). */
+    letter-spacing: var(--uxm-section-header-title-letter-spacing, 0.06em);
     margin: 0;
-    text-transform: uppercase;
+    text-transform: var(--uxm-section-header-title-text-transform, uppercase);
   }
 
   &__trailing {
