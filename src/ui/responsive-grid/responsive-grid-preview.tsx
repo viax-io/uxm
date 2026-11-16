@@ -25,14 +25,14 @@ export function ResponsiveGridPreview({ styles, variants }: PreviewProps) {
   const mode = (variants.columns as string) ?? 'auto';
   const min = (styles.min as string) ?? '200px';
   const gap = styles.gap as number;
-  // Wrap to 100% width so the grid sees the canvas width as its container,
-  // not its own intrinsic content width. Without this the auto-fit
-  // collapses to one column at any viewport because the grid is
-  // shrink-wrapped to its children.
+  // An explicit width, not `100%`: the canvas centres its content in a
+  // shrink-to-fit box, so a percentage resolves to the content's own width
+  // (one 200px column in auto-fit), and a `columns` grid, a size container,
+  // has none at all.
   if (mode !== 'auto') {
     const bento = mode === 'bento';
     return (
-      <div style={{ width: '100%', maxWidth: 720 }}>
+      <div style={{ width: 720, maxWidth: '100%' }}>
         <ResponsiveGrid columns={bento || mode === '3' ? 3 : mode} gap={gap}>
           {bento && (
             <GridItem span={2} rowSpan={2} style={{ ...CELL, minHeight: 176 }}>
@@ -49,7 +49,7 @@ export function ResponsiveGridPreview({ styles, variants }: PreviewProps) {
     );
   }
   return (
-    <div style={{ width: '100%', maxWidth: 720 }}>
+    <div style={{ width: 720, maxWidth: '100%' }}>
       <ResponsiveGrid min={min} gap={gap}>
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} style={CELL}>
