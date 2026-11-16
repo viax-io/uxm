@@ -30,6 +30,8 @@ export const filterTabsDef: ComponentDef = {
     { key: 'paddingY', label: 'Tab Padding Y', control: 'number', defaultValue: 6, min: 2, max: 14, step: 1, unit: 'px' },
     { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 12, min: 10, max: 16, step: 1, unit: 'px' },
     { key: 'fontWeight', label: 'Inactive Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600'] },
+    { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+    { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
   ],
   layoutVariants: [
     {

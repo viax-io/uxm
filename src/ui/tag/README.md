@@ -44,6 +44,8 @@ The `TagType` and `TagSize` unions are exported for consumer-side helpers.
 |----------|----------------|---------|---------|
 | `--uxm-tag-border-radius` | – | `999px` | Pill radius (both sizes). |
 | `--uxm-tag-font-weight` | `--font-weight-medium` | `500` | Label font weight (both sizes). |
+| `--uxm-tag-text-transform` | – | `inherited` | Label case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. Unset, it inherits, as before. |
+| `--uxm-tag-letter-spacing` | – | `inherited` | Label tracking (Studio saves `em`). Unset, it inherits, as before. |
 
 ### Per type
 

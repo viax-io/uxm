@@ -18,6 +18,8 @@ export const detailSectionDef: ComponentDef = {
     { key: 'iconBg', label: 'Icon Bg', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'colors' },
     { key: 'iconColor', label: 'Icon Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'titleSize', label: 'Title Size', control: 'number', defaultValue: 15, min: 12, max: 22, step: 1, unit: 'px' },
+    { key: 'titleTextTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+    { key: 'titleLetterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
     { key: 'subtitleColor', label: 'Subtitle Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'accentWidth', label: 'Accent Rail Width', control: 'slider', defaultValue: 3, min: 0, max: 8, step: 1, unit: 'px' },
     { key: 'accentColor', label: 'Accent Color', control: 'color', defaultValue: 'var(--color-accent)', section: 'colors' },

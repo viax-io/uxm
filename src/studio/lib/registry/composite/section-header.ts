@@ -9,6 +9,8 @@ export const sectionHeaderDef: ComponentDef = {
     { key: 'titleColor', label: 'Title Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'colors' },
     { key: 'titleSize', label: 'Title Size', control: 'number', defaultValue: 11, min: 9, max: 14, step: 1, unit: 'px' },
     { key: 'titleWeight', label: 'Title Weight', control: 'select', defaultValue: '600', options: ['500', '600', '700'] },
+    { key: 'titleTextTransform', label: 'Text Transform', control: 'select', defaultValue: 'uppercase', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+    { key: 'titleLetterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0.06, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
     { key: 'subtitleColor', label: 'Subtitle Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'subtitleSize', label: 'Subtitle Size', control: 'number', defaultValue: 10, min: 9, max: 14, step: 1, unit: 'px' },
     { key: 'gap', label: 'Title-Subtitle Gap', control: 'number', defaultValue: 2, min: 0, max: 12, step: 1, unit: 'px' },

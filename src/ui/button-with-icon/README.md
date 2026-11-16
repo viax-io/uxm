@@ -58,6 +58,8 @@ renders exactly as it always has.
 | `--uxm-button-with-icon-padding-y` | – | `8px` | Block padding. |
 | `--uxm-button-with-icon-font-size` | – | `13px` | Label size, still multiplied by `--type-scale`. |
 | `--uxm-button-with-icon-font-weight` | `--font-weight-medium` | `500` | Label weight. |
+| `--uxm-button-with-icon-text-transform` | – | `none` | Label case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. |
+| `--uxm-button-with-icon-letter-spacing` | – | `normal` | Label tracking (Studio saves `em`). |
 | `--uxm-button-with-icon-icon-size` | – | `15px` | Glyph width and height — any `<svg>` in the icon slot, whatever `size` the `Icon` was given. |
 | `--uxm-button-with-icon-gap` | – | `8px` | Gap between the icon span and the label span. |
 

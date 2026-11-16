@@ -59,6 +59,8 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any standard HTML at
 | `--uxm-detail-section-icon-bg` | `--color-surface-alt` | – | Icon tile background (bridged into `--uxm-icon-tile-bg`). |
 | `--uxm-detail-section-icon-color` | `--color-text-muted` | – | Icon tile foreground (bridged into `--uxm-icon-tile-color`). |
 | `--uxm-detail-section-title-size` | – | `15px` | Title font size. |
+| `--uxm-detail-section-title-text-transform` | – | `inherited` | Title case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. Unset, it inherits, as before. |
+| `--uxm-detail-section-title-letter-spacing` | – | `inherited` | Title tracking (Studio saves `em`). Unset, it inherits, as before. |
 | `--uxm-detail-section-subtitle-color` | `--color-text-muted` | – | Subtitle text color. |
 
 The icon tile is also pinned at `--uxm-icon-tile-size: 32px` and `--uxm-icon-tile-radius: 6px` via the in-component `ICON_TILE_STYLE` constant — these are not editable through DetailSection's own vars.

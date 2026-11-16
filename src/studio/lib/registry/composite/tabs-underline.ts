@@ -33,6 +33,8 @@ export const tabsUnderlineDef: ComponentDef = {
     { key: 'paddingY', label: 'Tab Padding Y', control: 'number', defaultValue: 8, min: 4, max: 16, step: 1, unit: 'px' },
     { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 11, max: 16, step: 1, unit: 'px' },
     { key: 'fontWeight', label: 'Inactive Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600'] },
+    { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+    { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
     { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 14, min: 10, max: 20, step: 1, unit: 'px' },
     { key: 'iconGap', label: 'Icon Gap', control: 'number', defaultValue: 6, min: 2, max: 12, step: 1, unit: 'px' },
   ],

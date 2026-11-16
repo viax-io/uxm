@@ -12,6 +12,8 @@
      brand's scale still reaches the label. */
   font-size: calc(var(--uxm-button-with-icon-font-size, 13px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-with-icon-font-weight, var(--font-weight-medium, 500));
+  letter-spacing: var(--uxm-button-with-icon-letter-spacing, normal);
+  text-transform: var(--uxm-button-with-icon-text-transform, none);
   gap: var(--uxm-button-with-icon-gap, 8px);
   padding: var(--uxm-button-with-icon-padding-y, 8px) var(--uxm-button-with-icon-padding-x, 12px);
   transition: background-color 0.15s, border-color 0.15s, color 0.15s;

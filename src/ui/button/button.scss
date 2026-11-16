@@ -16,6 +16,8 @@
   display: inline-flex;
   font-size: calc(var(--uxm-button-primary-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-primary-font-weight, var(--font-weight-strong, 600));
+  letter-spacing: var(--uxm-button-primary-letter-spacing, normal);
+  text-transform: var(--uxm-button-primary-text-transform, none);
   gap: var(--uxm-button-primary-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-primary-padding-y, 10px) var(--uxm-button-primary-padding-x, 20px);
@@ -59,6 +61,8 @@
   display: inline-flex;
   font-size: calc(var(--uxm-button-secondary-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-secondary-font-weight, var(--font-weight-strong, 600));
+  letter-spacing: var(--uxm-button-secondary-letter-spacing, normal);
+  text-transform: var(--uxm-button-secondary-text-transform, none);
   gap: var(--uxm-button-secondary-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-secondary-padding-y, 10px) var(--uxm-button-secondary-padding-x, 20px);
@@ -100,6 +104,8 @@
   display: inline-flex;
   font-size: calc(var(--uxm-button-tertiary-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-tertiary-font-weight, var(--font-weight-strong, 600));
+  letter-spacing: var(--uxm-button-tertiary-letter-spacing, normal);
+  text-transform: var(--uxm-button-tertiary-text-transform, none);
   gap: var(--uxm-button-tertiary-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-tertiary-padding-y, 10px) var(--uxm-button-tertiary-padding-x, 20px);
@@ -141,6 +147,8 @@
   display: inline-flex;
   font-size: calc(var(--uxm-button-ghost-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-ghost-font-weight, var(--font-weight-medium, 500));
+  letter-spacing: var(--uxm-button-ghost-letter-spacing, normal);
+  text-transform: var(--uxm-button-ghost-text-transform, none);
   gap: var(--uxm-button-ghost-gap, 8px);
   justify-content: center;
   padding: var(--uxm-button-ghost-padding-y, 10px) var(--uxm-button-ghost-padding-x, 20px);
@@ -184,6 +192,8 @@
   padding: var(--uxm-button-danger-padding-y, 10px) var(--uxm-button-danger-padding-x, 20px);
   font-size: calc(var(--uxm-button-danger-font-size, 14px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-danger-font-weight, var(--font-weight-strong, 600));
+  letter-spacing: var(--uxm-button-danger-letter-spacing, normal);
+  text-transform: var(--uxm-button-danger-text-transform, none);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 

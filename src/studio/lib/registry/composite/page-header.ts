@@ -14,6 +14,8 @@ export const pageHeaderDef: ComponentDef = {
     // unitless on their own, so the value never depends on formatValue's
     // `*LineHeight` rule. Same shape as `editable-cell`'s `smallFontSize`.
     { key: 'titleLineHeight', label: 'Title Line Height', control: 'select', defaultValue: 'normal', options: ['normal', '1.1', '1.15', '1.2', '1.25', '1.3', '1.4', '1.5'] },
+    { key: 'titleTextTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+    { key: 'titleLetterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
     { key: 'metaColor', label: 'Meta Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
     { key: 'metaSize', label: 'Meta Size', control: 'number', defaultValue: 13, min: 11, max: 18, step: 1, unit: 'px' },
     { key: 'iconBg', label: 'Icon Bg', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },

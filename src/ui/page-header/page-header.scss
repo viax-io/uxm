@@ -64,6 +64,11 @@
     font-family: var(--uxm-page-header-title-font, var(--type-page-title-font, var(--brand-heading-font, inherit)));
     font-size: calc(var(--uxm-page-header-title-size, 22px) * var(--type-page-title-scale, 1) * var(--type-scale, 1));
     font-weight: var(--uxm-page-header-title-weight, var(--type-page-title-weight, var(--brand-heading-weight, 600)));
+    /* Case and tracking knobs with NO fallback, on purpose: unset, the var is
+       invalid at computed-value time, which for these inherited properties
+       means `inherit`, exactly what this element did before the knobs. */
+    letter-spacing: var(--uxm-page-header-title-letter-spacing);
+    text-transform: var(--uxm-page-header-title-text-transform);
     /* Its own line height, so a theme's body line height (`brand.bodyLineHeight`
        → `body { line-height }`) stops reaching the title. Inherited, it grew the
        line box with every step: 1.6 at a 39px title made a 62px box, and since
