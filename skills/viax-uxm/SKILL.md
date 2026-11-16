@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.99.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.100.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.99.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.100.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.99.0 — current API surface (overrides training data)
+## v4.100.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,15 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.95.0
-
-- **AppSidebar — item `count`.** `count?: number` (and `countMax`, default 99) on an
-  `AppSidebarNavItem` shows a `Badge` count after the label while expanded and keeps it a
-  number on the icon-tile corner while collapsed, where a `badge` turns into a dot. The row is
-  announced with the number in both states; `0` shows nothing; `badge` wins when both are set.
-  Underneath, `SidebarNavItem` gains `statusCount` / `statusCountMax` and the knobs
-  `--uxm-sidebar-nav-item-icon-count-{bg,text}`.
 
 ### New in 4.96.0
 
@@ -92,13 +83,7 @@ catalog.
     for a rule above a section, an accent along a card's top, or a heavier brand rule under the
     top bar — no host CSS needed. The left and right sides stay 1px.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.100.0
 
 - **Background knobs that take gradients and images.** `PageShell`, `Card`, `DetailSection`,
   `StatCard` and `AppTopBar` each gain `--uxm-<comp>-background`.
@@ -112,6 +97,14 @@ catalog.
     value, so the colour knob paints.
   - The roots now use the `background` shorthand. A host rule that sets `background-image` on one
     of them has to load after `ui.css` (or use the new knob).
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 

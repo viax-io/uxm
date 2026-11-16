@@ -1,3 +1,10 @@
+# [4.100.0](https://github.com/viax-io/uxm/compare/v4.99.0...v4.100.0) (2026-11-16)
+
+
+### Features
+
+* **theming:** background knobs that take gradients and images ([0b35e86](https://github.com/viax-io/uxm/commit/0b35e86f2e44768023f1bdf0c41cb8629b3ecf55))
+
 # [4.99.0](https://github.com/viax-io/uxm/compare/v4.98.0...v4.99.0) (2026-11-16)
 
 

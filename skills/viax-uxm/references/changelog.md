@@ -2551,3 +2551,12 @@ reached the published library; now shipped in 2.8.0.
 - **DataTable** — with `stackedRole`s on, a `field` column with no plain-text name (a JSX `header`
   and no `label`) now logs a development-only `console.warn` naming the column: its cards show the
   value with no label. Production builds stay silent.
+
+### New in 4.95.0
+
+- **AppSidebar — item `count`.** `count?: number` (and `countMax`, default 99) on an
+  `AppSidebarNavItem` shows a `Badge` count after the label while expanded and keeps it a
+  number on the icon-tile corner while collapsed, where a `badge` turns into a dot. The row is
+  announced with the number in both states; `0` shows nothing; `badge` wins when both are set.
+  Underneath, `SidebarNavItem` gains `statusCount` / `statusCountMax` and the knobs
+  `--uxm-sidebar-nav-item-icon-count-{bg,text}`.
