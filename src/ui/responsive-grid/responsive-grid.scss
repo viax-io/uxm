@@ -8,3 +8,38 @@
     minmax(var(--uxm-responsive-grid-min, 200px), 1fr)
   );
 }
+
+/* `columns` mode: the root is the size container the collapse measures, and
+   the grid moves to the inner track (a grid can't query its own width). The
+   root takes its container's width, as any block does. */
+.uxm-responsive-grid--columns {
+  container-type: inline-size;
+  display: block;
+}
+
+.uxm-responsive-grid__track {
+  display: grid;
+  gap: var(--uxm-responsive-grid-gap, 16px);
+  grid-template-columns: var(--uxm-responsive-grid-columns, minmax(0, 1fr));
+}
+
+.uxm-grid-item {
+  grid-column: var(--uxm-grid-item-column, auto);
+  grid-row: var(--uxm-grid-item-row, auto);
+  min-width: 0;
+}
+
+/* One block per `stackAt` value: a size container condition can't read a
+   custom property. Collapsed, every track is one column and spans reset. */
+@each $bp in (480, 640, 768, 960) {
+  @container (max-width: #{$bp}px) {
+    .uxm-responsive-grid--stack-#{$bp} > .uxm-responsive-grid__track {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .uxm-responsive-grid--stack-#{$bp} > .uxm-responsive-grid__track > .uxm-grid-item {
+      grid-column: auto;
+      grid-row: auto;
+    }
+  }
+}
