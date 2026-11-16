@@ -166,6 +166,14 @@ interface ListboxCommonProps<T> {
   /** Wrapper element class — only meaningful if you visually wrap the trigger. */
   className?: string;
   style?: CSSProperties;
+  /**
+   * Size the wrapper to its trigger instead of filling the row. Default
+   * `false`: the wrapper is `width: 100%`, the form-field layout every picker
+   * built on Listbox (Select, PhoneInput, …) relies on. Set it for a
+   * menu-style trigger in a row of other controls (a "Viewing as" picker in a
+   * top bar's `Cluster`), where a full-width wrapper squeezes its neighbours.
+   */
+  inline?: boolean;
 
   /** Block all interaction. */
   disabled?: boolean;
@@ -307,6 +315,7 @@ function ListboxCore<T>({
   panelStyle,
   className,
   style,
+  inline = false,
   disabled = false,
   onOpenChange,
   'aria-label': ariaLabel,
@@ -527,7 +536,7 @@ function ListboxCore<T>({
       : undefined;
 
   return (
-    <div className={cn('uxm-listbox', className)} style={style}>
+    <div className={cn('uxm-listbox', inline && 'uxm-listbox--inline', className)} style={style}>
       {/* eslint-disable-next-line react-hooks/refs -- triggerProps is memoised above and contains a ref-setter callback; the rule flags the pattern but the callback is the React-blessed way to wire a ref through a consumer-rendered element */}
       {renderTrigger({ open, selected: triggerSelected, triggerProps })}
       <Popover
