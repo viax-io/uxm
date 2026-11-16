@@ -103,6 +103,13 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`ResponsiveGrid` `columns` and `GridItem`.**
+  - `columns={3}` or `columns="2fr 1fr"` gives fixed or weighted tracks.
+  - `GridItem` `span` / `rowSpan` spans them (a wide hero card, a bento).
+  - The grid collapses to one column, spans reset, when its own container is `stackAt` (480
+    default, 640, 768, 960, or `false`) or narrower.
+  - Without `columns`, the auto-fit grid and its single element are unchanged.
+
 ## Workflow
 
 ### Where the documentation lives

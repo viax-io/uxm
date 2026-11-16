@@ -73,7 +73,9 @@ const BUDGET_GZIP_KB = {
   'uxm.css': 40,
   // The opt-in page baseline (base.css): a handful of rules, ~0.5 KB gz.
   'uxm-base.css': 1,
-  'uxm.esm.d.ts': 80,
+  // Types grow with every documented prop: 80.3 KB gz on 4.105 + ResponsiveGrid
+  // `columns` / GridItem (16-11-2026) crossed the old 80. Raised on purpose.
+  'uxm.esm.d.ts': 84,
   'uxm-generate-css.esm.d.ts': 4,
   // Studio, measured on v4.71.1 (26-10-2026): esm 125.6 with ui external (a
   // 181 KB figure from an earlier probe still carried a copy of ui), css 6.4,

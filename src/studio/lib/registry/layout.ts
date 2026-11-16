@@ -15,7 +15,21 @@ export const layoutDefs: ComponentDef[] = [
       { key: 'min', label: 'Min Column Width', control: 'text', defaultValue: '200px' },
       { key: 'gap', label: 'Gap', control: 'number', defaultValue: 16, min: 0, max: 48, step: 2, unit: 'px' },
     ],
-    layoutVariants: [],
+    layoutVariants: [
+      {
+        // A prop, not a knob: `columns` sets the tracks, `GridItem` the spans.
+        // The preview shows each mode; a narrow canvas shows the collapse.
+        key: 'columns',
+        label: 'Columns',
+        options: [
+          { value: 'auto', label: 'Auto-fit (min width)' },
+          { value: '3', label: '3 equal' },
+          { value: '2fr 1fr', label: '2 : 1' },
+          { value: 'bento', label: 'Bento (spans)' },
+        ],
+        defaultValue: 'auto',
+      },
+    ],
     canvasBackground: false,
   },
   {
