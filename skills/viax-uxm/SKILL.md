@@ -113,6 +113,14 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`FilterTabs` as navigation.**
+  - Options with an `href` turn the bar into a `<nav>` of links, with `aria-current="page"` on
+    the option matching `value`.
+  - `linkAs` takes the router's link (as on `Link` / `AppSidebar`), so section tabs in a header
+    navigate on the client.
+  - It looks the same; links aren't tabs, so there's no `tablist`.
+  - Without any `href`, nothing changes.
+
 ## Workflow
 
 ### Where the documentation lives
