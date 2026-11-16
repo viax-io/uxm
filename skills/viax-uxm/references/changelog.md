@@ -2545,3 +2545,9 @@ reached the published library; now shipped in 2.8.0.
 - **DataTable** — `--uxm-data-table-stacked-label-font-weight` themes the weight of a
   `stackedRoles` field's label (the `<dt>`), alongside `-stacked-label-{font-size,color}`. Default
   unchanged: `--font-weight-strong`.
+
+### New in 4.94.0
+
+- **DataTable** — with `stackedRole`s on, a `field` column with no plain-text name (a JSX `header`
+  and no `label`) now logs a development-only `console.warn` naming the column: its cards show the
+  value with no label. Production builds stay silent.

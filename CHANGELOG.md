@@ -1,3 +1,10 @@
+# [4.99.0](https://github.com/viax-io/uxm/compare/v4.98.0...v4.99.0) (2026-11-16)
+
+
+### Features
+
+* **theming:** top and bottom border knobs on Card, DetailSection and AppTopBar ([724a1b6](https://github.com/viax-io/uxm/commit/724a1b6a8536f358011f0d8cca96f135ca4110d2))
+
 # [4.98.0](https://github.com/viax-io/uxm/compare/v4.97.0...v4.98.0) (2026-11-16)
 
 
