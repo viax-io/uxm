@@ -11,7 +11,7 @@
   /* `--uxm-app-top-bar-background` takes any `background` value (a gradient, an
      image with its size and repeat) and wins over the colour knob when set. */
   background: var(--uxm-app-top-bar-background, var(--uxm-app-top-bar-background-color, color-mix(in srgb, var(--color-surface-alt) 50%, transparent)));
-  border-bottom: 1px solid var(--uxm-app-top-bar-border-color, var(--color-border));
+  border-bottom: var(--uxm-app-top-bar-border-bottom-width, 1px) solid var(--uxm-app-top-bar-border-color, var(--color-border));
   display: flex;
   gap: var(--uxm-app-top-bar-gap, 12px);
   height: var(--uxm-app-top-bar-height, 64px);

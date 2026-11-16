@@ -2533,3 +2533,21 @@ reached the published library; now shipped in 2.8.0.
 - **Menu** — `MenuControlRow` docs now state its known ARIA trade-off: a control that is not made of
   menuitems fails axe `aria-required-children` inside `role="menu"` and may be hidden from a screen
   reader in menu mode (Tab still reaches it). Keep control rows to non-essential settings.
+
+### New in 4.92.5
+
+- **DataTable** — the actions column (table mode, stacked cards, and the `stackedRoles` actions
+  footer) aligns to the trailing edge with `text-align: end`, so it lands on the left in RTL
+  instead of the right. No change in LTR.
+
+### New in 4.93.0
+
+- **DataTable** — `--uxm-data-table-stacked-label-font-weight` themes the weight of a
+  `stackedRoles` field's label (the `<dt>`), alongside `-stacked-label-{font-size,color}`. Default
+  unchanged: `--font-weight-strong`.
+
+### New in 4.94.0
+
+- **DataTable** — with `stackedRole`s on, a `field` column with no plain-text name (a JSX `header`
+  and no `label`) now logs a development-only `console.warn` naming the column: its cards show the
+  value with no label. Production builds stay silent.

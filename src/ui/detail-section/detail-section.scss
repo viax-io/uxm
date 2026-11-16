@@ -12,7 +12,14 @@
   /* `--uxm-detail-section-background` takes any `background` value (a gradient, an
      image with its size and repeat) and wins over the colour knob when set. */
   background: var(--uxm-detail-section-background, var(--uxm-detail-section-bg, var(--color-card)));
-  border: 1px solid var(--uxm-detail-section-border-color, var(--color-border));
+  /* Top and bottom edges are knobs of their own and fall back to the
+     all-sides colour (see Card). The accent rail sits inside the border, so
+     a thicker top edge runs above it. */
+  border-color: var(--uxm-detail-section-border-top-color, var(--uxm-detail-section-border-color, var(--color-border)))
+    var(--uxm-detail-section-border-color, var(--color-border))
+    var(--uxm-detail-section-border-bottom-color, var(--uxm-detail-section-border-color, var(--color-border)));
+  border-style: solid;
+  border-width: var(--uxm-detail-section-border-top-width, 1px) 1px var(--uxm-detail-section-border-bottom-width, 1px);
   border-radius: var(--uxm-detail-section-radius, 4px);
   overflow: hidden;
   position: relative;

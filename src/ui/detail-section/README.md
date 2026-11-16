@@ -43,7 +43,11 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any standard HTML at
 |----------|----------------|---------|---------|
 | `--uxm-detail-section-bg` | `--color-card` | – | Section background. |
 | `--uxm-detail-section-background` | `--uxm-detail-section-bg` | – | Any `background` value — a gradient, or an image with its position, size and repeat — painted instead of the colour knob. Unset by default. A gradient or an opaque image covers the colour; for a transparent pattern put the colour in the value's last layer (`url(/grid.svg) 0 0 / 30px 30px, var(--color-card)`). A Studio save keeps only `https://` and root-relative (`/…`) `url()`s; any other url (`data:`, `./…`) drops the whole value, and the colour knob paints. |
-| `--uxm-detail-section-border-color` | `--color-border` | – | Section border. |
+| `--uxm-detail-section-border-color` | `--color-border` | – | Section border (all four sides). |
+| `--uxm-detail-section-border-top-width` | – | `1px` | Top edge width — e.g. a 3px rule above the section. It runs above the accent rail. The sides stay 1px, so with a thick edge keep the radius small: a large radius tapers the corner where the widths meet. |
+| `--uxm-detail-section-border-top-color` | `--uxm-detail-section-border-color` | – | Top edge colour; unset, it follows the border colour. |
+| `--uxm-detail-section-border-bottom-width` | – | `1px` | Bottom edge width. |
+| `--uxm-detail-section-border-bottom-color` | `--uxm-detail-section-border-color` | – | Bottom edge colour; unset, it follows the border colour. |
 | `--uxm-detail-section-radius` | – | `4px` | Section corner radius. |
 | `--uxm-detail-section-padding` | – | `20px` | Inner padding (left is `padding + accent-width + accent-gap`). |
 | `--uxm-detail-section-title-font` | `--type-section-title-font` → `--brand-heading-font` | `inherit` | Title typeface (**h2** role). |

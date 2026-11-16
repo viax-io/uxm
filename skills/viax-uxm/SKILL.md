@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.96.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.99.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.96.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.99.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.96.0 — current API surface (overrides training data)
+## v4.99.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,24 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.92.5
-
-- **DataTable** — the actions column (table mode, stacked cards, and the `stackedRoles` actions
-  footer) aligns to the trailing edge with `text-align: end`, so it lands on the left in RTL
-  instead of the right. No change in LTR.
-
-### New in 4.93.0
-
-- **DataTable** — `--uxm-data-table-stacked-label-font-weight` themes the weight of a
-  `stackedRoles` field's label (the `<dt>`), alongside `-stacked-label-{font-size,color}`. Default
-  unchanged: `--font-weight-strong`.
-
-### New in 4.94.0
-
-- **DataTable** — with `stackedRole`s on, a `field` column with no plain-text name (a JSX `header`
-  and no `label`) now logs a development-only `console.warn` naming the column: its cards show the
-  value with no label. Production builds stay silent.
 
 ### New in 4.95.0
 
@@ -78,6 +60,37 @@ catalog.
   tokens (plain host text was black in the dark theme); removed the `.uxm-list` /
   `.uxm-list-item` width rules (the library has done this itself since 4.80.4) and the
   `.uxm-detail-section__inner` override.
+
+### New in 4.97.0
+
+- **`Listbox` / `MultiListbox` `inline`** — `inline?: boolean` (default `false`) sizes the
+  wrapper to its trigger instead of the form-field `width: 100%`. Use it for a menu-style picker
+  in a row of other controls, e.g. a "Viewing as" persona picker beside a Sign out button in an
+  `AppTopBar` `Cluster`, where the full-width wrapper took ~320px and squeezed the button.
+
+### New in 4.98.0
+
+- **`uxm/base.css`, the opt-in page baseline** — recipe 0's host baseline as a shipped file:
+  - the `border-box` reset;
+  - `height: 100%` on `html` / `body` / `#root`;
+  - the brand font on the document, with the `--font-inter` fallback;
+  - `body` with `margin: 0` and the surface and text colours;
+  - `font: inherit` on raw form controls.
+
+  Every rule is in `:where()` (specificity 0), so host rules win in any order. Import it after
+  `tokens.css` and `ui.css` instead of copying recipe 0. On the CDN it is `uxm-base.css`, linked
+  after `uxm.css`.
+
+### New in 4.99.0
+
+- **Per-side border knobs on `Card`, `DetailSection` and `AppTopBar`.**
+  - `Card` and `DetailSection` gain `--uxm-<comp>-border-top-width` / `-border-top-color` and
+    `-border-bottom-width` / `-border-bottom-color`. Widths default to `1px`; colours fall back
+    to the all-sides `-border-color`, so an unset edge keeps following it.
+  - `AppTopBar` gains `--uxm-app-top-bar-border-bottom-width` (`1px`).
+  - All of them are Studio knobs, in a "Top & Bottom Edges" section for the first two. Use them
+    for a rule above a section, an accent along a card's top, or a heavier brand rule under the
+    top bar — no host CSS needed. The left and right sides stay 1px.
 
 ### Unreleased
 
@@ -156,11 +169,14 @@ skill:
      delay, so installing or bumping right after a fresh `@viax.io/uxm` release can 404 or
      silently resolve a stale version through Nexus without this override. Add it if missing —
      see `uxm-studio/.npmrc` for a working example.
-2. Confirm CSS imports are in place. Both stylesheets must be imported once at the app entry:
+2. Confirm CSS imports are in place. Both stylesheets must be imported once at the app entry,
+   plus the host baseline (recipe 0) — on a release that ships it (4.98.0), that's
+   `uxm/base.css`:
    ```ts
    // app/layout.tsx (Next.js) or main.tsx (Vite/CRA)
    import 'uxm/tokens.css';
    import 'uxm/ui.css';
+   import 'uxm/base.css'; // the page baseline; older releases copy recipe 0 instead
    ```
    If missing, add them before any visual work.
 
@@ -277,7 +293,7 @@ hardcode a competing family (see `references/design-tokens.md` → "Typography")
 > would otherwise render in Arial next to the body font. There is no `--font-mono` token —
 > use `var(--font-mono, monospace)` with the literal fallback.
 >
-> These two lines are the emergency fix. **The complete host baseline — including the
+> These two lines are the emergency fix; `uxm/base.css` (4.98.0) carries both. **The complete host baseline — including the
 > `html, body, #root { height: 100% }` that `PageShell` needs in order to bound its own scroll
 > area, and the `DetailSection` / `List` corrections — is
 > [`references/quick-recipes.md` § 0](references/quick-recipes.md).** Apply that once and none of
@@ -325,7 +341,8 @@ base; the studio's runtime `<style>` still wins live on the editor route.
     write `@viax.io/uxm/…` in application code — the real package name lives in ONE place, the
     `"uxm": "npm:@viax.io/uxm@^x.y.z"` dependency line, so a version bump or a rename is a one-line
     change. The subpaths are unchanged: `uxm`, `uxm/ui`, `uxm/tokens`, `uxm/hooks`, `uxm/previews`,
-    `uxm/studio`, `uxm/studio/generate-css`, plus `uxm/ui.css`, `uxm/tokens.css`, `uxm/studio.css`.
+    `uxm/studio`, `uxm/studio/generate-css`, plus `uxm/ui.css`, `uxm/tokens.css`, `uxm/base.css`
+    (4.98.0), `uxm/studio.css`.
 
 ## Out of scope
 
