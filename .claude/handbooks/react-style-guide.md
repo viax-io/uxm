@@ -59,10 +59,17 @@ Each component lives in its own folder with its `.scss`, `index.ts` barrel,
 (`@viax.io/uxm` or `@viax.io/uxm/ui`) — deep imports into individual files are **not**
 a supported contract (constitution III).
 
-### A2. No `"use client"` directives
+### A2. `'use client'` only where a Server Component can't render the module
 
-Consumers are client-side SPAs. There are no Server Components, no `"use client"`,
-no `"use server"`. Never add the directive; remove it from any code you touch.
+Consumers include Next.js App Router apps, where a server page renders the atoms
+directly. So a module starts with `'use client';` exactly when it calls a hook or
+`createContext`, or builds its own event handler (`onClick={() => …}`); a server
+component can't do either. A module that only forwards a handler prop
+(`onClick={onDismiss}`) and the pure layout atoms (`Stack`, `Cluster`, `Card`, …)
+carry no directive. Keep a public constant (one exported from `src/ui/index.ts`)
+out of a `'use client'` module, in its own `<name>-constants.ts`: imported from
+one, a server component gets a client reference instead of the value. Never `'use server'`. `tests/use-client.test.ts`
+derives the set from the source and fails on a missing or an unneeded directive.
 
 ### A3. Named exports only
 
@@ -611,7 +618,7 @@ a real external-consumer break (`gotchas.md` → semver).
 - [ ] `className` accepted and forwarded via `cn('uxm-block', className)`
 - [ ] `...rest` spread on the root element where practical
 - [ ] Controlled/uncontrolled pair when stateful
-- [ ] No `"use client"`, no `any`, no inline design values, no Tailwind
+- [ ] `'use client'` if and only if the module has hooks, context or its own handlers; no `any`, no inline design values, no Tailwind
 - [ ] Every themable declaration is `var(--uxm-<name>-<prop>, var(--color-*))`; literals commented
 - [ ] `font-size` wrapped in `calc(… * var(--type-scale, 1))`
 - [ ] BEM class names `uxm-block__element--modifier`; state via modifiers

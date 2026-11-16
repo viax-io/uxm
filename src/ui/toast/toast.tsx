@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '../../helpers/cn';
 import { Icon } from '../icon';
 

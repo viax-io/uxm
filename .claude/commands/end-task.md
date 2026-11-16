@@ -44,7 +44,7 @@ Read `.claude/memory/constitution.md` and check every changed file under `src/`:
 |---|---|
 | I. Token-first | every themable declaration reads `var(--uxm-<comp>-<prop>, var(--color-<token>))`; no literal colours/spacing/radii except the documented exceptions, each with a justifying comment |
 | II. BEM | `uxm-` prefix, `__` elements, `--` modifiers (variant folded into the block name is fine); styles in the colocated `<name>.scss`; `src/ui/styles.css` stays a pure `@import` list; no Tailwind outside `src/studio` |
-| III. Semver | Conventional Commit types match the public impact (`feat` = MINOR, `fix` = PATCH); a `BREAKING CHANGE:` footer only for a real external-consumer break (see `gotchas.md`); no deep-import contracts, no default exports, no `"use client"` |
+| III. Semver | Conventional Commit types match the public impact (`feat` = MINOR, `fix` = PATCH); a `BREAKING CHANGE:` footer only for a real external-consumer break (see `gotchas.md`); no deep-import contracts, no default exports, `'use client'` only where `tests/use-client.test.ts` requires it |
 | IV. A11y | keyboard-operable, visible `:focus-visible`, correct ARIA, WCAG AA text/UI contrast in **both** themes, state never by colour alone |
 | V. Hygiene | gates green; every `eslint-disable` carries `-- <reason>`; no new `any` / `@ts-expect-error` without a comment; no new runtime dependencies |
 

@@ -1,3 +1,5 @@
+'use client';
+
 import { useId, useMemo, type CSSProperties, type ReactNode } from 'react';
 
 import { cn, mergeDescribedBy } from '@/helpers';

@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, useId, useState } from 'react';
 
 import { cn, mergeDescribedBy } from '@/helpers';

@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FORMAT_SPEC, formatDate as formatDateAs, invalidDateMessage, parseDate as parseFormattedDate } from '../date-input';

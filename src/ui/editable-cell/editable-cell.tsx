@@ -1,3 +1,5 @@
+'use client';
+
 import { DEFAULT_EXPANDABLE_LINES } from '../expandable-text/use-expandable-text';
 
 import { EditableCellDateView } from './editable-cell-date';

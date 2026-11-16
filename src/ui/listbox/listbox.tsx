@@ -1,3 +1,5 @@
+'use client';
+
 import {
   useCallback,
   useEffect,
@@ -13,12 +15,12 @@ import { cn } from '../../helpers/cn';
 import { Icon } from '../icon';
 import { Popover, type PopoverPlacement } from '../popover';
 
+import { SEARCHABLE_AUTO_THRESHOLD } from './listbox-constants';
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  Public constants
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Item count above which `searchable="auto"` enables the search box. */
-export const SEARCHABLE_AUTO_THRESHOLD = 6;
 
 /**
  * Default message when a `required` multi-select is left empty. Lives here so

@@ -12,7 +12,7 @@ description: >
   Figma design that needs to be implemented with Viax UI primitives in React. Use this skill to
   pick the right primitive, look up its props/CSS-vars/design-tokens, and produce code that
   conforms to the library's conventions (subpath imports, BEM classnames, token-driven theming,
-  no `"use client"` unless required by Next.js App Router).
+  `'use client'` only in host files that need it).
 keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-system, modo, brand-settings, primitives, themable, previews, studio, style-editor, UxmApp, generateOverridesCss
 ---
 
@@ -86,6 +86,19 @@ catalog.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
+
+- **`'use client'` on the modules that need it.**
+  - Every `src/ui` module that calls hooks or `createContext`, or builds its own event handlers,
+    now starts with `'use client'`: 57 modules, including `DataTable`, `Thumbnail`, `Listbox`,
+    `Dialog`, `Tabs` and `ButtonGroup`.
+  - A Next.js App Router **server page** can render the atoms that take only data without a
+    client wrapper. Verified on Next 16: a server page with `Tabs`, `Thumbnail`, `ButtonGroup`,
+    `Avatar` and `Loader` prerenders, where 4.94.1 failed with `createContext is not a function`.
+  - Pure layout atoms (`Stack`, `Cluster`, `Card`, `PageShell`, `Icon`, …) stay server components.
+  - `SEARCHABLE_AUTO_THRESHOLD`, `DEFAULT_UXM_LOCALE` and `DEFAULT_SIDEBAR_ICON_COLORS` moved to
+    server-safe modules, so a server component still reads their values.
+  - Function props (`onChange`, `renderTrigger`, `rowKey`) still need a client component in the
+    host.
 
 ## Workflow
 
@@ -170,8 +183,11 @@ guess prop names from training data.
   - `import { themeTokens } from 'uxm/tokens'` for token-aware tooling.
   - `import { UxmApp } from 'uxm/studio'` + `import 'uxm/studio.css'` to embed the
     live style editor (see "Embedding the style editor").
-- **No `"use client"` directive** unless the file uses client-only React features (hooks, state,
-  event handlers). UXM components themselves do not require it.
+- **No `"use client"` directive** unless the host file uses client-only React features (hooks,
+  state, event handlers, or passes a function prop such as `onChange` / `renderTrigger` /
+  `rowKey`). From the release that ships it (unreleased), the uxm modules that need the browser
+  carry the directive themselves, so a server page can render atoms that take only data
+  (`Card`, `Tabs`, `Thumbnail`, …) directly.
 - **BEM classnames are part of the public contract**. If the user wants to extend styling, they
   should target the `uxm-{component}` class or its modifier classes (e.g. `uxm-button-primary`,
   `uxm-chip--state-focus`). Document this when delivering.

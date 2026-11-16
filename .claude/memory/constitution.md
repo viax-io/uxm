@@ -1,6 +1,25 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.5.2 → 2.0.0
+Bump rationale: MAJOR — a rule's meaning is reversed. "No `"use client"`
+directives, consumers are SPAs" was no longer true: modo, rmb, cs-ops-portal
+and the generated portals are Next.js App Router apps, and a server page
+rendering a hook-using atom returned a 500. The rule now requires the
+directive on exactly the modules that need it.
+
+Modified principles:
+  - III. Component API Stability & Semver — the directive rule (see above).
+Added sections: none. Removed sections: none.
+
+Templates requiring updates:
+  ✅ .claude/handbooks/react-style-guide.md (A2, checklist)
+  ✅ .claude/agents/code-review.md, runtime-debugger.md, react-frontend.md
+  ✅ .claude/commands/start-task.md, code-review.md, end-task.md
+  ✅ README.md, skills/viax-uxm (SKILL.md, quick-recipes.md)
+  — CLAUDE.md: no change needed
+
+Previous report (1.5.1 → 1.5.2) — kept for history:
 Version change: 1.5.1 → 1.5.2
 Bump rationale: PATCH — the release stamper now also resolves the skill's
 "(unreleased)" qualifiers, so the manual post-release cleanup step is gone.
@@ -256,8 +275,18 @@ Rules:
 - Components are functional, one-per-folder (`<name>.tsx` + `<name>.scss` +
   `index.ts` barrel), **kebab-case filename**, PascalCase named export. No
   default exports.
-- No `"use client"` / `"use server"` directives. Consumers (currently `modo`)
-  are SPA; framework-specific pragmas leak abstractions.
+- `'use client'` marks exactly the modules a React Server Component can't
+  render: the ones that call hooks or `createContext`, or build their own
+  event handlers. Consumers include Next.js App Router apps (viax-modo-next,
+  rmb, cs-ops-portal, the generated portals), where a server page renders the
+  pure atoms directly. Pure layout and presentational modules carry no
+  directive, and a public non-component value (a constant exported from
+  `src/ui/index.ts`; folder barrels are deep imports, not a contract) lives in
+  a server-safe module, never in a `'use client'` one: a server component
+  importing it from there gets a client reference, not the value. The one
+  exception is `toast`, an imperative API only ever called from handlers.
+  `tests/use-client.test.ts` derives the set from the source and fails on a
+  missing or an unneeded directive. Never `'use server'`.
 - Versioning and `CHANGELOG.md` are **CI-owned**: semantic-release derives the
   bump from Conventional Commits, generates the changelog, stamps the AI-skill
   markers, and publishes. Commit types therefore carry semver meaning and MUST
@@ -495,4 +524,4 @@ end.
   document end-to-end and file follow-up issues for drift.
 - **Deferred items.** None.
 
-**Version**: 1.5.2 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-10-26
+**Version**: 2.0.0 | **Ratified**: 2026-05-25 | **Last Amended**: 2026-11-16

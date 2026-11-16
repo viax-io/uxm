@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useMemo, useRef, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 
