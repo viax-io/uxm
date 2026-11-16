@@ -99,6 +99,13 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **New atom: `MediaObject`.** Media beside content.
+  - `media`, `mediaPosition` (`start` / `end`), `mediaWidth` (a grid track, `'40%'` for a hero),
+    `align` and `gap`.
+  - Stacks to one column when its own container is `stackAt` (640 default) or narrower.
+  - For a split hero (copy left, illustration right) or any avatar / illustration row, which
+    `EmptyState` couldn't lay out side by side.
+
 ## Workflow
 
 ### Where the documentation lives

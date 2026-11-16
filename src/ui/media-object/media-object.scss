@@ -1,0 +1,58 @@
+/* ── media-object ── */
+
+/* MediaObject — media beside content. The root is the size container the
+   stacking measures; the two columns live on the inner grid (a grid can't
+   query its own width). The media column is a grid track from
+   --uxm-media-object-media-width, the content takes the rest. */
+
+.uxm-media-object {
+  box-sizing: border-box;
+  container-type: inline-size;
+
+  &__inner {
+    align-items: center;
+    display: grid;
+    gap: var(--uxm-media-object-gap, 24px);
+    grid-template-columns: var(--uxm-media-object-media-width, auto) minmax(0, 1fr);
+  }
+
+  &--end > &__inner {
+    grid-template-columns: minmax(0, 1fr) var(--uxm-media-object-media-width, auto);
+  }
+
+  &--align-start > &__inner {
+    align-items: start;
+  }
+
+  &--align-end > &__inner {
+    align-items: end;
+  }
+
+  &__media,
+  &__body {
+    min-width: 0;
+  }
+
+  /* An image fills its column at most, never wider. An svg keeps its own
+     height attribute: without a viewBox, `height: auto` would distort it. */
+  &__media > img {
+    display: block;
+    height: auto;
+    max-width: 100%;
+  }
+
+  &__media > svg {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+/* One block per `stackAt` value: a size container condition can't read a
+   custom property. Stacked, one column in DOM order. */
+@each $bp in (480, 640, 768, 960) {
+  @container (max-width: #{$bp}px) {
+    .uxm-media-object--stack-#{$bp} > .uxm-media-object__inner {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}

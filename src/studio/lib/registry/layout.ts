@@ -33,6 +33,49 @@ export const layoutDefs: ComponentDef[] = [
     canvasBackground: false,
   },
   {
+    id: 'media-object',
+    name: 'Media Object',
+    category: 'Layout',
+    description: 'Media beside content — a hero with its illustration, a row with an avatar. Stacks to one column when its own container is narrow.',
+    styleProperties: [
+      { key: 'gap', label: 'Gap', control: 'number', defaultValue: 24, min: 0, max: 64, step: 4, unit: 'px' },
+    ],
+    // The defaults show a hero (illustration at the end, 40% wide), not the
+    // component's own `start` / `auto`, which an avatar row would use.
+    layoutVariants: [
+      {
+        key: 'mediaPosition',
+        label: 'Media Position',
+        options: [
+          { value: 'end', label: 'End' },
+          { value: 'start', label: 'Start' },
+        ],
+        defaultValue: 'end',
+      },
+      {
+        key: 'mediaWidth',
+        label: 'Media Width',
+        options: [
+          { value: '40%', label: '40%' },
+          { value: '1fr', label: 'Half' },
+          { value: 'auto', label: 'Auto' },
+        ],
+        defaultValue: '40%',
+      },
+      {
+        key: 'align',
+        label: 'Align',
+        options: [
+          { value: 'center', label: 'Center' },
+          { value: 'start', label: 'Start' },
+          { value: 'end', label: 'End' },
+        ],
+        defaultValue: 'center',
+      },
+    ],
+    canvasBackground: false,
+  },
+  {
     id: 'stack',
     name: 'Stack',
     category: 'Layout',

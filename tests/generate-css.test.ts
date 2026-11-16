@@ -81,6 +81,12 @@ describe('generateOverridesCss', () => {
     expect(css).not.toMatch(/^\s*border-(top|bottom)-(width|color):/m);
   });
 
+  it('saves the media object gap as its var, not a bare `gap` on the non-grid root', () => {
+    const css = generateOverridesCss({ 'media-object': { gap: 32 } }, brand);
+    expect(css).toContain('  --uxm-media-object-gap: 32px;');
+    expect(css).not.toMatch(/^\s*gap:/m);
+  });
+
   it('adds px to lengths but never to weights or opacities', () => {
     const css = generateOverridesCss(
       { 'input-text': { borderRadius: 8, fontWeight: 600, disabledOpacity: 0.4, itemDisabledOpacity: 0.5 } },
