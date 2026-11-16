@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.109.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.110.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.109.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.110.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.109.0 — current API surface (overrides training data)
+## v4.110.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,21 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.105.0
-
-- **`'use client'` on the modules that need it.**
-  - Every `src/ui` module that calls hooks or `createContext`, or builds its own event handlers,
-    now starts with `'use client'`: 57 modules, including `DataTable`, `Thumbnail`, `Listbox`,
-    `Dialog`, `Tabs` and `ButtonGroup`.
-  - A Next.js App Router **server page** can render the atoms that take only data without a
-    client wrapper. Verified on Next 16: a server page with `Tabs`, `Thumbnail`, `ButtonGroup`,
-    `Avatar` and `Loader` prerenders, where 4.94.1 failed with `createContext is not a function`.
-  - Pure layout atoms (`Stack`, `Cluster`, `Card`, `PageShell`, `Icon`, …) stay server components.
-  - `SEARCHABLE_AUTO_THRESHOLD`, `DEFAULT_UXM_LOCALE` and `DEFAULT_SIDEBAR_ICON_COLORS` moved to
-    server-safe modules, so a server component still reads their values.
-  - Function props (`onChange`, `renderTrigger`, `rowKey`) still need a client component in the
-    host.
 
 ### New in 4.106.0
 
@@ -96,13 +81,7 @@ catalog.
     default, 640, 768, 960, or `false`) or narrower.
   - Without `columns`, the auto-fit grid and its single element are unchanged.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.110.0
 
 - **`AppTopBar` `collapseAt`.**
   - `640 | 768 | 960 | 1024`: at or below that viewport width the bar moves its `search` slot
@@ -111,6 +90,14 @@ catalog.
   - For section tabs or a wide search in the top bar, which otherwise wrap or overlap on narrow
     screens.
   - CSS only: replaces a `matchMedia` switch in the app.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 

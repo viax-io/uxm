@@ -2666,3 +2666,18 @@ reached the published library; now shipped in 2.8.0.
   client instead of reloading the document. It gets `href`, `className`, `children` and the rest of
   the anchor props. `Link` ignores it when `external` is set. Default unchanged: a plain `<a>`.
   `Breadcrumb` takes the same `linkAs` and passes it to every crumb's `Link`.
+
+### New in 4.105.0
+
+- **`'use client'` on the modules that need it.**
+  - Every `src/ui` module that calls hooks or `createContext`, or builds its own event handlers,
+    now starts with `'use client'`: 57 modules, including `DataTable`, `Thumbnail`, `Listbox`,
+    `Dialog`, `Tabs` and `ButtonGroup`.
+  - A Next.js App Router **server page** can render the atoms that take only data without a
+    client wrapper. Verified on Next 16: a server page with `Tabs`, `Thumbnail`, `ButtonGroup`,
+    `Avatar` and `Loader` prerenders, where 4.94.1 failed with `createContext is not a function`.
+  - Pure layout atoms (`Stack`, `Cluster`, `Card`, `PageShell`, `Icon`, …) stay server components.
+  - `SEARCHABLE_AUTO_THRESHOLD`, `DEFAULT_UXM_LOCALE` and `DEFAULT_SIDEBAR_ICON_COLORS` moved to
+    server-safe modules, so a server component still reads their values.
+  - Function props (`onChange`, `renderTrigger`, `rowKey`) still need a client component in the
+    host.

@@ -1,3 +1,10 @@
+# [4.110.0](https://github.com/viax-io/uxm/compare/v4.109.0...v4.110.0) (2026-11-16)
+
+
+### Features
+
+* **app-top-bar:** collapseAt moves the search slot onto a second row ([c68c628](https://github.com/viax-io/uxm/commit/c68c6287c58b7dcd20959a16d5b25cdb218092b3))
+
 # [4.109.0](https://github.com/viax-io/uxm/compare/v4.108.0...v4.109.0) (2026-11-16)
 
 
