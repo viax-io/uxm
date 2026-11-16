@@ -3,7 +3,7 @@ import { cn } from '@/helpers';
 import { Icon } from '../icon';
 import { Link } from '../link';
 
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 
 export type BreadcrumbSeparator = 'slash' | 'chevron' | 'dot' | 'dash';
 
@@ -19,6 +19,12 @@ export interface BreadcrumbCrumb {
 export interface BreadcrumbProps extends HTMLAttributes<HTMLElement> {
   items: BreadcrumbCrumb[];
   separator?: BreadcrumbSeparator;
+  /**
+   * The router's link component, passed to every crumb's `Link` (see
+   * `Link`'s `linkAs`), so a crumb click navigates on the client instead of
+   * reloading the document. Default: a plain `<a>`.
+   */
+  linkAs?: ElementType;
 }
 
 const SEPARATOR_GLYPH: Record<Exclude<BreadcrumbSeparator, 'chevron'>, string> = {
@@ -30,6 +36,7 @@ const SEPARATOR_GLYPH: Record<Exclude<BreadcrumbSeparator, 'chevron'>, string> =
 export function Breadcrumb({
   items,
   separator = 'chevron',
+  linkAs,
   className,
   ...rest
 }: BreadcrumbProps) {
@@ -46,6 +53,7 @@ export function Breadcrumb({
                   href={item.href}
                   underline="hover"
                   disabled={item.disabled}
+                  linkAs={linkAs}
                   className="uxm-breadcrumb__link"
                 >
                   {item.label}

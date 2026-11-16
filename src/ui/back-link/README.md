@@ -2,7 +2,7 @@
 
 A subdued navigation link prefixed with a left-arrow glyph — typically rendered above a detail-page heading to return to the list view.
 
-`BackLink` renders a native `<a>` with a fixed leading `Icon` (`arrow-left`, 14px). It carries no logic beyond merging classes; all routing semantics flow through the spread `AnchorHTMLAttributes` (so `href`, `onClick`, `target`, etc. behave natively). Typography and gap are exposed as CSS variables for per-instance tuning.
+`BackLink` renders a native `<a>` (or your router's link component, through `linkAs`) with a fixed leading `Icon` (`arrow-left`, 14px). It carries no logic beyond merging classes; all routing semantics flow through the spread `AnchorHTMLAttributes` (so `href`, `onClick`, `target`, etc. behave natively). Typography and gap are exposed as CSS variables for per-instance tuning.
 
 ## Usage
 
@@ -27,10 +27,24 @@ Extends `AnchorHTMLAttributes<HTMLAnchorElement>` — `href`, `target`, `rel`, `
 |------|------|---------|-------------|
 | `children` | `ReactNode` | – | **Required.** Label text rendered after the arrow icon. |
 | `href` | `string` | – | Standard anchor target. Required for it to act as a real link. |
+| `linkAs` | `ElementType` | `'a'` | Element rendered for the anchor — pass the router's link (`next/link`, or an `href` → `to` adapter for React Router) so going back doesn't reload the page. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
 | _(any native anchor attribute)_ | – | – | Spread onto the root `<a>`. |
 
-The component does not accept an `as` / `linkAs` prop — wrap it in your router's link primitive if you need client-side navigation.
+### Client-side navigation
+
+A plain `<a href>` reloads the document. Pass the router's link component as `linkAs` — the same
+knob `AppSidebar` and `Link` have — and going back navigates on the client:
+
+```tsx
+import NextLink from 'next/link';
+
+<BackLink href="/models" linkAs={NextLink}>Back to models</BackLink>;
+```
+
+`linkAs` gets `href`, `className`, the arrow and label as `children`, and the rest of the anchor
+props. React Router's `Link` reads `to`, not `href`: pass an `href` → `to` adapter (see the `Link`
+README).
 
 ## CSS variables
 
@@ -62,7 +76,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 ## Accessibility
 
-- Renders a native `<a>` — full keyboard activation (`Enter`) and screen-reader semantics come for free.
+- Renders a native `<a>` — full keyboard activation (`Enter`) and screen-reader semantics come for free. A `linkAs` component must render an `<a href>` itself to keep them.
 - The arrow icon is rendered without `aria-hidden`; if it carries no meaning, mark it decorative upstream or rely on its `<svg>` being inert by default.
 - Provide concise label text in `children` — "Back" alone is acceptable but a destination ("Back to models") gives more context.
 - No `aria-label` is forwarded automatically; if you need to override the accessible name, pass `aria-label` as a prop (it will spread onto the `<a>`).
