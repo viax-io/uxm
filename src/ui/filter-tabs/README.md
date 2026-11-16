@@ -26,6 +26,26 @@ function Example() {
 }
 ```
 
+### As navigation
+
+Give the options an `href` and the bar navigates instead of filtering: it renders a `<nav>` of links, the option matching `value` carries `aria-current="page"`, and pass the router's link as `linkAs` so a click doesn't reload the document. Pass the current route as `value`, and name the bar with `aria-label`.
+
+```tsx
+import NextLink from 'next/link';
+
+<FilterTabs
+  aria-label="Sections"
+  value={section}
+  linkAs={NextLink}
+  options={[
+    { value: 'home', label: 'Home', href: '/' },
+    { value: 'orders', label: 'Orders', href: '/orders' },
+  ]}
+/>
+```
+
+It looks exactly like the tab mode; only the semantics change. Links aren't tabs (a tab shows a panel, a link goes somewhere), so there's no `tablist` and no arrow-key roving: each link is its own Tab stop, as in any nav. A disabled option renders as `<span role="link" aria-disabled="true">`, with no `href`, out of the Tab order. An option without an `href` in a navigation bar renders as a plain button that only reports the pick. Keep navigation mode controlled, with the current route as `value`: a modified click (Cmd / Ctrl / Shift, middle button) opens the link elsewhere and doesn't change the selection.
+
 ## Props
 
 ### `FilterTabsProps`
@@ -37,9 +57,10 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `options` | `FilterTabsOption[]` | – | **Required.** Tab descriptors; render order matches array order. |
 | `value` | `string` | – | Controlled selected value. When provided, internal state is ignored. |
 | `defaultValue` | `string` | first non-disabled option's `value` | Uncontrolled initial selection. Ignored when `value` is provided. |
-| `onChange` | `(value: string) => void` | – | Fires when a non-disabled tab is selected. |
+| `onChange` | `(value: string) => void` | – | Fires when a non-disabled tab is selected (in navigation mode, when a link is clicked). |
+| `linkAs` | `ElementType` | `'a'` | The router's link for options with an `href` (`next/link`, or an `href` → `to` adapter for React Router). Same prop as `Link`, `BackLink`, `Breadcrumb` and `AppSidebar`. |
 | `className` | `string` | – | Merged with the root class via `cn`. |
-| _(any native div attribute)_ | – | – | Spread onto the root `<div role="tablist">`. |
+| _(any native div attribute)_ | – | – | Spread onto the root: `<div role="tablist">`, or the `<nav>` in navigation mode. |
 
 ### `FilterTabsOption`
 
@@ -48,6 +69,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'onChange'>` — any standard div 
 | `value` | `string` | yes | Unique identifier; emitted to `onChange` and used as the React key. |
 | `label` | `string` | yes | Visible tab text. |
 | `disabled` | `boolean` | no | Inert tab; selection is a no-op and the native `disabled` attribute is forwarded. |
+| `href` | `string` | no | Where the option navigates. On any option, it switches the bar to navigation mode (see [As navigation](#as-navigation)). |
 
 ## CSS variables
 
@@ -94,6 +116,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 
 - Uses `role="tablist"` on the root and `role="tab"` + `aria-selected` on each button, matching the WAI-ARIA Tabs pattern.
 - Each tab is a native `<button type="button">` — `Space` / `Enter` activates, `Tab` / `Shift+Tab` moves focus.
-- **Missing:** the WAI-ARIA Tabs pattern also expects arrow-key navigation between tabs and `tabindex` management (only the active tab in the tab order). This component does not implement either — every tab is independently focusable. Acceptable for short tab lists; consider augmenting for longer ones.
+- Roving `tabindex`: only the active tab is a Tab stop; `ArrowLeft` / `ArrowRight` / `Home` / `End` move between tabs and select (automatic activation).
+- In navigation mode the bar is a `<nav>` of links with `aria-current="page"` on the active one; no tab roles, and each link is its own Tab stop.
 - No `aria-controls` link to a tabpanel is rendered; if you're driving a panel, set `aria-controls` via the spread props or wrap the consumer in your own tabpanel structure.
 - Disabled tabs forward the native `disabled` attribute, so they're removed from the tab order and announced as unavailable.
