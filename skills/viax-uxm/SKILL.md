@@ -104,6 +104,14 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`AppTopBar` `collapseAt`.**
+  - `640 | 768 | 960 | 1024`: at or below that viewport width the bar moves its `search` slot
+    onto a full-width second row. The first row keeps the bar's height, brand left and actions
+    right.
+  - For section tabs or a wide search in the top bar, which otherwise wrap or overlap on narrow
+    screens.
+  - CSS only: replaces a `matchMedia` switch in the app.
+
 ## Workflow
 
 ### Where the documentation lives

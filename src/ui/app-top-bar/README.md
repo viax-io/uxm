@@ -38,6 +38,23 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | `className` | `string` | – | Merged with the `<header>` root class via `cn`. |
 | _(any native HTMLElement attribute)_ | – | – | Spread onto the `<header>` root. |
 | `menuLabel` | `string` | `'Open navigation'` | Accessible name for the mobile menu trigger. |
+| `collapseAt` | `640 \| 768 \| 960 \| 1024` | – | Viewport width at or below which the bar grows a second row and moves the `search` slot onto it (full width, padded like the bar's sides). The first row keeps the bar's height, with the brand at the left and the actions at the right. Unset, the bar stays one row. |
+
+### Collapsing on narrow screens
+
+Tabs or a wide search in the `search` slot squeeze the brand and actions as the window narrows, until labels wrap or overlap. `collapseAt` moves the slot onto its own row instead:
+
+```tsx
+<AppTopBar collapseAt={960} brand={<Logo />} search={<FilterTabs … />} actions={<PersonaMenu />} />
+```
+
+It's CSS only (one media query per value), so there's no script and no flash on load. Studio's canvas doesn't narrow the viewport, so the collapse shows in the app, not in the workbench.
+
+- **The breakpoint is the window, not the bar.** With an `AppSidebar` beside it the bar is narrower than the window, so pick the value with the sidebar's width in mind.
+- **Heights.** Collapsed, `--uxm-app-top-bar-height` is the first row's height and the bar grows to fit the search row, padded like the bar's sides (`--uxm-app-top-bar-padding-x`).
+- **Focus order.** The search row sits below the actions but keeps its place in the DOM, so Tab still reaches it before the actions, the same order as the wide bar.
+- **Use it with a brand or actions.** A bar with only a search slot has nothing to keep on the first row.
+- **Very narrow screens.** If the brand and the actions can't share the first row, the actions wrap onto a row of their own rather than overlap the brand. Shorten a long action label ("Viewing as: …") at that width.
 
 ## CSS variables
 
@@ -74,6 +91,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 | Desktop layout | viewport `≥ 768px` | `__menu` button is hidden via media query. |
 | Menu hover | `:hover` on `__menu` | Background → `--color-surface`, text → `--color-text` with a 0.15s transition. |
 | No actions | `actions` omitted | The right-side `__actions` wrapper is not rendered at all (no empty flex cell). |
+| Collapsed | `collapseAt` set, viewport at or below it | Two rows: brand and actions on a bar-height first row, `search` full width on the second. |
 
 ## Accessibility
 
