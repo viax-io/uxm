@@ -15,7 +15,7 @@ The package ships **no `"use client"` / `"use server"` directives** by design: c
 - **Themable previews** (`@viax.io/uxm/previews`) — preview components (one per atom, plus composite previews) used by host shells like MODO's brand-settings editor to render live, knob-driven theme exploration.
 - **Studio** (`@viax.io/uxm/studio`) — `UxmApp`, the full design workbench MODO serves at `/uxm`, backend-decoupled through the `StudioPersistence` contract; see [Studio](#studio).
 - **WCAG / contrast helpers** (`@viax.io/uxm`) — `contrastRatio`, `parseColor`, `rgbToHex`, `suggestAccessibleColor`, `suggestAccessibleToken`, `wcagLevel`, plus `RGB` and `TokenCandidate` types.
-- **Default stylesheets** — `@viax.io/uxm/ui.css` (component primitive defaults) and `@viax.io/uxm/tokens.css` (token declarations).
+- **Default stylesheets** — `@viax.io/uxm/ui.css` (component primitive defaults) and `@viax.io/uxm/tokens.css` (token declarations), plus the opt-in page baseline `@viax.io/uxm/base.css`.
 - **CDN bundles** (`https://uxm.viax.io/<version>/…`) — self-contained `<script>`/`<link>` builds of the UI primitives + styles for pages that can't use npm; see [CDN usage](#cdn-usage).
 
 ## Install
@@ -63,7 +63,17 @@ Import both stylesheets once, at your application entry point:
 // e.g. src/main.tsx
 import '@viax.io/uxm/tokens.css';
 import '@viax.io/uxm/ui.css';
+import '@viax.io/uxm/base.css'; // optional: the page baseline, see below
 ```
+
+The library styles its own atoms and nothing else. `base.css` is the opt-in page baseline the atoms rely on:
+- a `border-box` reset;
+- `height: 100%` on `html`, `body` and `#root`, so `PageShell` can bound its own scroll;
+- the brand font on the document;
+- `body` with no margin and the surface and text colours, in both themes;
+- `font: inherit` on raw form controls.
+
+Every rule is wrapped in `:where()` (specificity 0), so any rule of your own wins. Skip it if your app already has these. One trade-off: on a page that scrolls the whole document instead of using `PageShell`, a `position: sticky` child of `body` or `#root` stops sticking after one screen. Override with `#root { height: auto }`.
 
 Then use the primitives anywhere:
 
@@ -132,6 +142,7 @@ Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same 
 | `uxm.esm.js` | ESM, `react` / `react-dom` / `react/jsx-runtime` **external**; also exports `VERSION` (the release it was built from) | the host page's, via import map | pages that already have React 19 |
 | `uxm.standalone.js` | IIFE, `window.UXM`, React **bundled in** | its own, inside the bundle | pages with **no** React at all |
 | `uxm.css` | flattened `tokens.css` + `ui.css` | — | both |
+| `uxm-base.css` | `base.css`, the opt-in page baseline | — | both, after `uxm.css` |
 | `uxm-studio.esm.js` | ESM, React **and ui external** — imports `./uxm.esm.js` | the host page's, via import map | the studio workbench (`UxmApp`) — see [below](#studio--the-workbench-from-the-cdn) |
 | `chunks/<locale>-<hash>.js` | ESM, one per studio locale, loaded lazily by `uxm-studio.esm.js` | — | never referenced directly |
 | `uxm-studio.css` | the studio's own stylesheet | — | with `uxm-studio.esm.js`, after `uxm.css` |
@@ -213,14 +224,23 @@ Every release also overwrites `https://uxm.viax.io/latest/<file>` with the same 
 
 ### Required host baseline
 
-A CDN page gets none of the resets a bundler-based app inherits from its own global stylesheet. Add this once, after `uxm.css` — skip it and the app renders in Times New Roman with inputs overflowing their containers. This is the same baseline npm consumers need; see `skills/viax-uxm/references/quick-recipes.md` (recipe 0) for the full version and why each line is load-bearing.
+A CDN page gets none of the resets a bundler-based app inherits from its own global stylesheet. Link `uxm-base.css` after `uxm.css`; skip it and the app renders in Times New Roman with inputs overflowing their containers:
+
+```html
+<link rel="stylesheet" href="https://uxm.viax.io/<version>/uxm.css" />
+<link rel="stylesheet" href="https://uxm.viax.io/<version>/uxm-base.css" />
+```
+
+It is the same file npm consumers import as `@viax.io/uxm/base.css` (see [Quick start](#quick-start)). Releases before it shipped need the rules by hand:
 
 ```css
+/* Releases before base.css: the same baseline by hand. */
 *, *::before, *::after { box-sizing: border-box; }
 html, body, #root { height: 100%; }
 :root { --font-sans: var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif); }
 html, body, #root { font-family: var(--brand-font, var(--font-sans)); }
 button, input, select, textarea { font: inherit; }
+body { margin: 0; color: var(--color-text); background-color: var(--color-surface); }
 ```
 
 ### Types

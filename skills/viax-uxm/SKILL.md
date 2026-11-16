@@ -87,6 +87,17 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`uxm/base.css`, the opt-in page baseline** — recipe 0's host baseline as a shipped file:
+  - the `border-box` reset;
+  - `height: 100%` on `html` / `body` / `#root`;
+  - the brand font on the document, with the `--font-inter` fallback;
+  - `body` with `margin: 0` and the surface and text colours;
+  - `font: inherit` on raw form controls.
+
+  Every rule is in `:where()` (specificity 0), so host rules win in any order. Import it after
+  `tokens.css` and `ui.css` instead of copying recipe 0. On the CDN it is `uxm-base.css`, linked
+  after `uxm.css`.
+
 ## Workflow
 
 ### Where the documentation lives
@@ -143,11 +154,14 @@ skill:
      delay, so installing or bumping right after a fresh `@viax.io/uxm` release can 404 or
      silently resolve a stale version through Nexus without this override. Add it if missing —
      see `uxm-studio/.npmrc` for a working example.
-2. Confirm CSS imports are in place. Both stylesheets must be imported once at the app entry:
+2. Confirm CSS imports are in place. Both stylesheets must be imported once at the app entry,
+   plus the host baseline (recipe 0) — on a release that ships it (unreleased), that's
+   `uxm/base.css`:
    ```ts
    // app/layout.tsx (Next.js) or main.tsx (Vite/CRA)
    import 'uxm/tokens.css';
    import 'uxm/ui.css';
+   import 'uxm/base.css'; // the page baseline; older releases copy recipe 0 instead
    ```
    If missing, add them before any visual work.
 
@@ -264,7 +278,7 @@ hardcode a competing family (see `references/design-tokens.md` → "Typography")
 > would otherwise render in Arial next to the body font. There is no `--font-mono` token —
 > use `var(--font-mono, monospace)` with the literal fallback.
 >
-> These two lines are the emergency fix. **The complete host baseline — including the
+> These two lines are the emergency fix; `uxm/base.css` (unreleased) carries both. **The complete host baseline — including the
 > `html, body, #root { height: 100% }` that `PageShell` needs in order to bound its own scroll
 > area, and the `DetailSection` / `List` corrections — is
 > [`references/quick-recipes.md` § 0](references/quick-recipes.md).** Apply that once and none of
@@ -312,7 +326,8 @@ base; the studio's runtime `<style>` still wins live on the editor route.
     write `@viax.io/uxm/…` in application code — the real package name lives in ONE place, the
     `"uxm": "npm:@viax.io/uxm@^x.y.z"` dependency line, so a version bump or a rename is a one-line
     change. The subpaths are unchanged: `uxm`, `uxm/ui`, `uxm/tokens`, `uxm/hooks`, `uxm/previews`,
-    `uxm/studio`, `uxm/studio/generate-css`, plus `uxm/ui.css`, `uxm/tokens.css`, `uxm/studio.css`.
+    `uxm/studio`, `uxm/studio/generate-css`, plus `uxm/ui.css`, `uxm/tokens.css`, `uxm/base.css`
+    (unreleased), `uxm/studio.css`.
 
 ## Out of scope
 

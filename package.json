@@ -31,6 +31,7 @@
       "require": "./dist/tokens/index.cjs"
     },
     "./tokens.css": "./dist/tokens/index.css",
+    "./base.css": "./dist/base/index.css",
     "./hooks": {
       "types": "./dist/hooks/index.d.ts",
       "import": "./dist/hooks/index.js",
