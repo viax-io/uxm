@@ -87,6 +87,19 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable` `stackAt={320}` and `stackAt={false}`.**
+  - The stacking threshold can go below its 480px default.
+  - `320` keeps a two- or three-column table as a table in a third-width column, and stacks only
+    from 320px.
+  - `false` never stacks; below its natural width the table scrolls sideways.
+  - Both keep the fixed-layout ellipsis while they are tables.
+  - In Studio: "Stack Into Cards" → "Never" / "320px and narrower".
+  - Limit: a `stackAt={false}` table nested inside another DataTable's cell stacks when the
+    outer table is at 480px or less.
+  - The root now carries `container-name: uxm-data-table`, and the 480 stacking depends on it. A
+    host that sets `container-name` / `container` on `.uxm-data-table` must keep that name
+    (`container-name: mine uxm-data-table`) or wrap the table instead.
+
 ## Workflow
 
 ### Where the documentation lives

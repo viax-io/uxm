@@ -311,6 +311,7 @@ export const messages: StudioMessages = {
   label: {
     '12-hour (HH:MM AM/PM)': '12-uurs (UU:MM AM/PM)',
     '24-hour (HH:MM)': '24-uurs (UU:MM)',
+    '320px and narrower': 'Tot en met 320px',
     '404 — Not Found': '404 — Niet gevonden',
     '480px and narrower (default)': 'Tot en met 480px (standaard)',
     '500 — Server Error': '500 — Serverfout',

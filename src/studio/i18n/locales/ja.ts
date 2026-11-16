@@ -305,6 +305,7 @@ export const messages: StudioMessages = {
   label: {
     '12-hour (HH:MM AM/PM)': '12時間制 (HH:MM AM/PM)',
     '24-hour (HH:MM)': '24時間制 (HH:MM)',
+    '320px and narrower': '320px 以下',
     '404 — Not Found': '404 — ページが見つかりません',
     '480px and narrower (default)': '480px 以下（既定）',
     '500 — Server Error': '500 — サーバーエラー',

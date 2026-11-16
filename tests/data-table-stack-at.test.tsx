@@ -30,7 +30,7 @@ const ROWS: Row[] = [{ id: 'r1', name: 'Alpha' }];
 const COLUMNS: DataTableColumn<Row>[] = [{ key: 'name', header: 'Name' }];
 
 const rootOf = (c: HTMLElement) => c.querySelector('.uxm-data-table') as HTMLElement;
-const table = (stackAt?: DataTableStackAt, className?: string) => (
+const table = (stackAt?: DataTableStackAt | false, className?: string) => (
   <DataTable rowKey={(r) => r.id} columns={COLUMNS} rows={ROWS} stackAt={stackAt} className={className} />
 );
 
@@ -48,11 +48,18 @@ describe('DataTable stackAt', () => {
     expect(rootOf(container).className).not.toMatch(/--stack-/);
   });
 
-  it.each([640, 768, 960] as const)('emits exactly one modifier for %i', (bp) => {
+  it.each([320, 640, 768, 960] as const)('emits exactly one modifier for %i', (bp) => {
     const { container } = render(table(bp));
     const cls = rootOf(container).className;
     expect(cls).toContain(`uxm-data-table--stack-${bp}`);
     expect(cls.match(/--stack-\d+/g)).toHaveLength(1);
+  });
+
+  it('emits the off modifier, and no width modifier, for false', () => {
+    const { container } = render(table(false));
+    const cls = rootOf(container).className;
+    expect(cls).toContain('uxm-data-table--stack-off');
+    expect(cls).not.toMatch(/--stack-\d+/);
   });
 
   it('leaves the other root modifiers and a consumer className alone', () => {
@@ -84,15 +91,19 @@ describe('DataTable stackAt — the prop and the stylesheet agree', () => {
     return [...m[1].split('|').map((v) => Number(v.trim()))].sort((a, b) => a - b);
   };
 
+  /** The 480 blocks ask for the named container; the opt-in presets don't. */
+  const queryFor = (bp: number) =>
+    bp === 480 ? '@container uxm-data-table (max-width: 480px)' : `@container (max-width: ${bp}px)`;
+
   /** The text of one `@container (max-width: Npx)` block in the compiled css. */
   const blockFor = (bp: number) => {
-    const at = css.indexOf(`@container (max-width: ${bp}px)`);
+    const at = css.indexOf(queryFor(bp));
     if (at < 0) return '';
     const end = css.indexOf('\n}', at);
     return css.slice(at, end < 0 ? undefined : end);
   };
 
-  const OPT_IN = [640, 768, 960] as const;
+  const OPT_IN = [320, 640, 768, 960] as const;
 
   it('reads a non-empty union (a silent zero would pass the checks below)', () => {
     expect(declared().length).toBeGreaterThan(1);
@@ -146,7 +157,7 @@ describe('DataTable stackAt — the prop and the stylesheet agree', () => {
     // carries every rule the test above looks for, and loses every tie.
     const at = css.indexOf(`@container (max-width: ${bp}px)`);
     expect(at, 'after the unconditional 480 blocks').toBeGreaterThan(
-      css.lastIndexOf('@container (max-width: 480px)'),
+      css.lastIndexOf(queryFor(480)),
     );
     expect(at, 'after the fixed-layout clip it releases').toBeGreaterThan(
       css.indexOf('@container (min-width: 481px)'),
@@ -157,6 +168,43 @@ describe('DataTable stackAt — the prop and the stylesheet agree', () => {
     const topLevel = tail.match(/^\S[^\n]*\{/gm) ?? [];
     const preset = new RegExp(`^@container \\(max-width: (${OPT_IN.join('|')})px\\)`);
     expect(topLevel.filter((r) => !preset.test(r))).toEqual([]);
+  });
+});
+
+describe('DataTable stackAt — off and 320 leave the 480 blocks', () => {
+  // `false` and 320 must not stack at 480. The 480 blocks are unconditional
+  // and their selectors carry no root class (gating them would flip their
+  // specificity contests), so the only switch is the container they query:
+  // every 480 block asks for the NAMED container, and these two modes drop the
+  // name. An unnamed 480 query anywhere would stack them again.
+  // Comments stripped: the stylesheet's notes quote `stackAt={false}`, whose
+  // braces would end a `[^}]*` match early.
+  const css = compiledCss('src/ui/data-table/data-table.scss').replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('the root names its container', () => {
+    expect(css).toMatch(/\.uxm-data-table\s*\{[^}]*container-name:\s*uxm-data-table/);
+  });
+
+  it('every 480 query asks for the named container', () => {
+    expect(css).not.toContain('@container (max-width: 480px)');
+    expect(css.split('@container uxm-data-table (max-width: 480px)').length - 1).toBe(3);
+  });
+
+  it('off and 320 drop the name, and nothing else does', () => {
+    const rule = css.match(/([^{}]+)\{\s*container-name:\s*none;?\s*\}/);
+    expect(rule?.[1].split(',').map((s) => s.trim()).sort()).toEqual([
+      '.uxm-data-table--stack-320',
+      '.uxm-data-table--stack-off',
+    ]);
+  });
+
+  it('a table that stays a table below 481px keeps the fixed-layout clip', () => {
+    // The clip is gated on `min-width: 481px` for "while this is a table";
+    // off is a table at every width and 320 down to 321px.
+    expect(css).toMatch(/\.uxm-data-table--stack-off [^{]*--fixed[^}]*overflow:\s*hidden/);
+    const at = css.indexOf('@container (min-width: 321px)');
+    expect(at).toBeGreaterThan(-1);
+    expect(css.slice(at, css.indexOf('\n}', at))).toMatch(/\.uxm-data-table--stack-320 [^{]*--fixed[^}]*overflow:\s*hidden/);
   });
 });
 
@@ -183,10 +231,10 @@ describe('DataTable stackAt — the registry, the preview and the prop agree', (
     expect(variant, 'the studio registry must offer the stackAt variant').toBeDefined();
   });
 
-  it('offers exactly the widths the prop accepts', () => {
-    const offered = (variant?.options ?? [])
-      .map((o) => Number(typeof o === 'string' ? o : o.value))
-      .sort((a, b) => a - b);
+  it('offers exactly the widths the prop accepts, plus off', () => {
+    const values = (variant?.options ?? []).map((o) => (typeof o === 'string' ? o : o.value));
+    expect(values).toContain('off');
+    const offered = values.filter((v) => v !== 'off').map(Number).sort((a, b) => a - b);
     expect(offered).toEqual(union);
   });
 
@@ -203,5 +251,6 @@ describe('DataTable stackAt — the registry, the preview and the prop agree', (
     // Keys are what the registry hands back; values are what reaches the atom.
     expect(mapped.map(([, k]) => Number(k)).sort((a, b) => a - b)).toEqual(union);
     expect(mapped.every(([, k, v]) => k === v), 'each key must map to its own width').toBe(true);
+    expect(m[1], 'the off option must reach the atom as false').toMatch(/\boff:\s*false\b/);
   });
 });
