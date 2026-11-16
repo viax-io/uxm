@@ -21,6 +21,7 @@ export function AppTopBarPreview({ styles, variants, shell }: PreviewProps) {
     '--uxm-app-top-bar-brand-gap': `${styles.brandGap}px`,
     '--uxm-app-top-bar-background-color': styles.backgroundColor as string,
     '--uxm-app-top-bar-border-color': styles.borderColor as string,
+    '--uxm-app-top-bar-border-bottom-width': `${styles.borderBottomWidth}px`,
     '--uxm-app-top-bar-height': `${styles.height}px`,
     '--uxm-app-top-bar-padding-x': `${styles.paddingX}px`,
     '--uxm-app-top-bar-gap': `${styles.gap}px`,

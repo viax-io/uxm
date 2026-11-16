@@ -9,7 +9,14 @@
 
 .uxm-card {
   background-color: var(--uxm-card-bg, var(--color-card));
-  border: 1px solid var(--uxm-card-border-color, var(--color-border));
+  /* Top and bottom edges are knobs of their own (a rule above a section, an
+     accent along the top) and fall back to the all-sides colour, so an
+     unset edge keeps following Border Color. The sides stay 1px. */
+  border-color: var(--uxm-card-border-top-color, var(--uxm-card-border-color, var(--color-border)))
+    var(--uxm-card-border-color, var(--color-border))
+    var(--uxm-card-border-bottom-color, var(--uxm-card-border-color, var(--color-border)));
+  border-style: solid;
+  border-width: var(--uxm-card-border-top-width, 1px) 1px var(--uxm-card-border-bottom-width, 1px);
   border-radius: var(--uxm-card-radius, 4px);
   padding: var(--uxm-card-padding, 24px);
 
