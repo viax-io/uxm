@@ -2645,3 +2645,16 @@ reached the published library; now shipped in 2.8.0.
   - New `--font-mono` token for host CSS: the brand's mono face, else the system mono stack.
     It resolves on `:root`, so it follows the brand var published there; a subtree that sets
     `--brand-mono-font` itself should read that var directly.
+
+### New in 4.103.0
+
+- **Case and tracking knobs.** `--uxm-<comp>-text-transform` and `-letter-spacing` (Studio:
+  "Text Transform" / "Letter Spacing"; tracking saves in `em`) on:
+  - the five Button variants, `ButtonWithIcon`, `FilterTabs` and `TabsUnderline`, defaulting to
+    `none` / `normal` (what a `<button>` already gets);
+  - the `Tag` label, `StatCard` label and `PageHeader` / `DetailSection` titles, which have no
+    fallback, so unset they inherit, as before;
+  - `SectionHeader`, whose hard-coded uppercase and 0.06em are now its knob defaults.
+
+  A theme whose voice is in capitals sets the case knob instead of writing strings in capitals,
+  so the content stays as written for screen readers and translations.

@@ -1,3 +1,10 @@
+# [4.108.0](https://github.com/viax-io/uxm/compare/v4.107.0...v4.108.0) (2026-11-16)
+
+
+### Features
+
+* **theming:** a label wrapping knob on buttons and tabs ([c4234da](https://github.com/viax-io/uxm/commit/c4234dadda207cd42acd390f2cfbecf1dc0187b1))
+
 # [4.107.0](https://github.com/viax-io/uxm/compare/v4.106.0...v4.107.0) (2026-11-16)
 
 
