@@ -696,17 +696,13 @@ button, input, select, textarea { font: inherit; }
   --uxm-card-radius: 8px;
   --uxm-detail-section-radius: 8px;
 
-  /* DetailSection: hide the 3px accent rail and bump inner padding.
-     IMPORTANT: accent-width MUST carry a unit (0px, not 0) — the library's
-     padding-left uses calc(…+var(…)+4px) which silently fails on unitless 0. */
+  /* DetailSection: hide the 3px accent rail and the gap after it, and bump inner
+     padding — left padding then matches the other sides, no class override needed.
+     IMPORTANT: both MUST carry a unit (0px, not 0) — the library's padding-left is
+     calc(padding + accent-width + accent-gap), which silently fails on a unitless 0. */
   --uxm-detail-section-accent-width: 0px;
+  --uxm-detail-section-accent-gap: 0px;
   --uxm-detail-section-padding: 28px;
-}
-
-/* DetailSection: the library hardcodes an asymmetric padding-left to reserve
-   space for the (now-hidden) accent rail. Make padding-left match the other sides. */
-.uxm-detail-section__inner {
-  padding-left: var(--uxm-detail-section-padding, 20px);
 }
 
 /* InputWithIcon: size nested <Icon> SVGs to the slot the input reserves.
@@ -717,11 +713,6 @@ button, input, select, textarea { font: inherit; }
   width: var(--uxm-input-with-icon-icon-size, 16px);
   height: var(--uxm-input-with-icon-icon-size, 16px);
 }
-
-/* Interactive ListItems render as <button>/<a> and shrink-wrap by default,
-   making vertical lists look staggered. Force them full width. */
-.uxm-list { display: flex; flex-direction: column; }
-.uxm-list > .uxm-list-item { width: 100%; text-align: left; }
 
 /* AppTopBar — widen padding so trailing actions don't hug the right edge. */
 .uxm-app-top-bar { padding: 0 24px; height: 72px; }

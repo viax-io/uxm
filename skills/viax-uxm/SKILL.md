@@ -86,6 +86,15 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DetailSection` — new `--uxm-detail-section-accent-gap` (default `4px`)**: the space
+  between the accent rail and the content, previously a hard-coded `4px`. Hiding the rail
+  is now `--uxm-detail-section-accent-width: 0px` + `--uxm-detail-section-accent-gap: 0px`;
+  drop any `.uxm-detail-section__inner { padding-left }` override.
+- **Host baseline (`quick-recipes.md` §0)**: added `body { color; background-color }` from
+  tokens (plain host text was black in the dark theme); removed the `.uxm-list` /
+  `.uxm-list-item` width rules (the library has done this itself since 4.80.4) and the
+  `.uxm-detail-section__inner` override.
+
 ## Workflow
 
 ### Where the documentation lives

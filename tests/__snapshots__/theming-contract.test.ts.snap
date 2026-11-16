@@ -599,6 +599,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-date-input-placeholder-color",
   "--uxm-date-input-popover-shadow",
   "--uxm-detail-section-accent-color",
+  "--uxm-detail-section-accent-gap",
   "--uxm-detail-section-accent-width",
   "--uxm-detail-section-bg",
   "--uxm-detail-section-border-color",

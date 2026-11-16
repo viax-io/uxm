@@ -2,7 +2,7 @@
 
 A bordered card with a left accent rail, an icon tile, a title/subtitle header, and an optional body slot. Used for grouping read-only or composite content in detail pages and side panels.
 
-`DetailSection` renders as a `<section>` with three structural pieces: a positioned `&__accent` rail along the left edge, an inner `&__inner` block whose left padding is computed (`padding + rail-width + 4px`) so toggling the rail doesn't reflow content, and a `<header>` containing an optional `IconTile` and an `<h3>` title + optional `<p>` subtitle. The icon tile theming is bridged: the component projects `--uxm-detail-section-icon-{bg,color}` onto `IconTile`'s own `--uxm-icon-tile-{bg,color}` vars via inline style, so editor saves at the section level flow through to the nested tile.
+`DetailSection` renders as a `<section>` with three structural pieces: a positioned `&__accent` rail along the left edge, an inner `&__inner` block whose left padding is computed (`padding + accent-width + accent-gap`) so toggling the rail doesn't reflow content, and a `<header>` containing an optional `IconTile` and an `<h3>` title + optional `<p>` subtitle. The icon tile theming is bridged: the component projects `--uxm-detail-section-icon-{bg,color}` onto `IconTile`'s own `--uxm-icon-tile-{bg,color}` vars via inline style, so editor saves at the section level flow through to the nested tile.
 
 ## Usage
 
@@ -44,12 +44,13 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any standard HTML at
 | `--uxm-detail-section-bg` | `--color-card` | – | Section background. |
 | `--uxm-detail-section-border-color` | `--color-border` | – | Section border. |
 | `--uxm-detail-section-radius` | – | `4px` | Section corner radius. |
-| `--uxm-detail-section-padding` | – | `20px` | Inner padding (left is `padding + accent-width + 4px`). |
+| `--uxm-detail-section-padding` | – | `20px` | Inner padding (left is `padding + accent-width + accent-gap`). |
 | `--uxm-detail-section-title-font` | `--type-section-title-font` → `--brand-heading-font` | `inherit` | Title typeface (**h2** role). |
 | `--uxm-detail-section-title-weight` | `--type-section-title-weight` → `--brand-heading-weight` | `600` | Title weight (**h2** role). |
 | `--type-body-line-height` | – | `1.5` | Line height of the body copy (global typography token). |
 | `--uxm-detail-section-accent-color` | `--color-accent` | – | Left rail fill. |
-| `--uxm-detail-section-accent-width` | – | `3px` | Left rail width. |
+| `--uxm-detail-section-accent-width` | – | `3px` | Left rail width. Must carry a unit (`0px`, not `0`). |
+| `--uxm-detail-section-accent-gap` | – | `4px` | Space between the rail and the content, added to the inner left padding. |
 | `--uxm-detail-section-icon-bg` | `--color-surface-alt` | – | Icon tile background (bridged into `--uxm-icon-tile-bg`). |
 | `--uxm-detail-section-icon-color` | `--color-text-muted` | – | Icon tile foreground (bridged into `--uxm-icon-tile-color`). |
 | `--uxm-detail-section-title-size` | – | `15px` | Title font size. |
@@ -77,6 +78,7 @@ The icon tile is also pinned at `--uxm-icon-tile-size: 32px` and `--uxm-icon-til
 | With subtitle | `subtitle` prop provided | Muted 12px `<p>` rendered 2px below the title. |
 | With body | `children` provided | `&__body` block rendered 12px below the header in muted 13px text. |
 | Header-only | `children` omitted | No body slot; section collapses to header height. |
+| Rail hidden | `--uxm-detail-section-accent-width: 0px` + `--uxm-detail-section-accent-gap: 0px` | No rail; left padding equals the other three sides. |
 
 ## Accessibility
 
