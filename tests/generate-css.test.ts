@@ -108,6 +108,20 @@ describe('generateOverridesCss', () => {
     expect(css).not.toContain('[data-theme="dark"] {');
   });
 
+  it('publishes the mono typeface as --brand-mono-font over a mono stack, imported once', () => {
+    const css = generateOverridesCss({}, { fontFamily: 'Manrope', monoFontFamily: 'IBM Plex Mono' } as BrandConfig);
+    expect(css).toContain('--brand-mono-font: "IBM Plex Mono", ui-monospace,');
+    // The fallback is fixed-width, never the body's sans stack.
+    expect(css).not.toMatch(/--brand-mono-font:[^;]*font-inter/);
+    expect(css.match(/family=IBM\+Plex\+Mono/g)).toHaveLength(1);
+    // The same face for body and mono is fetched once.
+    const same = generateOverridesCss({}, { fontFamily: 'JetBrains Mono', monoFontFamily: 'JetBrains Mono' } as BrandConfig);
+    expect(same.match(/family=JetBrains\+Mono/g)).toHaveLength(1);
+    // Unset or unsafe → no var at all, so each atom keeps its own stack.
+    expect(generateOverridesCss({}, {} as BrandConfig)).not.toContain('--brand-mono-font');
+    expect(generateOverridesCss({}, { monoFontFamily: 'x"; } body {' } as BrandConfig)).not.toContain('--brand-mono-font');
+  });
+
   it('emits the strong weight on :root and drops anything but 500/600/700', () => {
     expect(generateOverridesCss({}, { strongFontWeight: '500' })).toContain('--font-weight-strong: 500;');
     expect(generateOverridesCss({}, { strongFontWeight: '900; color: red' })).not.toContain('--font-weight-strong');

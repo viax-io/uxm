@@ -11,7 +11,7 @@ import {
 } from '@/ui';
 
 import {
-  ASSETS, FONT_OPTIONS, LINE_HEIGHT_OPTIONS, MEDIUM_WEIGHT_OPTIONS, ROLES, SCALE_OPTIONS, WEIGHT_OPTIONS,
+  ASSETS, FONT_OPTIONS, LINE_HEIGHT_OPTIONS, MEDIUM_WEIGHT_OPTIONS, MONO_FONT_OPTIONS, ROLES, SCALE_OPTIONS, WEIGHT_OPTIONS,
 } from './brand-settings-options';
 
 type TypeTab = 'body' | 'headings';
@@ -335,7 +335,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
   // Which tab carries a non-default value, for the dot on the tab label.
   const bodyDirty = Boolean(
     brand.fontFamily || brand.typeScale || brand.bodyLineHeight
-      || brand.strongFontWeight || brand.mediumFontWeight,
+      || brand.strongFontWeight || brand.mediumFontWeight || brand.monoFontFamily,
   );
   const headingsDirty = Boolean(
     brand.headingFontFamily || brand.headingFontWeight
@@ -424,6 +424,24 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                   <option value="" disabled>{t('Inter (default)')}</option>
                   {FONT_OPTIONS.slice(1).map((f) => (
                     <option key={f.value} value={f.value}>{t(f.label)}</option>
+                  ))}
+                </Select>
+              </FormField>
+
+              <FormField
+                label={t('Monospace')}
+                labelPosition="side"
+                hint={t('Code, IDs and record numbers.')}
+              >
+                <Select
+                  value={brand.monoFontFamily ?? ''}
+                  onChange={(e) => setBrand({ monoFontFamily: e.target.value || undefined })}
+                  aria-label={t('Monospace typeface')}
+                  style={{ width: '100%' }}
+                >
+                  <option value="" disabled>{t('System monospace (default)')}</option>
+                  {MONO_FONT_OPTIONS.map((f) => (
+                    <option key={f.value} value={f.value}>{f.value}</option>
                   ))}
                 </Select>
               </FormField>

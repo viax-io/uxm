@@ -30,6 +30,21 @@ export const FONT_OPTIONS: { label: string; value: string; stack: string }[] = [
   { label: 'JetBrains Mono', value: 'JetBrains Mono', stack: "'JetBrains Mono', ui-monospace, monospace" },
 ];
 
+/**
+ * Fixed-width typefaces for `monoFontFamily` (code, IDs, record numbers): all
+ * on Google Fonts, which is where a published brand imports them from. The
+ * names are proper nouns; the empty value keeps each atom's system mono stack.
+ */
+export const MONO_FONT_OPTIONS: { value: string }[] = [
+  { value: 'JetBrains Mono' },
+  { value: 'IBM Plex Mono' },
+  { value: 'Roboto Mono' },
+  { value: 'Source Code Pro' },
+  { value: 'Fira Code' },
+  { value: 'DM Mono' },
+  { value: 'Space Mono' },
+];
+
 /** Only these font labels carry translatable words; the rest are brand names. */
 export const TRANSLATABLE_FONT_LABELS = ['Inter (default)'];
 

@@ -105,7 +105,7 @@ Extends `HTMLAttributes<HTMLDivElement>` (minus `onScroll`, re-typed below).
 | `--uxm-code-editor-color` | `--color-text` | – | Code text. |
 | `--uxm-code-editor-placeholder-color` | `--color-text-muted` | – | Placeholder text (`::placeholder`, `CodeEditor` only). |
 | `--uxm-code-editor-border-radius` | – | `8px` | Root radius. |
-| `--uxm-code-editor-font-family` | – | `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace` | Typeface for code **and** gutter. |
+| `--uxm-code-editor-font-family` | `--brand-mono-font` | `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace` | Typeface for code **and** gutter. Follows the brand's mono typeface (Studio → Brand Settings → Typography → Monospace) when one is published; unset, the system stack. |
 | `--uxm-code-editor-font-size` | – | `12.5px` | Multiplied by `--type-scale`. |
 | `--uxm-code-editor-line-height` | – | `1.6` | Unitless on purpose — see below. |
 | `--uxm-code-editor-tab-size` | – | `2` | Render width of a literal tab character. |
