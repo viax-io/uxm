@@ -11,7 +11,7 @@ import {
 } from '@/ui';
 
 import {
-  ASSETS, FONT_OPTIONS, LINE_HEIGHT_OPTIONS, MEDIUM_WEIGHT_OPTIONS, MONO_FONT_OPTIONS, ROLES, SCALE_OPTIONS, WEIGHT_OPTIONS,
+  ASSETS, FONT_OPTIONS, HEADING_CASE_OPTIONS, HEADING_TRACKING_OPTIONS, LINE_HEIGHT_OPTIONS, MEDIUM_WEIGHT_OPTIONS, MONO_FONT_OPTIONS, ROLES, SCALE_OPTIONS, WEIGHT_OPTIONS,
 } from './brand-settings-options';
 
 type TypeTab = 'body' | 'headings';
@@ -338,7 +338,7 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
       || brand.strongFontWeight || brand.mediumFontWeight || brand.monoFontFamily,
   );
   const headingsDirty = Boolean(
-    brand.headingFontFamily || brand.headingFontWeight
+    brand.headingFontFamily || brand.headingFontWeight || brand.headingTextTransform || brand.headingLetterSpacing
     || ROLES.some((r) => brand[r.familyKey] || brand[r.weightKey] || brand[r.scaleKey]),
   );
 
@@ -553,6 +553,30 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                 />
               </FormField>
 
+              <FormField
+                label={t('Case')}
+                labelPosition="side"
+                hint={t('Default keeps each title as written.')}
+              >
+                <ButtonGroup
+                  style={{ alignSelf: 'start' }}
+                  value={brand.headingTextTransform ?? ''}
+                  onChange={(v) => setBrand({ headingTextTransform: v || undefined })}
+                  aria-label={t('Heading case')}
+                  options={HEADING_CASE_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
+                />
+              </FormField>
+
+              <FormField label={t('Tracking')} labelPosition="side">
+                <ButtonGroup
+                  style={{ alignSelf: 'start' }}
+                  value={brand.headingLetterSpacing ?? ''}
+                  onChange={(v) => setBrand({ headingLetterSpacing: v || undefined })}
+                  aria-label={t('Heading tracking')}
+                  options={HEADING_TRACKING_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
+                />
+              </FormField>
+
               <Disclosure
                 id="uxm-typography-levels"
                 open={levelsOpen}
@@ -639,6 +663,14 @@ export function BrandSettingsPreview({ shell }: PreviewProps) {
                     fontWeight: Number(
                       (brand[r.weightKey] as string | undefined) || headingFontWeight || r.baseWeight,
                     ),
+                    // Case and tracking reach the titles only (h1 / h2), not the
+                    // display numbers, as in the atoms.
+                    ...(r.key === 'display'
+                      ? null
+                      : {
+                          textTransform: brand.headingTextTransform as CSSProperties['textTransform'],
+                          letterSpacing: brand.headingLetterSpacing,
+                        }),
                   }}
                 >
                   {r.sample}

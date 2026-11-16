@@ -2,6 +2,8 @@ import type { PreviewProps } from '@/previews/types';
 import { ButtonPrimary, ButtonTertiary } from '@/ui';
 import { Icon } from '@/ui';
 
+import type { CSSProperties } from 'react';
+
 const COPY: Record<string, { code: string; title: string; message: string; primary: string; secondary?: string }> = {
   '404': {
     code: '404',
@@ -73,6 +75,9 @@ export function ErrorPagePreview({ styles, variants }: PreviewProps) {
         fontFamily: 'var(--uxm-error-page-title-font, var(--type-page-title-font, var(--brand-heading-font, inherit)))',
         fontSize: `calc(${titleSize}px * var(--type-page-title-scale, 1) * var(--type-scale, 1))`,
         fontWeight: 'var(--uxm-error-page-title-weight, var(--type-page-title-weight, var(--brand-heading-weight, 600)))',
+        // The brand's heading case and tracking, as error-page.scss reads them.
+        textTransform: 'var(--brand-heading-text-transform)' as CSSProperties['textTransform'],
+        letterSpacing: 'var(--brand-heading-letter-spacing)',
         color: styles.titleColor as string,
         marginTop: 16,
         marginBottom: 0,
