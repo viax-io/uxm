@@ -3,6 +3,13 @@ import { useState } from 'react';
 import type { PreviewProps } from '@/previews/types';
 import { Card, Cluster, EditableCell, FormField, Stack } from '@/ui';
 
+// The edge colours fall back to Border Color in the stylesheet. Projecting
+// their registry default would pin them to --color-border and stop them
+// following that knob, so they're projected only once set to something else.
+// (An edge set to exactly var(--color-border) therefore previews as following
+// Border Color; a save still writes it, since Studio stores the changed key.)
+const edgeColor = (value: unknown) => (value && value !== 'var(--color-border)' ? (value as string) : undefined);
+
 export function CardPreview({ styles, variants }: PreviewProps) {
   const [name, setName] = useState('Dental Customer Onboarding');
   const [status, setStatus] = useState('Active');
@@ -75,6 +82,10 @@ export function CardPreview({ styles, variants }: PreviewProps) {
       style={{
         ['--uxm-card-bg' as string]: styles.backgroundColor as string,
         ['--uxm-card-border-color' as string]: styles.borderColor as string,
+        ['--uxm-card-border-top-width' as string]: `${styles.borderTopWidth}px`,
+        ['--uxm-card-border-top-color' as string]: edgeColor(styles.borderTopColor),
+        ['--uxm-card-border-bottom-width' as string]: `${styles.borderBottomWidth}px`,
+        ['--uxm-card-border-bottom-color' as string]: edgeColor(styles.borderBottomColor),
         ['--uxm-card-radius' as string]: `${styles.borderRadius}px`,
         // Tunable shadow — same var surface a production consumer re-themes.
         ['--uxm-card-shadow-color' as string]: styles.shadowColor as string,

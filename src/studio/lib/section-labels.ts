@@ -47,4 +47,5 @@ export const SECTION_LABELS: Record<string, string> = {
   edgeToggle: 'Edge Toggle',
   brandSlot: 'Brand Slot',
   tileCount: 'Icon Count',
+  edges: 'Top & Bottom Edges',
 };

@@ -50,6 +50,27 @@ describe('generateOverridesCss', () => {
     expect(css).toContain('  --uxm-empty-state-description-max-width: 40ch;');
   });
 
+  it('saves the per-side border knobs as the vars the stylesheets read', () => {
+    // None of these keys is a REAL_CSS_PROPS entry, so each falls through to
+    // its own --uxm-<comp>-<kebab> name; pinned so a later mapping or a
+    // REAL_CSS_PROPS addition can't turn them into bare properties.
+    const css = generateOverridesCss(
+      {
+        card: { borderTopWidth: 4, borderTopColor: 'var(--color-accent)', borderBottomWidth: 0 },
+        'detail-section': { borderTopWidth: 3, borderBottomColor: '#123456' },
+        'app-top-bar': { borderBottomWidth: 5 },
+      },
+      brand,
+    );
+    expect(css).toContain('  --uxm-card-border-top-width: 4px;');
+    expect(css).toContain('  --uxm-card-border-top-color: var(--color-accent);');
+    expect(css).toContain('  --uxm-card-border-bottom-width: 0px;');
+    expect(css).toContain('  --uxm-detail-section-border-top-width: 3px;');
+    expect(css).toContain('  --uxm-detail-section-border-bottom-color: #123456;');
+    expect(css).toContain('  --uxm-app-top-bar-border-bottom-width: 5px;');
+    expect(css).not.toMatch(/^\s*border-(top|bottom)-(width|color):/m);
+  });
+
   it('adds px to lengths but never to weights or opacities', () => {
     const css = generateOverridesCss(
       { 'input-text': { borderRadius: 8, fontWeight: 600, disabledOpacity: 0.4, itemDisabledOpacity: 0.5 } },

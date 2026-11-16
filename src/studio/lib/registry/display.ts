@@ -217,6 +217,10 @@ export const displayDefs: ComponentDef[] = [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 24, step: 1, unit: 'px' },
+      { key: 'borderTopWidth', label: 'Top Border Width', control: 'slider', defaultValue: 1, min: 0, max: 8, step: 1, unit: 'px', section: 'edges' },
+      { key: 'borderTopColor', label: 'Top Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'edges' },
+      { key: 'borderBottomWidth', label: 'Bottom Border Width', control: 'slider', defaultValue: 1, min: 0, max: 8, step: 1, unit: 'px', section: 'edges' },
+      { key: 'borderBottomColor', label: 'Bottom Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'edges' },
       { key: 'padding', label: 'Padding', control: 'number', defaultValue: 24, min: 0, max: 64, step: 4, unit: 'px' },
       // No on/off toggle: with/without shadow is a value state, not a mode —
       // zero the offset/blur for a flat card. (Consumers opt in/out in code

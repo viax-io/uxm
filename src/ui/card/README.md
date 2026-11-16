@@ -52,7 +52,11 @@ function Example() {
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-card-bg` | `--color-card` | – | Card background colour. |
-| `--uxm-card-border-color` | `--color-border` | – | Card border colour. |
+| `--uxm-card-border-color` | `--color-border` | – | Card border colour (all four sides). |
+| `--uxm-card-border-top-width` | – | `1px` | Top edge width — e.g. a 4px accent along the top. The sides stay 1px, so with a thick edge keep the radius small: a large radius tapers the corner where the widths meet. |
+| `--uxm-card-border-top-color` | `--uxm-card-border-color` | – | Top edge colour; unset, it follows the border colour. |
+| `--uxm-card-border-bottom-width` | – | `1px` | Bottom edge width. |
+| `--uxm-card-border-bottom-color` | `--uxm-card-border-color` | – | Bottom edge colour; unset, it follows the border colour. |
 | `--uxm-card-radius` | – | `4px` | Card border-radius. |
 | `--uxm-card-padding` | – | `24px` | Card inner padding. |
 | `--uxm-card-gap` | – | `16px` | Column gap between direct children (only applies with the `uxm-card--gap` modifier / `gap` prop). |

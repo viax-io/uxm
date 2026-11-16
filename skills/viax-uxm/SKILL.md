@@ -87,6 +87,15 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Per-side border knobs on `Card`, `DetailSection` and `AppTopBar`.**
+  - `Card` and `DetailSection` gain `--uxm-<comp>-border-top-width` / `-border-top-color` and
+    `-border-bottom-width` / `-border-bottom-color`. Widths default to `1px`; colours fall back
+    to the all-sides `-border-color`, so an unset edge keeps following it.
+  - `AppTopBar` gains `--uxm-app-top-bar-border-bottom-width` (`1px`).
+  - All of them are Studio knobs, in a "Top & Bottom Edges" section for the first two. Use them
+    for a rule above a section, an accent along a card's top, or a heavier brand rule under the
+    top bar — no host CSS needed. The left and right sides stay 1px.
+
 ## Workflow
 
 ### Where the documentation lives
