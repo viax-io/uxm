@@ -1,3 +1,10 @@
+# [4.111.0](https://github.com/viax-io/uxm/compare/v4.110.0...v4.111.0) (2026-11-16)
+
+
+### Features
+
+* **stepper:** a new atom for a record's lifecycle, left to right ([04af8b8](https://github.com/viax-io/uxm/commit/04af8b852cae18c5a7cbf22a61d4f8e20461a24a))
+
 # [4.110.0](https://github.com/viax-io/uxm/compare/v4.109.0...v4.110.0) (2026-11-16)
 
 

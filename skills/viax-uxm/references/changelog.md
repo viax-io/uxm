@@ -2681,3 +2681,13 @@ reached the published library; now shipped in 2.8.0.
     server-safe modules, so a server component still reads their values.
   - Function props (`onChange`, `renderTrigger`, `rowKey`) still need a client component in the
     host.
+
+### New in 4.106.0
+
+- **`FilterTabs` as navigation.**
+  - Options with an `href` turn the bar into a `<nav>` of links, with `aria-current="page"` on
+    the option matching `value`.
+  - `linkAs` takes the router's link (as on `Link` / `AppSidebar`), so section tabs in a header
+    navigate on the client.
+  - It looks the same; links aren't tabs, so there's no `tablist`.
+  - Without any `href`, nothing changes.
