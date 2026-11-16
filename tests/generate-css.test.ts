@@ -166,9 +166,22 @@ describe('generateOverridesCss', () => {
       tokens: { light: { '--color-accent': '#123456', 'bad key': '#000' }, dark: { '--color-card': '#000; }' } },
     } as unknown as BrandConfig);
     expect(css.match(/@import url\("https:\/\/fonts\.googleapis\.com/g)).toHaveLength(1);
-    expect(css).toContain(':root:not([data-theme="dark"]) {\n  --color-accent: #123456;\n}');
+    // One rule for the root and for a light panel inside a dark page.
+    expect(css).toContain(':root:not([data-theme="dark"]), [data-theme="light"] {\n  --color-accent: #123456;\n}');
     expect(css).not.toContain('bad key');
     expect(css).not.toContain('[data-theme="dark"] {');
+  });
+
+  it('restores the light artwork on a light panel only when there is a dark variant', () => {
+    const both = generateOverridesCss({}, {
+      logoUrl: '/logo.svg', logoUrlDark: '/logo-dark.svg', iconUrl: '/icon.svg',
+    } as BrandConfig);
+    expect(both).toContain('[data-theme="dark"] {\n  --brand-logo-url: url("/logo-dark.svg");\n}');
+    expect(both).toContain('[data-theme="light"] {\n  --brand-logo-url: url("/logo.svg");\n}');
+    // The icon has no dark variant: one value, inherited everywhere.
+    expect(both).not.toMatch(/\[data-theme="light"\] \{[^}]*--brand-icon-url/);
+    const lightOnly = generateOverridesCss({}, { logoUrl: '/logo.svg' } as BrandConfig);
+    expect(lightOnly).not.toContain('[data-theme="light"]');
   });
 
   it('publishes the mono typeface as --brand-mono-font over a mono stack, imported once', () => {

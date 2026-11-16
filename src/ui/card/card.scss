@@ -50,17 +50,17 @@
      `box-shadow`.
 
      The DEFAULT colour is theme-aware via the internal
-     `--uxm-card-shadow-default` (dark override below) — an explicit
-     `--uxm-card-shadow-color` wins in both themes, so a workbench-saved
-     colour tuned for light will also apply on dark. */
+     `--uxm-card-shadow-default`, which reads `--shadow-card-color` from the
+     token layer (darker in the dark block). A token rather than a
+     `[data-theme='dark'] .uxm-card--shadow` rule, because a descendant
+     selector matches ANY dark ancestor: a light panel inside a dark page
+     would keep the dark shadow. The token comes from the nearest theme scope.
+     An explicit `--uxm-card-shadow-color` wins in both themes, so a
+     workbench-saved colour tuned for light will also apply on dark. */
   &--shadow {
-    --uxm-card-shadow-default: rgba(0, 0, 0, 0.12);
+    --uxm-card-shadow-default: var(--shadow-card-color, rgba(0, 0, 0, 0.12));
 
     box-shadow: 0 var(--uxm-card-shadow-offset-y, 6px) var(--uxm-card-shadow-blur, 20px)
       var(--uxm-card-shadow-color, var(--uxm-card-shadow-default));
   }
-}
-
-[data-theme='dark'] .uxm-card--shadow {
-  --uxm-card-shadow-default: rgba(0, 0, 0, 0.3);
 }

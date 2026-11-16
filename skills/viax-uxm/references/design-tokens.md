@@ -294,6 +294,7 @@ too — darker, denser shadows so elevation still reads on a dark surface.
 | `--shadow-2xl` | `0 24px 48px rgba(0,0,0,0.18)` |
 | `--shadow-card` | `0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)` |
 | `--shadow-modal` | `var(--shadow-2xl)` — follows `--shadow-2xl` in both themes |
+| `--shadow-card-color` | `rgba(0,0,0,0.12)` (unreleased) — the colour `Card`'s `shadow` composes its own box-shadow from; `0.30` in dark |
 
 Like the colours they are the global fallback layer: components read them through their own
 knob (e.g. `--uxm-app-sidebar-drawer-shadow` → `--shadow-lg`), so override the component
@@ -364,6 +365,22 @@ involved:
 |--------------|---------|-----------|
 | *(unset)* / `"light"` | Default light | — (the `:root` values). |
 | `"dark"` | Dark | Full override set incl. semantic colors and deeper shadows. |
+
+**Dark and light panels** (unreleased). The attribute works on any element, not only the root:
+`data-theme="dark"` on a header or dock re-declares the dark tokens for that subtree, and
+`data-theme="light"` re-declares the light ones (`:where([data-theme="light"])`, specificity 0).
+The atoms inside follow; plain host text and the panel's own background don't, so paint them
+yourself (`background: var(--color-surface); color: var(--color-text)`).
+
+- **Brand tokens reach a panel only if they are written for it.** A panel's own declarations
+  beat what it would inherit from `:root`, so a hand-written theme that sets light tokens on
+  `:root` alone loses them inside a light panel on a dark page. Write them on
+  `:root, [data-theme="light"]` (and dark ones on `[data-theme="dark"]`). Studio's generated
+  CSS already does, including the light logo and icon when a dark variant exists.
+- The aliases `--color-drop-target` and `--shadow-modal` are re-resolved on every
+  `[data-theme]` element, so a custom value for them belongs on `:root, [data-theme]`.
+- A knob saved as a literal colour (`#FFFFFF`) is the same in every panel; only token-valued
+  knobs follow it.
 
 The host owns the attribute (the embedded studio defers to it); a typical toggle is a session-only
 `useState` that writes `document.documentElement.dataset.theme`. The `themeTokens` array (and the
