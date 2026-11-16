@@ -18,7 +18,10 @@
 //   3. every `--color-*` that exists ONLY inside the Tailwind `@theme inline`
 //      block is listed in DEPRECATED_ALIASES (browsers drop that block, so a
 //      name declared there alone is never defined for a plain-CSS host);
-//   4. the dark block declares nothing `:root` doesn't.
+//   4. the dark block declares nothing `:root` doesn't;
+//   5. the light scope block (`:where([data-theme="light"])`, for a light panel
+//      inside a dark page) declares exactly the custom properties the dark
+//      block declares, each with its `:root` value.
 //
 // Usage: node scripts/check-token-parity.mjs   (exits 1 on any mismatch)
 import { readFileSync } from 'node:fs';
@@ -60,7 +63,7 @@ const DEPRECATED_ALIASES = [
 ];
 
 /** `--color-*: value;` declarations inside the first block opened by `selector`. */
-function block(selector) {
+function block(selector, prefix = '--color-') {
   const start = css.indexOf(selector);
   if (start === -1) throw new Error(`block not found: ${selector}`);
   const open = css.indexOf('{', start);
@@ -72,7 +75,8 @@ function block(selector) {
   }
   const body = css.slice(open + 1, i); // comments already stripped at load
   const out = new Map();
-  for (const m of body.matchAll(/(--color-[a-z0-9-]+)\s*:\s*([^;]+);/g)) out.set(m[1], m[2].trim());
+  const re = new RegExp(`(${prefix}[a-z0-9-]+)\\s*:\\s*([^;]+);`, 'g');
+  for (const m of body.matchAll(re)) out.set(m[1], m[2].trim().replace(/\s+/g, ' '));
   return out;
 }
 
@@ -121,9 +125,23 @@ for (const name of dark.keys()) {
   if (!root.has(name)) problems.push(`${name}: overridden in [data-theme="dark"] but never declared on :root`);
 }
 
+// 5. light scope = dark block's names, :root's values
+const LIGHT = ':where([data-theme="light"])';
+const rootAll = block(':root', '--');
+const darkAll = block('[data-theme="dark"]', '--');
+const lightAll = block(LIGHT, '--');
+for (const name of darkAll.keys()) {
+  if (!lightAll.has(name)) problems.push(`${name}: overridden in [data-theme="dark"] but not restored in ${LIGHT}`);
+}
+for (const [name, value] of lightAll) {
+  if (!darkAll.has(name)) problems.push(`${name}: declared in ${LIGHT} but not in [data-theme="dark"] — the light scope only restores what dark overrides`);
+  else if (!rootAll.has(name)) problems.push(`${name}: declared in ${LIGHT} but never on :root`);
+  else if (value.toUpperCase() !== rootAll.get(name).toUpperCase()) problems.push(`${name}: ${LIGHT} ${value} ≠ :root ${rootAll.get(name)}`);
+}
+
 if (problems.length) {
   console.error(`${problems.length} token parity problem(s):\n  ${problems.join('\n  ')}`);
   process.exit(1);
 }
 // eslint-disable-next-line no-console -- CLI summary line; this IS the program's output
-console.log(`OK — ${catalog.length} catalog tokens match tokens.css; ${Object.keys(INTERNAL).length} internal, ${DEPRECATED_ALIASES.length} deprecated aliases accounted for`);
+console.log(`OK — ${catalog.length} catalog tokens match tokens.css; ${Object.keys(INTERNAL).length} internal, ${DEPRECATED_ALIASES.length} deprecated aliases accounted for; light scope restores all ${darkAll.size} dark overrides`);

@@ -95,6 +95,9 @@
   --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.18);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
   --shadow-modal: var(--shadow-2xl);
+  /* The colour Card's `shadow` composes its own box-shadow from (Card needs a
+     colour, and --shadow-card is a whole box-shadow). Darker in dark. */
+  --shadow-card-color: rgba(0, 0, 0, 0.12);
 
   /* ── Typography ──
      No font file is bundled; reference the family name with a system
@@ -249,6 +252,77 @@
   --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.50);
   --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.55);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.30), 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-card-color: rgba(0, 0, 0, 0.30);
+
+  /* Aliases, repeated so a dark PANEL resolves them too. A custom property
+     holding a var() is resolved where it is declared: declared on :root only,
+     an element below carrying data-theme="dark" would inherit the root's
+     already-resolved light value. */
+  --color-drop-target: var(--color-accent);
+  --shadow-modal: var(--shadow-2xl);
+}
+
+/* Light theme, as a SCOPE.
+
+   The light values already sit on :root, so a page with no data-theme, or
+   with data-theme="light" on <html>, never needs this block. It exists for a
+   light PANEL inside a dark page: an element carrying data-theme="light"
+   re-declares every value the dark block overrides, with :root's value, so
+   the atoms inside it paint light again (the Surface atom sets the attribute
+   for you). The dark block above works the same way for a dark panel on a
+   light page, because it is keyed on an attribute, not on :root.
+
+   Wrapped in :where(), so it has specificity 0. On a root that is already
+   light it repeats :root's values, and any token an app sets itself — on
+   :root, html or anywhere else — still wins over it, whatever the load order.
+
+   Keep it in lockstep: exactly the names the dark block declares, each with
+   its :root value. `scripts/check-token-parity.mjs` checks both. */
+:where([data-theme="light"]) {
+  --color-surface: #F8F7F6;
+  --color-surface-alt: #F2F1F0;
+  --color-card: #FFFFFF;
+  --color-text: #1E1E1E;
+  --color-text-strong: #4A4A4A;
+  --color-text-muted: #6E6A64;
+  --color-text-subtle: #8A857D;
+  --color-text-inverse: #FFFFFF;
+  --color-border: #EBEBEA;
+  --color-accent-subtle: #ECF8F0;
+  --color-accent-light: #90E9B8;
+  --color-accent: #3ECC87;
+  --color-accent-bold: #1E7150;
+  --color-highlight-warm: #FCD0A1;
+  --color-highlight-cool: #C3BEF7;
+  --color-on-highlight-warm: #7C6B3E;
+  --color-on-highlight-cool: #5B54A0;
+  --color-category-composite: #F472B6;
+  --color-category-diagram: #6366F1;
+  --color-success-bg: #F0FDF4;
+  --color-success-text: #166534;
+  --color-success-border: #BBF7D0;
+  --color-info-bg: #EFF6FF;
+  --color-info-text: #1E40AF;
+  --color-info-border: #BFDBFE;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-text: #92400E;
+  --color-warning-border: #FDE68A;
+  --color-danger-bg: #FEF2F2;
+  --color-danger-text: #991B1B;
+  --color-danger-border: #FECACA;
+  --color-canvas-dot: #E0E0E0;
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.10);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.18);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-card-color: rgba(0, 0, 0, 0.12);
+
+  /* Aliases: see the dark block for why they are repeated. */
+  --color-drop-target: var(--color-accent);
+  --shadow-modal: var(--shadow-2xl);
 }
 
 @theme inline {

@@ -97,6 +97,15 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Light panels on a dark page.** `tokens.css` now has a light scope,
+  `:where([data-theme="light"])`. It has specificity 0, so an app's own `:root` tokens still win.
+  - An element carrying `data-theme="light"` inside a dark page paints its atoms light again.
+    `data-theme="dark"` already did the reverse.
+  - Studio's generated CSS writes a brand's light tokens on `[data-theme="light"]` as well, and
+    the light logo and icon when a dark variant exists.
+  - Card's `shadow` default colour now comes from the new `--shadow-card-color` token, so it
+    follows the nearest panel rather than any dark ancestor.
+
 ## Workflow
 
 ### Where the documentation lives

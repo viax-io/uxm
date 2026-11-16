@@ -65,7 +65,7 @@ function Example() {
 | `--uxm-card-shadow-blur` | – | `20px` | Shadow blur radius. |
 | `--uxm-card-shadow-offset-y` | – | `6px` | Shadow vertical offset. |
 
-The `shadow` modifier composes its `box-shadow` from the three `--uxm-card-shadow-*` vars, so elevation is tunable (colour / blur / offset) instead of a fixed token. The default colour is theme-aware (internal `--uxm-card-shadow-default`, dark override in `card.scss`).
+The `shadow` modifier composes its `box-shadow` from the three `--uxm-card-shadow-*` vars, so elevation is tunable (colour / blur / offset) instead of a fixed token. The default colour is theme-aware: the internal `--uxm-card-shadow-default` reads the `--shadow-card-color` token (`rgba(0,0,0,.12)` light, `.30` dark), so a card inside a `data-theme` panel takes that panel's shadow.
 
 > **The shadow got stronger.** `shadow` previously painted the `--shadow-card` token — a very subtle two-layer shadow (`0 1px 2px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.04)` in light). It now uses the 6/20 geometry `Calendar` uses for floating surfaces (the `--shadow-lg` step) at roughly 3× the alpha, so **existing `<Card shadow>` instances read more lifted than before**. To get close to the old, flatter look, set the vars per instance or in your theme: `--uxm-card-shadow-offset-y: 4px; --uxm-card-shadow-blur: 12px; --uxm-card-shadow-color: rgba(0,0,0,0.04)`. That reproduces the token's dominant layer only — the composition is single-layer by design, so the token's tight `0 1px 2px` contact shadow can't be expressed through these vars. If you need it exactly, paint `box-shadow: var(--shadow-card)` yourself via `className`/`style` and leave `shadow` off.
 >

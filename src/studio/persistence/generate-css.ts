@@ -1,5 +1,6 @@
 import { safeFontFamily, safeFontWeight, safeLetterSpacing, safeLineHeight, safeMediumFontWeight, safeTextTransform, safeTokenKey, safeTokenValue, safeTypeScale, safeUrl } from './css-sanitizers';
 import { PER_COMPONENT_MAPPING, PER_COMPONENT_SELECTOR } from './generate-css-mapping';
+import { DARK_TOKENS_SELECTOR, LIGHT_TOKENS_SELECTOR } from './theme-selectors';
 
 import type { AllOverrides } from './types';
 import type { BrandConfig } from '../lib/types';
@@ -231,6 +232,19 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
     lines.push('}');
     lines.push('');
   }
+  // A light panel inside a dark page (an element carrying data-theme="light")
+  // would otherwise inherit the dark artwork from <html>. Only the URLs that
+  // HAVE a dark variant need restoring; one without keeps a single value that
+  // is already inherited everywhere.
+  const lightBrandRules: string[] = [];
+  if (logoUrlDark && logoUrl) lightBrandRules.push(`  --brand-logo-url: url("${logoUrl}");`);
+  if (iconUrlDark && iconUrl) lightBrandRules.push(`  --brand-icon-url: url("${iconUrl}");`);
+  if (lightBrandRules.length > 0) {
+    lines.push('[data-theme="light"] {');
+    lines.push(...lightBrandRules);
+    lines.push('}');
+    lines.push('');
+  }
 
   const emitTokens = (selector: string, overrides: Record<string, string> | undefined) => {
     if (!overrides) return;
@@ -254,8 +268,11 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   // order) — pinning that token to its light value in dark mode too. Scoping
   // lets an unset dark token fall through the cascade to tokens/index.css's
   // own `[data-theme="dark"]` default instead.
-  emitTokens(':root:not([data-theme="dark"])', brand.tokens?.light);
-  emitTokens('[data-theme="dark"]', brand.tokens?.dark);
+  //
+  // `[data-theme="light"]` (in the same selector list) carries them to a light
+  // panel inside a dark page; see theme-selectors.ts.
+  emitTokens(LIGHT_TOKENS_SELECTOR, brand.tokens?.light);
+  emitTokens(DARK_TOKENS_SELECTOR, brand.tokens?.dark);
 
   const componentIds = Object.keys(allOverrides).sort();
 

@@ -1,5 +1,6 @@
 import { useUxm } from './lib/context';
 import { safeTokenKey, safeTokenValue } from './persistence/generate-css';
+import { DARK_TOKENS_SELECTOR, LIGHT_TOKENS_SELECTOR } from './persistence/theme-selectors';
 
 // `brand.tokens` come from the network (loaded via persistence) and are
 // interpolated into a live `<style>` tag below — sanitise every key/value
@@ -23,11 +24,9 @@ export function BrandTokenStyles() {
   if (!tokens) return null;
 
   const blocks = [
-    // Scope to non-dark so a token customized only for light doesn't pin its
-    // value in dark mode too — see generate-css.ts's identical fix for why
-    // (`:root` / `[data-theme="dark"]` are equal-specificity selectors).
-    renderBlock(':root:not([data-theme="dark"])', tokens.light),
-    renderBlock('[data-theme="dark"]', tokens.dark),
+    // The same selectors as the published sheet; see theme-selectors.ts.
+    renderBlock(LIGHT_TOKENS_SELECTOR, tokens.light),
+    renderBlock(DARK_TOKENS_SELECTOR, tokens.dark),
   ].filter(Boolean);
 
   if (blocks.length === 0) return null;
