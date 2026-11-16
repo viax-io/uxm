@@ -219,6 +219,16 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     borderRadius: '--uxm-checkbox-border-radius',
     gap: '--uxm-checkbox-gap',
   },
+  // `backgroundColor`, `background`, `borderRadius` and `padding` are all
+  // REAL_CSS_PROPS keys: unmapped, a save would write bare properties on the
+  // root instead of the vars the stylesheet reads. `textColor` isn't one, so
+  // it takes the generic `--uxm-surface-text-color`.
+  surface: {
+    backgroundColor: '--uxm-surface-bg',
+    background: '--uxm-surface-background',
+    borderRadius: '--uxm-surface-radius',
+    padding: '--uxm-surface-padding',
+  },
   card: {
     backgroundColor: '--uxm-card-bg',
     // `background` (the gradient / image knob) is a REAL_CSS_PROPS key: unmapped

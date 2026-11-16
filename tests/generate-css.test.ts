@@ -87,6 +87,19 @@ describe('generateOverridesCss', () => {
     expect(css).not.toMatch(/^\s*gap:/m);
   });
 
+  it('saves the surface knobs as the vars its stylesheet reads, never bare properties', () => {
+    const css = generateOverridesCss(
+      { surface: { backgroundColor: 'var(--color-card)', background: 'linear-gradient(#000, #111)', textColor: 'var(--color-text-strong)', borderRadius: 12, padding: 16 } },
+      brand,
+    );
+    expect(css).toContain('  --uxm-surface-bg: var(--color-card);');
+    expect(css).toContain('  --uxm-surface-background: linear-gradient(#000, #111);');
+    expect(css).toContain('  --uxm-surface-text-color: var(--color-text-strong);');
+    expect(css).toContain('  --uxm-surface-radius: 12px;');
+    expect(css).toContain('  --uxm-surface-padding: 16px;');
+    expect(css).not.toMatch(/^\s*(background|background-color|border-radius|padding):/m);
+  });
+
   it('adds px to lengths but never to weights or opacities', () => {
     const css = generateOverridesCss(
       { 'input-text': { borderRadius: 8, fontWeight: 600, disabledOpacity: 0.4, itemDisabledOpacity: 0.5 } },

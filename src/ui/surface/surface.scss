@@ -1,0 +1,31 @@
+/* ── surface ── */
+
+/* Surface — a panel that can set its own theme. The theme itself is the
+   `data-theme` attribute the component writes: tokens.css re-declares every
+   --color-* token for an element carrying it (the dark block, or the light
+   scope at specificity 0), so everything here and inside reads that theme.
+
+   Every knob below falls back to a TOKEN and is declared on this element, so
+   it resolves against the panel's own theme: `var(--color-surface)` is the
+   dark surface inside a dark panel. A knob saved as a fixed colour is the
+   same in every panel. */
+
+.uxm-surface {
+  /* `--uxm-surface-background` takes any `background` value (a gradient, an
+     image) and wins over the colour knob when set. */
+  background: var(--uxm-surface-background, var(--uxm-surface-bg, var(--color-surface)));
+  /* Plain host text inside the panel inherits this, so a bare <p> reads on
+     the panel's background instead of keeping the page's text colour. */
+  color: var(--uxm-surface-text-color, var(--color-text));
+  border-radius: var(--uxm-surface-radius, 0);
+  padding: var(--uxm-surface-padding, 24px);
+
+  /* Native controls and scrollbars inside the panel follow its theme. */
+  &--dark {
+    color-scheme: dark;
+  }
+
+  &--light {
+    color-scheme: light;
+  }
+}

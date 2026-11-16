@@ -141,6 +141,7 @@ Import path for all: `import { … } from 'uxm/ui';`
 | **SectionHeader** | `SectionHeader`, `SectionHeaderProps` | Uppercase heading; `children` (heading text), `trailing?: ReactNode` (right-aligned action/status), `subtitle?: ReactNode` (context line below). `level?: 2–6` sets the heading tag (default 4); styling is unchanged (4.31.0). Its uppercase and 0.06em tracking are now knobs (4.103.0): `--uxm-section-header-title-text-transform` / `-letter-spacing`, so a sentence-case theme can set `none` / `0em`. |
 | **SideFlexpane** | `SideFlexpane`, `SideFlexpaneProps` | Right-docked resizable `<aside>` with ARIA separator. Header composes optional `icon` · `eyebrow` · `title` · `subtitle` + a trailing `actions` slot; optional `onBack`/`backLabel` back-link bar; `expandable` toggle (`expanded`/`defaultExpanded`/`onExpandedChange`, `expandedWidth`) that maximises and hides the resize handle while expanded. |
 | **Stack** | `Stack`, `StackProps` | Flex-column with `gap` + `align`. **No tokens read.** ⚠️ **Vertical only — there is no direction prop**; do not fight it with a `flexDirection: 'row'` style override — reach for `Cluster` for horizontal layouts. |
+| **Surface** (unreleased) | `Surface`, `SurfaceProps`, `SurfaceTheme`, `SurfaceElement` | A panel that sets its own theme: `theme: 'dark' \| 'light'` writes `data-theme` (and `color-scheme`) on the element, so every atom inside reads that theme's tokens, and it paints the background and text colour from them. A dark header or dock on a light page, a light area in a dark app; no `theme` follows the page. `as` (`div` default, `section`, `aside`, `header`, `footer`, `nav`, `article`), `padding`. Knobs: `--uxm-surface-bg` (→ `--color-surface`), `--uxm-surface-background` (any `background`, wins when set), `--uxm-surface-text-color` (→ `--color-text`), `--uxm-surface-radius` (`0`), `--uxm-surface-padding` (`24px`). A fixed-colour knob is the same in every panel; token values follow it. Portalled panels (`Select`, `Menu`) keep the page's theme. |
 
 ## Data display
 
@@ -339,6 +340,7 @@ translated prefix.
 | Pick a color (theme/brand token, style editor) | `ColorInput` (inline panel) or `ColorInputPopover` (swatch → popover) |
 | Custom dropdown no picker covers | `Listbox` / `MultiListbox` + `renderTrigger` |
 | Show error feedback near a field | the atom's own `error` prop (red border + message), not a banner |
+| A dark header / dock on a light page, or a light area in a dark app | `Surface` with `theme` (unreleased) |
 | Show page-level / persistent status strip | `Banner` (stays until dismissed) |
 | Transient after-the-fact feedback ("Saved", "Copied") | `toast.success(…)` — requires `<Toaster/>` at the app root |
 | Confirm / form dialog over the page | `Dialog` + `Modal` (`Modal.Header/Body/Footer`) |

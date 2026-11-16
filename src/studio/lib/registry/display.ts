@@ -317,6 +317,37 @@ export const displayDefs: ComponentDef[] = [
     ],
   },
   {
+    id: 'surface',
+    name: 'Surface',
+    category: 'Display',
+    description: 'A panel that sets its own theme: a dark header or dock on a light page, a light area in a dark app. Paints its background and text from that theme, and every atom inside follows it.',
+    // Every default is a TOKEN, resolved on the panel itself, so it follows the
+    // panel's theme: Background is the dark surface inside a dark panel. A
+    // fixed colour saved here is the same in every panel.
+    styleProperties: [
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-surface)', section: 'colors' },
+      { key: 'background', label: 'Background Image or Gradient', control: 'text', defaultValue: '', section: 'colors' },
+      { key: 'textColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
+      { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 0, min: 0, max: 32, step: 1, unit: 'px' },
+      { key: 'padding', label: 'Padding', control: 'number', defaultValue: 24, min: 0, max: 64, step: 4, unit: 'px' },
+    ],
+    // The theme is a prop per instance (one page has a dark dock and a light
+    // body), so it is a variant, never a saved style.
+    layoutVariants: [
+      {
+        key: 'theme',
+        label: 'Theme',
+        options: [
+          { value: 'dark', label: 'Dark' },
+          { value: 'light', label: 'Light' },
+          { value: 'page', label: 'Page' },
+        ],
+        defaultValue: 'dark',
+      },
+    ],
+    canvasBackground: false,
+  },
+  {
     id: 'avatar',
     name: 'Avatar',
     category: 'Display',
