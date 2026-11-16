@@ -33,7 +33,7 @@ function stylesToCssVars(styles: PreviewProps['styles']): CSSProperties {
   for (const [key, value] of Object.entries(styles)) {
     // Case and tracking have no stylesheet fallback (unset = inherit), so their
     // registry defaults are left unprojected to match production.
-    if ((key === 'textTransform' && value === 'none') || (key === 'letterSpacing' && !value)) continue;
+    if ((key === 'textTransform' && value === 'inherit') || (key === 'letterSpacing' && !value)) continue;
     const cssVar = '--uxm-tag-' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
     if (typeof value === 'boolean') {
       out[cssVar] = value ? '1' : '0';

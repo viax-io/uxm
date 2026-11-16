@@ -30,7 +30,7 @@ export function DetailSectionPreview({ styles }: PreviewProps) {
     '--uxm-detail-section-icon-bg': styles.iconBg as string,
     '--uxm-detail-section-icon-color': styles.iconColor as string,
     '--uxm-detail-section-title-size': `${styles.titleSize}px`,
-    '--uxm-detail-section-title-text-transform': styles.titleTextTransform !== 'none' ? (styles.titleTextTransform as string) : undefined,
+    '--uxm-detail-section-title-text-transform': styles.titleTextTransform !== 'inherit' ? (styles.titleTextTransform as string) : undefined,
     '--uxm-detail-section-title-letter-spacing': styles.titleLetterSpacing ? `${styles.titleLetterSpacing}em` : undefined,
     '--uxm-detail-section-subtitle-color': styles.subtitleColor as string,
     '--uxm-detail-section-accent-width': `${styles.accentWidth}px`,

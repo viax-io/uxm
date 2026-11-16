@@ -194,6 +194,8 @@ function MiniCard() {
         <div>
           <h4 style={{
             fontFamily: roleFont('section-title'),
+            textTransform: 'var(--brand-heading-text-transform)' as CSSProperties['textTransform'],
+            letterSpacing: 'var(--brand-heading-letter-spacing)',
             fontSize: scaled(13, 'section-title'),
             fontWeight: roleWeight('section-title', 600),
             color: 'var(--color-text)', margin: 0,
@@ -574,6 +576,8 @@ function BuildSuccess({ onClose }: { onClose: () => void }) {
       <div>
         <h2 id="uxm-preview-modal-title" style={{
           fontFamily: roleFont('page-title'),
+          textTransform: 'var(--brand-heading-text-transform)' as CSSProperties['textTransform'],
+          letterSpacing: 'var(--brand-heading-letter-spacing)',
           fontSize: scaled(22, 'page-title'),
           fontWeight: roleWeight('page-title', 700),
           color: 'var(--color-text)', margin: '0 0 6px',
@@ -740,6 +744,8 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                   <div style={{ minWidth: 0 }}>
                     <h3 id="uxm-preview-modal-title" style={{
                       fontFamily: roleFont('page-title'),
+                      textTransform: 'var(--brand-heading-text-transform)' as CSSProperties['textTransform'],
+                      letterSpacing: 'var(--brand-heading-letter-spacing)',
                       fontSize: scaled(18, 'page-title'),
                       fontWeight: roleWeight('page-title', 700),
                       color: 'var(--color-text)', margin: 0,
@@ -794,6 +800,8 @@ export function PreviewModal({ onClose }: { onClose: () => void }) {
                   }}>
                     <h4 style={{
                       fontFamily: roleFont('section-title'),
+                      textTransform: 'var(--brand-heading-text-transform)' as CSSProperties['textTransform'],
+                      letterSpacing: 'var(--brand-heading-letter-spacing)',
                       fontSize: scaled(13, 'section-title'),
                       fontWeight: roleWeight('section-title', 600),
                       color: 'var(--color-text)', margin: '0 0 12px',

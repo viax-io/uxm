@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.105.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.107.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.105.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.107.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.105.0 — current API surface (overrides training data)
+## v4.107.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,34 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.101.0
-
-- **`DataTable` `stackAt={320}` and `stackAt={false}`.**
-  - The stacking threshold can go below its 480px default.
-  - `320` keeps a two- or three-column table as a table in a third-width column, and stacks only
-    from 320px.
-  - `false` never stacks; below its natural width the table scrolls sideways.
-  - Both keep the fixed-layout ellipsis while they are tables.
-  - In Studio: "Stack Into Cards" → "Never" / "320px and narrower".
-  - Limit: a `stackAt={false}` table nested inside another DataTable's cell stacks when the
-    outer table is at 480px or less.
-  - The root now carries `container-name: uxm-data-table`, and the 480 stacking depends on it. A
-    host that sets `container-name` / `container` on `.uxm-data-table` must keep that name
-    (`container-name: mine uxm-data-table`) or wrap the table instead.
-
-### New in 4.102.0
-
-- **A mono font role.**
-  - `brand.monoFontFamily`, set in Studio under Brand Settings → Typography → Body → Monospace
-    (JetBrains Mono, IBM Plex Mono, Roboto Mono, …), publishes `--brand-mono-font` and imports
-    the face.
-  - It always falls back to a mono stack.
-  - `PropertyField` values and `CodeEditor` / `CodeBlock` read it over their own stacks, so
-    nothing changes until a brand sets one.
-  - New `--font-mono` token for host CSS: the brand's mono face, else the system mono stack.
-    It resolves on `:root`, so it follows the brand var published there; a subtree that sets
-    `--brand-mono-font` itself should read that var directly.
 
 ### New in 4.103.0
 
@@ -104,6 +76,27 @@ catalog.
     server-safe modules, so a server component still reads their values.
   - Function props (`onChange`, `renderTrigger`, `rowKey`) still need a client component in the
     host.
+
+### New in 4.106.0
+
+- **`FilterTabs` as navigation.**
+  - Options with an `href` turn the bar into a `<nav>` of links, with `aria-current="page"` on
+    the option matching `value`.
+  - `linkAs` takes the router's link (as on `Link` / `AppSidebar`), so section tabs in a header
+    navigate on the client.
+  - It looks the same; links aren't tabs, so there's no `tablist`.
+  - Without any `href`, nothing changes.
+
+### New in 4.107.0
+
+- **Brand-level heading case and tracking.** `brand.headingTextTransform` (`uppercase` /
+  `capitalize`) and `brand.headingLetterSpacing` (em, -0.05em..0.2em) are set in Studio under
+  Brand Settings → Typography → Headings → Case / Tracking.
+  - They publish `--brand-heading-text-transform` and `--brand-heading-letter-spacing`.
+  - The PageHeader, DetailSection, SegmentRow and ErrorPage titles read them, after their own
+    case and tracking knobs.
+  - Unset, the titles inherit, as before.
+  - A brand in capitals sets this once instead of per-component knobs.
 
 ### Unreleased
 

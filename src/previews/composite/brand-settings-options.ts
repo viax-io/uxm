@@ -83,6 +83,23 @@ export const MEDIUM_WEIGHT_OPTIONS = [
   { value: '600', label: '600' },
 ];
 
+/** Heading case: unset inherits; 'none' would force sentence case over an
+ *  ancestor's, which no brand has asked for, so it isn't offered. */
+export const HEADING_CASE_OPTIONS = [
+  { value: '', label: 'Default' },
+  { value: 'uppercase', label: 'Uppercase' },
+  { value: 'capitalize', label: 'Capitalize' },
+];
+
+/** Heading tracking, in em so it scales with each title's size. */
+export const HEADING_TRACKING_OPTIONS = [
+  { value: '', label: 'Default' },
+  { value: '-0.01em', label: 'Tight' },
+  { value: '0.02em', label: 'Slight' },
+  { value: '0.05em', label: 'Wide' },
+  { value: '0.1em', label: 'Wider' },
+];
+
 export const LINE_HEIGHT_OPTIONS = [
   { value: '', label: 'Default' },
   { value: '1.4', label: 'Tight' },

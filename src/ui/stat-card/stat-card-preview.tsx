@@ -31,7 +31,7 @@ export function StatCardPreview({ styles }: PreviewProps) {
             minWidth: 160,
           } as CSSProperties}
         >
-          <p style={{ fontSize: styles.labelSize as number, color: 'var(--color-text-muted)', fontWeight: 'var(--font-weight-medium, 500)', margin: 0, textTransform: styles.labelTextTransform !== 'none' ? (styles.labelTextTransform as CSSProperties['textTransform']) : undefined, letterSpacing: styles.labelLetterSpacing ? `${styles.labelLetterSpacing}em` : undefined }}>
+          <p style={{ fontSize: styles.labelSize as number, color: 'var(--color-text-muted)', fontWeight: 'var(--font-weight-medium, 500)', margin: 0, textTransform: styles.labelTextTransform !== 'inherit' ? (styles.labelTextTransform as CSSProperties['textTransform']) : undefined, letterSpacing: styles.labelLetterSpacing ? `${styles.labelLetterSpacing}em` : undefined }}>
             {stat.label}
           </p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>

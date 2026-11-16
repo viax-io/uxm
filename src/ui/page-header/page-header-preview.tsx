@@ -20,7 +20,7 @@ export function PageHeaderPreview({ styles }: PreviewProps) {
     '--uxm-page-header-title-color': styles.titleColor as string,
     '--uxm-page-header-title-size': `${styles.titleSize}px`,
     '--uxm-page-header-title-line-height': String(styles.titleLineHeight),
-    '--uxm-page-header-title-text-transform': styles.titleTextTransform !== 'none' ? (styles.titleTextTransform as string) : undefined,
+    '--uxm-page-header-title-text-transform': styles.titleTextTransform !== 'inherit' ? (styles.titleTextTransform as string) : undefined,
     '--uxm-page-header-title-letter-spacing': styles.titleLetterSpacing ? `${styles.titleLetterSpacing}em` : undefined,
     '--uxm-page-header-meta-color': styles.metaColor as string,
     '--uxm-page-header-meta-size': `${styles.metaSize}px`,

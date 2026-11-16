@@ -81,9 +81,13 @@
     font-family: var(--uxm-segment-row-title-font, var(--type-section-title-font, var(--brand-heading-font, inherit)));
     font-size: calc(var(--uxm-segment-row-title-size, 16px) * var(--type-section-title-scale, 1) * var(--type-scale, 1));
     font-weight: var(--uxm-segment-row-title-weight, var(--type-section-title-weight, var(--brand-heading-weight, 600)));
+    /* The brand's heading case and tracking, with no fallback: unset, they
+       inherit, as before. */
+    letter-spacing: var(--brand-heading-letter-spacing);
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-transform: var(--brand-heading-text-transform);
     white-space: nowrap;
   }
 

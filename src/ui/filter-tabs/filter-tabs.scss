@@ -27,9 +27,11 @@
     text-transform: var(--uxm-filter-tabs-text-transform, none);
     justify-content: center;
     padding: var(--uxm-filter-tabs-padding-y, 6px) var(--uxm-filter-tabs-padding-x, 12px);
+    /* A link option (navigation mode) looks exactly like a tab. */
+    text-decoration: none;
     transition: background-color 0.15s, color 0.15s;
 
-    &:hover:not(.uxm-filter-tabs__tab--active):not(:disabled) {
+    &:hover:not(.uxm-filter-tabs__tab--active):not(:disabled):not([aria-disabled='true']) {
       background-color: var(--uxm-filter-tabs-hover-bg, var(--color-surface-alt));
       color: var(--uxm-filter-tabs-hover-text, var(--color-text));
     }
@@ -40,9 +42,15 @@
       outline-offset: 2px;
     }
 
-    &:disabled {
+    &:disabled,
+    &[aria-disabled='true'] {
       color: var(--uxm-filter-tabs-disabled-text, var(--color-text-muted));
       opacity: var(--uxm-filter-tabs-disabled-opacity, 0.5);
+    }
+
+    /* A disabled destination (navigation mode) is text, not a control. */
+    &[aria-disabled='true'] {
+      cursor: default;
     }
 
     &--active {

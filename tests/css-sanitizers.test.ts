@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vitest';
 import {
   safeFontFamily,
   safeFontWeight,
+  safeLetterSpacing,
   safeMediumFontWeight,
   safeLineHeight,
+  safeTextTransform,
   safeTokenKey,
   safeTokenValue,
   safeTypeScale,
@@ -14,6 +16,16 @@ import {
 // The generated stylesheet is served to every browser session, so each
 // sanitizer's job is to make "break out of the declaration" impossible.
 describe('css sanitizers', () => {
+  it('safeTextTransform keeps the four keywords only', () => {
+    for (const v of ['none', 'uppercase', 'capitalize', 'lowercase']) expect(safeTextTransform(v)).toBe(v);
+    for (const v of ['Uppercase', 'full-width', 'uppercase; color: red', '', 3]) expect(safeTextTransform(v)).toBeUndefined();
+  });
+
+  it('safeLetterSpacing keeps em values between -0.05em and 0.2em', () => {
+    for (const v of ['0.05em', '-0.01em', '.1em', '0em', '0.2em']) expect(safeLetterSpacing(v)).toBe(v);
+    for (const v of ['2px', '0.3em', '-0.1em', '0.05em; color: red', 'normal', 0.05]) expect(safeLetterSpacing(v)).toBeUndefined();
+  });
+
   it('safeUrl accepts http(s) and root-relative URLs only', () => {
     expect(safeUrl('https://cdn.example/logo.svg')).toBe('https://cdn.example/logo.svg');
     expect(safeUrl('/assets/icon.svg')).toBe('/assets/icon.svg');

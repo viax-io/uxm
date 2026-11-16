@@ -1,4 +1,4 @@
-import { safeFontFamily, safeFontWeight, safeLineHeight, safeMediumFontWeight, safeTokenKey, safeTokenValue, safeTypeScale, safeUrl } from './css-sanitizers';
+import { safeFontFamily, safeFontWeight, safeLetterSpacing, safeLineHeight, safeMediumFontWeight, safeTextTransform, safeTokenKey, safeTokenValue, safeTypeScale, safeUrl } from './css-sanitizers';
 import { PER_COMPONENT_MAPPING, PER_COMPONENT_SELECTOR } from './generate-css-mapping';
 
 import type { AllOverrides } from './types';
@@ -119,6 +119,8 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   const fontFamily = safeFontFamily(brand.fontFamily);
   const headingFontFamily = safeFontFamily(brand.headingFontFamily);
   const headingFontWeight = safeFontWeight(brand.headingFontWeight);
+  const headingTextTransform = safeTextTransform(brand.headingTextTransform);
+  const headingLetterSpacing = safeLetterSpacing(brand.headingLetterSpacing);
   const monoFontFamily = safeFontFamily(brand.monoFontFamily);
   // Per-role refinements, layered under the umbrella heading vars above.
   const roles = resolveTypeRoles(brand);
@@ -170,6 +172,10 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   if (headingFontWeight) {
     brandRules.push(`  --brand-heading-weight: ${headingFontWeight};`);
   }
+  // Read by the heading titles with no fallback of their own, so unset keeps
+  // them inheriting, as before.
+  if (headingTextTransform) brandRules.push(`  --brand-heading-text-transform: ${headingTextTransform};`);
+  if (headingLetterSpacing) brandRules.push(`  --brand-heading-letter-spacing: ${headingLetterSpacing};`);
   // Falls back to a MONO stack, not the body's sans one: a face that fails to
   // load must still be fixed-width.
   if (monoFontFamily) {

@@ -1,5 +1,5 @@
 import { useUxm } from './lib/context';
-import { safeMediumFontWeight } from './persistence/css-sanitizers';
+import { safeLetterSpacing, safeMediumFontWeight, safeTextTransform } from './persistence/css-sanitizers';
 import { fontFileUrl, resolveTypeRoles, safeFontFamily, safeFontWeight, safeLineHeight, safeTypeScale } from './persistence/generate-css';
 
 /**
@@ -41,6 +41,8 @@ export function BrandFontStyles() {
   const headingFontFamily = safeFontFamily(brand.headingFontFamily);
   const headingFontWeight = safeFontWeight(brand.headingFontWeight);
   const monoFontFamily = safeFontFamily(brand.monoFontFamily);
+  const headingTextTransform = safeTextTransform(brand.headingTextTransform);
+  const headingLetterSpacing = safeLetterSpacing(brand.headingLetterSpacing);
   const roles = resolveTypeRoles(brand);
   const typeScale = safeTypeScale(brand.typeScale);
   const bodyLineHeight = safeLineHeight(brand.bodyLineHeight);
@@ -70,6 +72,8 @@ export function BrandFontStyles() {
       <style>{`:root { --brand-font: ${fontFamily ? `"${fontFamily}", ` : ''}var(--font-inter), system-ui, sans-serif;
   --brand-heading-font: ${headingFontFamily ? stack(headingFontFamily) : 'initial'};
   --brand-heading-weight: ${headingFontWeight ?? 'initial'};
+  --brand-heading-text-transform: ${headingTextTransform ?? 'initial'};
+  --brand-heading-letter-spacing: ${headingLetterSpacing ?? 'initial'};
   --brand-mono-font: ${monoFontFamily ? `"${monoFontFamily}", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace` : 'initial'};
 ${roleVars}
   --type-scale: ${typeScale ?? 'initial'};

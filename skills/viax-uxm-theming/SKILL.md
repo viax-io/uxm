@@ -126,6 +126,8 @@ the store getter. Importing the wrong one fails silently.
       "fontFamily": "Manrope",   // drives --brand-font via generateOverridesCss
       "headingFontFamily": "Space Grotesk",  // → --brand-heading-font; optional, additive
       "headingFontWeight": "600",            // → --brand-heading-weight ('500'|'600'|'700')
+      "headingTextTransform": "uppercase",   // → --brand-heading-text-transform; optional (a newer uxm than 4.105)
+      "headingLetterSpacing": "0.05em",      // → --brand-heading-letter-spacing; em, -0.05em..0.2em; optional
       "monoFontFamily": "IBM Plex Mono",     // → --brand-mono-font; optional — IDs, code (a newer uxm than 4.96; older ones ignore it)
       // Per-role refinements, layered UNDER the umbrella above. Roles: display
       // (StatCard value, ErrorPage code), h1 (page titles), h2 (section titles).
