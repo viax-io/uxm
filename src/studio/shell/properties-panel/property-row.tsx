@@ -25,7 +25,14 @@ export function renderEditor(
   const { label, value, onChange, prop } = args;
   switch (control) {
     case 'color':
-      return <ColorPicker label={label} value={value as string} onChange={onChange} />;
+      return (
+        <ColorPicker
+          label={label}
+          value={value as string}
+          onChange={onChange}
+          defaultValue={typeof prop.defaultValue === 'string' ? prop.defaultValue : undefined}
+        />
+      );
     case 'number':
       return (
         <NumberInput

@@ -116,6 +116,11 @@ catalog.
   - `as` (a block element), `padding`; knobs `--uxm-surface-bg`, `--uxm-surface-background`,
     `--uxm-surface-text-color`, `--uxm-surface-radius`, `--uxm-surface-padding`.
   - For a dark header or dock on a light page, or a light area inside a dark app.
+- **Studio flags fixed colours.** A colour knob set to a fixed opaque value (`#FFFFFF`) shows
+  "Fixed color: it won’t follow a dark or light panel" under the picker, with a one-click
+  "Use <token>" for the nearest theme token. Tokens, `color-mix` of tokens, the registry's own
+  defaults and translucent shadow colours stay quiet. Card's Shadow Color knob now defaults to
+  `var(--shadow-card-color)`, so its preview shows the dark shadow on a dark canvas.
 
 ## Workflow
 
