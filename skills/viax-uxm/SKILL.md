@@ -109,6 +109,13 @@ catalog.
     the light logo and icon when a dark variant exists.
   - Card's `shadow` default colour now comes from the new `--shadow-card-color` token, so it
     follows the nearest panel rather than any dark ancestor.
+- **New atom: `Surface`.** A panel that sets its own theme.
+  - `theme: 'dark' | 'light'` writes `data-theme` and `color-scheme`, so every atom inside reads
+    that theme's tokens, and paints the background (`--color-surface`) and text (`--color-text`)
+    from them; plain host text inside reads too.
+  - `as` (a block element), `padding`; knobs `--uxm-surface-bg`, `--uxm-surface-background`,
+    `--uxm-surface-text-color`, `--uxm-surface-radius`, `--uxm-surface-padding`.
+  - For a dark header or dock on a light page, or a light area inside a dark app.
 
 ## Workflow
 

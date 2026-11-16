@@ -243,6 +243,8 @@ export { StatCard } from './stat-card';
 export type { StatCardProps, StatCardTrend } from './stat-card';
 export { Stepper } from './stepper';
 export type { StepperProps, StepperStep, StepperStepState } from './stepper';
+export { Surface } from './surface';
+export type { SurfaceElement, SurfaceProps, SurfaceTheme } from './surface';
 export { Tabs } from './tabs';
 export type { TabsOption, TabsProps } from './tabs';
 export { TabsUnderline } from './tabs-underline';

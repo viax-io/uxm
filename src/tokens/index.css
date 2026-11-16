@@ -264,8 +264,8 @@
    with data-theme="light" on <html>, never needs this block. It exists for a
    light PANEL inside a dark page: an element carrying data-theme="light"
    re-declares every value the dark block overrides, with :root's value, so
-   the atoms inside it paint light again (a planned Surface atom will set the
-   attribute and paint the panel for you). The dark block above works the same way for a dark panel on a
+   the atoms inside it paint light again (the Surface atom sets the attribute
+   and paints the panel for you). The dark block above works the same way for a dark panel on a
    light page, because it is keyed on an attribute, not on :root.
 
    Wrapped in :where(), so it has specificity 0. On a root that is already
