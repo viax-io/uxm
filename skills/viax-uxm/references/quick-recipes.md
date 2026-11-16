@@ -18,6 +18,22 @@ import 'uxm/ui.css';
 complete — two of them are load-bearing, and skipping either produces a broken app that looks
 like a library bug. Load this AFTER `tokens.css` and `ui.css`.
 
+**From the release that ships `uxm/base.css` (4.98.0) on, import that file instead of
+copying the CSS below.** It contains these rules, plus `margin: 0` on `body`, each wrapped in
+`:where()` (specificity 0, so any host rule wins):
+
+```ts
+import 'uxm/tokens.css';
+import 'uxm/ui.css';
+import 'uxm/base.css';
+```
+
+On older releases, or to keep the rules in your own stylesheet, copy the block below.
+
+Either way, the `height: 100%` rule has one trade-off: on a page that scrolls the whole document
+instead of using `PageShell`, a `position: sticky` child of `body` or `#root` stops sticking
+after one screen. Such a page overrides it with `#root { height: auto }`.
+
 The dependency itself is installed under the **`uxm` alias** — every import in this file and in
 the app reads `uxm/…`, and the real package name appears exactly once:
 
@@ -55,7 +71,7 @@ button, input, select, textarea { font: inherit; }
 /* MANDATORY page colours — atoms paint themselves, but plain host text (a name in
    AppTopBar's actions, a bare <p>) inherits from <body>, which the library never
    styles: without this it stays black in the dark theme. */
-body { color: var(--color-text); background-color: var(--color-surface); }
+body { margin: 0; color: var(--color-text); background-color: var(--color-surface); }
 ```
 
 Never select `.uxm-*` classes or declare `--color-*` in this file — re-theme through the
@@ -1023,9 +1039,10 @@ toast store. Load it from a versioned path, never `latest/`: its locale dictiona
 
 `import { VERSION } from '@viax.io/uxm/ui'` gives a CDN page the release it runs (CDN build only).
 
-Still copy recipe 0's host baseline in verbatim — a CDN page gets none of a bundler-based app's
+Still give the page recipe 0's host baseline — a CDN page gets none of a bundler-based app's
 resets, and skipping it renders the whole page in Times New Roman with inputs overflowing their
-containers.
+containers. From the release that ships it (4.98.0), link `uxm-base.css` after `uxm.css`;
+on older releases, copy recipe 0's CSS in verbatim.
 
 URLs are versioned and immutable (`https://uxm.viax.io/<version>/…`) — pin one version number
 and reuse it across **every** file on the page, JS and CSS both. Mixing versions across files is

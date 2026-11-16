@@ -11,6 +11,7 @@
 //   chunks/<locale>-<hash>.js  the studio's lazily loaded dictionaries, one per locale
 //   uxm.standalone.js          IIFE `window.UXM`, React inside — pages without React
 //   uxm.css                    tokens + every atom, flattened
+//   uxm-base.css               the opt-in page baseline (base.css) — load after uxm.css
 //   uxm-studio.css             the studio's own (Tailwind) stylesheet — load after uxm.css
 //   uxm.esm.d.ts               bundled types for uxm.esm.js (needs @types/react)
 //   uxm-generate-css.esm.d.ts  bundled types for the applier
@@ -24,7 +25,8 @@
 //      build's metafile that it bundled no shared ui module;
 //   3. flatten `dist/tokens/index.css` + the `dist/ui/styles.css` @import
 //      aggregator into one minified uxm.css (cascade order preserved), and
-//      minify `dist/studio/studio.css` into uxm-studio.css;
+//      minify `dist/base/index.css` into uxm-base.css and
+//      `dist/studio/studio.css` into uxm-studio.css;
 //   4. smoke — each artifact is exercised, not just emitted:
 //        · uxm.esm.js imports in Node and exports exactly what dist/ui does,
 //          plus `VERSION` === package.json's version;
@@ -69,6 +71,8 @@ const BUDGET_GZIP_KB = {
   'uxm-generate-css.esm.js': 8,
   'uxm.standalone.js': 132,
   'uxm.css': 40,
+  // The opt-in page baseline (base.css): a handful of rules, ~0.5 KB gz.
+  'uxm-base.css': 1,
   'uxm.esm.d.ts': 80,
   'uxm-generate-css.esm.d.ts': 4,
   // Studio, measured on v4.71.1 (26-10-2026): esm 125.6 with ui external (a
@@ -94,6 +98,7 @@ for (const rel of [
   'ui/index.d.ts',
   'ui/styles.css',
   'tokens/index.css',
+  'base/index.css',
   'studio/index.js',
   'studio/index.d.ts',
   'studio/studio.css',
@@ -147,6 +152,16 @@ await esbuild.build({
   charset: 'utf8',
   banner: { css: `/*! ${pkg.name} v${pkg.version} | ${pkg.license} */` },
   outfile: join(OUT, 'uxm.css'),
+  logLevel: 'warning',
+});
+// The opt-in page baseline, its own file so a page can leave it out.
+await esbuild.build({
+  entryPoints: [join(DIST, 'base/index.css')],
+  bundle: true,
+  minify: true,
+  charset: 'utf8',
+  banner: { css: `/*! ${pkg.name} v${pkg.version} base | ${pkg.license} */` },
+  outfile: join(OUT, 'uxm-base.css'),
   logLevel: 'warning',
 });
 await esbuild.build({

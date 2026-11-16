@@ -20,6 +20,7 @@ export const appDefs: ComponentDef[] = [
     styleProperties: [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'colors' },
       { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
+      { key: 'borderBottomWidth', label: 'Border Width', control: 'slider', defaultValue: 1, min: 0, max: 8, step: 1, unit: 'px' },
       { key: 'expandedWidth', label: 'Expanded Width', control: 'number', defaultValue: 256, min: 200, max: 320, step: 4, unit: 'px' },
       { key: 'collapsedWidth', label: 'Collapsed Width', control: 'number', defaultValue: 64, min: 48, max: 96, step: 4, unit: 'px' },
       // Top only: lets a shell start the first section level with its page
