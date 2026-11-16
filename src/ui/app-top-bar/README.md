@@ -43,6 +43,8 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
+| `--uxm-app-top-bar-background-color` | `--color-surface-alt` at 50% | – | Bar background colour (translucent by default). |
+| `--uxm-app-top-bar-background` | `--uxm-app-top-bar-background-color` | – | Any `background` value — a gradient, or an image with its position, size and repeat — painted instead of the colour knob. Unset by default. A gradient or an opaque image covers the colour; for a transparent pattern put the colour in the value's last layer (`url(/grid.svg) 0 0 / 30px 30px, var(--color-surface-alt)`). A Studio save keeps only `https://` and root-relative (`/…`) `url()`s; any other url (`data:`, `./…`) drops the whole value, and the colour knob paints. |
 | `--uxm-app-top-bar-border-color` | `--color-border` | – | Bottom border colour. |
 | `--uxm-app-top-bar-border-bottom-width` | – | `1px` | Bottom border width — a heavier brand rule under the bar, or `0px` for none. |
 | `--uxm-app-top-bar-brand-gap` | – | `16px` | Space after the `__brand` slot. |

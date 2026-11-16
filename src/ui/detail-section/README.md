@@ -42,6 +42,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any standard HTML at
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-detail-section-bg` | `--color-card` | – | Section background. |
+| `--uxm-detail-section-background` | `--uxm-detail-section-bg` | – | Any `background` value — a gradient, or an image with its position, size and repeat — painted instead of the colour knob. Unset by default. A gradient or an opaque image covers the colour; for a transparent pattern put the colour in the value's last layer (`url(/grid.svg) 0 0 / 30px 30px, var(--color-card)`). A Studio save keeps only `https://` and root-relative (`/…`) `url()`s; any other url (`data:`, `./…`) drops the whole value, and the colour knob paints. |
 | `--uxm-detail-section-border-color` | `--color-border` | – | Section border (all four sides). |
 | `--uxm-detail-section-border-top-width` | – | `1px` | Top edge width — e.g. a 3px rule above the section. It runs above the accent rail. The sides stay 1px, so with a thick edge keep the radius small: a large radius tapers the corner where the widths meet. |
 | `--uxm-detail-section-border-top-color` | `--uxm-detail-section-border-color` | – | Top edge colour; unset, it follows the border colour. |

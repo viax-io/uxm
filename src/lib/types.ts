@@ -15,6 +15,9 @@ export interface BrandConfig {
   fontFamily?: string;
   /** Typeface for heading surfaces. Unset = headings inherit the body face. */
   headingFontFamily?: string;
+  /** Fixed-width typeface for code, IDs and record numbers → `--brand-mono-font`
+   *  (and the `--font-mono` token). Unset = each atom's own system mono stack. */
+  monoFontFamily?: string;
   /** Weight for heading surfaces ('500' | '600' | '700'). Unset = each
    *  component keeps its own default (600, or 700 for the display sizes). */
   headingFontWeight?: string;

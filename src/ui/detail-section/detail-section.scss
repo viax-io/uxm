@@ -9,7 +9,9 @@
    is 4 (was hardcoded 8 — drift). */
 
 .uxm-detail-section {
-  background-color: var(--uxm-detail-section-bg, var(--color-card));
+  /* `--uxm-detail-section-background` takes any `background` value (a gradient, an
+     image with its size and repeat) and wins over the colour knob when set. */
+  background: var(--uxm-detail-section-background, var(--uxm-detail-section-bg, var(--color-card)));
   /* Top and bottom edges are knobs of their own and fall back to the
      all-sides colour (see Card). The accent rail sits inside the border, so
      a thicker top edge runs above it. */

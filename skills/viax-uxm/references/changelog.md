@@ -2551,3 +2551,30 @@ reached the published library; now shipped in 2.8.0.
 - **DataTable** — with `stackedRole`s on, a `field` column with no plain-text name (a JSX `header`
   and no `label`) now logs a development-only `console.warn` naming the column: its cards show the
   value with no label. Production builds stay silent.
+
+### New in 4.95.0
+
+- **AppSidebar — item `count`.** `count?: number` (and `countMax`, default 99) on an
+  `AppSidebarNavItem` shows a `Badge` count after the label while expanded and keeps it a
+  number on the icon-tile corner while collapsed, where a `badge` turns into a dot. The row is
+  announced with the number in both states; `0` shows nothing; `badge` wins when both are set.
+  Underneath, `SidebarNavItem` gains `statusCount` / `statusCountMax` and the knobs
+  `--uxm-sidebar-nav-item-icon-count-{bg,text}`.
+
+### New in 4.96.0
+
+- **`DetailSection` — new `--uxm-detail-section-accent-gap` (default `4px`)**: the space
+  between the accent rail and the content, previously a hard-coded `4px`. Hiding the rail
+  is now `--uxm-detail-section-accent-width: 0px` + `--uxm-detail-section-accent-gap: 0px`;
+  drop any `.uxm-detail-section__inner { padding-left }` override.
+- **Host baseline (`quick-recipes.md` §0)**: added `body { color; background-color }` from
+  tokens (plain host text was black in the dark theme); removed the `.uxm-list` /
+  `.uxm-list-item` width rules (the library has done this itself since 4.80.4) and the
+  `.uxm-detail-section__inner` override.
+
+### New in 4.97.0
+
+- **`Listbox` / `MultiListbox` `inline`** — `inline?: boolean` (default `false`) sizes the
+  wrapper to its trigger instead of the form-field `width: 100%`. Use it for a menu-style picker
+  in a row of other controls, e.g. a "Viewing as" persona picker beside a Sign out button in an
+  `AppTopBar` `Cluster`, where the full-width wrapper took ~320px and squeezed the button.

@@ -7,6 +7,7 @@ export const detailSectionDef: ComponentDef = {
   description: 'Card-like section with icon header, title/subtitle, and an accent rail.',
   styleProperties: [
     { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
+    { key: 'background', label: 'Background Image or Gradient', control: 'text', defaultValue: '', section: 'colors' },
     { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
     { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 20, step: 1, unit: 'px' },
     { key: 'borderTopWidth', label: 'Top Border Width', control: 'slider', defaultValue: 1, min: 0, max: 8, step: 1, unit: 'px', section: 'edges' },

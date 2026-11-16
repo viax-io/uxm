@@ -38,7 +38,7 @@
     color: var(--uxm-property-field-value-color, var(--color-text));
     /* Value font is a knob so a grid of prose values can drop the monospace
        (data/technical) look for the body typeface. Default = today's mono. */
-    font-family: var(--uxm-property-field-value-font, ui-monospace, SFMono-Regular, Menlo, monospace);
+    font-family: var(--uxm-property-field-value-font, var(--brand-mono-font, ui-monospace, SFMono-Regular, Menlo, monospace));
     font-size: calc(var(--uxm-property-field-value-size, 14px) * var(--type-scale, 1));
   }
 }

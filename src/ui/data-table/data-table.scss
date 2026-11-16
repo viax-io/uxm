@@ -8,6 +8,13 @@
    intentionally override cell padding directly. */
 .uxm-data-table {
   container-type: inline-size;
+  /* Named so the unconditional 480 queries can be switched off per table:
+     they ask for `uxm-data-table`, and `stackAt={false}` / `stackAt={320}`
+     drop the name (see the end of the file). Every other query stays unnamed,
+     and an unnamed query still matches this container. A host that sets its
+     own container-name here replaces this one and turns the 480 stacking off
+     (the README says to keep both names, or wrap the table). */
+  container-name: uxm-data-table;
   /* Re-assert the EditableCell composition knobs this table's own cells need.
      Both are inherited custom properties, so a host that sets them on a
      wrapper reaches every cell below it at any depth — `FormField` sets both
@@ -74,6 +81,37 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+/* The same clip for the tables that stay tables BELOW 481px: `stackAt={false}`
+   at every width, `stackAt={320}` down to 321px. The gate's intent is "while
+   this is a table", and these are. */
+.uxm-data-table--stack-off .uxm-data-table__table--fixed .uxm-data-table__td:not(.uxm-data-table__td--actions),
+.uxm-data-table--stack-off .uxm-data-table__table--fixed .uxm-data-table__th:not(.uxm-data-table__th--actions) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@container (min-width: 321px) {
+  .uxm-data-table--stack-320 .uxm-data-table__table--fixed .uxm-data-table__td:not(.uxm-data-table__td--actions),
+  .uxm-data-table--stack-320 .uxm-data-table__table--fixed .uxm-data-table__th:not(.uxm-data-table__th--actions) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Below the 480 default: `stackAt={false}` never stacks, `stackAt={320}` stacks
+   only from 320px down (its own copy at the end of the file). Both leave the
+   unconditional 480 blocks by dropping the container name those blocks ask
+   for — no selector changes, so every specificity contest the 480 blocks rely
+   on (see the card-mode note) is untouched. The root stays a size container,
+   so the unnamed queries — the clip above, the 320 copy — still match it.
+
+   One limit: a named query looks past an unnamed container to the nearest
+   ANCESTOR with the name, so a `--stack-off` table nested inside another
+   DataTable's cell stacks when that outer table is at 480px or less. */
+.uxm-data-table--stack-off,
+.uxm-data-table--stack-320 {
+  container-name: none;
 }
 
 .uxm-data-table__th {
@@ -254,7 +292,7 @@
     box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
   }
 }
-@container (max-width: 480px) { @include stacked-active-rail; }
+@container uxm-data-table (max-width: 480px) { @include stacked-active-rail; }
 
 /* Exists so `:hover` does not replace the active tint — without it, pointing at
    the active row would make it look like any other hovered row. It defaults to
@@ -629,7 +667,7 @@
   }
   #{$d}.uxm-data-table__scroll-arrow { display: none; }
 }
-@container (max-width: 480px) { @include stacked-no-scroll; }
+@container uxm-data-table (max-width: 480px) { @include stacked-no-scroll; }
 
 /* ── Card mode — last of the UNCONDITIONAL rules, and that is load-bearing ──
    (The `stackAt` blocks at the very end of the file are appended copies of
@@ -831,7 +869,7 @@
   }
 }
 
-@container (max-width: 480px) {
+@container uxm-data-table (max-width: 480px) {
   @include stacked-cards;
   @include stacked-role-cards;
 }
@@ -864,7 +902,7 @@
    A query per preset is unavoidable: a SIZE container condition cannot contain
    `var()` — the condition parses, is kept in `cssRules`, and never matches — so
    the threshold is a prop and the accepted values are a closed set. */
-@each $bp in (640, 768, 960) {
+@each $bp in (320, 640, 768, 960) {
   $self: '.uxm-data-table--stack-#{$bp}';
 
   @container (max-width: #{$bp}px) {

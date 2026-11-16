@@ -284,7 +284,7 @@ describe('DataTable sticky actions column', () => {
  * mode moved to the end of the file).
  */
 function stackedStickyBlock(): string {
-  const marks = [...css.matchAll(/@container \(max-width: 480px\)/g)].map((m) => m.index!);
+  const marks = [...css.matchAll(/@container uxm-data-table \(max-width: 480px\)/g)].map((m) => m.index!);
   for (const at of marks) {
     const body = css.slice(at, css.indexOf('\n}', at));
     if (body.includes('__scroll-arrow') || body.includes('--sticky-start')) return body;

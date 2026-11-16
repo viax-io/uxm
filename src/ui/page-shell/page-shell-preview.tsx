@@ -46,6 +46,7 @@ export function PageShellPreview({ styles, variants, shell }: PreviewProps) {
     borderRadius: 8,
     overflow: 'hidden',
     ['--uxm-page-shell-bg' as string]: styles.backgroundColor as string,
+    ['--uxm-page-shell-background' as string]: (styles.background as string) || undefined,
     ['--uxm-page-shell-content-padding' as string]: `${styles.contentPadding}px`,
   };
 

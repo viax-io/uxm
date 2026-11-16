@@ -221,6 +221,9 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   card: {
     backgroundColor: '--uxm-card-bg',
+    // `background` (the gradient / image knob) is a REAL_CSS_PROPS key: unmapped
+    // it would save a bare `background` on the root, beating every modifier.
+    background: '--uxm-card-background',
     borderColor: '--uxm-card-border-color',
     borderRadius: '--uxm-card-radius',
     padding: '--uxm-card-padding',
@@ -323,6 +326,7 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   'app-top-bar': {
     borderColor: '--uxm-app-top-bar-border-color',
     backgroundColor: '--uxm-app-top-bar-background-color',
+    background: '--uxm-app-top-bar-background',
     height: '--uxm-app-top-bar-height',
     paddingX: '--uxm-app-top-bar-padding-x',
     gap: '--uxm-app-top-bar-gap',
@@ -513,6 +517,7 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   'detail-section': {
     backgroundColor: '--uxm-detail-section-bg',
+    background: '--uxm-detail-section-background',
     borderColor: '--uxm-detail-section-border-color',
     borderRadius: '--uxm-detail-section-radius',
     padding: '--uxm-detail-section-padding',
@@ -688,6 +693,7 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   'page-shell': {
     backgroundColor: '--uxm-page-shell-bg',
+    background: '--uxm-page-shell-background',
   },
   'property-field': {
     gap: '--uxm-property-field-gap',
@@ -707,6 +713,7 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
   },
   'stat-card': {
     backgroundColor: '--uxm-stat-card-background-color',
+    background: '--uxm-stat-card-background',
     borderColor: '--uxm-stat-card-border-color',
     borderRadius: '--uxm-stat-card-border-radius',
     padding: '--uxm-stat-card-padding',

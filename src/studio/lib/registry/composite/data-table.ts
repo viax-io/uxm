@@ -51,6 +51,8 @@ export const dataTableDef: ComponentDef = {
       key: 'stackAt',
       label: 'Stack Into Cards',
       options: [
+        { value: 'off', label: 'Never' },
+        { value: '320', label: '320px and narrower' },
         { value: '480', label: '480px and narrower (default)' },
         { value: '640', label: '640px and narrower' },
         { value: '768', label: '768px and narrower' },

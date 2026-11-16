@@ -21,7 +21,7 @@ export type DataTableDensity = 'compact' | 'default' | 'relaxed';
  * `@container` block in the stylesheet. A free `number` would accept `500` and
  * silently do nothing, which is the one failure mode this union removes.
  */
-export type DataTableStackAt = 480 | 640 | 768 | 960;
+export type DataTableStackAt = 320 | 480 | 640 | 768 | 960;
 
 /**
  * What a column becomes once the table reflows into cards.
@@ -279,8 +279,12 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * panel, a dashboard column, a two-up layout. The measurement is the
    * TABLE's own container, not the viewport, so the same table stacks in a
    * 600px panel and stays a table full-bleed on the same screen.
+   *
+   * Lower it to `320` for a table that stays readable narrower than 480px
+   * (two or three short columns in a third-width column), or pass `false` to
+   * never stack: below its width the table then scrolls sideways instead.
    */
-  stackAt?: DataTableStackAt;
+  stackAt?: DataTableStackAt | false;
   /**
    * Returns the horizontal scroller to its start edge whenever this value
    * changes. Opt-in: with no key the position is kept across a rows change,
@@ -869,7 +873,8 @@ export function DataTable<T>({
         // rules carry an extra class of specificity, so a `stack-480` table
         // would resolve its stacked rules differently from every table that
         // leaves this alone.
-        stackAt !== undefined && stackAt !== 480 && `uxm-data-table--stack-${stackAt}`,
+        stackAt === false && 'uxm-data-table--stack-off',
+        typeof stackAt === 'number' && stackAt !== 480 && `uxm-data-table--stack-${stackAt}`,
         stackedRoles && 'uxm-data-table--stacked-roles',
         scrollArrows === 'hover' && 'uxm-data-table--arrows-hover',
         scrollArrows !== undefined && scrollArrows !== 'none' && 'uxm-data-table--arrows-inset',

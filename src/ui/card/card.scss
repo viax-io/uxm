@@ -8,7 +8,9 @@
    between its direct children (the `--gap` modifier below). */
 
 .uxm-card {
-  background-color: var(--uxm-card-bg, var(--color-card));
+  /* `--uxm-card-background` takes any `background` value (a gradient, an
+     image with its size and repeat) and wins over the colour knob when set. */
+  background: var(--uxm-card-background, var(--uxm-card-bg, var(--color-card)));
   /* Top and bottom edges are knobs of their own (a rule above a section, an
      accent along the top) and fall back to the all-sides colour, so an
      unset edge keeps following Border Color. The sides stay 1px. */

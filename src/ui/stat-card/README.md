@@ -38,6 +38,8 @@ The `StatCardTrend` union (`'up' \| 'down' \| 'neutral'`) is exported for consum
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
+| `--uxm-stat-card-background-color` | `--color-card` | – | Card background colour. |
+| `--uxm-stat-card-background` | `--uxm-stat-card-background-color` | – | Any `background` value — a gradient, or an image with its position, size and repeat — painted instead of the colour knob. Unset by default. A gradient or an opaque image covers the colour; for a transparent pattern put the colour in the value's last layer (`url(/grid.svg) 0 0 / 30px 30px, var(--color-card)`). A Studio save keeps only `https://` and root-relative (`/…`) `url()`s; any other url (`data:`, `./…`) drops the whole value, and the colour knob paints. |
 | `--uxm-stat-card-label-size` | – | `13px` | Label font size. |
 | `--uxm-stat-card-label-text-transform` | – | `inherited` | Label case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. Unset, it inherits, as before. |
 | `--uxm-stat-card-label-letter-spacing` | – | `inherited` | Label tracking (Studio saves `em`). Unset, it inherits, as before. |

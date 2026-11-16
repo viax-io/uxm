@@ -50,6 +50,16 @@ describe('generateOverridesCss', () => {
     expect(css).toContain('  --uxm-empty-state-description-max-width: 40ch;');
   });
 
+  it('saves the background knob as each surface\'s var, never a bare `background`', () => {
+    // `background` is a REAL_CSS_PROPS key: unmapped, a save writes a bare
+    // `background` on the root, which would also beat every modifier's colour.
+    const value = 'url(/grid.svg) 0 0 / 30px 30px, var(--color-surface)';
+    const ids = ['card', 'detail-section', 'page-shell', 'stat-card', 'app-top-bar'];
+    const css = generateOverridesCss(Object.fromEntries(ids.map((id) => [id, { background: value }])), brand);
+    for (const id of ids) expect(css).toContain(`  --uxm-${id}-background: ${value};`);
+    expect(css).not.toMatch(/^\s*background:/m);
+  });
+
   it('saves the per-side border knobs as the vars the stylesheets read', () => {
     // None of these keys is a REAL_CSS_PROPS entry, so each falls through to
     // its own --uxm-<comp>-<kebab> name; pinned so a later mapping or a
@@ -109,7 +119,33 @@ describe('generateOverridesCss', () => {
   it('drops an override value that could break out of the declaration', () => {
     const css = generateOverridesCss({ card: { color: 'red; } body { display: none } /*' } }, brand);
     expect(css).not.toContain('display: none');
-    expect(css).toContain('  color: ;');
+    // Left out entirely, not written as `color: ;` (see the next case).
+    expect(css).not.toMatch(/^\s*color:/m);
+  });
+
+  it('leaves out a dropped or empty value instead of emitting an empty declaration', () => {
+    // An empty CUSTOM property is valid CSS: `--uxm-card-background: ;` makes
+    // the background declaration that reads it resolve to nothing, and the
+    // card turns transparent, where an unset knob keeps its colour fallback.
+    // A data: URI is the likeliest way in — Studio's preview paints it, the
+    // sanitiser rejects it.
+    const css = generateOverridesCss(
+      { card: { background: 'url(data:image/png;base64,AAAA)', backgroundColor: '' , padding: 16 } },
+      brand,
+    );
+    expect(css).not.toContain('--uxm-card-background');
+    expect(css).not.toContain('--uxm-card-bg');
+    expect(css).toContain('  --uxm-card-padding: 16px;');
+    // A component whose every value is dropped emits no rule at all.
+    expect(generateOverridesCss({ card: { background: 'url(javascript:alert(1))' } }, brand)).not.toContain('.uxm-card');
+  });
+
+  it('keeps a quoted root-relative url and a gradient in the background knob', () => {
+    const css = generateOverridesCss(
+      { card: { background: 'url("/grid.svg") 0 0 / 30px 30px, linear-gradient(135deg, rgba(0, 0, 0, 0.1), #fff)' } },
+      brand,
+    );
+    expect(css).toContain('  --uxm-card-background: url("/grid.svg") 0 0 / 30px 30px, linear-gradient(135deg, rgba(0, 0, 0, 0.1), #fff);');
   });
 
   it('emits portaled panels on both the wrapper and the panel selector', () => {
@@ -127,6 +163,20 @@ describe('generateOverridesCss', () => {
     expect(css).toContain(':root:not([data-theme="dark"]) {\n  --color-accent: #123456;\n}');
     expect(css).not.toContain('bad key');
     expect(css).not.toContain('[data-theme="dark"] {');
+  });
+
+  it('publishes the mono typeface as --brand-mono-font over a mono stack, imported once', () => {
+    const css = generateOverridesCss({}, { fontFamily: 'Manrope', monoFontFamily: 'IBM Plex Mono' } as BrandConfig);
+    expect(css).toContain('--brand-mono-font: "IBM Plex Mono", ui-monospace,');
+    // The fallback is fixed-width, never the body's sans stack.
+    expect(css).not.toMatch(/--brand-mono-font:[^;]*font-inter/);
+    expect(css.match(/family=IBM\+Plex\+Mono/g)).toHaveLength(1);
+    // The same face for body and mono is fetched once.
+    const same = generateOverridesCss({}, { fontFamily: 'JetBrains Mono', monoFontFamily: 'JetBrains Mono' } as BrandConfig);
+    expect(same.match(/family=JetBrains\+Mono/g)).toHaveLength(1);
+    // Unset or unsafe → no var at all, so each atom keeps its own stack.
+    expect(generateOverridesCss({}, {} as BrandConfig)).not.toContain('--brand-mono-font');
+    expect(generateOverridesCss({}, { monoFontFamily: 'x"; } body {' } as BrandConfig)).not.toContain('--brand-mono-font');
   });
 
   it('emits the strong weight on :root and drops anything but 500/600/700', () => {
