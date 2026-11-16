@@ -1,3 +1,15 @@
+# [4.114.0](https://github.com/viax-io/uxm/compare/v4.113.0...v4.114.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* **surface:** keep the theme scope and class in step, and state measured contrast ([2c196cb](https://github.com/viax-io/uxm/commit/2c196cb3c15ab69d4e5f18e0c79c4efdd1a36645))
+
+
+### Features
+
+* **surface:** a new atom, a panel that sets its own theme ([be41fe1](https://github.com/viax-io/uxm/commit/be41fe1bd551ec79d73afd0019db1172eac917db))
+
 # [4.113.0](https://github.com/viax-io/uxm/compare/v4.112.1...v4.113.0) (2026-11-16)
 
 
