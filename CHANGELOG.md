@@ -1,3 +1,10 @@
+## [4.112.1](https://github.com/viax-io/uxm/compare/v4.112.0...v4.112.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* **stepper:** a visible ring round the current step in light mode ([15f52fb](https://github.com/viax-io/uxm/commit/15f52fb2a9af5be8315899e23f52a8992bba0436)), closes [#ECF8F0](https://github.com/viax-io/uxm/issues/ECF8F0)
+
 # [4.112.0](https://github.com/viax-io/uxm/compare/v4.111.0...v4.112.0) (2026-11-16)
 
 
