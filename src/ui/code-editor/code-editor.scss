@@ -38,13 +38,16 @@
 .uxm-code-block__gutter-lines {
   font-family: var(
     --uxm-code-editor-font-family,
-    ui-monospace,
-    SFMono-Regular,
-    "SF Mono",
-    Menlo,
-    Consolas,
-    "Liberation Mono",
-    monospace
+    var(
+      --brand-mono-font,
+      ui-monospace,
+      SFMono-Regular,
+      "SF Mono",
+      Menlo,
+      Consolas,
+      "Liberation Mono",
+      monospace
+    )
   );
   font-size: calc(var(--uxm-code-editor-font-size, 12.5px) * var(--type-scale, 1));
   line-height: var(--uxm-code-editor-line-height, 1.6);

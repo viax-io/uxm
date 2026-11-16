@@ -110,6 +110,17 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **A mono font role.**
+  - `brand.monoFontFamily`, set in Studio under Brand Settings → Typography → Body → Monospace
+    (JetBrains Mono, IBM Plex Mono, Roboto Mono, …), publishes `--brand-mono-font` and imports
+    the face.
+  - It always falls back to a mono stack.
+  - `PropertyField` values and `CodeEditor` / `CodeBlock` read it over their own stacks, so
+    nothing changes until a brand sets one.
+  - New `--font-mono` token for host CSS: the brand's mono face, else the system mono stack.
+    It resolves on `:root`, so it follows the brand var published there; a subtree that sets
+    `--brand-mono-font` itself should read that var directly.
+
 ## Workflow
 
 ### Where the documentation lives
@@ -287,8 +298,9 @@ hardcode a competing family (see `references/design-tokens.md` → "Typography")
 > `--font-inter` *is* declared in the real `:root`, so it resolves. The second rule is needed
 > because native form controls do NOT inherit the document font (UA default → Arial): uxm atoms
 > set `font-family: inherit` themselves, but any raw `<button>`/`<input>`/`<select>` in host code
-> would otherwise render in Arial next to the body font. There is no `--font-mono` token —
-> use `var(--font-mono, monospace)` with the literal fallback.
+> would otherwise render in Arial next to the body font. For monospace, use
+> `var(--font-mono, monospace)`. The `--font-mono` token (unreleased) follows the brand's mono
+> typeface; on older releases the literal fallback paints.
 >
 > These two lines are the emergency fix; `uxm/base.css` (4.98.0) carries both. **The complete host baseline — including the
 > `html, body, #root { height: 100% }` that `PageShell` needs in order to bound its own scroll

@@ -100,6 +100,13 @@
      No font file is bundled; reference the family name with a system
      fallback stack so `--font-sans` resolves even when Inter is absent. */
   --font-inter: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* The fixed-width face for code, IDs and record numbers: the brand's mono
+     typeface when Studio publishes one (`--brand-mono-font`), else the system
+     stack. For host CSS; the atoms read `--brand-mono-font` over their own
+     stacks, so this token moves no existing atom. Resolved here on :root, so
+     it follows a --brand-mono-font set on :root (where Studio publishes it),
+     not one a host sets on a subtree — there, read the brand var directly. */
+  --font-mono: var(--brand-mono-font, ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace);
 }
 
 /* ── Layering — the stacking scale ─────────────────────────────────────────

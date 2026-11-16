@@ -85,8 +85,9 @@ rail and the gap after it, so the left padding matches the other sides:
 }
 ```
 
-There is **no `--font-mono` token** — where you need monospace, write
-`var(--font-mono, ui-monospace, monospace)` and rely on the literal fallback.
+Where you need monospace, write `var(--font-mono, ui-monospace, monospace)`. From the release
+that ships it (unreleased), `--font-mono` is a token that follows the brand's mono typeface
+(`brand.monoFontFamily` → `--brand-mono-font`); on older releases the literal fallback paints.
 
 Symptoms if you skip it: whole app in a serif → the bridge is missing; plain host text black
 in the dark theme → the `body` colour rule is missing; only raw buttons and

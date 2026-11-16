@@ -40,6 +40,7 @@ export function BrandFontStyles() {
   const fontFamily = safeFontFamily(brand.fontFamily);
   const headingFontFamily = safeFontFamily(brand.headingFontFamily);
   const headingFontWeight = safeFontWeight(brand.headingFontWeight);
+  const monoFontFamily = safeFontFamily(brand.monoFontFamily);
   const roles = resolveTypeRoles(brand);
   const typeScale = safeTypeScale(brand.typeScale);
   const bodyLineHeight = safeLineHeight(brand.bodyLineHeight);
@@ -48,7 +49,7 @@ export function BrandFontStyles() {
 
   // One <link> per distinct family; React 19 also dedupes by href.
   const families = [...new Set(
-    [fontFamily, headingFontFamily, ...roles.map((r) => r.family)].filter((f): f is string => !!f),
+    [fontFamily, headingFontFamily, monoFontFamily, ...roles.map((r) => r.family)].filter((f): f is string => !!f),
   )];
   const stack = (f: string) => `"${f}", var(--font-inter), system-ui, sans-serif`;
   // `initial` = guaranteed-invalid = genuinely unset, so each line cancels a
@@ -69,6 +70,7 @@ export function BrandFontStyles() {
       <style>{`:root { --brand-font: ${fontFamily ? `"${fontFamily}", ` : ''}var(--font-inter), system-ui, sans-serif;
   --brand-heading-font: ${headingFontFamily ? stack(headingFontFamily) : 'initial'};
   --brand-heading-weight: ${headingFontWeight ?? 'initial'};
+  --brand-mono-font: ${monoFontFamily ? `"${monoFontFamily}", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace` : 'initial'};
 ${roleVars}
   --type-scale: ${typeScale ?? 'initial'};
   --type-body-line-height: ${bodyLineHeight ?? 'initial'};
