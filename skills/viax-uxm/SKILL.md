@@ -98,9 +98,13 @@ catalog.
      the markers, and never append notes under an already-stamped heading. -->
 
 - **Light panels on a dark page.** `tokens.css` now has a light scope,
-  `:where([data-theme="light"])`. It has specificity 0, so an app's own `:root` tokens still win.
+  `:where([data-theme="light"])`, at specificity 0.
   - An element carrying `data-theme="light"` inside a dark page paints its atoms light again.
     `data-theme="dark"` already did the reverse.
+  - A hand-written theme reaches such a panel only when its light tokens are written on
+    `:root, [data-theme="light"]`; tokens on `:root` alone are replaced inside the panel.
+  - A host that already puts `data-theme="light"` on a wrapper below `<html>` now gets the
+    library's light values on that wrapper, over tokens it set only on `:root`.
   - Studio's generated CSS writes a brand's light tokens on `[data-theme="light"]` as well, and
     the light logo and icon when a dark variant exists.
   - Card's `shadow` default colour now comes from the new `--shadow-card-color` token, so it

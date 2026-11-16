@@ -21,7 +21,10 @@
 //   4. the dark block declares nothing `:root` doesn't;
 //   5. the light scope block (`:where([data-theme="light"])`, for a light panel
 //      inside a dark page) declares exactly the custom properties the dark
-//      block declares, each with its `:root` value.
+//      block declares, each with its `:root` value;
+//   6. every `:root` alias of a colour or shadow token (a value that reads
+//      `var(--color-…)` / `var(--shadow-…)`) is re-declared, unchanged, in the
+//      `:where([data-theme])` alias block, so a theme panel re-resolves it.
 //
 // Usage: node scripts/check-token-parity.mjs   (exits 1 on any mismatch)
 import { readFileSync } from 'node:fs';
@@ -139,9 +142,21 @@ for (const [name, value] of lightAll) {
   else if (value.toUpperCase() !== rootAll.get(name).toUpperCase()) problems.push(`${name}: ${LIGHT} ${value} ≠ :root ${rootAll.get(name)}`);
 }
 
+// 6. aliases re-resolved in every theme scope
+const ALIASES = ':where([data-theme])';
+const aliasBlock = block(ALIASES, '--');
+for (const [name, value] of rootAll) {
+  if (!/var\(--(color|shadow)-/.test(value)) continue;
+  if (!aliasBlock.has(name)) problems.push(`${name}: a :root alias (${value}) missing from ${ALIASES}, so a theme panel keeps the root's resolved value`);
+  else if (aliasBlock.get(name) !== value) problems.push(`${name}: ${ALIASES} ${aliasBlock.get(name)} ≠ :root ${value}`);
+}
+for (const name of aliasBlock.keys()) {
+  if (!rootAll.has(name)) problems.push(`${name}: declared in ${ALIASES} but never on :root`);
+}
+
 if (problems.length) {
   console.error(`${problems.length} token parity problem(s):\n  ${problems.join('\n  ')}`);
   process.exit(1);
 }
 // eslint-disable-next-line no-console -- CLI summary line; this IS the program's output
-console.log(`OK — ${catalog.length} catalog tokens match tokens.css; ${Object.keys(INTERNAL).length} internal, ${DEPRECATED_ALIASES.length} deprecated aliases accounted for; light scope restores all ${darkAll.size} dark overrides`);
+console.log(`OK — ${catalog.length} catalog tokens match tokens.css; ${Object.keys(INTERNAL).length} internal, ${DEPRECATED_ALIASES.length} deprecated aliases accounted for; light scope restores all ${darkAll.size} dark overrides; ${aliasBlock.size} aliases re-resolve per theme`);

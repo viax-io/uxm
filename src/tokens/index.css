@@ -47,7 +47,10 @@
      brand accent through both themes, which is why there is no override in the
      dark block below and why it is absent from `themeTokens` — an entry there
      needs a light/dark hex pair, and pinning one would freeze the colour away
-     from accent. Consumers who want a distinct drop colour set this one var. */
+     from accent. Consumers who want a distinct drop colour set this one var.
+     It is re-declared at specificity 0 on every [data-theme] element (see the
+     alias block below the light scope) so a dark or light panel resolves it
+     against its own accent; set it on `:root, [data-theme]` to reach panels. */
   --color-drop-target: var(--color-accent);
 
   /* ── Highlights ── */
@@ -253,13 +256,6 @@
   --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.55);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.30), 0 4px 12px rgba(0, 0, 0, 0.25);
   --shadow-card-color: rgba(0, 0, 0, 0.30);
-
-  /* Aliases, repeated so a dark PANEL resolves them too. A custom property
-     holding a var() is resolved where it is declared: declared on :root only,
-     an element below carrying data-theme="dark" would inherit the root's
-     already-resolved light value. */
-  --color-drop-target: var(--color-accent);
-  --shadow-modal: var(--shadow-2xl);
 }
 
 /* Light theme, as a SCOPE.
@@ -268,13 +264,17 @@
    with data-theme="light" on <html>, never needs this block. It exists for a
    light PANEL inside a dark page: an element carrying data-theme="light"
    re-declares every value the dark block overrides, with :root's value, so
-   the atoms inside it paint light again (the Surface atom sets the attribute
-   for you). The dark block above works the same way for a dark panel on a
+   the atoms inside it paint light again (a planned Surface atom will set the
+   attribute and paint the panel for you). The dark block above works the same way for a dark panel on a
    light page, because it is keyed on an attribute, not on :root.
 
    Wrapped in :where(), so it has specificity 0. On a root that is already
-   light it repeats :root's values, and any token an app sets itself — on
-   :root, html or anywhere else — still wins over it, whatever the load order.
+   light it repeats :root's values, and a token an app sets on the same element
+   (its own :root or html rule) still wins, whatever the load order. Inside a
+   light PANEL, though, this block's own declaration beats a value the panel
+   would only inherit: a hand-written theme that sets light tokens on :root
+   alone loses them there. Write them on `:root, [data-theme="light"]` instead,
+   which is what Studio's generated CSS does.
 
    Keep it in lockstep: exactly the names the dark block declares, each with
    its :root value. `scripts/check-token-parity.mjs` checks both. */
@@ -319,8 +319,18 @@
   --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.18);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
   --shadow-card-color: rgba(0, 0, 0, 0.12);
+}
 
-  /* Aliases: see the dark block for why they are repeated. */
+/* Aliases, re-resolved in every theme scope. A custom property holding a
+   var() is resolved where it is declared: declared on :root only, an element
+   below carrying data-theme would inherit the root's already-resolved value
+   (a dark panel's drop target would keep the light accent). Re-declaring them
+   on any [data-theme] element resolves them against that scope's tokens.
+   :where() keeps it at specificity 0, so a host's own value for an alias, on
+   :root or anywhere else, still wins on the element it is set on. Every :root
+   alias of a --color-* or --shadow-* token belongs here; the parity check
+   enforces it. */
+:where([data-theme]) {
   --color-drop-target: var(--color-accent);
   --shadow-modal: var(--shadow-2xl);
 }
