@@ -11,6 +11,9 @@ import type { CSSProperties } from 'react';
 // Border Color; a save still writes it, since Studio stores the changed key.)
 const edgeColor = (value: unknown) => (value && value !== 'var(--color-border)' ? (value as string) : undefined);
 
+// Case and tracking: projected only once set. The stylesheet has no fallback
+// for them (unset = inherit), so projecting the registry default would show
+// `none` / `0em` where production inherits.
 export function DetailSectionPreview({ styles }: PreviewProps) {
   // Each registry knob → matching CSS custom property; the preview consumes
   // the real component instead of reimplementing it inline.
@@ -27,6 +30,8 @@ export function DetailSectionPreview({ styles }: PreviewProps) {
     '--uxm-detail-section-icon-bg': styles.iconBg as string,
     '--uxm-detail-section-icon-color': styles.iconColor as string,
     '--uxm-detail-section-title-size': `${styles.titleSize}px`,
+    '--uxm-detail-section-title-text-transform': styles.titleTextTransform !== 'none' ? (styles.titleTextTransform as string) : undefined,
+    '--uxm-detail-section-title-letter-spacing': styles.titleLetterSpacing ? `${styles.titleLetterSpacing}em` : undefined,
     '--uxm-detail-section-subtitle-color': styles.subtitleColor as string,
     '--uxm-detail-section-accent-width': `${styles.accentWidth}px`,
     '--uxm-detail-section-accent-color': styles.accentColor as string,

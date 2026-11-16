@@ -104,6 +104,8 @@ function plainButtonStateStyle(
     [`--uxm-button-${variant}-padding-x`]: styles.paddingX != null ? `${styles.paddingX}px` : undefined,
     [`--uxm-button-${variant}-font-size`]: styles.fontSize != null ? `${styles.fontSize}px` : undefined,
     [`--uxm-button-${variant}-font-weight`]: styles.fontWeight != null ? String(styles.fontWeight) : undefined,
+    [`--uxm-button-${variant}-text-transform`]: styles.textTransform as string | undefined,
+    [`--uxm-button-${variant}-letter-spacing`]: styles.letterSpacing != null ? `${styles.letterSpacing}em` : undefined,
     [gapVar]: styles.gap != null ? `${styles.gap}px` : undefined,
     ...(isDisabled ? { opacity: styles.disabledOpacity as number | undefined } : {}),
     ...(isFocused

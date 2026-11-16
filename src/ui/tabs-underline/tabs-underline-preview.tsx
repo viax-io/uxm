@@ -40,6 +40,8 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-tabs-underline-padding-y': `${styles.paddingY}px`,
     '--uxm-tabs-underline-font-size': `${styles.fontSize}px`,
     '--uxm-tabs-underline-font-weight': styles.fontWeight as string,
+    '--uxm-tabs-underline-text-transform': styles.textTransform as string,
+    '--uxm-tabs-underline-letter-spacing': `${styles.letterSpacing}em`,
     '--uxm-tabs-underline-icon-size': `${styles.iconSize}px`,
     '--uxm-tabs-underline-icon-gap': `${styles.iconGap}px`,
   } as CSSProperties;

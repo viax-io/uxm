@@ -9,6 +9,9 @@ import type { CSSProperties } from 'react';
 /** `iconGlyphSize`'s registry default — see the note on the knob below. */
 const ICON_GLYPH_DEFAULT = 14;
 
+// Case and tracking: projected only once set. The stylesheet has no fallback
+// for them (unset = inherit), so projecting the registry default would show
+// `none` / `0em` where production inherits.
 export function PageHeaderPreview({ styles }: PreviewProps) {
   // Each registry knob → matching CSS custom property; the preview consumes
   // the real component, so the title's line height and the tile's glyph size
@@ -17,6 +20,8 @@ export function PageHeaderPreview({ styles }: PreviewProps) {
     '--uxm-page-header-title-color': styles.titleColor as string,
     '--uxm-page-header-title-size': `${styles.titleSize}px`,
     '--uxm-page-header-title-line-height': String(styles.titleLineHeight),
+    '--uxm-page-header-title-text-transform': styles.titleTextTransform !== 'none' ? (styles.titleTextTransform as string) : undefined,
+    '--uxm-page-header-title-letter-spacing': styles.titleLetterSpacing ? `${styles.titleLetterSpacing}em` : undefined,
     '--uxm-page-header-meta-color': styles.metaColor as string,
     '--uxm-page-header-meta-size': `${styles.metaSize}px`,
     '--uxm-page-header-icon-bg': styles.iconBg as string,

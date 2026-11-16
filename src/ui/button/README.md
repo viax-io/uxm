@@ -56,6 +56,8 @@ Each variant exposes a `--uxm-button-{variant}-gap` custom property for fine-tun
 | `ButtonTertiary` | `--uxm-button-tertiary-gap` | `8px` |
 | `ButtonGhost` | `--uxm-button-ghost-gap` | `8px` |
 
+Every variant also takes `--uxm-button-{variant}-text-transform` (default `none`; `none` \| `uppercase` \| `capitalize` \| `lowercase`) and `--uxm-button-{variant}-letter-spacing` (default `normal`; Studio saves it in `em`), for a brand whose buttons are set in capitals. The defaults are what a `<button>` already gets from the browser, so nothing changes until a theme sets them. Prefer this to writing labels in capitals: the case is presentation, and screen readers still get the words as written.
+
 ## Design tokens (MODO-configurable)
 
 All non-structural visual aspects (background, foreground, border) read from the global design-token layer exported by `@viax.io/uxm/tokens`. These tokens are the customization surface exposed to MODO's brand-settings editor: changes saved there flow into `:root` as `--color-*` declarations and re-tint every consumer instantly. Component CSS vars (above) sit on top of this layer for per-instance fine-tuning.

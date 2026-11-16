@@ -116,6 +116,17 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Case and tracking knobs.** `--uxm-<comp>-text-transform` and `-letter-spacing` (Studio:
+  "Text Transform" / "Letter Spacing"; tracking saves in `em`) on:
+  - the five Button variants, `ButtonWithIcon`, `FilterTabs` and `TabsUnderline`, defaulting to
+    `none` / `normal` (what a `<button>` already gets);
+  - the `Tag` label, `StatCard` label and `PageHeader` / `DetailSection` titles, which have no
+    fallback, so unset they inherit, as before;
+  - `SectionHeader`, whose hard-coded uppercase and 0.06em are now its knob defaults.
+
+  A theme whose voice is in capitals sets the case knob instead of writing strings in capitals,
+  so the content stays as written for screen readers and translations.
+
 - **Link**, **BackLink** — `linkAs?: ElementType`, as on `AppSidebar`: pass the router's link
   (`next/link`, or an `href` → `to` adapter for React Router) and an in-app click navigates on the
   client instead of reloading the document. It gets `href`, `className`, `children` and the rest of

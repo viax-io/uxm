@@ -46,6 +46,8 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute (id, sty
 | `--uxm-section-header-title-color` | `--color-text-subtle` | – | Heading text colour. |
 | `--uxm-section-header-title-size` | – | `11px` | Heading font size. |
 | `--uxm-section-header-title-weight` | `--font-weight-strong` | `600` | Heading font weight. |
+| `--uxm-section-header-title-text-transform` | – | `uppercase` | Heading case: `none` \| `uppercase` \| `capitalize` \| `lowercase`. Uppercase is the default, not the definition: a sentence-case theme sets `none`. |
+| `--uxm-section-header-title-letter-spacing` | – | `0.06em` | Heading tracking (Studio saves `em`); set `0em` with `none`. |
 | `--uxm-section-header-subtitle-color` | `--color-text-muted` | – | Subtitle text colour. |
 | `--uxm-section-header-subtitle-size` | – | `10px` | Subtitle font size. |
 

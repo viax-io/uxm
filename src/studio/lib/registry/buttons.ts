@@ -31,6 +31,8 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 2, max: 24, step: 2, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px' },
       { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '600', options: ['400', '500', '600', '700'] },
+      { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+      { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
       { key: 'gap', label: 'Icon Gap', control: 'number', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },
     ],
     layoutVariants: [
@@ -96,6 +98,8 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 2, max: 24, step: 2, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px' },
       { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '600', options: ['400', '500', '600', '700'] },
+      { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+      { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
       { key: 'gap', label: 'Icon Gap', control: 'number', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },
     ],
     layoutVariants: [
@@ -149,6 +153,8 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 2, max: 24, step: 2, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px' },
       { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '600', options: ['400', '500', '600', '700'] },
+      { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+      { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
       { key: 'gap', label: 'Icon Gap', control: 'number', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },
     ],
     layoutVariants: [
@@ -198,6 +204,8 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 2, max: 24, step: 2, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px' },
       { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600', '700'] },
+      { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+      { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
       { key: 'gap', label: 'Icon Gap', control: 'number', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },
     ],
     layoutVariants: [
@@ -251,6 +259,8 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 2, max: 24, step: 2, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 14, min: 10, max: 24, step: 1, unit: 'px' },
       { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '600', options: ['400', '500', '600', '700'] },
+      { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+      { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
       { key: 'gap', label: 'Icon Gap', control: 'number', defaultValue: 8, min: 0, max: 16, step: 1, unit: 'px' },
     ],
     layoutVariants: [
@@ -323,6 +333,8 @@ export const buttonsDefs: ComponentDef[] = [
       { key: 'paddingY', label: 'Padding Y', control: 'number', defaultValue: 8, min: 2, max: 16, step: 1, unit: 'px' },
       { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 10, max: 18, step: 1, unit: 'px' },
       { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600', '700'] },
+      { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
+      { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
       { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 15, min: 12, max: 24, step: 1, unit: 'px' },
       { key: 'gap', label: 'Icon Gap', control: 'number', defaultValue: 8, min: 2, max: 16, step: 1, unit: 'px' },
     ],

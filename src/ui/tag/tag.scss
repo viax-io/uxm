@@ -22,6 +22,11 @@
   &__label {
     align-items: center;
     display: inline-flex;
+    /* Case and tracking knobs with NO fallback, on purpose: unset, the var is
+       invalid at computed-value time, which for these inherited properties
+       means `inherit`, exactly what this element did before the knobs. */
+    letter-spacing: var(--uxm-tag-letter-spacing);
+    text-transform: var(--uxm-tag-text-transform);
   }
 
   &--accent {

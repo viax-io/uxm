@@ -10,6 +10,8 @@ export function SectionHeaderPreview({ styles }: PreviewProps) {
     '--uxm-section-header-title-color': styles.titleColor as string,
     '--uxm-section-header-title-size': `${styles.titleSize}px`,
     '--uxm-section-header-title-weight': styles.titleWeight as string,
+    '--uxm-section-header-title-text-transform': styles.titleTextTransform as string,
+    '--uxm-section-header-title-letter-spacing': `${styles.titleLetterSpacing}em`,
     '--uxm-section-header-subtitle-color': styles.subtitleColor as string,
     '--uxm-section-header-subtitle-size': `${styles.subtitleSize}px`,
     '--uxm-section-header-gap': `${styles.gap}px`,
