@@ -1,3 +1,10 @@
+## [4.105.1](https://github.com/viax-io/uxm/compare/v4.105.0...v4.105.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* **theming:** default the Tag and StatCard label case knobs to inherit in Studio ([73592ae](https://github.com/viax-io/uxm/commit/73592aee6c5223cfe8fe6dfb9da51c51d63d04ce))
+
 # [4.105.0](https://github.com/viax-io/uxm/compare/v4.104.0...v4.105.0) (2026-11-16)
 
 
