@@ -68,7 +68,8 @@ execute(query: string, variables?: Record<string, unknown>): Promise<TData>
 It POSTs `{ query, variables }` to the environment's GraphQL endpoint, attaches whatever auth
 that environment needs, throws on a non-empty `errors` array, and resolves with `data`. The
 reference implementation imports it as `@/lib/graphql-client`; that path is a convention, not a
-package — **nothing ships it, so build it before wiring any of this up.** A minimal version:
+package. In a viax React app it is the client of
+[`viax-graphql-data-layer`](../viax-graphql-data-layer/SKILL.md) — copy that. Anywhere else **build it before wiring any of this up**; a minimal version:
 
 ```javascript
 export async function execute(query, variables = {}) {

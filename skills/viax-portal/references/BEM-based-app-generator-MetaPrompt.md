@@ -4,37 +4,42 @@
 
 ## ⚙️ Client Configuration Variables
 
-> **Configured for `viax.lab` environment.** Values below are already applied throughout this document.
+> Every `{{PLACEHOLDER}}` in this document is replaced with the value confirmed in the portal skill's
+> Step 3 before any instruction is acted on. Nothing here is pre-filled for a specific environment.
 
 | Variable | Description | Value |
 |---|---|---|
-| `CLIENT_NAME` | Display name for the portal (title case) | `viax Lab` |
-| `CLIENT_NAME_LOWER` | Lowercase version for copy/brand voice | `viax lab` |
-| `CLIENT_SLUG` | URL/folder-safe slug | `viax-lab` |
-| `REALM` | Keycloak realm name | `viax` |
-| `ENV` | viax environment | `lab` |
-| `CLIENT_ID` | OAuth client ID | `viax-ui` |
-| `AUTH_URL` | Keycloak base URL | `https://auth.viax.lab.viax.tech` |
-| `API_URL` | viax GraphQL endpoint | `https://api.viax.lab.viax.tech/graphql` |
-| `GITHUB_REPO` | Target GitHub repository | _(not set — scaffold locally)_ |
-| `PORTAL_SUBDIR` | Subdirectory within the repo | `/viax-lab-portal/` |
-| `EMBED_UXM_STUDIO` | Embed the UXM Studio editor at `/uxm`? (`yes`/`no`) — `no` = consume the env's published config only | `no` |
-| `LOCALIZATION` | Build the i18n layer? (`yes`/`no`) — `no` = English-only portal, steps 3 and 14 skipped | `yes` |
-| `PORTAL_ID` | Unique portal identifier, `vx-{CLIENT_SLUG}-{8 hex}` — suffix generated at build time via `openssl rand -hex 4`, never hand-invented | _(generated fresh per build)_ |
-| `GENERATED_AT` | Generation date, `YYYY-MM-DD` | _(today at build time)_ |
+| `CLIENT_NAME` | Display name for the portal (title case) | `{{CLIENT_NAME}}` |
+| `CLIENT_NAME_LOWER` | Lowercase version for copy/brand voice | `{{CLIENT_NAME_LOWER}}` |
+| `CLIENT_SLUG` | URL/folder-safe slug | `{{CLIENT_SLUG}}` |
+| `REALM` | Keycloak realm name | `{{REALM}}` |
+| `ENV` | viax environment | `{{ENV}}` |
+| `CLIENT_ID` | OAuth client ID | `{{CLIENT_ID}}` |
+| `AUTH_URL` | Keycloak base URL | `{{AUTH_URL}}` |
+| `API_URL` | viax GraphQL endpoint | `{{API_URL}}` |
+| `SCHEMA_API` | bcore Schema API version of the environment (`v1`/`v2`), derived in Step 3 | `{{SCHEMA_API}}` |
+| `GITHUB_REPO` | Target GitHub repository — blank = scaffold locally | `{{GITHUB_REPO}}` |
+| `PORTAL_SUBDIR` | Subdirectory within the repo | `{{PORTAL_SUBDIR}}` |
+| `EMBED_UXM_STUDIO` | Embed the UXM Studio editor at `/uxm`? (`yes`/`no`) — `no` = consume the env's published config only | `{{EMBED_UXM_STUDIO}}` |
+| `THEME_PICKER` | Read-only theme picker in the header? (`yes`/`no`) | `{{THEME_PICKER}}` |
+| `LOCALIZATION` | Build the i18n layer? (`yes`/`no`) — `no` = English-only portal, steps 3 and 14 skipped | `{{LOCALIZATION}}` |
+| `PORTAL_ID` | Unique portal identifier, `vx-{CLIENT_SLUG}-{8 hex}` — suffix generated at build time via `openssl rand -hex 4`, never hand-invented | `{{PORTAL_ID}}` |
+| `GENERATED_AT` | Generation date, `YYYY-MM-DD` | `{{GENERATED_AT}}` |
 
 ---
 
 ## Project Overview
 
-Build a **customer-facing portal** for **viax Lab** (a demo environment of the viax revenue orchestration platform). This portal is a fully authenticated, multi-tenant B2B application where customers log in and interact with their business transactions, products, and account information — all backed by viax's GraphQL API.
+Build a **customer-facing portal** for **{{CLIENT_NAME}}** on the viax revenue orchestration platform (realm `{{REALM}}`, environment `{{ENV}}`). This portal is a fully authenticated, multi-tenant B2B application where customers log in and interact with their business transactions, products, and account information — all backed by viax's GraphQL API.
 
-The portal ships with four **fixed pages**: Dashboard, Products, Account, and Admin — plus a fifth, **UXM Studio** (`/uxm`), only when `{{EMBED_UXM_STUDIO}} = yes` (off by default). All additional transactional pages (orders, invoices, subscriptions, etc.) are **dynamically scaffolded** at generation time by introspecting the active Business Interaction Execution Model (BEM) of the `viax` realm via the MCP server — see [BEM Discovery & Dynamic Route Generation](#bem-discovery--dynamic-route-generation).
+The portal ships with four **fixed pages**: Dashboard, Products, Account, and Admin — plus a fifth, **UXM Studio** (`/uxm`), only when `{{EMBED_UXM_STUDIO}} = yes` (off by default). All additional transactional pages (orders, invoices, subscriptions, etc.) are **dynamically scaffolded** at generation time by introspecting the active Business Interaction Execution Model (BEM) of the `{{REALM}}` realm via the MCP server — see [BI Types & Dynamic Route Generation](#bi-types--dynamic-route-generation) and the [`viax-bem-discovery`](../../viax-bem-discovery/SKILL.md) skill.
 
 The design language features a **greyscale/neutral palette**, clean typography, generous whitespace, rounded cards, and subtle shadows. The portal supports **runtime theming** by always loading the published **UXM Studio** config (the UXM config's `uxmStudio` key) on boot via `getUxmConfig` and applying it portal-wide through a generated global stylesheet — styles are authored in the standalone, env-bound UXM Studio app. **Embedding that editor inside the portal at `/uxm` is optional and off by default** (`{{EMBED_UXM_STUDIO}}`); there is no custom theme panel to build either way — see [Runtime Theming](#runtime-theming--consume-the-uxm-studio-config-optionally-embed-the-editor-at-uxm).
 
-**Repository:** `_(not set — scaffold locally)_`
-**Subdirectory:** All portal code lives in `/viax-lab-portal/` — wipe existing contents and start fresh.
+**Repository:** `{{GITHUB_REPO}}` (blank = scaffold locally)
+**Subdirectory:** All portal code lives in `{{PORTAL_SUBDIR}}` — wipe existing contents and start fresh, under the
+**wipe guard** in the portal skill's Step 4 (never the repository root, the home directory or a
+non-portal directory without asking).
 
 ---
 
@@ -46,7 +51,7 @@ The design language features a **greyscale/neutral palette**, clean typography, 
    ```
    Authorization: Bearer <session.accessToken>
    ```
-   This is enforced by the Axios request interceptor in `lib/graphql-client.js`. No GraphQL call should bypass this interceptor.
+   This is enforced by the Axios request interceptor in `lib/graphql-client.js` ([`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md), rule 5). No GraphQL call should bypass this interceptor.
 
 2. **Dev server port** — The development server must be configured to start on **port 9000**. Set in `vite.config.js` under `server.port`:
    ```javascript
@@ -56,9 +61,10 @@ The design language features a **greyscale/neutral palette**, clean typography, 
 
 3. **Products listing layout** — The `/products` listing page must display products as **horizontal line items** (not a grid). Each item is a full-width row containing: product image on the left, then name, ID, description, and category. Use a consistent image placeholder when no image URL is available.
 
-4. **Portal identity stamp (MANDATORY)** — Every generated portal carries a unique identity so deployed portals can be told apart. Three pieces, all required:
-
-   **a. `package.json` — the `"portal"` metadata block** (top-level custom field; npm ignores it, nothing breaks). This is the source of truth:
+4. **Portal identity stamp (MANDATORY)** — the three pieces (the `portal` block in `package.json`,
+   `__PORTAL_META__` through Vite's `define`, the boot stamp), how to read the ID back and the build
+   check are owned by [`viax-uxm-theming`](../../viax-uxm-theming/SKILL.md) → *App identity — the
+   `portal` block*. The portal's values:
 
    ```json
    {
@@ -74,31 +80,10 @@ The design language features a **greyscale/neutral palette**, clean typography, 
    }
    ```
 
-   `id` = `vx-{{CLIENT_SLUG}}-{8 hex}` where the hex suffix comes from actually running `openssl rand -hex 4` — never invent it by hand; a made-up suffix defeats the uniqueness guarantee across regenerations of the same client.
-
-   **b. `vite.config.js` — expose the block to the bundle.** `package.json` is not deployed with the built app, so the metadata must be compiled in via `define`:
-
-   ```javascript
-   import { defineConfig } from 'vite'
-   import react from '@vitejs/plugin-react'
-   import path from 'path'
-   import { readFileSync } from 'fs'
-
-   const pkg = JSON.parse(readFileSync(path.resolve(__dirname, 'package.json'), 'utf-8'))
-
-   export default defineConfig({
-     plugins: [react()],
-     define: {
-       __PORTAL_META__: JSON.stringify(pkg.portal ?? null),
-     },
-     server: { port: 9000 },
-     // …aliases etc.
-   })
-   ```
-
-   **c. `main.jsx` — stamp the running app.** On boot, before auth init, append a `<meta name="viax-portal-id">` tag to `<head>` and log the identity to the console, so any deployed portal is identifiable straight from the DOM/DevTools without source access (the full `stampPortalId()` code is in the App Entry Point block under Authentication).
-
-   Extraction: from source/CI — `jq -r .portal.id package.json`; from a deployed portal — read the meta tag or the `[viax] portal …` console line. **Verification is part of the build:** after `npm run build`, `grep -o "{{PORTAL_ID}}" dist/assets/*.js` must match.
+   `vite.config.js` adds `define: { __PORTAL_META__: JSON.stringify(pkg.portal ?? null) }` next to
+   `server: { port: 9000 }`; `stampPortalId()` is in the portal's `main.jsx` under *Authentication*.
+   `generator: "viax-build-portal"` is what the wipe guard (portal skill, Step 4) looks for. Before
+   calling the build done: `npm run build && grep -o "{{PORTAL_ID}}" dist/assets/*.js` must match.
 
 ---
 
@@ -110,26 +95,32 @@ The design language features a **greyscale/neutral palette**, clean typography, 
 | Routing | React Router v6 |
 | UI Components | **`@viax.io/uxm`** — Viax UXM React primitive library (76 BEM-classed components). **Do NOT** use shadcn/ui, Tailwind, or any other UI library. |
 | Styling | Plain CSS — design tokens from `uxm/tokens.css` (`--color-*`). Layout via `<Stack>`, `<Cluster>`, `<ResponsiveGrid>` primitives. No Tailwind. Inline `style` for one-off tweaks. |
-| HTTP Client | Axios (configured as a singleton with interceptors) |
+| HTTP Client | Axios — one client and `execute()`, the [`viax-graphql-data-layer`](../../viax-graphql-data-layer/SKILL.md) layer |
 | Server State | TanStack Query v5 |
 | URL State | React Router `useSearchParams` |
 | Client State | Zustand |
-| Auth | keycloak-js (OAuth 2.0 OIDC, browser-only) |
+| Auth | keycloak-js (OAuth 2.0 OIDC, browser-only) — the [`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md) layer |
 | Language | JavaScript (ES2024+, JSX) |
 | Localization | **Only when `{{LOCALIZATION}} = yes`.** Portal-owned locale files — generated `src/i18n/locales/*.json` are the single source of UI copy, wrapped in `UxmLocaleProvider` from `uxm/ui` for formatting. Entity data (`maName`, `bpStatus.name`, …) is localized by the server from the `X-Viax-User-Locale` header and needs nothing else. **Do NOT** add i18next, react-intl, LinguiJS or any other i18n runtime — the whole topic is the [`viax-localization`](../../viax-localization/SKILL.md) skill. |
 
 ### `@viax.io/uxm` — required UI library
 
-The portal **must** use `@viax.io/uxm` for every interactive UI primitive. See the dedicated [`viax-uxm` skill](../../viax-uxm/SKILL.md) for the authoritative component catalog, design-token reference, and quick-recipes (or browse the library source at [github.com/viax-io/uxm](https://github.com/viax-io/uxm)).
+Every UI primitive comes from `@viax.io/uxm`. Two skills govern it, and this MetaPrompt restates
+neither:
 
-**Hard rules from that skill (apply here too):**
+- **[`viax-uxm-conventions`](../../viax-uxm-conventions/SKILL.md) — the source of truth for how the
+  UI is built.** The one rule (shipped atoms + tokens only: no hand-rolled replica of an atom, no
+  invented token, no hard-coded colour, sentence-case labels, real glyphs), the reusable patterns
+  (listing shell, flexpanes, status maps), the composition gotchas (no `Card` around a
+  `DataTable` / `DetailSection`, columns mean `DataTable`, …), spacing, responsive, and the host
+  stylesheet. Read it before writing the first component.
+- **[`viax-uxm`](../../viax-uxm/SKILL.md) — the library facts.** Component catalog and props,
+  tokens, quick-recipes, and its *Hard rules* (prop shapes, imports through the `uxm` alias, no
+  `uxm/previews` in app code).
 
-1. **Never handroll a div** with the same intent as an existing `@viax.io/uxm` primitive. The library covers ~76 patterns — pick the right one (Button*, Card, FormField, DataTable, List, StatCard, PageShell, AppSidebar, AppTopBar, PageHeader, DetailSection, PropertyField, EmptyState, Loader, Tag, Banner, Avatar, Thumbnail, ToggleSwitch, TimelineEntry, BackLink, …).
-2. **Never inline literal hex** when a `--color-*` design token covers the intent. Use `var(--color-accent-bold)`, `var(--color-surface)`, etc.
-3. **Import from `uxm/ui`**, not the root `@viax.io/uxm`. Tokens from `uxm/tokens`.
-4. **FormField owns labels** — `<TextInput>`, `<Select>`, `<Textarea>`, etc. render bare; always wrap them in `<FormField label="…">`.
-5. **Never import `uxm/previews`** into application code — those are for MODO host shells only.
-6. **Never wrap `<DataTable>` or `<DetailSection>` in `<Card>`** — both already render their own border + radius, so the wrapper produces a visible double-border. See "UXM Layout & Styling Gotchas" under the Design System section for the full set of gotchas + the canonical `globals.css` baseline that must be in place from day one.
+The portal is the app that conventions pairs with: this MetaPrompt supplies only the
+realization — the stylesheet values (*Portal stylesheet and fonts* below), the shell and the page
+specs.
 
 ### Installing `@viax.io/uxm` — as the `uxm` alias
 
@@ -144,11 +135,12 @@ Install via `npm i uxm@npm:@viax.io/uxm@latest`. **Always install `@latest`** so
 Create `.env.local` with exactly these variables (Vite exposes only `VITE_`-prefixed vars to the browser):
 
 ```properties
-VITE_REALM=viax
-VITE_ENV=lab
-VITE_CLIENT_ID=viax-ui
-VITE_AUTH_URL=https://auth.viax.lab.viax.tech
-VITE_API_URL=https://api.viax.lab.viax.tech/graphql
+VITE_REALM={{REALM}}
+VITE_ENV={{ENV}}
+VITE_CLIENT_ID={{CLIENT_ID}}
+VITE_AUTH_URL={{AUTH_URL}}
+VITE_API_URL={{API_URL}}
+VITE_SCHEMA_API={{SCHEMA_API}}
 VITE_USE_MOCK_AUTH=false
 VITE_USE_MOCK_DATA=false
 ```
@@ -161,37 +153,36 @@ Also create `.env.example` as a copy for reference.
 
 ## Authentication
 
-The portal uses **keycloak-js** for direct Keycloak OIDC integration. All auth logic runs in the browser — no server-side session handling. When `VITE_USE_MOCK_AUTH=true`, a mock auth path is used instead that bypasses Keycloak entirely.
+**This whole topic lives in its own skill: [`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md).**
+Read it and follow it — the `keycloak-js` singleton, `onLoad: 'login-required'` (Keycloak's form
+*is* the login screen, so the portal ships no login page and no `/login` route), the mandatory
+`checkLoginIframe: false` + refresh interval, the in-memory auth store without roles,
+`ProtectedRoute`, the Bearer interceptor and the 401 handler, sign-out, mock auth as a Vite mode,
+and the realm checks (OIDC discovery, the client's redirect URIs). Copy its
+[`reference-implementation.md`](../../viax-keycloak-auth/references/reference-implementation.md);
+do not re-derive any of it here.
 
-### Keycloak Singleton
+The portal-specific decisions this MetaPrompt adds on top:
 
-Create `src/lib/keycloak.js`:
-
-```javascript
-import Keycloak from 'keycloak-js'
-
-const keycloak = new Keycloak({
-  url: import.meta.env.VITE_AUTH_URL,
-  realm: import.meta.env.VITE_REALM,
-  clientId: import.meta.env.VITE_CLIENT_ID,
-})
-
-export default keycloak
-```
-
-### App Entry Point
-
-Initialize Keycloak before mounting React. Create `src/main.jsx`:
+- **Values.** `VITE_AUTH_URL={{AUTH_URL}}`, `VITE_REALM={{REALM}}`, `VITE_CLIENT_ID={{CLIENT_ID}}`
+  (see *Environment Variables*); the mock user's e-mail is `mock@{{CLIENT_SLUG}}.example`.
+- **Mock mode.** Ship `.env.mock.local` / `.env.mock.example` and the `dev:mock` script
+  (`vite --mode mock`) from the skill.
+- **Dev port.** The portal runs on port 9000 (General Note #2). Before the first login, run the
+  skill's redirect-URI check for `http://localhost:9000/` against `{{CLIENT_ID}}`; a 400 is a
+  realm setting to report, not something to work around.
+- **Sign-out** sits in `<AppTopBar actions>` (order under *Localization & i18n → Header order*),
+  and drops the viax-access probe cache before `keycloak.logout()`.
+- **`main.jsx`** is the skill's entry point plus the portal's stylesheets and the identity stamp
+  (General Note #4) — this is the full file. When `{{EMBED_UXM_STUDIO}} = yes`, also import
+  `uxm/studio.css` right before `globals.css` (so the studio's `:root` brand defaults sit under the
+  portal's base); when `no`, the file is exactly as below.
 
 ```jsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import 'uxm/tokens.css'
 import 'uxm/ui.css'
-// MODO UXM Studio styles (Tailwind v4). Import BEFORE globals.css so the studio's
-// unlayered `:root` brand defaults sit UNDER the portal brand base — globals.css
-// wins app-wide, while the studio's own runtime <style> still wins live on /uxm.
-import 'uxm/studio.css'
 import '@/styles/globals.css'
 import App from './App'
 import keycloak from './lib/keycloak'
@@ -216,13 +207,11 @@ async function init() {
     useAuthStore.getState().setMockSession()
   } else {
     await keycloak.init({
-      onLoad: 'login-required',     // Keycloak owns the login screen — see the note below
+      onLoad: 'login-required',
       pkceMethod: 'S256',
-      checkLoginIframe: false,      // MANDATORY — see the CSP note below
+      checkLoginIframe: false,      // MANDATORY — see viax-keycloak-auth, rule 2
     })
     useAuthStore.getState().syncFromKeycloak(keycloak)
-    // Proactive token refresh — update when < 60s remaining. REQUIRED once
-    // checkLoginIframe is off: nothing else keeps the token alive.
     setInterval(() => keycloak.updateToken(60), 30_000)
   }
 
@@ -236,178 +225,8 @@ async function init() {
 init()
 ```
 
-### Auth Store
-
-The `auth-store` holds all session state derived from Keycloak. **Raw tokens are stored in memory only — never in localStorage or cookies.**
-
-```javascript
-// src/stores/auth-store.js
-import { create } from 'zustand'
-
-const useAuthStore = create((set) => ({
-  accessToken: null,
-  user: null,
-
-  syncFromKeycloak(keycloak) {
-    const parsed = keycloak.tokenParsed ?? {}
-    set({
-      accessToken: keycloak.token,
-      user: {
-        id: parsed.sub ?? null, // identity key for the access probes' cache (viax-access)
-        name: parsed.name ?? parsed.preferred_username ?? 'User',
-        email: parsed.email ?? '',
-      },
-    })
-    // Keep accessToken fresh after each silent refresh
-    keycloak.onTokenRefreshed = () => set({ accessToken: keycloak.token })
-  },
-
-  setMockSession() {
-    set({
-      accessToken: 'mock-access-token-' + Date.now(),
-      user: { id: 'mock-user', name: 'Mock User', email: 'mock@viax-lab.io' },
-    })
-  },
-}))
-
-export default useAuthStore
-```
-
-### Auth Guard (Protected Route)
-
-Create `src/routes/ProtectedRoute.jsx` to guard authenticated routes in the React
-Router tree. With `onLoad: 'login-required'` a visitor without a session never
-reaches React, so arriving here token-less means the session ended or init
-failed — re-enter the flow rather than render a portal-owned sign-in page (there
-is none):
-
-```jsx
-import { useEffect } from 'react'
-import { Loader } from 'uxm/ui'
-import useAuthStore from '@/stores/auth-store'
-import keycloak from '@/lib/keycloak'
-
-export default function ProtectedRoute({ children }) {
-  const accessToken = useAuthStore((s) => s.accessToken)
-  useEffect(() => {
-    if (!accessToken && !isMockAuth) keycloak.login()
-  }, [accessToken])
-  if (!accessToken) return <Loader />
-  return children
-}
-```
-
-Wrap all authenticated routes in `<ProtectedRoute>` in the router definition (`src/routes/index.jsx`).
-
-#### `checkLoginIframe: false` is MANDATORY — the realm refuses to be framed
-
-`keycloak-js` defaults `checkLoginIframe` to **true**, which embeds
-`/realms/{realm}/protocol/openid-connect/login-status-iframe.html` from the auth
-host and polls it every few seconds for session status. viax realms serve a
-`frame-ancestors` Content Security Policy that refuses framing, so the browser
-blocks it and the console fills with:
-
-```
-Framing 'https://auth.{realm}.{env}.viax.io/' violates the following
-Content Security Policy directive: "frame-ancestors 'self' http:* https:*".
-The request has been blocked.
-```
-
-(Note that policy is also malformed — `http:*` / `https:*` are not valid CSP
-source expressions; a browser that rejects them falls back to `'self'` alone, so
-**no** origin can frame the auth host, not even over https.)
-
-Consequences if you omit the flag: the error above on every load, a
-session-status check that silently never works, and — because the adapter
-believes the iframe is handling it — no other mechanism keeping the token fresh.
-Always pair `checkLoginIframe: false` with the explicit
-`setInterval(() => keycloak.updateToken(60), 30_000)` refresh.
-
-#### The login screen belongs to Keycloak
-
-**The portal generates no pre-login page and does not touch that screen.**
-Keycloak's hosted credential form *is* the login screen: it is themed and
-localized by the realm's own built-in internationalization, and nothing about it
-is the portal's business — no i18n, no locale parameter, no page in front of it
-whose only job is a redirect button.
-
-Realm side (ops, not code): Realm settings → Localization →
-*Internationalization* enabled, with the supported locales and default set to
-match `getSupportedLocales`. Keycloak picks the form's language itself.
-
-Custom copy or branding on the credential form (beyond translation) requires a
-custom Keycloak **theme**. That is a separate deliverable, owned by whoever owns
-the realm — not something the portal can do from its own codebase.
-
-#### `onLoad`: `login-required`
-
-`login-required` redirects an unauthenticated visitor to the auth server
-immediately, before React mounts. That is what makes Keycloak's own form the
-login screen and lets the portal ship no pre-login page at all — one screen,
-owned by whoever owns the realm, already themed and already translated.
-
-It is also the only `onLoad` mode in which `keycloak.init({ locale })` takes
-effect, which is how the form gets the right language (see above).
-
-Do **not** use `check-sso` here: it renders the portal instead of redirecting,
-which only makes sense if the portal has its own sign-in surface to show. Do
-**not** set `silentCheckSsoRedirectUri` either — it switches to an iframe
-strategy and reintroduces the CSP failure above.
-
-### Auth Architecture
-
-**Session flow:**
-1. `main.jsx` calls `keycloak.init({ onLoad: 'login-required', checkLoginIframe: false, … })`
-2. If no active session → Keycloak redirects to its own login page immediately, before React mounts
-3. After login → Keycloak redirects back to the app with tokens
-4. `syncFromKeycloak` stores `accessToken` and parsed user info into Zustand
-5. Proactive token refresh runs every 30s (silently refreshes when < 60s remaining)
-6. Sign-out calls `keycloak.logout()` — Keycloak handles session termination
-
-**User info shape** (available via `useAuthStore()`):
-```javascript
-{
-  accessToken: string,           // Bearer token for API calls
-  user: { id, name, email },     // parsed from Keycloak token; id = `sub`
-}
-```
-
-The store holds **no roles**. What a user may see is answered by the API at runtime — see
-*"Access & permissions"*; role names are never compared in the portal's code.
-
-### Mock Auth (when `VITE_USE_MOCK_AUTH=true`)
-
-When mock auth is enabled, `main.jsx` calls `setMockSession()` instead of initializing Keycloak. The mock session populates the same Zustand store shape with fake data so all downstream code works identically.
-
-### Token Usage in Axios
-
-The Axios request interceptor reads `accessToken` directly from the auth store's in-memory state:
-
-```javascript
-// lib/graphql-client.js
-import useAuthStore from '@/stores/auth-store'
-
-axiosInstance.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken
-  if (token) config.headers.Authorization = `Bearer ${token}`
-  return config
-})
-
-axiosInstance.interceptors.response.use(
-  (res) => res,
-  async (error) => {
-    if (error.response?.status === 401) {
-      const { default: keycloak } = await import('@/lib/keycloak')
-      keycloak.logout()
-    }
-    return Promise.reject(error)
-  }
-)
-```
-
-### Sign-Out
-
-Call `keycloak.logout()` (imported from `src/lib/keycloak.js`) to end the session and redirect back to Keycloak. **Under mock auth render no sign-out control at all** — the mock session is minted at boot and there is nothing to end, so a button that cannot work is worse than its absence.
+The auth store holds **no roles**; what a user may see is answered by the API at runtime — see
+*"Access & permissions"*.
 
 ---
 
@@ -440,124 +259,6 @@ Use `--uxm-{component}-*` CSS vars via inline `style` for one-off tweaks. The co
 <Card style={{ '--uxm-card-padding': '24px' }}>…</Card>
 ```
 
-### Legacy `--primary-*` / `--neutral-*` token table (deprecated — for reference only)
-
-> The viax customer-facing palette below is the OLD viax design system, kept here as reference for visual style. **Do NOT declare these in app code.** They are superseded by `@viax.io/uxm`'s canonical `--color-*` tokens (table above). Map any old reference (e.g. `--primary-default`) to its `--color-*` equivalent (e.g. `--color-accent-bold` for the primary brand colour). Map the old `--font-family` (Roboto) to `var(--brand-font, var(--font-sans))` — never re-declare a hardcoded family (see the Typography note under Runtime Theming). This assumes the mandatory `:root { --font-sans: … }` bridge from the `globals.css` baseline is present; without it that chain resolves to nothing and the page renders in Times New Roman.
-
-```css
---primary-default: #5F859C;
-    --secondary-default: #212121;
-    --tertiary-light: #6B7476;
-    --tertiary-dark: #393F41;
-    --light-default: #ffffff;
-    --neutral-1: #f5f6f7;
-    --neutral-2: #dfdfe2;
-    --neutral-3: #bfbfc5;
-    --neutral-4: #757680;
-    --neutral-5: #585660;
-    --dark-default: #39373e;
-    --light-default-rgb: 255, 255, 255;
-    --primary-default-rgb: 95, 133, 156;
-    --dark-default-rgb: 57, 63, 65;
-    --primary-light-1: #D4DFE6;
-    --primary-light-2: #D4DFE6;
-    --primary-light-3: #B5CCD9;
-    --primary-dark-1: #3D5569;
-    --primary-dark-2: #3D5569;
-    --primary-dark-3: #1F2D39;
-    --secondary-light-1: #F5F5F5;
-    --secondary-light-2: #B8B8B8;
-    --secondary-light-3: #858585;
-    --secondary-dark-1: #F5F5F5;
-    --secondary-dark-2: #B8B8B8;
-    --secondary-dark-3: #858585;
-    --feedback-neutral-light: #f2f8ff;
-    --feedback-neutral: #4c8fd9;
-    --feedback-success-light: #f2fff2;
-    --feedback-success-default: #458246;
-    --feedback-success-dark-1: #366637;
-    --feedback-danger-light: #fff2f4;
-    --feedback-danger-default: #c23e55;
-    --feedback-danger-dark-1: #a63549;
-    --feedback-warning-light: #fffdf2;
-    --feedback-warning: #ffde59;
-    --shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.1), 0 0 1px 0 rgba(52, 47, 47, 0.1);
-    --shadow-2: 0 2px 4px 0 rgba(52, 47, 47, 0.2), 0 0 1px 0 rgba(52, 47, 47, 0.1);
-    --shadow-3: 0 4px 8px 0 rgba(52, 47, 47, 0.2), 0 0 2px 0 rgba(52, 47, 47, 0.1);
-    --shadow-4: 0 8px 16px 0 rgba(52, 47, 47, 0.2), 0 2px 4px 0 rgba(52, 47, 47, 0.1);
-    --shadow-5: 0 16px 24px 0 rgba(52, 47, 47, 0.2), 0 2px 8px 0 rgba(52, 47, 47, 0.1);
-    --shadow-6: 0 20px 32px 0 rgba(0, 0, 0, 0.3), 0 2px 8px 0 rgba(52, 47, 47, 0.1);
-    --shadow-input: 0 0 1px 4px var(--secondary-light-1);
-    --shadow-around-default: 0px 0px 1px 0px rgba(52, 47, 47, 0.10), 0px 1px 2px 0px rgba(0, 0, 0, 0.10);
-    --shadow-around-primary: 0px 0px 0px 4px var(--primary-light-2);
-    --background-1: rgba(88, 86, 96, 0.5);
-    --background-light-1: #fafafa;
-    --background: url(data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle r="2" fill="black" fill-opacity="0.1" /></svg>) repeat var(--neutral-1);
-    --padding-xs: 2px;
-    --padding-s: 4px;
-    --padding-m: 8px;
-    --padding-ms: 12px;
-    --padding-l: 16px;
-    --padding-ls: 20px;
-    --padding-xl: 24px;
-    --padding-xls: 28px;
-    --padding-xxl: 32px;
-    --gutter: 16px;
-    --padding--xs: -2px;
-    --padding--s: -4px;
-    --padding--m: -8px;
-    --padding--ms: -12px;
-    --padding--l: -16px;
-    --padding--ls: -20px;
-    --padding--xl: -24px;
-    --padding--xls: -28px;
-    --padding--xxl: -32px;
-    --radius: 4px;
-    --radius-xs: 2px;
-    --radius-s: 4px;
-    --radius-m: 8px;
-    --radius-ms: 12px;
-    --radius-l: 16px;
-    --font-family: Roboto, sans-serif;
-    --font-size-xs: 12px;
-    --font-size-sm: 12px;
-    --font-size-md: 13px;
-    --font-size-lg: 13px;
-    --font-size-xl: 16px;
-    --font-size-xxl: 16px;
-    --font-size-xxxl: 20px;
-    --font-weight-regular: 400;
-    --font-weight-medium: 500;
-    --font-weight-bold: 700;
-    --text-primary: var(--primary-default);
-    --text-secondary: var(--secondary-default);
-    --text-light: var(--light-default);
-    --text-neutral: var(--neutral-4);
-    --text-dark: var(--dark-default);
-    --text-disable: var(--neutral-2);
-    --font-size-huge: 24px;
-    --font-weight-bolt: 700;
-    --icon-size-xs: 12px;
-    --icon-size-sm: 14px;
-    --icon-size-md: 16px;
-    --icon-size-lg: 18px;
-    --icon-size-xl: 20px;
-    --icon-size-xxl: 22px;
-    --icon-size-xxxl: 24px;
-    --icon-size-huge: 32px;
-    --icon-color-primary: var(--primary-default);
-    --icon-color-secondary: var(--secondary-default);
-    --icon-color-light: var(--light-default);
-    --icon-color-neutral: var(--neutral-4);
-    --icon-color-dark: var(--dark-default);
-    --icon-size: var(--icon-size-md);
-    --icon-color: var(--icon-color-neutral);
-    --icon-color-hover: var(--neutral-4);
-    --icon-size-small: var(--icon-size-xs);
-    --header-height: 72px;
-    --main-column-width: 1200px;
-```
-
 ### Reference Aesthetic
 
 Inherits directly from `@viax.io/uxm`:
@@ -568,131 +269,59 @@ Inherits directly from `@viax.io/uxm`:
 - **Top bar** — `<AppTopBar search={…} actions={…}>` with `<InputWithIcon>` and `<Avatar>` + `<InlineAction>` sign-out.
 - **Dashboard widgets** — `<StatCard>` for KPIs, recharts wrapped in `<Card>` for charts, `<DataTable>` for tabular activity feeds (Recent orders etc.), `<Checkbox>` for to-do lists, `<EmptyState>` / `<Loader>` for empty/loading.
 
-### UXM Layout & Styling Gotchas (mandatory)
+### Portal stylesheet and fonts
 
-These rules eliminate the most common visual defects the generator otherwise produces. **Apply on the first pass — do not wait for review.**
+The rules are [`viax-uxm-conventions`](../../viax-uxm-conventions/SKILL.md) → *The host
+stylesheet*: `viax-uxm`'s baseline, then only `--uxm-*` knobs on `:root` — **no `.uxm-*`
+selector and no `--color-*` declaration** in portal CSS. Below are the portal's values; ship them
+on the first pass.
 
-**1. Never wrap `DataTable` or `DetailSection` in `<Card>`.**
-
-Both components are *already* card-like containers (own border, own `border-radius: 8px`, own padding). Wrapping them in `<Card>` produces a visible double border and double-rounded corners.
-
-```jsx
-// ❌ Wrong — double border, double radius
-<Card shadow>
-  <DataTable columns={cols} rows={rows} rowKey={(r) => r.id} />
-</Card>
-<Card shadow style={{ padding: 24 }}>
-  <DetailSection icon={<Icon glyph="bell" />} title="Notifications">…</DetailSection>
-</Card>
-
-// ✅ Right — render directly
-<DataTable columns={cols} rows={rows} rowKey={(r) => r.id} />
-<DetailSection icon={<Icon glyph="bell" />} title="Notifications">…</DetailSection>
-```
-
-If you need a heading above a `DataTable`, use a `<Stack>` with a plain `<div>` for the title — not a `Card`.
-
-**2. Tabular data = `DataTable`, not `List` + `ListItem`.**
-
-Use `<List>` / `<ListItem>` only for *vertical lists of items where each row is a free-form card-like entry* (e.g. a notification feed). For anything that has *columns* — IDs, names, statuses, amounts, categories — use `<DataTable>` with typed `columns`. This applies to Products, Recent orders, Admin sections, and any BI list.
-
-**3. To-do lists / checkable items = `Checkbox`, not `<Icon glyph="check-circle">` in a List.**
-
-```jsx
-const [tasks, setTasks] = useState(TASKS)
-const toggleTask = (id) =>
-  setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)))
-
-<Stack gap={10}>
-  {tasks.map((t) => (
-    <Checkbox key={t.id} checked={t.done} onChange={() => toggleTask(t.id)}>
-      <span style={t.done ? { textDecoration: 'line-through', color: 'var(--color-text-muted)' } : undefined}>
-        {t.label}
-      </span>
-    </Checkbox>
-  ))}
-</Stack>
-```
-
-**4. `<Icon>` inside `<InputWithIcon>` needs no `size`.**
-
-`<Icon>` defaults to `size={24}`. The library now sizes the glyph from `--uxm-input-with-icon-icon-size` (16px) itself, so leave `size` off and change the glyph through the variable — the padding follows it. On versions before that fix the variable reserved padding only, and an un-sized `<Icon>` overflowed the slot; the `globals.css` rule below is that back-stop, harmless on current versions because it sets exactly what the library already sets.
-
-**5. Required `globals.css` baseline.**
-
-The library defaults leave a few visible inconsistencies (mixed radii, asymmetric padding, broken `calc` when accent-width is unitless). Ship this baseline so the first render already looks right:
+**1. `src/styles/globals.css`** — the full file:
 
 ```css
-/* src/styles/globals.css — loaded AFTER uxm/tokens.css and ui.css */
+/* src/styles/globals.css — loaded AFTER uxm/tokens.css and uxm/ui.css.
+   Baseline: viax-uxm quick-recipes § 0. Knob values: this portal's.
+   No .uxm-* selectors, no --color-* declarations (viax-uxm-conventions). */
 
-/* Give the document a definite height. <PageShell> is `height:100%` and its
-   __content area is `overflow:auto` — it is DESIGNED to bound itself to the
-   viewport and scroll the content internally (sidebar + top bar stay fixed).
-   That only works if html/body/#root have a height; otherwise height:100%
-   collapses to content height, the whole page grows with tall content (e.g. the
-   UXM Studio's long component list), and you must scroll the entire page —
-   centered content like the studio canvas ends up far below the fold. */
+/* The library ships no global reset; several atoms size themselves assuming one. */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* PageShell bounds itself to the viewport and scrolls its content area —
+   only if the document has a definite height. */
 html, body, #root { height: 100%; }
 
-/* MANDATORY --font-sans bridge — without it the ENTIRE portal renders in Times
-   New Roman. uxm/tokens.css declares `--font-sans: var(--font-inter)` ONLY
-   inside its `@theme inline { … }` block, which is a Tailwind v4 at-rule. This
-   portal is not a Tailwind host, so the browser does not understand `@theme`,
-   DROPS the whole block, and --font-sans never exists. With no brand font
-   published --brand-font is unset too, so the `body` rule below would collapse to
-   the guaranteed-invalid value → the declaration becomes INVALID AT
-   COMPUTED-VALUE TIME → <body> falls back to `inherit`, i.e. the browser's
-   default serif. Every uxm atom is `font-family: inherit`, so that serif then
-   spreads through every component (mixed with the monospace PropertyField values,
-   which is why it looks like "several different fonts").
-   --font-inter IS declared in the real `:root`, so alias it — literal stack last. */
+/* MANDATORY --font-sans bridge. tokens.css declares --font-sans only inside a
+   Tailwind-only `@theme inline` block that browsers drop; without this alias the
+   whole portal renders in Times New Roman. --font-inter IS in the real :root. */
 :root {
   --font-sans: var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif);
 }
 
-/* Base typeface chain: Inter by default; when the published studio config carries
-   a brand font (Brand Settings → Typography), the applier's injected stylesheet
-   defines --brand-font and its own
-   `body { font-family: var(--brand-font) !important }` rule. Declaring the SAME
-   chain here keeps pre-applier paint on Inter (never the browser serif default)
-   and leaves a single source of truth — do NOT hardcode any other family.
-   Safe ONLY because of the --font-sans bridge above. Applied to html/#root too
-   so NOTHING in the tree can resolve to the browser serif via the html element. */
+/* Inter by default; a brand font published from UXM Studio wins via --brand-font
+   (the applier injects it). Never hardcode another family. */
 body { margin: 0; }
+
+/* Page colours from tokens — plain host text (the user name in AppTopBar actions)
+   inherits from <body>, which the library never styles: without this it stays
+   black in the dark theme. */
+body { color: var(--color-text); background-color: var(--color-surface); }
 html, body, #root { font-family: var(--brand-font, var(--font-sans)); }
 
-/* MANDATORY form-control inheritance — native <button>/<input>/<select>/<textarea>
-   do NOT inherit the document font; browsers give them their own UA default
-   (Arial / system UI). Every @viax.io/uxm atom already sets `font-family: inherit`,
-   but any RAW native control in portal code (a custom Menu/Listbox trigger, a
-   bare <button>, a plain <select>) silently renders in Arial next to Inter text.
-   Force inheritance once — element-level specificity, so uxm class rules and the
-   studio's injected overrides still win: */
+/* Native controls do not inherit the document font (UA default → Arial). */
 button, input, select, textarea { font: inherit; }
 
-/* There is no --font-mono token in tokens.css at all — anywhere a monospace
-   treatment is wanted (IDs in tables, PropertyField values), always pass the
-   literal fallback: font-family: var(--font-mono, monospace). */
+/* There is no --font-mono token: write var(--font-mono, monospace). */
 
 :root {
-  /* NOTE: do NOT declare the brand accent ramp (--color-accent*) here. The UXM
-     Studio config is the single source of truth for it — DEFAULT_UXM_CONFIG seeds
-     it, UxmConfigApplier injects it on mount, and BrandTokenStyles drives it live
-     on /uxm. Re-declaring it here creates a SECOND source that ghosts through after
-     a studio "Reset all" (the studio's inputs fall back to the library default
-     while these hardcoded values keep painting the buttons). The fallback when no
-     brand is set is the library default from uxm/tokens.css — exactly what
-     the studio shows. (Minor trade-off: a brief library-default flash before React
-     mounts and the applier runs; the localStorage cache covers returning users.) */
-
-  /* Inputs — make the bg match Card (white), not Surface (gray) */
+  /* Inputs on the card colour, not the grey surface. */
   --uxm-input-with-icon-bg: var(--color-card);
 
-  /* PageShell breathing room */
+  /* Shell. */
   --uxm-page-shell-content-padding: 24px 32px;
+  --uxm-app-top-bar-height: 72px;
+  --uxm-app-top-bar-padding-x: 24px;
 
-  /* Unify all panel radii. Library defaults: Card 4px, DetailSection 4px,
-     StatCard 8px, DataTable 8px → bump everything to 8px. */
+  /* One panel radius: Card and DetailSection default to 4px, DataTable is 8px. */
   --uxm-card-radius: 8px;
   --uxm-detail-section-radius: 8px;
 
@@ -704,30 +333,17 @@ button, input, select, textarea { font: inherit; }
   --uxm-detail-section-accent-gap: 0px;
   --uxm-detail-section-padding: 28px;
 }
+```
 
-/* InputWithIcon: size nested <Icon> SVGs to the slot the input reserves.
-   Redundant on uxm versions that size the glyph themselves — it sets the same
-   declaration from the same variable — and the back-stop on earlier ones,
-   where <Icon>'s size=24 default overflowed the padding reservation. */
-.uxm-input-with-icon__icon svg {
-  width: var(--uxm-input-with-icon-icon-size, 16px);
-  height: var(--uxm-input-with-icon-icon-size, 16px);
-}
+When `{{EMBED_UXM_STUDIO}} = yes`, append the studio page's own class (it gives the studio's
+`h-full` root a definite height, so its component list and canvas scroll independently instead
+of stretching the page); the class is the one on `UxmStudioPage`'s root `<div>`:
 
-/* AppTopBar — widen padding so trailing actions don't hug the right edge. */
-.uxm-app-top-bar { padding: 0 24px; height: 72px; }
-
-/* Embedded UXM Studio (/uxm) — EMBED ONLY (include only when {{EMBED_UXM_STUDIO}} = yes).
-   Fill the now-viewport-bounded content area so the
-   studio's own `h-full` root resolves to a definite height and its panes
-   (component list + canvas) scroll independently. Without this the long component
-   list stretches the page and the demoed component centers in the middle of a very
-   tall column, requiring a full-page scroll to see it. The wrapper class must match
-   the one on UxmStudioPage's root <div> (`{{CLIENT_SLUG}}-uxm-studio`). */
+```css
 .{{CLIENT_SLUG}}-uxm-studio { height: 100%; }
 ```
 
-**6. Load Inter in `index.html`.**
+**2. Load Inter in `index.html`.**
 
 `uxm/tokens.css` only *references* the Inter family (`--font-inter`) — it bundles no font
 file. Without a loader the stack degrades to the system-UI fallbacks inside `--font-inter`
@@ -736,7 +352,7 @@ file. Without a loader the stack degrades to the system-UI fallbacks inside `--f
 > **Do not confuse that with the Times New Roman failure.** A serif page is a *different* bug: it
 > means `--font-sans` itself never resolved, because tokens.css only declares it inside the
 > Tailwind-only `@theme inline` block. Loading Inter does **not** fix that — the `:root
-> { --font-sans: … }` bridge in the `globals.css` baseline (item 5 above) does. Symptom triage:
+> { --font-sans: … }` bridge in the `globals.css` baseline (item 1 above) does. Symptom triage:
 > serif body text → missing bridge; sans-but-not-Inter → missing `<link>` below.
 
 Add the Google-Fonts link to `index.html` `<head>` (weights match the studio's brand-font emission):
@@ -750,53 +366,6 @@ Add the Google-Fonts link to `index.html` `<head>` (weights match the studio's b
 Only Inter is preloaded here — it's the default. A brand font chosen in Brand Settings →
 Typography is loaded at runtime by the applier's generated CSS (`@import` emitted by
 `generateOverridesCss`); do NOT preload other families.
-
-**7. `PropertyField`'s value is `children`, never a `value` prop.**
-
-```jsx
-// ❌ Wrong — silently renders an empty value cell
-<PropertyField label="Total" value={formatMoney(total)} />
-
-// ✅ Right
-<PropertyField label="Total">{formatMoney(total)}</PropertyField>
-```
-
-`ResponsiveGrid`'s `min` is a CSS length **string** (`"280px"`), not a bare number — a bare number
-emits an invalid, browser-dropped `minmax()`. `PropertyGrid` has no equivalent prop at all — its
-grid template (`auto-fill, minmax(120px, 1fr)`) is fixed; only its gaps are themable.
-
-**8. `PageHeader`'s `meta` renders inside a `<p>` — inline content only.**
-
-```jsx
-// ❌ Wrong — <div>-in-<p> nesting, hydration warning
-<PageHeader title={order.biName} meta={<Stack gap={4}>{order.biId}<span>{order.biCreatedAt}</span></Stack>} />
-
-// ✅ Right — string, <span>, or fragment only
-<PageHeader title={order.biName} meta={<>{order.biId} &middot; Created {order.biCreatedAt}</>} />
-```
-
-**9. Horizontal rows (party cards, avatar+name rows, button groups) = `Cluster`, not
-`Stack` with a `flexDirection: 'row'` override.**
-
-```jsx
-// ❌ Wrong — fights Stack's flex-column design
-<Stack gap={12} style={{ flexDirection: 'row' }}><Avatar .../><span>{party.paName}</span></Stack>
-
-// ✅ Right
-<Cluster gap={12} align="center"><Avatar .../><span>{party.paName}</span></Cluster>
-```
-
-**10. `BackLink` needs a real `href`, not just an `onClick`.**
-
-It renders as an `<a>` — an `onClick`-only usage breaks keyboard focus and right-click/open-in-new-tab.
-
-```jsx
-// ❌ Wrong
-<BackLink onClick={() => navigate('/orders')}>Back to orders</BackLink>
-
-// ✅ Right
-<BackLink href="/orders" onClick={(e) => { e.preventDefault(); navigate('/orders') }}>Back to orders</BackLink>
-```
 
 ### Runtime Theming — consume the UXM Studio config (optionally embed the editor at `/uxm`)
 
@@ -869,7 +438,8 @@ The portal-specific decisions this MetaPrompt adds on top:
 - **Header order (`<AppTopBar actions>`).** user name → light/dark toggle → `<ThemePicker />`
   (only when `{{THEME_PICKER}} = yes`) → **`<LanguageSwitcher />`** → Sign out. One call site,
   rendered unconditionally — the portal has no pre-login surface, and the atom returns `null`
-  by itself at one locale.
+  by itself at one locale. Lay the actions out in a `<Cluster wrap={false}>` — a wrapping row
+  stacks them vertically and spills them out of the 64px bar.
 - **`design.md`.** Emit the six localization items the skill lists under *"What `design.md`
   must state"*, alongside the rest of the design notes.
 
@@ -904,514 +474,109 @@ Three things still hold, and they are what keeps a later retrofit cheap:
 
 ---
 
-## viax GraphQL API Gotchas
+## Data layer
 
-> Critical corrections — these mistakes cause runtime errors. Apply them exactly.
+**This whole topic lives in its own skill: [`viax-graphql-data-layer`](../../viax-graphql-data-layer/SKILL.md).**
+Read it and follow it — the one client and `execute()` in `lib/graphql-client.js`, `schema-api.js`
+(`setTo()`), `normalize.js`, `lib/api/user.js` + `use-user.js`, the mock mode, the query keys, and
+the API gotchas (read [`api-gotchas.md`](../../viax-graphql-data-layer/references/api-gotchas.md)
+before writing a query). Copy its
+[`reference-implementation.md`](../../viax-graphql-data-layer/references/reference-implementation.md);
+do not re-derive any of it here.
 
-| # | Wrong | Correct | Why |
-|---|---|---|---|
-| 1 | `filter<Type>(..., _sort: [...])` | `filter<Type>(_first: N, _filter: "...")` | `_sort` is **not** a valid argument on `filter*` queries |
-| 2 | `pricPrice_TOTAL { amount currency }` | `pricPrice { edges { node { amount units { code } } } }` | `pricPrice` is a connection, readable on every environment. The per-code parts (`pricPrice_TOTAL`, `_SUBTOTAL`, etc.) are readable on Schema API v2 environments only (as lists of `Money`), and `Money` has no `currency` |
-| 3 | `bpStatus` (scalar) | `bpStatus { code }` | `bpStatus` is a DynamicEnum object — must select subfields |
-| 4 | `Money { amount currency }` | `Money { amount units { code } }` | `currency` is not a field on `Money`; currency code is at `units.code` |
-| 5 | Calling `keycloak.init()` more than once | Create keycloak instance as a module singleton in `lib/keycloak.js` and import it everywhere | Re-initializing Keycloak causes state conflicts and unexpected redirects |
-| 6 | `@radix-ui/react-badge` in `package.json` | Remove or implement badge using `class-variance-authority` | This package does not exist on npm |
-| 7 | `biConfigurationStateResult` (scalar in query) | Omit from queries entirely | It's `[StateConfigurationResult!]` — a complex nested type, not a scalar. It is also typically empty (`[]`). Do not query it; the component guard (`data.biConfigurationStateResult &&`) handles undefined gracefully. |
-| 8 | Using `get_type` field listing to detect if a type has `bpStatus` | Every BEM-discovered type has `bpStatus` — always set `hasStatus: true` | `get_type` only returns **directly defined** fields. Inherited fields (like `bpStatus` from `BusinessProcessable`) are **not shown**, even though they are fully queryable. Every type in the BEM tree extends `BusinessInteraction → BusinessProcessable`, so `bpStatus { code }` is always available. Never infer `hasStatus` from the `get_type` field list. |
-| 9 | `query Filter($filter: ${TypeName}Filter)` | `query Filter($filter: String)` | The `_filter` argument on all `filter*` queries is a **plain string expression** (e.g. `"bpStatus = 'Active'"`), not a typed input object. Using `${TypeName}Filter` as the variable type causes "Unknown type" errors at runtime. Always declare `$filter: String` and pass a string like `"bpStatus = 'Placed' AND biName regexp '(?i).*foo.*'"`. Text search uses `regexp` (a Java regex matched against the whole value, hence the `.*`), never `LIKE`. |
-| 10 | `prPartyX { edges { node { paId paName } } }` | `prPartyX { edges { node { parId parParty { paId paName } } } }` | `prParty*` connection nodes are `PartyRole` objects, **not** `Party` objects. `PartyRole` has no `paId`/`paName` — those fields live on the nested `Party` via `parParty`. Always traverse: `node.parId` (role ID) and `node.parParty.paId` / `node.parParty.paName` (the actual party). |
-| 11 | `getCurrentUserInfo { uid name email party { paPartyRoles { typeName } } }` | `getCurrentUserInfo { uid party { paId paName paMappedRolesList paPartyRoles { typeName } } }` | `name` and `email` are **not fields on the `User` type** — querying them causes a validation error. Use `party.paName` for display name. For sidebar role matching use `party.paMappedRolesList` (returns `["Partner", "Admin", ...]` — already normalized role name strings) rather than `paPartyRoles[].typeName` (returns `["PaloozaPartner", ...]` with realm prefix that won't match `prParty*` field names). |
-| 12 | `filterMaterialArticle` / `getMaterialArticle` / `filterViaxProduct` / `getViaxProduct` | `filterMaterial` / `getMaterial` | The queries for products are `filterMaterial(_first: N)` and `getMaterial(maId: "...")`: they return products of every material type. `MaterialArticle` has no query root fields, and `filterViaxProduct` / `getViaxProduct` return `ViaxProduct` records only. |
-| 13 | `maCategories` (scalar) | `maCategories { catId catName }` | `maCategories` is `[MaterialCategory]` — an object list, not a scalar. Must select subfields. `catId` and `catName` are the standard display fields from the `Category` interface. |
-| 14 | `maStatus` on products / `pricPrice` connection on `Material` | Omit both | `maStatus` does not exist on `Material`. `pricPrice` is not a queryable connection on material types (only on `BusinessInteraction` types). Product queries should use: `maId`, `maName`, `maDescription`, `maCategories { catId catName }`, `attAttachments { atId atName atMimeType atUrl }`. |
-| 15 | `query Get($id: ID!)` | `query Get($biId: String!)` / `query Get($uid: UUID!)` | The business keys of `get*` and `filter*` (`biId`, `maId`, `paId`, etc.) are typed as `String`, and `uid` as `UUID` — **not** `ID`. Using `ID!` causes "used in position expecting type String" (or `UUID`) errors. Declare `$biId: String!`, `$uid: UUID!`. |
+The portal-specific decisions this MetaPrompt adds on top:
 
----
+- **Values.** `VITE_API_URL={{API_URL}}`, `VITE_SCHEMA_API={{SCHEMA_API}}` (see *Environment
+  Variables*); `.env.mock.local` carries the same two.
+- **`lib/api/bi.js` — generic over `BI_TYPES`.** Every query is built from a `bi-types.config.js`
+  entry (`filter${typeName}`, `get${typeName}`), never written per type. The list:
+  `fetchBiList(config, { status, search, first })` → `{ rows, totalCount }` with the status from
+  `config.statusField`. The detail page: **one function per section** (viax-access rule 1) —
+  `fetchBiHeader`, `fetchBiParties` (one selection per `config.partyFields` entry, a single
+  object or a connection as discovered), `fetchBiLineItems` (`hiConsistsOf`), `fetchBiPrice`.
+  The rename, emitted only where the access model says `write`: `update${typeName}` with
+  `$actions: [Update${typeName}ActionInput!]!` and `[setTo('biName', name)]`.
+- **`lib/api/products.js`** — `filterMaterial` / `getMaterial` as in the skill's gotchas;
+  category filtering client-side over the loaded page.
+- **Hooks.** `use-bi-list.js`, `use-bi-detail.js` (one hook per section, each `enabled` by its
+  feature flag), `use-products.js`, `use-user.js`.
+- **Mock data** in `lib/mock-data/` for every discovered BI type, products, the user and the
+  published UXM config (`uxm-config.js`, viax-uxm-theming) — raw API shapes with the realm's real
+  field names, including at least one localized label that is `null` (viax-localization). The portal is fully functional under `npm run dev:mock`
+  (access probes answer `allowed` without calling the API).
 
-## GraphQL Integration Layer
-
-### Axios + GraphQL Client
-
-```javascript
-// lib/graphql-client.js
-// - Singleton Axios instance pointed at VITE_API_URL
-// - Request interceptor: attach Bearer token from useAuthStore.getState().accessToken
-// - Request interceptor (ONLY when {{LOCALIZATION}} = yes): attach X-Viax-User-Locale
-//   + X-Viax-User-Currency and inject
-//   nothing else. THIS IS THE ONLY PLACE locale touches the API — no component,
-//   hook or lib/api/* module passes it. Do NOT inject a `_locale` variable or
-//   argument; it is not accepted by filter/get queries. See "Localization & i18n".
-// - Response interceptor: 401 → keycloak.logout() → Keycloak redirects to login
-// - Generic execute function: (query, variables?) => Promise
-// - execute() classifies errors[] (viax-access → runtime contract §1): any
-//   extensions.code === 'ACCESS_DENIED' → throw AccessDeniedError (paths, types, partial data);
-//   other errors → ordinary Error. NEVER join errors[].message into one string before this
-//   check, and never treat a network failure as a denial. See "Access & permissions".
-// - No direct fetch() calls anywhere — all GraphQL goes through this client
-
-// lib/api/bi.js — data normalization after fetching:
-// 1. pricPrice connection → normalize to [{amount, currency}]:
-//    edges.map(e => e.node).filter(Boolean).map(n => ({ amount: n.amount, currency: n.units?.code ?? 'USD' }))
-// 2. bpStatus DynamicEnum → normalize to flat string:
-//    record.biStatus = record[config.statusField]?.code
-//    (components reference biStatus; API returns bpStatus { code })
-```
-
-### TanStack Query Hooks
-
-One file per domain entity in `hooks/`:
-
-```javascript
-// Example: hooks/use-orders.js
-// useOrders(filters)  → useQuery wrapping graphqlClient
-// useOrder(biId)      → useQuery for single order detail
-// useCreateOrder()    → useMutation
-```
-
-**Writes** use bcore Schema API v2 ([bcore-schema-v2.md](../../graphql/references/bcore-schema-v2.md); on a v1
-environment convert them with its §3; schema-validated, not run live). A BI type created in the BI Modeler comes with `create`, `update` and
-`delete`; its item type has none, so items change through the BI:
-
-```graphql
-mutation CreateOrder($input: PaloozaShopifyOrderInput) {
-  createPaloozaShopifyOrder(input: $input) { uid biId }
-}
-
-mutation RenameOrder($biId: String!, $name: String) {
-  updatePaloozaShopifyOrder(id: { biId: $biId }, _actions: [{ setToBiName: { value: $name } }]) { uid biName }
-}
-
-mutation DeleteOrder($biId: String!) {
-  deletePaloozaShopifyOrder(id: { biId: $biId }) { uid }
-}
-```
-
-- In `input`, an existing record is one key (`prPartyPrimary: { uid: "…" }`), never nested data or `typeName`; a
-  link to another BI goes through the per-code field (`biRelatesTo_<CODE>: [{ biId: "…" }]`); items are data in
-  `hiConsistsOf`.
-- `update` takes one action per `_actions` element: `setTo…` wraps the value (`{ value: … }`), links are added with
-  `addToBiRelatesTo_<CODE>: { biId: "…" }`, an existing item changes with
-  `updateInHiConsistsOf: { id: { uid: "…" }, _actions: [ … ] }`. Never `update…(input: …)`.
-
-**`use-user.js`** — an ordinary query hook for the signed-in user's party (display name, avatar, the
-role list shown on the Account page). It feeds **no** visibility decision:
-
-```javascript
-// hooks/use-user.js
-import { useQuery } from '@tanstack/react-query'
-import { fetchCurrentUser } from '@/lib/api/user'
-
-export function useUser() {
-  return useQuery({
-    queryKey: ['current-user'],
-    queryFn: fetchCurrentUser,
-    staleTime: 300_000,
-    refetchOnWindowFocus: false,
-  })
-}
-```
-
-### Mock Data Layer
-
-- `lib/mock-data/` — realistic mock data for every entity type using actual viax field names
-- `lib/api/` — each module exports a real and mock implementation, toggled via `VITE_USE_MOCK_DATA=true`
-- The portal must be fully functional with `VITE_USE_MOCK_DATA=true` — no real API calls required (access probes answer `allowed` in this mode without calling the API)
+The business roles from `useUser()` (`parParty.paMappedRolesList`) are **displayed** on the Account
+page and decide nothing (viax-access, rule 6).
 
 ---
 
-## viax GraphQL Schema Reference
+## BI Types & Dynamic Route Generation
 
-### Querying Patterns
+> **This step runs during scaffolding** — before generating any transactional page files.
 
-```graphql
-# Single entity — business keys are String, uid is UUID, never ID (see Gotcha #15)
-get<TypeName>(biId: "...")
-get<TypeName>(uid: "...")
+### Step 1 — Discover the BI types from the BEM
 
-# List with filters — supported args: _first, _last, _filter, _after, _before
-# NOTE: _sort is NOT a valid argument on filter<TypeName> queries — omit it entirely
-# NOTE: _filter is a plain String expression, NOT a typed input object (see Gotcha #9)
-filter<TypeName>(
-  _first: 10,
-  _filter: "bpStatus = 'Active'"
-)
+**This whole topic lives in its own skill: [`viax-bem-discovery`](../../viax-bem-discovery/SKILL.md).**
+Run it through the MCP of the `{{REALM}}` realm (the one Step 3d of the portal skill checked):
+ask the user for the BEM (uid or code — never pick one), resolve the code to the right version,
+walk the whole tree, drop and report the types that do not exist, read each type's interfaces,
+`prParty*` fields and status values, and write `src/lib/bi-types.config.js` and the BEM section of
+`design.md` exactly as it says. Do not re-derive any of it here.
 
-# Connections
-edges { node { ... } }
-```
+What the portal does with the registry:
 
-> **GraphQL variable types for IDs:** `biId`, `maId` etc. arguments accept `String`, and `uid` accepts `UUID` — never `ID`. Declare variables as `$biId: String!` / `$uid: UUID!` — using `ID!` causes a type mismatch error at runtime (see Gotcha #15).
+- `isPriceable` → a Total column on the list, the Price Summary on the detail page;
+  `hasLineItems` → the Line Items table; `hasParties` → one `<PartyCard>` per `partyFields` entry;
+  `hasStatus` → the Status column, the status filter (from `statusValues`) and the badge;
+  `handOffs` → the read-only "Becomes" section of the detail page.
+- The page title of each type is `bi.<slug>.title` in the locale files (English literal with
+  `{{LOCALIZATION}} = no`) — never a label in the config. Its English text is the copy the discovery
+  reports for the type (the BEM spec's `label`, else the type's own label); the same holds for
+  `bi.<slug>.description` and the party card titles `bi.party.<role>`.
+- Mock data in `lib/mock-data/bi.js` covers every registry entry, with its real field names.
 
-### Key Entity Types
+### Step 2 — Scaffold Route Files
 
-> The entity type names below use the `Palooza` prefix which matches the `viax` realm. If the realm changes, update the type name prefixes accordingly (e.g. `AcmeSalesOrder` for realm `acme`).
+**One shared page pair serves every `BI_TYPES` entry** — no per-type page files. The routes are
+generated from `BI_TYPES`, and the wrappers delegate to the shared templates.
 
-**Business Interactions (transactions):**
-
-All implement `BusinessInteraction` with: `biId`, `biName`, `biDescription`, `biCreatedAt`, `biCompletedAt`
-
-> **Do NOT query `biConfigurationStateResult`** — it is `[StateConfigurationResult!]`, a complex nested type that is almost always empty. Omit it from all queries.
-
-**Status field — `bpStatus` is a DynamicEnum object, NOT a scalar.** Always query it as `bpStatus { code }`. The `code` field contains the status string value (e.g. `"Placed"`, `"Unpaid"`). Filter by the code directly: `_filter: "bpStatus = 'Placed'"`.
-
-Most implement `Priceable` via a **`pricPrice` connection** (NOT individual `pricPrice_TOTAL`, `pricPrice_SUBTOTAL` etc. fields — those do not exist as directly queryable fields). Always query pricing as:
-```graphql
-pricPrice { edges { node { amount units { code } } } }
-```
-The `Money` type has `amount` (BigDecimal) and `units { code }` (ISO 4217 currency code). There is no `currency` field directly on `Money`. After fetching, normalize the connection to `[{ amount, currency }]` by mapping `units.code` → `currency` for use in formatting utilities.
-
-**Party roles on BIs:** Every BI type has one **primary party** field (`prPartyPrimary`) and zero or more **additional party** fields following the pattern `prParty{partyRoleName}` (e.g. `prPartyCustomer`, `prPartySoldTo`, `prPartyBillTo`, `prPartyShipTo`, `prPartySales`, `prPartySeller`, `prPartySupplier`).
-
-The exact set of party fields available on a given BI type is **not fixed** — it depends on the BEM definition. Always discover the actual `prParty*` fields for each type at scaffolding time using `get_type` or `getEntity` (see [BEM Discovery & Dynamic Route Generation](#bem-discovery--dynamic-route-generation)). Store the discovered fields in `bi-types.config.js` so the detail page knows which party cards to render.
-
-**Materials (Products):** `filterMaterial` / `getMaterial` — fields: `maId`, `maName`, `maDescription`, `maCategories { catId catName }`, `attAttachments { atId atName atMimeType atUrl }` (images come from `attAttachments`; filter by `atMimeType.startsWith('image/')` or use the first entry with an `atUrl`; `maStatus` and `pricPrice` do not exist on this type)
-
-**Parties (Customers/Orgs):** `filterOrganisation`, `filterIndividual` — fields: `paId`, `paName` (`Party` has no `paDescription`)
-
-**User Info:** Fetch with the query below for display (Account page, avatar). It does **not** drive menu visibility — navigation is gated by access probes (see [Step 7 — Sidebar Navigation](#step-7--sidebar-navigation)):
-
-```graphql
-query getCurrentUserInfo {
-  getCurrentUserInfo {
-    uid
-    party {
-      paId
-      paName
-      paMappedRolesList
-      paPartyRoles {
-        typeName
-      }
-    }
-  }
-}
-```
-
-> **`name` and `email` are not fields on `User`** — do not include them in the query (causes a GraphQL validation error). Use `party.paName` as the display name.
-
-The result stays in TanStack Query (`useUser()`); nothing is copied into `auth-store`. To show the user's business roles, use `party.paMappedRolesList` (a `[String]` like `["Admin", "Partner"]`, realm prefix stripped) — **not** `paPartyRoles[].typeName` (`"PaloozaPartner"`). These roles may be **displayed**; they never decide what is visible or editable (viax-access, rule 6).
-
-**Mock user shape** must mirror the real API response:
-```javascript
-// lib/mock-data/user.js
-export const MOCK_USER = {
-  uid: 'mock-user-001',
-  party: {
-    paId: 'mock-party-001',
-    paName: 'Alex Johnson',
-    paMappedRolesList: ['Admin', 'Partner'],   // display only — never compared in code
-    paPartyRoles: [
-      { typeName: 'ViaxAdmin' },
-      { typeName: 'PaloozaPartner' },
-    ],
-  },
-}
-```
-
-### Hierarchical Structure (Line Items)
-
-```graphql
-{
-  getPaloozaShopifyOrder(biId: "123") {
-    biId
-    biName
-    hiConsistsOf {
-      ... on BusinessInteractionItem {
-        biiId
-        biiName
-        biiQuantity { amount units { code } }
-      }
-    }
-  }
-}
-```
-
-`hiConsistsOf` is a plain list of the BI's item type, not a connection (no `edges`), and `Quantity` is
-`{ amount units { code } }`.
-
----
-
-## BEM Discovery & Dynamic Route Generation
-
-> **This step runs during scaffolding** — before generating any transactional page files. Use the MCP `get_type` and `execute_query` tools to introspect the live viax API for the `viax` realm.
-
-### Step 1 — Ask the User for the BEM Identifier
-
-**Do not auto-detect the BEM.** Before proceeding, ask the user to supply the BEM they want to use. They can provide either:
-
-- A **UID** — e.g. `019a92b2-52a7-7726-8299-e3d38a5bab0f`
-- A **code** — e.g. `2UBusinessExecutionModel`
-
-Once the user provides the identifier, fetch the BEM using the appropriate filter:
-
-```graphql
-# If the user provided a UID:
-query GetBEMByUid {
-  filterBusinessInteractionExecutionModel(
-    _first: 1,
-    _filter: "uid = '019a92b2-52a7-7726-8299-e3d38a5bab0f'"
-  ) {
-    edges { node { code name uid version status } }
-  }
-}
-
-# If the user provided a code — its ACTIVE version:
-query GetBEMByCode {
-  filterBusinessInteractionExecutionModel(
-    _first: 1,
-    _filter: "code = '2UBusinessExecutionModel' AND status = ACTIVE"
-  ) {
-    edges { node { code name uid version status } }
-  }
-}
-```
-
-- If **zero** results: inform the user the identifier did not match any BEM (or, by code, that the code has no `ACTIVE` version) and ask them to verify it.
-- If a result is returned: confirm the BEM name back to the user before proceeding.
-- **Read the `ACTIVE` version only.** A code has at most one; it is the version whose types, relations and hand-offs exist. By uid, check `status`: a `DRAFT` (not published, its new types may not exist yet) or `ARCHIVED` version is not what runs — fetch the code's `ACTIVE` one instead (`code = '<code>' AND status = ACTIVE`) and tell the user.
-
-### Step 2 — Fetch the Full BEM Relation Tree
-
-The BEM structure is a **tree**, not a flat list. The root type has `groups`, each group has `relations`, and each relation can itself have nested `groups` and `relations`. You must traverse the **entire tree recursively** to collect every unique BI type — otherwise you will miss types that are nested deeper than one level.
-
-First, call `get_type('BusinessInteractionExecutionModel')` and `get_type('BITypeRelation')` to confirm the available fields, then execute a single deep query that fetches all levels at once — the tree, the specs of the BI types the BEM owns (`biTypes`, bcore 5.0.0 and later) and the hand-off of every group (`handOff`, at every depth):
-
-```graphql
-query GetBEMFullTree {
-  filterBusinessInteractionExecutionModel(
-    _first: 1,
-    _filter: "uid = '<BEM_UID>'"
-  ) {
-    edges {
-      node {
-        code
-        name
-        uid
-        status
-        sourceBIType
-        biTypes {
-          biTypeName
-          label
-          summary
-          partyRoles { role primary required }
-        }
-        groups {
-          ...GroupHandOff
-          relations {
-            sourceBIType
-            groups {
-              ...GroupHandOff
-              relations {
-                sourceBIType
-                groups {
-                  ...GroupHandOff
-                  relations {
-                    sourceBIType
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-fragment GroupHandOff on BITypeGroupRelations {
-  groupNameId
-  handOff {
-    split
-    splitField
-    routes { targetBIType values }
-    header { field action }
-    items { field action }
-  }
-  copyDeterminationModel { deId }
-  splitDeterminationModel { deId }
-}
-```
-
-> **Depth note:** Nest `groups → relations` as many levels as needed until no further nesting appears in the data. The query above covers 4 levels which is sufficient for most BEMs, but add more if the model is deeper. Put `...GroupHandOff` on every `groups` level you add.
-
-> **Never read `metadata.modo.*`** (`handOffs`, `draftBis`, …): that is where BEMs built before bcore 5.0.0 kept their drafts and hand-offs. A current BEM's `ACTIVE` version carries everything in `biTypes` and `groups[].handOff`; `metadata` is free-form and not interpreted.
-
-### Step 3 — Collect All Unique BI Types
-
-From the query result, **walk the entire tree** and collect every unique `sourceBIType` value encountered at every level — root, groups, nested relations, and sub-groups. Build a deduplicated flat list.
-
-**Example** for BEM `2UBusinessExecutionModel` (`019a92b2-52a7-7726-8299-e3d38a5bab0f`):
-
-```
-Root:                    Palooza2USubscriptionOrder
-└── Subscription Definition (group)
-    ├── Palooza2UInvoice
-    └── Palooza2USubscriptionContract
-        └── Recurring Charges (group)
-            ├── PaloozaEducationPartnerCommissions   ← nested level 2
-            ├── Palooza2UInvoice                     ← duplicate, skip
-            └── Palooza2ULicense                     ← nested level 2
-```
-
-Unique types found: `Palooza2USubscriptionOrder`, `Palooza2UInvoice`, `Palooza2USubscriptionContract`, `PaloozaEducationPartnerCommissions`, `Palooza2ULicense`
-
-**Do not stop at the first level of relations.** The most common mistake is collecting only direct children of the root — this causes deeper BI types (e.g. `PaloozaEducationPartnerCommissions`, `Palooza2ULicense`) to be silently omitted from the generated app.
-
-For each unique type in the collected list, call `get_type(typeName)` in parallel to discover which interfaces it implements.
-
-**Display name and description of each type.** A type the BEM owns has a spec in `biTypes` (`biTypeName` equal to the tree's `sourceBIType`): its `label` and `summary` are the entry's `label` and `description`. A type the BEM only uses (no spec — the platform's `ViaxBill`, a type made in the BI modeler) has none there: take the type's own label and summary (`get_type(typeName)` / `getEntity(name: …) { label summary }`).
-
-### Step 4 — Interface Feature Flags
-
-Map implemented interfaces to feature flags stored in `bi-types.config.js`:
-
-| Interface | Flag | Effect on generated pages |
-|---|---|---|
-| **ALL BEM types** (implicit — see note below) | `hasStatus: true`, `statusField: 'bpStatus'` | Status badge column; status filter on list. Field is `bpStatus { code }` (DynamicEnum). Normalize `record.bpStatus.code` → `biStatus` in the data layer. |
-| `Priceable` | `isPriceable: true` | Price column in list table; Price Summary card on detail. Query via `pricPrice { edges { node { amount units { code } } } }`. Normalize to `[{ amount, currency }]` in the data layer. |
-| `Hierarchical` | `hasLineItems: true` | Line Items table on detail page |
-| `PartyRoleHolder` | `hasParties: true`, `partyFields: [...]` | Party Cards on detail page — one card per discovered `prParty*` field. `partyFields` is populated during BEM parsing (see note below). |
-
-> **`hasParties` — the participants of a type:**
-> - **A type the BEM owns** (a spec in `biTypes`): its participants are the spec's `partyRoles[{ role, primary, required }]`. `role` is the platform's party role type (`BillTo`, `SoldTo`, `Sales` — not a label like "Bill-To"); the one with `primary: true` is the record's `prPartyPrimary` field, every other role its own `prParty<Role>` field (`BillTo` → `prPartyBillTo`). Carry `required` into the entry as a hint for the card (a participant the business expects on every record); the API does not enforce it — the field is not mandatory. The same list is on the type's metadata as `TypeMetadata.data.modoPartyRoles`.
-> - **A type the BEM only uses** (no spec): call `get_type(typeName)` (or `getEntity`) to list its fields and collect every field whose name starts with `prParty`.
->
-> Store them as `partyFields` in the config entry — `role` as the API names it, `label` as the card shows it (the
-> human label of `bi-creation` → "Party Role Mapping", `SoldTo` → "Sold-To"; the technical name where none is known):
-> ```javascript
-> partyFields: [
->   { field: 'prPartyPrimary', role: 'SoldTo', label: 'Sold-To', required: true },  // the primary role (always present on PartyRoleHolder types)
->   { field: 'prPartyBillTo',  role: 'BillTo', label: 'Bill-To' },
->   { field: 'prPartyShipTo',  role: 'ShipTo', label: 'Ship-To' },
-> ]
-> ```
-> The detail page iterates `partyFields` to render one `<PartyCard>` per entry. Do **not** hard-code a fixed list of party roles — use whatever was discovered. `partyFields` describe **the data** (which party cards to render); they say nothing about who may see the BI type — never derive navigation or route visibility from them.
-
-> **`hasStatus` rule — always `true` for every BEM type:**
-> Every type in the BEM tree extends `BusinessInteraction`, which extends `BusinessProcessable`, which defines `bpStatus`. **Do NOT use `get_type` field listing to decide this.** `get_type` only shows directly-defined fields — inherited fields like `bpStatus` will not appear, making it look like the type has no status. The correct approach: always set `hasStatus: true` and `statusField: 'bpStatus'` for every BEM-discovered type, then verify by querying live data (see Step 5).
->
-> Only set `hasStatus: false` if a live query of `bpStatus { code }` returns `null` for all sampled records of that type.
-
-### Step 5 — Collect Status Values for Every BI Type
-
-For every BEM-discovered type, **always set `hasStatus: true`** and collect the actual status values by sampling live data:
-
-```graphql
-# Run for each type — replace {TypeName} with the concrete type name
-query Get{TypeName}StatusValues {
-  filter{TypeName}(_first: 200, _filter: "biId IS NOT NULL") {
-    edges {
-      node {
-        bpStatus { code }
-      }
-    }
-  }
-}
-```
-
-From the result, collect all unique non-null `bpStatus.code` values and store them as `statusValues` on the config entry.
-
-> **Status codes:** read them with `get{TypeName}StatusValues { code }` (every BI Modeler type has it); sample live records only to learn which codes are in use.
->
-> **If all sampled records return `bpStatus: null`** (e.g. the type has no business process defined yet), set `hasStatus: false` and `statusValues: []` as an exception — and leave a comment in the config noting the manual override.
-
-```javascript
-// src/lib/bi-types.config.js
-// AUTO-GENERATED from BEM — do not edit manually
-// Regenerate by re-running the scaffolding prompt
-
-export const BI_TYPES = [
-  // One entry per BEM relation, e.g.:
-  {
-    slug: 'shopify-orders',           // URL-safe label slug
-    label: 'Shopify Orders',          // Display name (from BEM relation label)
-    typeName: 'PaloozaShopifyOrder',  // GraphQL type name
-    description: 'eCommerce orders synced from Shopify',
-    isPriceable: true,
-    hasStatus: true,
-    statusField: 'bpStatus',          // Actual GraphQL field name for status (always 'bpStatus' for BIs)
-    statusValues: ['Draft', 'Active', 'Completed', 'Cancelled'], // from getPaloozaShopifyOrderStatusValues
-    hasLineItems: true,
-    hasParties: true,
-    partyFields: [{ field: 'prPartyPrimary', role: 'SoldTo', label: 'Sold-To', required: true }, { field: 'prPartyBillTo', role: 'BillTo', label: 'Bill-To' }], // Step 4
-    handOffs: [{ group: 'TO_FULFILLMENT', targets: ['PaloozaShopifyFulfillment'], split: 'LINE' }],                          // Step 5b
-  },
-  // ... one entry per BEM relation
-]
-
-export function getBiType(slug) {
-  return BI_TYPES.find(t => t.slug === slug) ?? null
-}
-```
-
-### Step 5b — Collect the Hand-offs
-
-A group's `handOff` says how a record of the group's **source** type becomes records of the group's **target** types
-(bcore 5.0.0 and later). Walk every group at every depth:
-
-- the source type is the `sourceBIType` of the node holding the group — the BEM's for the root's `groups`, the
-  relation's for a relation's own `groups`;
-- the target types are the group's `relations[].sourceBIType`;
-- `split`: `ONE` — the whole source record becomes one new record; `LINE` — one new record per line; `GROUP` — the
-  lines grouped by the value of `splitField` (a field of the line, or a path through its product, e.g.
-  `wtTransactable.family`), each group becoming a record of the type `routes[{ targetBIType, values }]` sends that
-  value to;
-- `header` / `items`: the fields of the record / of its lines carried over, `{ field, action }` with `COPY` (the value)
-  or `LINK` (a reference to the same value); a field not listed is not carried over;
-- `copyDeterminationModel { deId }` / `splitDeterminationModel { deId }`: the models the publish wrote for it — the
-  `ACTIVE` version has them on every group with a hand-off.
-
-A group without `handOff` is a plain relation: nothing is created from the source. Record each hand-off on the
-**source** type's config entry:
-
-```javascript
-handOffs: [
-  { group: 'TO_FULFILLMENTS', targets: ['PaloozaHardwareFulfillment', 'PaloozaServiceFulfillment'], split: 'GROUP', splitField: 'wtTransactable.family' },
-  { group: 'TO_INVOICE', targets: ['Palooza2UInvoice'], split: 'ONE' },
-]
-```
-
-The hand-off runs in the source type's lifecycle (a "Create related" step), never from the portal; the records it
-creates are linked to the source through the BEM's relation codes (`biRelatesTo_<bemCode>_<targetType>` on the
-source, `biRelatesTo_<bemCode>_<sourceType>` on the new record).
-
-### Step 6 — Scaffold Route Files
-
-For **each entry** in `BI_TYPES`, generate two thin wrapper pages that delegate to shared templates. Register each pair as a React Router route in `src/routes/index.jsx`.
-
-**List page** — `src/pages/{slug}/BiListPage.jsx`:
+`src/pages/bi/BiListPage.jsx` and `src/pages/bi/BiDetailPage.jsx`:
 
 ```jsx
+// src/pages/bi/BiListPage.jsx
 import { getBiType } from '@/lib/bi-types.config'
 import BiListTemplate from '@/components/bi/bi-list-page'
 
-export default function BiListPage() {
-  const config = getBiType('{slug}')
-  return <BiListTemplate config={config} />
+export default function BiListPage({ slug }) {
+  return <BiListTemplate key={slug} config={getBiType(slug)} />
 }
 ```
 
-**Detail page** — `src/pages/{slug}/BiDetailPage.jsx`:
-
 ```jsx
+// src/pages/bi/BiDetailPage.jsx
 import { useParams } from 'react-router-dom'
 import { getBiType } from '@/lib/bi-types.config'
 import BiDetailTemplate from '@/components/bi/bi-detail-page'
 
-export default function BiDetailPage() {
+export default function BiDetailPage({ slug }) {
   const { biId } = useParams()
-  const config = getBiType('{slug}')
-  return <BiDetailTemplate config={config} biId={biId} />
+  return <BiDetailTemplate key={`${slug}-${biId}`} config={getBiType(slug)} biId={biId} />
 }
 ```
 
-**Register routes** in `src/routes/index.jsx` — add one route pair per `BI_TYPES` entry:
+`key` resets the template's state when the user moves between two types or two records.
+
+**Register routes** in `src/routes/index.jsx`, inside the protected route group — one pair per
+`BI_TYPES` entry, generated:
 
 ```jsx
-<Route path="/{slug}" element={<BiListPage />} />
-<Route path="/{slug}/:biId" element={<BiDetailPage />} />
+{BI_TYPES.map((type) => [
+  <Route key={type.slug} path={`/${type.slug}`} element={<BiListPage slug={type.slug} />} />,
+  <Route key={`${type.slug}-detail`} path={`/${type.slug}/:biId`} element={<BiDetailPage slug={type.slug} />} />,
+])}
 ```
 
-### Step 7 — Sidebar Navigation
+### Step 3 — Sidebar Navigation
 
 Build the nav items array from fixed pages + `BI_TYPES`. **Which BI items appear is answered by
 the API**, through one access probe per BI type (`filter<Type>(_first: 1) { edges { node { biId } } }`,
@@ -1421,25 +586,29 @@ cached per session and identity) — see [`viax-access`](../../viax-access/SKILL
 
 ```javascript
 // src/components/layout/sidebar.jsx (relevant excerpt)
+import { Icon } from 'uxm/ui'
 import { BI_TYPES } from '@/lib/bi-types.config'
 import { useBiTypesAccess } from '@/access/use-access'
+import { useT } from '@/i18n'
 
-const NAV_TOP = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/products',  label: 'Products',  icon: Package },
-]
-
-const NAV_BOTTOM = [
-  { href: '/account', label: 'Account', icon: User },
-  { href: '/admin',   label: 'Admin',   icon: Settings },
-]
-
+// Icons are uxm <Icon> glyphs (AppSidebar items take a node) — no lucide or other icon set.
+// Use ids from the viax-uxm glyph registry: there is no `dashboard`, `package` or `home`.
 export function useNavItems() {
+  const t = useT('nav')   // labels are UI copy (with {{LOCALIZATION}} = no, English literals)
+  const tb = useT('bi')
   const access = useBiTypesAccess(BI_TYPES) // { [typeName]: 'loading' | 'allowed' | 'denied' | 'error' }
 
+  const NAV_TOP = [
+    { href: '/dashboard', label: t('dashboard'), icon: <Icon glyph="grid" /> },
+    { href: '/products',  label: t('products'),  icon: <Icon glyph="product" /> },
+  ]
   const NAV_BI = BI_TYPES
-    .filter((t) => access[t.typeName] === 'allowed') // loading / denied / error → not shown
-    .map((t) => ({ href: `/${t.slug}`, label: t.label, icon: FileText }))
+    .filter((type) => access[type.typeName] === 'allowed') // loading / denied / error → not shown
+    .map((type) => ({ href: `/${type.slug}`, label: tb(`${type.slug}.title`), icon: <Icon glyph="business-interaction" /> }))
+  const NAV_BOTTOM = [
+    { href: '/account', label: t('account'), icon: <Icon glyph="user" /> },
+    { href: '/admin',   label: t('admin'),   icon: <Icon glyph="settings" /> },
+  ]
 
   return [...NAV_TOP, ...NAV_BI, ...NAV_BOTTOM]
 }
@@ -1456,7 +625,7 @@ export function useNavItems() {
 ## Application Structure
 
 ```
-viax-lab-portal/
+{{CLIENT_SLUG}}-portal/
 ├── index.html                               # Vite entry HTML
 ├── .env.local
 ├── .env.example
@@ -1479,16 +648,16 @@ viax-lab-portal/
 │   ├── pages/
 │   │   ├── dashboard/
 │   │   │   └── DashboardPage.jsx            # PageHeader + StatCard × 4 + recharts in Card + List recent
-│   │   ├── bi/                              # Shared BI page wrappers (one BiListPage + BiDetailPage handle every slug)
+│   │   ├── bi/                              # Shared BI page wrappers (one BiListPage + BiDetailPage handle every slug — BI Types Step 2)
 │   │   │   ├── BiListPage.jsx
 │   │   │   └── BiDetailPage.jsx
 │   │   ├── products/
-│   │   │   ├── ProductsPage.jsx             # PageHeader + InlineFilter + DataTable (Gotchas #1, #2)
+│   │   │   ├── ProductsPage.jsx             # PageHeader + InlineFilter + DataTable (no Card wrapper, columns mean DataTable — viax-uxm-conventions)
 │   │   │   └── ProductDetailPage.jsx        # PageHeader + DetailSection + PropertyGrid
 │   │   ├── account/
-│   │   │   └── AccountPage.jsx              # PageHeader + <Card> (Avatar row only) + bare <DetailSection> × N (no Card around DetailSection — Gotcha #1)
+│   │   │   └── AccountPage.jsx              # PageHeader + <Card> (Avatar row only) + bare <DetailSection> × N (no Card around DetailSection — viax-uxm-conventions)
 │   │   ├── admin/
-│   │   │   └── AdminPage.jsx                # PageHeader + DataTable of sections (Gotcha #2)
+│   │   │   └── AdminPage.jsx                # PageHeader + DataTable of sections (viax-uxm-conventions)
 │   │   └── uxm/
 │   │       └── UxmStudioPage.jsx            # <UxmApp embed persistence={localStorage}/> — the MODO style editor
 │   ├── components/
@@ -1501,12 +670,12 @@ viax-lab-portal/
 │   │   │   ├── status-donut.jsx             # recharts PieChart in <Card>
 │   │   │   └── progress-ring.jsx            # SVG ring in <Card>
 │   │   ├── detail/
-│   │   │   ├── line-items.jsx               # heading + <DataTable> (no Card wrapper — Gotcha #1)
-│   │   │   ├── party-card.jsx               # <Card> + <Cluster> (NOT Stack+flexDirection:row — Gotcha #9) of <Avatar> rows
-│   │   │   └── price-summary.jsx            # <Card> + <PropertyGrid> (PropertyField children, not value= — Gotcha #7) + <Divider>
+│   │   │   ├── line-items.jsx               # heading + <DataTable> (no Card wrapper — viax-uxm-conventions)
+│   │   │   ├── party-card.jsx               # <Card> + <Cluster> (NOT Stack+flexDirection:row — viax-uxm rule 9) of <Avatar> rows
+│   │   │   └── price-summary.jsx            # <Card> + <PropertyGrid> (PropertyField children, not value= — viax-uxm rule 6) + <Divider>
 │   │   ├── bi/
 │   │   │   ├── bi-list-page.jsx             # PageHeader + InlineFilter + DataTable + Loader/EmptyState (feature-flagged)
-│   │   │   └── bi-detail-page.jsx           # BackLink (needs href — Gotcha #10) + PageHeader (inline meta only — Gotcha #8) + LineItems + Timeline + PartyCard + PriceSummary (feature-flagged)
+│   │   │   └── bi-detail-page.jsx           # BackLink (needs href — viax-uxm rule 10) + PageHeader (inline meta only — viax-uxm rule 7) + LineItems + Timeline + PartyCard + PriceSummary (feature-flagged)
 │   │   └── shared/
 │   │       ├── status-badge.jsx             # Maps status → <Tag type="…">
 │   │       ├── money-display.jsx
@@ -1527,6 +696,8 @@ viax-lab-portal/
 │   │   ├── uxm-persistence.js               # StudioPersistence adapter: load→live store, save→server (saveUxmConfig)+mirror
 │   │   ├── bi-types.config.js               # AUTO-GENERATED: BI type registry from BEM
 │   │   ├── api/
+│   │   │   ├── schema-api.js                # viax-graphql-data-layer: SCHEMA_API + setTo() (v1/v2 writes)
+│   │   │   ├── normalize.js                 # viax-graphql-data-layer: rows, prices by mapsOn.code, totalOf, regexLiteral
 │   │   │   ├── bi.js                        # Generic BI list/detail queries (parameterized by BiTypeConfig)
 │   │   │   ├── products.js
 │   │   │   ├── parties.js
@@ -1552,10 +723,7 @@ viax-lab-portal/
 │   │   ├── api.js                           # JSDoc typedefs for GraphQL responses
 │   │   └── entities.js                      # JSDoc typedefs for domain entities
 │   └── styles/
-│       ├── globals.scss                     # CSS custom properties + global styles
-│       └── components/
-│           ├── sidebar.module.scss
-│           └── dashboard.module.scss
+│       └── globals.css                      # "Portal stylesheet and fonts" §1, verbatim — plain CSS, no SCSS / CSS modules
 ```
 
 ---
@@ -1571,20 +739,20 @@ viax-lab-portal/
 **Middle row:** Revenue line chart (6 months), Order status donut chart, Monthly progress ring — each in a `<Card shadow>`.
 
 **Bottom row:**
-- **Recent orders** — `<DataTable>` (no `<Card>` wrapper; see Gotcha #1) with a heading above it. Columns: `ID` (monospace, muted), `Name` (medium weight), `Status` (`<Tag>`), `Amount` (right-aligned, tabular-nums). `onRowClick` navigates to `/orders/{id}`.
-- **Tasks** — `<Card shadow>` containing a `<Stack>` of `<Checkbox>`-es with `useState`-driven toggle (see Gotcha #3). Strike-through + muted color for done items.
+- **Recent orders** — `<DataTable>` (no `<Card>` wrapper; see viax-uxm-conventions) with a heading above it. Columns: `ID` (monospace, muted), `Name` (medium weight), `Status` (`<Tag>`), `Amount` (right-aligned, tabular-nums). `onRowClick` navigates to `/orders/{id}`.
+- **Tasks** — `<Card shadow>` containing a `<Stack>` of `<Checkbox>`-es with `useState`-driven toggle (see viax-uxm-conventions). Strike-through + muted color for done items.
 - **Quick links** — `<Card shadow>` with `<ButtonPrimary>` / `<ButtonSecondary>` / `<ButtonTertiary>` stacked.
 
 ### BI List Pages (BEM-Generated)
 
 One list page per `BI_TYPES` entry in `bi-types.config.js`. All share the `<BiListPage config={config} />` template — behavior is driven by feature flags on the config object:
 
-- Page title from `config.label`; a "Create New" button **only** where the access model (design.md) says `write` for `create{TypeName}` — otherwise none. A refused create shows `toast.error` and records the denial (viax-access rule 4)
+- Page title `bi.<slug>.title` (UI copy — the registry has no labels); a "Create New" button **only** where the access model (design.md) says `write` for `create{TypeName}` — otherwise none. A refused create shows `toast.error` and records the denial (viax-access rule 4)
 - Route gate: `useBiTypeAccess(config)` — `loading` → `<Loader>`, `denied` → `<NoAccessPage />`
 - Filters bar (`<InlineFilter>`): search (`<InputWithIcon>`), status filter (`<FormField>` + `<Select>` if `config.hasStatus`) — all synced to URL via React Router `useSearchParams`
 - `<DataTable>` with typed columns; clicking a row (`onRowClick`) navigates to `/{slug}/{biId}`
 - **Base columns** (always): ID (`biId`), Name (`biName`), Created date (`biCreatedAt`)
-- **`config.hasStatus`** (true for all BEM types by default): add Status column displaying `bpStatus` with `<StatusBadge>`; status filter dropdown is populated from `config.statusValues` (collected via live data sampling during BEM discovery — see Step 5). Query as `bpStatus { code }` and normalize to `biStatus: node.bpStatus.code` in the data layer. Filter string uses the raw field name: `_filter: "bpStatus = 'Active'"`.
+- **`config.hasStatus`** (false only for a type with no status values): add Status column displaying `bpStatus` with `<StatusBadge>`; status filter dropdown is populated from `config.statusValues` (from `get{TypeName}StatusValues` — [`viax-bem-discovery`](../../viax-bem-discovery/SKILL.md) Step 5). Query as `bpStatus { code }` and normalize to `biStatus: node.bpStatus.code` in the data layer. Filter string uses the raw field name: `_filter: "bpStatus = 'Active'"`.
 - **`config.isPriceable`**: add Total Amount column — query via `pricPrice { edges { node { amount units { code } } } }` and normalize to `[{ amount, currency }]` in the data layer (where `currency = units.code`)
 
 Data is fetched via `useBiList(config)` hook → `lib/api/bi.js` → `filter{config.typeName}` GraphQL query.
@@ -1593,12 +761,12 @@ Data is fetched via `useBiList(config)` hook → `lib/api/bi.js` → `filter{con
 
 One detail page per `BI_TYPES` entry. All share the `<BiDetailPage config={config} biId={biId} />` template — sections are conditionally rendered by feature flags:
 
-- Back button — `<BackLink href="/{config.slug}" onClick={(e) => { e.preventDefault(); navigate(-1) }}>` (always pass a real `href`, not just `onClick` — Gotcha #10), `biId`, `biName`, Created / Completed dates (always). Render `biId`/dates via `<PageHeader meta={<>…</>}>` — **inline content only**, never a `Stack`/block element (Gotcha #8).
+- Back button — `<BackLink href="/{config.slug}" onClick={(e) => { e.preventDefault(); navigate(-1) }}>` (always pass a real `href`, not just `onClick` — viax-uxm rule 10), `biId`, `biName`, Created / Completed dates (always). Render `biId`/dates via `<PageHeader meta={<>…</>}>` — **inline content only**, never a `Stack`/block element (viax-uxm rule 7).
 - **`config.hasStatus`**: Status badge
-- **`config.hasParties`**: Party cards — one `<Card>` per `config.partyFields` entry, each an avatar+name row laid out with `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — Gotcha #9); a `required` entry without a party shows an empty card, not an error
-- **`config.handOffs`** (non-empty): a read-only "Becomes" section — one row per hand-off: the target type(s), linked to their list pages, and how (`ONE` one record, `LINE` one per line, `GROUP` by `splitField`). The hand-off itself runs in the lifecycle (Step 5b), never from the portal
+- **`config.hasParties`**: Party cards — one `<Card>` per `config.partyFields` entry, each an avatar+name row laid out with `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — viax-uxm rule 9); a `required` entry without a party shows an empty card, not an error. The card's title is UI copy, `bi.party.<role>` (`role` from the registry; the field name where the entry has no `role`)
+- **`config.handOffs`** (non-empty): a read-only "Becomes" section — one row per hand-off: the target type(s) by their `bi.<slug>.title`, linked to their list pages, what they are (`kind`: made from it, made from its lines, linked to it) and how (`ONE` one record, `LINE` one per line, `GROUP` by `splitField`). The hand-off itself runs in the lifecycle ([`viax-bem-discovery`](../../viax-bem-discovery/SKILL.md) Step 6), never from the portal
 - **`config.hasLineItems`**: Line items table — quantity, product, unit price
-- **`config.isPriceable`**: Price summary card — subtotal, discount, tax, freight, **total**, each rendered via `<PropertyField label="…">{value}</PropertyField>` (value as children, never a `value` prop — Gotcha #7)
+- **`config.isPriceable`**: Price summary card — subtotal, discount, tax, freight, **total**, each rendered via `<PropertyField label="…">{value}</PropertyField>` (value as children, never a `value` prop — viax-uxm rule 6)
 - Status / event timeline (always)
 
 Route gate as on the list page (`useBiTypeAccess(config)` → `<NoAccessPage />` on `denied`).
@@ -1616,23 +784,23 @@ Every value is read-only (`<PropertyField>`) by default; an inline editor or wor
 
 ### Products (`/products`)
 
-- `<DataTable>` (not `<List>` — products have columns; see Gotcha #2). No `<Card>` wrapper (Gotcha #1).
+- `<DataTable>` (not `<List>` — products have columns; see viax-uxm-conventions). No `<Card>` wrapper (viax-uxm-conventions).
 - **Columns:** Image (`<Thumbnail>` with `style={{ '--uxm-thumbnail-size': '36px', '--uxm-thumbnail-border-radius': '6px' }}`, fallback `<Icon glyph="image" />`), Name (medium weight), ID (monospace, muted), Description (muted), Categories (right-aligned `<Cluster>` of `<Tag type="neutral" size="small">`).
 - `onRowClick` navigates to `/products/{maId}`.
 - Above the table: `<PageHeader>` + `<InlineFilter>` (search via `<InputWithIcon>` + category `<Select>` in a `<FormField labelPosition="side">`).
-- Detail page with full product info (`<DetailSection>` + `<PropertyGrid>` of `<PropertyField label="…">{value}</PropertyField>` — children, not a `value` prop; Gotcha #7 — no `<Card>` wrapper).
+- Detail page with full product info (`<DetailSection>` + `<PropertyGrid>` of `<PropertyField label="…">{value}</PropertyField>` — children, not a `value` prop; viax-uxm rule 6 — no `<Card>` wrapper).
 
 ### Account (`/account`)
 
-- Top profile block: `<Card shadow>` with a `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — Gotcha #9) of `<Avatar>` + name/email (no `DetailSection` here — it's a single-row identity card). Next to them, the user's business roles from `useUser()` (`party.paMappedRolesList`) as `<Tag>`s — **display only**, never compared in code (viax-access rule 6).
-- **Below that, render each section as a `<DetailSection>` directly** — Addresses, Notifications, Security — **with no `<Card>` wrapper** (Gotcha #1). DetailSection is already a card.
+- Top profile block: `<Card shadow>` with a `<Cluster>` (not `<Stack style={{flexDirection:'row'}}>` — viax-uxm rule 9) of `<Avatar>` + name/email (no `DetailSection` here — it's a single-row identity card). Next to them, the user's business roles from `useUser()` (`parParty.paMappedRolesList`) as `<Tag>`s — **display only**, never compared in code (viax-access rule 6).
+- **Below that, render each section as a `<DetailSection>` directly** — Addresses, Notifications, Security — **with no `<Card>` wrapper** (viax-uxm-conventions). DetailSection is already a card.
 - Addresses: `<EmptyState>` until backend wired.
 - Notifications: `<Stack>` of `<ToggleSwitch>`-es.
 - Security: `<Link external>` to the Keycloak account console (`{VITE_AUTH_URL}/realms/{VITE_REALM}/account`).
 
 ### Admin (`/admin`)
 
-- `<DataTable>` (Gotcha #2) of sections — Users (coming soon), Integrations (coming soon).
+- `<DataTable>` (viax-uxm-conventions) of sections — Users (coming soon), Integrations (coming soon).
 - **Columns:** icon, `Section` title, `Description`, right-aligned chevron (`<Icon glyph="chevron-right" />`, omitted on disabled rows).
 - `onRowClick` navigates to the section, with an inline guard so disabled rows are no-ops.
 - **No Theme row** — runtime theming is the published UXM Studio config (always consumed); when `{{EMBED_UXM_STUDIO}} = yes` the editor is a separate **UXM Studio** Settings sidebar item, not an Admin row.
@@ -1670,7 +838,7 @@ accordingly. The portal adds only this glue:
   `useIdentity()` = `useAuthStore((s) => s.user?.id ?? null)`, `isMockMode` =
   `import.meta.env.VITE_USE_MOCK_DATA === 'true'`, `useTranslate()` = the portal's `useT()`
   when `{{LOCALIZATION}} = yes`, English literals otherwise.
-- **Surfaces** — nav items (Step 7), BI list/detail route gates, per-section queries on the
+- **Surfaces** — nav items (BI Types Step 3), BI list/detail route gates, per-section queries on the
   detail page, the dashboard's "Recent orders" (its own query; `<NoAccessSection />` on denial
   once wired to live data). Products, Account and Admin are not BI types and get no probe; their
   queries still go through the same error classification.
@@ -1695,7 +863,7 @@ accordingly. The portal adds only this glue:
 | Light/dark mode | Host-owned `data-theme` on `:root` — session-only `useState` in `shell.jsx` (the embedded studio defers it to the host) |
 | Ephemeral UI (modals, form inputs) | React `useState` |
 
-> **Critical:** Tokens are stored in Zustand **in-memory only** — never in localStorage or cookies. On page refresh, `keycloak.init()` re-establishes the session from Keycloak's own session cookie via silent refresh.
+> **Critical:** Tokens are stored in Zustand **in-memory only** — never in localStorage or cookies. On page refresh, `keycloak.init()` re-establishes the session from Keycloak's own session cookie via silent refresh ([`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md), rule 4).
 
 ---
 
@@ -1704,7 +872,7 @@ accordingly. The portal adds only this glue:
 ### Naming & Brand
 
 - **viax** is always lowercase "v" — never `Viax` or `VIAX` in any UI copy
-- The portal display name is **viax Lab** — use `viax lab` in lowercase contexts
+- The portal display name is **{{CLIENT_NAME}}** — use `{{CLIENT_NAME_LOWER}}` in lowercase contexts
 
 ### Code Quality
 
@@ -1712,7 +880,7 @@ accordingly. The portal adds only this glue:
 - The portal must be fully functional with `VITE_USE_MOCK_DATA=true`
 - Theme changes apply instantly via the UXM Studio — a Save regenerates the global `#uxm-overrides` stylesheet (no page reload, no custom theme code)
 - Every list page filter/search/sort state must live in the URL via React Router `useSearchParams` (shareable links)
-- **Use `@viax.io/uxm` for every UI primitive** — see [`viax-uxm/SKILL.md`](../../viax-uxm/SKILL.md). Never handroll a div with the same intent as an existing primitive (Card, FormField, DataTable, List, StatCard, PageShell, EmptyState, Loader, Tag, Banner, …).
+- **Use `@viax.io/uxm` for every UI primitive, the [`viax-uxm-conventions`](../../viax-uxm-conventions/SKILL.md) way** — its one rule, patterns and composition gotchas; props from [`viax-uxm`](../../viax-uxm/SKILL.md). Never hand-roll a div with the same intent as a shipped atom (Card, FormField, DataTable, List, StatCard, PageShell, EmptyState, Loader, Tag, Banner, …).
 - Layout via `<Stack>`, `<Cluster>`, `<ResponsiveGrid>` — not ad-hoc flex/grid divs.
 - Inline `style` only for one-off overrides via `--uxm-{component}-*` vars or layout sizing the library doesn't expose.
 - JSDoc comments on all function signatures and complex types
@@ -1731,11 +899,11 @@ accordingly. The portal adds only this glue:
 
 Build in this exact sequence:
 
-1. **Project scaffold** — Vite + React 19; install `uxm` (the `@viax.io/uxm` alias) + deps; import `uxm/tokens.css` and `uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (Gotcha #6); jsconfig paths. **Portal identity stamp (General Note #4, mandatory):** generate `{{PORTAL_ID}}` via `openssl rand -hex 4`, write the `"portal"` block into `package.json`, add the `__PORTAL_META__` `define` to `vite.config.js`, and the `stampPortalId()` boot call in `main.jsx`.
-2. **Theme system** — `globals.css` with the **full baseline from "UXM Layout & Styling Gotchas → Required `globals.css`"** (panel-radius unification, DetailSection padding override, InputWithIcon icon clamp, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 11). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchUxmConfig`/`fetchStudioConfig`/`fetchPortalAssignment`/`fetchAppliedStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveUxmConfig`/`saveStudioConfig` write helpers (deferred to step 11). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 5.
+1. **Project scaffold** — Vite + React 19; install `uxm` (the `@viax.io/uxm` alias) + deps; import `uxm/tokens.css` and `uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (*Portal stylesheet and fonts* §2); jsconfig paths. **Portal identity stamp (General Note #4, mandatory):** generate `{{PORTAL_ID}}` via `openssl rand -hex 4`, write the `"portal"` block into `package.json`, add the `__PORTAL_META__` `define` to `vite.config.js`, and the `stampPortalId()` boot call in `main.jsx`.
+2. **Theme system** — `globals.css` **verbatim from *Portal stylesheet and fonts* §1** (the box-sizing reset, panel-radius and shell knobs, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 11). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchUxmConfig`/`fetchStudioConfig`/`fetchPortalAssignment`/`fetchAppliedStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveUxmConfig`/`saveStudioConfig` write helpers (deferred to step 11). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 5.
 3. **i18n foundation (before ANY page) — ONLY when `{{LOCALIZATION}} = yes`; when `no`, skip this step entirely and go to step 4.** Follow the [`viax-localization`](../../viax-localization/SKILL.md) skill end to end: probe `getSupportedLocales` + `currentLocale` **at scaffold time** (as the generator, with your own credentials); generate `src/i18n/locales/{locale}.json` for every supported locale; **copy** `src/i18n/{index.jsx,bundled.js,resolve.js,locale-state.js}` and `lib/api/i18n.js` from the skill's [`reference-implementation.md`](../../viax-localization/references/reference-implementation.md) and the three npm scripts from its [`scripts.md`](../../viax-localization/references/scripts.md) — do NOT write this layer from scratch, it is identical in every viax React app and only `POPULATED_DEFAULT`, the bundled locale imports and the locale JSON contents are per-portal; mount `<I18nProvider>` in `App.jsx` **above the router and above the auth guard**; add the locale **header** to `lib/graphql-client.js`. Verify `LanguageSwitcher` is exported by the installed `@viax.io/uxm` — **if it is not, STOP and report; never hand-roll one.** Building any page before this step guarantees hardcoded strings that step 14 will reject.
-4. **Auth system** — `lib/keycloak.js` singleton, `main.jsx` init flow with `onLoad: 'login-required'`, `auth-store`, `ProtectedRoute` (token-less → `keycloak.login()`). **Generate NO login page and no `/login` route** — Keycloak's own form is the login screen; a portal page whose only job is a button that redirects there is pure friction. Mock auth mints its session at boot, so it needs no form either, and renders no sign-out control. The portal passes Keycloak **no locale**: that screen is the realm's.
-5. **Shell layout** — `<PageShell>` + `<AppSidebar>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; BI navigation items are gated by access probes (Step 7 — Sidebar Navigation), never by roles. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle. **Only when `{{LOCALIZATION}} = yes`:** add `<LanguageSwitcher />` after that and before Sign out (full order under *"Localization & i18n → Header order"*).
+4. **Auth system** — copy the [`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md) layer (run its redirect-URI check for port 9000 first): `lib/keycloak.js` singleton, `main.jsx` init flow with `onLoad: 'login-required'`, `auth-store`, `ProtectedRoute` (token-less → `keycloak.login()`). **Generate NO login page and no `/login` route** — Keycloak's own form is the login screen; a portal page whose only job is a button that redirects there is pure friction. Mock auth mints its session at boot, so it needs no form either, and renders no sign-out control. The portal passes Keycloak **no locale**: that screen is the realm's.
+5. **Shell layout** — `<PageShell>` + `<AppSidebar>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; BI navigation items are gated by access probes (BI Types Step 3 — Sidebar Navigation), never by roles. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle. **Only when `{{LOCALIZATION}} = yes`:** add `<LanguageSwitcher />` after that and before Sign out (full order under *"Localization & i18n → Header order"*).
 
    🔴 **`linkAs` needs an `href` → `to` adapter — never pass react-router's `Link` directly.**
    `AppSidebar` renders each item as `<linkAs href={item.href}>`. `next/link` accepts `href`, but
@@ -1759,28 +927,42 @@ Build in this exact sequence:
    The same adapter is required for any other UXM component with a polymorphic link prop. See
    [`viax-uxm/references/quick-recipes.md`](../../viax-uxm/references/quick-recipes.md) §1.
 
-6. **Mock data** — Realistic data for all entity types using real viax field names
-7. **Dashboard** — `<PageHeader>` + `<StatCard>` × 4 + recharts charts in `<Card>` + `<DataTable>` for Recent orders (no Card wrapper — Gotcha #1) + `<Checkbox>`-driven Tasks (Gotcha #3) + Quick links Card (mock data)
-8. **BEM discovery** — Query active BEM via MCP (`get_type` + `execute_query`); call `get_type` on each discovered BI type to resolve interfaces; populate `bi-types.config.js`; build `<BiListPage>` and `<BiDetailPage>` shared templates using `<DataTable>`, `<PageHeader>`, `<InlineFilter>`, `<TimelineEntry>`, `<PropertyGrid>`; scaffold one thin page pair per `BI_TYPES` entry; populate sidebar `navItems` from `BI_TYPES`. **Then access (viax-access steps 1–5)** — see *"Access & permissions"*: discover the realm's policies, write the access model + audit into `design.md`, add `src/access/*`, the error classification in `lib/graphql-client.js`, the probes, the route gates and the no-access surfaces, and emit edit controls only where the model says `write`
-9. **Products** — `<DataTable>` with 5 columns (image `<Thumbnail>`, name, ID, description, categories `<Tag>`s); **no `<Card>` wrapper** (Gotcha #1). Detail page via `<DetailSection>` + `<PropertyGrid>` rendered directly.
-10. **Account** — top `<Card>` for the Avatar identity row; each section (Addresses, Notifications, Security) as a bare `<DetailSection>` — **no `<Card>` around DetailSection** (Gotcha #1). Wire to `useAuthStore(s => s.user)`; the role `<Tag>`s come from `useUser()` (display only).
-11. **Admin index (+ UXM Studio editor only if `{{EMBED_UXM_STUDIO}} = yes`)** — Admin index uses `<DataTable>` for the section list (Gotcha #2: Users / Integrations "coming soon", **no Theme row**). **Always** wire the host light/dark toggle in `<AppTopBar>` and the brand-driven sidebar logo (subscribe to `uxm-studio-config`). **Only when `{{EMBED_UXM_STUDIO}} = yes`:** create `lib/uxm-persistence.js` + the `saveUxmConfig`/`saveStudioConfig` write helpers, import `uxm/studio.css` in `main.jsx`, build the UXM Studio page (`src/pages/uxm/UxmStudioPage.jsx`) mounting `<UxmApp embed persistence={createConfigRepoPersistence()} />`, register `/uxm` in the router, and add the "UXM Studio" item under the **Settings** sidebar group. See [Runtime Theming](#runtime-theming--consume-the-uxm-studio-config-optionally-embed-the-editor-at-uxm).
+6. **Data layer + mock data** — copy the [`viax-graphql-data-layer`](../../viax-graphql-data-layer/SKILL.md) files (`graphql-client.js` with the blocks of the skills in use, `schema-api.js`, `normalize.js`, `user.js` + `use-user.js`) and write the portal's modules and realistic raw-shape mock data (*Data layer*)
+7. **Dashboard** — `<PageHeader>` + `<StatCard>` × 4 + recharts charts in `<Card>` + `<DataTable>` for Recent orders (no Card wrapper — viax-uxm-conventions) + `<Checkbox>`-driven Tasks (viax-uxm-conventions) + Quick links Card (mock data)
+8. **BI types from the BEM** — run [`viax-bem-discovery`](../../viax-bem-discovery/SKILL.md) (asks the user for the BEM, writes `bi-types.config.js` and the BEM section of `design.md`); build `<BiListPage>` and `<BiDetailPage>` shared templates using `<DataTable>`, `<PageHeader>`, `<InlineFilter>`, `<TimelineEntry>`, `<PropertyGrid>`; scaffold one thin page pair per `BI_TYPES` entry; populate sidebar `navItems` from `BI_TYPES`. **Then access (viax-access steps 1–5)** — see *"Access & permissions"*: discover the realm's policies, write the access model + audit into `design.md`, add `src/access/*`, the error classification in `lib/graphql-client.js`, the probes, the route gates and the no-access surfaces, and emit edit controls only where the model says `write`
+9. **Products** — `<DataTable>` with 5 columns (image `<Thumbnail>`, name, ID, description, categories `<Tag>`s); **no `<Card>` wrapper** (viax-uxm-conventions). Detail page via `<DetailSection>` + `<PropertyGrid>` rendered directly.
+10. **Account** — top `<Card>` for the Avatar identity row; each section (Addresses, Notifications, Security) as a bare `<DetailSection>` — **no `<Card>` around DetailSection** (viax-uxm-conventions). Wire to `useAuthStore(s => s.user)`; the role `<Tag>`s come from `useUser()` (display only).
+11. **Admin index (+ UXM Studio editor only if `{{EMBED_UXM_STUDIO}} = yes`)** — Admin index uses `<DataTable>` for the section list (columns mean `DataTable` — viax-uxm-conventions; Users / Integrations "coming soon", **no Theme row**). **Always** wire the host light/dark toggle in `<AppTopBar>` and the brand-driven sidebar logo (subscribe to `uxm-studio-config`). **Only when `{{EMBED_UXM_STUDIO}} = yes`:** create `lib/uxm-persistence.js` + the `saveUxmConfig`/`saveStudioConfig` write helpers, import `uxm/studio.css` in `main.jsx`, build the UXM Studio page (`src/pages/uxm/UxmStudioPage.jsx`) mounting `<UxmApp embed persistence={createConfigRepoPersistence()} />`, register `/uxm` in the router, and add the "UXM Studio" item under the **Settings** sidebar group. See [Runtime Theming](#runtime-theming--consume-the-uxm-studio-config-optionally-embed-the-editor-at-uxm).
 12. **Polish** — `<Loader>` / `<EmptyState>` for all data-fetching pages, error boundaries (access denials excluded — see Error Handling), `<Toaster/>` + `toast.*()` from `uxm/ui` (no sonner), responsive (`<ResponsiveGrid>` does most of the work)
 13. **Font smoke-check (MANDATORY — do not skip).** Before declaring the build done, verify the typography wiring survived generation. In the running app (DevTools → Computed → `font-family`), or by inspecting the built files, confirm ALL of:
     - `globals.css` contains the `:root { --font-sans: var(--font-inter, …) }` bridge, the `html, body, #root { font-family: var(--brand-font, var(--font-sans)) }` chain, and `button, input, select, textarea { font: inherit }`.
-    - `index.html` contains the Inter Google-Fonts `<link>` (Gotcha #6).
+    - `index.html` contains the Inter Google-Fonts `<link>` (*Portal stylesheet and fonts* §2).
     - Computed `font-family` on `<body>` is Inter (or the published brand font) — **never a serif**. Serif body text → the bridge is missing.
     - Computed `font-family` on a native `<button>`/`<input>` matches the body — **never Arial/Helvetica**. Arial controls → the `font: inherit` rule is missing.
     - Sans-serif but not Inter → the `index.html` `<link>` is missing.
-    If any check fails, fix `globals.css`/`index.html` from the Gotcha #5/#6 baselines verbatim — do not improvise alternative font declarations.
-14. **Hardcoded-string scan — ONLY when `{{LOCALIZATION}} = yes`** (when `no`, the build ends
-    at step 13). **MANDATORY in that case — do not skip.** Generate
+    If any check fails, fix `globals.css`/`index.html` from *Portal stylesheet and fonts* verbatim — do not improvise alternative font declarations.
+    **Then the data layer's checks** — [`viax-graphql-data-layer`](../../viax-graphql-data-layer/SKILL.md) → *Checks before calling it done* (no `fetch(`, one `axios.create`, no `ID!` / `_sort` / `LIKE`, no inline `setTo` values, no invented currency, `VITE_SCHEMA_API` set).
+    **Then the stylesheet rules of `viax-uxm-conventions`** — each of these returns nothing:
+    ```bash
+    grep -rnE '\.uxm-[a-z]' src --include='*.css'                          # no .uxm-* selector
+    grep -rnE '^[[:space:]]*--color-' src --include='*.css'                 # no --color-* declaration
+    grep -rnE '#[0-9a-fA-F]{3,8}\b' src --include='*.css' --include='*.jsx' # no hard-coded colour
+    ```
+    A hit is fixed the conventions' way — a `--uxm-*` knob, a token, or a proposal for a library
+    gap — never by keeping the override.
+14. **Hardcoded-string scan — ONLY when `{{LOCALIZATION}} = yes`** (when `no`, go from step 13
+    to step 15). **MANDATORY in that case — do not skip.** Generate
     `scripts/scan-hardcoded-strings.mjs`, wire it as `"scan:i18n"` in
     `package.json`, and run it. **It must exit non-zero on any literal UI text**,
     and the build is not done while it fails. A generated surface starts at
     **zero** hits. The full spec — what it must flag, what it must not flag, and
     the object-literal case that is easy to omit — is in
     [`viax-localization/references/catalog-and-files.md`](../../viax-localization/references/catalog-and-files.md).
+15. **No placeholder left behind (MANDATORY — always the last step).** In the portal directory,
+    `grep -rnE '\{\{[A-Z_]+\}\}' src index.html package.json vite.config.js .env.local .env.example`
+    must return nothing. A hit is a value that was never substituted — a literal `{{AUTH_URL}}` in
+    `.env.local` builds fine and sends the login to a non-existent address. Fix it from the confirmed
+    values, never by guessing.
 
 ---
 

@@ -782,6 +782,7 @@ function ThemePicker({ rows, selectedId, onSelect }) {
       matchAnchorWidth={false}
       minPanelWidth={300}
       maxPanelWidth={360}
+      className="theme-picker"
       panelClassName="theme-picker__panel"
       aria-label="Select theme"
       renderTrigger={({ triggerProps }) => (
@@ -826,6 +827,9 @@ ships no spacing-scale token (`--spacing` doesn't exist anywhere in the library)
 ends up jammed against the name (see design-tokens.md → Rules #5):
 
 ```css
+/* .uxm-listbox is width: 100% (sized for form fields); in a wrapping actions row it takes the whole
+   line and pushes every other action onto its own row. */
+.theme-picker { width: auto; }
 .theme-picker__panel { --uxm-listbox-option-padding-y: 8px; }
 .theme-picker__row { display: flex; align-items: center; gap: 12px; width: 100%; }
 .theme-picker__avatar { flex-shrink: 0; }

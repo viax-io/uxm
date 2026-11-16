@@ -74,7 +74,8 @@ The write half (`SAVE_UXM_CONFIG`, `saveStudioConfig`) is **embed-only** — a c
 writes.
 
 ```javascript
-import { execute } from '@/lib/graphql-client'
+import { execute, USE_MOCK_DATA } from '@/lib/graphql-client'
+import { MOCK_UXM_CONFIG } from '@/lib/mock-data/uxm-config'
 
 const GET_UXM_CONFIG = /* GraphQL */ `
   query getUxmConfig { getUxmConfig { config } }
@@ -104,6 +105,7 @@ export function invalidateUxmConfig() { configCache = null }
 
 export async function fetchUxmConfig() {
   if (configCache) return configCache
+  if (USE_MOCK_DATA) return MOCK_UXM_CONFIG // mock mode never calls the API (viax-graphql-data-layer rule 6)
   configCache = execute(GET_UXM_CONFIG)
     .then((d) => hydrateConfig(d?.getUxmConfig?.config))
     .catch((err) => { configCache = null; throw err })   // don't cache failures
@@ -160,6 +162,11 @@ export async function saveStudioConfig(studioConfig) {
   configCache = Promise.resolve(next)
 }
 ```
+
+`MOCK_UXM_CONFIG` (`lib/mock-data/uxm-config.js`) is the environment's published config, read with
+`getUxmConfig` at generation time — the default theme plus the named themes with their real brand
+assets (logos included), so the picker, the sidebar logo and the accent ramp behave in mock mode as
+they will live. An app without a mock mode drops the branch and the import.
 
 ## 3. Applier — `src/components/uxm-config-applier.jsx`
 
@@ -428,7 +435,10 @@ export function useHydrateStudioConfig() {
 ```
 
 **6d. UI.** A `Tag` pill opening a `Listbox` of `themeRows(structure)` — not a `Dialog`; the
-list is small. `searchable={false}` and `showCheckmark={false}`; mark the active row with a
+list is small. `searchable={false}`, `showCheckmark={false}`, and size the panel to its rows —
+`matchAnchorWidth={false}` + `minPanelWidth={220}` (+ `placement="bottom-end"` in a top bar): the
+panel otherwise takes the trigger's width, and a short theme name ("Lab") leaves no room for the
+"Active" pill (seen 2026-11-13). Mark the active row with a
 `Tag type="success"` "Active" pill and make the whole row the click target. No "Use" badge on
 inactive rows (redundant — the row is already clickable), no "Default" badge, no
 confirm-before-switch (there is no editor state a switch could discard).
