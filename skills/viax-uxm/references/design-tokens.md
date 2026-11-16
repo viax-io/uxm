@@ -381,7 +381,7 @@ yourself (`background: var(--color-surface); color: var(--color-text)`).
   `[data-theme]` element, so a custom value for them belongs on `:root, [data-theme]`.
 - A knob saved as a literal colour (`#FFFFFF`) is the same in every panel; only token-valued
   knobs follow it. Studio flags such a value under the colour picker and offers the nearest
-  token (unreleased).
+  token (4.115.0).
 
 The host owns the attribute (the embedded studio defers to it); a typical toggle is a session-only
 `useState` that writes `document.documentElement.dataset.theme`. The `themeTokens` array (and the

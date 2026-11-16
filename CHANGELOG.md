@@ -1,3 +1,15 @@
+# [4.115.0](https://github.com/viax-io/uxm/compare/v4.114.0...v4.115.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* **studio:** keep the reset button on its row and quiet the hint's false alarms ([a95fb95](https://github.com/viax-io/uxm/commit/a95fb951f50b1a6bb74d5f387257ed6372b33255))
+
+
+### Features
+
+* **studio:** flag a fixed colour that won't follow a dark or light panel ([2f46fd2](https://github.com/viax-io/uxm/commit/2f46fd2067e2e4ae77c8d9b35a1adfd5f8a6a821))
+
 # [4.114.0](https://github.com/viax-io/uxm/compare/v4.113.0...v4.114.0) (2026-11-16)
 
 
