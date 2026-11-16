@@ -134,6 +134,21 @@ X.Y.Z`, not above it. The stamper renames in place and never reorders, so a
 section parked in the wrong slot is frozen there by the next release and the
 history reads scrambled from then on.
 
+**Third half: dependent PRs merged in a row all land under the first release.**
+#171, #172 and #173 (2026-11-16) each needed the previous one, so each branch
+was cut from the one before and carried its notes under the same
+`### Unreleased`. #171's release stamped that heading `New in 4.113.0` with all
+three PRs' bullets under it (git merged #172's and #173's on top of it
+cleanly), and 4.114.0 and 4.115.0 found no `### Unreleased` to stamp. The
+catalog rows were fine, since each `(unreleased)` marker is stamped by the
+release that ships it. Fixed by hand in a docs PR that split the block into
+`New in 4.114.0` and `New in 4.115.0`.
+
+**How to apply:** when PRs depend on each other, have each one add only its own
+bullet, and merge them one release at a time. After the releases, check that
+each `### New in X.Y.Z` holds only that version's notes, and move any that
+landed under an earlier one.
+
 **Third variant of the same trap: an MR that outlives a release gets its
 bullets silently folded under the freshly stamped heading at merge.** You
 write your notes under `### Unreleased`; while your MR is open, another MR
