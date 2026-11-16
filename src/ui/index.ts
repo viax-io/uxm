@@ -8,7 +8,7 @@ export type {
   AppSidebarToggle,
 } from './app-sidebar';
 export { AppTopBar } from './app-top-bar';
-export type { AppTopBarProps } from './app-top-bar';
+export type { AppTopBarCollapseAt, AppTopBarProps } from './app-top-bar';
 export { Avatar } from './avatar';
 export type { AvatarProps, AvatarSize, AvatarType } from './avatar';
 export { BackLink } from './back-link';

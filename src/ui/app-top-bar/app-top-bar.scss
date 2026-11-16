@@ -78,3 +78,47 @@
     }
   }
 }
+
+/* `collapseAt`: at or below the width, the bar wraps and the `search` slot
+   takes a full-width second row. `__left` dissolves (`display: contents`) so
+   its slots become the bar's own flex items: menu and brand lead the first
+   row, the actions keep the right edge, and search is ordered last. A
+   zero-width `::before` holds the first row at the bar's height whatever it
+   contains (its negative margin cancels the gap it would add), and the search
+   row is padded like the bar's sides. One block per value: a media query
+   can't read a custom property. */
+@each $bp in (640, 768, 960, 1024) {
+  @media (max-width: #{$bp}px) {
+    .uxm-app-top-bar--collapse-#{$bp} {
+      flex-wrap: wrap;
+      height: auto;
+      justify-content: flex-start;
+      row-gap: 0;
+
+      &::before {
+        content: '';
+        flex: 0 0 0;
+        margin-right: calc(-1 * var(--uxm-app-top-bar-gap, 12px));
+        min-height: var(--uxm-app-top-bar-height, 64px);
+      }
+
+      .uxm-app-top-bar__left {
+        display: contents;
+      }
+
+      /* Right-aligned on the first row. If brand and actions can't share it
+         (buttons don't shrink below their labels), the actions wrap onto a
+         row of their own rather than overlap the brand. */
+      .uxm-app-top-bar__actions {
+        margin-left: auto;
+      }
+
+      .uxm-app-top-bar__search {
+        flex: 1 0 100%;
+        margin-bottom: var(--uxm-app-top-bar-padding-x, 16px);
+        max-width: none;
+        order: 1;
+      }
+    }
+  }
+}
