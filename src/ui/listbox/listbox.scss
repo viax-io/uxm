@@ -7,6 +7,16 @@
   position: relative;
   width: 100%;
 
+  /* `inline`: as wide as the trigger, for a menu trigger sitting in a row of
+     other controls. `max-width` keeps a long trigger label from pushing past
+     a narrow container. */
+  &--inline {
+    display: inline-flex;
+    max-width: 100%;
+    vertical-align: middle;
+    width: auto;
+  }
+
   &__panel {
     display: flex;
     flex-direction: column;

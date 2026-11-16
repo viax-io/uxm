@@ -106,5 +106,6 @@ export default defineConfig({
     await copyCssTree('src/ui', 'dist/ui');
     await compileScssTree('src/ui', 'dist/ui');
     await copyAsset('src/tokens/index.css', 'dist/tokens/index.css');
+    await copyAsset('src/base/index.css', 'dist/base/index.css');
   },
 });

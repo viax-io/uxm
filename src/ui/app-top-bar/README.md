@@ -44,6 +44,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
 | `--uxm-app-top-bar-border-color` | `--color-border` | – | Bottom border colour. |
+| `--uxm-app-top-bar-border-bottom-width` | – | `1px` | Bottom border width — a heavier brand rule under the bar, or `0px` for none. |
 | `--uxm-app-top-bar-brand-gap` | – | `16px` | Space after the `__brand` slot. |
 | `--uxm-app-top-bar-brand-height` | – | `24px` | Height of an `<img>` inside the `__brand` slot. |
 | `--uxm-app-top-bar-search-max-width` | – | `320px` | Max width of the `__search` slot inside the left column. |

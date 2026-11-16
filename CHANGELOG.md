@@ -1,3 +1,24 @@
+# [4.99.0](https://github.com/viax-io/uxm/compare/v4.98.0...v4.99.0) (2026-11-16)
+
+
+### Features
+
+* **theming:** top and bottom border knobs on Card, DetailSection and AppTopBar ([724a1b6](https://github.com/viax-io/uxm/commit/724a1b6a8536f358011f0d8cca96f135ca4110d2))
+
+# [4.98.0](https://github.com/viax-io/uxm/compare/v4.97.0...v4.98.0) (2026-11-16)
+
+
+### Features
+
+* **base:** ship the host baseline as an opt-in base.css ([b69c889](https://github.com/viax-io/uxm/commit/b69c889ed63d73957e7300ad63e6695b102f5558))
+
+# [4.97.0](https://github.com/viax-io/uxm/compare/v4.96.0...v4.97.0) (2026-11-16)
+
+
+### Features
+
+* **listbox:** add inline prop to size the wrapper to its trigger ([86712bb](https://github.com/viax-io/uxm/commit/86712bb1e3d8a899fd67ccddd0ac1366b304e196))
+
 # [4.96.0](https://github.com/viax-io/uxm/compare/v4.95.0...v4.96.0) (2026-11-16)
 
 
