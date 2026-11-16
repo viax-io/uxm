@@ -21,6 +21,12 @@ export interface BrandConfig {
   /** Weight for heading surfaces ('500' | '600' | '700'). Unset = each
    *  component keeps its own default (600, or 700 for the display sizes). */
   headingFontWeight?: string;
+  /** Case for the heading titles ('uppercase' | 'capitalize' | 'none') →
+   *  `--brand-heading-text-transform`. Unset = each title inherits, as before. */
+  headingTextTransform?: string;
+  /** Tracking for the heading titles, in em ('0.04em') →
+   *  `--brand-heading-letter-spacing`. Unset = each title inherits. */
+  headingLetterSpacing?: string;
   /** Per-role heading refinements, layered UNDER the umbrella above: unset =
    *  the role follows `headingFontFamily` / `headingFontWeight`. Roles are
    *  display (StatCard value, ErrorPage code), h1 (PageHeader / ErrorPage

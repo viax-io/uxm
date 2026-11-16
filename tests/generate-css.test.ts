@@ -179,6 +179,16 @@ describe('generateOverridesCss', () => {
     expect(generateOverridesCss({}, { monoFontFamily: 'x"; } body {' } as BrandConfig)).not.toContain('--brand-mono-font');
   });
 
+  it('publishes the heading case and tracking on :root, and drops anything else', () => {
+    const css = generateOverridesCss({}, { headingTextTransform: 'uppercase', headingLetterSpacing: '0.05em' } as BrandConfig);
+    expect(css).toContain('  --brand-heading-text-transform: uppercase;');
+    expect(css).toContain('  --brand-heading-letter-spacing: 0.05em;');
+    // Unset or unsafe → no var, so every title keeps inheriting.
+    expect(generateOverridesCss({}, {} as BrandConfig)).not.toMatch(/--brand-heading-(text-transform|letter-spacing)/);
+    const bad = generateOverridesCss({}, { headingTextTransform: 'uppercase; color: red', headingLetterSpacing: '2px' } as BrandConfig);
+    expect(bad).not.toMatch(/--brand-heading-(text-transform|letter-spacing)/);
+  });
+
   it('emits the strong weight on :root and drops anything but 500/600/700', () => {
     expect(generateOverridesCss({}, { strongFontWeight: '500' })).toContain('--font-weight-strong: 500;');
     expect(generateOverridesCss({}, { strongFontWeight: '900; color: red' })).not.toContain('--font-weight-strong');

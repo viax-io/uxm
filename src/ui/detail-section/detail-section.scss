@@ -61,12 +61,13 @@
     font-family: var(--uxm-detail-section-title-font, var(--type-section-title-font, var(--brand-heading-font, inherit)));
     font-size: calc(var(--uxm-detail-section-title-size, 15px) * var(--type-section-title-scale, 1) * var(--type-scale, 1));
     font-weight: var(--uxm-detail-section-title-weight, var(--type-section-title-weight, var(--brand-heading-weight, 600)));
-    /* Case and tracking knobs with NO fallback, on purpose: unset, the var is
-       invalid at computed-value time, which for these inherited properties
-       means `inherit`, exactly what this element did before the knobs. */
-    letter-spacing: var(--uxm-detail-section-title-letter-spacing);
+    /* Case and tracking: the knob, then the brand's heading case / tracking,
+       and no final fallback, on purpose: unset, the var is invalid at
+       computed-value time, which for these inherited properties means
+       `inherit`, exactly what this element did before the knobs. */
+    letter-spacing: var(--uxm-detail-section-title-letter-spacing, var(--brand-heading-letter-spacing));
     margin: 0;
-    text-transform: var(--uxm-detail-section-title-text-transform);
+    text-transform: var(--uxm-detail-section-title-text-transform, var(--brand-heading-text-transform));
   }
 
   &__subtitle {

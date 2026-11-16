@@ -46,6 +46,7 @@ Set on the root (or an ancestor scope); each falls back to a design token.
 | `--uxm-segment-row-accent-color` / `-accent-width` / `-accent-radius` | `accent-bold` / `4px` / `2px` | Accent line |
 | `--uxm-segment-row-title-color` / `-title-size` / `-title-weight` | `text` / `16px` / `600` | Title (weight falls back through `--brand-heading-weight`) |
 | `--uxm-segment-row-title-font` | `--type-section-title-font` → `--brand-heading-font` → `inherit` | Title typeface (**h2** role) |
+| `--brand-heading-text-transform` / `--brand-heading-letter-spacing` | `inherit` | The brand's heading case and tracking (Studio: Brand Settings → Typography → Headings), read by the title. There's no per-component case knob here (PageHeader and DetailSection have one) |
 | `--uxm-segment-row-count-bg` / `-count-color` / `-count-size` | `surface-alt` / `text-muted` / `12px` | Count badge |
 | `--uxm-segment-row-count-padding-x` / `-y` / `-count-radius` | `10px` / `2px` / `999px` | Count badge shape |
 | `--uxm-segment-row-row-hover-bg` / `-row-hover-radius` | `color-mix(text 4%)` / `12px` | Row hover highlight |

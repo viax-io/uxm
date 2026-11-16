@@ -36,7 +36,11 @@
     font-family: var(--uxm-error-page-title-font, var(--type-page-title-font, var(--brand-heading-font, inherit)));
     font-size: calc(var(--uxm-error-page-title-size, 24px) * var(--type-page-title-scale, 1) * var(--type-scale, 1));
     font-weight: var(--uxm-error-page-title-weight, var(--type-page-title-weight, var(--brand-heading-weight, 600)));
+    /* The brand's heading case and tracking, with no fallback: unset, they
+       inherit, as before. */
+    letter-spacing: var(--brand-heading-letter-spacing);
     margin: 16px 0 0;
+    text-transform: var(--brand-heading-text-transform);
   }
 
   &__message {

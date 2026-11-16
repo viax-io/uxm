@@ -113,6 +113,15 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Brand-level heading case and tracking.** `brand.headingTextTransform` (`uppercase` /
+  `capitalize`) and `brand.headingLetterSpacing` (em, -0.05em..0.2em) are set in Studio under
+  Brand Settings → Typography → Headings → Case / Tracking.
+  - They publish `--brand-heading-text-transform` and `--brand-heading-letter-spacing`.
+  - The PageHeader, DetailSection, SegmentRow and ErrorPage titles read them, after their own
+    case and tracking knobs.
+  - Unset, the titles inherit, as before.
+  - A brand in capitals sets this once instead of per-component knobs.
+
 ## Workflow
 
 ### Where the documentation lives

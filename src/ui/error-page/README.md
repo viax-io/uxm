@@ -55,6 +55,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — `title` is shadowed 
 | `--uxm-error-page-title-size` | – | `24px` | Title font size. |
 | `--uxm-error-page-title-font` | `--type-page-title-font` → `--brand-heading-font` | `inherit` | Title typeface (**h1** role). |
 | `--uxm-error-page-title-weight` | `--brand-heading-weight` | `600` | Title weight. |
+| `--brand-heading-text-transform` / `--brand-heading-letter-spacing` | – | `inherited` | The brand's heading case and tracking (Studio: Brand Settings → Typography → Headings), read by the title. Unset, it inherits. There's no per-component case knob here (PageHeader and DetailSection have one). |
 | `--uxm-error-page-message-color` | `--color-text-muted` | – | Message colour. |
 | `--uxm-error-page-message-size` | – | `14px` | Message font size. |
 | `--uxm-error-page-message-max-width` | – | `28rem` | Message wrap width. |

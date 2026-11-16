@@ -55,6 +55,20 @@ export function safeLineHeight(v: unknown): string | undefined {
   const n = Number(s);
   return n >= 1 && n <= 2.5 ? s : undefined;
 }
+/** Heading case: a closed set, so the whitelist is the sanitizer. Wider than
+ *  the editor (which offers uppercase / capitalize) on purpose: `none` lets an
+ *  API-set brand force sentence case over a host's own heading rule. */
+export function safeTextTransform(v: unknown): string | undefined {
+  const s = typeof v === 'string' ? v.trim() : undefined;
+  return s !== undefined && /^(none|uppercase|capitalize|lowercase)$/.test(s) ? s : undefined;
+}
+/** Heading tracking, in em only and within -0.05em..0.2em (what the editor offers). */
+export function safeLetterSpacing(v: unknown): string | undefined {
+  const s = typeof v === 'string' ? v.trim() : undefined;
+  if (s === undefined || !/^-?\d*\.?\d+em$/.test(s)) return undefined;
+  const n = Number(s.slice(0, -2));
+  return n >= -0.05 && n <= 0.2 ? s : undefined;
+}
 export function safeTokenKey(v: string): boolean {
   return /^--[A-Za-z0-9-]+$/.test(v);
 }
