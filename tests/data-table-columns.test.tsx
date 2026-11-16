@@ -230,11 +230,11 @@ describe('DataTable fixed layout — the cases CSS alone decides', () => {
     // override loses and the stacked card draws two rails — one on the row and
     // one on its first field. That is exactly what the first version did.
     const base = css.indexOf('.uxm-data-table__row--active > :first-child');
-    const stacked = css.indexOf('@container (max-width: 480px)', base);
+    const stacked = css.indexOf('@container uxm-data-table (max-width: 480px)', base);
     expect(base, 'base rail rule missing').toBeGreaterThan(-1);
     expect(stacked, 'stacked rail override must come after the base rule').toBeGreaterThan(base);
     expect(css.slice(stacked)).toMatch(
-      /@container \(max-width: 480px\)[\s\S]{0,400}?__row--active > :first-child\s*\{\s*box-shadow:\s*none/,
+      /@container uxm-data-table \(max-width: 480px\)[\s\S]{0,400}?__row--active > :first-child\s*\{\s*box-shadow:\s*none/,
     );
   });
 
@@ -248,7 +248,7 @@ describe('DataTable fixed layout — the cases CSS alone decides', () => {
     // Found by CONTENT, not `lastIndexOf` — positional lookup is what made the
     // sticky tests silently inspect a different block once this one moved.
     const cardAt = scss.indexOf('attr(data-label)');
-    const blockAt = scss.lastIndexOf('@container (max-width: 480px)', cardAt);
+    const blockAt = scss.lastIndexOf('@container uxm-data-table (max-width: 480px)', cardAt);
     const block = scss.slice(blockAt);
     expect(cardAt, 'card-mode block not found').toBeGreaterThan(-1);
 
@@ -274,7 +274,7 @@ describe('DataTable fixed layout — the cases CSS alone decides', () => {
     // mode's (0,1,0) wherever the block sits. Moving the block fixed default
     // density and left compact/relaxed exactly as broken — 6px and 16px cell
     // padding stacked on the row's own. The reset has to match their shape.
-    const block = scss.slice(scss.lastIndexOf('@container (max-width: 480px)', scss.indexOf('attr(data-label)')));
+    const block = scss.slice(scss.lastIndexOf('@container uxm-data-table (max-width: 480px)', scss.indexOf('attr(data-label)')));
     expect(block).toMatch(
       /--compact \.uxm-data-table__td,[\s\S]{0,120}?--relaxed \.uxm-data-table__td\s*\{\s*padding:\s*4px 0/,
     );

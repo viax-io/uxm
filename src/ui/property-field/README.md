@@ -57,7 +57,7 @@ Extends `HTMLAttributes<HTMLDivElement>` — any standard div attribute is forwa
 | `--uxm-property-field-value-size` | – | `14px` | Value font size. |
 | `--uxm-property-field-label-transform` | – | `uppercase` | Label `text-transform`. Set `none` for a sentence-case label (prose grids). |
 | `--uxm-property-field-label-tracking` | – | `0.06em` | Label `letter-spacing`. Pair `normal` with `label-transform: none` — the tracking suits caps, not sentence case. |
-| `--uxm-property-field-value-font` | – | `ui-monospace, SFMono-Regular, Menlo, monospace` | Value `font-family`. For proportional prose values pass an explicit body stack, e.g. `var(--brand-font, var(--font-sans, sans-serif))`. ⚠️ Do **not** pass the keyword `inherit` — a CSS-wide keyword as a custom-property value makes the property inherit (a no-op) rather than resolving to `font-family: inherit`, so it silently falls back to the mono default. |
+| `--uxm-property-field-value-font` | `--brand-mono-font` | `ui-monospace, SFMono-Regular, Menlo, monospace` | Value `font-family`. Follows the brand's mono typeface when one is published; unset, the system stack. For proportional prose values pass an explicit body stack, e.g. `var(--brand-font, var(--font-sans, sans-serif))`. ⚠️ Do **not** pass the keyword `inherit` — a CSS-wide keyword as a custom-property value makes the property inherit (a no-op) rather than resolving to `font-family: inherit`, so it silently falls back to the mono default. |
 
 Label additionally carries a hard-coded `font-weight: 600` (not exposed). The case, tracking, and value font are themeable via the variables above — their defaults reproduce the original uppercase-eyebrow label + monospace value exactly, so an unset instance is unchanged.
 

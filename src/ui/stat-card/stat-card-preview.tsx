@@ -17,10 +17,11 @@ export function StatCardPreview({ styles }: PreviewProps) {
           key={stat.label}
           style={{
             '--uxm-stat-card-background-color': styles.backgroundColor as string,
+            '--uxm-stat-card-background': (styles.background as string) || undefined,
             '--uxm-stat-card-border-color': styles.borderColor as string,
             '--uxm-stat-card-border-radius': `${styles.borderRadius}px`,
             '--uxm-stat-card-padding': `${styles.padding}px`,
-            backgroundColor: 'var(--uxm-stat-card-background-color)',
+            background: 'var(--uxm-stat-card-background, var(--uxm-stat-card-background-color))',
             border: '1px solid var(--uxm-stat-card-border-color)',
             borderRadius: 'var(--uxm-stat-card-border-radius)',
             padding: 'var(--uxm-stat-card-padding)',

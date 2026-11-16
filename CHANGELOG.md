@@ -1,3 +1,24 @@
+# [4.102.0](https://github.com/viax-io/uxm/compare/v4.101.0...v4.102.0) (2026-11-16)
+
+
+### Features
+
+* **theming:** a mono font role, brand.monoFontFamily and the --font-mono token ([4285ba8](https://github.com/viax-io/uxm/commit/4285ba8c1d38e633f44ef8cc2c34c0ed89b5e43a))
+
+# [4.101.0](https://github.com/viax-io/uxm/compare/v4.100.0...v4.101.0) (2026-11-16)
+
+
+### Features
+
+* **data-table:** stackAt={320} and stackAt={false} to stack later or never ([314538a](https://github.com/viax-io/uxm/commit/314538a55e8a5139e9380a95f6a1b11fc27af17e))
+
+# [4.100.0](https://github.com/viax-io/uxm/compare/v4.99.0...v4.100.0) (2026-11-16)
+
+
+### Features
+
+* **theming:** background knobs that take gradients and images ([0b35e86](https://github.com/viax-io/uxm/commit/0b35e86f2e44768023f1bdf0c41cb8629b3ecf55))
+
 # [4.99.0](https://github.com/viax-io/uxm/compare/v4.98.0...v4.99.0) (2026-11-16)
 
 

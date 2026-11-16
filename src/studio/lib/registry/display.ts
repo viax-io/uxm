@@ -215,6 +215,7 @@ export const displayDefs: ComponentDef[] = [
     description: 'Content surface with border and optional shadow. An optional vertical gap spaces its direct children; content layout is composed inside with Stack/Cluster.',
     styleProperties: [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
+      { key: 'background', label: 'Background Image or Gradient', control: 'text', defaultValue: '', section: 'colors' },
       { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
       { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 24, step: 1, unit: 'px' },
       { key: 'borderTopWidth', label: 'Top Border Width', control: 'slider', defaultValue: 1, min: 0, max: 8, step: 1, unit: 'px', section: 'edges' },

@@ -222,7 +222,7 @@ What you get, and what to know:
 ### Stacking threshold
 
 Rows reflow into stacked cards at or below a **480px container** by default (the query is
-`max-width`, so the threshold itself stacks). `stackAt` raises that:
+`max-width`, so the threshold itself stacks). `stackAt` moves that, up or down, or turns it off:
 
 ```tsx
 <DataTable stackAt={768} columns={columns} rows={rows} rowKey={(r) => r.id} />
@@ -233,8 +233,30 @@ column, one half of a two-up layout. Because the measurement is the **table's ow
 container** and not the viewport, the same table can stack inside a 600px panel and stay a
 table full-bleed on the same screen.
 
-`480` is the default and deliberately emits no class, so a table that doesn't set this is
-unchanged down to the byte. Passing `stackAt={480}` explicitly is the same thing.
+`480` is the default and deliberately emits no class, so a table that doesn't set this
+behaves exactly as before. Passing `stackAt={480}` explicitly is the same thing.
+
+**Lower it, or turn it off** (unreleased):
+- `stackAt={320}` keeps a short table — two or three narrow columns in a third-width column —
+  as a table down to 321px and stacks it only from 320px.
+- `stackAt={false}` never stacks: below its natural width the table scrolls sideways like any
+  other overflowing table.
+
+Both keep the fixed-layout clip (ellipsis in `layout="fixed"` cells) while they are tables, which
+at the default only applies above 480px.
+
+How they leave the default: the unconditional 480 rules query a **named** container
+(`container-name: uxm-data-table` on the root), and these two modes set `container-name: none`.
+No selector changes, so every specificity contest the 480 rules depend on is untouched. The root
+stays a size container, so every other (unnamed) query still matches it. One limit: a named query
+looks past an unnamed container to the nearest ancestor with the name, so a `stackAt={false}`
+table **nested inside another DataTable's cell** stacks when that outer table is at 480px or less.
+
+**Don't replace the table's container name.** The default 480 stacking now depends on it. A
+host rule that sets `container-name` or the `container` shorthand on `.uxm-data-table` (say, to
+query the table from app CSS) replaces `uxm-data-table`, and the table silently stops stacking at
+480px. Wrap the table in your own container instead, or keep both names:
+`container-name: my-table uxm-data-table`.
 
 **Why a prop and not a `--uxm-data-table-*` knob.** A **size** container condition cannot
 contain `var()`: `@container (max-width: var(--bp))` parses, is kept in `cssRules` with its
@@ -244,16 +266,12 @@ size condition specifically that will not.) Each threshold therefore needs its o
 `@container` block, which is also why the prop is a closed set rather than a `number`: a
 value with no block behind it would type-check and do nothing.
 
-**480 is a floor, not just a default.** The set only goes up. Stacking below 480, or never
-stacking, would mean suppressing the unconditional block rather than adding to it — a
-different change with a different risk, and not available here.
-
 **Every table pays for the presets, used or not.** Each opt-in threshold is a full copy of
 the stacked rules (the card reflow, the scroll and sticky resets, the active rail) keyed to
-its own class, and the stylesheet ships all three whether or not anything sets `stackAt`.
-Measured on the `sass` compressed output: about 2.8 KB per preset, 8.4 KB for the three — a
-little under half of `data-table.css` — but only about 0.5 KB after gzip, because the copies
-repeat each other almost exactly. That is the price of a closed set; adding a fourth
+its own class, and the stylesheet ships all four (320, 640, 768, 960) whether or not anything
+sets `stackAt`. Measured on the `sass` compressed output, adding 320 and the off / 320 clip
+copies took `data-table.css` from 29.3 KB to 35.1 KB, but only from 3.0 KB to 3.3 KB after gzip,
+because the copies repeat each other almost exactly. That is the price of a closed set; adding a fourth
 threshold adds another copy, so add one only for a width a real layout needs.
 
 A table's own container is what counts, so `stackAt` has no relationship to the viewport
@@ -428,7 +446,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `rows` | `T[]` | – | **Required.** Row dataset; rendered in order, one `<tr>` per item. |
 | `rowKey` | `(row: T) => string` | – | **Required.** Stable key extractor for React's reconciliation; pick a value that doesn't change between renders. |
 | `density` | `'compact' \| 'default' \| 'relaxed'` | `'default'` | Vertical cell padding modifier. See [States](#states--variants). |
-| `stackAt` | `480 \| 640 \| 768 \| 960` | `480` | Container width at or below which rows reflow into stacked cards. See [Stacking threshold](#stacking-threshold). |
+| `stackAt` | `320 \| 480 \| 640 \| 768 \| 960 \| false` | `480` | Container width at or below which rows reflow into stacked cards; `false` never stacks. See [Stacking threshold](#stacking-threshold). |
 | `scrollResetKey` | `string` | – | Returns the horizontal scroller to its start edge whenever this changes. Opt-in; without it the position is kept. See [Scroll reset](#scroll-reset). |
 | `scrollArrows` | `'always' \| 'hover' \| 'none'` | – | When the scroll arrows show, and where they sit. Opt-in; absent keeps today's behaviour. See [Scroll arrows](#scroll-arrows). |
 | `onRowClick` | `(row: T) => void` | – | When provided, rows render with a pointer cursor (`uxm-data-table__row--interactive`), forward clicks, and become keyboard-operable: each row takes `tabIndex={0}` and activates on `Enter` / `Space` with a focus ring. **Every row is its own tab stop**, so a long table is a long tab sequence — `rowProps` returning `tabIndex: -1` is the hook for your own roving scheme. A key pressed on a control inside the row stays that control's. Header clicks are not captured. |

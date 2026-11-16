@@ -126,6 +126,7 @@ the store getter. Importing the wrong one fails silently.
       "fontFamily": "Manrope",   // drives --brand-font via generateOverridesCss
       "headingFontFamily": "Space Grotesk",  // → --brand-heading-font; optional, additive
       "headingFontWeight": "600",            // → --brand-heading-weight ('500'|'600'|'700')
+      "monoFontFamily": "IBM Plex Mono",     // → --brand-mono-font; optional — IDs, code (a newer uxm than 4.96; older ones ignore it)
       // Per-role refinements, layered UNDER the umbrella above. Roles: display
       // (StatCard value, ErrorPage code), h1 (page titles), h2 (section titles).
       "pageTitleFontFamily": "Figtree", "pageTitleFontWeight": "700", "pageTitleScale": "1.25",

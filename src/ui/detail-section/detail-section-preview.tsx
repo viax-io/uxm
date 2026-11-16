@@ -16,6 +16,7 @@ export function DetailSectionPreview({ styles }: PreviewProps) {
   // the real component instead of reimplementing it inline.
   const cssVars = {
     '--uxm-detail-section-bg': styles.backgroundColor as string,
+    '--uxm-detail-section-background': (styles.background as string) || undefined,
     '--uxm-detail-section-border-color': styles.borderColor as string,
     '--uxm-detail-section-border-top-width': `${styles.borderTopWidth}px`,
     '--uxm-detail-section-border-top-color': edgeColor(styles.borderTopColor),

@@ -119,6 +119,7 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   const fontFamily = safeFontFamily(brand.fontFamily);
   const headingFontFamily = safeFontFamily(brand.headingFontFamily);
   const headingFontWeight = safeFontWeight(brand.headingFontWeight);
+  const monoFontFamily = safeFontFamily(brand.monoFontFamily);
   // Per-role refinements, layered under the umbrella heading vars above.
   const roles = resolveTypeRoles(brand);
   const typeScale = safeTypeScale(brand.typeScale);
@@ -143,6 +144,11 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   // A role may pick a face neither the body nor the umbrella uses — fetch each
   // distinct one exactly once (@import must stay above the rules below).
   const imported = new Set([fontFamily, headingFontFamily].filter(Boolean));
+  if (monoFontFamily && !imported.has(monoFontFamily)) {
+    imported.add(monoFontFamily);
+    lines.push(`@import url("${fontFileUrl(monoFontFamily)}");`);
+    lines.push('');
+  }
   for (const { family } of roles) {
     if (family && !imported.has(family)) {
       imported.add(family);
@@ -163,6 +169,11 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
   }
   if (headingFontWeight) {
     brandRules.push(`  --brand-heading-weight: ${headingFontWeight};`);
+  }
+  // Falls back to a MONO stack, not the body's sans one: a face that fails to
+  // load must still be fixed-width.
+  if (monoFontFamily) {
+    brandRules.push(`  --brand-mono-font: "${monoFontFamily}", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;`);
   }
   // Role vars sit between the component var and the umbrella in each atom's
   // chain, so an unset role simply falls through to the umbrella.
@@ -247,13 +258,21 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
     const entries = Object.entries(overrides);
     if (entries.length === 0) continue;
 
+    // A value the sanitiser drops comes back as '', and is left out rather
+    // than written as `prop: ;`. On a real property that line is merely
+    // invalid, but most knobs are custom properties, where an empty value is
+    // VALID: `var(--uxm-card-background, <fallback>)` would resolve to nothing
+    // and the declaration reading it would paint nothing at all (a transparent
+    // card), where leaving the knob unset keeps the fallback.
+    const declarations = entries.flatMap(([key, value]) => {
+      const cssValue = formatValue(value, key);
+      return cssValue === '' ? [] : [`  ${toCSS(key, id)}: ${cssValue};`];
+    });
+    if (declarations.length === 0) continue;
+
     const selector = PER_COMPONENT_SELECTOR[id] ?? `.uxm-${id}`;
     lines.push(`${selector} {`);
-    for (const [key, value] of entries) {
-      const cssProp = toCSS(key, id);
-      const cssValue = formatValue(value, key);
-      lines.push(`  ${cssProp}: ${cssValue};`);
-    }
+    lines.push(...declarations);
     lines.push('}');
     lines.push('');
   }
