@@ -13,6 +13,9 @@
   font-size: calc(var(--uxm-button-with-icon-font-size, 13px) * var(--type-scale, 1));
   font-weight: var(--uxm-button-with-icon-font-weight, var(--font-weight-medium, 500));
   letter-spacing: var(--uxm-button-with-icon-letter-spacing, normal);
+  /* Label wrapping, no fallback on purpose: unset, `white-space` inherits, as
+     it always did (a button inside a no-wrap cell keeps not wrapping). */
+  white-space: var(--uxm-button-with-icon-white-space);
   text-transform: var(--uxm-button-with-icon-text-transform, none);
   gap: var(--uxm-button-with-icon-gap, 8px);
   padding: var(--uxm-button-with-icon-padding-y, 8px) var(--uxm-button-with-icon-padding-x, 12px);

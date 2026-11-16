@@ -44,6 +44,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-filter-tabs-font-size': `${styles.fontSize}px`,
     '--uxm-filter-tabs-font-weight': styles.fontWeight as string,
     '--uxm-filter-tabs-text-transform': styles.textTransform as string,
+    '--uxm-filter-tabs-white-space': styles.whiteSpace && styles.whiteSpace !== 'inherit' ? (styles.whiteSpace as string) : undefined,
     '--uxm-filter-tabs-letter-spacing': `${styles.letterSpacing}em`,
   } as CSSProperties;
 }

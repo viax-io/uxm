@@ -677,6 +677,7 @@ export const messages: StudioMessages = {
     'Label Tint': 'Labeltint',
     'Label Variant': 'Labelvariant',
     'Label Weight': 'Labeldikte',
+    'Label Wrapping': 'Terugloop van het label',
     'Label/Value Gap': 'Ruimte label/waarde',
     'Labelled cells (default)': 'Cellen met label (standaard)',
     'Large (640px)': 'Groot (640px)',

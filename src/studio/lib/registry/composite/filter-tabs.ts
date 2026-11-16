@@ -32,6 +32,7 @@ export const filterTabsDef: ComponentDef = {
     { key: 'fontWeight', label: 'Inactive Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600'] },
     { key: 'textTransform', label: 'Text Transform', control: 'select', defaultValue: 'none', options: ['none', 'uppercase', 'capitalize', 'lowercase'] },
     { key: 'letterSpacing', label: 'Letter Spacing', control: 'number', defaultValue: 0, min: -0.05, max: 0.2, step: 0.01, unit: 'em' },
+    { key: 'whiteSpace', label: 'Label Wrapping', control: 'select', defaultValue: 'inherit', options: ['inherit', 'normal', 'nowrap'] },
   ],
   layoutVariants: [
     {

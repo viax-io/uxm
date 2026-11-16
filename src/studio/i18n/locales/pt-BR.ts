@@ -683,6 +683,7 @@ export const messages: StudioMessages = {
     'Label Tint': 'Tonalidade do rótulo',
     'Label Variant': 'Variante do rótulo',
     'Label Weight': 'Peso do rótulo',
+    'Label Wrapping': 'Quebra de linha do rótulo',
     'Label/Value Gap': 'Espaço rótulo/valor',
     'Labelled cells (default)': 'Células rotuladas (padrão)',
     'Large (640px)': 'Grande (640px)',

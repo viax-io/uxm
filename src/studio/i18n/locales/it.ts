@@ -683,6 +683,7 @@ export const messages: StudioMessages = {
     'Label Tint': 'Tinta dell’etichetta',
     'Label Variant': 'Variante dell’etichetta',
     'Label Weight': 'Spessore dell’etichetta',
+    'Label Wrapping': 'A capo dell\'etichetta',
     'Label/Value Gap': 'Spazio etichetta/valore',
     'Labelled cells (default)': 'Celle etichettate (predefinito)',
     'Large (640px)': 'Grande (640px)',

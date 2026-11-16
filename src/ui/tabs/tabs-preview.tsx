@@ -43,6 +43,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-tabs-padding-y': `${styles.paddingY}px`,
     '--uxm-tabs-font-size': `${styles.fontSize}px`,
     '--uxm-tabs-font-weight': styles.fontWeight as string,
+    '--uxm-tabs-white-space': styles.whiteSpace && styles.whiteSpace !== 'inherit' ? (styles.whiteSpace as string) : undefined,
     '--uxm-tabs-icon-size': `${styles.iconSize}px`,
     '--uxm-tabs-icon-gap': `${styles.iconGap}px`,
   } as CSSProperties;

@@ -683,6 +683,7 @@ export const messages: StudioMessages = {
     'Label Tint': 'Teinte du libellé',
     'Label Variant': 'Variante du libellé',
     'Label Weight': 'Graisse du libellé',
+    'Label Wrapping': 'Retour à la ligne du libellé',
     'Label/Value Gap': 'Écart libellé/valeur',
     'Labelled cells (default)': 'Cellules étiquetées (par défaut)',
     'Large (640px)': 'Grand (640px)',
