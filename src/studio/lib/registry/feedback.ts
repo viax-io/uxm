@@ -16,7 +16,7 @@ export const feedbackDefs: ComponentDef[] = [
       { key: 'doneColor', label: 'Done Color', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
       { key: 'doneIconColor', label: 'Done Check Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'colors' },
       { key: 'currentColor', label: 'Current Color', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
-      { key: 'currentRing', label: 'Current Ring', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
+      { key: 'currentRing', label: 'Current Ring', control: 'color', defaultValue: 'color-mix(in srgb, var(--color-accent-bold) 25%, transparent)', section: 'colors' },
       { key: 'aheadColor', label: 'Upcoming Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'colors' },
       { key: 'markerBg', label: 'Upcoming Fill', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
       { key: 'lineColor', label: 'Line Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
