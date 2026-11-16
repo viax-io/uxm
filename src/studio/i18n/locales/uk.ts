@@ -367,6 +367,7 @@ export const messages: StudioMessages = {
     'Backdrop Blur': 'Розмиття тла',
     'Background': 'Тло',
     'Background Color': 'Колір тла',
+    'Background Image or Gradient': 'Зображення або градієнт тла',
     'Badge': 'Значок',
     'Badge Radius': 'Радіус значка',
     'Badge Text Size': 'Розмір тексту значка',

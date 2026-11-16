@@ -8,6 +8,7 @@ export const pageShellDef: ComponentDef = {
     'Top-level page layout — sidebar + (optional) top bar + content. Two variants drive the chrome: standard (full chrome, padded content) and canvas (no top bar, full-bleed content for diagrams/lifecycle).',
   styleProperties: [
     { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-surface)', section: 'colors' },
+    { key: 'background', label: 'Background Image or Gradient', control: 'text', defaultValue: '', section: 'colors' },
     { key: 'contentPadding', label: 'Content Padding', control: 'number', defaultValue: 32, min: 0, max: 64, step: 4, unit: 'px' },
   ],
   layoutVariants: [

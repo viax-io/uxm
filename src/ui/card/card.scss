@@ -8,7 +8,9 @@
    between its direct children (the `--gap` modifier below). */
 
 .uxm-card {
-  background-color: var(--uxm-card-bg, var(--color-card));
+  /* `--uxm-card-background` takes any `background` value (a gradient, an
+     image with its size and repeat) and wins over the colour knob when set. */
+  background: var(--uxm-card-background, var(--uxm-card-bg, var(--color-card)));
   border: 1px solid var(--uxm-card-border-color, var(--color-border));
   border-radius: var(--uxm-card-radius, 4px);
   padding: var(--uxm-card-padding, 24px);

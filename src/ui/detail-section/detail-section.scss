@@ -9,7 +9,9 @@
    is 4 (was hardcoded 8 — drift). */
 
 .uxm-detail-section {
-  background-color: var(--uxm-detail-section-bg, var(--color-card));
+  /* `--uxm-detail-section-background` takes any `background` value (a gradient, an
+     image with its size and repeat) and wins over the colour knob when set. */
+  background: var(--uxm-detail-section-background, var(--uxm-detail-section-bg, var(--color-card)));
   border: 1px solid var(--uxm-detail-section-border-color, var(--color-border));
   border-radius: var(--uxm-detail-section-radius, 4px);
   overflow: hidden;

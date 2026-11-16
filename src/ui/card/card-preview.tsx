@@ -74,6 +74,7 @@ export function CardPreview({ styles, variants }: PreviewProps) {
       gap={styles.gap as number}
       style={{
         ['--uxm-card-bg' as string]: styles.backgroundColor as string,
+        ['--uxm-card-background' as string]: (styles.background as string) || undefined,
         ['--uxm-card-border-color' as string]: styles.borderColor as string,
         ['--uxm-card-radius' as string]: `${styles.borderRadius}px`,
         // Tunable shadow — same var surface a production consumer re-themes.

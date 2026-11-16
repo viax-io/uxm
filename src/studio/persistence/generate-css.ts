@@ -247,13 +247,21 @@ export function generateOverridesCss(allOverrides: AllOverrides, brand: BrandCon
     const entries = Object.entries(overrides);
     if (entries.length === 0) continue;
 
+    // A value the sanitiser drops comes back as '', and is left out rather
+    // than written as `prop: ;`. On a real property that line is merely
+    // invalid, but most knobs are custom properties, where an empty value is
+    // VALID: `var(--uxm-card-background, <fallback>)` would resolve to nothing
+    // and the declaration reading it would paint nothing at all (a transparent
+    // card), where leaving the knob unset keeps the fallback.
+    const declarations = entries.flatMap(([key, value]) => {
+      const cssValue = formatValue(value, key);
+      return cssValue === '' ? [] : [`  ${toCSS(key, id)}: ${cssValue};`];
+    });
+    if (declarations.length === 0) continue;
+
     const selector = PER_COMPONENT_SELECTOR[id] ?? `.uxm-${id}`;
     lines.push(`${selector} {`);
-    for (const [key, value] of entries) {
-      const cssProp = toCSS(key, id);
-      const cssValue = formatValue(value, key);
-      lines.push(`  ${cssProp}: ${cssValue};`);
-    }
+    lines.push(...declarations);
     lines.push('}');
     lines.push('');
   }

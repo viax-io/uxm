@@ -180,6 +180,7 @@ export const appDefs: ComponentDef[] = [
     description: 'Top header: search, mobile menu trigger, primary action, theme toggle, avatar slot.',
     styleProperties: [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'color-mix(in srgb, var(--color-surface-alt) 50%, transparent)', section: 'colors' },
+      { key: 'background', label: 'Background Image or Gradient', control: 'text', defaultValue: '', section: 'colors' },
       { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
       { key: 'height', label: 'Height', control: 'number', defaultValue: 64, min: 48, max: 96, step: 4, unit: 'px' },
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 16, min: 8, max: 32, step: 2, unit: 'px' },

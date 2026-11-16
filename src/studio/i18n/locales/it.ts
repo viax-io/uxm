@@ -361,6 +361,7 @@ export const messages: StudioMessages = {
     'Backdrop Blur': 'Sfocatura dello sfondo',
     'Background': 'Sfondo',
     'Background Color': 'Colore di sfondo',
+    'Background Image or Gradient': 'Immagine o sfumatura di sfondo',
     'Badge': 'Badge',
     'Badge Radius': 'Raggio del badge',
     'Badge Text Size': 'Dimensione del testo del badge',
