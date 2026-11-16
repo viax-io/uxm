@@ -2617,3 +2617,18 @@ reached the published library; now shipped in 2.8.0.
     value, so the colour knob paints.
   - The roots now use the `background` shorthand. A host rule that sets `background-image` on one
     of them has to load after `ui.css` (or use the new knob).
+
+### New in 4.101.0
+
+- **`DataTable` `stackAt={320}` and `stackAt={false}`.**
+  - The stacking threshold can go below its 480px default.
+  - `320` keeps a two- or three-column table as a table in a third-width column, and stacks only
+    from 320px.
+  - `false` never stacks; below its natural width the table scrolls sideways.
+  - Both keep the fixed-layout ellipsis while they are tables.
+  - In Studio: "Stack Into Cards" → "Never" / "320px and narrower".
+  - Limit: a `stackAt={false}` table nested inside another DataTable's cell stacks when the
+    outer table is at 480px or less.
+  - The root now carries `container-name: uxm-data-table`, and the 480 stacking depends on it. A
+    host that sets `container-name` / `container` on `.uxm-data-table` must keep that name
+    (`container-name: mine uxm-data-table`) or wrap the table instead.

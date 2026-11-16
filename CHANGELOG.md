@@ -1,3 +1,10 @@
+# [4.106.0](https://github.com/viax-io/uxm/compare/v4.105.1...v4.106.0) (2026-11-16)
+
+
+### Features
+
+* **filter-tabs:** navigation mode, options with an href render a nav of links ([053df14](https://github.com/viax-io/uxm/commit/053df146930d4d5d7db0f43728ec92ac09a450c8))
+
 ## [4.105.1](https://github.com/viax-io/uxm/compare/v4.105.0...v4.105.1) (2026-11-16)
 
 
