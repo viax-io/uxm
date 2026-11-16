@@ -2523,3 +2523,13 @@ reached the published library; now shipped in 2.8.0.
   over the rail, so the content's left edge beside the rail is usable again (it swallowed clicks,
   selection and drags there even with the handle hidden). The handle drops `aria-expanded`: its
   label already names the action, and the pair read "Collapse sidebar, expanded".
+
+### New in 4.92.4
+
+- **Menu** — `role="menu"`, its `id` (the trigger's `aria-controls`) and `aria-label` moved from
+  the floating `.uxm-menu__panel` to the `.uxm-menu__list` inside it; the panel is now
+  `presentation`, as in `Listbox`. The menu owned a focusable, roleless list, which axe flags
+  (`aria-required-children`). Selectors on `.uxm-menu__panel[role="menu"]` need updating.
+- **Menu** — `MenuControlRow` docs now state its known ARIA trade-off: a control that is not made of
+  menuitems fails axe `aria-required-children` inside `role="menu"` and may be hidden from a screen
+  reader in menu mode (Tab still reaches it). Keep control rows to non-essential settings.

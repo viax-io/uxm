@@ -59,7 +59,7 @@ body { color: var(--color-text); background-color: var(--color-surface); }
 ```
 
 Never select `.uxm-*` classes or declare `--color-*` in this file — re-theme through the
-`--uxm-*` variables instead. To hide `DetailSection`'s accent rail (unreleased), zero both the
+`--uxm-*` variables instead. To hide `DetailSection`'s accent rail (4.96.0), zero both the
 rail and the gap after it, so the left padding matches the other sides:
 
 ```css

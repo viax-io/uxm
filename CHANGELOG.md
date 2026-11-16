@@ -1,3 +1,10 @@
+# [4.96.0](https://github.com/viax-io/uxm/compare/v4.95.0...v4.96.0) (2026-11-16)
+
+
+### Features
+
+* **detail-section:** add --uxm-detail-section-accent-gap for the rail-to-content gap ([2002ef0](https://github.com/viax-io/uxm/commit/2002ef0b49f831e559918a5b4b1136977d4f363f))
+
 # [4.95.0](https://github.com/viax-io/uxm/compare/v4.94.1...v4.95.0) (2026-11-14)
 
 
