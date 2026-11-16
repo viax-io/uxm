@@ -1,3 +1,10 @@
+# [4.103.0](https://github.com/viax-io/uxm/compare/v4.102.0...v4.103.0) (2026-11-16)
+
+
+### Features
+
+* **theming:** case and tracking knobs on buttons, tabs, tags and headings ([1089eab](https://github.com/viax-io/uxm/commit/1089eab9ed0b740a67660ab6477386a24cfff350))
+
 # [4.102.0](https://github.com/viax-io/uxm/compare/v4.101.0...v4.102.0) (2026-11-16)
 
 

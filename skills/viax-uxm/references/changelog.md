@@ -2578,3 +2578,16 @@ reached the published library; now shipped in 2.8.0.
   wrapper to its trigger instead of the form-field `width: 100%`. Use it for a menu-style picker
   in a row of other controls, e.g. a "Viewing as" persona picker beside a Sign out button in an
   `AppTopBar` `Cluster`, where the full-width wrapper took ~320px and squeezed the button.
+
+### New in 4.98.0
+
+- **`uxm/base.css`, the opt-in page baseline** — recipe 0's host baseline as a shipped file:
+  - the `border-box` reset;
+  - `height: 100%` on `html` / `body` / `#root`;
+  - the brand font on the document, with the `--font-inter` fallback;
+  - `body` with `margin: 0` and the surface and text colours;
+  - `font: inherit` on raw form controls.
+
+  Every rule is in `:where()` (specificity 0), so host rules win in any order. Import it after
+  `tokens.css` and `ui.css` instead of copying recipe 0. On the CDN it is `uxm-base.css`, linked
+  after `uxm.css`.
