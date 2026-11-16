@@ -52,7 +52,7 @@ Every default is a token, and the variable is resolved on the panel itself, so i
 
 ## Theming notes
 
-- **A fixed colour doesn't follow the panel.** A knob saved as `#FFFFFF`, on this atom or one inside it, is the same in every panel. Token values (`var(--color-…)`) follow it.
+- **A fixed colour doesn't follow the panel.** A knob saved as `#FFFFFF`, on this atom or one inside it, is the same in every panel. Token values (`var(--color-…)`) follow it. Studio flags a fixed colour under the picker and offers the nearest token.
 - **Brand tokens.** Studio's generated CSS writes a brand's light tokens on `:root:not([data-theme="dark"]), [data-theme="light"]` and its dark ones on `[data-theme="dark"]`, so a panel keeps the brand in either theme. A hand-written theme does the same: light tokens on `:root, [data-theme="light"]`. Tokens set on `:root` alone are replaced inside a light panel on a dark page.
 - **Portalled layers.** A `Select`, `Menu` or `Tooltip` opened from inside the panel renders its floating panel at the end of `<body>`, outside the panel, so it uses the page's theme.
 

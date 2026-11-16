@@ -88,6 +88,7 @@
     "Filter by category",
     "Find…",
     "Fine-tune levels",
+    "Fixed color: it won’t follow a dark or light panel.",
     "Heading case",
     "Heading tracking",
     "Heading typeface",
@@ -185,6 +186,8 @@
     "Uploaded — URL copied to clipboard",
     "Uploading…",
     "Usage",
+    "Use {token}",
+    "Use {token} for {label}",
     "Variant Matrix",
     "Visual",
     "Weight"

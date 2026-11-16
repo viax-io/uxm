@@ -230,7 +230,10 @@ export const displayDefs: ComponentDef[] = [
       // via the `shadow` prop; the preview always renders the shadow being
       // themed.) The box-shadow is built from these three vars (mirrors
       // Calendar).
-      { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'rgba(0, 0, 0, 0.12)', section: 'shadow' },
+      // The token, not its light value: the stylesheet's default follows the
+      // theme (.12 light, .30 dark) and the preview projects this inline, so
+      // a literal here showed the light shadow on a dark canvas.
+      { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'var(--shadow-card-color)', section: 'shadow' },
       { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 20, min: 0, max: 48, step: 1, unit: 'px', section: 'shadow' },
       { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 6, min: 0, max: 24, step: 1, unit: 'px', section: 'shadow' },
       // The card owns ONE gap: the distance between its direct children (a
