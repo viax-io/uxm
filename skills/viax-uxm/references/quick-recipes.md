@@ -52,20 +52,28 @@ html, body, #root { font-family: var(--brand-font, var(--font-sans)); }
    Arial). uxm atoms set `font-family: inherit` themselves; raw host controls don't. */
 button, input, select, textarea { font: inherit; }
 
-/* DetailSection hardcodes an asymmetric padding-left reserving space for a
-   now-hidden accent rail. Make it match the other sides. */
-.uxm-detail-section__inner { padding-left: var(--uxm-detail-section-padding, 20px); }
+/* MANDATORY page colours — atoms paint themselves, but plain host text (a name in
+   AppTopBar's actions, a bare <p>) inherits from <body>, which the library never
+   styles: without this it stays black in the dark theme. */
+body { color: var(--color-text); background-color: var(--color-surface); }
+```
 
-/* Interactive ListItems render as <button>/<a>, which shrink-wrap by default and
-   make a vertical list look staggered. Force full width. */
-.uxm-list { display: flex; flex-direction: column; }
-.uxm-list > .uxm-list-item { width: 100%; text-align: left; }
+Never select `.uxm-*` classes or declare `--color-*` in this file — re-theme through the
+`--uxm-*` variables instead. To hide `DetailSection`'s accent rail (unreleased), zero both the
+rail and the gap after it, so the left padding matches the other sides:
+
+```css
+:root {
+  --uxm-detail-section-accent-width: 0px; /* keep the unit — a unitless 0 breaks the calc */
+  --uxm-detail-section-accent-gap: 0px;
+}
 ```
 
 There is **no `--font-mono` token** — where you need monospace, write
 `var(--font-mono, ui-monospace, monospace)` and rely on the literal fallback.
 
-Symptoms if you skip it: whole app in a serif → the bridge is missing; only raw buttons and
+Symptoms if you skip it: whole app in a serif → the bridge is missing; plain host text black
+in the dark theme → the `body` colour rule is missing; only raw buttons and
 inputs in Arial → the `font: inherit` rule is missing; the page scrolls as a whole instead of
 the content area → `height: 100%` is missing; inputs poking a few px out of their `Card` →
 the box-sizing reset is missing.

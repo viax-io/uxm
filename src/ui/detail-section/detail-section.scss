@@ -1,8 +1,11 @@
 /* ── detail-section ── */
 
 /* DetailSection — defaults match the `detail-section` registry entry.
-   `padding` controls the inner box (rail width is added on the left so
-   accent toggles don't reflow content). Note: registry default radius
+   `padding` controls the inner box (rail width + gap are added on the left
+   so accent toggles don't reflow content). A host that hides the rail sets
+   both `--uxm-detail-section-accent-width` and `--uxm-detail-section-accent-gap`
+   to `0px` (with the unit — a unitless 0 makes the calc invalid) and gets
+   symmetric padding without overriding `__inner`. Note: registry default radius
    is 4 (was hardcoded 8 — drift). */
 
 .uxm-detail-section {
@@ -26,8 +29,12 @@
 
   &__inner {
     padding: var(--uxm-detail-section-padding, 20px);
-    /* Reserve space for the rail on the left so the accent doesn't overlap content. */
-    padding-left: calc(var(--uxm-detail-section-padding, 20px) + var(--uxm-detail-section-accent-width, 3px) + 4px);
+    /* Reserve space for the rail (plus a gap after it) on the left so the accent
+       doesn't overlap content. */
+    padding-left: calc(
+      var(--uxm-detail-section-padding, 20px) + var(--uxm-detail-section-accent-width, 3px) +
+        var(--uxm-detail-section-accent-gap, 4px)
+    );
   }
 
   &__header {
