@@ -1,7 +1,7 @@
 import { cn } from '@/helpers';
 import { Icon } from '@/ui/icon';
 
-import type { AnchorHTMLAttributes, ReactNode } from 'react';
+import type { AnchorHTMLAttributes, ElementType, ReactNode } from 'react';
 
 export interface BackLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   /**
@@ -13,11 +13,20 @@ export interface BackLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
    */
   href?: string;
   children: ReactNode;
+  /**
+   * Element type used for the anchor. Defaults to `'a'`. Pass the router's
+   * link component (`next/link`'s `Link`) so going back navigates on the
+   * client instead of reloading the document — the same knob as
+   * `AppSidebar`'s `linkAs`. It receives `href`, `className`, `children` and
+   * the rest of the anchor props; React Router's `Link` reads `to`, so wrap
+   * it in an `href` → `to` adapter.
+   */
+  linkAs?: ElementType;
 }
 
-export function BackLink({ children, className, ...rest }: BackLinkProps) {
+export function BackLink({ children, className, linkAs: Component = 'a', ...rest }: BackLinkProps) {
   return (
-    <a className={cn('uxm-back-link', className)} {...rest}>
+    <Component className={cn('uxm-back-link', className)} {...rest}>
       <Icon
         glyph="arrow-left"
         size={14}
@@ -25,6 +34,6 @@ export function BackLink({ children, className, ...rest }: BackLinkProps) {
         className="uxm-back-link__arrow"
       />
       {children}
-    </a>
+    </Component>
   );
 }

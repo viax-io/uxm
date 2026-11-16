@@ -166,6 +166,14 @@ const RouterNavLink = forwardRef<HTMLAnchorElement, { href?: string }>(
 
 Without this every sidebar click tears down the provider tree and visibly re-hydrates the app.
 
+`Link` and `BackLink` take the same `linkAs` (unreleased) and the same adapter — pass it to every
+in-app `Link` / `BackLink` too, or those clicks still reload the page:
+
+```tsx
+<BackLink href="/orders" linkAs={RouterNavLink}>Back to orders</BackLink>
+<Link href={`/orders/${id}`} linkAs={RouterNavLink}>{id}</Link>
+```
+
 ---
 
 ## 2. Form with `FormField` wrappers

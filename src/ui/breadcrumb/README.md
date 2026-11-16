@@ -33,6 +33,7 @@ Extends `HTMLAttributes<HTMLElement>` — any standard attribute (id, style, dat
 |------|------|---------|-------------|
 | `items` | `BreadcrumbCrumb[]` | – | **Required.** Ordered crumbs; the last one is rendered as the current page. |
 | `separator` | `'slash' \| 'chevron' \| 'dot' \| 'dash'` | `'chevron'` | Glyph rendered between crumbs. `chevron` uses the `chevron-right` `Icon`; the others render their character inside a `<span>`. |
+| `linkAs` | `ElementType` | `'a'` | The router's link component, passed to every crumb's `Link` (`next/link`, or an `href` → `to` adapter for React Router), so crumb clicks navigate on the client. See [`Link`](../link/README.md). |
 | `className` | `string` | – | Merged with the `<nav>` root class via `cn`. |
 | _(any native nav attribute)_ | – | – | Spread onto the `<nav>`. |
 
