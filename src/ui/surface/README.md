@@ -58,5 +58,5 @@ Every default is a token, and the variable is resolved on the panel itself, so i
 
 ## Accessibility
 
-- A plain block element; the semantics come from `as` and the children. Use `as="header"`, `as="nav"` or `as="aside"` when the panel is one of those landmarks, with an `aria-label` if there is more than one.
-- Text contrast follows the theme's own token pairs, which meet AA in both themes. A custom background (`--uxm-surface-bg`) needs a text colour checked against it.
+- A plain block element; the semantics come from `as` and the children. Use `as="header"`, `as="nav"` or `as="aside"` when the panel is one of those landmarks, with an `aria-label` if there is more than one. `header` and `footer` are landmarks only at the top level, not inside an `article`, `section` or `main`, and a `section` becomes one only with an accessible name.
+- On the default background, the theme's text tokens measure (light / dark): `--color-text` 15.58 / 14.58, `--color-text-strong` 8.28 / 9.50, `--color-text-muted` 5.02 / 6.30, all AA for body text. `--color-text-subtle` is 3.42 / 3.12: large text and non-text marks only. A custom `--uxm-surface-bg` or `--uxm-surface-text-color` needs its pair checked with `contrastRatio`.

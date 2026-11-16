@@ -25,6 +25,14 @@ describe('Surface', () => {
     expect(panel.className).toBe('uxm-surface');
   });
 
+  it('keeps the scope and the class in step: an unknown theme or a stray data-theme sets neither apart', () => {
+    const { rerender } = render(<Surface data-testid="panel" theme={'auto' as never}>x</Surface>);
+    expect(screen.getByTestId('panel')).not.toHaveAttribute('data-theme');
+    expect(screen.getByTestId('panel').className).toBe('uxm-surface');
+    rerender(<Surface data-testid="panel" theme="dark" {...{ 'data-theme': 'light' }}>x</Surface>);
+    expect(screen.getByTestId('panel')).toHaveAttribute('data-theme', 'dark');
+  });
+
   it('renders the requested element and writes padding to its variable', () => {
     render(<Surface theme="light" as="header" padding={12} aria-label="Store">x</Surface>);
     const header = screen.getByRole('banner', { name: 'Store' });

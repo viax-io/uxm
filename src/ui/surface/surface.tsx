@@ -43,6 +43,9 @@ export function Surface({
   children,
   ...rest
 }: SurfaceProps) {
+  // Only the two themes tokens.css scopes; anything else (an untyped caller's
+  // 'auto') sets no scope rather than an attribute nothing matches.
+  const scope = theme === 'dark' || theme === 'light' ? theme : undefined;
   const vars: CSSProperties = {
     ...(padding != null
       ? { ['--uxm-surface-padding' as string]: typeof padding === 'number' ? `${padding}px` : padding }
@@ -51,10 +54,12 @@ export function Surface({
   };
   return (
     <Tag
-      data-theme={theme}
-      className={cn('uxm-surface', theme && `uxm-surface--${theme}`, className)}
+      className={cn('uxm-surface', scope && `uxm-surface--${scope}`, className)}
       style={vars}
       {...rest}
+      // After the spread: the attribute must agree with the class (and its
+      // color-scheme), so a stray data-theme in rest can't split them.
+      data-theme={scope}
     >
       {children}
     </Tag>
