@@ -2632,3 +2632,16 @@ reached the published library; now shipped in 2.8.0.
   - The root now carries `container-name: uxm-data-table`, and the 480 stacking depends on it. A
     host that sets `container-name` / `container` on `.uxm-data-table` must keep that name
     (`container-name: mine uxm-data-table`) or wrap the table instead.
+
+### New in 4.102.0
+
+- **A mono font role.**
+  - `brand.monoFontFamily`, set in Studio under Brand Settings → Typography → Body → Monospace
+    (JetBrains Mono, IBM Plex Mono, Roboto Mono, …), publishes `--brand-mono-font` and imports
+    the face.
+  - It always falls back to a mono stack.
+  - `PropertyField` values and `CodeEditor` / `CodeBlock` read it over their own stacks, so
+    nothing changes until a brand sets one.
+  - New `--font-mono` token for host CSS: the brand's mono face, else the system mono stack.
+    It resolves on `:root`, so it follows the brand var published there; a subtree that sets
+    `--brand-mono-font` itself should read that var directly.

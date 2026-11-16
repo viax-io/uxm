@@ -1,3 +1,10 @@
+# [4.107.0](https://github.com/viax-io/uxm/compare/v4.106.0...v4.107.0) (2026-11-16)
+
+
+### Features
+
+* **theming:** brand-level heading case and tracking ([8040998](https://github.com/viax-io/uxm/commit/8040998006d2d4215ed522cca1b1724e433157eb)), closes [#159](https://github.com/viax-io/uxm/issues/159)
+
 # [4.106.0](https://github.com/viax-io/uxm/compare/v4.105.1...v4.106.0) (2026-11-16)
 
 
