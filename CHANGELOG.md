@@ -1,3 +1,15 @@
+# [4.109.0](https://github.com/viax-io/uxm/compare/v4.108.0...v4.109.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* **responsive-grid:** give the Studio preview a width, not 100% ([d5d9d1d](https://github.com/viax-io/uxm/commit/d5d9d1dfa0b67767768fda86e5940e4638f9a3c9))
+
+
+### Features
+
+* **responsive-grid:** columns and GridItem spans, collapsing at a container width ([1c0302f](https://github.com/viax-io/uxm/commit/1c0302f21ea12a2568e4e9fdf84c489a506d6ce3))
+
 # [4.108.0](https://github.com/viax-io/uxm/compare/v4.107.0...v4.108.0) (2026-11-16)
 
 

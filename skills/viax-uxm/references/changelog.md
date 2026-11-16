@@ -2658,3 +2658,11 @@ reached the published library; now shipped in 2.8.0.
 
   A theme whose voice is in capitals sets the case knob instead of writing strings in capitals,
   so the content stays as written for screen readers and translations.
+
+### New in 4.104.0
+
+- **Link**, **BackLink** — `linkAs?: ElementType`, as on `AppSidebar`: pass the router's link
+  (`next/link`, or an `href` → `to` adapter for React Router) and an in-app click navigates on the
+  client instead of reloading the document. It gets `href`, `className`, `children` and the rest of
+  the anchor props. `Link` ignores it when `external` is set. Default unchanged: a plain `<a>`.
+  `Breadcrumb` takes the same `linkAs` and passes it to every crumb's `Link`.
