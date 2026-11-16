@@ -1,3 +1,10 @@
+# [4.102.0](https://github.com/viax-io/uxm/compare/v4.101.0...v4.102.0) (2026-11-16)
+
+
+### Features
+
+* **theming:** a mono font role, brand.monoFontFamily and the --font-mono token ([4285ba8](https://github.com/viax-io/uxm/commit/4285ba8c1d38e633f44ef8cc2c34c0ed89b5e43a))
+
 # [4.101.0](https://github.com/viax-io/uxm/compare/v4.100.0...v4.101.0) (2026-11-16)
 
 

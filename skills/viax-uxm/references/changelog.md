@@ -2571,3 +2571,10 @@ reached the published library; now shipped in 2.8.0.
   tokens (plain host text was black in the dark theme); removed the `.uxm-list` /
   `.uxm-list-item` width rules (the library has done this itself since 4.80.4) and the
   `.uxm-detail-section__inner` override.
+
+### New in 4.97.0
+
+- **`Listbox` / `MultiListbox` `inline`** — `inline?: boolean` (default `false`) sizes the
+  wrapper to its trigger instead of the form-field `width: 100%`. Use it for a menu-style picker
+  in a row of other controls, e.g. a "Viewing as" persona picker beside a Sign out button in an
+  `AppTopBar` `Cluster`, where the full-width wrapper took ~320px and squeezed the button.

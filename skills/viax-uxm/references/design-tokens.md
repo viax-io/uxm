@@ -152,7 +152,7 @@ array or the studio's Color editor) but they are part of the same theming contra
   }
   ```
 
-  `--font-mono` (unreleased) is the fixed-width token. It resolves to the brand's mono typeface
+  `--font-mono` (4.102.0) is the fixed-width token. It resolves to the brand's mono typeface
   (`--brand-mono-font`, from Studio's Brand Settings → Typography → Monospace) or the system
   mono stack. Keep a literal fallback, `var(--font-mono, monospace)`, for older releases. It resolves on `:root`, so it follows a `--brand-mono-font` set there (where Studio publishes it); a host that sets the brand var on a subtree reads `var(--brand-mono-font, var(--font-mono))` there.
 - Base typeface in app CSS: `html, body, #root { font-family: var(--brand-font, var(--font-sans)); }` —

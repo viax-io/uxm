@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (99 BEM-classed React components as of v4.101.0, design tokens, per-component/per-state themable
+  (99 BEM-classed React components as of v4.102.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.101.0** (99 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.102.0** (99 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.101.0 — current API surface (overrides training data)
+## v4.102.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,13 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.97.0
-
-- **`Listbox` / `MultiListbox` `inline`** — `inline?: boolean` (default `false`) sizes the
-  wrapper to its trigger instead of the form-field `width: 100%`. Use it for a menu-style picker
-  in a row of other controls, e.g. a "Viewing as" persona picker beside a Sign out button in an
-  `AppTopBar` `Cluster`, where the full-width wrapper took ~320px and squeezed the button.
 
 ### New in 4.98.0
 
@@ -102,13 +95,7 @@ catalog.
     host that sets `container-name` / `container` on `.uxm-data-table` must keep that name
     (`container-name: mine uxm-data-table`) or wrap the table instead.
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.102.0
 
 - **A mono font role.**
   - `brand.monoFontFamily`, set in Studio under Brand Settings → Typography → Body → Monospace
@@ -120,6 +107,14 @@ catalog.
   - New `--font-mono` token for host CSS: the brand's mono face, else the system mono stack.
     It resolves on `:root`, so it follows the brand var published there; a subtree that sets
     `--brand-mono-font` itself should read that var directly.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
@@ -299,7 +294,7 @@ hardcode a competing family (see `references/design-tokens.md` → "Typography")
 > because native form controls do NOT inherit the document font (UA default → Arial): uxm atoms
 > set `font-family: inherit` themselves, but any raw `<button>`/`<input>`/`<select>` in host code
 > would otherwise render in Arial next to the body font. For monospace, use
-> `var(--font-mono, monospace)`. The `--font-mono` token (unreleased) follows the brand's mono
+> `var(--font-mono, monospace)`. The `--font-mono` token (4.102.0) follows the brand's mono
 > typeface; on older releases the literal fallback paints.
 >
 > These two lines are the emergency fix; `uxm/base.css` (4.98.0) carries both. **The complete host baseline — including the
