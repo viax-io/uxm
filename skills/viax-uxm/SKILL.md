@@ -99,6 +99,14 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **New atom: `Stepper`.** A record's lifecycle left to right, as an ordered list.
+  - `steps` is `{ label, state: 'done' | 'current' | 'ahead' | 'off', meta? }[]`.
+  - Done steps are checked, the current step ringed (`aria-current="step"`), steps ahead hollow,
+    skipped steps dashed.
+  - It scrolls sideways on narrow screens.
+  - For a record page's progress (quote → order → delivery); `TimelineEntry` stays the vertical
+    history.
+
 ## Workflow
 
 ### Where the documentation lives

@@ -3,6 +3,42 @@ import type { ComponentDef } from '../types';
 export const feedbackDefs: ComponentDef[] = [
   // ── Feedback ──
   {
+    id: 'stepper',
+    name: 'Stepper',
+    category: 'Display',
+    description: "A record's progress through its lifecycle, left to right — done steps checked, the current step ringed, steps ahead hollow.",
+    styleProperties: [
+      { key: 'markerSize', label: 'Marker Size', control: 'number', defaultValue: 20, min: 12, max: 32, step: 1, unit: 'px' },
+      { key: 'lineWidth', label: 'Line Width', control: 'number', defaultValue: 2, min: 1, max: 4, step: 1, unit: 'px' },
+      { key: 'stepMinWidth', label: 'Step Min Width', control: 'number', defaultValue: 96, min: 48, max: 200, step: 4, unit: 'px' },
+      { key: 'labelSize', label: 'Label Size', control: 'number', defaultValue: 13, min: 11, max: 18, step: 1, unit: 'px' },
+      { key: 'metaSize', label: 'Meta Size', control: 'number', defaultValue: 12, min: 10, max: 16, step: 1, unit: 'px' },
+      { key: 'doneColor', label: 'Done Color', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
+      { key: 'doneIconColor', label: 'Done Check Color', control: 'color', defaultValue: 'var(--color-text-inverse)', section: 'colors' },
+      { key: 'currentColor', label: 'Current Color', control: 'color', defaultValue: 'var(--color-accent-bold)', section: 'colors' },
+      { key: 'currentRing', label: 'Current Ring', control: 'color', defaultValue: 'var(--color-accent-subtle)', section: 'colors' },
+      { key: 'aheadColor', label: 'Upcoming Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'colors' },
+      { key: 'markerBg', label: 'Upcoming Fill', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
+      { key: 'lineColor', label: 'Line Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
+      { key: 'labelColor', label: 'Label Color', control: 'color', defaultValue: 'var(--color-text)', section: 'colors' },
+      { key: 'mutedLabelColor', label: 'Upcoming Label Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
+      { key: 'metaColor', label: 'Meta Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'colors' },
+      { key: 'focusRing', label: 'Focus Ring', control: 'color', defaultValue: 'var(--color-accent)', section: 'colors' },
+    ],
+    layoutVariants: [
+      {
+        key: 'skipped',
+        label: 'Skipped Step',
+        options: [
+          { value: 'off', label: 'Off' },
+          { value: 'on', label: 'On' },
+        ],
+        defaultValue: 'off',
+      },
+    ],
+    canvasBackground: false,
+  },
+  {
     id: 'timeline-entry',
     name: 'Timeline Entry',
     category: 'Display',

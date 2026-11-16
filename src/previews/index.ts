@@ -93,6 +93,7 @@ export { SidebarNavTriggerPreview } from '@/ui/sidebar-nav-trigger/sidebar-nav-t
 export { SliderPreview } from '@/ui/slider/slider-preview';
 export { StackPreview } from '@/ui/stack/stack-preview';
 export { StatCardPreview } from '@/ui/stat-card/stat-card-preview';
+export { StepperPreview } from '@/ui/stepper/stepper-preview';
 export { TabsPreview } from '@/ui/tabs/tabs-preview';
 export { TabsUnderlinePreview } from '@/ui/tabs-underline/tabs-underline-preview';
 export { TagPreview } from '@/ui/tag/tag-preview';

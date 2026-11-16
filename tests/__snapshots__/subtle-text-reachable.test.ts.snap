@@ -26,6 +26,8 @@ exports[`--color-text-subtle used as text > pins which declarations default to t
   "search-dropdown/search-dropdown.scss — .uxm-search-dropdown__option-meta { color }",
   "section-header/section-header.scss — .uxm-section-header__title { color }",
   "segment-row/segment-row.scss — .uxm-segment-row__drag { color }",
+  "stepper/stepper.scss — .uxm-stepper__step--ahead .uxm-stepper__marker { border-color }",
+  "stepper/stepper.scss — .uxm-stepper__step--off .uxm-stepper__marker { border-color }",
   "thumbnail/thumbnail.scss — .uxm-thumbnail__placeholder { color }",
   "timeline-entry/timeline-entry.scss — .uxm-timeline-entry--idle .uxm-timeline-entry__dot { background-color }",
   "timeline-entry/timeline-entry.scss — .uxm-timeline-entry__trailing { color }",
