@@ -308,6 +308,7 @@
   "label": [
     "12-hour (HH:MM AM/PM)",
     "24-hour (HH:MM)",
+    "320px and narrower",
     "404 — Not Found",
     "480px and narrower (default)",
     "500 — Server Error",

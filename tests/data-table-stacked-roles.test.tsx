@@ -324,8 +324,10 @@ describe('DataTable stackedRole — the stylesheet', () => {
     // A threshold can compile to SEVERAL @container blocks (480 has three),
     // and only one of them carries the role rules — so ask whether any block
     // for that width does, not whether the first one does.
-    for (const bp of [480, 640, 768, 960]) {
-      const blocks = [...css.matchAll(new RegExp(`@container \\(max-width: ${bp}px\\) \\{[\\s\\S]*?\\n\\}`, 'g'))].map((m) => m[0]);
+    // The 480 blocks ask for the named container (so off / 320 can leave them).
+    for (const bp of [320, 480, 640, 768, 960]) {
+      const name = bp === 480 ? 'uxm-data-table ' : '';
+      const blocks = [...css.matchAll(new RegExp(`@container ${name}\\(max-width: ${bp}px\\) \\{[\\s\\S]*?\\n\\}`, 'g'))].map((m) => m[0]);
       expect(blocks.length, `no block for ${bp}`).toBeGreaterThan(0);
       expect(
         blocks.some((b) => b.includes('--stacked-roles')),

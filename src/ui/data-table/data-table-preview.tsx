@@ -122,7 +122,7 @@ const SCROLL_ARROWS: Record<string, 'always' | 'hover' | 'none' | undefined> = {
  * option added to the registry and not here falls back to the default instead
  * of reaching the atom as an unsupported width.
  */
-const STACK_AT: Record<string, DataTableStackAt> = { '480': 480, '640': 640, '768': 768, '960': 960 };
+const STACK_AT: Record<string, DataTableStackAt | false> = { off: false, '320': 320, '480': 480, '640': 640, '768': 768, '960': 960 };
 
 /** Must match `cellPaddingX`/`cellPaddingY` in the studio registry. */
 const CELL_PADDING_DEFAULT = 12;
