@@ -691,6 +691,11 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     paddingX: '--uxm-page-header-padding-x',
     paddingY: '--uxm-page-header-padding-y',
   },
+  // `gap` is a REAL_CSS_PROPS key: unmapped, a save writes a bare `gap` on the
+  // root, which isn't the grid (the inner track is).
+  'media-object': {
+    gap: '--uxm-media-object-gap',
+  },
   'page-shell': {
     backgroundColor: '--uxm-page-shell-bg',
     background: '--uxm-page-shell-background',

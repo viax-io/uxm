@@ -66,6 +66,7 @@ export { ListItemPreview } from '@/ui/list/list-item-preview';
 export { ListboxPreview } from '@/ui/listbox/listbox-preview';
 export { LoaderPreview } from '@/ui/loader/loader-preview';
 export { MenuPreview } from '@/ui/menu/menu-preview';
+export { MediaObjectPreview } from '@/ui/media-object/media-object-preview';
 export { MetaRowPreview } from '@/ui/meta-row/meta-row-preview';
 export { ModalPreview } from '@/ui/modal/modal-preview';
 export { NumberStepperPreview } from '@/ui/number-stepper/number-stepper-preview';

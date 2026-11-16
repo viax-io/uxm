@@ -126,6 +126,8 @@ export { LifecycleTerminal } from './lifecycle-terminal';
 export type { LifecycleTerminalProps } from './lifecycle-terminal';
 export { LifecycleZoomControl } from './lifecycle-zoom-control';
 export type { LifecycleZoomControlProps } from './lifecycle-zoom-control';
+export { MediaObject } from './media-object';
+export type { MediaObjectProps, MediaObjectStackAt } from './media-object';
 export { MetaRow } from './meta-row';
 export type { MetaRowProps } from './meta-row';
 export { Modal } from './modal';
