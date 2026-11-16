@@ -51,7 +51,7 @@ Extends `HTMLAttributes<HTMLOListElement>`; every attribute (`aria-label`, `id`,
 | `--uxm-stepper-done-color` | `--color-accent-bold` | – | Done markers and the line into reached steps. |
 | `--uxm-stepper-done-icon-color` | `--color-text-inverse` | – | The check in a done marker. |
 | `--uxm-stepper-current-color` | `--color-accent-bold` | – | The current marker. |
-| `--uxm-stepper-current-ring` | `--color-accent-subtle` | – | The 4px ring round the current marker. |
+| `--uxm-stepper-current-ring` | `--color-accent-bold` at 25% | – | The 4px ring round the current marker (`color-mix(in srgb, var(--color-accent-bold) 25%, transparent)`). |
 | `--uxm-stepper-ahead-color` | `--color-text-subtle` | – | Border of upcoming and skipped (dashed) markers. |
 | `--uxm-stepper-marker-bg` | `--color-card` | – | Fill of upcoming and skipped markers. |
 | `--uxm-stepper-label-color` | `--color-text` | – | Done and current labels. |
@@ -65,8 +65,7 @@ Extends `HTMLAttributes<HTMLOListElement>`; every attribute (`aria-label`, `id`,
 
 | Token | Group / name | Used for |
 |-------|--------------|----------|
-| `--color-accent-bold` | Accent / Accent Bold | Done and current markers, the reached line. |
-| `--color-accent-subtle` | Accent / Accent Subtle | Current ring. |
+| `--color-accent-bold` | Accent / Accent Bold | Done and current markers, the reached line, and (at 25%) the current ring. |
 | `--color-text-subtle` | Text / Text Subtle | Upcoming marker border (3:1 on card and surface). |
 | `--color-border` | Borders / Border | Line ahead. |
 

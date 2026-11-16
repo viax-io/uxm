@@ -75,7 +75,9 @@
   &__step--current &__marker {
     background-color: var(--uxm-stepper-current-color, var(--color-accent-bold));
     border-color: var(--uxm-stepper-current-color, var(--color-accent-bold));
-    box-shadow: 0 0 0 4px var(--uxm-stepper-current-ring, var(--color-accent-subtle));
+    /* A quarter of the accent: --color-accent-subtle (#ECF8F0) all but vanished
+       on a white card, leaving only the fill to mark the current step. */
+    box-shadow: 0 0 0 4px var(--uxm-stepper-current-ring, color-mix(in srgb, var(--color-accent-bold) 25%, transparent));
     /* Forced colours drop the shadow; a transparent outline turns visible. */
     outline: 2px solid transparent;
     outline-offset: 2px;
