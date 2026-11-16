@@ -81,6 +81,7 @@ export function CardPreview({ styles, variants }: PreviewProps) {
       gap={styles.gap as number}
       style={{
         ['--uxm-card-bg' as string]: styles.backgroundColor as string,
+        ['--uxm-card-background' as string]: (styles.background as string) || undefined,
         ['--uxm-card-border-color' as string]: styles.borderColor as string,
         ['--uxm-card-border-top-width' as string]: `${styles.borderTopWidth}px`,
         ['--uxm-card-border-top-color' as string]: edgeColor(styles.borderTopColor),

@@ -361,6 +361,7 @@ export const messages: StudioMessages = {
     'Backdrop Blur': 'Desfoque do fundo',
     'Background': 'Fundo',
     'Background Color': 'Cor de fundo',
+    'Background Image or Gradient': 'Imagem ou gradiente de fundo',
     'Badge': 'Selo',
     'Badge Radius': 'Raio do selo',
     'Badge Text Size': 'Tamanho do texto do selo',

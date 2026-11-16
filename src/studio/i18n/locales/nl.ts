@@ -355,6 +355,7 @@ export const messages: StudioMessages = {
     'Backdrop Blur': 'Achtergrondvervaging',
     'Background': 'Achtergrond',
     'Background Color': 'Achtergrondkleur',
+    'Background Image or Gradient': 'Achtergrondafbeelding of verloop',
     'Badge': 'Badge',
     'Badge Radius': 'Badgeradius',
     'Badge Text Size': 'Tekstgrootte van de badge',

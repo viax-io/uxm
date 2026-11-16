@@ -7,6 +7,7 @@ export const statCardDef: ComponentDef = {
   description: 'Metric card with value, label, and trend indicator.',
   styleProperties: [
     { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
+    { key: 'background', label: 'Background Image or Gradient', control: 'text', defaultValue: '', section: 'colors' },
     { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
     { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 8, min: 0, max: 20, step: 1, unit: 'px' },
     { key: 'padding', label: 'Padding', control: 'number', defaultValue: 24, min: 12, max: 40, step: 4, unit: 'px' },

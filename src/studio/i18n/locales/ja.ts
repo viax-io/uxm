@@ -349,6 +349,7 @@ export const messages: StudioMessages = {
     'Backdrop Blur': '背景のぼかし',
     'Background': '背景',
     'Background Color': '背景色',
+    'Background Image or Gradient': '背景画像またはグラデーション',
     'Badge': 'バッジ',
     'Badge Radius': 'バッジの角丸',
     'Badge Text Size': 'バッジのテキストサイズ',

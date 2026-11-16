@@ -6,7 +6,9 @@
    valueSize / labelSize / trendUpColor / trendDownColor reach them. */
 
 .uxm-stat-card {
-  background-color: var(--uxm-stat-card-background-color, var(--color-card));
+  /* `--uxm-stat-card-background` takes any `background` value (a gradient, an
+     image with its size and repeat) and wins over the colour knob when set. */
+  background: var(--uxm-stat-card-background, var(--uxm-stat-card-background-color, var(--color-card)));
   border: 1px solid var(--uxm-stat-card-border-color, var(--color-border));
   border-radius: var(--uxm-stat-card-border-radius, 8px);
   min-width: 160px;

@@ -355,6 +355,7 @@ export const messages: StudioMessages = {
     'Backdrop Blur': 'Arka plan bulanıklığı',
     'Background': 'Arka plan',
     'Background Color': 'Arka plan rengi',
+    'Background Image or Gradient': 'Arka plan görseli veya gradyanı',
     'Badge': 'Rozet',
     'Badge Radius': 'Rozet yarıçapı',
     'Badge Text Size': 'Rozet metin boyutu',

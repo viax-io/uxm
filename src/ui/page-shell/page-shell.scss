@@ -1,7 +1,9 @@
 /* ── page-shell ── */
 
 .uxm-page-shell {
-  background-color: var(--uxm-page-shell-bg, var(--color-surface));
+  /* `--uxm-page-shell-background` takes any `background` value (a gradient, an
+     image with its size and repeat) and wins over the colour knob when set. */
+  background: var(--uxm-page-shell-background, var(--uxm-page-shell-bg, var(--color-surface)));
   display: flex;
   height: 100%;
 
