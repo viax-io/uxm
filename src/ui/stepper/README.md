@@ -28,7 +28,7 @@ Extends `HTMLAttributes<HTMLOListElement>`; every attribute (`aria-label`, `id`,
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `steps` | `StepperStep[]` | – | **Required.** The steps, in order. |
-| `stateLabels` | `{ done?: string; off?: string }` | `{ done: 'Done', off: 'Skipped' }` | The word a screen reader hears after a done or skipped step's label (the marker shows it only as a shape). Pass your own copy to translate. |
+| `stateLabels` | `{ done?: string; off?: string }` | `{ done: 'Done', off: 'Skipped' }` | The word a screen reader hears after a done or skipped step's label (the marker shows it only as a shape). Pass your own copy to translate: it follows the label after a space, so include any punctuation your language wants. |
 | `className` | `string` | – | Merged with `uxm-stepper` via `cn`. |
 
 ### `StepperStep`
@@ -82,8 +82,8 @@ Extends `HTMLAttributes<HTMLOListElement>`; every attribute (`aria-label`, `id`,
 
 - An `<ol>`: the order is the meaning, and screen readers announce "list, N items". Name it with `aria-label`.
 - The current step carries `aria-current="step"`. Done and skipped steps add a visually hidden word after the label (`stateLabels`), since the marker shows the state only as a shape.
-- State is never colour alone: done has a check, current a ring and a heavier label, skipped a dashed marker and a struck-through label.
+- State is never colour alone: done has a check; current is filled without a check, with a heavier label and `aria-current`; skipped has a dashed marker and a struck-through label. The ring round the current marker is decoration on top of those: at 25% accent it measures about 1.4:1 against the card in light and 1.9:1 in dark, below the 3:1 a cue on its own would need. Raise `--uxm-stepper-current-ring` if you want it to carry the state.
 - Markers are `aria-hidden`; the list is not interactive. To let people jump to a step, put links in the labels.
 - The list is a Tab stop (`tabIndex={0}`, with a focus ring), because it scrolls sideways when the steps don't fit and a scroller has to be reachable from the keyboard. Pass `tabIndex={-1}` where the steps always fit.
-- The hidden word follows the label after a comma ("Quoted, Done").
+- The default hidden word follows the label after a comma ("Quoted, Done"). Your own `stateLabels` follow after a space, with no comma added, so a language that doesn't use ", " isn't given one.
 - RTL: the steps and lines run right to left (logical properties).
