@@ -39,7 +39,11 @@ describe('Stepper', () => {
     expect(items[1].textContent).toBe('Ordered');
     expect(items[3].textContent).toBe('Delivered');
     rerender(<Stepper steps={STEPS} stateLabels={{ done: 'Fertig', off: 'Übersprungen' }} />);
-    expect(screen.getAllByRole('listitem')[0]).toHaveTextContent('Quoted, Fertig');
+    // The comma is the default copy's punctuation, not something forced on a
+    // translation: a language that doesn't use ", " brings its own or none.
+    expect(screen.getAllByRole('listitem')[0].querySelector('.uxm-stepper__status')?.textContent).toBe(' Fertig');
+    rerender(<Stepper steps={STEPS} stateLabels={{ done: '完了' }} />);
+    expect(screen.getAllByRole('listitem')[0].querySelector('.uxm-stepper__status')?.textContent).toBe(' 完了');
   });
 
   it('is a Tab stop as a scroller, unless the app opts out', () => {

@@ -93,6 +93,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Stepper` no longer adds an English comma to translated state words** — the hidden text
+  after a done or skipped label was always `, {word}`. The comma now belongs to the default copy
+  only ("Quoted, Done"); `stateLabels` follow after a space. The README no longer counts the
+  current step's 25% ring as a state cue: it is about 1.4:1, so the cues are the fill without a
+  check, the heavier label and `aria-current`.
+
 ## Workflow
 
 ### Where the documentation lives
