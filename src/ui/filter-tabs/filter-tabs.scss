@@ -61,3 +61,10 @@
     }
   }
 }
+
+/* The reset above is (0,1,0), so a host's own link rule, `a:hover { text-decoration:
+   underline }` at (0,1,1), underlined the tabs in navigation mode. Scoped under the
+   track it is (0,2,0) and wins; nothing else in this file sets a decoration. */
+.uxm-filter-tabs .uxm-filter-tabs__tab {
+  text-decoration: none;
+}
