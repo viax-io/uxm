@@ -120,6 +120,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`MenuButton` renders from a server component** — the module now carries `'use client'`
+  (it builds `Menu`'s `renderTrigger` itself, and a server component can't hand a function
+  to a client one). Before this, `<MenuButton>` on a Next.js server page threw "Functions
+  cannot be passed directly to Client Components".
+
 ## Workflow
 
 ### Where the documentation lives

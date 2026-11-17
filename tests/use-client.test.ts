@@ -36,6 +36,9 @@ const HOOK = /\buse[A-Z]\w*\s*(?:<[^>()]*>)?\(|createContext\s*(?:<[^>()]*>)?\(|
 // `{ onClick: () => … }`, aren't matched: the pattern can't be told apart from a
 // props interface's `onClick: () => void`.)
 const OWN_FN = /\bref=\{\s*\(/;
+// Any other function built inline as a JSX prop (`renderTrigger={({ open }) => …}`,
+// `format={function (v) {…}}`) is a function this module hands across the boundary.
+const INLINE_FN = /\b\w+=\{\s*(?:async\s+)?(?:\([^()]*(?:\([^()]*\)[^()]*)*\)|\w+)\s*=>|\b\w+=\{\s*(?:async\s+)?function\b/;
 const HANDLER = /\b(on[A-Z]\w*)=\{([^}]*)/g;
 
 /** True when the module builds a handler itself, not just forwards a prop of the same name.
@@ -59,7 +62,8 @@ const source = (rel: string) => readFileSync(join(ROOT, rel), 'utf8');
 const startsWithDirective = (src: string) => /^\s*(?:\/\*[\s\S]*?\*\/\s*|\/\/[^\n]*\n\s*)*['"]use client['"];/.test(src);
 /** Comments stripped, so an example in a JSDoc block isn't read as code. */
 const code = (src: string) => src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
-const needsClient = (src: string) => HOOK.test(code(src)) || OWN_FN.test(code(src)) || ownsHandler(code(src));
+const needsClient = (src: string) =>
+  HOOK.test(code(src)) || OWN_FN.test(code(src)) || INLINE_FN.test(code(src)) || ownsHandler(code(src));
 
 describe("'use client' in src/ui", () => {
   it('finds the modules (a silent empty scan would pass everything below)', () => {
