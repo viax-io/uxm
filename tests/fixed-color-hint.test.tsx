@@ -1,9 +1,9 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { FixedColorHint } from '@/studio/editors/fixed-color-hint';
 import { isFixedColor, isTranslucent, nearestColor, sameColorValue } from '@/studio/lib/fixed-color';
-import { PropertyRow } from '@/studio/shell/properties-panel/property-row';
+import { PropertyRow, renderBelow } from '@/studio/shell/properties-panel/property-row';
 
 /**
  * A colour knob saved as a fixed value paints the same in a dark panel, a
@@ -97,5 +97,44 @@ describe('FixedColorHint', () => {
     const reset = screen.getByRole('button', { name: 'Reset Text Color to default' });
     expect(reset.parentElement).not.toContainElement(screen.getByTestId('hint'));
     expect(reset.parentElement).toHaveTextContent('picker');
+  });
+});
+
+describe('FixedColorHint in a panel that sets its own theme', () => {
+  // #1B1A18 is the dark Card. On a light page it is nearest the light Text
+  // (#1E1E1E), and "Use Text" wrote a token that paints near-white inside the
+  // dark Surface being edited. The offer has to be measured in the panel's theme.
+  const darkCard = '#1B1A18';
+
+  it('measures the nearest token in the panel theme, not the page', () => {
+    const { rerender } = render(
+      <FixedColorHint label="Background" value={darkCard} defaultValue="var(--color-surface)" onChange={() => {}} />,
+    );
+    expect(screen.getByRole('button')).toHaveTextContent('Use Text');
+    rerender(
+      <FixedColorHint label="Background" value={darkCard} defaultValue="var(--color-surface)" onChange={() => {}} panelTheme="dark" />,
+    );
+    expect(screen.getByRole('button')).toHaveTextContent('Use Card');
+  });
+
+  it('recomputes the offer when the page theme flips', async () => {
+    // The memo used to key on the value alone, so the offer stayed the one
+    // measured in the theme the hint first rendered in.
+    render(<FixedColorHint label="Background" value={darkCard} defaultValue="var(--color-surface)" onChange={() => {}} />);
+    expect(screen.getByRole('button')).toHaveTextContent('Use Text');
+    try {
+      act(() => {
+        document.documentElement.dataset.theme = 'dark';
+      });
+      expect(await screen.findByRole('button', { name: /Use Card/ })).toBeInTheDocument();
+    } finally {
+      delete document.documentElement.dataset.theme;
+    }
+  });
+
+  it('renderBelow hands the panel theme to the hint', () => {
+    const prop = { key: 'backgroundColor', label: 'Background', control: 'color' as const, defaultValue: 'var(--color-surface)' };
+    render(<>{renderBelow('color', { label: 'Background', value: darkCard, onChange: () => {}, prop, panelTheme: 'dark' })}</>);
+    expect(screen.getByRole('button')).toHaveTextContent('Use Card');
   });
 });

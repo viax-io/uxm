@@ -78,10 +78,20 @@ export function renderBelow(
     value: string | number | boolean;
     onChange: (v: string | number | boolean) => void;
     prop: ComponentDef['styleProperties'][number];
+    /** The previewed component's own theme, when it sets one (Surface's `theme` variant). */
+    panelTheme?: 'light' | 'dark';
   },
 ): ReactNode {
   if (control !== 'color') return null;
-  return <FixedColorHint label={args.label} value={args.value} defaultValue={args.prop.defaultValue} onChange={args.onChange} />;
+  return (
+    <FixedColorHint
+      label={args.label}
+      value={args.value}
+      defaultValue={args.prop.defaultValue}
+      onChange={args.onChange}
+      panelTheme={args.panelTheme}
+    />
+  );
 }
 
 export function PropertyRow({

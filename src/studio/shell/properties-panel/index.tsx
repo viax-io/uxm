@@ -91,6 +91,13 @@ export function PropertiesPanel({
 
   if (!def) return null;
 
+  // A component that sets its own theme (Surface's `theme` variant) paints its
+  // colour knobs there, not in the page's theme; `page` and absent follow the page.
+  // Untouched, the variant sits at its default (as the canvas resolves it).
+  const themeVariant =
+    currentVariants.theme ?? def.layoutVariants.find((v) => v.key === 'theme')?.defaultValue;
+  const panelTheme = themeVariant === 'dark' || themeVariant === 'light' ? themeVariant : undefined;
+
   // Variants live in ephemeral session state; styleProperty edits live in
   // persisted overrides. `resolve` checks both so panel UI reads the right
   // thing regardless of which kind of key it's looking at.
@@ -453,7 +460,7 @@ export function PropertiesPanel({
                       justMatched={isJustMatched}
                       isOverridden={isOverridden}
                       onReset={() => resetOverride(selectedId, prop.key)}
-                      below={renderBelow(prop.control, editorArgs)}
+                      below={renderBelow(prop.control, { ...editorArgs, panelTheme })}
                     >
                       {editor}
                     </PropertyRow>
