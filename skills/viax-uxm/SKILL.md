@@ -84,6 +84,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable` stacks at 480px again when the host names its container** — since `stackAt={320 | false}`
+  the default stacking queried a container named `uxm-data-table`, so a host rule that set
+  `container-name` or the `container` shorthand on the table (Tailwind `@container/foo`) silently
+  turned it off. The root is unnamed again; off and 320 now leave the 480 rules through a
+  zero-specificity `:where()` gate. The workaround of keeping both names is no longer needed.
+
 ## Workflow
 
 ### Where the documentation lives

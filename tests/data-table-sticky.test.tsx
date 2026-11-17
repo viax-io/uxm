@@ -284,7 +284,7 @@ describe('DataTable sticky actions column', () => {
  * mode moved to the end of the file).
  */
 function stackedStickyBlock(): string {
-  const marks = [...css.matchAll(/@container uxm-data-table \(max-width: 480px\)/g)].map((m) => m.index!);
+  const marks = [...css.matchAll(/@container \(max-width: 480px\)/g)].map((m) => m.index!);
   for (const at of marks) {
     const body = css.slice(at, css.indexOf('\n}', at));
     if (body.includes('__scroll-arrow') || body.includes('--sticky-start')) return body;
@@ -328,7 +328,7 @@ describe('DataTable sticky/scroll — CSS contracts', () => {
     // browser probe caught it. The reset must mirror their shape.
     const stacked = stackedStickyBlock();
     expect(stacked).toMatch(
-      /\.uxm-data-table--scrolled-start \.uxm-data-table__td--sticky-start[\s\S]{0,300}?box-shadow:\s*none/,
+      /\.uxm-data-table--scrolled-start \.uxm-data-table__td--sticky-start[\s\S]{0,800}?box-shadow:\s*none/,
     );
     // Strip comments before scanning for `!important`: this very block
     // explains why it is NOT used, and a raw text scan matched that prose —
