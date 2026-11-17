@@ -1,3 +1,10 @@
+## [4.115.3](https://github.com/viax-io/uxm/compare/v4.115.2...v4.115.3) (2026-11-17)
+
+
+### Bug Fixes
+
+* **studio-i18n:** translate the heading Case and Tracking option labels ([f1adca6](https://github.com/viax-io/uxm/commit/f1adca6287b938b37aef463e39fc761f07087da4))
+
 ## [4.115.2](https://github.com/viax-io/uxm/compare/v4.115.1...v4.115.2) (2026-11-17)
 
 
