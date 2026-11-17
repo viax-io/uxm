@@ -85,4 +85,38 @@ describe('css sanitizers', () => {
     expect(safeTokenValue('url(javascript:alert(1))')).toBeUndefined();
     expect(safeTokenValue("url('data:,hello')")).toBeUndefined();
   });
+
+  it('safeTokenValue keeps the gradients and image layers the background knobs take', () => {
+    for (const ok of [
+      'linear-gradient(135deg, var(--color-accent) 0%, color-mix(in srgb, var(--color-surface) 80%, transparent) 100%)',
+      'url(/grid.svg) 0 0 / 30px 30px, var(--color-surface)',
+      'radial-gradient(circle at 20% 30%, rgb(0 0 0 / 0.2), transparent 60%)',
+      'grid-template-areas: "a b"',
+      'calc(100% - [x] 2px)',
+    ]) {
+      expect(safeTokenValue(ok), ok).toBe(ok);
+    }
+  });
+
+  it('safeTokenValue rejects a value that would swallow the rest of the sheet', () => {
+    // An unclosed bracket, quote or comment carries the tokenizer past the `;`
+    // the generator appends and over every following rule.
+    expect(safeTokenValue('linear-gradient(135deg, red')).toBeUndefined();
+    expect(safeTokenValue('red)')).toBeUndefined();
+    expect(safeTokenValue('calc([1px)')).toBeUndefined();
+    expect(safeTokenValue('"unterminated')).toBeUndefined();
+    expect(safeTokenValue('red /*')).toBeUndefined();
+    expect(safeTokenValue('red */ blue')).toBeUndefined();
+  });
+
+  it('safeTokenValue rejects escapes and URL functions that bypass the url() whitelist', () => {
+    expect(safeTokenValue('red\\')).toBeUndefined();
+    expect(safeTokenValue('\\75rl(javascript:alert(1))')).toBeUndefined();
+    expect(safeTokenValue('image-set("data:image/svg+xml,AA" 1x)')).toBeUndefined();
+    expect(safeTokenValue('-webkit-image-set("javascript:x" 1x)')).toBeUndefined();
+    expect(safeTokenValue('image("javascript:x")')).toBeUndefined();
+    expect(safeTokenValue('src("javascript:x")')).toBeUndefined();
+    // A name that merely ends in one of them is not the function.
+    expect(safeTokenValue('var(--my-image)')).toBe('var(--my-image)');
+  });
 });
