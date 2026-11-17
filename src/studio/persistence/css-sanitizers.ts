@@ -100,9 +100,44 @@ function stripUrlQuotes(inner: string): string {
 // the same gate already applied to `logoUrl`/`iconUrl`, so a text override
 // can't turn into a `javascript:`/`data:` load or a third-party tracking
 // beacon fired from every session that renders the stylesheet.
+//
+// Since the background knobs take free text (gradients, images), a typo is as
+// likely as an attack, and the characters above aren't the only way out of a
+// declaration:
+// - an unclosed `(` or `[` makes the CSS tokenizer swallow the `;`, the `}` and
+//   every rule after it up to the next matching bracket anywhere in the sheet
+//   (`linear-gradient(135deg, red`); an unclosed quote swallows to end of line;
+// - `/*` opens a comment that runs to the next `*/` — or the end of the sheet;
+// - a backslash escapes whatever follows: a trailing `\` escapes the `;` the
+//   generator appends, and `\75rl(` is `url(` that the whitelist can't see;
+// - `image-set()` / `image()` / `src()` take a URL as a plain string, outside
+//   `url(...)`, so they'd skip the `safeUrl` whitelist entirely.
+const URL_STRING_FN_REGEX = /(?:^|[^\w-])(?:-webkit-)?(?:image-set|image|src)\(/i;
+
+/** True when every `(`, `[` and quote opened outside a string is closed. */
+function balanced(v: string): boolean {
+  const stack: string[] = [];
+  let quote: string | undefined;
+  for (const ch of v) {
+    if (quote) {
+      if (ch === quote) quote = undefined;
+    } else if (ch === '"' || ch === "'") {
+      quote = ch;
+    } else if (ch === '(' || ch === '[') {
+      stack.push(ch === '(' ? ')' : ']');
+    } else if (ch === ')' || ch === ']') {
+      if (stack.pop() !== ch) return false;
+    }
+  }
+  return !quote && stack.length === 0;
+}
+
 export function safeTokenValue(v: unknown): string | undefined {
   if (typeof v !== 'string') return undefined;
-  if (/[{};\n\r<>]/.test(v)) return undefined;
+  if (/[{};\n\r<>\\]/.test(v)) return undefined;
+  if (v.includes('/*') || v.includes('*/')) return undefined;
+  if (!balanced(v)) return undefined;
+  if (URL_STRING_FN_REGEX.test(v)) return undefined;
   for (const match of v.matchAll(CSS_URL_FN_REGEX)) {
     if (safeUrl(stripUrlQuotes(match[1])) === undefined) return undefined;
   }
