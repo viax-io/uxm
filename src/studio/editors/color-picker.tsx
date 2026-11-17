@@ -42,15 +42,42 @@ function groupTokens(tokens: ThemeToken[]) {
  */
 function liveHex(value: string): string {
   if (typeof document !== 'undefined') {
-    const token = findToken(value);
-    if (token) {
-      const computed = getComputedStyle(document.documentElement)
-        .getPropertyValue(token.cssVar)
-        .trim();
-      if (/^#[0-9A-Fa-f]{6}$/.test(computed)) return computed;
+    const cssVar = findToken(value)?.cssVar ?? varName(value);
+    if (cssVar) {
+      const computed = toHex(getComputedStyle(document.documentElement).getPropertyValue(cssVar));
+      if (computed) return computed;
     }
   }
   return resolveHex(value);
+}
+
+/**
+ * The custom property a plain `var(--name)` value reads, or `undefined`. Some
+ * knobs default to a variable outside the `--color-*` palette (Card's shadow
+ * reads `var(--shadow-card-color)`), which `isTokenValue` does not treat as a
+ * token; without this the custom field opened on the raw `var(...)` text and
+ * the native input, which only takes a hex, fell back to black.
+ */
+function varName(value: string): string | undefined {
+  return value.match(/^var\(\s*(--[\w-]+)\s*\)$/)?.[1];
+}
+
+/** `#rrggbb`, `#rrggbbaa` or `rgb()`/`rgba()` as a hex, keeping alpha below 1. */
+function toHex(raw: string): string | undefined {
+  const v = raw.trim();
+  if (/^#(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(v)) return v;
+  const fn = v.match(/^rgba?\(([^)]+)\)$/i);
+  if (!fn) return undefined;
+  const [r, g, b, a] = fn[1].split(/[\s,/]+/).filter(Boolean).map(parseFloat);
+  if (![r, g, b].every(Number.isFinite)) return undefined;
+  const byte = (n: number) => Math.round(Math.min(255, Math.max(0, n))).toString(16).padStart(2, '0');
+  const alpha = a !== undefined && Number.isFinite(a) && a < 1 ? byte(a * 255) : '';
+  return `#${byte(r)}${byte(g)}${byte(b)}${alpha}`;
+}
+
+/** The native colour input takes `#rrggbb` only. */
+function opaqueHex(hex: string): string {
+  return /^#[0-9A-Fa-f]{8}$/.test(hex) ? hex.slice(0, 7) : hex;
 }
 
 export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
@@ -76,7 +103,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
 
   // Sync custom hex field when value changes externally
   useEffect(() => {
-    if (!isTokenValue(value)) {
+    if (!isTokenValue(value) && !varName(value)) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional external-value → custom-hex sync
       setCustomHex(value);
     }
@@ -228,7 +255,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
                 <input
                   ref={nativePickerRef}
                   type="color"
-                  value={customHex || displayHex}
+                  value={opaqueHex(customHex || displayHex)}
                   onChange={(e) => {
                     setCustomHex(e.target.value);
                     onChange(e.target.value);
@@ -262,7 +289,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
               <button
                 onClick={() => {
                   setCustomMode(true);
-                  setCustomHex(isTokenValue(value) ? resolveHex(value) : value);
+                  setCustomHex(isTokenValue(value) || varName(value) ? liveHex(value) : value);
                 }}
                 className="flex w-full items-center gap-2 text-[12px] text-text-muted hover:text-text-strong transition-colors"
               >

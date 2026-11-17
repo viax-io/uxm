@@ -84,6 +84,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Studio's colour knobs read colours, not strings** — the fixed-colour hint no longer fires on an
+  untouched knob whose default is `#fff` when the picker writes `#FFFFFF`, and stays quiet on a
+  translucent `oklch(… / 40%)` or `color(srgb … / .5)` shadow as it already did for `rgba()`. The
+  colour picker opens its custom field on the resolved value of a variable outside the palette
+  (Card's `var(--shadow-card-color)`) instead of the raw `var(...)` text and a black native input.
 - **`DataTable` stacks at 480px again when the host names its container** — since `stackAt={320 | false}`
   the default stacking queried a container named `uxm-data-table`, so a host rule that set
   `container-name` or the `container` shorthand on the table (Tailwind `@container/foo`) silently
