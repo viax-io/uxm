@@ -1,3 +1,10 @@
+## [4.115.6](https://github.com/viax-io/uxm/compare/v4.115.5...v4.115.6) (2026-11-17)
+
+
+### Bug Fixes
+
+* **studio:** measure the fixed-colour suggestion in the panel's own theme ([8c1b556](https://github.com/viax-io/uxm/commit/8c1b55658b410ff077ee33f941d9f6aa95757374)), closes [#1B1A18](https://github.com/viax-io/uxm/issues/1B1A18)
+
 ## [4.115.5](https://github.com/viax-io/uxm/compare/v4.115.4...v4.115.5) (2026-11-17)
 
 
