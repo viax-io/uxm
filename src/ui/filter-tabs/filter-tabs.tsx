@@ -46,7 +46,12 @@ export function FilterTabs({
   ...rest
 }: FilterTabsProps) {
   const isControlled = value !== undefined;
-  const [internal, setInternal] = useState<string>(defaultValue ?? options[0]?.value ?? '');
+  const isNav = options.some((opt) => opt.href !== undefined);
+  // A tablist always has a selected tab, so it falls back to the first. A nav
+  // doesn't: without `value` or `defaultValue` it can't know the current route,
+  // and marking the first link `aria-current="page"` would announce a page the
+  // user isn't on. Nothing is current until they pick one.
+  const [internal, setInternal] = useState<string>(defaultValue ?? (isNav ? '' : (options[0]?.value ?? '')));
   const active = isControlled ? value : internal;
 
   const select = (next: string) => {
@@ -70,7 +75,7 @@ export function FilterTabs({
   // shows a panel; a link goes somewhere), so the bar is a `<nav>`, the active
   // option carries `aria-current="page"`, and every link is its own Tab stop
   // as in any nav. Name it with `aria-label`.
-  if (options.some((opt) => opt.href !== undefined)) {
+  if (isNav) {
     return (
       <nav className={cn('uxm-filter-tabs', className)} {...rest}>
         {options.map((opt) => {
@@ -78,7 +83,16 @@ export function FilterTabs({
           const cls = cn('uxm-filter-tabs__tab', isActive && 'uxm-filter-tabs__tab--active');
           if (opt.href === undefined) {
             return (
-              <button key={opt.value} type="button" disabled={opt.disabled} className={cls} onClick={() => select(opt.value)}>
+              <button
+                key={opt.value}
+                type="button"
+                disabled={opt.disabled}
+                // Not a page, so `true` rather than `page`: the pick is otherwise
+                // conveyed by the active styling alone.
+                aria-current={isActive ? 'true' : undefined}
+                className={cls}
+                onClick={() => select(opt.value)}
+              >
                 {opt.label}
               </button>
             );

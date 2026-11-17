@@ -44,7 +44,7 @@ import NextLink from 'next/link';
 />
 ```
 
-It looks exactly like the tab mode; only the semantics change. Links aren't tabs (a tab shows a panel, a link goes somewhere), so there's no `tablist` and no arrow-key roving: each link is its own Tab stop, as in any nav. A disabled option renders as `<span role="link" aria-disabled="true">`, with no `href`, out of the Tab order. An option without an `href` in a navigation bar renders as a plain button that only reports the pick. Keep navigation mode controlled, with the current route as `value`: a modified click (Cmd / Ctrl / Shift, middle button) opens the link elsewhere and doesn't change the selection.
+It looks exactly like the tab mode; only the semantics change. Links aren't tabs (a tab shows a panel, a link goes somewhere), so there's no `tablist` and no arrow-key roving: each link is its own Tab stop, as in any nav. A disabled option renders as `<span role="link" aria-disabled="true">`, with no `href`, out of the Tab order. An option without an `href` in a navigation bar renders as a plain button that only reports the pick, and carries `aria-current="true"` while picked. Without `value` or `defaultValue` no link is current (the bar can't know the route), unlike the tab mode, which selects the first tab. Keep navigation mode controlled, with the current route as `value`: a modified click (Cmd / Ctrl / Shift, middle button) opens the link elsewhere and doesn't change the selection.
 
 ## Props
 

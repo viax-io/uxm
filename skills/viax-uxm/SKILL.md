@@ -89,6 +89,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`FilterTabs` navigation mode marks no link current until it knows the route** — without
+  `value` or `defaultValue` it used to put `aria-current="page"` on the first link whatever page
+  the user was on. Tab mode still selects the first tab. A picked `href`-less button in a nav now
+  carries `aria-current="true"`.
+
 ## Workflow
 
 ### Where the documentation lives

@@ -87,5 +87,27 @@ describe('FilterTabs navigation', () => {
     expect(screen.getByRole('tablist')).toBeInTheDocument();
     expect(screen.getAllByRole('tab')).toHaveLength(2);
     expect(screen.queryByRole('navigation')).toBeNull();
+    // A tablist still selects the first tab when nothing is passed.
+    expect(screen.getByRole('tab', { name: 'All' })).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('marks no link current without value or defaultValue', () => {
+    // It can't know the route, and the first link used to be announced as the
+    // current page whatever page the user was on.
+    render(<FilterTabs aria-label="Sections" options={SECTIONS} />);
+    for (const link of screen.getAllByRole('link')) {
+      expect(link).not.toHaveAttribute('aria-current');
+      expect(link).not.toHaveClass('uxm-filter-tabs__tab--active');
+    }
+    fireEvent.click(screen.getByRole('link', { name: 'Orders' }));
+    expect(screen.getByRole('link', { name: 'Orders' })).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('marks a picked button in a nav as current, not only by its styling', () => {
+    const mixed = [...SECTIONS, { value: 'help', label: 'Help' }];
+    render(<FilterTabs aria-label="Sections" options={mixed} value="help" />);
+    const help = screen.getByRole('button', { name: 'Help' });
+    expect(help).toHaveAttribute('aria-current', 'true');
+    expect(screen.getByRole('link', { name: 'Home' })).not.toHaveAttribute('aria-current');
   });
 });
