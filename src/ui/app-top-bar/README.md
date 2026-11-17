@@ -52,7 +52,8 @@ It's CSS only (one media query per value), so there's no script and no flash on 
 
 - **The breakpoint is the window, not the bar.** With an `AppSidebar` beside it the bar is narrower than the window, so pick the value with the sidebar's width in mind.
 - **Heights.** Collapsed, `--uxm-app-top-bar-height` is the first row's height and the bar grows to fit the search row, padded like the bar's sides (`--uxm-app-top-bar-padding-x`).
-- **Focus order.** The search row sits below the actions but keeps its place in the DOM, so Tab still reaches it before the actions, the same order as the wide bar.
+- **Focus order.** The search row sits below the actions but keeps its place in the DOM, so Tab reaches it before the actions: the same order as the wide bar, but not the visual order of the collapsed one (brand, search on row 2, then back up to the actions). That is the trade-off of one DOM serving both widths; reordering it would put the wide bar out of step instead. Keep the actions few where this matters.
+- **Height.** The first row keeps the wide bar's height, padding and border included (with `box-sizing: border-box`, which `@viax.io/uxm/base.css` and the common resets set), so the bar doesn't jump at the breakpoint; the search row adds its own height below.
 - **Use it with a brand or actions.** A bar with only a search slot has nothing to keep on the first row.
 - **Very narrow screens.** If the brand and the actions can't share the first row, the actions wrap onto a row of their own rather than overlap the brand. Shorten a long action label ("Viewing as: …") at that width.
 
