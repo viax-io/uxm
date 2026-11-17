@@ -85,6 +85,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Studio's fixed-colour hint offers the token nearest in the panel's own theme** — on a
+  Surface with `theme="dark"` it measured against the page, so "Use Text" on a near-black
+  background wrote a token that paints near-white in the panel. It also re-measures when the
+  page theme flips.
+
 - **`FilterTabs` navigation mode marks no link current until it knows the route** — without
   `value` or `defaultValue` it used to put `aria-current="page"` on the first link whatever page
   the user was on. Tab mode still selects the first tab. A picked `href`-less button in a nav now
