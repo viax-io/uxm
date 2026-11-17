@@ -53,6 +53,7 @@
     "Browser tab icon. Accepts .ico, .png, .svg.",
     "Build failed",
     "Buttons, active tabs, table headers and panel titles. Default is 600.",
+    "Capitalize",
     "Case",
     "Categories",
     "Clear",
@@ -166,6 +167,7 @@
     "Shown in the expanded sidebar. Upload a file or paste a URL.",
     "Sidebar Icon",
     "Size",
+    "Slight",
     "Strong text weight",
     "Strong weight",
     "Surfaces",
@@ -185,12 +187,15 @@
     "Upload is unavailable in this host.",
     "Uploaded — URL copied to clipboard",
     "Uploading…",
+    "Uppercase",
     "Usage",
     "Use {token}",
     "Use {token} for {label}",
     "Variant Matrix",
     "Visual",
-    "Weight"
+    "Weight",
+    "Wide",
+    "Wider"
   ],
   "category": [
     "App",

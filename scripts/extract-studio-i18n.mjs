@@ -117,7 +117,8 @@ for (const title of Object.values(COLOR_GROUP_LABELS)) buckets.label.add(title);
 const isWord = (v) => typeof v === 'string' && /[A-Za-z]{2}/.test(v);
 for (const label of brandOptions.TRANSLATABLE_FONT_LABELS) buckets.chrome.add(label);
 for (const set of [brandOptions.SCALE_OPTIONS, brandOptions.WEIGHT_OPTIONS,
-  brandOptions.LINE_HEIGHT_OPTIONS]) {
+  brandOptions.MEDIUM_WEIGHT_OPTIONS, brandOptions.LINE_HEIGHT_OPTIONS,
+  brandOptions.HEADING_CASE_OPTIONS, brandOptions.HEADING_TRACKING_OPTIONS]) {
   for (const o of set) if (isWord(o.label)) buckets.chrome.add(o.label);
 }
 // `label`/`short` are chrome; `sample` is specimen text and stays English.
