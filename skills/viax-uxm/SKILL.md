@@ -87,6 +87,16 @@ catalog.
 - **`Surface` keeps a `data-theme` passed without `theme`** — it used to drop it, since the
   component wrote its own (empty) `data-theme` after the rest props. `data-theme="dark"` or
   `"light"` now acts as `theme`, class and `color-scheme` included; any other value passes through.
+- **Studio's colour knobs read colours, not strings** — the fixed-colour hint no longer fires on an
+  untouched knob whose default is `#fff` when the picker writes `#FFFFFF`, and stays quiet on a
+  translucent `oklch(… / 40%)` or `color(srgb … / .5)` shadow as it already did for `rgba()`. The
+  colour picker opens its custom field on the resolved value of a variable outside the palette
+  (Card's `var(--shadow-card-color)`) instead of the raw `var(...)` text and a black native input.
+- **`DataTable` stacks at 480px again when the host names its container** — since `stackAt={320 | false}`
+  the default stacking queried a container named `uxm-data-table`, so a host rule that set
+  `container-name` or the `container` shorthand on the table (Tailwind `@container/foo`) silently
+  turned it off. The root is unnamed again; off and 320 now leave the 480 rules through a
+  zero-specificity `:where()` gate. The workaround of keeping both names is no longer needed.
 
 ## Workflow
 

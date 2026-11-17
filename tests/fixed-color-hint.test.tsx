@@ -41,9 +41,27 @@ describe('fixed colour detection', () => {
     expect(isTranslucent('#FFFFFF')).toBe(false);
   });
 
-  it('compares values ignoring case and spacing', () => {
+  it('spots translucency in the modern colour functions too', () => {
+    // A translucent oklch shadow was classed as an opaque fixed colour and got
+    // the "Fixed color" hint, which no token can answer.
+    expect(isTranslucent('oklch(0.2 0 0 / 40%)')).toBe(true);
+    expect(isTranslucent('color(srgb 0 0 0 / .5)')).toBe(true);
+    expect(isTranslucent('hsla(0, 0%, 0%, 0.3)')).toBe(true);
+    expect(isTranslucent('oklch(0.2 0 0)')).toBe(false);
+    expect(isTranslucent('oklch(0.2 0 0 / 1)')).toBe(false);
+    // A gradient whose last stop is translucent is not itself a colour.
+    expect(isTranslucent('linear-gradient(red, rgb(0 0 0 / .2))')).toBe(false);
+  });
+
+  it('compares values by colour where both parse, by text otherwise', () => {
     expect(sameColorValue('rgba(0,0,0,0.12)', ' RGBA(0, 0, 0, 0.12) ')).toBe(true);
-    expect(sameColorValue('#fff', '#ffffff')).toBe(false);
+    // A registry `#fff` against the `#FFFFFF` a picker round-trip writes.
+    expect(sameColorValue('#fff', '#FFFFFF')).toBe(true);
+    expect(sameColorValue('#000', 'rgb(0, 0, 0)')).toBe(true);
+    expect(sameColorValue('#0000001F', 'rgba(0, 0, 0, 0.12)')).toBe(true);
+    expect(sameColorValue('#000', 'rgba(0, 0, 0, 0.5)')).toBe(false);
+    expect(sameColorValue('#fff', '#fffffe')).toBe(false);
+    expect(sameColorValue('var(--color-text)', ' VAR(--color-text) ')).toBe(true);
   });
 
   it('finds the nearest opaque candidate, and none for what it cannot parse', () => {
@@ -84,6 +102,10 @@ describe('FixedColorHint', () => {
     rerender(<FixedColorHint label="Color" value="#123456" defaultValue=" #123456" onChange={() => {}} />);
     expect(container).toBeEmptyDOMElement();
     rerender(<FixedColorHint label="Color" value="rgba(0, 0, 0, 0.2)" defaultValue="var(--shadow-card-color)" onChange={() => {}} />);
+    expect(container).toBeEmptyDOMElement();
+    rerender(<FixedColorHint label="Color" value="#FFFFFF" defaultValue="#fff" onChange={() => {}} />);
+    expect(container).toBeEmptyDOMElement();
+    rerender(<FixedColorHint label="Color" value="oklch(0.2 0 0 / 40%)" defaultValue="var(--shadow-card-color)" onChange={() => {}} />);
     expect(container).toBeEmptyDOMElement();
   });
 
