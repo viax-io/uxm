@@ -1,11 +1,14 @@
 import { cn } from '@/helpers';
 
-import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
+import type { ComponentPropsWithRef, CSSProperties, ReactNode } from 'react';
 
 /** Container widths at which the media stacks above (or below) the content. */
 export type MediaObjectStackAt = 480 | 640 | 768 | 960;
 
-export interface MediaObjectProps extends HTMLAttributes<HTMLDivElement> {
+// `ComponentPropsWithRef`, not `HTMLAttributes`: React 19 passes `ref` as a
+// plain prop and the rest spread already delivers it, but `HTMLAttributes`
+// doesn't declare it, so `<MediaObject ref={…}>` was a type error (button.tsx).
+export interface MediaObjectProps extends ComponentPropsWithRef<'div'> {
   /** The image, illustration, avatar or chart beside the content. */
   media: ReactNode;
   /** Which side the media sits on. Default `'start'` (left in LTR). */
