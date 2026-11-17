@@ -1,3 +1,10 @@
+## [4.115.10](https://github.com/viax-io/uxm/compare/v4.115.9...v4.115.10) (2026-11-17)
+
+
+### Bug Fixes
+
+* **stepper,media-object:** accept ref in the props type ([3290f89](https://github.com/viax-io/uxm/commit/3290f89027534bbd4d90af240d944215ee936460))
+
 ## [4.115.9](https://github.com/viax-io/uxm/compare/v4.115.8...v4.115.9) (2026-11-17)
 
 

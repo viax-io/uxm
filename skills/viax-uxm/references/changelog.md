@@ -2805,3 +2805,9 @@ reached the published library; now shipped in 2.8.0.
   `linear-gradient(135deg, red` used to swallow every rule after it), and `image-set()` /
   `image()` / `src()`, which take a URL outside `url()` and skipped its `https://`-or-`/`
   whitelist. The value is dropped and the colour knob paints, as for a rejected `url()`.
+
+### New in 4.115.5
+
+- **A `GridItem` span no longer leaks into a grid nested inside it** — the spans are inherited
+  custom properties, so a plain cell of a `ResponsiveGrid` inside `<GridItem span={2}>` spanned 2
+  as well. Every `ResponsiveGrid` root now resets `--uxm-grid-item-column` / `-row`.
