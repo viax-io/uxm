@@ -34,6 +34,10 @@ Either way, the `height: 100%` rule has one trade-off: on a page that scrolls th
 instead of using `PageShell`, a `position: sticky` child of `body` or `#root` stops sticking
 after one screen. Such a page overrides it with `#root { height: auto }`.
 
+The height chain also assumes the app mounts in `#root` (Vite, CRA). A different mount node
+(Next.js `#__next`, a Remix or Astro layout with no wrapper) needs its own `height: 100%`, or
+`PageShell` has no definite height to bound its scroll.
+
 The dependency itself is installed under the **`uxm` alias** — every import in this file and in
 the app reads `uxm/…`, and the real package name appears exactly once:
 
