@@ -84,6 +84,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`DataTable` stacks at 480px again when the host names its container** — since `stackAt={320 | false}`
+  the default stacking queried a container named `uxm-data-table`, so a host rule that set
+  `container-name` or the `container` shorthand on the table (Tailwind `@container/foo`) silently
+  turned it off. The root is unnamed again; off and 320 now leave the 480 rules through a
+  zero-specificity `:where()` gate. The workaround of keeping both names is no longer needed.
+
 - **`FilterTabs` navigation mode marks no link current until it knows the route** — without
   `value` or `defaultValue` it used to put `aria-current="page"` on the first link whatever page
   the user was on. Tab mode still selects the first tab. A picked `href`-less button in a nav now

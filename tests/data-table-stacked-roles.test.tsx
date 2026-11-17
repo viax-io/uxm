@@ -301,7 +301,8 @@ describe('DataTable stackedRole — the stylesheet', () => {
     // the first one in this file is the unrelated `min-width: 481px` clip.
     const topLevel = css.match(/^\.uxm-data-table--stacked-roles \.uxm-data-table__field-term \{[^}]*\}/m);
     expect(topLevel?.[0], 'term must be hidden in table mode').toMatch(/display:\s*none/);
-    const nested = css.match(/^ +\.uxm-data-table--stacked-roles \.uxm-data-table__field-term \{[^}]*\}/m);
+    // The 480 copy carries the zero-specificity `:where(...)` gate in front.
+    const nested = css.match(/^ +\S*\.uxm-data-table--stacked-roles \.uxm-data-table__field-term \{[^}]*\}/m);
     expect(nested?.[0], 'term must come back in card mode').toMatch(/display:\s*block/);
   });
 
@@ -324,10 +325,8 @@ describe('DataTable stackedRole — the stylesheet', () => {
     // A threshold can compile to SEVERAL @container blocks (480 has three),
     // and only one of them carries the role rules — so ask whether any block
     // for that width does, not whether the first one does.
-    // The 480 blocks ask for the named container (so off / 320 can leave them).
     for (const bp of [320, 480, 640, 768, 960]) {
-      const name = bp === 480 ? 'uxm-data-table ' : '';
-      const blocks = [...css.matchAll(new RegExp(`@container ${name}\\(max-width: ${bp}px\\) \\{[\\s\\S]*?\\n\\}`, 'g'))].map((m) => m[0]);
+      const blocks = [...css.matchAll(new RegExp(`@container \\(max-width: ${bp}px\\) \\{[\\s\\S]*?\\n\\}`, 'g'))].map((m) => m[0]);
       expect(blocks.length, `no block for ${bp}`).toBeGreaterThan(0);
       expect(
         blocks.some((b) => b.includes('--stacked-roles')),
