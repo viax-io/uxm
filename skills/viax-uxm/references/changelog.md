@@ -2783,3 +2783,10 @@ reached the published library; now shipped in 2.8.0.
   "Use <token>" for the nearest theme token. Tokens, `color-mix` of tokens, the registry's own
   defaults and translucent shadow colours stay quiet. Card's Shadow Color knob now defaults to
   `var(--shadow-card-color)`, so its preview shows the dark shadow on a dark canvas.
+
+### New in 4.115.1
+
+- **`MenuButton` renders from a server component** — the module now carries `'use client'`
+  (it builds `Menu`'s `renderTrigger` itself, and a server component can't hand a function
+  to a client one). Before this, `<MenuButton>` on a Next.js server page threw "Functions
+  cannot be passed directly to Client Components".

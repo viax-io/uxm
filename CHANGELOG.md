@@ -1,3 +1,10 @@
+## [4.115.7](https://github.com/viax-io/uxm/compare/v4.115.6...v4.115.7) (2026-11-17)
+
+
+### Bug Fixes
+
+* **filter-tabs:** mark no link current in navigation mode until the route is known ([5ba44ee](https://github.com/viax-io/uxm/commit/5ba44ee51b7924744bf0c1b3a369349ed7e47321))
+
 ## [4.115.6](https://github.com/viax-io/uxm/compare/v4.115.5...v4.115.6) (2026-11-17)
 
 
