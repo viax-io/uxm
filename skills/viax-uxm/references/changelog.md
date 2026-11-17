@@ -2741,3 +2741,12 @@ reached the published library; now shipped in 2.8.0.
   - It scrolls sideways on narrow screens.
   - For a record page's progress (quote → order → delivery); `TimelineEntry` stays the vertical
     history.
+
+### New in 4.112.0
+
+- **New atom: `MediaObject`.** Media beside content.
+  - `media`, `mediaPosition` (`start` / `end`), `mediaWidth` (a grid track, `'40%'` for a hero),
+    `align` and `gap`.
+  - Stacks to one column when its own container is `stackAt` (640 default) or narrower.
+  - For a split hero (copy left, illustration right) or any avatar / illustration row, which
+    `EmptyState` couldn't lay out side by side.

@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (102 BEM-classed React components as of v4.115.1, design tokens, per-component/per-state themable
+  (102 BEM-classed React components as of v4.115.2, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.115.1** (102 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.115.2** (102 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.115.1 — current API surface (overrides training data)
+## v4.115.2 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,15 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.112.0
-
-- **New atom: `MediaObject`.** Media beside content.
-  - `media`, `mediaPosition` (`start` / `end`), `mediaWidth` (a grid track, `'40%'` for a hero),
-    `align` and `gap`.
-  - Stacks to one column when its own container is `stackAt` (640 default) or narrower.
-  - For a split hero (copy left, illustration right) or any avatar / illustration row, which
-    `EmptyState` couldn't lay out side by side.
 
 ### New in 4.113.0
 
@@ -90,6 +81,13 @@ catalog.
   to a client one). Before this, `<MenuButton>` on a Next.js server page threw "Functions
   cannot be passed directly to Client Components".
 
+### New in 4.115.2
+
+- **AppTopBar's Border Width knob is on the App Top Bar entry** — it had been registered on
+  App Sidebar, so Studio saved a `--uxm-app-sidebar-border-bottom-width` nothing reads and
+  the top bar preview lost its bottom border. `--uxm-app-top-bar-border-bottom-width` itself
+  is unchanged.
+
 ### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
@@ -97,11 +95,6 @@ catalog.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
-
-- **AppTopBar's Border Width knob is on the App Top Bar entry** — it had been registered on
-  App Sidebar, so Studio saved a `--uxm-app-sidebar-border-bottom-width` nothing reads and
-  the top bar preview lost its bottom border. `--uxm-app-top-bar-border-bottom-width` itself
-  is unchanged.
 
 ## Workflow
 

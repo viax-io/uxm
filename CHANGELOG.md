@@ -1,3 +1,10 @@
+## [4.115.2](https://github.com/viax-io/uxm/compare/v4.115.1...v4.115.2) (2026-11-17)
+
+
+### Bug Fixes
+
+* **app-top-bar:** register the Border Width knob on App Top Bar, not App Sidebar ([4448ffc](https://github.com/viax-io/uxm/commit/4448ffc830598ea5b98f5a85cd32bab2bdb50ad9)), closes [#155](https://github.com/viax-io/uxm/issues/155)
+
 ## [4.115.1](https://github.com/viax-io/uxm/compare/v4.115.0...v4.115.1) (2026-11-17)
 
 
