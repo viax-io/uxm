@@ -1,3 +1,10 @@
+## [4.115.11](https://github.com/viax-io/uxm/compare/v4.115.10...v4.115.11) (2026-11-17)
+
+
+### Bug Fixes
+
+* **app-top-bar:** keep the collapsed first row at the wide bar's height ([17818d1](https://github.com/viax-io/uxm/commit/17818d174c9dbb51dd56874c35f38bd3daec95c9))
+
 ## [4.115.10](https://github.com/viax-io/uxm/compare/v4.115.9...v4.115.10) (2026-11-17)
 
 

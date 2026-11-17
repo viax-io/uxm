@@ -2811,3 +2811,10 @@ reached the published library; now shipped in 2.8.0.
 - **A `GridItem` span no longer leaks into a grid nested inside it** — the spans are inherited
   custom properties, so a plain cell of a `ResponsiveGrid` inside `<GridItem span={2}>` spanned 2
   as well. Every `ResponsiveGrid` root now resets `--uxm-grid-item-column` / `-row`.
+
+### New in 4.115.6
+
+- **Studio's fixed-colour hint offers the token nearest in the panel's own theme** — on a
+  Surface with `theme="dark"` it measured against the page, so "Use Text" on a near-black
+  background wrote a token that paints near-white in the panel. It also re-measures when the
+  page theme flips.
