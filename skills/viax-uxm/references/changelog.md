@@ -2797,3 +2797,11 @@ reached the published library; now shipped in 2.8.0.
   App Sidebar, so Studio saved a `--uxm-app-sidebar-border-bottom-width` nothing reads and
   the top bar preview lost its bottom border. `--uxm-app-top-bar-border-bottom-width` itself
   is unchanged.
+
+### New in 4.115.4
+
+- **Studio background knobs reject a value that would break the saved stylesheet** — an
+  unclosed `(`, `[` or quote, a `/*` comment or a backslash (a typo like
+  `linear-gradient(135deg, red` used to swallow every rule after it), and `image-set()` /
+  `image()` / `src()`, which take a URL outside `url()` and skipped its `https://`-or-`/`
+  whitelist. The value is dropped and the colour knob paints, as for a rejected `url()`.

@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (102 BEM-classed React components as of v4.115.8, design tokens, per-component/per-state themable
+  (102 BEM-classed React components as of v4.115.9, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.115.8** (102 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.115.9** (102 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.115.8 — current API surface (overrides training data)
+## v4.115.9 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,14 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.115.4
-
-- **Studio background knobs reject a value that would break the saved stylesheet** — an
-  unclosed `(`, `[` or quote, a `/*` comment or a backslash (a typo like
-  `linear-gradient(135deg, red` used to swallow every rule after it), and `image-set()` /
-  `image()` / `src()`, which take a URL outside `url()` and skipped its `https://`-or-`/`
-  whitelist. The value is dropped and the colour knob paints, as for a rejected `url()`.
 
 ### New in 4.115.5
 
@@ -85,6 +77,14 @@ catalog.
   turned it off. The root is unnamed again; off and 320 now leave the 480 rules through a
   zero-specificity `:where()` gate. The workaround of keeping both names is no longer needed.
 
+### New in 4.115.9
+
+- **`Stepper` no longer adds an English comma to translated state words** — the hidden text
+  after a done or skipped label was always `, {word}`. The comma now belongs to the default copy
+  only ("Quoted, Done"); `stateLabels` follow after a space. The README no longer counts the
+  current step's 25% ring as a state cue: it is about 1.4:1, so the cues are the fill without a
+  check, the heavier label and `aria-current`.
+
 ### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
@@ -96,11 +96,6 @@ catalog.
 - **`Stepper` and `MediaObject` accept `ref` in TypeScript** — their props extended
   `HTMLAttributes`, which doesn't declare `ref`, so `<Stepper ref={r}>` failed typecheck though it
   worked at runtime. Both now extend `ComponentPropsWithRef`, as the buttons do.
-- **`Stepper` no longer adds an English comma to translated state words** — the hidden text
-  after a done or skipped label was always `, {word}`. The comma now belongs to the default copy
-  only ("Quoted, Done"); `stateLabels` follow after a space. The README no longer counts the
-  current step's 25% ring as a state cue: it is about 1.4:1, so the cues are the fill without a
-  check, the heavier label and `aria-current`.
 
 ## Workflow
 
