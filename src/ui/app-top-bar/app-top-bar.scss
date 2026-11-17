@@ -95,11 +95,19 @@
       justify-content: flex-start;
       row-gap: 0;
 
+      /* The wide bar's `height` includes its vertical padding and bottom
+         border (border-box, which base.css and every common reset set), so
+         the first row holds the CONTENT height. Holding the full height here
+         made the bar jump by 2 × padding-y + the border at the breakpoint. */
       &::before {
         content: '';
         flex: 0 0 0;
         margin-right: calc(-1 * var(--uxm-app-top-bar-gap, 12px));
-        min-height: var(--uxm-app-top-bar-height, 64px);
+        min-height: calc(
+          var(--uxm-app-top-bar-height, 64px)
+          - 2 * var(--uxm-app-top-bar-padding-y, 0px)
+          - var(--uxm-app-top-bar-border-bottom-width, 1px)
+        );
       }
 
       .uxm-app-top-bar__left {

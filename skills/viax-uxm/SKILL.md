@@ -93,6 +93,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`AppTopBar` `collapseAt` no longer grows the first row at the breakpoint** — collapsed, the
+  first row held the bar's full `--uxm-app-top-bar-height` as content, so with vertical padding
+  and the bottom border the bar jumped by `2 × padding-y + border`. The README now says plainly
+  that collapsed, Tab reaches the search row before the actions above it.
+
 ## Workflow
 
 ### Where the documentation lives

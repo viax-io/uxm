@@ -36,4 +36,20 @@ describe('AppTopBar collapseAt', () => {
       expect(block).toMatch(new RegExp(`\\${sel} \\.uxm-app-top-bar__search\\s*\\{[^}]*flex:\\s*1 0 100%[^}]*order:\\s*1`));
     }
   });
+
+  it('holds the first row at the wide bar\'s CONTENT height, so the bar doesn\'t jump', () => {
+    // The wide bar's height is border-box: padding and the bottom border are
+    // inside it. Holding the full height as content grew the collapsed first
+    // row by 2 × padding-y + the border (measured: actions 8px lower at
+    // padding-y 8px).
+    const css = compiledCss('src/ui/app-top-bar/app-top-bar.scss');
+    for (const bp of [640, 768, 960, 1024]) {
+      const at = css.indexOf(`.uxm-app-top-bar--collapse-${bp}::before`);
+      expect(at, `no height holder for ${bp}`).toBeGreaterThan(-1);
+      const rule = css.slice(at, css.indexOf('}', at)).replace(/\s+/g, ' ');
+      expect(rule).toMatch(
+        /min-height: calc\( ?var\(--uxm-app-top-bar-height, 64px\) - 2 \* var\(--uxm-app-top-bar-padding-y, 0px\) - var\(--uxm-app-top-bar-border-bottom-width, 1px\) ?\)/,
+      );
+    }
+  });
 });
