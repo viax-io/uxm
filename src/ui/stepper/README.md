@@ -23,7 +23,7 @@ import { Stepper } from '@viax.io/uxm/ui';
 
 ## Props
 
-Extends `HTMLAttributes<HTMLOListElement>`; every attribute (`aria-label`, `id`, `style`, …) goes to the `<ol>`.
+Extends `ComponentPropsWithRef<'ol'>`; every attribute (`ref`, `aria-label`, `id`, `style`, …) goes to the `<ol>`.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|

@@ -18,7 +18,7 @@ import { ButtonPrimary, MediaObject } from '@viax.io/uxm/ui';
 
 ## Props
 
-Extends `HTMLAttributes<HTMLDivElement>`; every attribute goes to the root.
+Extends `ComponentPropsWithRef<'div'>`; every attribute, `ref` included, goes to the root.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|

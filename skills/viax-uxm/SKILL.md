@@ -84,6 +84,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Stepper` and `MediaObject` accept `ref` in TypeScript** — their props extended
+  `HTMLAttributes`, which doesn't declare `ref`, so `<Stepper ref={r}>` failed typecheck though it
+  worked at runtime. Both now extend `ComponentPropsWithRef`, as the buttons do.
+
 ## Workflow
 
 ### Where the documentation lives

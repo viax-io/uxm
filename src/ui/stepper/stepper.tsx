@@ -2,7 +2,7 @@ import { cn } from '@/helpers';
 
 import { Icon } from '../icon';
 
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { ComponentPropsWithRef, ReactNode } from 'react';
 
 export type StepperStepState = 'done' | 'current' | 'ahead' | 'off';
 
@@ -16,7 +16,10 @@ export interface StepperStep {
   key?: string;
 }
 
-export interface StepperProps extends HTMLAttributes<HTMLOListElement> {
+// `ComponentPropsWithRef`, not `HTMLAttributes`: React 19 passes `ref` as a
+// plain prop and the rest spread already delivers it, but `HTMLAttributes`
+// doesn't declare it, so `<Stepper ref={…}>` was a type error (button.tsx).
+export interface StepperProps extends ComponentPropsWithRef<'ol'> {
   steps: StepperStep[];
   /**
    * The word a screen reader hears after a `done` or `off` step's label (the
