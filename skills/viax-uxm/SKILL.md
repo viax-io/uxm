@@ -89,6 +89,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **A `GridItem` span no longer leaks into a grid nested inside it** — the spans are inherited
+  custom properties, so a plain cell of a `ResponsiveGrid` inside `<GridItem span={2}>` spanned 2
+  as well. Every `ResponsiveGrid` root now resets `--uxm-grid-item-column` / `-row`.
+
 - **Studio's fixed-colour hint offers the token nearest in the panel's own theme** — on a
   Surface with `theme="dark"` it measured against the page, so "Use Text" on a near-black
   background wrote a token that paints near-white in the panel. It also re-measures when the

@@ -1,6 +1,13 @@
 /* ResponsiveGrid — moved from monolithic styles.css */
 
+/* Every grid root resets the GridItem span channel. The spans are custom
+   properties, which inherit: without this a plain cell of a grid nested inside
+   `<GridItem span={2}>` would inherit `span 2` instead of falling back to
+   `auto`. `initial` is the guaranteed-invalid value, so `var()` takes its
+   fallback; a GridItem's own inline span still wins on the item itself. */
 .uxm-responsive-grid {
+  --uxm-grid-item-column: initial;
+  --uxm-grid-item-row: initial;
   display: grid;
   gap: var(--uxm-responsive-grid-gap, 16px);
   grid-template-columns: repeat(
