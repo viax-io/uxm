@@ -1,3 +1,10 @@
+## [4.115.9](https://github.com/viax-io/uxm/compare/v4.115.8...v4.115.9) (2026-11-17)
+
+
+### Bug Fixes
+
+* **stepper:** keep the English comma out of translated state words ([5dbfbdf](https://github.com/viax-io/uxm/commit/5dbfbdf2f2487ac4306d7e844730edbb73b59a4f))
+
 ## [4.115.8](https://github.com/viax-io/uxm/compare/v4.115.7...v4.115.8) (2026-11-17)
 
 
