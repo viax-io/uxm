@@ -81,6 +81,19 @@ describe('generateOverridesCss', () => {
     expect(css).not.toMatch(/^\s*border-(top|bottom)-(width|color):/m);
   });
 
+  it('registers each per-side border knob on the atom whose stylesheet reads it', () => {
+    // The generator test above feeds keys straight in, so it passed while the
+    // AppTopBar's Border Width sat on the App Sidebar entry: the sidebar saved a
+    // var nothing reads, and the top bar preview projected `undefinedpx`, which
+    // dropped its bottom border. Nothing else checks a knob against its entry.
+    const keysOf = (id: string) => registry.find((d) => d.id === id)?.styleProperties.map((p) => p.key) ?? [];
+    expect(keysOf('app-top-bar')).toContain('borderBottomWidth');
+    expect(keysOf('app-sidebar')).not.toContain('borderBottomWidth');
+    for (const id of ['card', 'detail-section']) {
+      expect(keysOf(id)).toEqual(expect.arrayContaining(['borderTopWidth', 'borderBottomWidth']));
+    }
+  });
+
   it('saves the media object gap as its var, not a bare `gap` on the non-grid root', () => {
     const css = generateOverridesCss({ 'media-object': { gap: 32 } }, brand);
     expect(css).toContain('  --uxm-media-object-gap: 32px;');

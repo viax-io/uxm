@@ -20,7 +20,6 @@ export const appDefs: ComponentDef[] = [
     styleProperties: [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'colors' },
       { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
-      { key: 'borderBottomWidth', label: 'Border Width', control: 'slider', defaultValue: 1, min: 0, max: 8, step: 1, unit: 'px' },
       { key: 'expandedWidth', label: 'Expanded Width', control: 'number', defaultValue: 256, min: 200, max: 320, step: 4, unit: 'px' },
       { key: 'collapsedWidth', label: 'Collapsed Width', control: 'number', defaultValue: 64, min: 48, max: 96, step: 4, unit: 'px' },
       // Top only: lets a shell start the first section level with its page
@@ -183,6 +182,7 @@ export const appDefs: ComponentDef[] = [
       { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'color-mix(in srgb, var(--color-surface-alt) 50%, transparent)', section: 'colors' },
       { key: 'background', label: 'Background Image or Gradient', control: 'text', defaultValue: '', section: 'colors' },
       { key: 'borderColor', label: 'Border', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
+      { key: 'borderBottomWidth', label: 'Border Width', control: 'slider', defaultValue: 1, min: 0, max: 8, step: 1, unit: 'px' },
       { key: 'height', label: 'Height', control: 'number', defaultValue: 64, min: 48, max: 96, step: 4, unit: 'px' },
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 16, min: 8, max: 32, step: 2, unit: 'px' },
       { key: 'gap', label: 'Gap', control: 'number', defaultValue: 12, min: 4, max: 24, step: 2, unit: 'px' },

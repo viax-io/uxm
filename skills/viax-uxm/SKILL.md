@@ -120,6 +120,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **AppTopBar's Border Width knob is on the App Top Bar entry** — it had been registered on
+  App Sidebar, so Studio saved a `--uxm-app-sidebar-border-bottom-width` nothing reads and
+  the top bar preview lost its bottom border. `--uxm-app-top-bar-border-bottom-width` itself
+  is unchanged.
+
 ## Workflow
 
 ### Where the documentation lives
