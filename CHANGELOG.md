@@ -1,3 +1,10 @@
+## [4.115.5](https://github.com/viax-io/uxm/compare/v4.115.4...v4.115.5) (2026-11-17)
+
+
+### Bug Fixes
+
+* **responsive-grid:** stop a GridItem span leaking into a nested grid ([a35bafe](https://github.com/viax-io/uxm/commit/a35bafe696dc6798f6fda2c0fdc78989218b9609))
+
 ## [4.115.4](https://github.com/viax-io/uxm/compare/v4.115.3...v4.115.4) (2026-11-17)
 
 
