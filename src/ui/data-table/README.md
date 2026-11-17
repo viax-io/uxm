@@ -245,18 +245,12 @@ behaves exactly as before. Passing `stackAt={480}` explicitly is the same thing.
 Both keep the fixed-layout clip (ellipsis in `layout="fixed"` cells) while they are tables, which
 at the default only applies above 480px.
 
-How they leave the default: the unconditional 480 rules query a **named** container
-(`container-name: uxm-data-table` on the root), and these two modes set `container-name: none`.
-No selector changes, so every specificity contest the 480 rules depend on is untouched. The root
-stays a size container, so every other (unnamed) query still matches it. One limit: a named query
-looks past an unnamed container to the nearest ancestor with the name, so a `stackAt={false}`
-table **nested inside another DataTable's cell** stacks when that outer table is at 480px or less.
-
-**Don't replace the table's container name.** The default 480 stacking now depends on it. A
-host rule that sets `container-name` or the `container` shorthand on `.uxm-data-table` (say, to
-query the table from app CSS) replaces `uxm-data-table`, and the table silently stops stacking at
-480px. Wrap the table in your own container instead, or keep both names:
-`container-name: my-table uxm-data-table`.
+How they leave the default: every 480 rule sits behind a `:where(.uxm-data-table:not(--stack-off):not(--stack-320))`
+gate. `:where()` adds no specificity, so every contest the 480 rules depend on resolves as before.
+The root is an **unnamed** size container and every query in the stylesheet is unnamed, so a host
+may name it (Tailwind `@container/foo`, `container: foo / inline-size`) without switching the
+stacking off. One limit: a `stackAt={false}` or `stackAt={320}` table **nested inside another
+DataTable's cell** still takes the outer table's 480 rules, measured against its own width.
 
 **Why a prop and not a `--uxm-data-table-*` knob.** A **size** container condition cannot
 contain `var()`: `@container (max-width: var(--bp))` parses, is kept in `cssRules` with its
