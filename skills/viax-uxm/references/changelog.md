@@ -2790,3 +2790,10 @@ reached the published library; now shipped in 2.8.0.
   (it builds `Menu`'s `renderTrigger` itself, and a server component can't hand a function
   to a client one). Before this, `<MenuButton>` on a Next.js server page threw "Functions
   cannot be passed directly to Client Components".
+
+### New in 4.115.2
+
+- **AppTopBar's Border Width knob is on the App Top Bar entry** — it had been registered on
+  App Sidebar, so Studio saved a `--uxm-app-sidebar-border-bottom-width` nothing reads and
+  the top bar preview lost its bottom border. `--uxm-app-top-bar-border-bottom-width` itself
+  is unchanged.
