@@ -1,3 +1,10 @@
+## [4.115.1](https://github.com/viax-io/uxm/compare/v4.115.0...v4.115.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* **menu-button:** add 'use client' so a server component can render it ([9b28ec1](https://github.com/viax-io/uxm/commit/9b28ec1051df2c74ba6d475d4702c507b35c7882))
+
 # [4.115.0](https://github.com/viax-io/uxm/compare/v4.114.0...v4.115.0) (2026-11-16)
 
 

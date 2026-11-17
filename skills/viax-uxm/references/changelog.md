@@ -2712,3 +2712,32 @@ reached the published library; now shipped in 2.8.0.
     keeps not wrapping).
   - `nowrap` keeps a squeezed label ("Sign out" beside a wide picker) on one line; the control
     grows instead.
+
+### New in 4.109.0
+
+- **`ResponsiveGrid` `columns` and `GridItem`.**
+  - `columns={3}` or `columns="2fr 1fr"` gives fixed or weighted tracks.
+  - `GridItem` `span` / `rowSpan` spans them (a wide hero card, a bento).
+  - The grid collapses to one column, spans reset, when its own container is `stackAt` (480
+    default, 640, 768, 960, or `false`) or narrower.
+  - Without `columns`, the auto-fit grid and its single element are unchanged.
+
+### New in 4.110.0
+
+- **`AppTopBar` `collapseAt`.**
+  - `640 | 768 | 960 | 1024`: at or below that viewport width the bar moves its `search` slot
+    onto a full-width second row. The first row keeps the bar's height, brand left and actions
+    right.
+  - For section tabs or a wide search in the top bar, which otherwise wrap or overlap on narrow
+    screens.
+  - CSS only: replaces a `matchMedia` switch in the app.
+
+### New in 4.111.0
+
+- **New atom: `Stepper`.** A record's lifecycle left to right, as an ordered list.
+  - `steps` is `{ label, state: 'done' | 'current' | 'ahead' | 'off', meta? }[]`.
+  - Done steps are checked, the current step ringed (`aria-current="step"`), steps ahead hollow,
+    skipped steps dashed.
+  - It scrolls sideways on narrow screens.
+  - For a record page's progress (quote → order → delivery); `TimelineEntry` stays the vertical
+    history.
