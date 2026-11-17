@@ -1,3 +1,12 @@
+## [4.115.8](https://github.com/viax-io/uxm/compare/v4.115.7...v4.115.8) (2026-11-17)
+
+
+### Bug Fixes
+
+* **data-table:** keep 480 stacking when the host names the container ([6f91d6d](https://github.com/viax-io/uxm/commit/6f91d6d55dd781d34653d271a33e998f2e76715c))
+* **studio:** compare colour knob values as colours, not strings ([a8cd2db](https://github.com/viax-io/uxm/commit/a8cd2dba1b4bc7a01cad273a2e84f6c1b2524888))
+* **surface:** keep a data-theme passed without the theme prop ([6eae204](https://github.com/viax-io/uxm/commit/6eae2046825b303f8e325e2b34111fe7efaf7500))
+
 ## [4.115.7](https://github.com/viax-io/uxm/compare/v4.115.6...v4.115.7) (2026-11-17)
 
 

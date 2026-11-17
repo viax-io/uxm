@@ -33,16 +33,67 @@ export function isFixedColor(value: string | number | boolean | undefined): bool
   return !/var\(\s*--/.test(v);
 }
 
-/** Two knob values naming the same colour, ignoring case and spacing. */
+interface RGBA { r: number; g: number; b: number; a: number }
+
+/** The alpha of a functional colour: after ` / ` in the modern syntax, the 4th comma argument in `rgba()`/`hsla()`. */
+function alphaOf(args: string): number | undefined {
+  const slash = args.lastIndexOf('/');
+  let raw: string | undefined;
+  if (slash >= 0) raw = args.slice(slash + 1).trim();
+  else {
+    const commas = args.split(',');
+    if (commas.length === 4) raw = commas[3].trim();
+  }
+  if (raw === undefined || raw === '') return undefined;
+  const n = raw.endsWith('%') ? parseFloat(raw) / 100 : parseFloat(raw);
+  return Number.isFinite(n) ? n : undefined;
+}
+
+/**
+ * A literal hex or `rgb()`/`rgba()` colour as numbers, or `null` for anything
+ * else. Pure string work, no DOM: used to compare knob values, not to resolve them.
+ */
+function parseLiteral(value: string): RGBA | null {
+  const v = value.trim().toLowerCase();
+  const hex = v.match(/^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/);
+  if (hex) {
+    const h = hex[1].length <= 4 ? hex[1].split('').map((c) => c + c).join('') : hex[1];
+    return {
+      r: parseInt(h.slice(0, 2), 16),
+      g: parseInt(h.slice(2, 4), 16),
+      b: parseInt(h.slice(4, 6), 16),
+      a: h.length === 8 ? parseInt(h.slice(6, 8), 16) / 255 : 1,
+    };
+  }
+  const fn = v.match(/^rgba?\(([^)]+)\)$/);
+  if (!fn) return null;
+  const parts = fn[1].split(/[\s,/]+/).filter(Boolean).slice(0, 3);
+  if (parts.length < 3) return null;
+  const [r, g, b] = parts.map((p) => Math.round(p.endsWith('%') ? (parseFloat(p) * 255) / 100 : parseFloat(p)));
+  if (![r, g, b].every(Number.isFinite)) return null;
+  return { r, g, b, a: alphaOf(fn[1]) ?? 1 };
+}
+
+/**
+ * Two knob values naming the same colour. Literal colours compare by value, so
+ * a registry default of `#fff` matches the `#FFFFFF` a picker round-trip
+ * writes; anything else compares as text, ignoring case and spacing.
+ */
 export function sameColorValue(a: string, b: string): boolean {
+  const ca = parseLiteral(a);
+  const cb = parseLiteral(b);
+  if (ca && cb) {
+    return ca.r === cb.r && ca.g === cb.g && ca.b === cb.b && Math.abs(ca.a - cb.a) < 1 / 255;
+  }
   const norm = (s: string) => s.trim().toLowerCase().replace(/\s+/g, '');
   return norm(a) === norm(b);
 }
 
 /**
- * True when the value has an alpha below 1 (`rgba(0,0,0,.12)`, `#0000001F`).
- * Translucent fixed colours are shadows and overlays: a tint of whatever is
- * under them, which no opaque token can stand in for.
+ * True when the value has an alpha below 1 (`rgba(0,0,0,.12)`, `#0000001F`,
+ * `oklch(0.2 0 0 / 40%)`, `color(srgb 0 0 0 / .5)`). Translucent fixed colours
+ * are shadows and overlays: a tint of whatever is under them, which no opaque
+ * token can stand in for.
  */
 export function isTranslucent(value: string): boolean {
   const v = value.trim();
@@ -51,12 +102,11 @@ export function isTranslucent(value: string): boolean {
     const a = v.length === 5 ? v[4] + v[4] : v.slice(7, 9);
     return parseInt(a, 16) < 255;
   }
-  const fn = v.match(/^(?:rgba?|hsla?)\(([^)]+)\)$/i);
+  // Colour functions only: a gradient's last stop may carry ` / .2` too.
+  const fn = v.match(/^(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(([^()]+)\)$/i);
   if (!fn) return false;
-  const parts = fn[1].split(/[\s,/]+/).filter(Boolean);
-  if (parts.length < 4) return false;
-  const alpha = parts[3].endsWith('%') ? parseFloat(parts[3]) / 100 : parseFloat(parts[3]);
-  return alpha < 1;
+  const alpha = alphaOf(fn[1]);
+  return alpha !== undefined && alpha < 1;
 }
 
 /**

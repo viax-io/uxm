@@ -7,14 +7,12 @@
    them. The `--compact` / `--relaxed` density modifier rules below
    intentionally override cell padding directly. */
 .uxm-data-table {
+  /* Unnamed on purpose. Every query in this file is unnamed, so a host that
+     names this container (Tailwind `@container/foo`, `container: foo /
+     inline-size`) keeps the stacking. The default 480 path leaves out
+     `stackAt={false}` / `stackAt={320}` by selector instead, see
+     `$default-stack` below. */
   container-type: inline-size;
-  /* Named so the unconditional 480 queries can be switched off per table:
-     they ask for `uxm-data-table`, and `stackAt={false}` / `stackAt={320}`
-     drop the name (see the end of the file). Every other query stays unnamed,
-     and an unnamed query still matches this container. A host that sets its
-     own container-name here replaces this one and turns the 480 stacking off
-     (the README says to keep both names, or wrap the table). */
-  container-name: uxm-data-table;
   /* Re-assert the EditableCell composition knobs this table's own cells need.
      Both are inherited custom properties, so a host that sets them on a
      wrapper reaches every cell below it at any depth — `FormField` sets both
@@ -97,21 +95,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-}
-
-/* Below the 480 default: `stackAt={false}` never stacks, `stackAt={320}` stacks
-   only from 320px down (its own copy at the end of the file). Both leave the
-   unconditional 480 blocks by dropping the container name those blocks ask
-   for — no selector changes, so every specificity contest the 480 blocks rely
-   on (see the card-mode note) is untouched. The root stays a size container,
-   so the unnamed queries — the clip above, the 320 copy — still match it.
-
-   One limit: a named query looks past an unnamed container to the nearest
-   ANCESTOR with the name, so a `--stack-off` table nested inside another
-   DataTable's cell stacks when that outer table is at 480px or less. */
-.uxm-data-table--stack-off,
-.uxm-data-table--stack-320 {
-  container-name: none;
 }
 
 .uxm-data-table__th {
@@ -257,9 +240,8 @@
   box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
 }
 // The three stacked-mode mixins below take `$self`: the root selector a copy of
-// their rules belongs to. Empty for the unconditional 480 path, which keeps the
-// original top-level selectors byte for byte; the stack class (`--stack-640` …)
-// for an opt-in copy.
+// their rules belongs to. `$default-stack` for the 480 path; the stack class
+// (`--stack-640` …) for an opt-in copy.
 //
 // Two prefixes, not one, and the difference is the whole reason they are
 // parameterised. A rule keyed off a ROOT modifier (`--compact`,
@@ -267,6 +249,22 @@
 // the same element as the stack class, so a descendant selector can never match
 // and the rule is dead. Everything else is a descendant of the root, written
 // with the prefix this returns.
+// Below the 480 default: `stackAt={false}` never stacks, `stackAt={320}` stacks
+// only from 320px down (its own copy at the end of the file). The 480 path
+// leaves both out by selector, wrapped in `:where()` so it adds NO specificity:
+// every contest the 480 rules rely on (see the card-mode note) is decided
+// exactly as when they were bare `.uxm-data-table__td`, (0,1,0).
+//
+// It used to be done by container name: the 480 queries asked for a named
+// `uxm-data-table` container, and off / 320 dropped the name. That made the
+// default stacking depend on the name, so any host that named the root
+// container (to query it from app CSS) silently switched stacking off.
+//
+// One limit: a descendant selector matches through ANY ancestor root, so a
+// `stackAt={false}` table nested in a cell of a default DataTable still takes
+// the 480 rules, measured against its own width.
+$default-stack: ':where(.uxm-data-table:not(.uxm-data-table--stack-off):not(.uxm-data-table--stack-320))';
+
 @function stack-descendant($self) {
   @if $self == '' {
     @return '';
@@ -292,7 +290,7 @@
     box-shadow: inset 3px 0 0 0 var(--uxm-data-table-row-active-rail, var(--color-accent-bold));
   }
 }
-@container uxm-data-table (max-width: 480px) { @include stacked-active-rail; }
+@container (max-width: 480px) { @include stacked-active-rail($default-stack); }
 
 /* Exists so `:hover` does not replace the active tint — without it, pointing at
    the active row would make it look like any other hovered row. It defaults to
@@ -667,7 +665,7 @@
   }
   #{$d}.uxm-data-table__scroll-arrow { display: none; }
 }
-@container uxm-data-table (max-width: 480px) { @include stacked-no-scroll; }
+@container (max-width: 480px) { @include stacked-no-scroll($default-stack); }
 
 /* ── Card mode — last of the UNCONDITIONAL rules, and that is load-bearing ──
    (The `stackAt` blocks at the very end of the file are appended copies of
@@ -869,18 +867,19 @@
   }
 }
 
-@container uxm-data-table (max-width: 480px) {
-  @include stacked-cards;
-  @include stacked-role-cards;
+@container (max-width: 480px) {
+  @include stacked-cards($default-stack);
+  @include stacked-role-cards($default-stack);
 }
 
 /* ── A wider stacking threshold, opt-in via `stackAt` ─────────────────────────
-   The 480px blocks above are untouched. Their selectors are bare
-   (`.uxm-data-table__td`, (0,1,0)) and deliberately EQUAL to the table-mode
-   rules they override, so source order alone decides each contest — measured,
-   not theorised, per the card-mode note. Gating them would raise them to
-   (0,2,0) and silently flip those contests for every existing table. So nothing
-   is gated; copies are appended, carrying the stack class.
+   The 480px blocks above keep their specificity. Their selectors are
+   (`.uxm-data-table__td`, (0,1,0)) behind a zero-specificity `:where()` gate,
+   deliberately EQUAL to the table-mode rules they override, so source order
+   alone decides each contest — measured, not theorised, per the card-mode
+   note. Gating them on the stack class would raise them to (0,2,0) and silently
+   flip those contests for every existing table. So copies are appended,
+   carrying the stack class.
 
    The copies are NOT nested under that class. Nesting makes every selector a
    descendant, which is wrong for the rules keyed off a root modifier

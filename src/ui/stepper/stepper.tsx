@@ -25,7 +25,9 @@ export interface StepperProps extends ComponentPropsWithRef<'ol'> {
    * The word a screen reader hears after a `done` or `off` step's label (the
    * marker shows it only as a shape). The current step is announced through
    * `aria-current="step"`, and a step not yet reached needs no word. Pass your
-   * own copy to translate them.
+   * own copy to translate them. The defaults are read after a comma ("Quoted,
+   * Done"); your copy follows the label after a space, so add the punctuation
+   * your language wants to the string itself.
    */
   stateLabels?: Partial<Record<'done' | 'off', string>>;
 }
@@ -58,7 +60,12 @@ export function Stepper({ steps, stateLabels, className, ...rest }: StepperProps
           <span className="uxm-stepper__label">
             {step.label}
             {(step.state === 'done' || step.state === 'off') && (
-              <span className="uxm-stepper__status">, {words[step.state]}</span>
+              <span className="uxm-stepper__status">
+                {/* The comma is English punctuation: it belongs to the default
+                    copy, not to a translation that brings its own. */}
+                {stateLabels?.[step.state] === undefined ? ', ' : ' '}
+                {words[step.state]}
+              </span>
             )}
           </span>
           {step.meta != null && <span className="uxm-stepper__meta">{step.meta}</span>}

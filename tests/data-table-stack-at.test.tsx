@@ -91,9 +91,7 @@ describe('DataTable stackAt — the prop and the stylesheet agree', () => {
     return [...m[1].split('|').map((v) => Number(v.trim()))].sort((a, b) => a - b);
   };
 
-  /** The 480 blocks ask for the named container; the opt-in presets don't. */
-  const queryFor = (bp: number) =>
-    bp === 480 ? '@container uxm-data-table (max-width: 480px)' : `@container (max-width: ${bp}px)`;
+  const queryFor = (bp: number) => `@container (max-width: ${bp}px)`;
 
   /** The text of one `@container (max-width: Npx)` block in the compiled css. */
   const blockFor = (bp: number) => {
@@ -172,30 +170,49 @@ describe('DataTable stackAt — the prop and the stylesheet agree', () => {
 });
 
 describe('DataTable stackAt — off and 320 leave the 480 blocks', () => {
-  // `false` and 320 must not stack at 480. The 480 blocks are unconditional
-  // and their selectors carry no root class (gating them would flip their
-  // specificity contests), so the only switch is the container they query:
-  // every 480 block asks for the NAMED container, and these two modes drop the
-  // name. An unnamed 480 query anywhere would stack them again.
+  // `false` and 320 must not stack at 480. The 480 rules leave them out by a
+  // zero-specificity `:where()` gate, so their specificity contests are those of
+  // bare selectors. It used to be a named container that off / 320 dropped, and
+  // then a host that named the root container (Tailwind `@container/foo`,
+  // `container: foo / inline-size`) silently lost the default stacking.
   // Comments stripped: the stylesheet's notes quote `stackAt={false}`, whose
   // braces would end a `[^}]*` match early.
   const css = compiledCss('src/ui/data-table/data-table.scss').replace(/\/\*[\s\S]*?\*\//g, '');
+  const GATE = ':where(.uxm-data-table:not(.uxm-data-table--stack-off):not(.uxm-data-table--stack-320))';
 
-  it('the root names its container', () => {
-    expect(css).toMatch(/\.uxm-data-table\s*\{[^}]*container-name:\s*uxm-data-table/);
+  /** Every selector of every rule inside the three 480 blocks. */
+  const selectors480 = () => {
+    const out: string[] = [];
+    let at = css.indexOf('@container (max-width: 480px)');
+    while (at >= 0) {
+      let depth = 0;
+      let i = css.indexOf('{', at);
+      let start = i + 1;
+      for (; i < css.length; i++) {
+        if (css[i] === '{') {
+          if (depth === 1) out.push(...css.slice(start, i).split(',').map((s) => s.trim()));
+          depth++;
+        } else if (css[i] === '}') {
+          depth--;
+          if (depth === 0) break;
+          start = i + 1;
+        }
+      }
+      at = css.indexOf('@container (max-width: 480px)', i);
+    }
+    return out;
+  };
+
+  it('names no container, so a host may name it', () => {
+    expect(css).not.toMatch(/container-name|container:\s/);
+    expect(css).not.toMatch(/@container\s+[a-z]/);
   });
 
-  it('every 480 query asks for the named container', () => {
-    expect(css).not.toContain('@container (max-width: 480px)');
-    expect(css.split('@container uxm-data-table (max-width: 480px)').length - 1).toBe(3);
-  });
-
-  it('off and 320 drop the name, and nothing else does', () => {
-    const rule = css.match(/([^{}]+)\{\s*container-name:\s*none;?\s*\}/);
-    expect(rule?.[1].split(',').map((s) => s.trim()).sort()).toEqual([
-      '.uxm-data-table--stack-320',
-      '.uxm-data-table--stack-off',
-    ]);
+  it('has three 480 blocks, and every rule in them goes through the gate', () => {
+    expect(css.split('@container (max-width: 480px)').length - 1).toBe(3);
+    const sel = selectors480();
+    expect(sel.length).toBeGreaterThan(30);
+    expect(sel.filter((s) => !s.startsWith(GATE))).toEqual([]);
   });
 
   it('a table that stays a table below 481px keeps the fixed-layout clip', () => {
