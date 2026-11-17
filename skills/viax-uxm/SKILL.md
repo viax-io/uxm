@@ -89,6 +89,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **A `GridItem` span no longer leaks into a grid nested inside it** — the spans are inherited
+  custom properties, so a plain cell of a `ResponsiveGrid` inside `<GridItem span={2}>` spanned 2
+  as well. Every `ResponsiveGrid` root now resets `--uxm-grid-item-column` / `-row`.
+
 - **`FilterTabs` navigation mode marks no link current until it knows the route** — without
   `value` or `defaultValue` it used to put `aria-current="page"` on the first link whatever page
   the user was on. Tab mode still selects the first tab. A picked `href`-less button in a nav now

@@ -62,6 +62,17 @@ describe('ResponsiveGrid columns', () => {
     expect(c.getAttribute('style')).toBeNull();
   });
 
+  it('stops a GridItem span leaking into a grid nested inside it', () => {
+    // The spans are inherited custom properties: a plain cell of an inner grid
+    // inside <GridItem span={2}> took `span 2`. jsdom resolves no cascade, so
+    // the reset is pinned on the compiled root rule.
+    const css = compiledCss('src/ui/responsive-grid/responsive-grid.scss');
+    const root = css.match(/(?:^|\n)\.uxm-responsive-grid\s*\{([^}]*)\}/)?.[1] ?? '';
+    expect(root).toMatch(/--uxm-grid-item-column:\s*initial/);
+    expect(root).toMatch(/--uxm-grid-item-row:\s*initial/);
+    expect(css).toMatch(/\.uxm-grid-item\s*\{[^}]*grid-column:\s*var\(--uxm-grid-item-column, auto\)/);
+  });
+
   it('has a collapse block for every stackAt value', () => {
     const css = compiledCss('src/ui/responsive-grid/responsive-grid.scss');
     for (const bp of [480, 640, 768, 960]) {
