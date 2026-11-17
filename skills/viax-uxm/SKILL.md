@@ -96,6 +96,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **A `GridItem` span no longer leaks into a grid nested inside it** — the spans are inherited
+  custom properties, so a plain cell of a `ResponsiveGrid` inside `<GridItem span={2}>` spanned 2
+  as well. Every `ResponsiveGrid` root now resets `--uxm-grid-item-column` / `-row`.
+
 ## Workflow
 
 ### Where the documentation lives
