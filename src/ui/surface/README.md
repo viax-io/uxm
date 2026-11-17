@@ -21,7 +21,7 @@ import { FilterTabs, Surface } from '@viax.io/uxm/ui';
 
 ## Props
 
-Extends `HTMLAttributes<HTMLElement>`; every attribute goes to the root.
+Extends `HTMLAttributes<HTMLElement>`; every attribute goes to the root. A `data-theme` passed without `theme` counts as `theme` when it is `'dark'` or `'light'` (class and `color-scheme` follow), and goes through untouched otherwise. With `theme` set, `theme` wins.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|

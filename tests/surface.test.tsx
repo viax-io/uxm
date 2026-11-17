@@ -33,6 +33,18 @@ describe('Surface', () => {
     expect(screen.getByTestId('panel')).toHaveAttribute('data-theme', 'dark');
   });
 
+  it('reads a plain data-theme as the theme when `theme` is omitted', () => {
+    // It used to be dropped: `data-theme={scope}` after the spread wrote
+    // undefined over it, against "every attribute goes to the root".
+    const { rerender } = render(<Surface data-testid="panel" {...{ 'data-theme': 'dark' }}>x</Surface>);
+    expect(screen.getByTestId('panel')).toHaveAttribute('data-theme', 'dark');
+    expect(screen.getByTestId('panel')).toHaveClass('uxm-surface--dark');
+    // A host's own scope name passes through, with no theme class.
+    rerender(<Surface data-testid="panel" {...{ 'data-theme': 'brand-x' }}>x</Surface>);
+    expect(screen.getByTestId('panel')).toHaveAttribute('data-theme', 'brand-x');
+    expect(screen.getByTestId('panel').className).toBe('uxm-surface');
+  });
+
   it('renders the requested element and writes padding to its variable', () => {
     render(<Surface theme="light" as="header" padding={12} aria-label="Store">x</Surface>);
     const header = screen.getByRole('banner', { name: 'Store' });

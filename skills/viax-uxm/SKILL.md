@@ -84,6 +84,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Surface` keeps a `data-theme` passed without `theme`** — it used to drop it, since the
+  component wrote its own (empty) `data-theme` after the rest props. `data-theme="dark"` or
+  `"light"` now acts as `theme`, class and `color-scheme` included; any other value passes through.
+
 ## Workflow
 
 ### Where the documentation lives
