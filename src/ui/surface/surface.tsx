@@ -44,8 +44,15 @@ export function Surface({
   ...rest
 }: SurfaceProps) {
   // Only the two themes tokens.css scopes; anything else (an untyped caller's
-  // 'auto') sets no scope rather than an attribute nothing matches.
-  const scope = theme === 'dark' || theme === 'light' ? theme : undefined;
+  // 'auto') sets no scope rather than an attribute nothing matches. Without
+  // `theme`, a plain `data-theme="dark"` is read as the same request, so the
+  // class and its color-scheme follow it instead of the attribute being dropped.
+  const passed = (rest as Record<string, unknown>)['data-theme'];
+  const requested = theme ?? passed;
+  const scope = requested === 'dark' || requested === 'light' ? requested : undefined;
+  // Any other data-theme a host passes without `theme` (its own brand scope)
+  // goes through untouched, as every other attribute does.
+  const attr = scope ?? (theme === undefined && typeof passed === 'string' ? passed : undefined);
   const vars: CSSProperties = {
     ...(padding != null
       ? { ['--uxm-surface-padding' as string]: typeof padding === 'number' ? `${padding}px` : padding }
@@ -58,8 +65,8 @@ export function Surface({
       style={vars}
       {...rest}
       // After the spread: the attribute must agree with the class (and its
-      // color-scheme), so a stray data-theme in rest can't split them.
-      data-theme={scope}
+      // color-scheme), so a data-theme in rest can't split them from `theme`.
+      data-theme={attr}
     >
       {children}
     </Tag>

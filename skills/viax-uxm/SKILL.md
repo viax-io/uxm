@@ -84,6 +84,9 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Surface` keeps a `data-theme` passed without `theme`** — it used to drop it, since the
+  component wrote its own (empty) `data-theme` after the rest props. `data-theme="dark"` or
+  `"light"` now acts as `theme`, class and `color-scheme` included; any other value passes through.
 - **Studio's colour knobs read colours, not strings** — the fixed-colour hint no longer fires on an
   untouched knob whose default is `#fff` when the picker writes `#FFFFFF`, and stays quiet on a
   translucent `oklch(… / 40%)` or `color(srgb … / .5)` shadow as it already did for `rgba()`. The
