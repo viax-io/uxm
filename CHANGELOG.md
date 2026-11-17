@@ -1,3 +1,10 @@
+## [4.115.4](https://github.com/viax-io/uxm/compare/v4.115.3...v4.115.4) (2026-11-17)
+
+
+### Bug Fixes
+
+* **studio:** reject override values that would break the saved stylesheet ([567017d](https://github.com/viax-io/uxm/commit/567017d56c8eff4a5f653ec5dbf63f9089692581)), closes [#156](https://github.com/viax-io/uxm/issues/156)
+
 ## [4.115.3](https://github.com/viax-io/uxm/compare/v4.115.2...v4.115.3) (2026-11-17)
 
 

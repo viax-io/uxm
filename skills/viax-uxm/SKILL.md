@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (102 BEM-classed React components as of v4.115.3, design tokens, per-component/per-state themable
+  (102 BEM-classed React components as of v4.115.4, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.115.3** (102 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.115.4** (102 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.115.3 — current API surface (overrides training data)
+## v4.115.4 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,21 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.113.0
-
-- **Light panels on a dark page.** `tokens.css` now has a light scope,
-  `:where([data-theme="light"])`, at specificity 0.
-  - An element carrying `data-theme="light"` inside a dark page paints its atoms light again.
-    `data-theme="dark"` already did the reverse.
-  - A hand-written theme reaches such a panel only when its light tokens are written on
-    `:root, [data-theme="light"]`; tokens on `:root` alone are replaced inside the panel.
-  - A host that already puts `data-theme="light"` on a wrapper below `<html>` now gets the
-    library's light values on that wrapper, over tokens it set only on `:root`.
-  - Studio's generated CSS writes a brand's light tokens on `[data-theme="light"]` as well, and
-    the light logo and icon when a dark variant exists.
-  - Card's `shadow` default colour now comes from the new `--shadow-card-color` token, so it
-    follows the nearest panel rather than any dark ancestor.
 
 ### New in 4.114.0
 
@@ -88,6 +73,14 @@ catalog.
   the top bar preview lost its bottom border. `--uxm-app-top-bar-border-bottom-width` itself
   is unchanged.
 
+### New in 4.115.4
+
+- **Studio background knobs reject a value that would break the saved stylesheet** — an
+  unclosed `(`, `[` or quote, a `/*` comment or a backslash (a typo like
+  `linear-gradient(135deg, red` used to swallow every rule after it), and `image-set()` /
+  `image()` / `src()`, which take a URL outside `url()` and skipped its `https://`-or-`/`
+  whitelist. The value is dropped and the colour knob paints, as for a rejected `url()`.
+
 ### Unreleased
 
 <!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
@@ -95,12 +88,6 @@ catalog.
      "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
-
-- **Studio background knobs reject a value that would break the saved stylesheet** — an
-  unclosed `(`, `[` or quote, a `/*` comment or a backslash (a typo like
-  `linear-gradient(135deg, red` used to swallow every rule after it), and `image-set()` /
-  `image()` / `src()`, which take a URL outside `url()` and skipped its `https://`-or-`/`
-  whitelist. The value is dropped and the colour knob paints, as for a rejected `url()`.
 
 ## Workflow
 
