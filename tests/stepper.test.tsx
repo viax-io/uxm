@@ -5,6 +5,8 @@ import { describe, expect, it } from 'vitest';
 import { Stepper } from '@/ui';
 import type { StepperStep } from '@/ui';
 
+import { compiledCss } from './compiled-css';
+
 /**
  * The marker shows a step's state as a shape only, so what needs pinning is
  * what a screen reader gets instead: an ordered list, `aria-current="step"` on
@@ -65,5 +67,15 @@ describe('Stepper', () => {
     }
     const results = await axe.run(container, { rules: { 'color-contrast': { enabled: false } } });
     expect(results.violations.map((v) => v.id)).toEqual([]);
+  });
+
+  it('sizes the check from the marker, so the smallest marker still holds it', () => {
+    // A fixed 12px check filled the whole disc of a 12px marker.
+    const { container } = render(<Stepper steps={STEPS} />);
+    expect(container.querySelector('.uxm-stepper__step--done .uxm-stepper__check')).not.toBeNull();
+    const css = compiledCss('src/ui/stepper/stepper.scss').replace(/\s+/g, ' ');
+    const rule = css.match(/\.uxm-stepper__check \{([^}]*)\}/)?.[1] ?? '';
+    expect(rule).toContain('width: calc(var(--uxm-stepper-marker-size, 20px) * 0.6)');
+    expect(rule).toContain('height: calc(var(--uxm-stepper-marker-size, 20px) * 0.6)');
   });
 });

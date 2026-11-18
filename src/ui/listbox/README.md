@@ -83,7 +83,7 @@ import { MultiListbox } from '@viax.io/uxm/ui';
 | `showCheckmark` | `boolean` | `true` | Right-edge ✓ on the selected row. Turn off when rows already carry trailing meta (dial codes, currency codes). |
 | `panelClassName` / `panelStyle` | – | – | Applied to the panel root. |
 | `className` / `style` | – | – | Wrapper — only meaningful if you visually wrap the trigger. |
-| `inline` | `boolean` | `false` | Size the wrapper to its trigger instead of filling the row (`width: 100%`). For a menu-style trigger in a row of other controls — e.g. a "Viewing as" picker in a top bar `Cluster` — where a full-width wrapper squeezes its neighbours. Form-field pickers keep the default; the atoms built on Listbox (`Select`, `PillSelect`, …) don't forward it. |
+| `inline` | `boolean` | `false` | Size the wrapper to its trigger instead of filling the row (`width: 100%`). For a menu-style trigger in a row of other controls — e.g. a "Viewing as" picker in a top bar `Cluster` — where a full-width wrapper squeezes its neighbours. Form-field pickers keep the default; the atoms built on Listbox (`Select`, `PillSelect`, …) don't forward it. The wrapper takes its width from the trigger, so a trigger styled `width: 100%` has nothing to fill and ends up as wide as its content. |
 | `disabled` | `boolean` | – | Blocks all interaction. |
 | `onOpenChange` | `(open: boolean) => void` | – | |
 | `aria-label` | `string` | – | Accessible name for the listbox. |

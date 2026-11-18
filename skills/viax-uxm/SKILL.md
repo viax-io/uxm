@@ -92,6 +92,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`Stepper`'s check scales with the marker** — it was a fixed 12px, so at the smallest
+  `--uxm-stepper-marker-size` (12px) it filled the whole disc. It is now 60% of the marker,
+  12px at the default 20px, so the default look is unchanged.
+
 ## Workflow
 
 ### Where the documentation lives

@@ -44,7 +44,7 @@ Extends `ComponentPropsWithRef<'ol'>`; every attribute (`ref`, `aria-label`, `id
 
 | Variable | Fallback token | Default | Affects |
 |----------|----------------|---------|---------|
-| `--uxm-stepper-marker-size` | – | `20px` | Marker diameter. |
+| `--uxm-stepper-marker-size` | – | `20px` | Marker diameter. The check in a done marker scales with it (60%: 12px at the default). |
 | `--uxm-stepper-line-width` | – | `2px` | Connecting line and hollow-marker border width. |
 | `--uxm-stepper-step-min-width` | – | `96px` | Minimum width per step before the list scrolls. |
 | `--uxm-stepper-line-color` | `--color-border` | – | Line into a step not yet reached. |
