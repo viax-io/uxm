@@ -1,7 +1,7 @@
 import type { ComponentDef } from '../types';
 
 export const feedbackDefs: ComponentDef[] = [
-  // ── Feedback ──
+  // ── Display: record progress (the sidebar files these under Display) ──
   {
     id: 'stepper',
     name: 'Stepper',
@@ -72,6 +72,7 @@ export const feedbackDefs: ComponentDef[] = [
       },
     ],
   },
+  // ── Feedback ──
   {
     id: 'loader',
     name: 'Loader',

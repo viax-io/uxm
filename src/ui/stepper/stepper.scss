@@ -15,6 +15,7 @@
   overflow-x: auto;
   padding: 4px 0;
 
+  /* The library's usual focus ring: 2px, offset 2px. */
   &:focus-visible {
     outline: 2px solid var(--uxm-stepper-focus-ring, var(--color-accent));
     outline-offset: 2px;
@@ -26,6 +27,8 @@
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
+    /* Fixed spacing between marker, label and meta; the sizes are knobs, the
+       rhythm between them isn't. */
     gap: 6px;
     min-width: var(--uxm-stepper-step-min-width, 96px);
     padding: 0 4px;
@@ -72,11 +75,23 @@
     color: var(--uxm-stepper-done-icon-color, var(--color-text-inverse));
   }
 
+  &__check {
+    /* Scales with the marker (12px at the default 20px), so the smallest
+       marker the knob allows doesn't push it past the disc. The done border
+       is the fill colour, so the disc is the whole marker: the check is
+       sized against that, not the content box inside the border. */
+    flex-shrink: 0;
+    height: calc(var(--uxm-stepper-marker-size, 20px) * 0.6);
+    width: calc(var(--uxm-stepper-marker-size, 20px) * 0.6);
+  }
+
   &__step--current &__marker {
     background-color: var(--uxm-stepper-current-color, var(--color-accent-bold));
     border-color: var(--uxm-stepper-current-color, var(--color-accent-bold));
     /* A quarter of the accent: --color-accent-subtle (#ECF8F0) all but vanished
        on a white card, leaving only the fill to mark the current step. */
+    /* 4px: the same 4px the list's block padding reserves, so the ring
+       isn't clipped by the scroller. Change one, change the other. */
     box-shadow: 0 0 0 4px var(--uxm-stepper-current-ring, color-mix(in srgb, var(--color-accent-bold) 25%, transparent));
     /* Forced colours drop the shadow; a transparent outline turns visible. */
     outline: 2px solid transparent;

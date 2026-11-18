@@ -55,7 +55,7 @@ export function Stepper({ steps, stateLabels, className, ...rest }: StepperProps
           aria-current={step.state === 'current' ? 'step' : undefined}
         >
           <span className="uxm-stepper__marker" aria-hidden="true">
-            {step.state === 'done' && <Icon glyph="check" size={12} strokeWidth={2.5} />}
+            {step.state === 'done' && <Icon glyph="check" size={12} strokeWidth={2.5} className="uxm-stepper__check" />}
           </span>
           <span className="uxm-stepper__label">
             {step.label}

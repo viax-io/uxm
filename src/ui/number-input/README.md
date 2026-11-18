@@ -1,6 +1,6 @@
 # NumberInput
 
-A themable typing-only numeric input. No `−` / `+` buttons (use `NumberField` for that), no currency formatting (use `CurrencyInput`). Strips non-digit characters in real time; `min` / `max` clamping fires on blur so typing isn't yanked mid-character.
+A themable typing-only numeric input. No `−` / `+` buttons (use [`NumberStepper`](../number-stepper/README.md) for that), no currency formatting (use `CurrencyInput`). Strips non-digit characters in real time; `min` / `max` clamping fires on blur so typing isn't yanked mid-character.
 
 Architecturally mirrors `TextInput`: the root `<input>` IS the visible surface (no positioning wrapper), so the `--state-*` forced modifiers and `:hover` / `:focus` / `:disabled` pseudos all target the same element. Uses `type="text"` with `inputMode="numeric"` (or `"decimal"`) rather than `type="number"` to avoid browser spinner UI, autofill heuristics, and per-browser disagreement over accepted characters.
 

@@ -4,7 +4,7 @@ export const numberInputDef: ComponentDef = {
   id: 'number-input',
   name: 'Number Input',
   category: 'Inputs',
-  description: 'Plain typing-only numeric field — no increment/decrement buttons (use `Number Field` for that, soon to be renamed `Stepper`). Masks non-digits in real time; optional sign and decimal support; min/max clamping on blur. For monetary values use `Currency Input`. State knobs cover default / hover / focus / disabled / error on the input itself (the root IS the visible surface, same shape as `Text Input`).',
+  description: 'Plain typing-only numeric field — no increment/decrement buttons (use `Number Stepper` for that). Masks non-digits in real time; optional sign and decimal support; min/max clamping on blur. For monetary values use `Currency Input`. State knobs cover default / hover / focus / disabled / error on the input itself (the root IS the visible surface, same shape as `Text Input`).',
   styleProperties: [
     // Default
     { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'fieldColors', showWhen: { state: 'default' } },

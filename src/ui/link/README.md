@@ -59,6 +59,12 @@ const RouterHrefLink = forwardRef<HTMLAnchorElement, { href?: string }>(
 `external` always renders a plain `<a>` and ignores `linkAs`: a link that opens another site in a
 new tab has nothing for a router to do.
 
+`linkAs` is typed as any `ElementType`, so TypeScript doesn't check that the component reads
+`href`: passing React Router's `Link` directly compiles and only fails when clicked. A narrower
+type (a component that takes `<a>` props) would catch that, but it also rejects `next/link`,
+whose `href` is required and accepts a URL object, so the type stays loose. `BackLink`,
+`Breadcrumb` and `AppSidebar` take the same `linkAs`.
+
 ## Props
 
 Extends `AnchorHTMLAttributes<HTMLAnchorElement>` — any standard anchor attribute (`href`, `target`, `rel`, `onClick`, `id`, `style`, `data-*`, `aria-*`) is forwarded to the root `<a>`. When `external` is set, `target` / `rel` are overridden after the spread to enforce safe defaults.
