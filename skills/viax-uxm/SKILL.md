@@ -82,6 +82,11 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- Clicking a `Checkbox`, `ToggleSwitch` or `RadioGroup` option inside a `SideFlexpane` (or any
+  positioned box) no longer slides the pane up and leaves a blank gap under the footer: the
+  label now contains its hidden input, and the flexpane frame clips instead of hiding
+  overflow. No API change.
+
 ## Workflow
 
 ### Where the documentation lives

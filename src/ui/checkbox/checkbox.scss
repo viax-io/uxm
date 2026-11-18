@@ -12,7 +12,7 @@
    Per-state hover/focus/disabled read `--uxm-checkbox-{state}-*` vars, each
    falling back to the REGISTRY's default for that state (registry/inputs.ts),
    not to the resting value — see the hover block below. Only the label-row
-   layout and the visually-hidden `__input` are shared across the three; each
+   layout (incl. its `position: relative`) and the visually-hidden `__input` are shared across the three; each
    owns its `--disabled` rule in its own file. */
 
 .uxm-checkbox {
@@ -35,6 +35,17 @@
 .uxm-checkbox--disabled {
   cursor: not-allowed;
   opacity: var(--uxm-checkbox-disabled-opacity, 0.4);
+}
+
+/* The label row is the hidden input's containing block. Without it the absolute input
+   anchors to the nearest positioned ancestor (a SideFlexpane, a Dialog panel), sitting at
+   its natural offset far below that box and outside the body that scrolls. Focusing it
+   (a click on the label does) then makes the browser scroll THAT box to reveal the input:
+   a pane slides up under its frame with a blank gap below the footer. */
+.uxm-checkbox,
+.uxm-toggle-switch,
+.uxm-radio {
+  position: relative;
 }
 
 .uxm-checkbox__input,
