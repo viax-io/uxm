@@ -7,7 +7,12 @@
   box-shadow: var(--shadow-xl);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* clip, not hidden: a hidden box can still be scrolled by the browser when something
+     positioned against the pane (not the body) overflows it and gets focus or is scrolled
+     into view; the whole pane then slides up under its rounded frame with a blank gap below
+     the footer (the checkbox's hidden input did this, see checkbox.scss). clip paints the
+     same and can't be scrolled; the body stays the one scroll container. */
+  overflow: clip;
   position: relative;
   width: var(--uxm-side-flexpane-width, 380px);
 
