@@ -568,9 +568,13 @@ silently erased them. Caught only because the diff stat showed
 `BEM-based-app-generator-MetaPrompt.md | 1179 +---` where a sync should add.
 
 **How to apply:** before every sync, in the distribution clone run
-`git log origin/main --format='%h %an %s' -- skills/<skill>` for each of the
-three skills. Any commit there that is not a `[VX-1736] … sync` is a direct
-edit: port it INTO this repo first (it is the source of truth), then sync.
+`git log --follow origin/main --format='%h %an %s' -- skills/ui/<skill>/SKILL.md`
+(and each `references/` file) for each of the three skills — they live under
+`skills/ui/` there since ai/viax-ai-skills!177, and `--follow` keeps the history
+from before the move. Any commit there that is not a `[VX-1736] … sync` is a
+direct edit: port it INTO this repo first (it is the source of truth), then sync.
+!177 itself was one: besides the move it rewrote the portal dashboard section
+(bb6879d), ported here with the move's link changes.
 A sync diff that *removes* prose from a skill you did not touch here is the
 alarm — stop and look. The same applies in reverse: our copy of
 `viax-portal/SKILL.md` carried an unquoted `description:` with ": " inside
