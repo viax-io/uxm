@@ -977,7 +977,7 @@ When the target page can't run npm at all — a static prototype, a CodePen repr
 someone else's site — skip recipe 0's `uxm/tokens.css` + `uxm/ui.css` npm imports and pull the
 CDN bundles instead. The full artifact table, SRI verification, and the exact host-baseline CSS
 live in the package README's
-[CDN usage](../../../README.md#cdn-usage) section — this recipe is the two shapes you'll
+[CDN usage](https://github.com/viax-io/uxm#cdn-usage) section — this recipe is the two shapes you'll
 actually reach for.
 
 **Pick the format by what the page already has:**

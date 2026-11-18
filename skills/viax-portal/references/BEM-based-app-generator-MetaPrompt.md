@@ -51,7 +51,7 @@ non-portal directory without asking).
    ```
    Authorization: Bearer <session.accessToken>
    ```
-   This is enforced by the Axios request interceptor in `lib/graphql-client.js` ([`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md), rule 5). No GraphQL call should bypass this interceptor.
+   This is enforced by the Axios request interceptor in `lib/graphql-client.js` ([`viax-keycloak-auth`](../../../ui-layers/viax-keycloak-auth/SKILL.md), rule 5). No GraphQL call should bypass this interceptor.
 
 2. **Dev server port** — The development server must be configured to start on **port 9000**. Set in `vite.config.js` under `server.port`:
    ```javascript
@@ -95,13 +95,13 @@ non-portal directory without asking).
 | Routing | React Router v6 |
 | UI Components | **`@viax.io/uxm`** — Viax UXM React primitive library (76 BEM-classed components). **Do NOT** use shadcn/ui, Tailwind, or any other UI library. |
 | Styling | Plain CSS — design tokens from `uxm/tokens.css` (`--color-*`). Layout via `<Stack>`, `<Cluster>`, `<ResponsiveGrid>` primitives. No Tailwind. Inline `style` for one-off tweaks. |
-| HTTP Client | Axios — one client and `execute()`, the [`viax-graphql-data-layer`](../../viax-graphql-data-layer/SKILL.md) layer |
+| HTTP Client | Axios — one client and `execute()`, the [`viax-graphql-data-layer`](../../../ui-layers/viax-graphql-data-layer/SKILL.md) layer |
 | Server State | TanStack Query v5 |
 | URL State | React Router `useSearchParams` |
 | Client State | Zustand |
-| Auth | keycloak-js (OAuth 2.0 OIDC, browser-only) — the [`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md) layer |
+| Auth | keycloak-js (OAuth 2.0 OIDC, browser-only) — the [`viax-keycloak-auth`](../../../ui-layers/viax-keycloak-auth/SKILL.md) layer |
 | Language | JavaScript (ES2024+, JSX) |
-| Localization | **Only when `{{LOCALIZATION}} = yes`.** Portal-owned locale files — generated `src/i18n/locales/*.json` are the single source of UI copy, wrapped in `UxmLocaleProvider` from `uxm/ui` for formatting. Entity data (`maName`, `bpStatus.name`, …) is localized by the server from the `X-Viax-User-Locale` header and needs nothing else. **Do NOT** add i18next, react-intl, LinguiJS or any other i18n runtime — the whole topic is the [`viax-localization`](../../viax-localization/SKILL.md) skill. |
+| Localization | **Only when `{{LOCALIZATION}} = yes`.** Portal-owned locale files — generated `src/i18n/locales/*.json` are the single source of UI copy, wrapped in `UxmLocaleProvider` from `uxm/ui` for formatting. Entity data (`maName`, `bpStatus.name`, …) is localized by the server from the `X-Viax-User-Locale` header and needs nothing else. **Do NOT** add i18next, react-intl, LinguiJS or any other i18n runtime — the whole topic is the [`viax-localization`](../../../ui-layers/viax-localization/SKILL.md) skill. |
 
 ### `@viax.io/uxm` — required UI library
 
@@ -153,13 +153,13 @@ Also create `.env.example` as a copy for reference.
 
 ## Authentication
 
-**This whole topic lives in its own skill: [`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md).**
+**This whole topic lives in its own skill: [`viax-keycloak-auth`](../../../ui-layers/viax-keycloak-auth/SKILL.md).**
 Read it and follow it — the `keycloak-js` singleton, `onLoad: 'login-required'` (Keycloak's form
 *is* the login screen, so the portal ships no login page and no `/login` route), the mandatory
 `checkLoginIframe: false` + refresh interval, the in-memory auth store without roles,
 `ProtectedRoute`, the Bearer interceptor and the 401 handler, sign-out, mock auth as a Vite mode,
 and the realm checks (OIDC discovery, the client's redirect URIs). Copy its
-[`reference-implementation.md`](../../viax-keycloak-auth/references/reference-implementation.md);
+[`reference-implementation.md`](../../../ui-layers/viax-keycloak-auth/references/reference-implementation.md);
 do not re-derive any of it here.
 
 The portal-specific decisions this MetaPrompt adds on top:
@@ -267,7 +267,7 @@ Inherits directly from `@viax.io/uxm`:
 - **Typography** — Inter by default (Google-Fonts `<link>` in `index.html` + the `html, body, #root` font chain and the `button, input, select, textarea { font: inherit }` rule in `globals.css` — see the baseline below); the portal-wide typeface is **brand-controlled**: UXM Studio → Brand Settings → **Typography** sets `brand.fontFamily`, and the published config re-fonts the whole portal via `--brand-font` (the applier's generated CSS auto-imports the chosen Google Font). Sizing/weight handled by `@viax.io/uxm` per component.
 - **Sidebar** — `<AppSidebar>` (sections + items, polymorphic `linkAs` so react-router does client nav — it must be a `forwardRef` `href` → `to` adapter, never react-router's `Link` itself; see step 5 of [Implementation Order](#implementation-order)).
 - **Top bar** — `<AppTopBar search={…} actions={…}>` with `<InputWithIcon>` and `<Avatar>` + `<InlineAction>` sign-out.
-- **Dashboard widgets** — `<StatCard>` for KPIs, recharts wrapped in `<Card>` for charts, `<DataTable>` for tabular activity feeds (Recent orders etc.), `<Checkbox>` for to-do lists, `<EmptyState>` / `<Loader>` for empty/loading.
+- **Dashboard widgets** — `<StatCard>` for counts (no trend), recharts wrapped in `<Card>` for charts, `<DataTable>` for the recent-records feed, `<EmptyState>` / `<Loader>` for empty/loading — every value from the API (see *Page Specifications → Dashboard*).
 
 ### Portal stylesheet and fonts
 
@@ -404,7 +404,7 @@ specified in the theming skill — see *"App identity"* there; `{{PORTAL_ID}}` a
 
 ## Localization & i18n — `{{LOCALIZATION}} = yes`
 
-**This whole topic lives in its own skill: [`viax-localization`](../../viax-localization/SKILL.md).**
+**This whole topic lives in its own skill: [`viax-localization`](../../../ui-layers/viax-localization/SKILL.md).**
 Read it and follow it — the locale files as the single source of UI copy, their shape,
 the boot gate, locale resolution and server-side persistence, header propagation, the
 `LanguageSwitcher` contract, the library caveats and all currency / date / number formatting
@@ -470,18 +470,18 @@ Three things still hold, and they are what keeps a later retrofit cheap:
   retrofit (the skill's retrofit path), not a config flip.
 
 **If the user later asks to localize this portal**, that is the retrofit path in the
-[`viax-localization`](../../viax-localization/SKILL.md) skill — not a regeneration.
+[`viax-localization`](../../../ui-layers/viax-localization/SKILL.md) skill — not a regeneration.
 
 ---
 
 ## Data layer
 
-**This whole topic lives in its own skill: [`viax-graphql-data-layer`](../../viax-graphql-data-layer/SKILL.md).**
+**This whole topic lives in its own skill: [`viax-graphql-data-layer`](../../../ui-layers/viax-graphql-data-layer/SKILL.md).**
 Read it and follow it — the one client and `execute()` in `lib/graphql-client.js`, `schema-api.js`
 (`setTo()`), `normalize.js`, `lib/api/user.js` + `use-user.js`, the mock mode, the query keys, and
-the API gotchas (read [`api-gotchas.md`](../../viax-graphql-data-layer/references/api-gotchas.md)
+the API gotchas (read [`api-gotchas.md`](../../../ui-layers/viax-graphql-data-layer/references/api-gotchas.md)
 before writing a query). Copy its
-[`reference-implementation.md`](../../viax-graphql-data-layer/references/reference-implementation.md);
+[`reference-implementation.md`](../../../ui-layers/viax-graphql-data-layer/references/reference-implementation.md);
 do not re-derive any of it here.
 
 The portal-specific decisions this MetaPrompt adds on top:
@@ -580,8 +580,8 @@ export default function BiDetailPage({ slug }) {
 
 Build the nav items array from fixed pages + `BI_TYPES`. **Which BI items appear is answered by
 the API**, through one access probe per BI type (`filter<Type>(_first: 1) { edges { node { biId } } }`,
-cached per session and identity) — see [`viax-access`](../../viax-access/SKILL.md) rule 3 and its
-[`react-uxm.md`](../../viax-access/references/react-uxm.md) §2–3. Never filter by role names, by
+cached per session and identity) — see [`viax-access`](../../../ui-layers/viax-access/SKILL.md) rule 3 and its
+[`react-uxm.md`](../../../ui-layers/viax-access/references/react-uxm.md) §2–3. Never filter by role names, by
 `paMappedRolesList`, or by matching roles against `partyFields`.
 
 ```javascript
@@ -647,7 +647,7 @@ export function useNavItems() {
 │   │   └── ProtectedRoute.jsx               # Auth guard: token-less → keycloak.login() (no portal sign-in page)
 │   ├── pages/
 │   │   ├── dashboard/
-│   │   │   └── DashboardPage.jsx            # PageHeader + StatCard × 4 + recharts in Card + List recent
+│   │   │   └── DashboardPage.jsx            # PageHeader + StatCard per BI type + charts + recent headline-type DataTable + quick links
 │   │   ├── bi/                              # Shared BI page wrappers (one BiListPage + BiDetailPage handle every slug — BI Types Step 2)
 │   │   │   ├── BiListPage.jsx
 │   │   │   └── BiDetailPage.jsx
@@ -666,9 +666,9 @@ export function useNavItems() {
 │   │   │   ├── theme-picker.jsx             # OPTIONAL ({{THEME_PICKER}}=yes): header trigger + Listbox dropdown, select-only
 │   │   │   └── shell.jsx                    # PageShell + AppSidebar (linkAs = forwardRef href→to adapter, NOT bare RouterLink) + AppTopBar + light/dark toggle
 │   │   ├── dashboard/
-│   │   │   ├── revenue-chart.jsx            # recharts LineChart in <Card>
-│   │   │   ├── status-donut.jsx             # recharts PieChart in <Card>
-│   │   │   └── progress-ring.jsx            # SVG ring in <Card>
+│   │   │   ├── activity-chart.jsx           # recharts LineChart in <Card>: records created per month (a count)
+│   │   │   ├── status-donut.jsx             # recharts PieChart in <Card>: root type by status
+│   │   │   └── value-by-currency.jsx        # <Card> + <PropertyGrid>: headline type's TOTAL, one line per currency
 │   │   ├── detail/
 │   │   │   ├── line-items.jsx               # heading + <DataTable> (no Card wrapper — viax-uxm-conventions)
 │   │   │   ├── party-card.jsx               # <Card> + <Cluster> (NOT Stack+flexDirection:row — viax-uxm rule 9) of <Avatar> rows
@@ -732,16 +732,57 @@ export function useNavItems() {
 
 ### Dashboard (`/dashboard`)
 
-**Top row:** "Hi, {firstName}!" from `useAuthStore(s => s.user.name)` + 4 `<StatCard>`s:
-- Total Orders, Revenue (MTD), Open Quotes, Active Subscriptions
-- Each: large number, label, trend arrow with percentage
+No business KPIs were specified for the portal, so the dashboard shows **what the API can state
+about the user's records — and nothing else**. Every number on it is read from the API at runtime
+(or from the mock files in `dev:mock`, through the same code path). It is built from the registry,
+like the BI pages: a BEM with other types gets a different dashboard with no code change.
 
-**Middle row:** Revenue line chart (6 months), Order status donut chart, Monthly progress ring — each in a `<Card shadow>`.
+**Never on the dashboard:** a trend arrow or percentage (the API returns no history to compare
+against — `StatCard`'s `trend` / `trendDirection` stay unset), a card for a type the BEM does not
+have ("Active subscriptions" on a BEM without subscriptions), a sum across currencies, a hard-coded
+route (`/orders/{id}`), a placeholder number, or a to-do list the portal invents. If something here
+cannot be filled from the data, leave it out rather than fill it.
 
-**Bottom row:**
-- **Recent orders** — `<DataTable>` (no `<Card>` wrapper; see viax-uxm-conventions) with a heading above it. Columns: `ID` (monospace, muted), `Name` (medium weight), `Status` (`<Tag>`), `Amount` (right-aligned, tabular-nums). `onRowClick` navigates to `/orders/{id}`.
-- **Tasks** — `<Card shadow>` containing a `<Stack>` of `<Checkbox>`-es with `useState`-driven toggle (see viax-uxm-conventions). Strike-through + muted color for done items.
-- **Quick links** — `<Card shadow>` with `<ButtonPrimary>` / `<ButtonSecondary>` / `<ButtonTertiary>` stacked.
+**Data.** One `fetchBiList(config, { first: 200 })` per BI type whose access probe answered
+`allowed` — each its own query (`useQueries`), so a denial empties only its own widget (viax-access
+rule 1); a denied type is simply absent. All widgets below compute from these rows.
+
+**The headline type** is the type the root becomes: `BI_TYPES[1]` — the registry is in tree order,
+so that is the root's first relation (OBI_PRO: the order after the quote) — or `BI_TYPES[0]` when the
+BEM has one type. Pick it in code from the registry, never by a slug literal, and record it in
+`design.md`.
+
+**Header:** `<PageHeader>` with "Hi, {firstName}!" from `useAuthStore(s => s.user.name)`
+(`dashboard.title` when there is no name) and a one-line subtitle.
+
+**Counts row:** one `<StatCard>` per readable BI type, in registry order, in a
+`<ResponsiveGrid min="200px">` — label `bi.<slug>.title`, value the list's `totalCount` through
+`Intl.NumberFormat`. No trend.
+
+**Charts row** — each in a `<Card shadow>`, recharts colours from tokens
+(`var(--color-accent)`, `var(--color-success-text)`, …), never a hex:
+
+- **Records created per month** — the last 6 calendar months (UTC), a line of the count of loaded
+  rows by `biCreatedAt`, month labels through `Intl.DateTimeFormat(locale, { month: 'short' })`. A
+  count, not money. When a type's `totalCount` exceeds the rows loaded, the caption says the chart
+  covers the loaded records (`dashboard.activity.partial`).
+- **`<root type>` by status** — a donut of the root type's loaded rows grouped by `bpStatus.code`,
+  labelled with the server's `bpStatus.name` (entity data — never translated in the locale files).
+  Only when the root type `hasStatus`.
+- **`<headline type>` value by currency** — only when the headline type `isPriceable`: the sum of
+  each row's `TOTAL` price, **one line per currency** (`units.code`), each formatted in its own
+  currency, as a `<PropertyGrid>` of `<PropertyField label="EUR">`… Never one grand total across
+  currencies (viax-localization → formatting); rows without a TOTAL are left out and the caption
+  says how many were counted.
+
+**Recent `<headline type>`** — a heading and a `<DataTable>` (no `<Card>` wrapper) of its 5 newest
+loaded rows, sorted by `biCreatedAt` client-side (`filter*` has no `_sort`). Columns: `ID`
+(monospace, muted), `Name`, `Status` (`<StatusBadge>`, when `hasStatus`), `Total` (right-aligned,
+when `isPriceable`). `onRowClick` → `/${slug}/${biId}`. `<NoAccessSection />` on denial,
+`<EmptyState>` when there are none.
+
+**Quick links** — a `<Card shadow>` of buttons to real routes only: one per readable BI type
+(`<ButtonPrimary>` for the headline type, `<ButtonSecondary>` for the rest), then Products.
 
 ### BI List Pages (BEM-Generated)
 
@@ -820,27 +861,27 @@ The embedded MODO style editor — **not a hand-built theme panel**. Renders `<U
 
 ## Access & permissions
 
-**This whole topic lives in its own skill: [`viax-access`](../../viax-access/SKILL.md).** Who may
+**This whole topic lives in its own skill: [`viax-access`](../../../ui-layers/viax-access/SKILL.md).** Who may
 read a field, run a query, call a mutation or fire a workflow transition is decided by the
 backend's authorization policies; the portal **reads what the API allows** and renders
 accordingly. The portal adds only this glue:
 
 - **Build time (step 8, after BEM discovery)** — run viax-access steps 1, 2 and 5 with the realm's
-  MCP ([`discovery.md`](../../viax-access/references/discovery.md)). Ask the user which Keycloak
+  MCP ([`discovery.md`](../../../ui-layers/viax-access/references/discovery.md)). Ask the user which Keycloak
   roles the portal serves; never guess them. If policies are not readable (`ACCESS_DENIED`, types
   missing), say so and continue with the runtime contract only. Write the **Access model** and
   **Access audit** sections into `design.md`, and report the audit findings to the user — never
   change policies from the build.
-- **Runtime** — implement [`runtime-contract.md`](../../viax-access/references/runtime-contract.md)
-  with [`react-uxm.md`](../../viax-access/references/react-uxm.md) in `src/access/*`. Portal
+- **Runtime** — implement [`runtime-contract.md`](../../../ui-layers/viax-access/references/runtime-contract.md)
+  with [`react-uxm.md`](../../../ui-layers/viax-access/references/react-uxm.md) in `src/access/*`. Portal
   bindings for its placeholders: `<graphql-client>` = `lib/graphql-client.js` (classify
   `res.data.errors` inside `execute()`; Axios resolves HTTP 200 with GraphQL errors in the body),
   `useIdentity()` = `useAuthStore((s) => s.user?.id ?? null)`, `isMockMode` =
   `import.meta.env.VITE_USE_MOCK_DATA === 'true'`, `useTranslate()` = the portal's `useT()`
   when `{{LOCALIZATION}} = yes`, English literals otherwise.
 - **Surfaces** — nav items (BI Types Step 3), BI list/detail route gates, per-section queries on the
-  detail page, the dashboard's "Recent orders" (its own query; `<NoAccessSection />` on denial
-  once wired to live data). Products, Account and Admin are not BI types and get no probe; their
+  detail page, the dashboard's widgets (one query per readable BI type; `<NoAccessSection />` on
+  denial). Products, Account and Admin are not BI types and get no probe; their
   queries still go through the same error classification.
 - **Copy** — `access.noAccessTitle`, `access.noAccessSection`, `access.noAccessPage`,
   `access.noAccessWrite` go through the locale files like every other string.
@@ -863,7 +904,7 @@ accordingly. The portal adds only this glue:
 | Light/dark mode | Host-owned `data-theme` on `:root` — session-only `useState` in `shell.jsx` (the embedded studio defers it to the host) |
 | Ephemeral UI (modals, form inputs) | React `useState` |
 
-> **Critical:** Tokens are stored in Zustand **in-memory only** — never in localStorage or cookies. On page refresh, `keycloak.init()` re-establishes the session from Keycloak's own session cookie via silent refresh ([`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md), rule 4).
+> **Critical:** Tokens are stored in Zustand **in-memory only** — never in localStorage or cookies. On page refresh, `keycloak.init()` re-establishes the session from Keycloak's own session cookie via silent refresh ([`viax-keycloak-auth`](../../../ui-layers/viax-keycloak-auth/SKILL.md), rule 4).
 
 ---
 
@@ -901,8 +942,8 @@ Build in this exact sequence:
 
 1. **Project scaffold** — Vite + React 19; install `uxm` (the `@viax.io/uxm` alias) + deps; import `uxm/tokens.css` and `uxm/ui.css` once in `main.jsx`; add the Inter Google-Fonts `<link>` to `index.html` (*Portal stylesheet and fonts* §2); jsconfig paths. **Portal identity stamp (General Note #4, mandatory):** generate `{{PORTAL_ID}}` via `openssl rand -hex 4`, write the `"portal"` block into `package.json`, add the `__PORTAL_META__` `define` to `vite.config.js`, and the `stampPortalId()` boot call in `main.jsx`.
 2. **Theme system** — `globals.css` **verbatim from *Portal stylesheet and fonts* §1** (the box-sizing reset, panel-radius and shell knobs, the **mandatory `:root { --font-sans: var(--font-inter, …) }` bridge**, the `html, body, #root` font chain `var(--brand-font, var(--font-sans))` that depends on it, and the **mandatory `button, input, select, textarea { font: inherit }` rule** — ship the bridge or the entire portal renders in Times New Roman; ship the form-control rule or every raw native control renders in Arial). **Do NOT redeclare `--color-accent*` in `globals.css`** — the UXM Studio config is the single source of truth for the accent ramp (see the SSOT note under Runtime Theming). **No hand-built admin theme editor / `ThemeProvider`** — runtime theming is the published UXM Studio config (consumed always; editor optional, step 11). Create the **consume-side** studio-plumbing files now (`lib/uxm-studio-config.js`, the **read** `lib/api/config.js` helpers `fetchUxmConfig`/`fetchStudioConfig`/`fetchPortalAssignment`/`fetchAppliedStudioConfig`, `components/layout/uxm-config-applier.jsx`, `hooks/use-hydrate-studio-config.js`), mount `<UxmConfigApplier/>` at the App root, and call `useHydrateStudioConfig()` in `App`. **Only when `{{EMBED_UXM_STUDIO}} = yes`** also create `lib/uxm-persistence.js` and add the `saveUxmConfig`/`saveStudioConfig` write helpers (deferred to step 11). **Only when `{{THEME_PICKER}} = yes`** also create `lib/theme-catalog.js` + `stores/theme-store.js` and repoint `use-hydrate-studio-config.js` to call `useThemeStore.getState().loadThemes()` (see *"Optional: read-only theme picker"* under Runtime Theming) — the header trigger itself is wired in step 5.
-3. **i18n foundation (before ANY page) — ONLY when `{{LOCALIZATION}} = yes`; when `no`, skip this step entirely and go to step 4.** Follow the [`viax-localization`](../../viax-localization/SKILL.md) skill end to end: probe `getSupportedLocales` + `currentLocale` **at scaffold time** (as the generator, with your own credentials); generate `src/i18n/locales/{locale}.json` for every supported locale; **copy** `src/i18n/{index.jsx,bundled.js,resolve.js,locale-state.js}` and `lib/api/i18n.js` from the skill's [`reference-implementation.md`](../../viax-localization/references/reference-implementation.md) and the three npm scripts from its [`scripts.md`](../../viax-localization/references/scripts.md) — do NOT write this layer from scratch, it is identical in every viax React app and only `POPULATED_DEFAULT`, the bundled locale imports and the locale JSON contents are per-portal; mount `<I18nProvider>` in `App.jsx` **above the router and above the auth guard**; add the locale **header** to `lib/graphql-client.js`. Verify `LanguageSwitcher` is exported by the installed `@viax.io/uxm` — **if it is not, STOP and report; never hand-roll one.** Building any page before this step guarantees hardcoded strings that step 14 will reject.
-4. **Auth system** — copy the [`viax-keycloak-auth`](../../viax-keycloak-auth/SKILL.md) layer (run its redirect-URI check for port 9000 first): `lib/keycloak.js` singleton, `main.jsx` init flow with `onLoad: 'login-required'`, `auth-store`, `ProtectedRoute` (token-less → `keycloak.login()`). **Generate NO login page and no `/login` route** — Keycloak's own form is the login screen; a portal page whose only job is a button that redirects there is pure friction. Mock auth mints its session at boot, so it needs no form either, and renders no sign-out control. The portal passes Keycloak **no locale**: that screen is the realm's.
+3. **i18n foundation (before ANY page) — ONLY when `{{LOCALIZATION}} = yes`; when `no`, skip this step entirely and go to step 4.** Follow the [`viax-localization`](../../../ui-layers/viax-localization/SKILL.md) skill end to end: probe `getSupportedLocales` + `currentLocale` **at scaffold time** (as the generator, with your own credentials); generate `src/i18n/locales/{locale}.json` for every supported locale; **copy** `src/i18n/{index.jsx,bundled.js,resolve.js,locale-state.js}` and `lib/api/i18n.js` from the skill's [`reference-implementation.md`](../../../ui-layers/viax-localization/references/reference-implementation.md) and the three npm scripts from its [`scripts.md`](../../../ui-layers/viax-localization/references/scripts.md) — do NOT write this layer from scratch, it is identical in every viax React app and only `POPULATED_DEFAULT`, the bundled locale imports and the locale JSON contents are per-portal; mount `<I18nProvider>` in `App.jsx` **above the router and above the auth guard**; add the locale **header** to `lib/graphql-client.js`. Verify `LanguageSwitcher` is exported by the installed `@viax.io/uxm` — **if it is not, STOP and report; never hand-roll one.** Building any page before this step guarantees hardcoded strings that step 14 will reject.
+4. **Auth system** — copy the [`viax-keycloak-auth`](../../../ui-layers/viax-keycloak-auth/SKILL.md) layer (run its redirect-URI check for port 9000 first): `lib/keycloak.js` singleton, `main.jsx` init flow with `onLoad: 'login-required'`, `auth-store`, `ProtectedRoute` (token-less → `keycloak.login()`). **Generate NO login page and no `/login` route** — Keycloak's own form is the login screen; a portal page whose only job is a button that redirects there is pure friction. Mock auth mints its session at boot, so it needs no form either, and renders no sign-out control. The portal passes Keycloak **no locale**: that screen is the realm's.
 5. **Shell layout** — `<PageShell>` + `<AppSidebar>` + `<AppTopBar>`; use `useAuthStore()` for user/avatar; BI navigation items are gated by access probes (BI Types Step 3 — Sidebar Navigation), never by roles. **Only when `{{THEME_PICKER}} = yes`:** add `<ThemePicker />` inside `<AppTopBar actions>`, **after** the light/dark toggle. **Only when `{{LOCALIZATION}} = yes`:** add `<LanguageSwitcher />` after that and before Sign out (full order under *"Localization & i18n → Header order"*).
 
    🔴 **`linkAs` needs an `href` → `to` adapter — never pass react-router's `Link` directly.**
@@ -927,8 +968,8 @@ Build in this exact sequence:
    The same adapter is required for any other UXM component with a polymorphic link prop. See
    [`viax-uxm/references/quick-recipes.md`](../../viax-uxm/references/quick-recipes.md) §1.
 
-6. **Data layer + mock data** — copy the [`viax-graphql-data-layer`](../../viax-graphql-data-layer/SKILL.md) files (`graphql-client.js` with the blocks of the skills in use, `schema-api.js`, `normalize.js`, `user.js` + `use-user.js`) and write the portal's modules and realistic raw-shape mock data (*Data layer*)
-7. **Dashboard** — `<PageHeader>` + `<StatCard>` × 4 + recharts charts in `<Card>` + `<DataTable>` for Recent orders (no Card wrapper — viax-uxm-conventions) + `<Checkbox>`-driven Tasks (viax-uxm-conventions) + Quick links Card (mock data)
+6. **Data layer + mock data** — copy the [`viax-graphql-data-layer`](../../../ui-layers/viax-graphql-data-layer/SKILL.md) files (`graphql-client.js` with the blocks of the skills in use, `schema-api.js`, `normalize.js`, `user.js` + `use-user.js`) and write the portal's modules and realistic raw-shape mock data (*Data layer*)
+7. **Dashboard** — the page and its route now; its widgets read the registry and the access probes that step 8 writes, so wire them as soon as step 8 is done (*Page Specifications → Dashboard*): `<PageHeader>` + one `<StatCard>` per readable BI type (no trend) + charts in `<Card>` + the headline type's value by currency + a `<DataTable>` of its recent records (no Card wrapper — viax-uxm-conventions) + Quick links. Live data in `dev`, mock data in `dev:mock` — the same code path; no number the API does not return
 8. **BI types from the BEM** — run [`viax-bem-discovery`](../../viax-bem-discovery/SKILL.md) (asks the user for the BEM, writes `bi-types.config.js` and the BEM section of `design.md`); build `<BiListPage>` and `<BiDetailPage>` shared templates using `<DataTable>`, `<PageHeader>`, `<InlineFilter>`, `<TimelineEntry>`, `<PropertyGrid>`; scaffold one thin page pair per `BI_TYPES` entry; populate sidebar `navItems` from `BI_TYPES`. **Then access (viax-access steps 1–5)** — see *"Access & permissions"*: discover the realm's policies, write the access model + audit into `design.md`, add `src/access/*`, the error classification in `lib/graphql-client.js`, the probes, the route gates and the no-access surfaces, and emit edit controls only where the model says `write`
 9. **Products** — `<DataTable>` with 5 columns (image `<Thumbnail>`, name, ID, description, categories `<Tag>`s); **no `<Card>` wrapper** (viax-uxm-conventions). Detail page via `<DetailSection>` + `<PropertyGrid>` rendered directly.
 10. **Account** — top `<Card>` for the Avatar identity row; each section (Addresses, Notifications, Security) as a bare `<DetailSection>` — **no `<Card>` around DetailSection** (viax-uxm-conventions). Wire to `useAuthStore(s => s.user)`; the role `<Tag>`s come from `useUser()` (display only).
@@ -941,7 +982,7 @@ Build in this exact sequence:
     - Computed `font-family` on a native `<button>`/`<input>` matches the body — **never Arial/Helvetica**. Arial controls → the `font: inherit` rule is missing.
     - Sans-serif but not Inter → the `index.html` `<link>` is missing.
     If any check fails, fix `globals.css`/`index.html` from *Portal stylesheet and fonts* verbatim — do not improvise alternative font declarations.
-    **Then the data layer's checks** — [`viax-graphql-data-layer`](../../viax-graphql-data-layer/SKILL.md) → *Checks before calling it done* (no `fetch(`, one `axios.create`, no `ID!` / `_sort` / `LIKE`, no inline `setTo` values, no invented currency, `VITE_SCHEMA_API` set).
+    **Then the data layer's checks** — [`viax-graphql-data-layer`](../../../ui-layers/viax-graphql-data-layer/SKILL.md) → *Checks before calling it done* (no `fetch(`, one `axios.create`, no `ID!` / `_sort` / `LIKE`, no inline `setTo` values, no invented currency, `VITE_SCHEMA_API` set).
     **Then the stylesheet rules of `viax-uxm-conventions`** — each of these returns nothing:
     ```bash
     grep -rnE '\.uxm-[a-z]' src --include='*.css'                          # no .uxm-* selector
@@ -957,7 +998,7 @@ Build in this exact sequence:
     and the build is not done while it fails. A generated surface starts at
     **zero** hits. The full spec — what it must flag, what it must not flag, and
     the object-literal case that is easy to omit — is in
-    [`viax-localization/references/catalog-and-files.md`](../../viax-localization/references/catalog-and-files.md).
+    [`viax-localization/references/catalog-and-files.md`](../../../ui-layers/viax-localization/references/catalog-and-files.md).
 15. **No placeholder left behind (MANDATORY — always the last step).** In the portal directory,
     `grep -rnE '\{\{[A-Z_]+\}\}' src index.html package.json vite.config.js .env.local .env.example`
     must return nothing. A hit is a value that was never substituted — a literal `{{AUTH_URL}}` in
