@@ -4,6 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { FilterTabs } from '@/ui';
 
+import { compiledCss } from './compiled-css';
+
 import type { AnchorHTMLAttributes } from 'react';
 
 /**
@@ -109,5 +111,12 @@ describe('FilterTabs navigation', () => {
     const help = screen.getByRole('button', { name: 'Help' });
     expect(help).toHaveAttribute('aria-current', 'true');
     expect(screen.getByRole('link', { name: 'Home' })).not.toHaveAttribute('aria-current');
+  });
+
+  it('keeps a host link rule from underlining the tabs', () => {
+    // The plain `.uxm-filter-tabs__tab` reset is (0,1,0) and lost to a host's
+    // `a:hover { text-decoration: underline }` (0,1,1).
+    const css = compiledCss('src/ui/filter-tabs/filter-tabs.scss');
+    expect(css).toMatch(/\.uxm-filter-tabs \.uxm-filter-tabs__tab\s*\{\s*text-decoration:\s*none/);
   });
 });

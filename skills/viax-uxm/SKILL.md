@@ -93,6 +93,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`FilterTabs` link tabs stay un-underlined under a host link rule** — the `text-decoration: none`
+  reset was (0,1,0), so a host's `a:hover { text-decoration: underline }` underlined the tabs in
+  navigation mode. It is now scoped under the track, (0,2,0).
+
 ## Workflow
 
 ### Where the documentation lives
