@@ -1,3 +1,10 @@
+## [4.115.14](https://github.com/viax-io/uxm/compare/v4.115.13...v4.115.14) (2026-11-18)
+
+
+### Bug Fixes
+
+* **checkbox:** contain the hidden input so focusing it can't scroll a pane ([fce4480](https://github.com/viax-io/uxm/commit/fce44803e8e99bf033c6a89111b8405fd74dbed5))
+
 ## [4.115.13](https://github.com/viax-io/uxm/compare/v4.115.12...v4.115.13) (2026-11-18)
 
 

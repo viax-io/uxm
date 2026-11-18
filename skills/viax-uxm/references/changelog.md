@@ -2841,3 +2841,11 @@ reached the published library; now shipped in 2.8.0.
   `container-name` or the `container` shorthand on the table (Tailwind `@container/foo`) silently
   turned it off. The root is unnamed again; off and 320 now leave the 480 rules through a
   zero-specificity `:where()` gate. The workaround of keeping both names is no longer needed.
+
+### New in 4.115.9
+
+- **`Stepper` no longer adds an English comma to translated state words** — the hidden text
+  after a done or skipped label was always `, {word}`. The comma now belongs to the default copy
+  only ("Quoted, Done"); `stateLabels` follow after a space. The README no longer counts the
+  current step's 25% ring as a state cue: it is about 1.4:1, so the cues are the fill without a
+  check, the heavier label and `aria-current`.
