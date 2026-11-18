@@ -1,13 +1,38 @@
 # /update-ai-skill Command
 
 Maintain the Claude skills this repo owns. **The editing source lives IN THIS REPO under
-`skills/`** — two of them ship:
+`skills/`** — three of them ship:
 
-| Skill | What it is | Versioned with the library? |
-|---|---|---|
-| `skills/viax-uxm/` | The component/token reference consumers read | **Yes** — CI stamps its version marker, component count and `### Unreleased` heading at release |
-| `skills/viax-portal/` | The portal generator (SKILL.md + the BEM MetaPrompt) | **No** — no version marker, no `(unreleased)` qualifiers; it tracks the library's API by hand |
-| `skills/viax-uxm-theming/` | How ANY app consumes the published UXM Studio config — fetch, apply, identity | **No** — same as above. Owns the theming topic; `viax-portal` delegates to it, so a change here must not be duplicated there |
+| Skill (here) | Ships to (`viax-ai-skills`) | What it is | Versioned with the library? |
+|---|---|---|---|
+| `skills/viax-uxm/` | `skills/ui/viax-uxm/` | The component/token reference consumers read | **Yes** — CI stamps its version marker, component count and `### Unreleased` heading at release |
+| `skills/viax-portal/` | `skills/ui/viax-portal/` | The portal generator (SKILL.md + the BEM MetaPrompt) | **No** — no version marker, no `(unreleased)` qualifiers; it tracks the library's API by hand |
+| `skills/viax-uxm-theming/` | `skills/ui/viax-uxm-theming/` | How ANY app consumes the published UXM Studio config — fetch, apply, identity | **No** — same as above. Owns the theming topic; `viax-portal` delegates to it, so a change here must not be duplicated there |
+
+### The distribution layout, and why links here point "outside" this repo
+
+`viax-ai-skills` groups its UI skills (ai/viax-ai-skills!177):
+
+- `skills/ui/` — the React + `@viax.io/uxm` approach: our three, plus `viax-bem-discovery`,
+  `viax-portal-generator` and `viax-uxm-conventions`.
+- `skills/ui-layers/` — layers both approaches share: `viax-access`,
+  `viax-graphql-data-layer`, `viax-keycloak-auth`, `viax-localization`.
+- `skills/ui-dbs/` — the older Vue approach (`viax-dynamic-forms`, `viax-mfa-component-skill`).
+- Everything else (`graphql/`, `business-execution-model/`, …) stays at the top of `skills/`.
+
+The files here are copied **verbatim**, so every relative link in them is written for that
+layout, not for this repo. From a `SKILL.md`:
+
+| Target | Link |
+|---|---|
+| a sibling in `ui/` | `../viax-uxm-conventions/SKILL.md` |
+| a shared layer | `../../ui-layers/viax-keycloak-auth/SKILL.md` |
+| a top-level skill | `../../graphql/references/bcore-schema-v2.md` |
+
+From a file under `references/`, add one more `../`. Links to other skills are dead inside
+this repo by design (those skills don't live here). A link to the library itself never uses a
+relative path: use `https://github.com/viax-io/uxm` (e.g. `…/uxm#cdn-usage`), which resolves in
+both repos.
 
 Steps 2 and 3 below (version check, leftover-qualifier check) apply to **`viax-uxm` only** —
 `viax-portal` has no markers to stamp. Step 1 (drift + hygiene) and step 4 (sync) cover
@@ -62,6 +87,10 @@ under the `### Unreleased` heading in SKILL.md; mark catalog rows for unreleased
 - `viax-uxm-theming` drift: it documents the GraphQL operations and the apply pipeline. When the
   config API changes, this skill is the FIRST thing to update — `viax-portal` points at it rather
   than repeating it, so fixing only the portal skill leaves the real source stale.
+- Link layout: a new or edited cross-skill link follows the table under "The distribution
+  layout" above. `grep -rnE "\]\(\.\./(\.\./)?viax-(access|graphql-data-layer|keycloak-auth|localization)/" skills/`
+  must be empty (a shared layer reached as a sibling is the old, flat layout), and so must
+  `grep -rn "README.md" skills/ | grep "\](\.\."` (the library README is linked by URL).
 - `viax-portal` drift: the MetaPrompt hardcodes the API surface it generates against
   (GraphQL operations, `@viax.io/uxm` version floor, helper names). When the portal's config
   API or the library's public surface changes, verify against a REAL working portal rather
@@ -97,12 +126,18 @@ run, whether a sync is due (distribution repo behind the published version) or a
 done. Reference checklist for the human (do not execute any of it):
 
 - **First** check the distribution repo for direct edits since the last sync
-  (`git log origin/main --format='%h %an %s' -- skills/<skill>` for each of the three; anything
-  that is not a `[VX-1736] … sync` commit must be ported INTO this repo before continuing —
-  see gotchas.md → "The skills distribution repo gets edited directly").
-- Copy **all three** — `skills/viax-uxm/`, `skills/viax-portal/` and `skills/viax-uxm-theming/` — verbatim into `viax-ai-skills`
-  (same relative paths) on a branch `feature/<ticket>-viax-uxm-skill-v<VERSION>` off
-  up-to-date `main` (VX-1736 is the standing ticket used by past syncs). `viax-portal` has
+  (`git log --follow origin/main --format='%h %an %s' -- skills/ui/<skill>/SKILL.md`, plus the
+  same for each file under `references/`, for each of the three — `--follow` carries the
+  history across the move from `skills/<skill>/`; anything that is not a `[VX-1736] … sync`
+  commit must be ported INTO this repo before continuing — see gotchas.md → "The skills
+  distribution repo gets edited directly"). The move itself (!177) is already ported.
+- Copy **all three** verbatim into `viax-ai-skills` **under `skills/ui/`** —
+  `skills/viax-uxm/` → `skills/ui/viax-uxm/`, `skills/viax-portal/` → `skills/ui/viax-portal/`,
+  `skills/viax-uxm-theming/` → `skills/ui/viax-uxm-theming/` (never back to `skills/<skill>/`,
+  which would recreate the old flat folders beside the grouped ones) — on a branch
+  `feature/<ticket>-viax-uxm-skill-v<VERSION>` off up-to-date `main` (VX-1736 is the standing
+  ticket used by past syncs). Then check every relative link in the three copies resolves in
+  that repo (the links are written for its layout — see "The distribution layout" above). `viax-portal` has
   no version of its own — it rides the same sync, so a portal-skill change alone is still a
   reason to sync even when `viax-uxm` is unchanged.
 - Run that repo's `bash scripts/validate-skills.sh` — must pass. Its `CLAUDE.md` → "Releasing"
