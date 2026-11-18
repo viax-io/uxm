@@ -17,7 +17,9 @@
 
 /* A definite height down to the app root: PageShell is height: 100% with an
    overflow: auto content area, so it bounds its own scroll only when its
-   ancestors have one. #root is the usual Vite / CRA mount node.
+   ancestors have one. #root is the usual Vite / CRA mount node; an app that
+   mounts elsewhere (Next.js #__next, a layout with no wrapper) sets the
+   height on its own node, as the README says.
    Trade-off for a page that scrolls the document instead: a position: sticky
    child of body or #root stops sticking after one screen, since its
    containing block is now one viewport tall. Such a page sets

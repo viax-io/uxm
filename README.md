@@ -73,7 +73,7 @@ The library styles its own atoms and nothing else. `base.css` is the opt-in page
 - `body` with no margin and the surface and text colours, in both themes;
 - `font: inherit` on raw form controls.
 
-Every rule is wrapped in `:where()` (specificity 0), so any rule of your own wins. Skip it if your app already has these. One trade-off: on a page that scrolls the whole document instead of using `PageShell`, a `position: sticky` child of `body` or `#root` stops sticking after one screen. Override with `#root { height: auto }`.
+Every rule is wrapped in `:where()` (specificity 0), so any rule of your own wins. Skip it if your app already has these. One trade-off: on a page that scrolls the whole document instead of using `PageShell`, a `position: sticky` child of `body` or `#root` stops sticking after one screen. Override with `#root { height: auto }`. The height chain names `#root`, the Vite / CRA mount node. If your app mounts elsewhere (Next.js `#__next`, a Remix or Astro layout with no wrapper, your own id), give that node `height: 100%` yourself, or `PageShell` gets no definite height and its content area won't scroll on its own.
 
 Then use the primitives anywhere:
 
