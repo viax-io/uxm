@@ -14,7 +14,8 @@ Maintain the Claude skills this repo owns. **The editing source lives IN THIS RE
 `viax-ai-skills` groups its UI skills (ai/viax-ai-skills!177):
 
 - `skills/ui/` — the React + `@viax.io/uxm` approach: our three, plus `viax-bem-discovery`,
-  `viax-portal-generator` and `viax-uxm-conventions`.
+  `viax-portal-generator`, `viax-uxm-conventions`, `modo-conventions` and
+  `brand-faithful-frontend`.
 - `skills/ui-layers/` — layers both approaches share: `viax-access`,
   `viax-graphql-data-layer`, `viax-keycloak-auth`, `viax-localization`.
 - `skills/ui-dbs/` — the older Vue approach (`viax-dynamic-forms`, `viax-mfa-component-skill`).
