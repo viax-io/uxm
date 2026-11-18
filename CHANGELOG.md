@@ -1,3 +1,10 @@
+## [4.115.13](https://github.com/viax-io/uxm/compare/v4.115.12...v4.115.13) (2026-11-18)
+
+
+### Bug Fixes
+
+* **stepper:** scale the check with the marker, and clear review nits ([4bb9402](https://github.com/viax-io/uxm/commit/4bb9402dd82d999e3b65357d78c3cfcf773e6256))
+
 ## [4.115.12](https://github.com/viax-io/uxm/compare/v4.115.11...v4.115.12) (2026-11-18)
 
 
