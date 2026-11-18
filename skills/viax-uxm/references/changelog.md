@@ -2818,3 +2818,10 @@ reached the published library; now shipped in 2.8.0.
   Surface with `theme="dark"` it measured against the page, so "Use Text" on a near-black
   background wrote a token that paints near-white in the panel. It also re-measures when the
   page theme flips.
+
+### New in 4.115.7
+
+- **`FilterTabs` navigation mode marks no link current until it knows the route** — without
+  `value` or `defaultValue` it used to put `aria-current="page"` on the first link whatever page
+  the user was on. Tab mode still selects the first tab. A picked `href`-less button in a nav now
+  carries `aria-current="true"`.

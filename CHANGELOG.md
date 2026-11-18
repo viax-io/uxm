@@ -1,3 +1,10 @@
+## [4.115.12](https://github.com/viax-io/uxm/compare/v4.115.11...v4.115.12) (2026-11-18)
+
+
+### Bug Fixes
+
+* **filter-tabs:** keep a host link rule from underlining link tabs ([4602e9a](https://github.com/viax-io/uxm/commit/4602e9abb52371a4605579ddcbec8feec82d6d60))
+
 ## [4.115.11](https://github.com/viax-io/uxm/compare/v4.115.10...v4.115.11) (2026-11-17)
 
 
