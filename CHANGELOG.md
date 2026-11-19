@@ -1,3 +1,10 @@
+# [4.118.0](https://github.com/viax-io/uxm/compare/v4.117.0...v4.118.0) (2026-11-19)
+
+
+### Features
+
+* **table-card:** an icon before the title and a count after it ([f9b518e](https://github.com/viax-io/uxm/commit/f9b518e2eb4a8aa9cb52b2407963b93e9543335e))
+
 # [4.117.0](https://github.com/viax-io/uxm/compare/v4.116.0...v4.117.0) (2026-11-19)
 
 

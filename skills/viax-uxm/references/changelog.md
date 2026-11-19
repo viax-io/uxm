@@ -2862,3 +2862,9 @@ reached the published library; now shipped in 2.8.0.
   first row held the bar's full `--uxm-app-top-bar-height` as content, so with vertical padding
   and the bottom border the bar jumped by `2 × padding-y + border`. The README now says plainly
   that collapsed, Tab reaches the search row before the actions above it.
+
+### New in 4.115.12
+
+- **`FilterTabs` link tabs stay un-underlined under a host link rule** — the `text-decoration: none`
+  reset was (0,1,0), so a host's `a:hover { text-decoration: underline }` underlined the tabs in
+  navigation mode. It is now scoped under the track, (0,2,0).
