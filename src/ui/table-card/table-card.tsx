@@ -14,6 +14,10 @@ export interface TableCardProps<T>
     Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
   /** Card heading. Pass an element (`<h3>`) when the page outline needs a real heading level. */
   title?: ReactNode;
+  /** Before the title: an `Icon` or a small mark. Muted (`--uxm-table-card-icon-color`). */
+  icon?: ReactNode;
+  /** After the title, muted, on the same line: a count such as the number of rows. */
+  count?: ReactNode;
   /** Muted line under the title. */
   description?: ReactNode;
   /** Right side of the header: buttons, a menu, a filter. */
@@ -49,6 +53,8 @@ export interface TableCardProps<T>
  */
 export function TableCard<T>({
   title,
+  icon,
+  count,
   description,
   actions,
   variant = 'lines',
@@ -81,7 +87,8 @@ export function TableCard<T>({
   framed: _framed,
   ...rest
 }: TableCardProps<T>) {
-  const hasHeader = title != null || description != null || actions != null;
+  const hasTitle = title != null || icon != null || count != null;
+  const hasHeader = hasTitle || description != null || actions != null;
   const showEmpty = empty != null && rows.length === 0;
 
   return (
@@ -98,9 +105,19 @@ export function TableCard<T>({
     >
       {hasHeader && (
         <div className="uxm-table-card__header">
-          {(title != null || description != null) && (
+          {(hasTitle || description != null) && (
             <div className="uxm-table-card__heading">
-              {title != null && <div className="uxm-table-card__title">{title}</div>}
+              {hasTitle && (
+                <div className="uxm-table-card__titlerow">
+                  {icon != null && (
+                    <span className="uxm-table-card__icon" aria-hidden="true">
+                      {icon}
+                    </span>
+                  )}
+                  {title != null && <div className="uxm-table-card__title">{title}</div>}
+                  {count != null && <span className="uxm-table-card__count">{count}</span>}
+                </div>
+              )}
               {description != null && (
                 <div className="uxm-table-card__description">{description}</div>
               )}
