@@ -107,6 +107,14 @@
 .uxm-editable-cell--state-hover:not(:disabled):not(.uxm-editable-cell--state-focus):not(.uxm-editable-cell--editing):not(.uxm-editable-cell--open) {
   border-color: var(--uxm-editable-cell-hover-border, transparent);
 }
+/* The pickers and textarea keep their box (border, padding) on an inner
+   trigger, the wrapper drawing none: the hover border goes there. */
+.uxm-editable-cell:not(.uxm-editable-cell--disabled):not(.uxm-editable-cell--open):hover .uxm-editable-cell__select-trigger:not(:focus-visible),
+.uxm-editable-cell--state-hover:not(.uxm-editable-cell--open) .uxm-editable-cell__select-trigger,
+.uxm-editable-cell:not(.uxm-editable-cell--disabled):not(.uxm-editable-cell--editing):hover .uxm-editable-cell__textarea-trigger:not(:focus-visible),
+.uxm-editable-cell--state-hover:not(.uxm-editable-cell--editing) .uxm-editable-cell__textarea-trigger {
+  border-color: var(--uxm-editable-cell-hover-border, transparent);
+}
 
 /* Forced hover — mirrors `:hover` above for the canvas. Editor preview only. */
 .uxm-editable-cell--state-hover:not(:disabled) {
