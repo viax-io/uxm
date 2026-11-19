@@ -2868,3 +2868,9 @@ reached the published library; now shipped in 2.8.0.
 - **`FilterTabs` link tabs stay un-underlined under a host link rule** — the `text-decoration: none`
   reset was (0,1,0), so a host's `a:hover { text-decoration: underline }` underlined the tabs in
   navigation mode. It is now scoped under the track, (0,2,0).
+
+### New in 4.115.13
+
+- **`Stepper`'s check scales with the marker** — it was a fixed 12px, so at the smallest
+  `--uxm-stepper-marker-size` (12px) it filled the whole disc. It is now 60% of the marker,
+  12px at the default 20px, so the default look is unchanged.

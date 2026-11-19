@@ -1,3 +1,10 @@
+# [4.119.0](https://github.com/viax-io/uxm/compare/v4.118.0...v4.119.0) (2026-11-19)
+
+
+### Features
+
+* **table-card:** a divider inset for the lines variant ([8117d0d](https://github.com/viax-io/uxm/commit/8117d0dcfede8e163412beecd0ebeba362f5cf71))
+
 # [4.118.0](https://github.com/viax-io/uxm/compare/v4.117.0...v4.118.0) (2026-11-19)
 
 
