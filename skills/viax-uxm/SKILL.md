@@ -89,6 +89,8 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **EditableCell `--uxm-editable-cell-hover-border`** — a hover border colour (transparent by default). Set it, with `--uxm-editable-cell-hover-bg: transparent`, to outline a cell on hover instead of tinting it; a focused, editing or open cell keeps its own border.
+
 ## Workflow
 
 ### Where the documentation lives

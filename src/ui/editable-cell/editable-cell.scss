@@ -99,6 +99,15 @@
   outline: 2px solid var(--uxm-editable-cell-focus-ring, var(--color-accent));
   outline-offset: 2px;
 }
+/* Hover border: unset, it stays transparent and the tint above is the
+   affordance; set `--uxm-editable-cell-hover-border` (with the tint
+   transparent) to outline the cell on hover instead. A focused cell keeps its
+   focus border. */
+.uxm-editable-cell:hover:not(:disabled):not(:focus-visible):not(.uxm-editable-cell--state-focus):not(.uxm-editable-cell--editing):not(.uxm-editable-cell--open),
+.uxm-editable-cell--state-hover:not(:disabled):not(.uxm-editable-cell--state-focus):not(.uxm-editable-cell--editing):not(.uxm-editable-cell--open) {
+  border-color: var(--uxm-editable-cell-hover-border, transparent);
+}
+
 /* Forced hover — mirrors `:hover` above for the canvas. Editor preview only. */
 .uxm-editable-cell--state-hover:not(:disabled) {
   background-color: var(--uxm-editable-cell-hover-bg, var(--color-surface-alt));

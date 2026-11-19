@@ -46,6 +46,7 @@ export const editableCellDef: ComponentDef = {
     { key: 'color', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text)', section: 'cellColors', showWhen: { state: 'default' } },
     { key: 'placeholderColor', label: 'Placeholder Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'cellColors', showWhen: { state: 'default' } },
     { key: 'hoverBg', label: 'Hover Background', control: 'color', defaultValue: 'var(--color-surface-alt)', section: 'cellColors', showWhen: { state: 'hover' } },
+    { key: 'hoverBorder', label: 'Border Color', control: 'color', defaultValue: 'transparent', section: 'cellColors', showWhen: { state: 'hover' } },
     // The hover affordance differs by type: text / number / date reveal a pencil,
     // the pickers (select / multiselect) reveal a chevron. Gate each so only the
     // relevant one shows under Hover.

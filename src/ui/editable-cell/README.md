@@ -232,6 +232,7 @@ In the studio both sizes expose the same control for the same property (Font Siz
 | `--uxm-editable-cell-radius` | – | `4px` | Display cell + editing input radius. |
 | `--uxm-editable-cell-color` | `--color-text` | – | The value's text colour. Pinned, not inherited: primary text is `--color-text` system-wide, so inheriting only let a muted column / dimmed row bleed in. |
 | `--uxm-editable-cell-hover-bg` | `--color-surface-alt` | – | Display hover tint. |
+| `--uxm-editable-cell-hover-border` | – | `transparent` | Display hover border colour. Set it (and `--uxm-editable-cell-hover-bg: transparent`) for an outline instead of a tint. |
 | `--uxm-editable-cell-pencil-color` | `--color-text-muted` | – | Hover pencil / calendar glyph. |
 | `--uxm-editable-cell-chevron-color` | `--color-text-muted` | – | Picker hover chevron. |
 | `--uxm-editable-cell-focus-border` | `--color-accent` | – | Keyboard-focus border (display). |

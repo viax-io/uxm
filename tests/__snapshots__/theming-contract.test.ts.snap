@@ -678,6 +678,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-editable-cell-focus-border",
   "--uxm-editable-cell-focus-ring",
   "--uxm-editable-cell-hover-bg",
+  "--uxm-editable-cell-hover-border",
   "--uxm-editable-cell-input-bg",
   "--uxm-editable-cell-input-border",
   "--uxm-editable-cell-input-color",
