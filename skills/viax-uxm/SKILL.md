@@ -81,6 +81,14 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **New atom: `TableCard`.** One frame whose body is a `DataTable`.
+  - `title`, `description`, `actions` (the header, omitted when none is given), `variant`
+    (`'lines'` default | `'striped'`), `hideHeaderRow`, `empty`, `shadow`; every `DataTable` prop
+    passes through.
+  - Use it instead of a `DataTable` inside a `Card`, which draws two frames and needs negative
+    margins; theme with `--uxm-table-card-*`.
+  - `DataTable` gains `framed` (default `true`); `framed={false}` drops its own border and radius.
+
 ## Workflow
 
 ### Where the documentation lives

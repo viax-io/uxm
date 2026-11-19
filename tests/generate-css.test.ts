@@ -113,6 +113,14 @@ describe('generateOverridesCss', () => {
     expect(css).not.toMatch(/^\s*(background|background-color|border-radius|padding):/m);
   });
 
+  it('saves the table card padding and frame as its vars, not bare properties on the root', () => {
+    const css = generateOverridesCss({ 'table-card': { paddingX: 24, borderRadius: 8, stripeBg: '#eee' } }, brand);
+    expect(css).toContain('  --uxm-table-card-padding-x: 24px;');
+    expect(css).toContain('  --uxm-table-card-radius: 8px;');
+    expect(css).toContain('  --uxm-table-card-stripe-bg: #eee;');
+    expect(css).not.toMatch(/^\s*padding-inline:/m);
+  });
+
   it('adds px to lengths but never to weights or opacities', () => {
     const css = generateOverridesCss(
       { 'input-text': { borderRadius: 8, fontWeight: 600, disabledOpacity: 0.4, itemDisabledOpacity: 0.5 } },

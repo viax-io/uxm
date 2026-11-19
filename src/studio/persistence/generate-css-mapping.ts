@@ -252,6 +252,16 @@ export const PER_COMPONENT_MAPPING: Record<string, Record<string, string>> = {
     // inherit). One owner per visual property; Card owns only its own gap.
     gap: '--uxm-card-gap',
   },
+  // The colliding keys (REAL_CSS_PROPS) route to the vars the stylesheet reads;
+  // unmapped, a save would write bare properties on the root, and `padding-inline`
+  // there would pad OUTSIDE the header and the rows, not line them up.
+  'table-card': {
+    backgroundColor: '--uxm-table-card-bg',
+    borderColor: '--uxm-table-card-border-color',
+    borderRadius: '--uxm-table-card-radius',
+    paddingX: '--uxm-table-card-padding-x',
+    paddingY: '--uxm-table-card-padding-y',
+  },
   'toggle-switch': {
     width: '--uxm-toggle-switch-width',
     height: '--uxm-toggle-switch-height',

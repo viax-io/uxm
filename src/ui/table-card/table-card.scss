@@ -1,0 +1,99 @@
+/* ── table-card ── */
+
+/* TableCard — one frame (the card's surface, border, radius, shadow) whose body
+   is a frameless DataTable. The table's own knobs (`--uxm-data-table-*`) keep
+   working inside; this file only sets what the card owns: the header, the
+   divider, the stripes, and the line the cell padding is derived from. */
+
+.uxm-table-card {
+  background: var(--uxm-table-card-background, var(--uxm-table-card-bg, var(--color-card)));
+  border: 1px solid var(--uxm-table-card-border-color, var(--color-border));
+  /* 4px: the same literal Card uses, so the two surfaces match by default. */
+  border-radius: var(--uxm-table-card-radius, 4px);
+  /* Rows and the header strip run to the card's edge: clip them to its corners. */
+  overflow: hidden;
+
+  &--shadow {
+    box-shadow: 0 var(--uxm-table-card-shadow-offset-y, 6px) var(--uxm-table-card-shadow-blur, 20px)
+      var(--uxm-table-card-shadow-color, var(--shadow-card-color));
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--uxm-table-card-header-gap, 12px);
+    padding: var(--uxm-table-card-padding-y, 16px) var(--uxm-table-card-padding-x, 20px);
+  }
+  &__heading {
+    min-width: 0;
+  }
+  &__title {
+    font-size: calc(var(--uxm-table-card-title-font-size, 15px) * var(--type-scale, 1));
+    font-weight: var(--uxm-table-card-title-font-weight, var(--font-weight-strong, 600));
+    color: var(--uxm-table-card-title-color, var(--color-text));
+  }
+  &__description {
+    margin-top: 2px;
+    font-size: calc(var(--uxm-table-card-description-font-size, 12px) * var(--type-scale, 1));
+    color: var(--uxm-table-card-description-color, var(--color-text-muted));
+  }
+  &__actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: var(--uxm-table-card-actions-gap, 8px);
+  }
+
+  /* The first and last cell of a row line up with the header text. */
+  &__body {
+    --uxm-data-table-cell-padding-x: var(--uxm-table-card-padding-x, 20px);
+  }
+  &__empty {
+    padding: var(--uxm-table-card-empty-padding-y, 32px) var(--uxm-table-card-padding-x, 20px);
+    text-align: center;
+    color: var(--uxm-table-card-description-color, var(--color-text-muted));
+  }
+
+  /* lines: one divider colour for the line under the header, the line under the
+     column-header row and the lines between rows. The line under the card
+     header is the body's top edge, so it is never doubled. */
+  &--lines &__body {
+    --uxm-data-table-border-color: var(--uxm-table-card-divider-color, var(--color-border));
+  }
+  &--lines#{&}--has-header &__body {
+    border-top: 1px solid var(--uxm-table-card-divider-color, var(--color-border));
+  }
+
+  /* striped: no dividers, alternate rows tinted. The body is inset by the
+     stripe inset and the cells take the rest of the padding, so the text stays
+     on the header's line while the tint stops short of the card's edge. */
+  &--striped &__body {
+    --_uxm-table-card-inset: var(--uxm-table-card-stripe-inset, 10px);
+    --uxm-data-table-cell-padding-x: calc(
+      var(--uxm-table-card-padding-x, 20px) - var(--_uxm-table-card-inset)
+    );
+    --uxm-data-table-header-bg: transparent;
+    padding: 0 var(--_uxm-table-card-inset) var(--_uxm-table-card-inset);
+  }
+  &--striped &__body .uxm-data-table__th,
+  &--striped &__body .uxm-data-table__td {
+    border-bottom: 0;
+  }
+  /* The knob goes on the row, not the cell: a pinned (sticky) cell paints the
+     same variable, so it follows the stripe. */
+  &--striped &__body .uxm-data-table__row:nth-child(even) {
+    --uxm-data-table-row-bg: var(--uxm-table-card-stripe-bg, var(--color-surface));
+  }
+
+  /* No column-header row: collapse the cells to zero height rather than remove
+     them, so the table keeps its column widths and a screen reader keeps the
+     column names. */
+  &--no-header-row &__body .uxm-data-table__th {
+    height: 0;
+    padding-block: 0;
+    border-bottom: 0;
+    line-height: 0;
+    overflow: hidden;
+  }
+}
