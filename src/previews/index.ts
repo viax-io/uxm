@@ -97,6 +97,7 @@ export { StatCardPreview } from '@/ui/stat-card/stat-card-preview';
 export { StepperPreview } from '@/ui/stepper/stepper-preview';
 export { SurfacePreview } from '@/ui/surface/surface-preview';
 export { TabsPreview } from '@/ui/tabs/tabs-preview';
+export { TableCardPreview } from '@/ui/table-card/table-card-preview';
 export { TabsUnderlinePreview } from '@/ui/tabs-underline/tabs-underline-preview';
 export { TagPreview } from '@/ui/tag/tag-preview';
 export { TextareaPreview } from '@/ui/input/textarea-preview';

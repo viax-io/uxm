@@ -288,6 +288,17 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    */
   stackAt?: DataTableStackAt | false;
   /**
+   * Draw the table's own 1px border and rounded corners. Default `true`.
+   *
+   * Pass `false` when the table is the BODY of a surface that already has a
+   * frame (a card, a panel): the border and radius drop away, so the surface's
+   * edge is the only one, and the rows run to it. Row dividers and the header
+   * strip stay. This is what `TableCard` uses; set it yourself only when you
+   * lay out your own surface. `--uxm-data-table-border-color` still colours the
+   * dividers.
+   */
+  framed?: boolean;
+  /**
    * Returns the horizontal scroller to its start edge whenever this value
    * changes. Opt-in: with no key the position is kept across a rows change,
    * which is what the table has always done.
@@ -750,6 +761,7 @@ export function DataTable<T>({
   rows,
   density = 'default',
   stackAt,
+  framed = true,
   scrollResetKey,
   scrollArrows,
   rowKey,
@@ -870,6 +882,7 @@ export function DataTable<T>({
       className={cn(
         'uxm-data-table',
         `uxm-data-table--${density}`,
+        !framed && 'uxm-data-table--frameless',
         // 480 is the stylesheet's unconditional threshold, so it needs no
         // class — and emitting one would be worse than redundant: the opt-in
         // rules carry an extra class of specificity, so a `stack-480` table

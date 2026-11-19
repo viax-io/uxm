@@ -245,6 +245,8 @@ export { Stepper } from './stepper';
 export type { StepperProps, StepperStep, StepperStepState } from './stepper';
 export { Surface } from './surface';
 export type { SurfaceElement, SurfaceProps, SurfaceTheme } from './surface';
+export { TableCard } from './table-card';
+export type { TableCardProps, TableCardVariant } from './table-card';
 export { Tabs } from './tabs';
 export type { TabsOption, TabsProps } from './tabs';
 export { TabsUnderline } from './tabs-underline';

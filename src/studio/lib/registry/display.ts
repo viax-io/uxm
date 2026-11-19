@@ -320,6 +320,61 @@ export const displayDefs: ComponentDef[] = [
     ],
   },
   {
+    id: 'table-card',
+    name: 'Table Card',
+    category: 'Display',
+    description: 'One frame whose body is a data table: a card header with a title, a muted line and actions over rows that run to the card\'s edge. Lines or striped rows.',
+    canvasFill: true,
+    styleProperties: [
+      { key: 'backgroundColor', label: 'Background', control: 'color', defaultValue: 'var(--color-card)', section: 'colors' },
+      { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
+      { key: 'dividerColor', label: 'Divider Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors', showWhen: { variant: 'lines' } },
+      { key: 'stripeBg', label: 'Stripe Background', control: 'color', defaultValue: 'var(--color-surface)', section: 'colors', showWhen: { variant: 'striped' } },
+      { key: 'titleColor', label: 'Title Color', control: 'color', defaultValue: 'var(--color-text)', section: 'text' },
+      { key: 'descriptionColor', label: 'Description Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'text' },
+      { key: 'titleFontSize', label: 'Title Size', control: 'number', defaultValue: 15, min: 12, max: 24, step: 1, unit: 'px', section: 'text' },
+      { key: 'descriptionFontSize', label: 'Description Size', control: 'number', defaultValue: 12, min: 10, max: 18, step: 1, unit: 'px', section: 'text' },
+      { key: 'borderRadius', label: 'Border Radius', control: 'slider', defaultValue: 4, min: 0, max: 24, step: 1, unit: 'px' },
+      { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 20, min: 8, max: 40, step: 2, unit: 'px' },
+      { key: 'paddingY', label: 'Header Padding Y', control: 'number', defaultValue: 16, min: 8, max: 32, step: 2, unit: 'px' },
+      { key: 'stripeInset', label: 'Stripe Inset', control: 'number', defaultValue: 10, min: 0, max: 20, step: 2, unit: 'px', showWhen: { variant: 'striped' } },
+      { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'var(--shadow-card-color)', section: 'shadow' },
+      { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 20, min: 0, max: 48, step: 1, unit: 'px', section: 'shadow' },
+      { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 6, min: 0, max: 24, step: 1, unit: 'px', section: 'shadow' },
+    ],
+    // Lines / striped and the header on or off are props per instance, so they
+    // are variants. The column-header row is a variant for the same reason.
+    layoutVariants: [
+      {
+        key: 'variant',
+        label: 'Variant',
+        options: [
+          { value: 'lines', label: 'Lines' },
+          { value: 'striped', label: 'Striped' },
+        ],
+        defaultValue: 'lines',
+      },
+      {
+        key: 'header',
+        label: 'Card Header',
+        options: [
+          { value: 'with', label: 'With header' },
+          { value: 'without', label: 'Without header' },
+        ],
+        defaultValue: 'with',
+      },
+      {
+        key: 'columnHeaders',
+        label: 'Column Headers',
+        options: [
+          { value: 'show', label: 'Show' },
+          { value: 'hide', label: 'Hide' },
+        ],
+        defaultValue: 'show',
+      },
+    ],
+  },
+  {
     id: 'surface',
     name: 'Surface',
     category: 'Display',
