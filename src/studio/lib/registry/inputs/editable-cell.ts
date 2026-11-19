@@ -28,7 +28,7 @@ export const editableCellDef: ComponentDef = {
     //      panel unpredictable — the property is the same property.
     { key: 'smallFontSize', label: 'Font Size', control: 'select', defaultValue: 'inherit', options: ['inherit', '11px', '12px', '13px', '14px', '15px', '16px', '18px'], showWhen: { size: 'small' } },
     { key: 'mediumPaddingX', label: 'Padding X', control: 'number', defaultValue: 12, min: 4, max: 20, step: 1, unit: 'px', showWhen: { size: 'medium' } },
-    { key: 'mediumPaddingY', label: 'Padding Y', control: 'number', defaultValue: 6, min: 0, max: 14, step: 1, unit: 'px', showWhen: { size: 'medium' } },
+    { key: 'mediumPaddingY', label: 'Padding Y', control: 'number', defaultValue: 10, min: 0, max: 14, step: 1, unit: 'px', showWhen: { size: 'medium' } },
     { key: 'mediumFontSize', label: 'Font Size', control: 'select', defaultValue: '14px', options: ['inherit', '11px', '12px', '13px', '14px', '15px', '16px', '18px'], showWhen: { size: 'medium' } },
     // Per-size, like every other dimension: a table cell needs a cap so one
     // long value can't push its column, a side-panel field should just fill

@@ -90,6 +90,7 @@ catalog.
      the markers, and never append notes under an already-stamped heading. -->
 
 - **EditableCell `--uxm-editable-cell-hover-border`** — a hover border colour (transparent by default). Set it, with `--uxm-editable-cell-hover-bg: transparent`, to outline a cell on hover instead of tinting it; a focused, editing or open cell keeps its own border.
+- **EditableCell `medium` matches the input box** — its padding now defaults to TextInput's (12px × 10px, following `--uxm-input-text-padding-*`), so a medium cell displays, hovers and edits at the size of the input it becomes. Medium cells are 8px taller than before.
 
 ## Workflow
 

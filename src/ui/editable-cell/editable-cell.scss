@@ -637,8 +637,11 @@
 }
 .uxm-editable-cell.uxm-editable-cell--medium {
   --_uxm-editable-cell-max-width: var(--uxm-editable-cell-medium-max-width, none);
-  --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-medium-padding-x, 12px);
-  --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-medium-padding-y, 6px);
+  /* The input family's box (TextInput's padding, and its knobs when themed),
+     so a medium cell shows, hovers and edits at the size of the input it
+     turns into. */
+  --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-medium-padding-x, var(--uxm-input-text-padding-x, 12px));
+  --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-medium-padding-y, var(--uxm-input-text-padding-y, 10px));
   font-size: calc(var(--uxm-editable-cell-medium-font-size, 14px) * var(--type-scale, 1));
 }
 
