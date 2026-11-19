@@ -92,6 +92,8 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **TableCard `--uxm-table-card-divider-inset`** — `lines` dividers (and row hover) stop short of the card's edges by this much (0 by default); the cells take the rest of the padding, so the text stays put.
+
 ## Workflow
 
 ### Where the documentation lives

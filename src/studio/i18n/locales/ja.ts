@@ -538,6 +538,7 @@ export const messages: StudioMessages = {
     'Divider': '区切り線',
     'Divider Color': '区切り線のカラー',
     'Divider Height': '区切り線の高さ',
+    'Divider Inset': '区切り線のインセット',
     'Divider Width': '区切り線の太さ',
     'Dock to Bottom': '下にドッキング',
     'Dock to Right': '右にドッキング',

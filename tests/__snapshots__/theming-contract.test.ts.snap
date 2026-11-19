@@ -1600,6 +1600,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-table-card-description-color",
   "--uxm-table-card-description-font-size",
   "--uxm-table-card-divider-color",
+  "--uxm-table-card-divider-inset",
   "--uxm-table-card-empty-padding-y",
   "--uxm-table-card-header-gap",
   "--uxm-table-card-header-row-bg",

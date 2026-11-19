@@ -550,6 +550,7 @@ export const messages: StudioMessages = {
     'Divider': 'Séparateur',
     'Divider Color': 'Couleur du séparateur',
     'Divider Height': 'Hauteur du séparateur',
+    'Divider Inset': 'Retrait des séparateurs',
     'Divider Width': 'Épaisseur du séparateur',
     'Dock to Bottom': 'Ancrer en bas',
     'Dock to Right': 'Ancrer à droite',

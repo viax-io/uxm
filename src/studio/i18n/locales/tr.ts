@@ -544,6 +544,7 @@ export const messages: StudioMessages = {
     'Divider': 'Ayırıcı',
     'Divider Color': 'Ayırıcı rengi',
     'Divider Height': 'Ayırıcı yüksekliği',
+    'Divider Inset': 'Ayırıcı girintisi',
     'Divider Width': 'Ayırıcı kalınlığı',
     'Dock to Bottom': 'Alta sabitle',
     'Dock to Right': 'Sağa sabitle',

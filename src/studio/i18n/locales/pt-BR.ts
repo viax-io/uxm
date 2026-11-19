@@ -550,6 +550,7 @@ export const messages: StudioMessages = {
     'Divider': 'Divisor',
     'Divider Color': 'Cor do divisor',
     'Divider Height': 'Altura do divisor',
+    'Divider Inset': 'Recuo dos divisores',
     'Divider Width': 'Espessura do divisor',
     'Dock to Bottom': 'Encaixar embaixo',
     'Dock to Right': 'Encaixar à direita',

@@ -78,6 +78,14 @@
      row: they read as one header. */
   &--lines &__body {
     --uxm-data-table-border-color: var(--uxm-table-card-divider-color, var(--color-border));
+    /* Divider inset (0 by default): the dividers stop short of the card's
+       edges by it, and the cells take the rest of the padding, so the text
+       stays on the header's line. */
+    --_uxm-table-card-divider-inset: var(--uxm-table-card-divider-inset, 0px);
+    --uxm-data-table-cell-padding-x: calc(
+      var(--uxm-table-card-padding-x, 20px) - var(--_uxm-table-card-divider-inset)
+    );
+    padding-inline: var(--_uxm-table-card-divider-inset);
   }
 
   /* striped: no dividers, alternate rows tinted. The body is inset by the
