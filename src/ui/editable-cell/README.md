@@ -219,8 +219,8 @@ In the studio both sizes expose the same control for the same property (Font Siz
 | `--uxm-editable-cell-small-padding-y` | `4px` | `small` block padding. |
 | `--uxm-editable-cell-small-font-size` | `1em` (inherit) | `small` font — inherits the surrounding text until pinned. |
 | `--uxm-editable-cell-medium-max-width` | `none` | `medium` width cap — `none` by default, so the cell fills its container like any input-family field. Pin a px value to cap it. |
-| `--uxm-editable-cell-medium-padding-x` | `12px` | `medium` inline padding. |
-| `--uxm-editable-cell-medium-padding-y` | `6px` | `medium` block padding. |
+| `--uxm-editable-cell-medium-padding-x` | `12px` (TextInput's `--uxm-input-text-padding-x`) | `medium` inline padding. |
+| `--uxm-editable-cell-medium-padding-y` | `10px` (TextInput's `--uxm-input-text-padding-y`) | `medium` block padding: the input's, so the cell is the size of the input it edits in. |
 | `--uxm-editable-cell-medium-font-size` | `14px` | `medium` font (pinned — standalone contexts have no table scale to inherit). |
 
 > The pre-4.2 un-namespaced `--uxm-editable-cell-{min-height,padding-x,padding-y}` vars are gone; there is no min-height at all — height derives from font + padding.
@@ -232,6 +232,7 @@ In the studio both sizes expose the same control for the same property (Font Siz
 | `--uxm-editable-cell-radius` | – | `4px` | Display cell + editing input radius. |
 | `--uxm-editable-cell-color` | `--color-text` | – | The value's text colour. Pinned, not inherited: primary text is `--color-text` system-wide, so inheriting only let a muted column / dimmed row bleed in. |
 | `--uxm-editable-cell-hover-bg` | `--color-surface-alt` | – | Display hover tint. |
+| `--uxm-editable-cell-hover-border` | – | `transparent` | Display hover border colour. Set it (and `--uxm-editable-cell-hover-bg: transparent`) for an outline instead of a tint. |
 | `--uxm-editable-cell-pencil-color` | `--color-text-muted` | – | Hover pencil / calendar glyph. |
 | `--uxm-editable-cell-chevron-color` | `--color-text-muted` | – | Picker hover chevron. |
 | `--uxm-editable-cell-focus-border` | `--color-accent` | – | Keyboard-focus border (display). |

@@ -99,6 +99,23 @@
   outline: 2px solid var(--uxm-editable-cell-focus-ring, var(--color-accent));
   outline-offset: 2px;
 }
+/* Hover border: unset, it stays transparent and the tint above is the
+   affordance; set `--uxm-editable-cell-hover-border` (with the tint
+   transparent) to outline the cell on hover instead. A focused cell keeps its
+   focus border. */
+.uxm-editable-cell:hover:not(:disabled):not(:focus-visible):not(.uxm-editable-cell--state-focus):not(.uxm-editable-cell--editing):not(.uxm-editable-cell--open),
+.uxm-editable-cell--state-hover:not(:disabled):not(.uxm-editable-cell--state-focus):not(.uxm-editable-cell--editing):not(.uxm-editable-cell--open) {
+  border-color: var(--uxm-editable-cell-hover-border, transparent);
+}
+/* The pickers and textarea keep their box (border, padding) on an inner
+   trigger, the wrapper drawing none: the hover border goes there. */
+.uxm-editable-cell:not(.uxm-editable-cell--disabled):not(.uxm-editable-cell--open):hover .uxm-editable-cell__select-trigger:not(:focus-visible),
+.uxm-editable-cell--state-hover:not(.uxm-editable-cell--open) .uxm-editable-cell__select-trigger,
+.uxm-editable-cell:not(.uxm-editable-cell--disabled):not(.uxm-editable-cell--editing):hover .uxm-editable-cell__textarea-trigger:not(:focus-visible),
+.uxm-editable-cell--state-hover:not(.uxm-editable-cell--editing) .uxm-editable-cell__textarea-trigger {
+  border-color: var(--uxm-editable-cell-hover-border, transparent);
+}
+
 /* Forced hover — mirrors `:hover` above for the canvas. Editor preview only. */
 .uxm-editable-cell--state-hover:not(:disabled) {
   background-color: var(--uxm-editable-cell-hover-bg, var(--color-surface-alt));
@@ -628,8 +645,11 @@
 }
 .uxm-editable-cell.uxm-editable-cell--medium {
   --_uxm-editable-cell-max-width: var(--uxm-editable-cell-medium-max-width, none);
-  --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-medium-padding-x, 12px);
-  --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-medium-padding-y, 6px);
+  /* The input family's box (TextInput's padding, and its knobs when themed),
+     so a medium cell shows, hovers and edits at the size of the input it
+     turns into. */
+  --_uxm-editable-cell-padding-x: var(--uxm-editable-cell-medium-padding-x, var(--uxm-input-text-padding-x, 12px));
+  --_uxm-editable-cell-padding-y: var(--uxm-editable-cell-medium-padding-y, var(--uxm-input-text-padding-y, 10px));
   font-size: calc(var(--uxm-editable-cell-medium-font-size, 14px) * var(--type-scale, 1));
 }
 
