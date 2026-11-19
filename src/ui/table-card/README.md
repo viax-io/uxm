@@ -55,6 +55,7 @@ Each reads a global token as its fallback. The table inside still reads its own 
 | `--uxm-table-card-border-color` | `--color-border` | – | The card's one border. |
 | `--uxm-table-card-radius` | – | `4px` | Card corners; rows are clipped to them. Matches `Card`. |
 | `--uxm-table-card-divider-color` | `--color-border` | – | `lines`: the line under the header and between rows. |
+| `--uxm-table-card-divider-inset` | – | `0px` | `lines`: how far the dividers (and row hover) stop short of the card's edges; the cells take the rest of `--uxm-table-card-padding-x`, so the text doesn't move. |
 | `--uxm-table-card-stripe-bg` | `--color-surface` | – | `striped`: the tint of every second row. |
 | `--uxm-table-card-stripe-inset` | – | `10px` | `striped`: how far the tint stops short of the card's edge. |
 | `--uxm-table-card-padding-x` | – | `20px` | Header side padding, and the first/last cell's, so the text lines up. |

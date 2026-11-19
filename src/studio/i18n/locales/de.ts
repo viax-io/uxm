@@ -544,6 +544,7 @@ export const messages: StudioMessages = {
     'Divider': 'Trennlinie',
     'Divider Color': 'Trennlinienfarbe',
     'Divider Height': 'Trennlinienhöhe',
+    'Divider Inset': 'Einzug der Trennlinien',
     'Divider Width': 'Trennlinienbreite',
     'Dock to Bottom': 'Unten andocken',
     'Dock to Right': 'Rechts andocken',

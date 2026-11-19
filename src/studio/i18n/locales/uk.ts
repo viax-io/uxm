@@ -556,6 +556,7 @@ export const messages: StudioMessages = {
     'Divider': 'Роздільник',
     'Divider Color': 'Колір роздільника',
     'Divider Height': 'Висота роздільника',
+    'Divider Inset': 'Відступ роздільників',
     'Divider Width': 'Товщина роздільника',
     'Dock to Bottom': 'Закріпити знизу',
     'Dock to Right': 'Закріпити справа',

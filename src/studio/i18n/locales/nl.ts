@@ -544,6 +544,7 @@ export const messages: StudioMessages = {
     'Divider': 'Scheidingslijn',
     'Divider Color': 'Kleur van de scheidingslijn',
     'Divider Height': 'Hoogte van de scheidingslijn',
+    'Divider Inset': 'Inspringing van de scheidingslijnen',
     'Divider Width': 'Breedte van de scheidingslijn',
     'Dock to Bottom': 'Onderaan vastzetten',
     'Dock to Right': 'Rechts vastzetten',

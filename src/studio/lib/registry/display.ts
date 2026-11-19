@@ -338,6 +338,7 @@ export const displayDefs: ComponentDef[] = [
       { key: 'paddingX', label: 'Padding X', control: 'number', defaultValue: 20, min: 8, max: 40, step: 2, unit: 'px' },
       { key: 'paddingY', label: 'Header Padding Y', control: 'number', defaultValue: 16, min: 8, max: 32, step: 2, unit: 'px' },
       { key: 'stripeInset', label: 'Stripe Inset', control: 'number', defaultValue: 10, min: 0, max: 20, step: 2, unit: 'px', showWhen: { variant: 'striped' } },
+      { key: 'dividerInset', label: 'Divider Inset', control: 'number', defaultValue: 0, min: 0, max: 24, step: 2, unit: 'px', showWhen: { variant: 'lines' } },
       { key: 'shadowColor', label: 'Color', control: 'color', defaultValue: 'var(--shadow-card-color)', section: 'shadow' },
       { key: 'shadowBlur', label: 'Blur', control: 'slider', defaultValue: 20, min: 0, max: 48, step: 1, unit: 'px', section: 'shadow' },
       { key: 'shadowOffsetY', label: 'Offset Y', control: 'slider', defaultValue: 6, min: 0, max: 24, step: 1, unit: 'px', section: 'shadow' },
