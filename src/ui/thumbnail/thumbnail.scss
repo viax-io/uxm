@@ -2,8 +2,21 @@
 
 /* Thumbnail — bounded image frame. Root IS the visible frame: bg / border /
    radius / size land directly. `--uxm-thumbnail-size` drives both width and
-   height (square frame). Image fills via object-fit; placeholder centers a
-   fallback icon when no src is provided. */
+   height (a square), unless `--uxm-thumbnail-width` / `-height` say otherwise
+   or the `--ratio` modifier (the `aspectRatio` prop) lets the height follow
+   the width. Image fills via object-fit; placeholder centers a fallback icon
+   when there is no image or it failed.
+
+   The root is a SIZE container, so the placeholder glyph can be sized from
+   the frame itself (cq units) rather than from the size knob, which can be a
+   percentage. Size containment gives the frame no intrinsic size, so its
+   width and height must resolve on their own: lengths by default, and with
+   `--ratio` the height comes from the width. A width of `auto`, or a
+   percentage inside a parent that shrinks to fit its content (inline-block,
+   an auto-width flex or grid item, an absolutely positioned box), resolves
+   to zero. The glyph's border correction needs a border width with a unit
+   (`0px`, not `0`). cq units: Chrome 105, Safari 16, Firefox 110; older
+   browsers get 45% of the size knob, as before. */
 
 .uxm-thumbnail {
   align-items: center;
@@ -11,15 +24,20 @@
   border: var(--uxm-thumbnail-border-width, 2px) solid var(--uxm-thumbnail-border-color, var(--color-border));
   border-radius: var(--uxm-thumbnail-border-radius, 12px);
   box-sizing: border-box;
+  container-type: size;
   display: inline-flex;
   flex-shrink: 0;
-  height: var(--uxm-thumbnail-size, 48px);
+  height: var(--uxm-thumbnail-height, var(--uxm-thumbnail-size, 48px));
   justify-content: center;
   overflow: hidden;
-  width: var(--uxm-thumbnail-size, 48px);
+  width: var(--uxm-thumbnail-width, var(--uxm-thumbnail-size, 48px));
 
-  /* CSS sizing wins over the SVG width/height attrs the Icon component sets,
-     so the placeholder glyph scales with the thumbnail's `--uxm-thumbnail-size`. */
+  /* `aspect-ratio` is ignored while the height is definite, so the modifier
+     hands the height back to the ratio. */
+  &--ratio {
+    aspect-ratio: var(--uxm-thumbnail-aspect-ratio);
+    height: auto;
+  }
 
   &__image {
     display: block;
@@ -41,9 +59,27 @@
     display: inline-flex;
     justify-content: center;
 
+    /* 45% of the size knob: the rule every browser gets, and the whole
+       story for a fixed frame. CSS sizing wins over the SVG width/height
+       attrs the Icon component sets; a `fallback` that is a bare svg is sized
+       the same way. */
     & > svg {
-      height: calc(var(--uxm-thumbnail-size, 48px) * 0.45);
-      width: calc(var(--uxm-thumbnail-size, 48px) * 0.45);
+      height: var(--uxm-thumbnail-placeholder-size, calc(var(--uxm-thumbnail-size, 48px) * 0.45));
+      width: var(--uxm-thumbnail-placeholder-size, calc(var(--uxm-thumbnail-size, 48px) * 0.45));
+    }
+
+    /* Where container units exist, 45% of the frame's shorter side, border
+       included: `100cqmin` is the content box, so the border is added back,
+       which keeps a fixed square frame at exactly the rule above. In a fluid
+       frame (a size of `100%`, a ratio) the glyph follows what is on screen.
+       Behind @supports because a var() declaration always parses: without cq
+       units it would be invalid at computed-value time and leave the icon
+       unsized rather than fall back to the rule above. */
+    @supports (width: 1cqmin) {
+      & > svg {
+        height: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--uxm-thumbnail-border-width, 2px)) * 0.45));
+        width: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--uxm-thumbnail-border-width, 2px)) * 0.45));
+      }
     }
   }
 }
