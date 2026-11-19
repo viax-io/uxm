@@ -54,7 +54,7 @@ The `ThumbnailFit` (`'cover' \| 'contain'`) and `ThumbnailStatus` (`'loading' \|
 | `--uxm-thumbnail-width` | – | the size | Frame width. `100%` fills the parent when the parent's width is definite. The frame is a size container with no intrinsic size, so `auto`, or a percentage inside a parent that shrinks to fit its content (inline-block, an auto-width flex or grid item, an absolutely positioned box), collapses it to zero. |
 | `--uxm-thumbnail-height` | – | the size | Frame height. Ignored with `aspectRatio`, where the height follows the width. |
 | `--uxm-thumbnail-aspect-ratio` | – | unset | Set by the `aspectRatio` prop; read only with the `uxm-thumbnail--ratio` modifier. |
-| `--uxm-thumbnail-placeholder-size` | – | 45% of the frame's shorter side | Placeholder glyph size (the built-in icon, or a bare `svg` `fallback`; a wrapped fallback keeps its own size). Set a length to fix it, e.g. `40px`. The default uses container query units (Chrome 105, Safari 16, Firefox 110); older browsers leave the icon at its own size. |
+| `--uxm-thumbnail-placeholder-size` | – | 45% of the frame's shorter side | Placeholder glyph size (the built-in icon, or a bare `svg` `fallback`; a wrapped fallback keeps its own size). Set a length to fix it, e.g. `40px`. The default uses container query units (Chrome 105, Safari 16, Firefox 110); older browsers get 45% of `--uxm-thumbnail-size`, as before. |
 | `--uxm-thumbnail-background-color` | `--color-card` | – | Frame background (visible when image is loading or contained). |
 | `--uxm-thumbnail-border-color` | `--color-border` | – | Frame border colour. |
 | `--uxm-thumbnail-border-width` | – | `2px` | Frame border width. Give it a unit (`0px`, not `0`): the placeholder glyph's size calculation reads it. |

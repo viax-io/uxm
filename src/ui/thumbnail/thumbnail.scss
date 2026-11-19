@@ -16,7 +16,7 @@
    an auto-width flex or grid item, an absolutely positioned box), resolves
    to zero. The glyph's border correction needs a border width with a unit
    (`0px`, not `0`). cq units: Chrome 105, Safari 16, Firefox 110; older
-   browsers drop the glyph rule and the icon keeps its own size. */
+   browsers get 45% of the size knob, as before. */
 
 .uxm-thumbnail {
   align-items: center;
@@ -59,15 +59,27 @@
     display: inline-flex;
     justify-content: center;
 
-    /* 45% of the frame's shorter side, border included: `100cqmin` is the
-       content box, so the border is added back, which keeps a fixed square
-       frame at exactly its old 45% of `--uxm-thumbnail-size`. In a fluid frame
-       (a size of `100%`, a ratio) the glyph follows what is on screen. CSS
-       sizing wins over the SVG width/height attrs the Icon component sets; a
-       `fallback` that is a bare svg is sized the same way. */
+    /* 45% of the size knob: the rule every browser gets, and the whole
+       story for a fixed frame. CSS sizing wins over the SVG width/height
+       attrs the Icon component sets; a `fallback` that is a bare svg is sized
+       the same way. */
     & > svg {
-      height: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--uxm-thumbnail-border-width, 2px)) * 0.45));
-      width: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--uxm-thumbnail-border-width, 2px)) * 0.45));
+      height: var(--uxm-thumbnail-placeholder-size, calc(var(--uxm-thumbnail-size, 48px) * 0.45));
+      width: var(--uxm-thumbnail-placeholder-size, calc(var(--uxm-thumbnail-size, 48px) * 0.45));
+    }
+
+    /* Where container units exist, 45% of the frame's shorter side, border
+       included: `100cqmin` is the content box, so the border is added back,
+       which keeps a fixed square frame at exactly the rule above. In a fluid
+       frame (a size of `100%`, a ratio) the glyph follows what is on screen.
+       Behind @supports because a var() declaration always parses: without cq
+       units it would be invalid at computed-value time and leave the icon
+       unsized rather than fall back to the rule above. */
+    @supports (width: 1cqmin) {
+      & > svg {
+        height: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--uxm-thumbnail-border-width, 2px)) * 0.45));
+        width: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--uxm-thumbnail-border-width, 2px)) * 0.45));
+      }
     }
   }
 }

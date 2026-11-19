@@ -107,6 +107,33 @@ describe('Thumbnail', () => {
     expect(onStatusChange.mock.calls).toEqual([['error']]);
   });
 
+  it('starts a new address on a fresh <img>, so the old image’s state is never trusted', () => {
+    const onStatusChange = vi.fn();
+    const { rerender } = render(<Thumbnail src="/a.jpg" alt="Chair" onStatusChange={onStatusChange} />);
+    const first = screen.getByRole('img', { name: 'Chair' });
+    fireEvent.load(first);
+    rerender(<Thumbnail src="/b.jpg" alt="Chair" onStatusChange={onStatusChange} />);
+    const second = screen.getByRole('img', { name: 'Chair' });
+    expect(second).not.toBe(first);
+    // A late load from the old element no longer counts for the new address.
+    fireEvent.load(first);
+    expect(onStatusChange.mock.calls).toEqual([['loading'], ['loaded'], ['loading']]);
+  });
+
+  it('says nothing when unmounted while the browser is still deciding', async () => {
+    vi.spyOn(HTMLImageElement.prototype, 'complete', 'get').mockReturnValue(true);
+    let settle: (() => void) | undefined;
+    proto.decode = () => new Promise<void>((_, reject) => {
+      settle = () => reject(new Error('EncodingError'));
+    });
+    const onStatusChange = vi.fn();
+    const { unmount } = render(<Thumbnail src="/dead.jpg" alt="Chair" onStatusChange={onStatusChange} />);
+    unmount();
+    settle?.();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(onStatusChange).not.toHaveBeenCalled();
+  });
+
   it('reports nothing without a src', () => {
     const onStatusChange = vi.fn();
     const { container } = render(<Thumbnail onStatusChange={onStatusChange} />);
@@ -122,9 +149,12 @@ describe('Thumbnail', () => {
     expect(root.style.color).toBe('red');
     const square = render(<Thumbnail />).container.firstElementChild as HTMLElement;
     expect(square).not.toHaveClass('uxm-thumbnail--ratio');
-    // An empty ratio is no ratio, not a frame with no height.
-    const empty = render(<Thumbnail aspectRatio=" " />).container.firstElementChild as HTMLElement;
-    expect(empty).not.toHaveClass('uxm-thumbnail--ratio');
+    // An empty, zero or non-finite ratio is no ratio, not a frame with no height.
+    for (const bad of [' ', 0, -1, Number.NaN, Number.POSITIVE_INFINITY]) {
+      const root = render(<Thumbnail aspectRatio={bad} />).container.firstElementChild as HTMLElement;
+      expect(root).not.toHaveClass('uxm-thumbnail--ratio');
+    }
+    expect(render(<Thumbnail aspectRatio={1.5} />).container.firstElementChild).toHaveClass('uxm-thumbnail--ratio');
   });
 
   it('has no axe violations', async () => {

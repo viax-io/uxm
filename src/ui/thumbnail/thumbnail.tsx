@@ -119,6 +119,8 @@ export function Thumbnail({
         () => current && fail(src),
       );
     } else {
+      // No decode() (no current engine): a zero width is taken as broken, at
+      // the cost of a false failure for an SVG with no dimensions.
       fail(src);
     }
     return () => {
@@ -126,9 +128,15 @@ export function Thumbnail({
     };
   }, [src, report, fail]);
 
-  // An empty ratio would set an invalid aspect-ratio with the height already
-  // handed to it: a frame with no height. Treat it as no ratio.
-  const ratio = aspectRatio != null && String(aspectRatio).trim() !== '' ? String(aspectRatio) : undefined;
+  // An empty, zero or non-finite ratio would set an invalid aspect-ratio with
+  // the height already handed to it: a frame with no height. Treat it as no
+  // ratio.
+  const ratio =
+    typeof aspectRatio === 'number'
+      ? Number.isFinite(aspectRatio) && aspectRatio > 0
+        ? String(aspectRatio)
+        : undefined
+      : aspectRatio?.trim() || undefined;
   const rootStyle: CSSProperties | undefined = ratio
     ? ({ ['--uxm-thumbnail-aspect-ratio' as string]: ratio, ...style } as CSSProperties)
     : style;
@@ -146,6 +154,10 @@ export function Thumbnail({
     >
       {showImage ? (
         <img
+          // One element per address: a reused <img> keeps describing the old
+          // image (complete, naturalWidth) until the browser starts the new
+          // request, and a late load from it would count for the new src.
+          key={src}
           ref={imgRef}
           className="uxm-thumbnail__image"
           src={src}
