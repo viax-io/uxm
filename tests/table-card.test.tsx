@@ -36,6 +36,15 @@ describe('TableCard', () => {
     expect(container.firstElementChild).toHaveClass('uxm-table-card--striped', 'uxm-table-card--has-header');
   });
 
+  it('lays an icon and a count on the title line, and shows the header for either alone', () => {
+    render(<TableCard columns={columns} rows={rows} rowKey={rowKey} icon={<svg data-testid="ic" />} title="Deals" count={3} />);
+    const titleRow = screen.getByText('Deals').parentElement!;
+    expect(titleRow).toHaveClass('uxm-table-card__titlerow');
+    expect(screen.getByTestId('ic').parentElement).toHaveClass('uxm-table-card__icon');
+    expect(screen.getByTestId('ic').parentElement).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.getByText('3')).toHaveClass('uxm-table-card__count');
+  });
+
   it('puts native attributes, className and style on the card, and the table props on the table', () => {
     const { container } = render(
       <TableCard

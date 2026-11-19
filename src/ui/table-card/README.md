@@ -33,6 +33,8 @@ const columns: DataTableColumn<Deal>[] = [
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `title` | `ReactNode` | – | Card heading. Pass an element (`<h3>`) when the page outline needs a real heading level; the default is a `div`. |
+| `icon` | `ReactNode` | – | Before the title, muted (`--uxm-table-card-icon-color`): an `Icon` or a small mark. |
+| `count` | `ReactNode` | – | After the title on the same line, muted: the number of rows, say. |
 | `description` | `ReactNode` | – | Muted line under the title. |
 | `actions` | `ReactNode` | – | Right side of the header. |
 | `variant` | `'lines' \| 'striped'` | `'lines'` | See [Variants](#states--variants). |
@@ -41,7 +43,7 @@ const columns: DataTableColumn<Deal>[] = [
 | `shadow` | `boolean` | `false` | Lift the card (`--uxm-table-card-shadow-*`). |
 | …`DataTableProps` | | | `columns`, `rows`, `rowKey`, `density`, `stackAt`, `sort`, `onSortChange`, `rowActions`, `onRowClick`, `rowProps`, `scrollable`, … |
 
-No header row is rendered when none of `title`, `description` and `actions` is given.
+No header row is rendered when none of `title`, `icon`, `count`, `description` and `actions` is given.
 
 ## CSS variables
 
@@ -57,6 +59,8 @@ Each reads a global token as its fallback. The table inside still reads its own 
 | `--uxm-table-card-stripe-inset` | – | `10px` | `striped`: how far the tint stops short of the card's edge. |
 | `--uxm-table-card-padding-x` | – | `20px` | Header side padding, and the first/last cell's, so the text lines up. |
 | `--uxm-table-card-padding-y` | – | `16px` | Header top and bottom padding. |
+| `--uxm-table-card-title-gap` | – | `8px` | Gap between the icon, the title and the count. |
+| `--uxm-table-card-icon-color` | `--color-text-muted` | – | The icon's colour. |
 | `--uxm-table-card-header-gap` | – | `12px` | Gap between the heading and the actions. |
 | `--uxm-table-card-header-row-bg` | – | `transparent` | The column-header row's background: the card's own surface by default. Set a surface token for a tinted strip. |
 | `--uxm-table-card-actions-gap` | – | `8px` | Gap between actions. |
