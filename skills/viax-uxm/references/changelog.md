@@ -2855,3 +2855,10 @@ reached the published library; now shipped in 2.8.0.
 - **`Stepper` and `MediaObject` accept `ref` in TypeScript** — their props extended
   `HTMLAttributes`, which doesn't declare `ref`, so `<Stepper ref={r}>` failed typecheck though it
   worked at runtime. Both now extend `ComponentPropsWithRef`, as the buttons do.
+
+### New in 4.115.11
+
+- **`AppTopBar` `collapseAt` no longer grows the first row at the breakpoint** — collapsed, the
+  first row held the bar's full `--uxm-app-top-bar-height` as content, so with vertical padding
+  and the bottom border the bar jumped by `2 × padding-y + border`. The README now says plainly
+  that collapsed, Tab reaches the search row before the actions above it.

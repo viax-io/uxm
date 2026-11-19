@@ -1,3 +1,18 @@
+# [4.117.0](https://github.com/viax-io/uxm/compare/v4.116.0...v4.117.0) (2026-11-19)
+
+
+### Bug Fixes
+
+* **editable-cell:** medium is the input's box, 12px × 10px ([c86b99f](https://github.com/viax-io/uxm/commit/c86b99f0270694a599f9e8ddf032d588e2463d53))
+* **editable-cell:** the hover border reaches picker and textarea cells ([024feb1](https://github.com/viax-io/uxm/commit/024feb1f7004f26690047cb605be0b54f6276649))
+* **table-card:** column-header row on the card's surface, no line above it ([2631ded](https://github.com/viax-io/uxm/commit/2631ded558b14f593da355dc06b0a9d4dcabfd85))
+
+
+### Features
+
+* **editable-cell:** a hover border knob, for an outline instead of a tint ([0daccf4](https://github.com/viax-io/uxm/commit/0daccf452a08550df39409857f2892b449e3238a))
+* **table-card:** a new atom, a table as a card's body ([60049ec](https://github.com/viax-io/uxm/commit/60049ecf47a795cafe53b9c3e71783a484e62f40))
+
 # [4.116.0](https://github.com/viax-io/uxm/compare/v4.115.14...v4.116.0) (2026-11-19)
 
 

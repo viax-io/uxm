@@ -2,7 +2,7 @@
 name: viax-uxm
 description: >
   Build React 19 apps and components using @viax.io/uxm — the Viax UI primitive library
-  (102 BEM-classed React components as of v4.116.0, design tokens, per-component/per-state themable
+  (103 BEM-classed React components as of v4.117.0, design tokens, per-component/per-state themable
   previews, and an embeddable studio style editor). TRIGGER
   when: user asks to create, scaffold, or modify a React app/page/component AND mentions
   @viax.io/uxm or the Viax design system; the working directory contains @viax.io/uxm in package.json
@@ -18,7 +18,7 @@ keywords: viax, uxm, viax-uxm, react, react-19, nextjs, design-tokens, design-sy
 
 # @viax.io/uxm — React 19 Component Library
 
-> Documents `@viax.io/uxm` **v4.116.0** (102 components). The version/count markers are stamped by
+> Documents `@viax.io/uxm` **v4.117.0** (103 components). The version/count markers are stamped by
 > the library's release pipeline; a stale marker means the skill copy is behind the published package.
 >
 > ⚠️ **A consumer may install behind the published latest** — check the project's `@viax.io/uxm` pin
@@ -31,7 +31,7 @@ This skill turns Claude into a competent consumer of `@viax.io/uxm`. It does not
 apps — for that, use `viax-mfa-component` instead. It assumes the target framework is React 19
 (Next.js App Router or Vite SPA) and that `@viax.io/uxm` is or will be a dependency of the project.
 
-## v4.116.0 — current API surface (overrides training data)
+## v4.117.0 — current API surface (overrides training data)
 
 The library ships on a fast release train; if your knowledge of it or old code conflicts
 with this list, THIS list wins. The sections below cover the **five most recent releases** plus
@@ -40,13 +40,6 @@ breaking changes in 3.0.0 (`Select` clear button) and 4.0.0 — lives in
 `references/changelog.md`, in the same format; read it whenever a consumer is pinned below the
 oldest version listed here (check its `package.json`) or a name in old code is not in the
 catalog.
-
-### New in 4.115.11
-
-- **`AppTopBar` `collapseAt` no longer grows the first row at the breakpoint** — collapsed, the
-  first row held the bar's full `--uxm-app-top-bar-height` as content, so with vertical padding
-  and the bottom border the bar jumped by `2 × padding-y + border`. The README now says plainly
-  that collapsed, Tab reaches the search row before the actions above it.
 
 ### New in 4.115.12
 
@@ -81,13 +74,7 @@ catalog.
   - The root is now a size container: a `--uxm-thumbnail-width` of `100%` needs a parent with a
     definite width (inside a shrink-to-fit parent it collapses to zero).
 
-### Unreleased
-
-<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
-     PR as the change. At release the pipeline renames this heading to
-     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
-     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
-     the markers, and never append notes under an already-stamped heading. -->
+### New in 4.117.0
 
 - **EditableCell `--uxm-editable-cell-hover-border`** — a hover border colour (transparent by default). Set it, with `--uxm-editable-cell-hover-bg: transparent`, to outline a cell on hover instead of tinting it; a focused, editing or open cell keeps its own border.
 - **EditableCell `medium` matches the input box** — its padding now defaults to TextInput's (12px × 10px, following `--uxm-input-text-padding-*`), so a medium cell displays, hovers and edits at the size of the input it becomes. Medium cells are 8px taller than before.
@@ -98,6 +85,14 @@ catalog.
   - Use it instead of a `DataTable` inside a `Card`, which draws two frames and needs negative
     margins; theme with `--uxm-table-card-*`.
   - `DataTable` gains `framed` (default `true`); `framed={false}` drops its own border and radius.
+
+### Unreleased
+
+<!-- Notes for changes merged but not yet published. Add a bullet here in the SAME
+     PR as the change. At release the pipeline renames this heading to
+     "New in X.Y.Z", stamps the version/count markers, and re-opens a fresh
+     "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
+     the markers, and never append notes under an already-stamped heading. -->
 
 ## Workflow
 
