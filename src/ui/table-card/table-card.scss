@@ -48,6 +48,9 @@
   /* The first and last cell of a row line up with the header text. */
   &__body {
     --uxm-data-table-cell-padding-x: var(--uxm-table-card-padding-x, 20px);
+    /* The column-header row sits on the card's own surface, not a tinted
+       strip: the card header already frames the table. */
+    --uxm-data-table-header-bg: var(--uxm-table-card-header-row-bg, transparent);
   }
   &__empty {
     padding: var(--uxm-table-card-empty-padding-y, 32px) var(--uxm-table-card-padding-x, 20px);
@@ -55,14 +58,11 @@
     color: var(--uxm-table-card-description-color, var(--color-text-muted));
   }
 
-  /* lines: one divider colour for the line under the header, the line under the
-     column-header row and the lines between rows. The line under the card
-     header is the body's top edge, so it is never doubled. */
+  /* lines: one divider colour for the line under the column-header row and the
+     lines between rows. No line between the card header and the column-header
+     row: they read as one header. */
   &--lines &__body {
     --uxm-data-table-border-color: var(--uxm-table-card-divider-color, var(--color-border));
-  }
-  &--lines#{&}--has-header &__body {
-    border-top: 1px solid var(--uxm-table-card-divider-color, var(--color-border));
   }
 
   /* striped: no dividers, alternate rows tinted. The body is inset by the
@@ -73,7 +73,6 @@
     --uxm-data-table-cell-padding-x: calc(
       var(--uxm-table-card-padding-x, 20px) - var(--_uxm-table-card-inset)
     );
-    --uxm-data-table-header-bg: transparent;
     padding: 0 var(--_uxm-table-card-inset) var(--_uxm-table-card-inset);
   }
   &--striped &__body .uxm-data-table__th,

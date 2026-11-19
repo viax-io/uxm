@@ -93,7 +93,8 @@ describe('DataTable framed', () => {
 describe('table-card stylesheet', () => {
   it('compiles the nested selectors the variants depend on', () => {
     const css = compiledCss('src/ui/table-card/table-card.scss');
-    expect(css).toContain('.uxm-table-card--lines.uxm-table-card--has-header .uxm-table-card__body');
+    expect(css).toContain('.uxm-table-card--lines .uxm-table-card__body');
+    expect(css).toContain('--uxm-data-table-header-bg: var(--uxm-table-card-header-row-bg, transparent)');
     expect(css).toContain('.uxm-table-card--striped .uxm-table-card__body .uxm-data-table__row:nth-child(even)');
   });
 });

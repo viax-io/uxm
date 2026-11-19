@@ -58,6 +58,7 @@ Each reads a global token as its fallback. The table inside still reads its own 
 | `--uxm-table-card-padding-x` | – | `20px` | Header side padding, and the first/last cell's, so the text lines up. |
 | `--uxm-table-card-padding-y` | – | `16px` | Header top and bottom padding. |
 | `--uxm-table-card-header-gap` | – | `12px` | Gap between the heading and the actions. |
+| `--uxm-table-card-header-row-bg` | – | `transparent` | The column-header row's background: the card's own surface by default. Set a surface token for a tinted strip. |
 | `--uxm-table-card-actions-gap` | – | `8px` | Gap between actions. |
 | `--uxm-table-card-title-color` | `--color-text` | – | Title colour. |
 | `--uxm-table-card-title-font-size` | – | `15px` | Title size (× `--type-scale`). |
@@ -73,7 +74,7 @@ Each reads a global token as its fallback. The table inside still reads its own 
 
 | Variant | Look |
 |---------|------|
-| `lines` | Rows run edge to edge with a divider between rows. The column-header row sits flush under the card header, with one divider above it (never two) and no outer table border. Cell padding equals the header's side padding. |
+| `lines` | Rows run edge to edge with a divider between rows. The column-header row sits on the card's surface right under the card header, with no line between them, so they read as one header; a divider follows it. No outer table border. Cell padding equals the header's side padding. |
 | `striped` | No dividers; every second row is tinted. The rows are inset by `--uxm-table-card-stripe-inset` and the cells take the rest of the padding, so the text still lines up with the header's. The column-header strip is transparent. |
 
 Hover, focus, active-row and stacked (card-list) states are the table's own. In stacked mode the rows keep DataTable's card dividers in either variant.
