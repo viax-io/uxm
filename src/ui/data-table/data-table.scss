@@ -29,6 +29,14 @@
   border-radius: var(--uxm-data-table-border-radius, 8px);
   overflow: hidden;
 }
+/* `framed={false}`: the table is the body of a surface that has its own frame.
+   The surface's edge is the only one, so the border and the corners go; the
+   cell dividers and the header strip are untouched. `overflow: hidden` above
+   stays, so a scrolled or sticky cell still clips at the table's edge. */
+.uxm-data-table--frameless {
+  border: 0;
+  border-radius: 0;
+}
 .uxm-data-table__table {
   width: 100%;
   border-collapse: collapse;
