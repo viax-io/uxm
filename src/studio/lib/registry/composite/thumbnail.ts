@@ -29,8 +29,21 @@ export const thumbnailDef: ComponentDef = {
       options: [
         { value: 'image', label: 'With Image' },
         { value: 'placeholder', label: 'Placeholder' },
+        { value: 'failed', label: 'Failed Image' },
       ],
       defaultValue: 'image',
+    },
+    // The shape is per instance (the `aspectRatio` prop plus a width), so it
+    // is a variant, never a saved style. Wide shows a card's picture: as wide
+    // as its column, 16:9, with the placeholder glyph following the frame.
+    {
+      key: 'shape',
+      label: 'Shape',
+      options: [
+        { value: 'square', label: 'Square' },
+        { value: 'wide', label: 'Wide' },
+      ],
+      defaultValue: 'square',
     },
   ],
 };

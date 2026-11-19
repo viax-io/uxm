@@ -252,7 +252,7 @@ export type { TabsUnderlineOption, TabsUnderlineProps } from './tabs-underline';
 export { Tag } from './tag';
 export type { TagProps, TagSize, TagType } from './tag';
 export { Thumbnail } from './thumbnail';
-export type { ThumbnailFit, ThumbnailProps } from './thumbnail';
+export type { ThumbnailFit, ThumbnailProps, ThumbnailStatus } from './thumbnail';
 export { TimelineEntry } from './timeline-entry';
 export type { TimelineDotState, TimelineEntryProps } from './timeline-entry';
 export { Toast, Toaster, toast } from './toast';

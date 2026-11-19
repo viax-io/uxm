@@ -32,14 +32,27 @@ const SAMPLE_SRC =
     </svg>`,
   );
 
+// An address that can't load, to show the failed state: the placeholder
+// replaces the browser's broken-image mark.
+const FAILED_SRC = 'https://thumbnail.invalid/missing.jpg';
+
 export function ThumbnailPreview({ styles, variants }: PreviewProps) {
   const fit = ((variants.fit as string) ?? 'cover') as ThumbnailFit;
   const state = (variants.state as string) ?? 'image';
+  const wide = variants.shape === 'wide';
   const thumbStyle = stylesToCssVars(styles);
+  const src = state === 'placeholder' ? undefined : state === 'failed' ? FAILED_SRC : SAMPLE_SRC;
 
-  if (state === 'placeholder') {
-    return <Thumbnail style={thumbStyle} />;
-  }
-
-  return <Thumbnail src={SAMPLE_SRC} alt="Sample" fit={fit} style={thumbStyle} />;
+  const thumbnail = (
+    <Thumbnail
+      src={src}
+      alt={src ? 'Sample' : undefined}
+      fit={fit}
+      aspectRatio={wide ? '16 / 9' : undefined}
+      style={wide ? { ...thumbStyle, ['--uxm-thumbnail-width' as string]: '100%' } : thumbStyle}
+    />
+  );
+  // Wide fills a card-width column, so the canvas's shrink-to-fit box needs a
+  // width to give it.
+  return wide ? <div style={{ width: 320, maxWidth: '100%' }}>{thumbnail}</div> : thumbnail;
 }
