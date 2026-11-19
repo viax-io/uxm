@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { cn } from '@/helpers';
 import { Icon } from '@/ui/icon';
@@ -52,15 +52,25 @@ export function Thumbnail({
   style,
   ...rest
 }: ThumbnailProps) {
+  // The address that failed. Cleared whenever `src` changes (adjusted during
+  // render, React's pattern for state derived from a prop), so every new
+  // address, including one that failed before (A fails, B, then A again),
+  // gets a fresh try.
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const [seenSrc, setSeenSrc] = useState(src);
+  if (seenSrc !== src) {
+    setSeenSrc(src);
+    setFailedSrc(null);
+  }
   const showImage = Boolean(src) && failedSrc !== src;
   const imgRef = useRef<HTMLImageElement>(null);
 
   // The latest callback, read when reporting, so an inline arrow from the
-  // caller never re-runs the image check. Declared before the check's effect,
-  // so it is current when that runs in the same commit.
+  // caller never re-runs the image check. A layout effect declared before the
+  // check's, so it is current for the check and for any onLoad / onError
+  // after this commit.
   const onStatusRef = useRef(onStatusChange);
-  useEffect(() => {
+  useLayoutEffect(() => {
     onStatusRef.current = onStatusChange;
   });
   const lastReport = useRef<{ src: string; status: ThumbnailStatus } | null>(null);
@@ -80,43 +90,55 @@ export function Thumbnail({
     [report],
   );
 
-  useEffect(() => {
+  // A layout effect, so an image the browser failed before hydration is
+  // swapped for the placeholder before the next paint.
+  useLayoutEffect(() => {
+    if (!src) {
+      // Nothing to report; forget the last report so the same address coming
+      // back is reported again.
+      lastReport.current = null;
+      return;
+    }
     const img = imgRef.current;
-    if (!src || !img) return;
+    if (!img) return;
     if (!img.complete) {
       report(src, 'loading');
       return;
     }
-    // Already finished before this effect ran: loaded or broken. `decode()`
-    // tells them apart (it rejects for a broken image); `naturalWidth` alone
-    // would call an SVG without a width or height broken in some browsers.
+    // Already finished before this effect ran. With a width it loaded. With
+    // none it is either broken or an SVG without a width or height (0 in some
+    // browsers), and `decode()` tells them apart: it rejects for a broken one.
+    if (img.naturalWidth > 0) {
+      report(src, 'loaded');
+      return;
+    }
     let current = true;
     if (typeof img.decode === 'function') {
       img.decode().then(
         () => current && report(src, 'loaded'),
         () => current && fail(src),
       );
-    } else if (img.naturalWidth === 0) {
-      fail(src);
     } else {
-      report(src, 'loaded');
+      fail(src);
     }
     return () => {
       current = false;
     };
   }, [src, report, fail]);
 
-  const rootStyle: CSSProperties | undefined =
-    aspectRatio != null
-      ? ({ ['--uxm-thumbnail-aspect-ratio' as string]: String(aspectRatio), ...style } as CSSProperties)
-      : style;
+  // An empty ratio would set an invalid aspect-ratio with the height already
+  // handed to it: a frame with no height. Treat it as no ratio.
+  const ratio = aspectRatio != null && String(aspectRatio).trim() !== '' ? String(aspectRatio) : undefined;
+  const rootStyle: CSSProperties | undefined = ratio
+    ? ({ ['--uxm-thumbnail-aspect-ratio' as string]: ratio, ...style } as CSSProperties)
+    : style;
 
   return (
     <div
       className={cn(
         'uxm-thumbnail',
         `uxm-thumbnail--${fit}`,
-        aspectRatio != null && 'uxm-thumbnail--ratio',
+        ratio && 'uxm-thumbnail--ratio',
         className,
       )}
       style={rootStyle}

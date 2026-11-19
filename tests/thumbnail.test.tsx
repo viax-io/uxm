@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axe from 'axe-core';
+import { StrictMode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Thumbnail } from '@/ui';
@@ -69,6 +70,43 @@ describe('Thumbnail', () => {
     expect(onStatusChange.mock.calls).toEqual([['loading'], ['error'], ['loading']]);
   });
 
+  it('retries an address that failed before when it comes back (A fails, B, A)', () => {
+    const onStatusChange = vi.fn();
+    const { container, rerender } = render(<Thumbnail src="/a.jpg" alt="Chair" onStatusChange={onStatusChange} />);
+    act(() => {
+      fireEvent.error(screen.getByRole('img', { name: 'Chair' }));
+    });
+    rerender(<Thumbnail src="/b.jpg" alt="Chair" onStatusChange={onStatusChange} />);
+    fireEvent.load(screen.getByRole('img', { name: 'Chair' }));
+    rerender(<Thumbnail src="/a.jpg" alt="Chair" onStatusChange={onStatusChange} />);
+    expect(container.querySelector('img')).toHaveAttribute('src', '/a.jpg');
+    expect(onStatusChange.mock.calls).toEqual([['loading'], ['error'], ['loading'], ['loaded'], ['loading']]);
+  });
+
+  it('reports the same address again after a gap with no src', async () => {
+    browserAlreadyFinished('loaded');
+    const onStatusChange = vi.fn();
+    const { rerender } = render(<Thumbnail src="/chair.jpg" alt="Chair" onStatusChange={onStatusChange} />);
+    await waitFor(() => expect(onStatusChange).toHaveBeenCalledTimes(1));
+    rerender(<Thumbnail alt="Chair" onStatusChange={onStatusChange} />);
+    rerender(<Thumbnail src="/chair.jpg" alt="Chair" onStatusChange={onStatusChange} />);
+    await waitFor(() => expect(onStatusChange).toHaveBeenCalledTimes(2));
+    expect(onStatusChange.mock.calls).toEqual([['loaded'], ['loaded']]);
+  });
+
+  it('reports once under StrictMode', async () => {
+    browserAlreadyFinished('broken');
+    const onStatusChange = vi.fn();
+    render(
+      <StrictMode>
+        <Thumbnail src="/dead.jpg" alt="Chair" onStatusChange={onStatusChange} />
+      </StrictMode>,
+    );
+    await waitFor(() => expect(onStatusChange).toHaveBeenCalled());
+    await new Promise((r) => setTimeout(r, 0));
+    expect(onStatusChange.mock.calls).toEqual([['error']]);
+  });
+
   it('reports nothing without a src', () => {
     const onStatusChange = vi.fn();
     const { container } = render(<Thumbnail onStatusChange={onStatusChange} />);
@@ -84,6 +122,9 @@ describe('Thumbnail', () => {
     expect(root.style.color).toBe('red');
     const square = render(<Thumbnail />).container.firstElementChild as HTMLElement;
     expect(square).not.toHaveClass('uxm-thumbnail--ratio');
+    // An empty ratio is no ratio, not a frame with no height.
+    const empty = render(<Thumbnail aspectRatio=" " />).container.firstElementChild as HTMLElement;
+    expect(empty).not.toHaveClass('uxm-thumbnail--ratio');
   });
 
   it('has no axe violations', async () => {

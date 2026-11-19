@@ -90,6 +90,8 @@ catalog.
   - New: `--uxm-thumbnail-width` / `--uxm-thumbnail-height` (default the size), an
     `aspectRatio` prop (the height follows the width), and
     `onStatusChange('loading' | 'loaded' | 'error')` to show something else when it fails.
+  - The root is now a size container: a `--uxm-thumbnail-width` of `100%` needs a parent with a
+    definite width (inside a shrink-to-fit parent it collapses to zero).
 
 ## Workflow
 

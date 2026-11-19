@@ -9,9 +9,14 @@
 
    The root is a SIZE container, so the placeholder glyph can be sized from
    the frame itself (cq units) rather than from the size knob, which can be a
-   percentage. Size containment needs a definite width and height: both are
-   set here, and with `--ratio` the height comes from the width. A host that
-   sets `--uxm-thumbnail-width: auto` gets a zero-width frame. */
+   percentage. Size containment gives the frame no intrinsic size, so its
+   width and height must resolve on their own: lengths by default, and with
+   `--ratio` the height comes from the width. A width of `auto`, or a
+   percentage inside a parent that shrinks to fit its content (inline-block,
+   an auto-width flex or grid item, an absolutely positioned box), resolves
+   to zero. The glyph's border correction needs a border width with a unit
+   (`0px`, not `0`). cq units: Chrome 105, Safari 16, Firefox 110; older
+   browsers drop the glyph rule and the icon keeps its own size. */
 
 .uxm-thumbnail {
   align-items: center;
