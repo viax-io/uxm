@@ -1,3 +1,16 @@
+# [4.116.0](https://github.com/viax-io/uxm/compare/v4.115.14...v4.116.0) (2026-11-19)
+
+
+### Bug Fixes
+
+* **thumbnail:** one img per address, and keep the old glyph size where cq units are missing ([a86ce03](https://github.com/viax-io/uxm/commit/a86ce03cfb410f93b7c0f1a1493d78f3599b0779))
+* **thumbnail:** retry any address that comes back, and say when a fluid frame collapses ([980345b](https://github.com/viax-io/uxm/commit/980345b3035a679162d1ae3cf03b5d19edb36d40))
+
+
+### Features
+
+* **thumbnail:** survive a failed image and fill any frame ([afadc9b](https://github.com/viax-io/uxm/commit/afadc9bdeede56b7b4de8965dfa2f87f6a9f4651))
+
 ## [4.115.14](https://github.com/viax-io/uxm/compare/v4.115.13...v4.115.14) (2026-11-18)
 
 

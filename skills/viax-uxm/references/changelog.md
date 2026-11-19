@@ -2849,3 +2849,9 @@ reached the published library; now shipped in 2.8.0.
   only ("Quoted, Done"); `stateLabels` follow after a space. The README no longer counts the
   current step's 25% ring as a state cue: it is about 1.4:1, so the cues are the fill without a
   check, the heavier label and `aria-current`.
+
+### New in 4.115.10
+
+- **`Stepper` and `MediaObject` accept `ref` in TypeScript** — their props extended
+  `HTMLAttributes`, which doesn't declare `ref`, so `<Stepper ref={r}>` failed typecheck though it
+  worked at runtime. Both now extend `ComponentPropsWithRef`, as the buttons do.
