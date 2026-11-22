@@ -15,10 +15,10 @@ export const inlineActionDef: ComponentDef = {
     { key: 'disabledOpacity', label: 'Opacity', control: 'slider', defaultValue: 0.4, min: 0.1, max: 1, step: 0.05, section: 'states', showWhen: { state: 'disabled' } },
     { key: 'disabledColor', label: 'Text Color', control: 'color', defaultValue: 'var(--color-text-muted)', section: 'states', showWhen: { state: 'disabled' } },
     // Shared style
-    { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 10, min: 9, max: 14, step: 1, unit: 'px' },
+    { key: 'fontSize', label: 'Font Size', control: 'number', defaultValue: 13, min: 9, max: 16, step: 1, unit: 'px' },
     { key: 'fontWeight', label: 'Font Weight', control: 'select', defaultValue: '500', options: ['400', '500', '600'] },
     { key: 'gap', label: 'Icon Gap', control: 'number', defaultValue: 4, min: 2, max: 8, step: 1, unit: 'px' },
-    { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 10, min: 8, max: 16, step: 1, unit: 'px' },
+    { key: 'iconSize', label: 'Icon Size', control: 'number', defaultValue: 12, min: 8, max: 16, step: 1, unit: 'px' },
   ],
   layoutVariants: [
     {
