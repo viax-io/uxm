@@ -1,3 +1,10 @@
+# [4.120.0](https://github.com/viax-io/uxm/compare/v4.119.0...v4.120.0) (2026-11-22)
+
+
+### Features
+
+* **inline-action:** 13px label and 12px icon by default ([f495543](https://github.com/viax-io/uxm/commit/f495543699716c8c9d24f865df329616b9199299))
+
 # [4.119.0](https://github.com/viax-io/uxm/compare/v4.118.0...v4.119.0) (2026-11-19)
 
 

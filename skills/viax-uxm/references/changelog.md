@@ -2874,3 +2874,10 @@ reached the published library; now shipped in 2.8.0.
 - **`Stepper`'s check scales with the marker** — it was a fixed 12px, so at the smallest
   `--uxm-stepper-marker-size` (12px) it filled the whole disc. It is now 60% of the marker,
   12px at the default 20px, so the default look is unchanged.
+
+### New in 4.115.14
+
+- Clicking a `Checkbox`, `ToggleSwitch` or `RadioGroup` option inside a `SideFlexpane` (or any
+  positioned box) no longer slides the pane up and leaves a blank gap under the footer: the
+  label now contains its hidden input, and the flexpane frame clips instead of hiding
+  overflow. No API change.
