@@ -11,8 +11,21 @@ import { IconButton } from '../icon-button';
 import type { CSSProperties } from 'react';
 
 export interface NumberStepperProps {
-  value: number;
+  /**
+   * Controlled value. `null` is an empty field (no value yet): the input
+   * shows `placeholder` instead of a number, and either step button starts
+   * from 0 (clamped to `min`/`max`).
+   */
+  value: number | null;
   onChange: (value: number) => void;
+  /**
+   * Called when the user empties the field by typing. Pair it with a `null`
+   * `value` to keep a field that can hold no value. Without it, an emptied
+   * field reports `0` through `onChange`, as before.
+   */
+  onEmpty?: () => void;
+  /** Shown in the input while `value` is `null`. */
+  placeholder?: string;
   min?: number;
   max?: number;
   step?: number;
@@ -86,6 +99,8 @@ export interface NumberStepperProps {
 export function NumberStepper({
   value,
   onChange,
+  onEmpty,
+  placeholder,
   min,
   max,
   step = 1,
@@ -102,7 +117,7 @@ export function NumberStepper({
 }: NumberStepperProps) {
   const errorId = useId();
   const adjust = (delta: number) => {
-    let next = value + delta;
+    let next = (value ?? 0) + delta;
     if (min !== undefined) next = Math.max(min, next);
     if (max !== undefined) next = Math.min(max, next);
     onChange(next);
@@ -131,8 +146,12 @@ export function NumberStepper({
         </IconButton>
         <input
           type="number"
-          value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
+          value={value ?? ''}
+          placeholder={placeholder}
+          onChange={(e) => {
+            if (e.target.value === '' && onEmpty) onEmpty();
+            else onChange(Number(e.target.value));
+          }}
           min={min}
           max={max}
           step={step}

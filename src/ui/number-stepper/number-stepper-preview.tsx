@@ -19,6 +19,7 @@ function buildVars(styles: Styles): CSSProperties {
     '--uxm-number-stepper-input-bg': styles.backgroundColor as string,
     '--uxm-number-stepper-input-border': styles.borderColor as string,
     '--uxm-number-stepper-input-color': styles.color as string,
+    '--uxm-number-stepper-placeholder-color': styles.placeholderColor as string,
     '--uxm-number-stepper-hover-bg': styles.hoverBg as string,
     '--uxm-number-stepper-hover-border': styles.hoverBorder as string,
     '--uxm-number-stepper-focus-border': styles.focusBorder as string,

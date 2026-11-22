@@ -89,6 +89,12 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **`NumberStepper` can be empty.** `value` takes `null` (the input shows the new `placeholder`
+  and either step button starts from 0, clamped to `min`/`max`), and the new `onEmpty` fires when
+  the user empties the field by typing. Additive: without `onEmpty` an emptied field still reports
+  `0` through `onChange`. The placeholder paints from the new
+  `--uxm-number-stepper-placeholder-color` (Placeholder knob, default `--color-text-muted`).
+
 ## Workflow
 
 ### Where the documentation lives

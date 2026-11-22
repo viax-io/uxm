@@ -1235,6 +1235,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-number-stepper-input-padding-y",
   "--uxm-number-stepper-input-radius",
   "--uxm-number-stepper-input-width",
+  "--uxm-number-stepper-placeholder-color",
   "--uxm-number-stepper-unit-color",
   "--uxm-number-stepper-unit-size",
   "--uxm-option-list-background",
