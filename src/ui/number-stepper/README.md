@@ -31,6 +31,18 @@ const [size, setSize] = useState(12);
   aria-label="Font size"
 />
 
+// A value that can be left empty: null shows the placeholder, emptying the field calls onEmpty,
+// and either button starts from 0.
+const [voltage, setVoltage] = useState<number | null>(null);
+
+<NumberStepper
+  value={voltage}
+  onChange={setVoltage}
+  onEmpty={() => setVoltage(null)}
+  placeholder="Not set"
+  aria-label="Voltage"
+/>
+
 // Invalid state — the message renders below the field.
 <NumberStepper
   value={size}
@@ -46,8 +58,10 @@ Does **not** extend a native attribute interface — the prop list is closed, an
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `number` | – | **Required.** Controlled value. There is no uncontrolled mode. |
+| `value` | `number \| null` | – | **Required.** Controlled value. There is no uncontrolled mode. `null` is an empty field: the input shows `placeholder`, and either step button starts from 0 (clamped to `min`/`max`). |
 | `onChange` | `(value: number) => void` | – | **Required.** Fires on typing and on either step button. |
+| `onEmpty` | `() => void` | – | Fires when the user empties the field by typing. Without it, an emptied field reports `0` through `onChange`. |
+| `placeholder` | `string` | – | Shown in the input while `value` is `null`. |
 | `min` | `number` | – | Lower clamp for the step buttons; also set as the input's `min`. |
 | `max` | `number` | – | Upper clamp for the step buttons; also set as the input's `max`. |
 | `step` | `number` | `1` | Increment applied by the ± buttons. |
@@ -75,6 +89,7 @@ The component carries a static `NumberStepper.hasError = true` flag, which the s
 | `--uxm-number-stepper-input-border` | `--color-border` | – | Field border, resting. |
 | `--uxm-number-stepper-input-bg` | `--color-surface` | – | Field background, resting. |
 | `--uxm-number-stepper-input-color` | `--color-text-strong` | – | Value text colour. |
+| `--uxm-number-stepper-placeholder-color` | `--color-text-muted` | – | Placeholder text while the field is empty (`value` null). |
 | `--uxm-number-stepper-input-padding-y` | – | `4px` | Field vertical padding. |
 | `--uxm-number-stepper-input-padding-x` | – | `8px` | Field horizontal padding. |
 | `--uxm-number-stepper-font-size` | – | `12px` | Value font size. |

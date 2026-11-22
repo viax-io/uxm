@@ -32,6 +32,11 @@
   -moz-appearance: textfield;
   transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
+/* An empty field (`value` null) shows `placeholder`; without a rule of its own
+   it would take the browser's grey (#757575 in Chrome). */
+.uxm-number-stepper__input::placeholder {
+  color: var(--uxm-number-stepper-placeholder-color, var(--color-text-muted));
+}
 .uxm-number-stepper__input::-webkit-inner-spin-button,
 .uxm-number-stepper__input::-webkit-outer-spin-button {
   -webkit-appearance: none;
