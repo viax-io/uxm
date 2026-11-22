@@ -42,10 +42,10 @@ Extends `ButtonHTMLAttributes<HTMLButtonElement>` — any standard button attrib
 |----------|----------------|---------|---------|
 | `--uxm-inline-action-color` | `--color-text-muted` | – | Resting label + icon colour. |
 | `--uxm-inline-action-hover-color` | `--color-accent-bold` | – | Hover label + icon colour. |
-| `--uxm-inline-action-font-size` | – | `10px` | Label font size. |
+| `--uxm-inline-action-font-size` | – | `13px` | Label font size. |
 | `--uxm-inline-action-font-weight` | `--font-weight-medium` | `500` | Label font weight. |
 | `--uxm-inline-action-gap` | – | `4px` | Gap between icon and label. |
-| `--uxm-inline-action-icon-size` | – | `10px` | Inner SVG width/height (CSS overrides SVG attributes). |
+| `--uxm-inline-action-icon-size` | – | `12px` | Inner SVG width/height (CSS overrides SVG attributes). |
 
 ## Design tokens (MODO-configurable)
 
@@ -71,6 +71,6 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - Renders a native `<button>` — `Space` / `Enter` activation and disabled handling come for free.
 - `type="button"` default prevents accidental form submission.
 - The icon span carries `aria-hidden="true"`, so screen readers announce only the label. Pick a label that stands alone semantically (`"Reset"`, not `""` with a reset glyph).
-- At 10px the label is below the typical 12px minimum for body copy; verify that the surrounding context makes the action discoverable and the hit area is comfortable. Consider increasing `--uxm-inline-action-font-size` for primary surfaces.
+- The label defaults to 13px (the muted-text size beside it in panes and forms); it was 10px, below the usual 12px minimum for body copy and hard to see or hit. Lower `--uxm-inline-action-font-size` only where the surrounding text is smaller too.
 - Hover-only affordance: the resting state has no underline or border, so users navigating by keyboard rely entirely on `:focus-visible` (browser default). Add a focus-ring style globally if your app needs stronger focus signalling on dense surfaces.
 - Default muted-on-surface contrast is 5.02:1 in light and 6.30:1 in dark — AA either way. It used to be marginal (2.37:1 light) and no longer is. Still verify if you override the background.

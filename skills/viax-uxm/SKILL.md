@@ -90,6 +90,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **InlineAction** reads at the muted-text size by default: label 13px (was 10px), icon 12px
+  (was 10px). Apps that set `--uxm-inline-action-font-size` / `--uxm-inline-action-icon-size`
+  keep their value; drop a 13px override, it's now the default.
+
 ## Workflow
 
 ### Where the documentation lives
