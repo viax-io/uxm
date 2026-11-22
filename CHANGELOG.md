@@ -1,3 +1,10 @@
+# [4.121.0](https://github.com/viax-io/uxm/compare/v4.120.0...v4.121.0) (2026-11-22)
+
+
+### Features
+
+* **number-stepper:** allow an empty value ([b6cfcff](https://github.com/viax-io/uxm/commit/b6cfcffb84c4bf36f6ac8045a9e047470d72c42d))
+
 # [4.120.0](https://github.com/viax-io/uxm/compare/v4.119.0...v4.120.0) (2026-11-22)
 
 

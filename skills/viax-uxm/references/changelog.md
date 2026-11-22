@@ -2881,3 +2881,17 @@ reached the published library; now shipped in 2.8.0.
   positioned box) no longer slides the pane up and leaves a blank gap under the footer: the
   label now contains its hidden input, and the flexpane frame clips instead of hiding
   overflow. No API change.
+
+### New in 4.116.0
+
+- **Thumbnail survives a failed image and fills any frame.**
+  - An image that failed (or loaded) before React hydrated is now caught, so a server-rendered
+    page shows the placeholder instead of the browser's broken-image mark.
+  - A failure belongs to its `src`: a new address gets a fresh try, with no `key={src}`.
+  - The placeholder glyph is 45% of the frame's shorter side (unchanged for a fixed square),
+    so it stays in proportion in a fluid frame; `--uxm-thumbnail-placeholder-size` fixes it.
+  - New: `--uxm-thumbnail-width` / `--uxm-thumbnail-height` (default the size), an
+    `aspectRatio` prop (the height follows the width), and
+    `onStatusChange('loading' | 'loaded' | 'error')` to show something else when it fails.
+  - The root is now a size container: a `--uxm-thumbnail-width` of `100%` needs a parent with a
+    definite width (inside a shrink-to-fit parent it collapses to zero).
