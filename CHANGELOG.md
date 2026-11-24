@@ -1,3 +1,10 @@
+## [4.122.1](https://github.com/viax-io/uxm/compare/v4.122.0...v4.122.1) (2026-11-24)
+
+
+### Bug Fixes
+
+* **side-flexpane:** fall back to overflow hidden where clip is unsupported ([94e11ca](https://github.com/viax-io/uxm/commit/94e11cae33a802a0cd365b309f3a725b22761049))
+
 # [4.122.0](https://github.com/viax-io/uxm/compare/v4.121.0...v4.122.0) (2026-11-24)
 
 

@@ -2907,3 +2907,7 @@ reached the published library; now shipped in 2.8.0.
   - Use it instead of a `DataTable` inside a `Card`, which draws two frames and needs negative
     margins; theme with `--uxm-table-card-*`.
   - `DataTable` gains `framed` (default `true`); `framed={false}` drops its own border and radius.
+
+### New in 4.118.0
+
+- **TableCard `icon` and `count`** — a muted icon before the title and a muted count after it, on the title's line ("Pro Account Quote 3"); knobs `--uxm-table-card-title-gap`, `--uxm-table-card-icon-color`.
