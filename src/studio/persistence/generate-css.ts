@@ -61,7 +61,7 @@ function formatValue(value: string | number | boolean, key: string): string {
     // one shipped today (`titleLineHeight`) is a select, so the Studio UI only
     // ever sends it as a string — this branch guards the next numeric one, and
     // an imported or hand-written overrides document that carries a number.
-    const unitless = ['fontWeight', 'titleWeight', 'nameWeight', 'typeLabelWeight', 'lineHeight', 'shadow', 'disabledOpacity'];
+    const unitless = ['fontWeight', 'titleWeight', 'nameWeight', 'typeLabelWeight', 'lineHeight', 'shadow', 'disabledOpacity', 'placeholderScale'];
     // `opacity` is always unitless — match every *Opacity knob (e.g. the
     // per-element `itemDisabledOpacity` / `optionDisabledOpacity` variants)
     // so a saved value never gets a spurious `px` suffix.
