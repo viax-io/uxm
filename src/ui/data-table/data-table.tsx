@@ -396,6 +396,8 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * arrow sits on the right.
    */
   scrollArrowLabel?: (direction: 'start' | 'end', tableLabel: string) => string;
+  /** Id of the element naming the `<table>` (`aria-labelledby`), e.g. its heading. */
+  tableLabelledBy?: string;
   /**
    * Pin the generated `rowActions` column to the trailing edge while scrolling.
    *
@@ -773,6 +775,7 @@ export function DataTable<T>({
   scrollable,
   scrollLabel = 'Table',
   scrollArrowLabel = defaultScrollArrowLabel,
+  tableLabelledBy,
   stickyActions,
   activeRowId,
   rowProps,
@@ -944,6 +947,7 @@ export function DataTable<T>({
         label={scrollLabel}
       >
       <table
+        aria-labelledby={tableLabelledBy}
         className={cn(
           'uxm-data-table__table',
           columns.some((c) => c.width != null) && 'uxm-data-table__table--fixed',

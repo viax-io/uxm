@@ -2,7 +2,7 @@
 
 A tiny, text-first button for in-place actions ("Reset section", "Edit", "Match in 4 other Inputs"). Reads as inline text first and a button second — muted by default, transitioning to an accent colour on hover.
 
-`InlineAction` is sized small (10px) by design so it disappears into dense UI without competing with primary CTAs. The component renders a native `<button>` with an optional leading icon slot and a label slot. Distinct from `BackLink` (breadcrumb navigation, arrow-led) and `ButtonGhost` (regular button-shaped, padded).
+`InlineAction` is sized small (13px label, 12px icon) by design so it fits into dense UI without competing with primary CTAs. The component renders a native `<button>` with an optional leading icon slot and a label slot. Distinct from `BackLink` (breadcrumb navigation, arrow-led) and `ButtonGhost` (regular button-shaped, padded).
 
 ## Usage
 
@@ -74,3 +74,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 - The label defaults to 13px (the muted-text size beside it in panes and forms); it was 10px, below the usual 12px minimum for body copy and hard to see or hit. Lower `--uxm-inline-action-font-size` only where the surrounding text is smaller too.
 - Hover-only affordance: the resting state has no underline or border, so users navigating by keyboard rely entirely on `:focus-visible` (browser default). Add a focus-ring style globally if your app needs stronger focus signalling on dense surfaces.
 - Default muted-on-surface contrast is 5.02:1 in light and 6.30:1 in dark — AA either way. It used to be marginal (2.37:1 light) and no longer is. Still verify if you override the background.
+
+## Upgrading
+
+**4.120.0 — 13px label, 12px icon.** The defaults went from `10px` to `13px` (`--uxm-inline-action-font-size`) and from `10px` to `12px` (`--uxm-inline-action-icon-size`). Every `InlineAction` that relies on the defaults is now larger: check dense rows, `SectionHeader` action slots and breadcrumbs. A saved studio override or your own value for either variable still wins. To keep the old size in one place, set both variables to `10px` there. This shipped as a minor release: no prop or variable was removed.

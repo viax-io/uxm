@@ -40,9 +40,10 @@ function buildVars(styles: Styles): CSSProperties {
     // behaviour rather than a hardcoded 13px the CSS never applies.
     '--uxm-editable-cell-small-font-size': (styles.smallFontSize as string) ?? 'inherit',
     '--uxm-editable-cell-medium-padding-x': `${styles.mediumPaddingX ?? 12}px`,
-    '--uxm-editable-cell-medium-padding-y': `${styles.mediumPaddingY ?? 6}px`,
+    '--uxm-editable-cell-medium-padding-y': `${styles.mediumPaddingY ?? 10}px`,
     '--uxm-editable-cell-medium-font-size': (styles.mediumFontSize as string) ?? '14px',
     '--uxm-editable-cell-hover-bg': styles.hoverBg as string,
+    '--uxm-editable-cell-hover-border': styles.hoverBorder as string,
     '--uxm-editable-cell-pencil-color': styles.pencilColor as string,
     '--uxm-editable-cell-focus-border': styles.focusBorder as string,
     '--uxm-editable-cell-focus-ring': styles.focusRing as string,

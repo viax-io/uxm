@@ -83,6 +83,10 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **TableCard / DataTable:** the card's `title` now names its table (`aria-labelledby`), so a screen reader no longer hears an unnamed table. New `DataTable` prop `tableLabelledBy` does the same for a bare table.
+- **Thumbnail:** with a non-empty `alt`, the placeholder of a missing or failed image is `role="img"` named by `alt` instead of `aria-hidden`.
+- **Studio:** the EditableCell Hover › Border Color and TableCard Divider Inset knobs now reach the canvas preview.
+
 ## Workflow
 
 ### Where the documentation lives

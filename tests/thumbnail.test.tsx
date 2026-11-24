@@ -157,6 +157,20 @@ describe('Thumbnail', () => {
     expect(render(<Thumbnail aspectRatio={1.5} />).container.firstElementChild).toHaveClass('uxm-thumbnail--ratio');
   });
 
+  it('keeps the alt as the name of a failed image, and stays decorative without one', async () => {
+    browserAlreadyFinished('broken');
+    const { container, rerender } = render(<Thumbnail src="https://cdn.example.invalid/x.jpg" alt="Oak chair" />);
+    await waitFor(() => expect(container.querySelector('img')).toBeNull());
+    const placeholder = screen.getByRole('img', { name: 'Oak chair' });
+    expect(placeholder).toHaveClass('uxm-thumbnail__placeholder');
+    expect(placeholder).not.toHaveAttribute('aria-hidden');
+    const results = await axe.run(container, { rules: { 'color-contrast': { enabled: false } } });
+    expect(results.violations.map((v) => v.id)).toEqual([]);
+    rerender(<Thumbnail />);
+    expect(container.querySelector('.uxm-thumbnail__placeholder')).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.queryByRole('img')).toBeNull();
+  });
+
   it('has no axe violations', async () => {
     const { container } = render(
       <>

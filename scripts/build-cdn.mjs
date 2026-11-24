@@ -75,7 +75,9 @@ const BUDGET_GZIP_KB = {
   'uxm-base.css': 1,
   // Types grow with every documented prop: 80.3 KB gz on 4.105 + ResponsiveGrid
   // `columns` / GridItem (16-11-2026) crossed the old 80. Raised on purpose.
-  'uxm.esm.d.ts': 84,
+  // 84.1 on 4.121 + DataTable `tableLabelledBy` (24-11-2026): 4.121 sat at the
+  // 84 line, so any new documented prop crossed it. Raised on purpose to 88.
+  'uxm.esm.d.ts': 88,
   'uxm-generate-css.esm.d.ts': 4,
   // Studio, measured on v4.71.1 (26-10-2026): esm 125.6 with ui external (a
   // 181 KB figure from an earlier probe still carried a copy of ui), css 6.4,

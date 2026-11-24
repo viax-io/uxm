@@ -60,6 +60,7 @@ export function TableCardPreview({ styles, variants }: PreviewProps) {
     '--uxm-table-card-padding-x': px('paddingX'),
     '--uxm-table-card-padding-y': px('paddingY'),
     '--uxm-table-card-stripe-inset': px('stripeInset'),
+    '--uxm-table-card-divider-inset': px('dividerInset'),
     '--uxm-table-card-shadow-color': styles.shadowColor as string,
     '--uxm-table-card-shadow-blur': px('shadowBlur'),
     '--uxm-table-card-shadow-offset-y': px('shadowOffsetY'),

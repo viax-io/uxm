@@ -99,6 +99,22 @@ describe('DataTable framed', () => {
   });
 });
 
+describe('TableCard table name', () => {
+  it('names the table by its title, and a consumer tableLabelledBy wins', () => {
+    const { rerender } = render(<TableCard columns={columns} rows={rows} rowKey={rowKey} title="Deals" count={3} />);
+    expect(screen.getByRole('table', { name: 'Deals' })).toBeInTheDocument();
+    rerender(
+      <>
+        <h2 id="own">Pipeline</h2>
+        <TableCard columns={columns} rows={rows} rowKey={rowKey} title="Deals" tableLabelledBy="own" />
+      </>,
+    );
+    expect(screen.getByRole('table', { name: 'Pipeline' })).toBeInTheDocument();
+    rerender(<TableCard columns={columns} rows={rows} rowKey={rowKey} />);
+    expect(screen.getByRole('table')).not.toHaveAttribute('aria-labelledby');
+  });
+});
+
 describe('table-card stylesheet', () => {
   it('compiles the nested selectors the variants depend on', () => {
     const css = compiledCss('src/ui/table-card/table-card.scss');

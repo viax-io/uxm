@@ -458,6 +458,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'children'>` — any standard div 
 | `scrollable` | `boolean` | `false` | Puts the table in its own horizontal scroller instead of letting it push its container wide. Implied by any `sticky` column; set it alone for a wide table that wants the affordances without pinning. |
 | `scrollLabel` | `string` | `'Table'` | Accessible name for the scroll region and its arrows. Give it the table's subject when a page has more than one, or every region announces the same. |
 | `scrollArrowLabel` | `(direction, tableLabel) => string` | `Scroll {label} back` / `… forward` | Names the two arrows. A callback, not a prefix, so a translation can place the table's name where its grammar needs it. Not "left"/"right" by default — those are physical, and in RTL the start arrow sits on the right. |
+| `tableLabelledBy` | `string` | – | Id of the element that names the `<table>` (`aria-labelledby`), usually the heading above it. Without it the table is announced unnamed. `TableCard` sets it to its title. |
 | `stickyActions` | `boolean` | `false` | Pins the generated `rowActions` column to the trailing edge. It needs its own prop because that column has no `column` object to carry `sticky`. Mutually exclusive with a data column that sets `sticky: 'end'`. |
 
 ### `DataTableColumn<T>`
