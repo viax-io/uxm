@@ -166,7 +166,13 @@ export function Thumbnail({
           onError={() => src && fail(src)}
         />
       ) : (
-        <span className="uxm-thumbnail__placeholder" aria-hidden>
+        // A failed image keeps its name: with a non-empty `alt` the placeholder
+        // stands in for the picture (`role="img"`), so assistive tech still
+        // hears "Oak chair". Without one it stays decorative, like the `<img>`.
+        <span
+          className="uxm-thumbnail__placeholder"
+          {...(alt ? { role: 'img', 'aria-label': alt } : { 'aria-hidden': true })}
+        >
           {fallback ?? <Icon glyph="image" />}
         </span>
       )}

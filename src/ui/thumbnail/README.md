@@ -2,7 +2,7 @@
 
 A bounded image frame with an automatic icon fallback when no source is provided or the image fails to load.
 
-`Thumbnail` renders a `<div className="uxm-thumbnail uxm-thumbnail--{fit}">`. When `src` is set and the `<img>` does not fail, the image fills the frame using `object-fit: cover` or `contain`. Otherwise an `Icon glyph="image"` (or consumer-supplied `fallback`) renders inside an `aria-hidden` placeholder span.
+`Thumbnail` renders a `<div className="uxm-thumbnail uxm-thumbnail--{fit}">`. When `src` is set and the `<img>` does not fail, the image fills the frame using `object-fit: cover` or `contain`. Otherwise an `Icon glyph="image"` (or consumer-supplied `fallback`) renders inside a placeholder span. With a non-empty `alt` the placeholder takes `role="img"` and `aria-label={alt}`, so a failed image keeps its name; without one it is `aria-hidden`.
 
 The frame is square by default (`--uxm-thumbnail-size` drives both width and height). `--uxm-thumbnail-width` / `--uxm-thumbnail-height` change either side, and `aspectRatio` lets the height follow the width. The placeholder glyph is 45% of the frame's shorter side, so it stays in proportion whatever the size is set in.
 
@@ -36,7 +36,7 @@ function Example() {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `src` | `string` | – | Image source. When omitted (or when the image errors), the fallback renders. |
-| `alt` | `string` | `''` | Forwarded to the `<img>` element. |
+| `alt` | `string` | `''` | Forwarded to the `<img>` element, and names the placeholder when the image is missing or fails. |
 | `fit` | `'cover' \| 'contain'` | `'cover'` | Image `object-fit` mode. `cover` crops; `contain` letterboxes. |
 | `fallback` | `ReactNode` | `<Icon glyph="image" />` | Override the placeholder content shown when no image is rendered. A bare `svg` here is sized like the built-in glyph. |
 | `aspectRatio` | `string \| number` | – | Gives the frame a shape (`'16 / 9'`, `1.5`): the height follows the width (`--uxm-thumbnail-width`, default the size). Sets `--uxm-thumbnail-aspect-ratio` and the `uxm-thumbnail--ratio` modifier. |
