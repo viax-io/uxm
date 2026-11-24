@@ -2911,3 +2911,7 @@ reached the published library; now shipped in 2.8.0.
 ### New in 4.118.0
 
 - **TableCard `icon` and `count`** — a muted icon before the title and a muted count after it, on the title's line ("Pro Account Quote 3"); knobs `--uxm-table-card-title-gap`, `--uxm-table-card-icon-color`.
+
+### New in 4.119.0
+
+- **TableCard `--uxm-table-card-divider-inset`** — `lines` dividers (and row hover) stop short of the card's edges by this much (0 by default); the cells take the rest of the padding, so the text stays put.

@@ -1,3 +1,10 @@
+# [4.123.0](https://github.com/viax-io/uxm/compare/v4.122.1...v4.123.0) (2026-11-24)
+
+
+### Features
+
+* **thumbnail:** an icon size knob as a share of the frame ([df6c336](https://github.com/viax-io/uxm/commit/df6c336e290c92d7fc2cbcf53b7fa2d0b38c7eae))
+
 ## [4.122.1](https://github.com/viax-io/uxm/compare/v4.122.0...v4.122.1) (2026-11-24)
 
 
