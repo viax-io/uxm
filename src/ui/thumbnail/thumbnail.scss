@@ -16,12 +16,20 @@
    an auto-width flex or grid item, an absolutely positioned box), resolves
    to zero. The glyph's border correction needs a border width with a unit
    (`0px`, not `0`). cq units: Chrome 105, Safari 16, Firefox 110; older
-   browsers get 45% of the size knob, as before. */
+   browsers get the same share of the size knob instead.
+
+   Two private pipes keep each default in one place: the border width (the
+   frame's border and the glyph's border correction must agree) and the glyph
+   ratio (`--uxm-thumbnail-placeholder-scale`, 0.45 = 45%, the share of the
+   frame the placeholder glyph takes). */
 
 .uxm-thumbnail {
   align-items: center;
   background-color: var(--uxm-thumbnail-background-color, var(--color-card));
-  border: var(--uxm-thumbnail-border-width, 2px) solid var(--uxm-thumbnail-border-color, var(--color-border));
+  --_uxm-thumbnail-border-width: var(--uxm-thumbnail-border-width, 2px);
+  --_uxm-thumbnail-glyph-ratio: var(--uxm-thumbnail-placeholder-scale, 0.45);
+
+  border: var(--_uxm-thumbnail-border-width) solid var(--uxm-thumbnail-border-color, var(--color-border));
   border-radius: var(--uxm-thumbnail-border-radius, 12px);
   box-sizing: border-box;
   container-type: size;
@@ -59,16 +67,16 @@
     display: inline-flex;
     justify-content: center;
 
-    /* 45% of the size knob: the rule every browser gets, and the whole
+    /* The glyph ratio (45% by default) of the size knob: the rule every browser gets, and the whole
        story for a fixed frame. CSS sizing wins over the SVG width/height
        attrs the Icon component sets; a `fallback` that is a bare svg is sized
        the same way. */
     & > svg {
-      height: var(--uxm-thumbnail-placeholder-size, calc(var(--uxm-thumbnail-size, 48px) * 0.45));
-      width: var(--uxm-thumbnail-placeholder-size, calc(var(--uxm-thumbnail-size, 48px) * 0.45));
+      height: var(--uxm-thumbnail-placeholder-size, calc(var(--uxm-thumbnail-size, 48px) * var(--_uxm-thumbnail-glyph-ratio)));
+      width: var(--uxm-thumbnail-placeholder-size, calc(var(--uxm-thumbnail-size, 48px) * var(--_uxm-thumbnail-glyph-ratio)));
     }
 
-    /* Where container units exist, 45% of the frame's shorter side, border
+    /* Where container units exist, the same ratio of the frame's shorter side, border
        included: `100cqmin` is the content box, so the border is added back,
        which keeps a fixed square frame at exactly the rule above. In a fluid
        frame (a size of `100%`, a ratio) the glyph follows what is on screen.
@@ -77,8 +85,8 @@
        unsized rather than fall back to the rule above. */
     @supports (width: 1cqmin) {
       & > svg {
-        height: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--uxm-thumbnail-border-width, 2px)) * 0.45));
-        width: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--uxm-thumbnail-border-width, 2px)) * 0.45));
+        height: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--_uxm-thumbnail-border-width)) * var(--_uxm-thumbnail-glyph-ratio)));
+        width: var(--uxm-thumbnail-placeholder-size, calc((100cqmin + 2 * var(--_uxm-thumbnail-border-width)) * var(--_uxm-thumbnail-glyph-ratio)));
       }
     }
   }

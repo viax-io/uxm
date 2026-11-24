@@ -77,6 +77,8 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Thumbnail:** new `--uxm-thumbnail-placeholder-scale` (unitless, default `0.45`) sets the share of the frame the placeholder glyph takes, and is the studio's Icon Size knob. `--uxm-thumbnail-placeholder-size` still fixes a length and wins.
+
 ## Workflow
 
 ### Where the documentation lives

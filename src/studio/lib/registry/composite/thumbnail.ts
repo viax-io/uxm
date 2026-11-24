@@ -12,6 +12,10 @@ export const thumbnailDef: ComponentDef = {
     { key: 'borderColor', label: 'Border Color', control: 'color', defaultValue: 'var(--color-border)', section: 'colors' },
     { key: 'borderWidth', label: 'Border Width', control: 'number', defaultValue: 2, min: 0, max: 4, step: 1, unit: 'px' },
     { key: 'placeholderColor', label: 'Placeholder Color', control: 'color', defaultValue: 'var(--color-text-subtle)', section: 'colors' },
+    // A share of the frame, not a length: one saved value has to suit every
+    // Thumbnail, whatever its size. A fixed glyph stays code-only
+    // (`--uxm-thumbnail-placeholder-size`).
+    { key: 'placeholderScale', label: 'Icon Size', control: 'slider', defaultValue: 0.45, min: 0.2, max: 0.8, step: 0.05 },
   ],
   layoutVariants: [
     {

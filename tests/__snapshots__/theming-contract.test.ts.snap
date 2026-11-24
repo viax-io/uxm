@@ -1722,6 +1722,7 @@ exports[`--uxm-* variables read by src/ui stylesheets > exports the pinned varia
   "--uxm-thumbnail-border-width",
   "--uxm-thumbnail-height",
   "--uxm-thumbnail-placeholder-color",
+  "--uxm-thumbnail-placeholder-scale",
   "--uxm-thumbnail-placeholder-size",
   "--uxm-thumbnail-size",
   "--uxm-thumbnail-width",

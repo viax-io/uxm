@@ -54,7 +54,8 @@ The `ThumbnailFit` (`'cover' \| 'contain'`) and `ThumbnailStatus` (`'loading' \|
 | `--uxm-thumbnail-width` | – | the size | Frame width. `100%` fills the parent when the parent's width is definite. The frame is a size container with no intrinsic size, so `auto`, or a percentage inside a parent that shrinks to fit its content (inline-block, an auto-width flex or grid item, an absolutely positioned box), collapses it to zero. |
 | `--uxm-thumbnail-height` | – | the size | Frame height. Ignored with `aspectRatio`, where the height follows the width. |
 | `--uxm-thumbnail-aspect-ratio` | – | unset | Set by the `aspectRatio` prop; read only with the `uxm-thumbnail--ratio` modifier. |
-| `--uxm-thumbnail-placeholder-size` | – | 45% of the frame's shorter side | Placeholder glyph size (the built-in icon, or a bare `svg` `fallback`; a wrapped fallback keeps its own size). Set a length to fix it, e.g. `40px`. The default uses container query units (Chrome 105, Safari 16, Firefox 110); older browsers get 45% of `--uxm-thumbnail-size`, as before. |
+| `--uxm-thumbnail-placeholder-scale` | – | `0.45` | The share of the frame's shorter side the placeholder glyph takes (`0.45` = 45%). Unitless. The studio's **Icon Size** knob (0.2–0.8); a ratio rather than a length, so one value suits every frame size. |
+| `--uxm-thumbnail-placeholder-size` | – | the scale × the frame's shorter side | Placeholder glyph size (the built-in icon, or a bare `svg` `fallback`; a wrapped fallback keeps its own size). Set a length to fix it, e.g. `40px`; it wins over the scale. Code only, no studio knob. The default uses container query units (Chrome 105, Safari 16, Firefox 110); older browsers get the scale × `--uxm-thumbnail-size`. |
 | `--uxm-thumbnail-background-color` | `--color-card` | – | Frame background (visible when image is loading or contained). |
 | `--uxm-thumbnail-border-color` | `--color-border` | – | Frame border colour. |
 | `--uxm-thumbnail-border-width` | – | `2px` | Frame border width. Give it a unit (`0px`, not `0`): the placeholder glyph's size calculation reads it. |
@@ -75,14 +76,14 @@ The `ThumbnailFit` (`'cover' \| 'contain'`) and `ThumbnailStatus` (`'loading' \|
 |-----------------|---------|--------|
 | Image (cover) | `src` set + `fit="cover"` (default) | Image fills frame, cropping overflow. |
 | Image (contain) | `src` set + `fit="contain"` | Image fits within frame, may show background bars. |
-| Placeholder (no src) | `src` omitted | `aria-hidden` span renders the fallback icon, centred. |
+| Placeholder (no src) | `src` omitted | A span renders the fallback icon, centred: `role="img"` named by `alt` when `alt` is non-empty, otherwise `aria-hidden`. |
 | Placeholder (failed) | the image fails, before or after hydration | Same as no-src. The failure lasts until `src` changes: any new `src`, including one that failed before, renders the image again. |
 | Shaped | `aspectRatio` set | Width from `--uxm-thumbnail-width` (default the size), height from the ratio. |
 
 ## Accessibility
 
 - The `<img>` receives the `alt` prop verbatim — supply a descriptive string for content images, or an empty `alt=""` for decorative ones (the component defaults `alt` to `""` when omitted).
-- The placeholder span is `aria-hidden`; if `fallback` carries meaning (e.g. initials), wrap the entire `Thumbnail` with an `aria-label` on the parent.
+- With a non-empty `alt`, the placeholder (no image, or one that failed) is `role="img"` named by `alt`, so the picture keeps its name. Without one it is `aria-hidden`; if `fallback` carries meaning (e.g. initials), pass an `alt` that says it.
 - Image errors are caught and the placeholder is rendered. To react to a failure (render an icon tile, or nothing), use `onStatusChange` rather than loading the image a second time.
 - The frame is non-interactive; if you make it clickable, wrap the whole `Thumbnail` in a `<button>` or `<a>` and supply an accessible label.
 

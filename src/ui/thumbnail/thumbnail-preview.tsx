@@ -10,7 +10,8 @@ function stylesToCssVars(styles: PreviewProps['styles']): CSSProperties {
     if (typeof value === 'boolean') {
       out[cssVar] = value ? '1' : '0';
     } else if (typeof value === 'number') {
-      out[cssVar] = `${value}px`;
+      // The icon size is a ratio of the frame; every other number is a length.
+      out[cssVar] = key === 'placeholderScale' ? String(value) : `${value}px`;
     } else {
       out[cssVar] = String(value);
     }

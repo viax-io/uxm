@@ -138,6 +138,14 @@ describe('generateOverridesCss', () => {
     expect(css).not.toContain('0.1px');
   });
 
+  it('saves the Thumbnail icon size as a ratio, not a length', () => {
+    // `--uxm-thumbnail-placeholder-scale` multiplies the frame size; `0.5px`
+    // would make the calc invalid and leave the glyph unsized.
+    const css = generateOverridesCss({ thumbnail: { placeholderScale: 0.5 } }, brand);
+    expect(css).toContain('--uxm-thumbnail-placeholder-scale: 0.5;');
+    expect(css).not.toContain('0.5px');
+  });
+
   it('saves every registry number knob in the unit it declares', () => {
     // A knob's `unit` is metadata the save path never sees: formatValue picks
     // units by key name. When the two disagree, the preview (which projects the
