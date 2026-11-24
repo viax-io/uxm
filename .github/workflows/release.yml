@@ -46,6 +46,14 @@ jobs:
 
       - run: npm run build
 
+      # Dry run of the CDN build BEFORE anything is published. The real one
+      # below must wait for the version bump (it stamps the version), so on its
+      # own a failure there comes after npm publish and the tag: 4.121.0 shipped
+      # to npm with no CDN files that way. Failing here stops the release
+      # while nothing is out yet. CI runs the same gate on every PR; this one
+      # covers direct pushes and anything that changed since.
+      - run: npm run build:cdn
+
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
