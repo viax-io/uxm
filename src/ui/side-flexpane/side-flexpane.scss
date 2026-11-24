@@ -11,7 +11,9 @@
      positioned against the pane (not the body) overflows it and gets focus or is scrolled
      into view; the whole pane then slides up under its rounded frame with a blank gap below
      the footer (the checkbox's hidden input did this, see checkbox.scss). clip paints the
-     same and can't be scrolled; the body stays the one scroll container. */
+     same and can't be scrolled; the body stays the one scroll container. `hidden` first is
+     the fallback for browsers without `clip` (Safari < 16), which drop the second line. */
+  overflow: hidden;
   overflow: clip;
   position: relative;
   width: var(--uxm-side-flexpane-width, 380px);

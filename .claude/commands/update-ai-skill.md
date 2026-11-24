@@ -91,6 +91,10 @@ under the `### Unreleased` heading in SKILL.md; mark catalog rows for unreleased
 - Link layout: a new or edited cross-skill link follows the table under "The distribution
   layout" above. `grep -rnE "\]\(\.\./(\.\./)?viax-(access|graphql-data-layer|keycloak-auth|localization)/" skills/`
   must be empty (a shared layer reached as a sibling is the old, flat layout), and so must
+  `grep -rnoE --include=SKILL.md "\]\(\.\./[A-Za-z0-9_-]+/" skills/ | grep -vE "\]\(\.\./(viax-uxm|viax-portal|viax-uxm-theming|viax-bem-discovery|viax-portal-generator|viax-uxm-conventions|modo-conventions|brand-faithful-frontend)/"`
+  (from a `SKILL.md`, a `../<name>/` link may only name a sibling in `ui/`: any other skill,
+  new layer or top-level one included, is two or more levels up; extend the list when
+  `skills/ui/` gains a skill), and so must
   `grep -rn "README.md" skills/ | grep "\](\.\."` (the library README is linked by URL).
 - `viax-portal` drift: the MetaPrompt hardcodes the API surface it generates against
   (GraphQL operations, `@viax.io/uxm` version floor, helper names). When the portal's config

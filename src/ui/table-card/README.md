@@ -33,8 +33,8 @@ const columns: DataTableColumn<Deal>[] = [
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `title` | `ReactNode` | – | Card heading. Pass an element (`<h3>`) when the page outline needs a real heading level; the default is a `div`. |
-| `icon` | `ReactNode` | – | Before the title, muted (`--uxm-table-card-icon-color`): an `Icon` or a small mark. |
-| `count` | `ReactNode` | – | After the title on the same line, muted: the number of rows, say. |
+| `icon` | `ReactNode` | – | Before the title, muted (`--uxm-table-card-icon-color`): an `Icon` or a small mark. Decorative: it is `aria-hidden`, so don't put meaning in it that the title doesn't carry. |
+| `count` | `ReactNode` | – | After the title on the same line, muted: the number of rows, say. Read right after the title ("Deals 3"), so pass an element with its own `aria-label` (`<span aria-label="3 deals">3</span>`) when the bare number is unclear. Styled with the title's size and the description's colour (`--uxm-table-card-title-font-size`, `--uxm-table-card-description-color`); it has no variables of its own. |
 | `description` | `ReactNode` | – | Muted line under the title. |
 | `actions` | `ReactNode` | – | Right side of the header. |
 | `variant` | `'lines' \| 'striped'` | `'lines'` | See [Variants](#states--variants). |
@@ -43,7 +43,7 @@ const columns: DataTableColumn<Deal>[] = [
 | `shadow` | `boolean` | `false` | Lift the card (`--uxm-table-card-shadow-*`). |
 | …`DataTableProps` | | | `columns`, `rows`, `rowKey`, `density`, `stackAt`, `sort`, `onSortChange`, `rowActions`, `onRowClick`, `rowProps`, `scrollable`, … |
 
-No header row is rendered when none of `title`, `icon`, `count`, `description` and `actions` is given.
+No header row is rendered when none of `title`, `icon`, `count`, `description` and `actions` is given. When it is, the root also carries `uxm-table-card--has-header`, a hook for your own CSS; the library's styles don't use it.
 
 ## CSS variables
 
