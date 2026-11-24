@@ -85,3 +85,7 @@ The `ThumbnailFit` (`'cover' \| 'contain'`) and `ThumbnailStatus` (`'loading' \|
 - The placeholder span is `aria-hidden`; if `fallback` carries meaning (e.g. initials), wrap the entire `Thumbnail` with an `aria-label` on the parent.
 - Image errors are caught and the placeholder is rendered. To react to a failure (render an icon tile, or nothing), use `onStatusChange` rather than loading the image a second time.
 - The frame is non-interactive; if you make it clickable, wrap the whole `Thumbnail` in a `<button>` or `<a>` and supply an accessible label.
+
+## Upgrading
+
+**4.116.0 — the frame is a size container.** The root now has `container-type: size`, so the placeholder can be sized from the frame's own width and height. A size container has no intrinsic size, which changes one case. If you set `--uxm-thumbnail-width` or `--uxm-thumbnail-height` (or `width` / `height`) to `auto`, or to a percentage inside a parent that shrinks to fit its content (inline-block, an auto-width flex or grid item, an absolutely positioned box), the frame now collapses to zero. Give it a length (`48px`), or `100%` of a parent whose width is definite. The default square frame (`--uxm-thumbnail-size`) is unaffected. This shipped as a minor release because the documented sizing (lengths) behaves as before.
