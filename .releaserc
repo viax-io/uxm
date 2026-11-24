@@ -12,6 +12,7 @@
     }],
     "@semantic-release/npm",
     ["@semantic-release/github", {
+      "successComment": false,
       "assets": [
         { "path": "CHANGELOG.md", "label": "CHANGELOG" },
         { "path": "package.json", "label": "package.json" },
