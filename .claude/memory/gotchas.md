@@ -732,3 +732,27 @@ doesn't produce; a knob with no `unit` that must be unitless is still on you.
 
 Related: "A per-state var whose fallback is the resting value ships a dead rule",
 the same family of the workbench looking right while the shipped path is wrong.
+
+---
+
+## A release step after `semantic-release` can't stop the release
+
+The release job builds the CDN bundles (`build:cdn`) after `npx semantic-release`,
+because the bundles stamp the bumped version. By then the version is tagged, on
+npm and on GitHub. So when `build:cdn` failed for 4.121.0 (the `uxm.esm.d.ts`
+gzip budget, 84.1 KB > 84), the job went red with the package already out and
+nothing uploaded: `https://uxm.viax.io/4.121.0/` is a 403 to this day. Re-running
+the job does not repair it: semantic-release sees the version is released, skips
+the rest, and `build:cdn` never runs. It was invisible before merge because CI
+never ran `build:cdn` at all.
+
+The gate now runs twice before anything ships: in `ci.yml` on every PR (before
+`test:ci`, so the `dist-cdn` checks in `tests/public-api.test.ts` run instead of
+skipping), and in `release.yml` as a dry run before `semantic-release`. The
+post-release build stays; it is the one that stamps the version.
+
+**How to apply:** a check that can fail does not belong after `semantic-release`.
+Run it before (as a dry run if it needs the version) and keep only the
+version-dependent output step after. When a budget in `scripts/build-cdn.mjs`
+trips on a PR, raise it there on purpose with the reason in a comment and the
+commit message; don't merge around it.

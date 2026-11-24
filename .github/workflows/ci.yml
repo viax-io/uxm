@@ -37,6 +37,14 @@ jobs:
 
       - run: npm run build
 
+      # The CDN bundles have their own gates (gzip budgets, a strict-consumer
+      # typecheck of the bundled .d.ts). Run them on the PR: the release job
+      # only builds the CDN after semantic-release has published to npm, so a
+      # budget overrun found there leaves a version on npm with no CDN files
+      # (4.121.0). Built before the tests so the dist-cdn checks in
+      # tests/public-api.test.ts run instead of skipping.
+      - run: npm run build:cdn
+
       - run: npm run test:ci
 
       - uses: actions/upload-artifact@v4
