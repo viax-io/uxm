@@ -77,6 +77,8 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **SideFlexpane:** browsers without `overflow: clip` (Safari < 16) now fall back to `overflow: hidden`, so the rounded frame still clips its content there.
+
 ## Workflow
 
 ### Where the documentation lives
