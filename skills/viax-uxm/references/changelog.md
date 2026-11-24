@@ -2895,3 +2895,15 @@ reached the published library; now shipped in 2.8.0.
     `onStatusChange('loading' | 'loaded' | 'error')` to show something else when it fails.
   - The root is now a size container: a `--uxm-thumbnail-width` of `100%` needs a parent with a
     definite width (inside a shrink-to-fit parent it collapses to zero).
+
+### New in 4.117.0
+
+- **EditableCell `--uxm-editable-cell-hover-border`** — a hover border colour (transparent by default). Set it, with `--uxm-editable-cell-hover-bg: transparent`, to outline a cell on hover instead of tinting it; a focused, editing or open cell keeps its own border.
+- **EditableCell `medium` matches the input box** — its padding now defaults to TextInput's (12px × 10px, following `--uxm-input-text-padding-*`), so a medium cell displays, hovers and edits at the size of the input it becomes. Medium cells are 8px taller than before.
+- **New atom: `TableCard`.** One frame whose body is a `DataTable`.
+  - `title`, `description`, `actions` (the header, omitted when none is given), `variant`
+    (`'lines'` default | `'striped'`), `hideHeaderRow`, `empty`, `shadow`; every `DataTable` prop
+    passes through.
+  - Use it instead of a `DataTable` inside a `Card`, which draws two frames and needs negative
+    margins; theme with `--uxm-table-card-*`.
+  - `DataTable` gains `framed` (default `true`); `framed={false}` drops its own border and radius.

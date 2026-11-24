@@ -1,3 +1,16 @@
+# [4.122.0](https://github.com/viax-io/uxm/compare/v4.121.0...v4.122.0) (2026-11-24)
+
+
+### Bug Fixes
+
+* **previews:** project the editable-cell hover border and table-card divider inset knobs ([f23a4ed](https://github.com/viax-io/uxm/commit/f23a4ed35bbf623b0a7064293dec3ddbec7e46e9))
+* **thumbnail:** keep the alt as the name of a missing or failed image ([c4b7224](https://github.com/viax-io/uxm/commit/c4b72245f9ff55fd9e8a7a2d6b549787e7a8e5d1))
+
+
+### Features
+
+* **table-card:** name the table by the card title ([11eb35e](https://github.com/viax-io/uxm/commit/11eb35ee8eaaa3f16f34480b9a133ad8e4a86e89))
+
 # [4.121.0](https://github.com/viax-io/uxm/compare/v4.120.0...v4.121.0) (2026-11-22)
 
 
