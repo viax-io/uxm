@@ -58,9 +58,9 @@ Does **not** extend a native attribute interface — the prop list is closed, an
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `number \| null` | – | **Required.** Controlled value. There is no uncontrolled mode. `null` is an empty field: the input shows `placeholder`, and either step button starts from 0 (clamped to `min`/`max`). |
+| `value` | `number \| null` | – | **Required.** Controlled value. There is no uncontrolled mode. `null` is an empty field: the input shows `placeholder`, and either step button starts from 0, then clamps to `min`/`max`: with `min={10}` either button gives 10, and with no `min` the − button gives `-step`. |
 | `onChange` | `(value: number) => void` | – | **Required.** Fires on typing and on either step button. |
-| `onEmpty` | `() => void` | – | Fires when the user empties the field by typing. Without it, an emptied field reports `0` through `onChange`. |
+| `onEmpty` | `() => void` | – | Fires when the user empties the field by typing. Without it, an emptied field reports `0` through `onChange`. Pass it whenever the field can be empty (`value` may be `null`): `onChange` only ever reports numbers, so without `onEmpty` your state never becomes `null` and the field jumps to 0. |
 | `placeholder` | `string` | – | Shown in the input while `value` is `null`. |
 | `min` | `number` | – | Lower clamp for the step buttons; also set as the input's `min`. |
 | `max` | `number` | – | Upper clamp for the step buttons; also set as the input's `max`. |
