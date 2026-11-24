@@ -2,7 +2,7 @@
 
 A tiny, text-first button for in-place actions ("Reset section", "Edit", "Match in 4 other Inputs"). Reads as inline text first and a button second — muted by default, transitioning to an accent colour on hover.
 
-`InlineAction` is sized small (10px) by design so it disappears into dense UI without competing with primary CTAs. The component renders a native `<button>` with an optional leading icon slot and a label slot. Distinct from `BackLink` (breadcrumb navigation, arrow-led) and `ButtonGhost` (regular button-shaped, padded).
+`InlineAction` is sized small (13px label, 12px icon) by design so it fits into dense UI without competing with primary CTAs. The component renders a native `<button>` with an optional leading icon slot and a label slot. Distinct from `BackLink` (breadcrumb navigation, arrow-led) and `ButtonGhost` (regular button-shaped, padded).
 
 ## Usage
 
