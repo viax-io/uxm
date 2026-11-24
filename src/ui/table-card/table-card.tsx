@@ -1,3 +1,7 @@
+'use client';
+
+import { useId } from 'react';
+
 import { cn } from '@/helpers';
 
 import { DataTable, type DataTableProps } from '../data-table';
@@ -84,12 +88,17 @@ export function TableCard<T>({
   rowProps,
   sortHref,
   renderSortLink,
+  tableLabelledBy,
   framed: _framed,
   ...rest
 }: TableCardProps<T>) {
   const hasTitle = title != null || icon != null || count != null;
   const hasHeader = hasTitle || description != null || actions != null;
   const showEmpty = empty != null && rows.length === 0;
+  // The title names the table, so a screen reader hears "Deals, table" rather
+  // than an unnamed one. A consumer's own `tableLabelledBy` wins.
+  const titleId = useId();
+  const labelledBy = tableLabelledBy ?? (title != null ? titleId : undefined);
 
   return (
     <div
@@ -114,7 +123,11 @@ export function TableCard<T>({
                       {icon}
                     </span>
                   )}
-                  {title != null && <div className="uxm-table-card__title">{title}</div>}
+                  {title != null && (
+                    <div id={titleId} className="uxm-table-card__title">
+                      {title}
+                    </div>
+                  )}
                   {count != null && <span className="uxm-table-card__count">{count}</span>}
                 </div>
               )}
@@ -153,6 +166,7 @@ export function TableCard<T>({
             rowProps={rowProps}
             sortHref={sortHref}
             renderSortLink={renderSortLink}
+            tableLabelledBy={labelledBy}
           />
         )}
       </div>

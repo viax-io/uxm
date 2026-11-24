@@ -87,7 +87,7 @@ Hover, focus, active-row and stacked (card-list) states are the table's own. In 
 ## Accessibility
 
 - A `div` card around a native `<table>`; the semantics are the table's. The title is a plain `div`: pass `<h3>` (or the level your page needs) as `title` to put it in the outline.
-- Name the table for assistive tech with `scrollLabel` when `scrollable`, as on a bare `DataTable`.
+- A `title` names the table: it gets an id and the `<table>` points at it with `aria-labelledby`, so a screen reader hears "Deals, table". Pass `tableLabelledBy` to name it from something else. Name the scroll region with `scrollLabel` when `scrollable`, as on a bare `DataTable`.
 - `hideHeaderRow` keeps the `<th>` cells in the DOM at zero height, so the column names are still announced.
 - Focus rings, `onRowClick` keyboard operation and sort buttons are DataTable's.
 
