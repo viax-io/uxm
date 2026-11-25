@@ -113,6 +113,7 @@ import { ButtonPrimary, themeTokens } from '@viax.io/uxm';
 | `@viax.io/uxm/ui.css` | Compiled component stylesheet — required for visual output. |
 | `@viax.io/uxm/tokens` | `themeTokens` array + `findToken` / `resolveHex` / `isTokenValue` + `ThemeToken` type. |
 | `@viax.io/uxm/tokens.css` | `--color-*` declarations on `:root`. |
+| `@viax.io/uxm/base.css` | Opt-in page baseline — `border-box` reset, the height chain `PageShell` needs, the brand font and surface colours on the document; every rule in `:where()`. See [Quick start](#quick-start). |
 | `@viax.io/uxm/hooks` | The behaviour hooks the atoms are built on — `useDismiss`, `useFocusTrap`, `useFocusOnMount`, `useRovingTabIndex`, `useScrollLock`, `usePortal`, `useToastStore` — for hosts composing their own floating layers or keyboard widgets. Pure React, no atom imports. Client-only: the modules carry no `'use client'` (a hook isn't a server/client boundary), so call them from a module that has it. |
 | `@viax.io/uxm/previews` | Preview components for host shells building theme editors. **No preview symbol leaks into `/ui`** — see the tree-shake guarantee below. |
 | `@viax.io/uxm/studio` | `UxmApp` (+ its `StudioAccount` type) + `UxmProvider` / `useUxm`, the component `registry`, the `StudioPersistence` contract and its three adapters (`createHttpPersistence`, `createClientPersistence`, `createReadOnlyPersistence`). |
@@ -483,7 +484,7 @@ npm run dev          # tsup --watch — only for local linked dev against a cons
 
 **Tests are a small Vitest smoke suite, not coverage.** `npm test` (`tests/*.test.tsx`, jsdom + Testing Library + axe-core) pins the contracts nothing else can see: focus trap / Escape / outside-click on the floating layers, ARIA wiring on the pickers, the CSS sanitizers and the overrides generator, and an axe pass over a form and a dialog. It also pins the public surface: the export names of every subpath, every `--uxm-*` variable the stylesheets read, and that `dist/` loads as ESM and CJS (snapshots in `tests/__snapshots__/`; a minus line in the diff is a removed export or knob, i.e. a MAJOR). See `tests/README.md`. Add a test when you touch one of those contracts or fix a behavioural bug; do not chase coverage on presentational atoms. For a visual change "tests pass" proves nothing — the verification is `typecheck`, `lint`, `build` and the portal.
 
-CI (`.github/workflows/ci.yml`) runs `lint`, `typecheck`, `check:drift`, `build` and `test:ci` on every pull request, plus an `npm audit` job that fails at critical.
+CI (`.github/workflows/ci.yml`) runs `lint`, `typecheck`, `check:drift`, `build`, `build:cdn` and `test:ci` on every pull request, plus an `npm audit` step that fails at critical. `build:cdn` is there for its own gates — the gzip budgets in `scripts/build-cdn.mjs` and a strict-consumer typecheck of the bundled `.d.ts` — so an overrun fails the PR, not the release.
 
 `npm run build` chains five steps, and the order is deliberate:
 
@@ -533,7 +534,7 @@ To iterate on the components themselves rather than on the integration, prefer `
 
 ## Releases
 
-**Releases are fully automated — never publish by hand.** Merging to `master` runs semantic-release in CI, which derives the version bump from the Conventional Commit types, writes `CHANGELOG.md`, stamps the AI-skill version markers, publishes to npm, and creates the GitHub release.
+**Releases are fully automated — never publish by hand.** Merging to `master` runs semantic-release in CI, which derives the version bump from the Conventional Commit types, writes `CHANGELOG.md`, stamps the AI-skill version markers, publishes to npm, and creates the GitHub release. The [CDN bundles](#cdn-usage) are built once as a dry run **before** anything is published — a failure there stops the release with nothing out — and again after, stamped with the new version, for the upload.
 
 This makes commit types carry semver meaning: `fix` → PATCH, `feat` → MINOR, a `BREAKING CHANGE:` footer → MAJOR. Running `npm version` or `npm publish` locally would desynchronise the tags from what CI has already released.
 
@@ -545,7 +546,7 @@ This makes commit types carry semver meaning: `fix` → PATCH, `feat` → MINOR,
 - **Change studio text**: any user-visible string under `src/studio/` or in the registry goes through `t()` / `tp()` — never a raw literal. Then `npm run i18n:extract && npm run i18n:gen`, fill every new `null` in **all** shipped locales in the same change, and `npm run check:studio-i18n` must pass. Details in [`src/studio/i18n/README.md`](src/studio/i18n/README.md#changing-a-string).
 - **Add a token**: add an entry to `themeTokens` in `src/tokens/index.ts` and declare the `--color-*` variable in `src/tokens/index.css` — `npm run check:drift` fails if only one side changes. Reference it from component SCSS via `var(--uxm-foo-bar, var(--color-new-token))` — never hardcode a colour, spacing, or radius.
 - Commits follow conventional-commit format (`commitizen` + `commitlint` enforced via `husky`); `npm run commit` walks you through it. Commit types drive the released version — see [Releases](#releases).
-- Run `npm run lint && npm run typecheck && npm run check:drift && npm test && npm run build` before opening a pull request — the same gates CI runs.
+- Run `npm run lint && npm run typecheck && npm run check:drift && npm run build && npm run build:cdn && npm test` before opening a pull request — the same gates CI runs (`build:cdn` after `build`, since it bundles `dist/`; `npm test` last, so its `dist/` and `dist-cdn/` checks run instead of skipping).
 
 ## License
 
