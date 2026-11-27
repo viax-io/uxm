@@ -60,6 +60,7 @@ The token group / name pairs map 1-to-1 to entries in `themeTokens` (`src/tokens
 ## Accessibility
 
 - Renders a plain `<div>` of `<span>` segments — assistive tech reads the segments in source order with natural whitespace pauses between them.
+- Fits the `meta` line of `PageHeader` and `TimelineEntry` and the `subtitle` of `SideFlexpane` and `DetailSection`: those slots render a `div`, so a `MetaRow` there is valid HTML.
 - The dot is marked `aria-hidden="true"` so screen readers ignore the decorative separator and announce only the metadata content.
 - No keyboard semantics — interactive children (e.g. links) retain their own focus/activation behaviour.
 - Contrast: default `--color-text-muted` is intended for secondary metadata; verify against `--color-card` / `--color-surface` backgrounds if you override the colour token.

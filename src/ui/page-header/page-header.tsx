@@ -29,7 +29,7 @@ export function PageHeader({ icon, title, meta, actions, className, ...rest }: P
       {icon && <IconTile style={ICON_TILE_STYLE}>{icon}</IconTile>}
       <div className="uxm-page-header__body">
         <h1 className="uxm-page-header__title">{title}</h1>
-        {meta && <p className="uxm-page-header__meta">{meta}</p>}
+        {meta && <div className="uxm-page-header__meta">{meta}</div>}
       </div>
       {actions && <div className="uxm-page-header__actions">{actions}</div>}
     </div>

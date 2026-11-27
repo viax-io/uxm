@@ -42,7 +42,7 @@ export function TimelineEntry({
           <span className="uxm-timeline-entry__title">{title}</span>
           {trailing && <span className="uxm-timeline-entry__trailing">{trailing}</span>}
         </div>
-        {meta && <p className="uxm-timeline-entry__meta">{meta}</p>}
+        {meta && <div className="uxm-timeline-entry__meta">{meta}</div>}
         {children && <div className="uxm-timeline-entry__body">{children}</div>}
       </div>
     </div>

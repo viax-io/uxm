@@ -63,7 +63,7 @@ export function Banner({
         {icon ?? <Icon glyph={VARIANT_GLYPH[variant]} size={20} strokeWidth={1.5} />}
       </span>
       <div className="uxm-banner__body">
-        {title && <p className="uxm-banner__title">{title}</p>}
+        {title && <div className="uxm-banner__title">{title}</div>}
         {children && <div className="uxm-banner__content">{children}</div>}
       </div>
       {onDismiss && (

@@ -29,7 +29,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — any standard div att
 |------|------|---------|-------------|
 | `icon` | `ReactNode` | – | Glyph node rendered inside an `IconTile`. When omitted, the tile slot collapses. |
 | `title` | `ReactNode` | – | **Required.** Rendered inside `<h1>`. |
-| `meta` | `ReactNode` | – | Secondary line below the title (`<p>`). Hidden when omitted. |
+| `meta` | `ReactNode` | – | Secondary line below the title, in a `div`, so it takes block content such as a `MetaRow`. Hidden when omitted. |
 | `actions` | `ReactNode` | – | Trailing action slot (typically buttons). Hidden when omitted. |
 | `className` | `string` | – | Merged with `uxm-page-header`. |
 | _(any native div attribute)_ | – | – | Spread onto the root `<div>`. |
@@ -108,6 +108,6 @@ With an `icon`, the icon shares the first line with the body down to **216px** (
 
 - Title renders inside `<h1>` — only one `PageHeader` per page in normal use; for sub-page headers (e.g. detail panes) demote semantically with a wrapping landmark or replace the heading at the consumer level.
 - The icon tile is presentational; the `IconTile` atom decides on `aria-hidden` based on glyph metadata.
-- Meta uses `<p>` — screen readers will announce it as a paragraph after the heading.
+- Meta is a `div` after the heading, read as plain text in source order. It is a `div`, not a `<p>`, so a `MetaRow` or a `Cluster` of tags fits without an invalid-nesting warning.
 - Actions inherit their own semantics (provide proper button labels / `aria-label` on icon buttons).
 - No focus management is performed; tab order follows source order (icon → title → meta → actions).

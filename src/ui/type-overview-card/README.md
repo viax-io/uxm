@@ -2,7 +2,7 @@
 
 A clickable summary tile pairing a label, a large numeric value, an optional left-edge accent stripe, an icon tile, and a "View all"-style trailing affordance revealed on hover.
 
-`TypeOverviewCard` renders a `<div className="uxm-type-overview-card">` with absolute-positioned accent stripe (`__accent`), an optional `IconTile` wrapping the supplied `icon`, a `<p>` label, a `<p>` value, and a `__trailing` element that defaults to `"View all"` + arrow icon. Icon-tile theming bridges through TypeOverviewCard's own `--uxm-typeoverview-icon-*` variables so a single set of editor knobs reaches both the card frame and the nested tile. The `iconBg` / `iconColor` / `accent` props are sugar that emit inline `--uxm-typeoverview-*` overrides on the root element.
+`TypeOverviewCard` renders a `<div className="uxm-type-overview-card">` with absolute-positioned accent stripe (`__accent`), an optional `IconTile` wrapping the supplied `icon`, a label and a value (each a `div`), and a `__trailing` element that defaults to `"View all"` + arrow icon. Icon-tile theming bridges through TypeOverviewCard's own `--uxm-typeoverview-icon-*` variables so a single set of editor knobs reaches both the card frame and the nested tile. The `iconBg` / `iconColor` / `accent` props are sugar that emit inline `--uxm-typeoverview-*` overrides on the root element.
 
 ## Usage
 

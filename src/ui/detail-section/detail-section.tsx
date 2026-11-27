@@ -37,7 +37,7 @@ export function DetailSection({
           {icon && <IconTile style={ICON_TILE_STYLE}>{icon}</IconTile>}
           <div className="uxm-detail-section__heading">
             <h3 className="uxm-detail-section__title">{title}</h3>
-            {subtitle && <p className="uxm-detail-section__subtitle">{subtitle}</p>}
+            {subtitle && <div className="uxm-detail-section__subtitle">{subtitle}</div>}
           </div>
         </header>
         {children && <div className="uxm-detail-section__body">{children}</div>}

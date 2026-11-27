@@ -53,8 +53,8 @@ export function TypeOverviewCard({
     <div className={cn('uxm-type-overview-card', className)} style={cssVars} {...rest}>
       <span aria-hidden="true" className="uxm-type-overview-card__accent" />
       {icon && <IconTile style={ICON_TILE_STYLE}>{icon}</IconTile>}
-      <p className="uxm-type-overview-card__label">{label}</p>
-      <p className="uxm-type-overview-card__value">{value}</p>
+      <div className="uxm-type-overview-card__label">{label}</div>
+      <div className="uxm-type-overview-card__value">{value}</div>
       {trailing !== null && (
         <span className="uxm-type-overview-card__trailing">
           {trailing ?? (

@@ -77,6 +77,8 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Text slots take block content:** `PageHeader` `meta`, `TimelineEntry` `meta`, `DetailSection` `subtitle`, `SideFlexpane` `eyebrow` / `subtitle`, `Banner` `title`, `ErrorPage` `code` / `message`, `StatCard` `label`, `TypeOverviewCard` `label` / `value` and `LifecycleNodeCard` `kindLabel` / `title` render a `div` instead of a `<p>`, so a `MetaRow` there no longer logs "<div> cannot be a descendant of <p>" (a hydration error under Next.js). Same classes, same look; a selector naming the element (`p.uxm-page-header__meta`) should drop the `p`.
+
 ## Workflow
 
 ### Where the documentation lives
