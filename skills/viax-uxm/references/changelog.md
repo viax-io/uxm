@@ -2915,3 +2915,9 @@ reached the published library; now shipped in 2.8.0.
 ### New in 4.119.0
 
 - **TableCard `--uxm-table-card-divider-inset`** — `lines` dividers (and row hover) stop short of the card's edges by this much (0 by default); the cells take the rest of the padding, so the text stays put.
+
+### New in 4.120.0
+
+- **InlineAction** reads at the muted-text size by default: label 13px (was 10px), icon 12px
+  (was 10px). Apps that set `--uxm-inline-action-font-size` / `--uxm-inline-action-icon-size`
+  keep their value; drop a 13px override, it's now the default.

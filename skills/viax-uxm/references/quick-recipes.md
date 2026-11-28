@@ -1112,7 +1112,7 @@ imperative `toast.*()` calls render through it.
 `<PropertyField label="Total">{total}</PropertyField>`.
 
 ❌ **Don't pass block content as `PageHeader`'s `meta` on a version before it became a `div`
-(unreleased).** It rendered inside a `<p>` there, so only inline content (string, `<span>`,
+(4.123.1).** It rendered inside a `<p>` there, so only inline content (string, `<span>`,
 fragment) is valid; a `MetaRow` or a `<div>` causes invalid `<div>`-in-`<p>` nesting and a
 hydration warning. From that version on, a `MetaRow` in `meta` is the intended use.
 

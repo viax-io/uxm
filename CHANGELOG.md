@@ -1,3 +1,10 @@
+## [4.123.1](https://github.com/viax-io/uxm/compare/v4.123.0...v4.123.1) (2026-11-28)
+
+
+### Bug Fixes
+
+* **ui:** text slots that take any node render a div, so a MetaRow fits ([7e3e137](https://github.com/viax-io/uxm/commit/7e3e1372345c756bf9c092ee503c394968d40a1e)), closes [#209](https://github.com/viax-io/uxm/issues/209)
+
 # [4.123.0](https://github.com/viax-io/uxm/compare/v4.122.1...v4.123.0) (2026-11-24)
 
 
