@@ -1111,9 +1111,10 @@ imperative `toast.*()` calls render through it.
 `<PropertyField label="Total" value={total} />` silently renders an empty value cell. Use
 `<PropertyField label="Total">{total}</PropertyField>`.
 
-❌ **Don't pass a block-level layout primitive (`Stack`, `Cluster`, a `<div>`) as `PageHeader`'s
-`meta`.** It renders inside a `<p>` — only inline content (string, `<span>`, fragment) is valid
-there; a block element causes invalid `<div>`-in-`<p>` nesting and a hydration warning.
+❌ **Don't pass block content as `PageHeader`'s `meta` on a version before it became a `div`
+(unreleased).** It rendered inside a `<p>` there, so only inline content (string, `<span>`,
+fragment) is valid; a `MetaRow` or a `<div>` causes invalid `<div>`-in-`<p>` nesting and a
+hydration warning. From that version on, a `MetaRow` in `meta` is the intended use.
 
 ❌ **Don't pass a bare number to `ResponsiveGrid`'s `min`.** It's a CSS length string
 (`"280px"`), not `280` — a bare number produces an invalid `minmax(280, 1fr)` that the browser

@@ -34,12 +34,16 @@ const cases: Array<[string, () => ReactElement]> = [
   ['PageHeader meta', () => <PageHeader title="Order" meta={row()} />],
   ['TimelineEntry meta', () => <TimelineEntry title="Created" meta={row()} />],
   ['DetailSection subtitle', () => <DetailSection title="Details" subtitle={row()} />],
-  ['SideFlexpane eyebrow and subtitle', () => <SideFlexpane title="Order" eyebrow={row()} subtitle={row()} />],
+  ['SideFlexpane eyebrow', () => <SideFlexpane title="Order" eyebrow={row()} />],
+  ['SideFlexpane subtitle', () => <SideFlexpane title="Order" subtitle={row()} />],
   ['Banner title', () => <Banner title={row()} />],
-  ['ErrorPage code and message', () => <ErrorPage title="Not found" code={row()} message={row()} />],
+  ['ErrorPage code', () => <ErrorPage title="Not found" code={row()} />],
+  ['ErrorPage message', () => <ErrorPage title="Not found" message={row()} />],
   ['StatCard label', () => <StatCard label={row()} value="12" />],
-  ['TypeOverviewCard label and value', () => <TypeOverviewCard label={row()} value={row()} />],
-  ['LifecycleNodeCard kindLabel and title', () => <LifecycleNodeCard kind="state" kindLabel={row()} title={row()} />],
+  ['TypeOverviewCard label', () => <TypeOverviewCard label={row()} value="12" />],
+  ['TypeOverviewCard value', () => <TypeOverviewCard label="Orders" value={row()} />],
+  ['LifecycleNodeCard kindLabel', () => <LifecycleNodeCard kind="state" kindLabel={row()} title="In cart" />],
+  ['LifecycleNodeCard title', () => <LifecycleNodeCard kind="state" title={row()} />],
 ];
 
 afterEach(() => {
