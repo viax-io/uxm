@@ -2,7 +2,7 @@
 
 A bordered card that pairs a label with a large numeric value and an optional trend indicator (up / down / neutral).
 
-`StatCard` renders a single `<div className="uxm-stat-card">` containing a `<p>` label, a row holding the headline `<span>` value, and an optional `<span>` trend chip. The trend chip auto-renders an `Icon` (`arrow-up`, flipped 180° for `down`) when `trendDirection` is non-neutral. All other native div attributes flow through.
+`StatCard` renders a single `<div className="uxm-stat-card">` containing a `div` label, a row holding the headline `<span>` value, and an optional `<span>` trend chip. The trend chip auto-renders an `Icon` (`arrow-up`, flipped 180° for `down`) when `trendDirection` is non-neutral. All other native div attributes flow through.
 
 ## Usage
 
@@ -71,7 +71,7 @@ The `StatCardTrend` union (`'up' \| 'down' \| 'neutral'`) is exported for consum
 
 ## Accessibility
 
-- Renders semantic `<p>` and `<span>` text — screen readers read the label, then the value, then the trend in DOM order.
+- Renders `<div>` and `<span>` text — screen readers read the label, then the value, then the trend in DOM order.
 - The trend arrow `Icon` is decorative; pair the trend string with a textual direction (e.g. `"+12.4%"`, `"−3.1%"`) so it remains comprehensible without the glyph.
 - The root is a non-interactive `<div>`; if you make a card clickable, wrap the whole component in an `<a>`/`<button>` and supply an accessible label.
 - Colour-only trend distinction (green vs red) does not pass contrast-only conveyance; the arrow icon and `+`/`−` prefix in `trend` carry the meaning for colour-blind users.

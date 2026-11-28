@@ -22,7 +22,7 @@ export function StatCard({
 }: StatCardProps) {
   return (
     <div className={cn('uxm-stat-card', className)} {...rest}>
-      <p className="uxm-stat-card__label">{label}</p>
+      <div className="uxm-stat-card__label">{label}</div>
       <div className="uxm-stat-card__row">
         <span className="uxm-stat-card__value">{value}</span>
         {trend && (

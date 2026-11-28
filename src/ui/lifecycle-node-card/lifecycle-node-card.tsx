@@ -130,11 +130,11 @@ export function LifecycleNodeCard({
         {rendersSomething(icon) ? icon : <NodeIcon kind={kind} />}
       </IconTile>
       <div className="uxm-lifecycle-node-card__body">
-        <p className="uxm-lifecycle-node-card__kind">{kindLabel ?? KIND_LABEL[kind]}</p>
-        <p className="uxm-lifecycle-node-card__title">{title}</p>
-        {/* Outside the title <p> on purpose: a meta row folded into `title`
-            inherits the title's typography and its one-line overflow clip, and
-            puts non-title content inside the title paragraph. */}
+        <div className="uxm-lifecycle-node-card__kind">{kindLabel ?? KIND_LABEL[kind]}</div>
+        <div className="uxm-lifecycle-node-card__title">{title}</div>
+        {/* Outside the title on purpose: a meta row folded into `title` inherits
+            the title's typography and its one-line overflow clip, and puts
+            non-title content inside the title. */}
         {rendersSomething(meta) && (
           <div className="uxm-lifecycle-node-card__meta">{meta}</div>
         )}

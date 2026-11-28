@@ -2,7 +2,7 @@
 
 A single row in a vertical activity timeline — a status dot on a rail to the left, a bordered content card on the right.
 
-`TimelineEntry` renders a `<div className="uxm-timeline-entry uxm-timeline-entry--{state}">` with two children: a `rail` column carrying optional `before`/`after` connector lines plus a status `dot`, and a `content` column carrying a title row (`title` + optional `trailing`), an optional `meta` paragraph, and an optional free-form `children` body. The component is a one-row primitive — composing a list of entries into a timeline is the consumer's responsibility (typically a stack with `lineBefore` off on the first entry and `lineAfter` off on the last).
+`TimelineEntry` renders a `<div className="uxm-timeline-entry uxm-timeline-entry--{state}">` with two children: a `rail` column carrying optional `before`/`after` connector lines plus a status `dot`, and a `content` column carrying a title row (`title` + optional `trailing`), an optional `meta` line (a `div`, so a `MetaRow` fits), and an optional free-form `children` body. The component is a one-row primitive — composing a list of entries into a timeline is the consumer's responsibility (typically a stack with `lineBefore` off on the first entry and `lineAfter` off on the last).
 
 ## Usage
 
@@ -95,13 +95,13 @@ The `TimelineDotState` union (`'active' \| 'idle'`) is exported.
 | Line above | `lineBefore` true | 2px vertical bar drawn from the top of the rail down to the dot. |
 | Line below | `lineAfter` true | 2px vertical bar drawn from just below the dot to the bottom of the rail. |
 | Trailing | `trailing` set | Right-aligned element in the title row (`margin-left: auto`). |
-| Meta | `meta` set | Small muted paragraph under the title row. |
-| Body | `children` set | Larger muted paragraph below meta. |
+| Meta | `meta` set | Small muted line under the title row. |
+| Body | `children` set | Larger muted text below meta. |
 
 ## Accessibility
 
 - The rail (dot + connector lines) is wrapped in `aria-hidden="true"` — assistive tech reads only the textual content.
-- Renders semantic `<span>` / `<p>` / `<div>` text — title, meta, trailing, and body surface in DOM order.
+- Renders `<span>` / `<div>` text — title, meta, trailing, and body surface in DOM order.
 - The dot colour is the only visual cue for `state`; pair `idle` entries with a textual marker (e.g. `meta="pending"` or a `trailing` badge) so the state is conveyed without colour.
 - The dot is the brand accent by design, and does not clear the 3:1 non-text floor in light: default `--color-accent` measures 2.06:1 on `--color-card`, against the `idle` dot's `--color-text-subtle` at 3.66:1 — so the live dot is the *quieter* of the two and is told apart by hue, not luminance. Dark is the other way round (9.71:1 against 3.41:1). Set `--uxm-timeline-entry-dot-color: var(--color-accent-bold)` (5.94:1) where the dot is the only signal of state. Note the studio's knob default is `accent-bold`, so the editor shows a darker dot than a bare consumer render.
 - The component is non-interactive; clickable entries should wrap the whole component in an `<a>` or `<button>` and supply an accessible label.

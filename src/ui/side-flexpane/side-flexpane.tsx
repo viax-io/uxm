@@ -258,9 +258,9 @@ export function SideFlexpane({
       <header className="uxm-side-flexpane__header">
         {icon && <span className="uxm-side-flexpane__icon">{icon}</span>}
         <div className="uxm-side-flexpane__heading">
-          {eyebrow && <p className="uxm-side-flexpane__eyebrow">{eyebrow}</p>}
+          {eyebrow && <div className="uxm-side-flexpane__eyebrow">{eyebrow}</div>}
           <h3 className="uxm-side-flexpane__title">{title}</h3>
-          {subtitle && <p className="uxm-side-flexpane__subtitle">{subtitle}</p>}
+          {subtitle && <div className="uxm-side-flexpane__subtitle">{subtitle}</div>}
         </div>
         {hasTrailing && (
           <div className="uxm-side-flexpane__actions">

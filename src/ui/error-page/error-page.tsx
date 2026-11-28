@@ -34,9 +34,9 @@ export function ErrorPage({
           {icon}
         </div>
       )}
-      {code && <p className="uxm-error-page__code">{code}</p>}
+      {code && <div className="uxm-error-page__code">{code}</div>}
       <h1 className="uxm-error-page__title">{title}</h1>
-      {message && <p className="uxm-error-page__message">{message}</p>}
+      {message && <div className="uxm-error-page__message">{message}</div>}
       {(primaryAction || secondaryAction) && (
         <div className="uxm-error-page__actions">
           {primaryAction}

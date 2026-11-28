@@ -2,7 +2,7 @@
 
 A full-page error layout — optional icon tile, optional large code (e.g. `"404"`), required `<h1>` title, optional message, and up to two action slots.
 
-`ErrorPage` renders a vertically-centered flex column inside a `<div>` with generous 64×24 padding. The icon (when present) sits in a 56×56 rounded tile with an accent-subtle background; the code uses an 88px, weight-700 text-subtle headline; the title is a real `<h1>` element; the message is a muted paragraph capped at `28rem`; the action row uses wrap-friendly flex with a 12px gap. Use for top-level `404` / `500` / lost-connection screens, not inline empty states (`EmptyState` is the inline counterpart).
+`ErrorPage` renders a vertically-centered flex column inside a `<div>` with generous 64×24 padding. The icon (when present) sits in a 56×56 rounded tile with an accent-subtle background; the code uses an 88px, weight-700 text-subtle headline; the title is a real `<h1>` element; the message is a muted block (a `div`, so it can hold a list or a link row) capped at `28rem`; the action row uses wrap-friendly flex with a 12px gap. Use for top-level `404` / `500` / lost-connection screens, not inline empty states (`EmptyState` is the inline counterpart).
 
 ## Usage
 
@@ -68,7 +68,7 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — `title` is shadowed 
 | `--color-accent-bold` | Accent / Accent Bold | Icon tile foreground. |
 | `--color-text-subtle` | Text / Text Subtle | Code (large numeric headline). |
 | `--color-text` | Text / Text | Title (`<h1>`). |
-| `--color-text-muted` | Text / Text Muted | Message paragraph. |
+| `--color-text-muted` | Text / Text Muted | Message. |
 
 ## States & variants
 
@@ -78,13 +78,13 @@ Extends `Omit<HTMLAttributes<HTMLDivElement>, 'title'>` — `title` is shadowed 
 | Icon-less | `icon` omitted | No tile rendered; code/title flow from the top of the column. |
 | Single action | only `primaryAction` (or only `secondaryAction`) provided | Actions row renders with one slot; wraps on narrow viewports. |
 | No actions | both action slots omitted | Actions row is not rendered at all. |
-| Message-less | `message` omitted | No paragraph; title is the final text element above any actions. |
+| Message-less | `message` omitted | No message; title is the final text element above any actions. |
 
 ## Accessibility
 
 - Renders an `<h1>` for the title — page-level heading semantics, suitable for a top-level error route.
 - The icon container is `aria-hidden="true"` — purely decorative.
-- The `code` is rendered as a `<p>` element, not a heading — assistive tech treats it as supporting text rather than a second heading; pair semantically with the `<h1>` title.
+- The `code` is rendered as a `div`, not a heading — assistive tech treats it as supporting text rather than a second heading; pair semantically with the `<h1>` title.
 - No live-region wiring — if the component mounts asynchronously (e.g. after a failed fetch), announce the change via a parent `aria-live` region.
 - Action slots are pass-through containers — the action elements themselves (e.g. `ButtonPrimary`) own focus, keyboard, and label semantics.
 - The component does not auto-focus any element on mount — consider focusing the primary action explicitly if the page renders mid-flow.

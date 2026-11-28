@@ -2,7 +2,7 @@
 
 A bordered card with a left accent rail, an icon tile, a title/subtitle header, and an optional body slot. Used for grouping read-only or composite content in detail pages and side panels.
 
-`DetailSection` renders as a `<section>` with three structural pieces: a positioned `&__accent` rail along the left edge, an inner `&__inner` block whose left padding is computed (`padding + accent-width + accent-gap`) so toggling the rail doesn't reflow content, and a `<header>` containing an optional `IconTile` and an `<h3>` title + optional `<p>` subtitle. The icon tile theming is bridged: the component projects `--uxm-detail-section-icon-{bg,color}` onto `IconTile`'s own `--uxm-icon-tile-{bg,color}` vars via inline style, so editor saves at the section level flow through to the nested tile.
+`DetailSection` renders as a `<section>` with three structural pieces: a positioned `&__accent` rail along the left edge, an inner `&__inner` block whose left padding is computed (`padding + accent-width + accent-gap`) so toggling the rail doesn't reflow content, and a `<header>` containing an optional `IconTile` and an `<h3>` title + optional subtitle (a `div`, so a `MetaRow` or a row of tags fits). The icon tile theming is bridged: the component projects `--uxm-detail-section-icon-{bg,color}` onto `IconTile`'s own `--uxm-icon-tile-{bg,color}` vars via inline style, so editor saves at the section level flow through to the nested tile.
 
 ## Usage
 
@@ -82,7 +82,7 @@ The icon tile is also pinned at `--uxm-icon-tile-size: 32px` and `--uxm-icon-til
 |-----------------|---------|--------|
 | With icon | `icon` prop provided | Renders an `IconTile` before the heading column. |
 | Without icon | `icon` omitted | Heading column starts at the inner padding edge. |
-| With subtitle | `subtitle` prop provided | Muted 12px `<p>` rendered 2px below the title. |
+| With subtitle | `subtitle` prop provided | Muted 12px line rendered 2px below the title. |
 | With body | `children` provided | `&__body` block rendered 12px below the header in muted 13px text. |
 | Header-only | `children` omitted | No body slot; section collapses to header height. |
 | Rail hidden | `--uxm-detail-section-accent-width: 0px` + `--uxm-detail-section-accent-gap: 0px` | No rail; left padding equals the other three sides. |

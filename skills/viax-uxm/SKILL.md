@@ -77,6 +77,8 @@ catalog.
      "### Unreleased" below it (scripts/stamp-skill-version.mjs) — never hand-edit
      the markers, and never append notes under an already-stamped heading. -->
 
+- **Text slots take block content:** `PageHeader` `meta`, `TimelineEntry` `meta`, `DetailSection` `subtitle`, `SideFlexpane` `eyebrow` / `subtitle`, `Banner` `title`, `ErrorPage` `code` / `message`, `StatCard` `label`, `TypeOverviewCard` `label` / `value` and `LifecycleNodeCard` `kindLabel` / `title` render a `div` instead of a `<p>`, so a `MetaRow` there no longer logs "<div> cannot be a descendant of <p>" (a hydration error under Next.js). Same classes, same look; a selector naming the element (`p.uxm-page-header__meta`) should drop the `p`, and a test finding one by `getByRole('paragraph')` should use its text or class.
+
 ## Workflow
 
 ### Where the documentation lives
@@ -296,8 +298,9 @@ base; the studio's runtime `<style>` still wins live on the editor route.
 6. **`PropertyField`'s value is `children`, never a `value` prop.** `value="…"` silently renders
    an empty cell. `PropertyGrid` has no `columns` / `minColumnWidth` prop — its grid template is
    fixed.
-7. **`PageHeader`'s `meta` renders inside a `<p>` — inline content only.** A block-level primitive
-   (`Stack`, a `<div>`) there is invalid `<div>`-in-`<p>` nesting and triggers a hydration warning.
+7. **Before `PageHeader`'s `meta` became a `div` (unreleased), it rendered inside a `<p>`.** On an
+   older version a block-level primitive (`MetaRow`, `Stack`, a `<div>`) there is invalid
+   `<div>`-in-`<p>` nesting and triggers a hydration warning; pass inline content only.
 8. **`ResponsiveGrid`'s `min` is a CSS length string** (`"280px"`), not a bare number — a bare
    number emits an invalid, dropped `minmax()`.
 9. **`Stack` is flex-column only — never override it with `flexDirection: 'row'`.** Use `Cluster`

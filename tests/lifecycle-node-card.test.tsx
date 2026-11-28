@@ -8,7 +8,7 @@ import { LifecycleNodeCard } from '@/ui';
 import type { ReactNode } from 'react';
 
 const meta = (c: HTMLElement) => c.querySelector('.uxm-lifecycle-node-card__meta');
-const titleP = (c: HTMLElement) => c.querySelector('p.uxm-lifecycle-node-card__title');
+const titleEl = (c: HTMLElement) => c.querySelector('.uxm-lifecycle-node-card__title');
 
 describe('LifecycleNodeCard meta slot', () => {
   it('renders no meta region when the prop is absent', () => {
@@ -56,7 +56,7 @@ describe('LifecycleNodeCard meta slot', () => {
     ).toHaveTextContent('0');
   });
 
-  it('renders meta content OUTSIDE the title paragraph', () => {
+  it('renders meta content OUTSIDE the title', () => {
     // The whole point of the slot. Asserting only "the content is in the
     // document" would pass against the overload it replaces — where consumers
     // put the same node INSIDE `title` — so the containment check is the test.
@@ -70,10 +70,10 @@ describe('LifecycleNodeCard meta slot', () => {
     const node = screen.getByTestId('participants');
     expect(meta(container), 'meta region missing').toContainElement(node);
     expect(
-      titleP(container)?.contains(node),
-      'meta content is inside the title paragraph — the overload this slot exists to replace',
+      titleEl(container)?.contains(node),
+      'meta content is inside the title — the overload this slot exists to replace',
     ).toBe(false);
-    expect(titleP(container)).toHaveTextContent('SalesOrder');
+    expect(titleEl(container)).toHaveTextContent('SalesOrder');
   });
 
   it('keeps the meta region inside the card body, after the title', () => {
@@ -84,7 +84,7 @@ describe('LifecycleNodeCard meta slot', () => {
     );
     const body = container.querySelector('.uxm-lifecycle-node-card__body');
     expect(body).toContainElement(meta(container) as HTMLElement);
-    expect(titleP(container)?.nextElementSibling).toBe(meta(container));
+    expect(titleEl(container)?.nextElementSibling).toBe(meta(container));
   });
 });
 
